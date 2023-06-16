@@ -136,7 +136,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             let subject = PassthroughSubject<BankTransferFlowResult, Never>()
             viewController.showAlert(
                 title: L10n.verificationIsRejected,
-                message: L10n.sorryBankTransferIsUnavailableForYou,
+                message: L10n.addMoneyViaBankTransferIsUnavailable,
                 actions: [
                     .init(
                         title: L10n.okay,

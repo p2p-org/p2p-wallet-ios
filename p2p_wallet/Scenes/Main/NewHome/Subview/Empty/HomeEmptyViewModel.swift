@@ -12,27 +12,41 @@ import Resolver
 import SolanaSwift
 import KeyAppKitCore
 import KeyAppBusiness
+import KeyAppUI
+import BankTransfer
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
+    @Injected private var bankTransferService: BankTransferService
     
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
     
     private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
     @Published var popularCoins = [PopularCoin]()
+    @Published var banner: HomeBannerParameters
 
     // MARK: - Initializer
 
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
+        self.banner = HomeBannerParameters(
+            backgroundColor: Asset.Colors.lightGrass.color,
+            image: .homeBannerPerson,
+            imageSize: CGSize(width: 198, height: 142),
+            title: L10n.topUpYourAccountToGetStarted,
+            subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
+            actionTitle: L10n.addMoney,
+            action: { navigation.send(.topUp) }
+        )
         super.init()
         updateData()
+        bindBankTransfer()
     }
-    
+
     // MARK: - Actions
 
     func reloadData() async {
@@ -42,10 +56,6 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         updateData()
     }
 
-    func receiveClicked() {
-        navigation.send(.topUp)
-    }
-    
     func buyTapped(index: Int) {
         let coin = popularCoinsTokens[index]
         analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
@@ -54,7 +64,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 }
 
 private extension HomeEmptyViewModel {
-    private func updateData() {
+    func updateData() {
         popularCoins = popularCoinsTokens.map { token in
             PopularCoin(
                 id: token.symbol,
@@ -64,6 +74,18 @@ private extension HomeEmptyViewModel {
                 image: image(for: token)
             )
         }
+    }
+
+    func bindBankTransfer() {
+        bankTransferService.state
+            .filter { $0.value.userId != nil && $0.value.mobileVerified }
+            .map { [weak self] value in
+                HomeBannerParameters(status: value.value.kycStatus, action: {
+                    self?.navigation.send(.topUp)
+                }, isSmallBanner: false)
+            }
+            .assignWeak(to: \.banner, on: self)
+            .store(in: &subscriptions)
     }
 }
 

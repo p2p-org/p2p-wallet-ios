@@ -8,7 +8,8 @@ struct HomeEmptyView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 36) {
-                banner
+                HomeBannerView(params: viewModel.banner)
+                    .animation(.easeInOut, value: viewModel.banner)
                 scrollingContent
             }
             .padding(.horizontal, 16)
@@ -19,53 +20,6 @@ struct HomeEmptyView: View {
         .customRefreshable {
             await viewModel.reloadData()
         }
-    }
-
-    private var banner: some View {
-        ZStack(alignment: .bottom) {
-            ZStack(alignment: .top) {
-                VStack(spacing: 0) {
-                    Color(Asset.Colors.smoke.color)
-                        .frame(height: 87)
-                    Color(.fern)
-                        .frame(height: 200)
-                        .cornerRadius(16)
-                }
-                Image(uiImage: .homeBannerPerson)
-            }
-            VStack(spacing: 19) {
-                VStack(spacing: 13) {
-                    Text(L10n.topUpYourAccountToGetStarted)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .fontWeight(.bold)
-                        .apply(style: .text1)
-                    Text(L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay)
-                        .apply(style: .text3)
-                        .minimumScaleFactor(0.5)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .padding(.horizontal, 24)
-                }
-                Button(
-                    action: {
-                        viewModel.receiveClicked()
-                    },
-                    label: {
-                        Text(L10n.addMoney)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .text4, weight: .semibold))
-                            .frame(height: 48)
-                            .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.snow.color))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 24)
-                    }
-                )
-            }
-            .padding(.bottom, 24)
-        }
-        .frame(maxWidth: .infinity)
     }
 
     private var scrollingContent: some View {

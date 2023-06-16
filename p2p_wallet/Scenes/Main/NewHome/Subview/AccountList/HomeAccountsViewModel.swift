@@ -9,6 +9,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
+import BankTransfer
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -21,6 +22,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: - Properties
 
@@ -30,6 +32,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var actions: [WalletActionType] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
+    @Published private(set) var smallBanner: HomeBannerParameters?
+    @Published private(set) var bannerTapped: Bool = false
 
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
@@ -60,6 +64,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         self.actions = actions
 
         super.init()
+        bindTransferData()
 
         // TODO: Replace with combine
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
@@ -186,6 +191,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func sellTapped() {
         navigation.send(.cashOut)
     }
+
+    func closeBanner() {
+        smallBanner = nil
+        bannerTapped = false
+    }
 }
 
 extension HomeAccountsViewModel {
@@ -193,5 +203,20 @@ extension HomeAccountsViewModel {
         case tap
         case visibleToggle
         case extraButtonTap
+    }
+}
+
+private extension HomeAccountsViewModel {
+    func bindTransferData() {
+        bankTransferService.state
+            .filter({ $0.value.userId != nil && $0.value.mobileVerified })
+            .map { value in
+                HomeBannerParameters(status: value.value.kycStatus, action: { [weak self] in
+                    self?.navigation.send(.topUp)
+                    self?.bannerTapped = true
+                }, isSmallBanner: true)
+            }
+            .assignWeak(to: \.smallBanner, on: self)
+            .store(in: &subscriptions)
     }
 }

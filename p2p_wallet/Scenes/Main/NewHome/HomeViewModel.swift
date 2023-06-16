@@ -15,6 +15,7 @@ import Sell
 import Send
 import SolanaSwift
 import Wormhole
+import BankTransfer
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -31,11 +32,13 @@ class HomeViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: - Published properties
 
     @Published var state = State.pending
     @Published var address = ""
+    @Published private var shouldUpdateBankTransfer = false
 
     // MARK: - Properties
 
@@ -49,7 +52,10 @@ class HomeViewModel: ObservableObject {
         bind()
 
         // reload
-        Task { await reload() }
+        Task {
+            await reload()
+            await bankTransferService.reload()
+        }
     }
 
     // MARK: - Methods
@@ -86,6 +92,10 @@ class HomeViewModel: ObservableObject {
         analyticsManager.log(
             event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
         )
+
+        if shouldUpdateBankTransfer {
+            Task { await bankTransferService.reload() }
+        }
     }
 }
 
@@ -199,6 +209,12 @@ private extension HomeViewModel {
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
             }
+            .store(in: &subscriptions)
+
+        bankTransferService.state
+            .receive(on: DispatchQueue.main)
+            .map { $0.value.userId != nil && $0.value.mobileVerified && $0.value.kycStatus != .approved }
+            .assignWeak(to: \.shouldUpdateBankTransfer, on: self)
             .store(in: &subscriptions)
     }
 }

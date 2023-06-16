@@ -53,11 +53,22 @@ struct HomeAccountsView: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if let smallBanner = viewModel.smallBanner {
+                HomeSmallBannerView(params: smallBanner)
+                    .animation(.linear, value: smallBanner)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .onChange(of: viewModel.bannerTapped) { [weak viewModel] output in
+                        guard output else { return }
+                        withAnimation { viewModel?.closeBanner() }
+                    }
+            }
             Text(L10n.tokens)
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
+                .padding(.top, 32)
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
                     tokenCell(rendableAccount: $0, isVisiable: true)
@@ -95,7 +106,6 @@ struct HomeAccountsView: View {
                 }
             }
         }
-        .padding(.top, 32)
         .background(Color(Asset.Colors.snow.color))
     }
 
