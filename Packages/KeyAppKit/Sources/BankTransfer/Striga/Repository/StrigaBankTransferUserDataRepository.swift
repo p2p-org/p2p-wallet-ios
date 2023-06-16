@@ -24,12 +24,9 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
-    public func synchronizeMetadata() async {
-        await metadataProvider.synchronize()
-    }
 
     public func getUserId() async -> String? {
-        await metadataProvider.getLocalStrigaMetadata()?.userId
+        await metadataProvider.getStrigaMetadata()?.userId
     }
     
     public func getKYCStatus() async throws -> StrigaKYC {
@@ -85,9 +82,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         // save userId
         try await metadataProvider.updateMetadata(withUserId: response.userId)
         
-        // synchronize
-        await synchronizeMetadata()
-        
         // return
         return response
     }
@@ -114,7 +108,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         // get metadata
-        guard let metadata = await metadataProvider.getLocalStrigaMetadata()
+        guard let metadata = await metadataProvider.getStrigaMetadata()
         else {
             throw BankTransferError.missingMetadata
         }
