@@ -1,11 +1,5 @@
-//
-//  AppDelegate.swift
-//  p2p wallet
-//
-//  Created by Chung Tran on 10/22/20.
-//
-
 @_exported import BEPureLayout
+import Combine
 import Firebase
 import Intercom
 import KeyAppUI
@@ -18,7 +12,8 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    private var appCoordinator: AppCoordinator?
+    private var appCoordinator: AppCoordinator!
+    private var subscriptions = [AnyCancellable]()
 
     @Injected private var notificationService: NotificationService
 
@@ -70,9 +65,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Lokalise.shared.swizzleMainBundle()
 
         // Set app coordinator
-        appCoordinator = AppCoordinator()
-        appCoordinator!.start()
-        window = appCoordinator?.window
+        window = UIWindow(frame: UIScreen.main.bounds)
+        appCoordinator = AppCoordinator(window: window!)
+        appCoordinator.start().sink { _ in }.store(in: &subscriptions)
 
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)

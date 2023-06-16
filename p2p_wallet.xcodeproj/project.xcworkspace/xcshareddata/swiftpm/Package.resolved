@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
         "state": {
           "branch": null,
-          "revision": "eee9ad754926c40a0f7e73f152357d37b119b7fa",
-          "version": "1.7.1"
+          "revision": "32f641cf24fc7abc1c591a2025e9f2f572648b0f",
+          "version": "1.7.2"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "7e22cf3e7d40a6530bbdff255d6350de890512de",
-          "version": "3.6.1"
+          "revision": "83e68b5fea032939fd9dcb178cd5bc01fde7ee58",
+          "version": "3.6.2"
         }
       },
       {

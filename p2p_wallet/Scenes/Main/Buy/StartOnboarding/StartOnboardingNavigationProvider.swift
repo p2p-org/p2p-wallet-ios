@@ -16,12 +16,12 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
         let isDeviceShareAvailable = accountStorage.deviceShare != nil
         analyticsManager.log(parameter: .userDeviceshare(isDeviceShareAvailable))
 
-        if isDeviceShareAvailable {
+//        if isDeviceShareAvailable {
             return RestoreWalletCoordinator(navigation: .root(window: window))
-        } else if service.lastState != nil {
-            return ContinueCoordinator(window: window)
-        } else {
-            return StartCoordinator(window: window)
-        }
+//        } else if service.lastState != nil {
+//            return ContinueCoordinator(window: window)
+//        } else {
+//            return StartCoordinator(window: window)
+//        }
     }
 }
