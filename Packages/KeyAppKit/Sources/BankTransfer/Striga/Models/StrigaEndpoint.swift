@@ -37,6 +37,19 @@ struct StrigaEndpoint: HTTPEndpoint {
     }
 
     // MARK: - Factory methods
+    static func getKYC(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/kyc/\(userId)",
+            method: .post,
+            keyPair: keyPair,
+            body: nil
+        )
+    }
 
     static func verifyMobileNumber(
         baseURL: String,

@@ -28,7 +28,9 @@ public final class StrigaRemoteProviderImpl {
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 
     public func getKYCStatus(userId: String) async throws -> StrigaKYC {
-        try await getUserDetails(userId: userId).KYC
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getKYC(baseURL: baseURL, keyPair: keyPair, userId: userId)
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaKYC.self)
     }
     
     public func getUserDetails(
