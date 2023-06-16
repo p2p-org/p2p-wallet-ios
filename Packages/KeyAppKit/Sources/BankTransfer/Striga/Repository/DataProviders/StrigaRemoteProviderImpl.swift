@@ -96,6 +96,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
             .token
     }
+
+    public func simulateStatus(userId: String, status: String) async throws {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.simulateKYC(baseURL: baseURL, keyPair: keyPair, userId: userId, status: status)
+        try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+    }
 }
 
 struct StrigaRemoteProviderError: Codable {

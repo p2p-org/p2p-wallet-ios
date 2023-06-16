@@ -20,4 +20,6 @@ public protocol BankTransferService {
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
+    
+    func simulateKYC(status: String) async throws
 }

@@ -16,4 +16,6 @@ public protocol BankTransferUserDataRepository {
 
     func updateUserLocally(registrationData: BankTransferRegistrationData) async throws
     func clearCache() async
+
+    func simulateKYC(userId: String, status: String) async throws
 }

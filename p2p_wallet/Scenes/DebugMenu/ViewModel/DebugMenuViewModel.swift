@@ -16,8 +16,10 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
     @Published var strigaEndpoints: [String]
+    @Published var selectedKYCStatus: StrigaKYCStatus? = nil
 
     @Injected private var accountsService: SolanaAccountsService
+    @Injected private var bankTransferService: BankTransferService
 
     override init() {
         features = Menu.allCases
@@ -72,6 +74,19 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         $currentMoonpayEnvironment
             .sink { environment in
                 Defaults.moonpayEnvironment = environment
+            }
+            .store(in: &subscriptions)
+
+        $selectedKYCStatus
+            .compactMap { $0?.rawValue }
+            .sinkAsync { [weak self] value in
+                Task {
+                    do {
+                        try await self?.bankTransferService.simulateKYC(status: value)
+                    } catch {
+                        debugPrint(error)
+                    }
+                }
             }
             .store(in: &subscriptions)
     }

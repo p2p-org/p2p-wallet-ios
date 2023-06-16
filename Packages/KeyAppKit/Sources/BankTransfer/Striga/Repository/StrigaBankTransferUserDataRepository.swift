@@ -155,6 +155,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func clearCache() async {
         await localProvider.clearRegistrationData()
     }
+
+    public func simulateKYC(userId: String, status: String) async throws {
+        try await remoteProvider.simulateStatus(userId: userId, status: status)
+    }
 }
 
 // MARK: - Helpers

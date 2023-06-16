@@ -1,6 +1,7 @@
 import Resolver
 import SolanaSwift
 import SwiftUI
+import BankTransfer
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
@@ -159,6 +160,13 @@ struct DebugMenuView: View {
                 }
             } label: {
                 Text("Remove userId from metadata")
+            }
+
+            Picker("Simulate KYC status", selection: $viewModel.selectedKYCStatus) {
+                Text("Unknown").tag(nil as StrigaKYCStatus?)
+                ForEach([StrigaKYCStatus.approved, .rejected], id: \.rawValue) { status in
+                    Text(status.rawValue).tag(status as StrigaKYCStatus?)
+                }
             }
         }
     }

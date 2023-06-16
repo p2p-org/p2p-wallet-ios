@@ -8,4 +8,5 @@ public protocol StrigaRemoteProvider: AnyObject {
     func resendSMS(userId: String) async throws
     
     func getKYCToken(userId: String) async throws -> String
+    func simulateStatus(userId: String, status: String) async throws -> Void
 }

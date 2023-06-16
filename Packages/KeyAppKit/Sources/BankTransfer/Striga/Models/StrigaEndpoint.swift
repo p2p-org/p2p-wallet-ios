@@ -115,6 +115,24 @@ struct StrigaEndpoint: HTTPEndpoint {
             ]
         )
     }
+
+    static func simulateKYC(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        status: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL.replacingOccurrences(of: "/user", with: ""),
+            path: "/simulate/user/kyc",
+            method: .patch,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "status": status
+            ]
+        )
+    }
 }
 
 extension KeyPair {

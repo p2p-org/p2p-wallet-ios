@@ -1,6 +1,10 @@
 import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
+    public func simulateStatus(userId: String, status: String) async throws {
+        fatalError()
+    }
+    
     // MARK: - Properties
 
     private var useCase: MockStrigaUseCase

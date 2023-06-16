@@ -106,6 +106,11 @@ extension BankTransferServiceImpl: BankTransferService {
         await repository.clearCache()
     }
     
+    public func simulateKYC(status: String) async throws {
+        guard let userId = subject.value.value.userId else { return }
+        try await repository.simulateKYC(userId: userId, status: status)
+    }
+    
     // MARK: - Helpers
 
     private func handleRegisteredUser(userId: String) async throws {
