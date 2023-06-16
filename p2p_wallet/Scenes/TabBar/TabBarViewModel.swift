@@ -91,10 +91,10 @@ extension TabBarViewModel {
                     .delay(for: isAuthenticating ? .milliseconds(800): .milliseconds(100), scheduler: RunLoop.main)
             }
             // get latest route
-            .withLatestFrom(
+            .map { _ in
                 Resolver.resolve(DeeplinkingRouter.self)
-                    .activeRoutePublisher
-            )
+                    .activeRoute
+            }
             // mark as handled after completion
             .handleEvents(receiveOutput: { _ in
                 Resolver.resolve(DeeplinkingRouter.self)
