@@ -1458,3 +1458,6 @@
 "Write to suppot" = "Viết thư cho suppot";
 "Please, wait 1 day for the next try" = "Vui lòng đợi 1 ngày cho lần thử tiếp theo";
 "After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "Sau 5 lần thử không chính xác, chúng tôi đã vô hiệu hóa xác minh SMS trong 1 ngày để bảo mật tài khoản của bạn.";
+"Seems like this number is already used" = "Có vẻ như số này đã được sử dụng";
+"With new data you can’t use Striga service for now. Bou you still have Bank card and Crypto options" = "Với dữ liệu mới, hiện tại bạn không thể sử dụng dịch vụ Striga.  Bou, bạn vẫn có tùy chọn thẻ ngân hàng và tiền điện tử";
+"Open my blank" = "Mở chỗ trống của tôi";

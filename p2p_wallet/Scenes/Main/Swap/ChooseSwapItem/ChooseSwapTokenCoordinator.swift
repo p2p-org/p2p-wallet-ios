@@ -28,7 +28,8 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     override func start() -> AnyPublisher<SwapToken?, Never> {
         let viewModel = ChooseItemViewModel(
             service: ChooseSwapTokenService(swapTokens: tokens, fromToken: fromToken),
-            chosenToken: chosenWallet
+            chosenItem: chosenWallet,
+            isSearchEnabled: true
         )
         let fromToken = fromToken
         let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { model in

@@ -6,12 +6,13 @@ enum ChooseItemCoordinatorResult {
     case cancel
 }
 
-class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoordinatorResult> {
-    let title: String?
-    let controller: UIViewController
-    let service: any ChooseItemService
-    let chosen: (any ChooseItemSearchableItem)?
-    let showDoneButton: Bool
+final class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoordinatorResult> {
+    private let title: String?
+    private let controller: UIViewController
+    private let service: any ChooseItemService
+    private let chosen: (any ChooseItemSearchableItem)?
+    private let showDoneButton: Bool
+    private let isSearchEnabled: Bool
     private weak var viewController: UIViewController?
 
     init(
@@ -19,32 +20,35 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
         controller: UIViewController,
         service: any ChooseItemService,
         chosen: (any ChooseItemSearchableItem)?,
-        showDoneButton: Bool = false
+        showDoneButton: Bool = false,
+        isSearchEnabled: Bool = true
     ) {
         self.title = title
         self.controller = controller
         self.service = service
         self.chosen = chosen
         self.showDoneButton = showDoneButton
+        self.isSearchEnabled = isSearchEnabled
     }
 
     override func start() -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
         let isWrapped = controller is UINavigationController
         let viewModel = ChooseItemViewModel(
             service: service,
-            chosenToken: chosen
+            chosenItem: chosen,
+            isSearchEnabled: isSearchEnabled
         )
         let view = ChooseItemView(viewModel: viewModel) { model in
             (model.item as? T)?.render()
         }
-        let aController = KeyboardAvoidingViewController(rootView: view)
-        aController.navigationItem.title = title
+        let vc = view.asViewController(withoutUIKitNavBar: false, ignoresKeyboard: true)
+        vc.navigationItem.title = title
         controller.show(
-            isWrapped ? aController : UINavigationController(rootViewController: aController),
+            isWrapped ? vc : UINavigationController(rootViewController: vc),
             sender: nil
         )
         if showDoneButton {
-            aController.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            vc.navigationItem.rightBarButtonItem = UIBarButtonItem(
                 title: L10n.done,
                 style: .plain,
                 target: self,
@@ -52,7 +56,7 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
             )
         }
 
-        viewController = aController
+        viewController = vc
         return Publishers.Merge(
             controller.deallocatedPublisher().map { ChooseItemCoordinatorResult.cancel },
             viewModel.chooseTokenSubject.map { ChooseItemCoordinatorResult.item(item: $0) }

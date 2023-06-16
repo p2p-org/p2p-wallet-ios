@@ -22,7 +22,7 @@ struct StrigaRegistrationTextField: View {
                 .font(uiFont: .font(of: .title2))
                 .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
                 .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
-                .frame(height: 56)
+                .frame(height: 58)
                 .disabled(!isEnabled)
         }
     }

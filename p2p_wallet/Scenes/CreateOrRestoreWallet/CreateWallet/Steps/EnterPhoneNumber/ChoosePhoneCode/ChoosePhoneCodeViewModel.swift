@@ -13,7 +13,6 @@ final class ChoosePhoneCodeViewModel: BaseViewModel, ObservableObject {
     @Published var selectedDialCode: String?
     @Published var selectedCountryCode: String?
     @Published var keyword = ""
-    @Published var isSearchFieldFocused = false
     @Published var data = [SelectableCountry]()
     let didClose = PassthroughSubject<Void, Never>()
 

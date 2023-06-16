@@ -1,23 +1,24 @@
 import SwiftUI
 import KeyAppUI
 
-/// An error view with a woman image :)
+/// An error view with image :)
 struct HardErrorView<Content: View>: View {
     let title: String
     let subtitle: String
-    @ViewBuilder public var content: () -> Content
+    var image: UIImage = .womanHardError
+    @ViewBuilder var content: () -> Content
 
     var body: some View {
         VStack {
             Spacer()
             OnboardingContentView(
                 data: .init(
-                    image: .womanHardError,
+                    image: image,
                     title: title,
                     subtitle: subtitle
                 )
             )
-                .padding(.bottom, 48)
+            .padding(.bottom, 48)
 
             BottomActionContainer {
                 content()

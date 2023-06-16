@@ -29,13 +29,15 @@ struct StrigaRegistrationInfoView: View {
     let appearance: StrigaRegistrationInfoViewModel
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 17) {
             Circle()
                 .fill(Color(asset: appearance.iconBackgroundColor))
-                .frame(width: 48, height: 48)
+                .frame(width: 49, height: 49)
                 .overlay(
                     Image(uiImage: appearance.icon)
+                        .resizable()
                         .renderingMode(.template)
+                        .aspectRatio(contentMode: .fill)
                         .foregroundColor(Color(asset: appearance.iconColor))
                         .frame(width: 20, height: 20)
                 )
@@ -46,7 +48,7 @@ struct StrigaRegistrationInfoView: View {
 
             Spacer()
         }
-        .padding(.all, 16)
+        .padding(.all, 17)
         .background(Color(asset: appearance.backgroundColor))
         .cornerRadius(radius: 12, corners: .allCorners)
     }

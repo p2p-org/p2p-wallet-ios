@@ -32,7 +32,8 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
                     title: L10n.selectYourIndustry,
                     controller: self.navigationController,
                     service: ChooseIndustryService(),
-                    chosen: value
+                    chosen: value,
+                    isSearchEnabled: false
                 ))
             }
             .sink { [weak viewModel] result in
@@ -50,7 +51,8 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
                     title: L10n.selectYourSourceOfFunds,
                     controller: self.navigationController,
                     service: ChooseSourceOfFundsService(),
-                    chosen: value
+                    chosen: value,
+                    isSearchEnabled: false
                 ))
             }
             .sink { [weak viewModel] result in
@@ -77,13 +79,23 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             }
         }.store(in: &subscriptions)
 
+        viewModel.openHardError
+            .flatMap { [unowned self] in
+                self.coordinate(to: StrigaRegistrationHardErrorCoordinator(navigationController: navigationController))
+            }
+            .sink { [weak self] in
+                self?.navigationController.popViewController(animated: false)
+                self?.navigationController.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationSecondStepCoordinatorResult.canceled },
             viewModel.openNextStep
                 .map { StrigaRegistrationSecondStepCoordinatorResult.completed }
         )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        .prefix(1)
+        .eraseToAnyPublisher()
     }
 }

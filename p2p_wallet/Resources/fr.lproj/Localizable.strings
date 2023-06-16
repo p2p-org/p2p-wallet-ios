@@ -1456,3 +1456,6 @@
 "Write to suppot" = "Ecrire au support";
 "Please, wait 1 day for the next try" = "S'il vous plaît, attendez 1 jour pour le prochain essai";
 "After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "Après 5 tentatives incorrectes, nous avons désactivé la vérification par SMS pendant 1 jour pour sécuriser votre compte.";
+"Seems like this number is already used" = "Il semble que ce numéro soit déjà utilisé";
+"With new data you can’t use Striga service for now. Bou you still have Bank card and Crypto options" = "Avec de nouvelles données, vous ne pouvez pas utiliser le service Striga pour le moment.  Bou vous avez encore les options Carte Bancaire et Crypto";
+"Open my blank" = "Ouvre mon blanc";
