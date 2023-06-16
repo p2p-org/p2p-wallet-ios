@@ -45,7 +45,7 @@ struct StrigaEndpoint: HTTPEndpoint {
         try .init(
             baseURL: baseURL,
             path: "/kyc/\(userId)",
-            method: .post,
+            method: .get,
             keyPair: keyPair,
             body: nil
         )
