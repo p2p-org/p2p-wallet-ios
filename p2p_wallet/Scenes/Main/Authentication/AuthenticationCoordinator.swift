@@ -13,12 +13,23 @@ final class AuthenticationCoordinator: Coordinator<Void> {
     // MARK: - Properties
 
     private let presentingViewController: UIViewController
+    private let isBackAvailable: Bool
+    private let isFullscreen: Bool
+
+    private var navigationController: UINavigationController!
 
     // MARK: - Initializer
 
-    init(authenticationService: AuthenticationService, presentingViewController: UIViewController) {
+    init(
+        authenticationService: AuthenticationService,
+        presentingViewController: UIViewController,
+        isBackAvailable: Bool,
+        isFullscreen: Bool
+    ) {
         self.authenticationService = authenticationService
         self.presentingViewController = presentingViewController
+        self.isBackAvailable = isBackAvailable
+        self.isFullscreen = isFullscreen
     }
 
     // MARK: - Methods
@@ -31,23 +42,50 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         }
         
         // Create pincode view
-        let viewModel = AuthenticationPincodeViewModel()
-        let view = AuthenticationPincodeView(viewModel: viewModel)
-        let vc = UIHostingController(rootView: view)
+        let pincodeViewModel = PincodeViewModel(
+            state: .check,
+            isBackAvailable: isBackAvailable,
+            successNotification: ""
+        )
+        let pincodeViewController = PincodeViewController(viewModel: pincodeViewModel)
         
-        // Show pincode view as full screen
-        vc.modalPresentationStyle = .fullScreen
-        presentingViewController.present(vc, animated: true)
-        
-        // Observe verification and dismiss view
-        viewModel.pincodeDidVerify
-            .sink { [weak vc] _ in
-                vc?.dismiss(animated: true)
+        // handle viewModel
+        pincodeViewModel.openMain
+            .sink { [weak self] _ in
+                self?.navigationController.dismiss(animated: true)
             }
             .store(in: &subscriptions)
+
+        // info did tap
+//        pincodeViewModel.infoDidTap
+//            .sink(receiveValue: { [unowned self] in
+//                helpLauncher.launch()
+//            })
+//            .store(in: &subscriptions)
+    
+        // cancellable pincode
+//        if isBackAvailable {
+//            pincodeViewController.onClose = { [weak self] in
+//                self?.viewModel.authenticate(presentationStyle: nil)
+//                if authSuccess == false {
+//                    authStyle.onCancel?()
+//                }
+//            }
+//        }
+
+        // Create navigation
+        navigationController = UINavigationController(
+            rootViewController: pincodeViewController
+        )
+
+        // Show pincode view as full screen
+        if isFullscreen {
+            navigationController.modalPresentationStyle = .fullScreen
+        }
+        presentingViewController.present(navigationController, animated: true)
         
         // Return result on view deallocated
-        return vc.deallocatedPublisher()
+        return navigationController.deallocatedPublisher()
             .prefix(1)
             .eraseToAnyPublisher()
     }

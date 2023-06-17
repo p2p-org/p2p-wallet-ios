@@ -96,7 +96,9 @@ final class TabBarCoordinator: Coordinator<Void> {
             .flatMap(maxPublishers: .max(1)) { [unowned self] in
                 coordinate(to: AuthenticationCoordinator(
                     authenticationService: Resolver.resolve(),
-                    presentingViewController: tabBarController
+                    presentingViewController: tabBarController,
+                    isBackAvailable: false,
+                    isFullscreen: true
                 ))
                     .delay(for: .milliseconds(100), scheduler: RunLoop.main)
             }
