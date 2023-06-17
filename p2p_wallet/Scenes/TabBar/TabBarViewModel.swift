@@ -95,14 +95,9 @@ extension TabBarViewModel {
             .switchToLatest()
             // get latest route
             .map { _ in
-                Resolver.resolve(DeeplinkingRouter.self)
-                    .activeRoute
+                Resolver.resolve(DeeplinkingRouteManager.self)
+                    .getActiveRoute()
             }
-            // mark as handled after completion
-            .handleEvents(receiveOutput: { _ in
-                Resolver.resolve(DeeplinkingRouter.self)
-                    .markAsHandled()
-            })
             // receive on main
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
