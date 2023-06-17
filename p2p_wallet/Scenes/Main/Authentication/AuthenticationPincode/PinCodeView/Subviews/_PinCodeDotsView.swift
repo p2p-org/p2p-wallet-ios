@@ -19,7 +19,7 @@ struct _PinCodeDotsView: View {
     
     // MARK: - Properties
     
-    let numberOfDigits: Int = 0
+    let numberOfDigits: Int
     
     // MARK: - View Body
     
