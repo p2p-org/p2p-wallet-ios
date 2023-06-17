@@ -83,7 +83,7 @@ extension TabBarViewModel {
             // will not be called
             .prepend(())
             // wait for latest from authenticationStatus
-            .flatMap { [unowned self] in
+            .map { [unowned self] in
                 let isAuthenticating = authenticationHandler.authenticationStatus != nil
                 return authenticationStatusPublisher
                     .filter { $0 == nil }
@@ -91,6 +91,8 @@ extension TabBarViewModel {
                     // and animations to be closed
                     .delay(for: .milliseconds(isAuthenticating ? 800: 100), scheduler: RunLoop.main)
             }
+            // switch to latest appDidBecomeActive
+            .switchToLatest()
             // get latest route
             .map { _ in
                 Resolver.resolve(DeeplinkingRouter.self)
