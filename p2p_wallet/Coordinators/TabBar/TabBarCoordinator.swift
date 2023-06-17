@@ -100,7 +100,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                     isBackAvailable: false,
                     isFullscreen: true
                 ))
-                    .delay(for: .milliseconds(100), scheduler: RunLoop.main)
+                    .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             }
             .sink { [weak self] in
                 // open deeplink of needed

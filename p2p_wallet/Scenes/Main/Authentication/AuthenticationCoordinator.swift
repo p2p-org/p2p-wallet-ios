@@ -45,16 +45,10 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         let pincodeViewModel = PincodeViewModel(
             state: .check,
             isBackAvailable: isBackAvailable,
-            successNotification: ""
+            successNotification: "",
+            ignoreAuthHandler: true
         )
         let pincodeViewController = PincodeViewController(viewModel: pincodeViewModel)
-        
-        // handle viewModel
-        pincodeViewModel.openMain
-            .sink { [weak self] _ in
-                self?.navigationController.dismiss(animated: true)
-            }
-            .store(in: &subscriptions)
 
         // info did tap
 //        pincodeViewModel.infoDidTap
@@ -85,7 +79,12 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         presentingViewController.present(navigationController, animated: true)
         
         // Return result on view deallocated
-        return navigationController.deallocatedPublisher()
+        return pincodeViewModel.openMain
+            .map { _ in () }
+            .handleEvents(receiveOutput: { [weak navigationController] _ in
+                navigationController?.dismiss(animated: true)
+            })
+            .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             .prefix(1)
             .eraseToAnyPublisher()
     }
