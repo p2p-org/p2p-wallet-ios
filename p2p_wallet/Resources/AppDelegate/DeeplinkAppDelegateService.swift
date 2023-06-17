@@ -23,7 +23,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
 //            return true
         
         // Handler natively
-        return Resolver.resolve(DeeplinkingRouter.self)
+        return Resolver.resolve(DeeplinkingRouteManager.self)
             .handleURIScheme(url: url)
         
     }
@@ -35,7 +35,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             return false
         }
         
-        return Resolver.resolve(DeeplinkingRouter.self)
+        return Resolver.resolve(DeeplinkingRouteManager.self)
             .handleUniversalLink(url: webpageURL)
     }
 }

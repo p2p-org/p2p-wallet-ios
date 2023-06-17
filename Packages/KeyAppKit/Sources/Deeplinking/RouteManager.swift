@@ -1,41 +1,25 @@
 import Foundation
 import Combine
 
-/// Object that manages deeplinking router
-public protocol DeeplinkingRouter {
-    /// Current active route publisher
-//    var activeRoutePublisher: AnyPublisher<Route?, Never> { get }
-    
-    /// Current active route
-    var activeRoute: Route? { get }
+/// Object that manages deeplinking route
+public protocol DeeplinkingRouteManager {
     
     /// Handle url from URIScheme
     func handleURIScheme(url: URL) -> Bool
     
     /// Handle url from UniversalLinks
     func handleUniversalLink(url: URL) -> Bool
-    
-    // TODO: - Fix later
-    /// Mark route as handled
-    func markAsHandled()
+
+    /// Get current active route from stack and mark as handled
+    func getActiveRoute() -> Route?
 }
 
-/// Default implementation of `DeeplinkingRouter`
-public final class Router: DeeplinkingRouter {
+/// Default implementation of `DeeplinkingRouteManager`
+public final class DeeplinkingRouteManagerImpl: DeeplinkingRouteManager {
 
     // MARK: - Properties
-
-    private let subject = CurrentValueSubject<Route?, Never>(nil)
     
-    // MARK: - Computed properties
-
-//    public var activeRoutePublisher: AnyPublisher<Route?, Never> {
-//        subject.eraseToAnyPublisher()
-//    }
-    
-    public var activeRoute: Route? {
-        subject.value
-    }
+    public var activeRoute: Route?
 
     // MARK: - Initializer
 
@@ -50,7 +34,7 @@ public final class Router: DeeplinkingRouter {
             let route = try urlParser.parseURIScheme()
             
             // accept route
-            subject.send(route)
+            activeRoute = route
             return true
         } catch {
             print(error)
@@ -65,7 +49,7 @@ public final class Router: DeeplinkingRouter {
             let route = try urlParser.parseUniversalLink(from: url)
             
             // accept route
-            subject.send(route)
+            activeRoute = route
             return true
         } catch {
             print(error)
@@ -73,8 +57,10 @@ public final class Router: DeeplinkingRouter {
         }
     }
     
-    public func markAsHandled() {
-        subject.send(nil)
+    public func getActiveRoute() -> Route? {
+        let route = activeRoute
+        activeRoute = nil
+        return route
     }
 }
 

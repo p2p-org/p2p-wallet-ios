@@ -203,8 +203,8 @@ extension Resolver: ResolverRegistering {
         register { EthereumTokensRepository(web3: resolve()) }
             .scope(.application)
         
-        register { Deeplinking.Router() }
-            .implements(DeeplinkingRouter.self)
+        register { DeeplinkingRouteManagerImpl() }
+            .implements(DeeplinkingRouteManager.self)
             .scope(.application)
     }
 
