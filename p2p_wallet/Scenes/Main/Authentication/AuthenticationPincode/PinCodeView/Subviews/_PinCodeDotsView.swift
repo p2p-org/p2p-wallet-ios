@@ -52,6 +52,6 @@ struct _PinCodeDotsView: View {
 
 struct PinCodeDotsView_Previews: PreviewProvider {
     static var previews: some View {
-        _PinCodeDotsView()
+        _PinCodeDotsView(numberOfDigits: 6)
     }
 }

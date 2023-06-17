@@ -10,10 +10,10 @@ struct _NumpadView: View {
     var didChooseNumber: ((Int) -> Void)?
     var didTapDelete: (() -> Void)?
     
-    private var numButtons: [NumpadButton] {
-        var views = [NumpadButton]()
+    private var numButtons: [_NumpadButton] {
+        var views = [_NumpadButton]()
         for index in 0 ..< 10 {
-            let view = NumpadButton(width: buttonSize, height: buttonSize, cornerRadius: 20)
+            let view = _NumpadButton(width: buttonSize, height: buttonSize, cornerRadius: 20)
             view.label.text = "\(index)"
             view.tag = index
             view.onLongTap(self, action: #selector(numButtonDidTap(_:)), minimumPressDuration: 0)
