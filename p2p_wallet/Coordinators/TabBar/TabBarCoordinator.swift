@@ -101,25 +101,18 @@ final class TabBarCoordinator: Coordinator<Void> {
             // will not be called
             .prepend(())
             // wait for auth scene to complete (if needed)
-            .map { [unowned self] in
+            .flatMap(maxPublishers: .max(1)) { [unowned self] in
                 coordinate(to: AuthenticationCoordinator(
-                    authenticationService: MockAuthenticationService(),
+                    authenticationService: Resolver.resolve(),
                     presentingViewController: tabBarController
                 ))
-                .delay(for: .milliseconds(100), scheduler: RunLoop.main)
+                    .delay(for: .milliseconds(100), scheduler: RunLoop.main)
             }
-            // switch to latest appDidBecomeActive
-            .switchToLatest()
             // get latest route
             .map { _ in
-                Resolver.resolve(DeeplinkingRouter.self)
-                    .activeRoute
+                Resolver.resolve(DeeplinkingRouteManager.self)
+                    .getActiveRoute()
             }
-            // mark as handled after completion
-            .handleEvents(receiveOutput: { _ in
-                Resolver.resolve(DeeplinkingRouter.self)
-                    .markAsHandled()
-            })
             // receive on main
             .receive(on: RunLoop.main)
             .sink { [weak self] route in

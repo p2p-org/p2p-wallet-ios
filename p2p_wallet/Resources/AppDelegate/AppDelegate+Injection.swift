@@ -563,6 +563,10 @@ extension Resolver: ResolverRegistering {
         }
         .implements(JupiterTokensProvider.self)
         .scope(.session)
+        
+        register { MockAuthenticationService() }
+            .implements(AuthenticationService.self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens

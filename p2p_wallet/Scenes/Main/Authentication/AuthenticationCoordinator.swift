@@ -30,19 +30,23 @@ final class AuthenticationCoordinator: Coordinator<Void> {
             return Just(()).prefix(1).eraseToAnyPublisher()
         }
         
-        // Show pincode screen
+        // Create pincode view
         let viewModel = AuthenticationPincodeViewModel()
         let view = AuthenticationPincodeView(viewModel: viewModel)
         let vc = UIHostingController(rootView: view)
         
+        // Show pincode view as full screen
+        vc.modalPresentationStyle = .fullScreen
         presentingViewController.present(vc, animated: true)
         
+        // Observe verification and dismiss view
         viewModel.pincodeDidVerify
             .sink { [weak vc] _ in
                 vc?.dismiss(animated: true)
             }
             .store(in: &subscriptions)
         
+        // Return result on view deallocated
         return vc.deallocatedPublisher()
             .prefix(1)
             .eraseToAnyPublisher()
