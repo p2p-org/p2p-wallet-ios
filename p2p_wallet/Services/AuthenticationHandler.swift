@@ -22,7 +22,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
     // MARK: - Properties
 
     private var subscriptions = Set<AnyCancellable>()
-    private var timeRequiredForAuthentication = 10 // in seconds
+    private var timeRequiredForAuthentication = 100 // in seconds
     private var lastAuthenticationTimeStamp = 0
     private var isAuthenticationPaused = false
     @Injected private var analyticsManager: AnalyticsManager

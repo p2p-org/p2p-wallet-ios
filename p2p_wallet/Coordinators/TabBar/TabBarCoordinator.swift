@@ -81,16 +81,53 @@ final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Helpers
 
     private func bind() {
-        tabBarViewModel
-            .deeplinkingRoutePublisher
+//        tabBarViewModel
+//            .deeplinkingRoutePublisher
+//            .sink { [weak self] route in
+//                guard let route else { return }
+//                self?.navigate(deeplinkingRoute: route)
+//            }
+//            .store(in: &subscriptions)
+        
+        listenToActionsButton()
+        listenToWallet()
+        
+        // Deeplink
+        // Observe appDidBecomeActive
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .map { _ in () }
+            // fill first event as first time opening app the appDidBecomeActive
+            // will not be called
+            .prepend(())
+            // wait for auth scene to complete (if needed)
+            .map { [unowned self] in
+                coordinate(to: AuthenticationCoordinator(
+                    authenticationService: MockAuthenticationService(),
+                    presentingViewController: tabBarController
+                ))
+                .delay(for: .milliseconds(100), scheduler: RunLoop.main)
+            }
+            // switch to latest appDidBecomeActive
+            .switchToLatest()
+            // get latest route
+            .map { _ in
+                Resolver.resolve(DeeplinkingRouter.self)
+                    .activeRoute
+            }
+            // mark as handled after completion
+            .handleEvents(receiveOutput: { _ in
+                Resolver.resolve(DeeplinkingRouter.self)
+                    .markAsHandled()
+            })
+            // receive on main
+            .receive(on: RunLoop.main)
             .sink { [weak self] route in
                 guard let route else { return }
                 self?.navigate(deeplinkingRoute: route)
             }
             .store(in: &subscriptions)
-        
-        listenToActionsButton()
-        listenToWallet()
+            
     }
     
     private func navigate(deeplinkingRoute route: Deeplinking.Route) {
