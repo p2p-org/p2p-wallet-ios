@@ -4,7 +4,6 @@ import KeyAppUI
 
 struct AuthenticationPincodeView: View {
     @ObservedObject private var viewModel: AuthenticationPincodeViewModel
-    @State private var pincode: String = ""
     
     init(viewModel: AuthenticationPincodeViewModel) {
         self.viewModel = viewModel
@@ -29,22 +28,24 @@ struct AuthenticationPincodeView: View {
                     .multilineTextAlignment(.center)
                 
                 VStack(spacing: 20) {
-                    _PinCodeView(correctPincode: $viewModel.pincode)
-                        .onSuccess { pincode in
-                            viewModel.pincodeSuccess.send(pincode)
-                        }
-                        .onFailed {
-                            viewModel.pincodeFailed.send()
-                        }
-                        .padding(.bottom, 27)
+                    PinCodeView(
+                        correctPincode: "111111",
+                        maxAttemptsCount: 3
+                    ) {
+                        // Handle pincode success
+                    } onFailed: {
+                        // Handle pincode success
+                    } onFailedAndExceededMaxAttempts: {
+                        // Handle pincode failure with maximum attempts exceeded
+                    }
                     
                     if viewModel.showForgetPin {
                         Button(action: {
                             viewModel.showForgotModal = true
                         }, label: {
                             Text("I forgot PIN")
-                                .font(.text1)
-                                .foregroundColor(.sky)
+                                .font(uiFont: .font(of: .text1))
+                                .foregroundColor(Color(Asset.Colors.sky.color))
                         })
                     }
                 }
@@ -52,12 +53,6 @@ struct AuthenticationPincodeView: View {
                 
                 Spacer()
             }
-        }
-        .onAppear {
-            pincode = ""
-        }
-        .onChange(of: pincode) { newValue in
-            // Handle pincode change
         }
         .alert(item: $viewModel.snackbar) { snackbar in
             Alert(
@@ -113,17 +108,6 @@ struct AuthenticationPincodeView: View {
         .onReceive(viewModel.logout) { _ in
             // Handle logout action
         }
-    }
-}
-
-struct _PinCodeView: View {
-    var correctPincode: String
-    
-    @State private var pincode: String = ""
-    
-    var body: some View {
-        // Pincode view implementation
-        Text("_PinCodeView")
     }
 }
 
