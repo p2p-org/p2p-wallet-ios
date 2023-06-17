@@ -74,35 +74,6 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
-    var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route?, Never> {
-        // Observe appDidBecomeActive
-        NotificationCenter.default
-            .publisher(for: UIApplication.didBecomeActiveNotification)
-            .map { _ in () }
-            // fill first event as first time opening app the appDidBecomeActive
-            // will not be called
-            .prepend(())
-            // wait for latest from authenticationStatus
-            .map { [unowned self] in
-                let isAuthenticating = authenticationHandler.authenticationStatus != nil
-                return authenticationStatusPublisher
-                    .filter { $0 == nil }
-                    // delay to wait for authentication scene (if exists)
-                    // and animations to be closed
-                    .delay(for: .milliseconds(isAuthenticating ? 800: 100), scheduler: RunLoop.main)
-            }
-            // switch to latest appDidBecomeActive
-            .switchToLatest()
-            // get latest route
-            .map { _ in
-                Resolver.resolve(DeeplinkingRouteManager.self)
-                    .getActiveRoute()
-            }
-            // receive on main
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
     var isLockedPublisher: AnyPublisher<Bool, Never> {
         authenticationHandler.isLockedPublisher
     }

@@ -12,7 +12,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
@@ -81,14 +81,6 @@ final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Helpers
 
     private func bind() {
-//        tabBarViewModel
-//            .deeplinkingRoutePublisher
-//            .sink { [weak self] route in
-//                guard let route else { return }
-//                self?.navigate(deeplinkingRoute: route)
-//            }
-//            .store(in: &subscriptions)
-        
         listenToActionsButton()
         listenToWallet()
         
@@ -108,22 +100,23 @@ final class TabBarCoordinator: Coordinator<Void> {
                 ))
                     .delay(for: .milliseconds(100), scheduler: RunLoop.main)
             }
-            // get latest route
-            .map { _ in
-                Resolver.resolve(DeeplinkingRouteManager.self)
-                    .getActiveRoute()
-            }
-            // receive on main
-            .receive(on: RunLoop.main)
-            .sink { [weak self] route in
-                guard let route else { return }
-                self?.navigate(deeplinkingRoute: route)
+            .sink { [weak self] in
+                // open deeplink of needed
+                self?.openDeeplinkIfNeeded()
             }
             .store(in: &subscriptions)
             
     }
     
-    private func navigate(deeplinkingRoute route: Deeplinking.Route) {
+    private func openDeeplinkIfNeeded() {
+        // get current route
+        guard let route = Resolver.resolve(DeeplinkingRouteManager.self)
+            .getActiveRoute()
+        else {
+            return
+        }
+        
+        // navigate through route
         switch route {
         case let .claimSentViaLink(url):
             UIApplication.dismissCustomPresentedViewController() {
@@ -300,7 +293,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            if walletsRepository.getWallets().count > 0 {
+            if solanaAccountService.state.value.count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
