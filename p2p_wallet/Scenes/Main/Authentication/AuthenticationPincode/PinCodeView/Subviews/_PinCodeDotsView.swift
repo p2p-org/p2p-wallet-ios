@@ -19,7 +19,7 @@ struct _PinCodeDotsView: View {
     
     // MARK: - Properties
     
-    @State private var numberOfDigits: Int = 0
+    let numberOfDigits: Int = 0
     
     // MARK: - View Body
     
@@ -47,21 +47,6 @@ struct _PinCodeDotsView: View {
         .onChange(of: numberOfDigits) { _ in
             // Update colors for dots based on state
         }
-    }
-    
-    // MARK: - Actions
-    
-    func pincodeEntered(numberOfDigits: Int) {
-        guard numberOfDigits <= pincodeLength else { return }
-        self.numberOfDigits = numberOfDigits
-    }
-    
-    func pincodeFailed() {
-        // Set error state
-    }
-    
-    func pincodeSuccess() {
-        // Set success state
     }
 }
 

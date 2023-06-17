@@ -23,8 +23,13 @@ struct PinCodeView: View {
     
     var body: some View {
         VStack(spacing: viewModel.stackViewSpacing) {
-            _PinCodeDotsView(numberOfDigits: viewModel.currentPincode?.count ?? 0)
-            _NumpadView(didChooseNumber: viewModel.add(digit:), didTapDelete: viewModel.backspace)
+            _PinCodeDotsView(
+                numberOfDigits: viewModel.currentPincode?.count ?? 0
+            )
+            _NumpadView(
+                didChooseNumber: viewModel.add(digit:),
+                didTapDelete: viewModel.backspace
+            )
             Text("Error Label")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.red)
