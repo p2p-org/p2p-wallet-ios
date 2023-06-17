@@ -1,0 +1,134 @@
+import Combine
+import SwiftUI
+import KeyAppUI
+
+struct AuthenticationPincodeView: View {
+    @ObservedObject private var viewModel: AuthenticationPincodeViewModel
+    @State private var pincode: String = ""
+    
+    init(viewModel: AuthenticationPincodeViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    var body: some View {
+        ZStack {
+            Color(Asset.Colors.lime.color)
+                .ignoresSafeArea()
+            
+            VStack {
+                Image(uiImage: .lockPincode)
+                    .resizable()
+                    .frame(width: 114, height: 107)
+                    .padding(.top, 70)
+                    .padding(.bottom, 33)
+                
+                Spacer()
+                
+                Text(viewModel.title)
+                    .font(.title2)
+                    .multilineTextAlignment(.center)
+                
+                VStack(spacing: 20) {
+                    _PinCodeView(correctPincode: $viewModel.pincode)
+                        .onSuccess { pincode in
+                            viewModel.pincodeSuccess.send(pincode)
+                        }
+                        .onFailed {
+                            viewModel.pincodeFailed.send()
+                        }
+                        .padding(.bottom, 27)
+                    
+                    if viewModel.showForgetPin {
+                        Button(action: {
+                            viewModel.showForgotModal = true
+                        }, label: {
+                            Text("I forgot PIN")
+                                .font(.text1)
+                                .foregroundColor(.sky)
+                        })
+                    }
+                }
+                .padding(.top, 56)
+                
+                Spacer()
+            }
+        }
+        .onAppear {
+            pincode = ""
+        }
+        .onChange(of: pincode) { newValue in
+            // Handle pincode change
+        }
+        .alert(item: $viewModel.snackbar) { snackbar in
+            Alert(
+                title: Text(snackbar.title),
+                message: Text(snackbar.message),
+                dismissButton: .default(Text("OK"), action: {
+                    viewModel.handleSnackbarAction()
+                })
+            )
+        }
+        .fullScreenCover(isPresented: $viewModel.showForgotModal) {
+            AuthenticationForgotPINView()
+                .padding()
+                .background(Color.white)
+                .cornerRadius(20)
+                .frame(height: 420)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(
+            leading: Button(action: {
+                viewModel.back.send()
+            }, label: {
+                Image(systemName: "arrow.backward")
+                    .foregroundColor(Color(Asset.Colors.night.color))
+            }),
+            trailing: Button(action: {
+                viewModel.infoDidTap.send()
+            }, label: {
+                Image(systemName: "questionmark.circle")
+                    .foregroundColor(.primary)
+            })
+        )
+        .toolbar(content: {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if viewModel.showFaceid {
+                    Button(action: {
+                        viewModel.biometricsTapped()
+                    }, label: {
+                        Image("faceId")
+                            .resizable()
+                            .frame(width: 32, height: 32)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                    })
+                }
+            }
+        })
+        .onReceive(viewModel.back) { _ in
+            // Handle back action
+        }
+        .onReceive(viewModel.infoDidTap) { _ in
+            // Handle info button tap
+        }
+        .onReceive(viewModel.logout) { _ in
+            // Handle logout action
+        }
+    }
+}
+
+struct _PinCodeView: View {
+    var correctPincode: String
+    
+    @State private var pincode: String = ""
+    
+    var body: some View {
+        // Pincode view implementation
+        Text("_PinCodeView")
+    }
+}
+
+struct PincodeView_Previews: PreviewProvider {
+    static var previews: some View {
+        AuthenticationPincodeView(viewModel: AuthenticationPincodeViewModel())
+    }
+}
