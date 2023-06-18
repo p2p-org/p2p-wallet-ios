@@ -1,8 +1,10 @@
 import Combine
 
-class PinCodeViewModel: ObservableObject {
+class PinCodeViewModel: BaseViewModel, ObservableObject {
     @Published var currentPincode: String?
     @Published var attemptsCount: Int = 0
+    @Published var isPresentingError = false
+    @Published var isLocked = false
     
     /// The title to be displayed in the pincode view.
     let title: String
@@ -17,13 +19,11 @@ class PinCodeViewModel: ObservableObject {
     let pincodeLength: Int
     let resetingDelayInSeconds: Int?
     
-    private var isPresentingError = false
-    
     var onSuccess = PassthroughSubject<Void, Never>()
     var onFailed = PassthroughSubject<Void, Never>()
     var onFailedAndExceededMaxAttempts = PassthroughSubject<Void, Never>()
     
-    init(title: String, showForgetPin: Bool, showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int? = nil) {
+    init(title: String, showForgetPin: Bool, showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int?) {
         self.title = title
         self.showBiometry = showBiometry
         self.showForgetPin = showForgetPin
@@ -36,6 +36,7 @@ class PinCodeViewModel: ObservableObject {
     func reset() {
         attemptsCount = 0
         currentPincode = nil
+        isPresentingError = false
     }
     
     func add(digit: Int) {
@@ -86,12 +87,7 @@ class PinCodeViewModel: ObservableObject {
                 pincodeSuccess()
             } else if let maxAttemptsCount = maxAttemptsCount {
                 attemptsCount += 1
-                
-                if attemptsCount >= maxAttemptsCount {
-                    pincodeFailed(exceededMaxAttempts: true)
-                } else {
-                    pincodeFailed(exceededMaxAttempts: false)
-                }
+                pincodeFailed(exceededMaxAttempts: attemptsCount >= maxAttemptsCount)
             } else {
                 pincodeFailed(exceededMaxAttempts: false)
             }
@@ -106,8 +102,10 @@ class PinCodeViewModel: ObservableObject {
     
     private func pincodeFailed(exceededMaxAttempts: Bool) {
         vibrate()
+        isPresentingError = true
         // Emit the corresponding event through the publishers
         if exceededMaxAttempts {
+            isLocked = true
             onFailedAndExceededMaxAttempts.send()
         } else {
             onFailed.send()
@@ -116,14 +114,11 @@ class PinCodeViewModel: ObservableObject {
     }
     
     private func clearErrorWithDelay() {
-        guard let resetingDelayInSeconds = resetingDelayInSeconds else {
-            return
-        }
-        
-        isPresentingError = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(resetingDelayInSeconds)) { [weak self] in
-            guard let self = self, self.isPresentingError else { return }
-            self.currentPincode = nil
+        if let resetingDelayInSeconds {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(resetingDelayInSeconds)) { [weak self] in
+                self?.isPresentingError = false
+                self?.currentPincode = nil
+            }
         }
     }
     

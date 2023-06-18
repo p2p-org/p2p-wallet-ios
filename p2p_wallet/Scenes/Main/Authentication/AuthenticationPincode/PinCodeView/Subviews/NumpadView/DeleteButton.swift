@@ -9,7 +9,7 @@ struct DeleteButton: View {
     
     // MARK: - State
     
-    @GestureState private var isDetectingLongPress = false
+    @State private var isHighlighting = false
     
     // MARK: - Properties
 
@@ -21,26 +21,18 @@ struct DeleteButton: View {
     var body: some View {
         Image(uiImage: Asset.Icons.remove.image.withRenderingMode(.alwaysTemplate))
             .resizable()
-            .foregroundColor(Color(isDetectingLongPress ? foregroundColor.withAlphaComponent(0.65) : foregroundColor))
+            .foregroundColor(Color(isHighlighting ? foregroundColor.withAlphaComponent(0.65) : foregroundColor))
             .padding(.horizontal, 22)
             .padding(.vertical, 24)
             .frame(width: size, height: size)
-            .gesture(
-                LongPressGesture(minimumDuration: 3)
-                    .updating($isDetectingLongPress) { currentState, gestureState,
-                        transaction in
-                        gestureState = currentState
-                    }
-                    .onEnded { finished in
-                        didTap?()
-                    }
-            )
-            .simultaneousGesture(
-                TapGesture()
-                    .onEnded {
-                        didTap?()
-                    }
-            )
+            .onTapGesture {
+                guard !isHighlighting else { return }
+                didTap?()
+                isHighlighting = true
+                withAnimation {
+                    isHighlighting = false
+                }
+            }
     }
 }
 

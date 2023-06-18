@@ -18,7 +18,7 @@ struct PinCodeView: View {
         showForgetPin: Bool,
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
-        resetingDelayInSeconds: Int? = nil,
+        resetingDelayInSeconds: Int?,
         onSuccess: (() -> Void)? = nil,
         onFailed: (() -> Void)? = nil,
         onFailedAndExceededMaxAttempts: (() -> Void)? = nil,
@@ -78,11 +78,13 @@ struct PinCodeView: View {
         VStack(spacing: viewModel.stackViewSpacing) {
             PinCodeDotsView(
                 numberOfDigits: viewModel.currentPincode?.count ?? 0,
-                pincodeLength: pincodeLength
+                pincodeLength: pincodeLength,
+                isPresentingError: viewModel.isPresentingError
             )
             NumpadView(
                 showBiometry: viewModel.showBiometry,
                 isDeleteButtonHidden: (viewModel.currentPincode?.count ?? 0) == 0,
+                isLocked: viewModel.isLocked,
                 didChooseNumber: viewModel.add(digit:),
                 didTapDelete: viewModel.backspace,
                 didTapBiometry: viewModel.validateBiometry
@@ -114,6 +116,7 @@ struct PinCodeView_Previews: PreviewProvider {
             showForgetPin: true,
             correctPincode: "111111",
             maxAttemptsCount: 3,
+            resetingDelayInSeconds: 1,
             onSuccess: {
                 
             },

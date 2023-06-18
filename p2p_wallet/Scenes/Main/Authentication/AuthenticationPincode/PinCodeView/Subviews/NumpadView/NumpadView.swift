@@ -15,6 +15,7 @@ struct NumpadView: View {
     
     let showBiometry: Bool
     let isDeleteButtonHidden: Bool
+    let isLocked: Bool
     var didChooseNumber: ((Int) -> Void)?
     var didTapDelete: (() -> Void)?
     var didTapBiometry: (() -> Void)?
@@ -43,6 +44,7 @@ struct NumpadView: View {
             HStack(spacing: spacing) {
                 if showBiometry {
                     Button(action: {
+                        guard !isLocked else { return }
                         didTapBiometry?()
                     }, label: {
                         Image(uiImage: .faceId)
@@ -57,6 +59,7 @@ struct NumpadView: View {
                 
                 numpadButton(0)
                 DeleteButton(size: buttonSize) {
+                    guard !isLocked else { return }
                     didTapDelete?()
                 }
                     .opacity(isDeleteButtonHidden ? 0: 1)
@@ -66,6 +69,7 @@ struct NumpadView: View {
 
     private func numpadButton(_ number: Int) -> NumpadButton {
         NumpadButton(number: number, size: buttonSize) {
+            guard !isLocked else { return }
             didChooseNumber?(number)
         }
     }
@@ -73,6 +77,10 @@ struct NumpadView: View {
 
 struct NumpadView_Previews: PreviewProvider {
     static var previews: some View {
-        NumpadView(showBiometry: true, isDeleteButtonHidden: false)
+        NumpadView(
+            showBiometry: true,
+            isDeleteButtonHidden: false,
+            isLocked: false
+        )
     }
 }

@@ -25,15 +25,20 @@ struct PinCodeDotsView: View {
     
     var numberOfDigits: Int
     let pincodeLength: Int
+    let isPresentingError: Bool
     
     // MARK: - View Body
     
     var body: some View {
-        VStack {
+        let colorForIndex: (Int) -> UIColor = { index in
+            if isPresentingError { return errorColor }
+            return index < numberOfDigits ? highlightColor : defaultColor
+        }
+        return VStack {
             HStack(spacing: padding.leading) {
                 ForEach(0..<pincodeLength, id: \.self) { index in
                     Circle()
-                        .fill(Color(index < numberOfDigits ? highlightColor : defaultColor))
+                        .fill(Color(colorForIndex(index)))
                         .frame(width: dotSize, height: dotSize)
                         .cornerRadius(dotSize / 2)
                 }
@@ -51,7 +56,11 @@ struct PinCodeDotsView_Previews: PreviewProvider {
         
         var body: some View {
             VStack {
-                PinCodeDotsView(numberOfDigits: numberOfDigits, pincodeLength: pincodeLength)
+                PinCodeDotsView(
+                    numberOfDigits: numberOfDigits,
+                    pincodeLength: pincodeLength,
+                    isPresentingError: false
+                )
                 Button("Tap here") {
                     if numberOfDigits == pincodeLength {
                         numberOfDigits = 0
