@@ -5,7 +5,7 @@ struct DeleteButton: View {
     // MARK: - Constant
     
     private let textSize: CGFloat = 32
-    private let foregroundColor = UIColor.black
+    private let foregroundColor = Asset.Colors.night.color
     
     // MARK: - State
     

@@ -11,7 +11,7 @@ struct NumpadView: View {
 
     // MARK: - Properties
 
-    @State private var deleteButtonColor = Color(UIColor(red: 0, green: 0, blue: 0, alpha: 1))
+    @State private var deleteButtonColor = Color(Asset.Colors.night.color)
     
     var didChooseNumber: ((Int) -> Void)?
     var didTapDelete: (() -> Void)?

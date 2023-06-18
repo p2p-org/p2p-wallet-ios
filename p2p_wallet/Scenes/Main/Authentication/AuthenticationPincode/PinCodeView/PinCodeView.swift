@@ -2,6 +2,8 @@ import Foundation
 import SwiftUI
 
 struct PinCodeView: View {
+    private let pincodeLength = 6
+    
     @StateObject private var viewModel: PinCodeViewModel
     
     private var onSuccess: (() -> Void)?
@@ -24,7 +26,8 @@ struct PinCodeView: View {
     var body: some View {
         VStack(spacing: viewModel.stackViewSpacing) {
             PinCodeDotsView(
-                numberOfDigits: viewModel.currentPincode?.count ?? 0
+                numberOfDigits: viewModel.currentPincode?.count ?? 0,
+                pincodeLength: pincodeLength
             )
             NumpadView(
                 didChooseNumber: viewModel.add(digit:),

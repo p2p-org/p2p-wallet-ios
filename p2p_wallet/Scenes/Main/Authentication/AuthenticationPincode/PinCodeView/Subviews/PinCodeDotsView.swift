@@ -1,57 +1,69 @@
 import SwiftUI
+import KeyAppUI
 
 struct PinCodeDotsView: View {
     // MARK: - Constants
     
-    private let dotSize: CGFloat = 12
-    private let cornerRadius: CGFloat = 12
-    private let padding: CGFloat = 13
-    private let pincodeLength = 6
+    private let dotSize: CGFloat = 12.adaptiveHeight
+    private let padding: EdgeInsets = .init(
+        top: 8.adaptiveHeight,
+        leading: 13.adaptiveHeight,
+        bottom: 8.adaptiveHeight,
+        trailing: 13.adaptiveHeight
+    )
     
     /// Default color for dots
-    private let defaultColor = Color.gray.opacity(0.3)
+    private let defaultColor = Asset.Colors.night.color.withAlphaComponent(0.3)
     /// Color for highlight state
-    private let highlightColor = Color.gray
+    private let highlightColor = Asset.Colors.night.color
     /// Color for error state
-    private let errorColor = Color.red
+    private let errorColor = Asset.Colors.rose.color
     /// Color for success state
-    private let successColor = Color.green
+    private let successColor = Asset.Colors.mint.color
     
     // MARK: - Properties
     
-    let numberOfDigits: Int
+    var numberOfDigits: Int
+    let pincodeLength: Int
     
     // MARK: - View Body
     
     var body: some View {
         VStack {
-            HStack(spacing: padding) {
+            HStack(spacing: padding.leading) {
                 ForEach(0..<pincodeLength, id: \.self) { index in
                     Circle()
-                        .fill(index < numberOfDigits ? highlightColor : defaultColor)
+                        .fill(Color(index < numberOfDigits ? highlightColor : defaultColor))
                         .frame(width: dotSize, height: dotSize)
                         .cornerRadius(dotSize / 2)
                 }
             }
             .padding(padding)
-            
-            Rectangle()
-                .frame(width: (dotSize + padding * 2) * CGFloat(numberOfDigits))
-                .foregroundColor(.clear)
-                .onChange(of: numberOfDigits) { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        // Animation for indicator view
-                    }
-                }
-        }
-        .onChange(of: numberOfDigits) { _ in
-            // Update colors for dots based on state
         }
     }
 }
 
 struct PinCodeDotsView_Previews: PreviewProvider {
+    //A view which will wraps the actual view and holds state variable.
+    struct ContainerView: View {
+        @State private var numberOfDigits: Int = 0
+        let pincodeLength = 6
+        
+        var body: some View {
+            VStack {
+                PinCodeDotsView(numberOfDigits: numberOfDigits, pincodeLength: pincodeLength)
+                Button("Tap here") {
+                    if numberOfDigits == pincodeLength {
+                        numberOfDigits = 0
+                    } else {
+                        numberOfDigits += 1
+                    }
+                }
+            }
+        }
+    }
+    
     static var previews: some View {
-        PinCodeDotsView(numberOfDigits: 6)
+        ContainerView()
     }
 }
