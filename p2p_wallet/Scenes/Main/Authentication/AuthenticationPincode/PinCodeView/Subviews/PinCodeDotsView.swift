@@ -1,10 +1,14 @@
 import SwiftUI
 import KeyAppUI
 
+/// A view representing the dots for displaying pin code digits.
 struct PinCodeDotsView: View {
     // MARK: - Constants
     
+    /// The size of the dots.
     private let dotSize: CGFloat = 12.adaptiveHeight
+    
+    /// The padding around the dots.
     private let padding: EdgeInsets = .init(
         top: 8.adaptiveHeight,
         leading: 13.adaptiveHeight,
@@ -12,19 +16,27 @@ struct PinCodeDotsView: View {
         trailing: 13.adaptiveHeight
     )
     
-    /// Default color for dots
+    /// The default color for the dots.
     private let defaultColor = Asset.Colors.night.color.withAlphaComponent(0.3)
-    /// Color for highlight state
+    
+    /// The color for the dots in the highlight state.
     private let highlightColor = Asset.Colors.night.color
-    /// Color for error state
+    
+    /// The color for the dots in the error state.
     private let errorColor = Asset.Colors.rose.color
-    /// Color for success state
+    
+    /// The color for the dots in the success state.
     private let successColor = Asset.Colors.mint.color
     
     // MARK: - Properties
     
+    /// The current number of digits entered.
     var numberOfDigits: Int
+    
+    /// The length of the pin code.
     let pincodeLength: Int
+    
+    /// Indicates whether the view is presenting an error state.
     let isPresentingError: Bool
     
     // MARK: - View Body

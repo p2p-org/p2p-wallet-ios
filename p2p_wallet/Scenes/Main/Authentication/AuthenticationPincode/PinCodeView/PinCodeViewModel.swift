@@ -1,14 +1,18 @@
 import Combine
 
 class PinCodeViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Published Properties
+    
     @Published var currentPincode: String?
     @Published var attemptsCount: Int = 0
     @Published var isPresentingError = false
     @Published var isLocked = false
     
+    // MARK: - Constants
+    
     /// The title to be displayed in the pincode view.
     let title: String
-
+    
     /// Indicates whether the "Forgot Pin" option should be shown.
     let showForgetPin: Bool
     
@@ -19,11 +23,23 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     let pincodeLength: Int
     let resetingDelayInSeconds: Int?
     
+    // MARK: - Subjects
+    
     var onSuccess = PassthroughSubject<Void, Never>()
     var onFailed = PassthroughSubject<Void, Never>()
     var onFailedAndExceededMaxAttempts = PassthroughSubject<Void, Never>()
     
-    init(title: String, showForgetPin: Bool, showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int?) {
+    // MARK: - Initialization
+    
+    init(
+        title: String,
+        showForgetPin: Bool,
+        showBiometry: Bool,
+        correctPincode: String? = nil,
+        maxAttemptsCount: Int? = nil,
+        pincodeLength: Int = 6,
+        resetingDelayInSeconds: Int?
+    ) {
         self.title = title
         self.showBiometry = showBiometry
         self.showForgetPin = showForgetPin
@@ -32,6 +48,8 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
         self.pincodeLength = pincodeLength
         self.resetingDelayInSeconds = resetingDelayInSeconds
     }
+    
+    // MARK: - Public Methods
     
     func reset() {
         attemptsCount = 0
@@ -93,6 +111,8 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    // MARK: - Private Methods
     
     private func pincodeSuccess() {
         vibrate()

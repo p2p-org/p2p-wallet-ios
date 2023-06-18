@@ -1,25 +1,43 @@
 import SwiftUI
 import KeyAppUI
 
+/// A view representing a numpad for entering numbers.
 struct NumpadView: View {
-
+    
     // MARK: - Constants
-
+    
+    /// The size of the numpad buttons.
     private let buttonSize: CGFloat = 68
+    
+    /// The horizontal spacing between numpad buttons.
     private let spacing: CGFloat = 42
+    
+    /// The vertical spacing between rows of numpad buttons.
     private let vSpacing: CGFloat = 12
-
+    
     // MARK: - Properties
-
+    
+    /// The color of the delete button.
     @State private var deleteButtonColor = Color(Asset.Colors.night.color)
     
+    /// Indicates whether to show the biometry button.
     let showBiometry: Bool
+    
+    /// Indicates whether the delete button is hidden.
     let isDeleteButtonHidden: Bool
+    
+    /// Indicates whether the numpad is locked.
     let isLocked: Bool
+    
+    /// The closure called when a number button is tapped.
     var didChooseNumber: ((Int) -> Void)?
+    
+    /// The closure called when the delete button is tapped.
     var didTapDelete: (() -> Void)?
+    
+    /// The closure called when the biometry button is tapped.
     var didTapBiometry: (() -> Void)?
-
+    
     // MARK: - Body
     
     var body: some View {
@@ -62,11 +80,16 @@ struct NumpadView: View {
                     guard !isLocked else { return }
                     didTapDelete?()
                 }
-                    .opacity(isDeleteButtonHidden ? 0: 1)
+                .opacity(isDeleteButtonHidden ? 0: 1)
             }
         }
     }
-
+    
+    /// Creates a numpad button for the specified number.
+    ///
+    /// - Parameters:
+    ///   - number: The number to display on the button.
+    /// - Returns: A `NumpadButton` representing the numpad button.
     private func numpadButton(_ number: Int) -> NumpadButton {
         NumpadButton(number: number, size: buttonSize) {
             guard !isLocked else { return }

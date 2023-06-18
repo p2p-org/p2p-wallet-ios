@@ -3,17 +3,25 @@ import SwiftUI
 import KeyAppUI
 
 struct AuthenticationPincodeView: View {
+    // MARK: - Properties
+    
     @ObservedObject private var viewModel: AuthenticationPincodeViewModel
+    
+    // MARK: - Initialization
     
     init(viewModel: AuthenticationPincodeViewModel) {
         self.viewModel = viewModel
     }
+    
+    // MARK: - Body
     
     var body: some View {
         NavigationView {
             content
         }
     }
+    
+    // MARK: - Private Views
     
     private var content: some View {
         PinCodeView(
@@ -30,7 +38,7 @@ struct AuthenticationPincodeView: View {
         } onFailedAndExceededMaxAttempts: {
             // Handle pincode failure with maximum attempts exceeded
         } onForgetPIN: {
-            // Handle on foregetPIN
+            // Handle on forgetPIN
         }
         .alert(item: $viewModel.snackbar) { snackbar in
             Alert(
@@ -74,6 +82,8 @@ struct AuthenticationPincodeView: View {
         }
     }
 }
+
+// MARK: - Preview
 
 struct PincodeView_Previews: PreviewProvider {
     static var previews: some View {

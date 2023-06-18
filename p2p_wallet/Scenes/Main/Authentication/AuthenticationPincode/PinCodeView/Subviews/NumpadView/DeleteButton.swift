@@ -1,19 +1,27 @@
 import SwiftUI
 import KeyAppUI
 
+/// A view representing a delete button.
 struct DeleteButton: View {
-    // MARK: - Constant
+    // MARK: - Constants
     
+    /// The text size for the delete icon.
     private let textSize: CGFloat = 32
+    
+    /// The foreground color of the delete icon.
     private let foregroundColor = Asset.Colors.night.color
     
     // MARK: - State
     
+    /// Indicates whether the button is currently being highlighted.
     @State private var isHighlighting = false
     
     // MARK: - Properties
-
+    
+    /// The size of the button.
     let size: CGFloat
+    
+    /// The closure called when the button is tapped.
     var didTap: (() -> Void)?
     
     // MARK: - Body
