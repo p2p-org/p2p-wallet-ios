@@ -6,12 +6,6 @@ class AuthenticationPincodeViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    /// The title to be displayed in the pincode view.
-    let title: String
-    
-    /// Indicates whether the "Forgot Pin" option should be shown.
-    let showForgetPin: Bool
-    
     /// Indicates whether the "Face ID" option should be shown.
     let showFaceID: Bool
     
@@ -49,9 +43,7 @@ class AuthenticationPincodeViewModel: ObservableObject {
     ///   - title: The title to be displayed in the pincode view.
     ///   - showForgetPin: Indicates whether the "Forgot Pin" option should be shown.
     ///   - showFaceID: Indicates whether the "Face ID" option should be shown.
-    init(title: String, showForgetPin: Bool, showFaceID: Bool) {
-        self.title = title
-        self.showForgetPin = showForgetPin
+    init(showFaceID: Bool) {
         self.showFaceID = showFaceID
     }
     

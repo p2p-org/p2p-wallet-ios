@@ -4,6 +4,12 @@ class PinCodeViewModel: ObservableObject {
     @Published var currentPincode: String?
     @Published var attemptsCount: Int = 0
     
+    /// The title to be displayed in the pincode view.
+    let title: String
+
+    /// Indicates whether the "Forgot Pin" option should be shown.
+    let showForgetPin: Bool
+    
     let showBiometry: Bool
     let correctPincode: String?
     let maxAttemptsCount: Int?
@@ -17,8 +23,10 @@ class PinCodeViewModel: ObservableObject {
     var onFailed = PassthroughSubject<Void, Never>()
     var onFailedAndExceededMaxAttempts = PassthroughSubject<Void, Never>()
     
-    init(showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int? = nil) {
+    init(title: String, showForgetPin: Bool, showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int? = nil) {
+        self.title = title
         self.showBiometry = showBiometry
+        self.showForgetPin = showForgetPin
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
         self.pincodeLength = pincodeLength

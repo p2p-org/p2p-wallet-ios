@@ -53,8 +53,6 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         
         // Create pincode view
         let authenticationPincodeViewModel = AuthenticationPincodeViewModel(
-            title: L10n.enterYourPIN,
-            showForgetPin: true,
             showFaceID: true
         )
         let authenticationPincodeView = AuthenticationPincodeView(
