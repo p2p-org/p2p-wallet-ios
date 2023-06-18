@@ -14,8 +14,9 @@ struct NumpadButton: View {
     private let textColor = PincodeStateColor(normal: Asset.Colors.night.color, tapped: Asset.Colors.snow.color)
     
     // MARK: - State
-    
+
     let number: Int
+    let size: CGFloat
     let cornerRadius: CGFloat = 20
     
     @GestureState private var isDetectingLongPress = false
@@ -29,13 +30,14 @@ struct NumpadButton: View {
             .foregroundColor(Color(isDetectingLongPress ? textColor.tapped : textColor.normal))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(isDetectingLongPress ? customBgColor.tapped : customBgColor.normal))
+            .frame(width: size, height: size)
             .cornerRadius(cornerRadius)
             .gesture(longPress)
     }
     
     // MARK: - Methods
     
-    var longPress: some Gesture {
+    private var longPress: some Gesture {
         LongPressGesture(minimumDuration: 3)
             .updating($isDetectingLongPress) { currentState, gestureState,
                 transaction in
@@ -49,7 +51,6 @@ struct NumpadButton: View {
 
 struct NumpadButton_Previews: PreviewProvider {
     static var previews: some View {
-        NumpadButton(number: 1)
-            .frame(width: 68, height: 68)
+        NumpadButton(number: 1, size: 68)
     }
 }

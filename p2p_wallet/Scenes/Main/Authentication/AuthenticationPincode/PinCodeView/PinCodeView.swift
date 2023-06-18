@@ -26,7 +26,7 @@ struct PinCodeView: View {
             _PinCodeDotsView(
                 numberOfDigits: viewModel.currentPincode?.count ?? 0
             )
-            _NumpadView(
+            NumpadView(
                 didChooseNumber: viewModel.add(digit:),
                 didTapDelete: viewModel.backspace
             )
