@@ -24,7 +24,7 @@ struct AuthenticationPincodeView: View {
                 Image(uiImage: .lockPincode)
                     .resizable()
                     .frame(width: 113.adaptiveHeight, height: 106.adaptiveHeight)
-                    .padding(.top, 70)
+                    .padding(.top, 31)
                     .padding(.bottom, 33)
                 
                 Spacer()
@@ -33,7 +33,7 @@ struct AuthenticationPincodeView: View {
                     .font(uiFont: .font(of: .title2, weight: .regular))
                     .multilineTextAlignment(.center)
                 
-                VStack(spacing: 20.adaptiveHeight) {
+                VStack(spacing: 24.adaptiveHeight) {
                     PinCodeView(
                         showBiometry: true,
                         correctPincode: "111111",
@@ -46,7 +46,6 @@ struct AuthenticationPincodeView: View {
                     } onFailedAndExceededMaxAttempts: {
                         // Handle pincode failure with maximum attempts exceeded
                     }
-                        .padding(.bottom, 27.adaptiveHeight)
                     
                     if viewModel.showForgetPin {
                         Button(action: {
