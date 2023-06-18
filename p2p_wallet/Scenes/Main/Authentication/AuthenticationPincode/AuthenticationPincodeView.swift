@@ -48,14 +48,14 @@ struct AuthenticationPincodeView: View {
                 .cornerRadius(20)
                 .frame(height: 420)
         }
-        .navigationBarBackButtonHidden(true)
+//        .navigationBarBackButtonHidden(true)
         .navigationBarItems(
-            leading: Button(action: {
-                viewModel.back.send()
-            }, label: {
-                Image(systemName: "arrow.backward")
-                    .foregroundColor(Color(Asset.Colors.night.color))
-            }),
+//            leading: Button(action: {
+//                viewModel.back.send()
+//            }, label: {
+//                Image(systemName: "arrow.backward")
+//                    .foregroundColor(Color(Asset.Colors.night.color))
+//            }),
             trailing: Button(action: {
                 viewModel.infoDidTap.send()
             }, label: {
