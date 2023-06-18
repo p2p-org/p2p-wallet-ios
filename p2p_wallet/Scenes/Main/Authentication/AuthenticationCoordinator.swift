@@ -3,21 +3,33 @@ import SwiftUI
 import Combine
 import UIKit
 
-/// Coordinator of Authentication flow
+/// Coordinator of the authentication flow.
 final class AuthenticationCoordinator: Coordinator<Void> {
-
+    
     // MARK: - Dependencies
-
+    
     private let authenticationService: AuthenticationService
-
+    
     // MARK: - Properties
-
+    
+    /// The view controller from which the authentication flow will be presented
     private let presentingViewController: UIViewController
+
+    /// Indicates whether the back button is available in the authentication flow
     private let isBackAvailable: Bool
+
+    //. Indicates whether the authentication flow should be presented as full screen
     private let isFullscreen: Bool
-
+    
     // MARK: - Initializer
-
+    
+    /// Initializes the authentication coordinator.
+    ///
+    /// - Parameters:
+    ///   - authenticationService: The authentication service used for authentication.
+    ///   - presentingViewController: The view controller from which the authentication flow will be presented.
+    ///   - isBackAvailable: Indicates whether the back button is available in the authentication flow.
+    ///   - isFullscreen: Indicates whether the authentication flow should be presented as full screen.
     init(
         authenticationService: AuthenticationService,
         presentingViewController: UIViewController,
@@ -29,9 +41,9 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         self.isBackAvailable = isBackAvailable
         self.isFullscreen = isFullscreen
     }
-
+    
     // MARK: - Methods
-
+    
     override func start() -> AnyPublisher<Void, Never> {
         // Detect if authentication is needed
         guard authenticationService.shouldAuthenticateUser() else {
@@ -40,40 +52,24 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         }
         
         // Create pincode view
-        let authenticationPincodeViewModel = AuthenticationPincodeViewModel()
-        let authenticationPincodeView = AuthenticationPincodeView(viewModel: authenticationPincodeViewModel)
-//        let pincodeViewModel = PincodeViewModel(
-//            state: .check,
-//            isBackAvailable: isBackAvailable,
-//            successNotification: "",
-//            ignoreAuthHandler: true
-//        )
-//        let pincodeViewController = PincodeViewController(viewModel: pincodeViewModel)
-
-        // info did tap
-//        pincodeViewModel.infoDidTap
-//            .sink(receiveValue: { [unowned self] in
-//                helpLauncher.launch()
-//            })
-//            .store(in: &subscriptions)
-    
-        // cancellable pincode
-//        if isBackAvailable {
-//            pincodeViewController.onClose = { [weak self] in
-//                self?.viewModel.authenticate(presentationStyle: nil)
-//                if authSuccess == false {
-//                    authStyle.onCancel?()
-//                }
-//            }
-//        }
-
-        // Create navigation
+        let authenticationPincodeViewModel = AuthenticationPincodeViewModel(
+            title: L10n.enterYourPIN,
+            showForgetPin: true,
+            showFaceID: true
+        )
+        let authenticationPincodeView = AuthenticationPincodeView(
+            viewModel: authenticationPincodeViewModel
+        )
+        
+        // Create hosting controller for pincode view
         let vc = UIHostingController(rootView: authenticationPincodeView)
-
+        
         // Show pincode view as full screen
         if isFullscreen {
             vc.modalPresentationStyle = .fullScreen
         }
+        
+        // Present pincode view from the presenting view controller
         presentingViewController.present(vc, animated: true)
         
         // Return result on view deallocated

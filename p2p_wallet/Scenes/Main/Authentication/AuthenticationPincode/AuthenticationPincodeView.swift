@@ -17,7 +17,7 @@ struct AuthenticationPincodeView: View {
             VStack {
                 Image(uiImage: .lockPincode)
                     .resizable()
-                    .frame(width: 114, height: 107)
+                    .frame(width: 114, height: 107.adaptiveHeight)
                     .padding(.top, 70)
                     .padding(.bottom, 33)
                 
@@ -87,7 +87,7 @@ struct AuthenticationPincodeView: View {
         )
         .toolbar(content: {
             ToolbarItem(placement: .navigationBarLeading) {
-                if viewModel.showFaceid {
+                if viewModel.showFaceID {
                     Button(action: {
                         viewModel.biometricsTapped()
                     }, label: {
@@ -113,6 +113,12 @@ struct AuthenticationPincodeView: View {
 
 struct PincodeView_Previews: PreviewProvider {
     static var previews: some View {
-        AuthenticationPincodeView(viewModel: AuthenticationPincodeViewModel())
+        AuthenticationPincodeView(
+            viewModel: .init(
+                title: L10n.enterYourPIN,
+                showForgetPin: true,
+                showFaceID: true
+            )
+        )
     }
 }
