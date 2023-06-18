@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 /// The view model class that manages the authentication pincode view.
-class AuthenticationPincodeViewModel: ObservableObject {
+class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
     
@@ -31,10 +31,6 @@ class AuthenticationPincodeViewModel: ObservableObject {
     
     /// Publishes a void value when the user logs out.
     var logout = PassthroughSubject<Void, Never>()
-    
-    // MARK: - Private Properties
-    
-    private var subscriptions = Set<AnyCancellable>()
     
     // MARK: - Initialization
     

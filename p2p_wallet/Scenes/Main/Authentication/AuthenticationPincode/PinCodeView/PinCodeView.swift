@@ -85,9 +85,15 @@ struct PinCodeView: View {
                 showBiometry: viewModel.showBiometry,
                 isDeleteButtonHidden: (viewModel.currentPincode?.count ?? 0) == 0,
                 isLocked: viewModel.isLocked,
-                didChooseNumber: viewModel.add(digit:),
-                didTapDelete: viewModel.backspace,
-                didTapBiometry: viewModel.validateBiometry
+                didChooseNumber: { digit in
+                    viewModel.add(digit: digit)
+                },
+                didTapDelete: {
+                    viewModel.backspace()
+                },
+                didTapBiometry: {
+                    viewModel.validateBiometry()
+                }
             )
         }
         .onReceive(viewModel.$currentPincode) { _ in
