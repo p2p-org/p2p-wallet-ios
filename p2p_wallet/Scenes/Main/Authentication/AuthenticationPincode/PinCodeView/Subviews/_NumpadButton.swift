@@ -15,17 +15,18 @@ struct _NumpadButton: View {
     
     // MARK: - State
     
+    let number: Int
     @State private var isHighlighted = false
     
     // MARK: - Body
     
     var body: some View {
-        Text("")
+        Text("\(number)")
             .font(.system(size: textSize))
             .foregroundColor(Color(isHighlighted ? textColor.tapped : textColor.normal))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(isHighlighted ? customBgColor.tapped : customBgColor.normal))
-            .onTapGesture {
+            .onLongPressGesture {
                 animateTapping()
             }
     }
@@ -41,5 +42,11 @@ struct _NumpadButton: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             setHighlight(value: false)
         }
+    }
+}
+
+struct _NumpadButton_Previews: PreviewProvider {
+    static var previews: some View {
+        _NumpadButton(number: 1)
     }
 }
