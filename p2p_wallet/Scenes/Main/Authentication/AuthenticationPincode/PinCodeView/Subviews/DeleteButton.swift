@@ -10,11 +10,11 @@ struct DeleteButton: View {
     // MARK: - State
     
     @GestureState private var isDetectingLongPress = false
-    @State private var completedLongPress = false
     
     // MARK: - Properties
 
     let size: CGFloat
+    var didTap: (() -> Void)?
     
     // MARK: - Body
     
@@ -25,20 +25,22 @@ struct DeleteButton: View {
             .padding(.horizontal, 22)
             .padding(.vertical, 24)
             .frame(width: size, height: size)
-            .gesture(longPress)
-    }
-    
-    // MARK: - Methods
-    
-    private var longPress: some Gesture {
-        LongPressGesture(minimumDuration: 3)
-            .updating($isDetectingLongPress) { currentState, gestureState,
-                transaction in
-                gestureState = currentState
-            }
-            .onEnded { finished in
-                self.completedLongPress = finished
-            }
+            .gesture(
+                LongPressGesture(minimumDuration: 3)
+                    .updating($isDetectingLongPress) { currentState, gestureState,
+                        transaction in
+                        gestureState = currentState
+                    }
+                    .onEnded { finished in
+                        didTap?()
+                    }
+            )
+            .simultaneousGesture(
+                TapGesture()
+                    .onEnded {
+                        didTap?()
+                    }
+            )
     }
 }
 

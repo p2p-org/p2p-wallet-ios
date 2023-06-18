@@ -13,6 +13,7 @@ struct NumpadView: View {
 
     @State private var deleteButtonColor = Color(Asset.Colors.night.color)
     
+    let isDeleteButtonHidden: Bool
     var didChooseNumber: ((Int) -> Void)?
     var didTapDelete: (() -> Void)?
 
@@ -40,7 +41,10 @@ struct NumpadView: View {
             HStack(spacing: spacing) {
                 Spacer().frame(width: 68, height: 68)
                 numpadButton(0)
-                DeleteButton(size: buttonSize)
+                DeleteButton(size: buttonSize) {
+                    didTapDelete?()
+                }
+                    .opacity(isDeleteButtonHidden ? 0: 1)
             }
         }
     }
@@ -54,6 +58,6 @@ struct NumpadView: View {
 
 struct NumpadView_Previews: PreviewProvider {
     static var previews: some View {
-        NumpadView()
+        NumpadView(isDeleteButtonHidden: false)
     }
 }

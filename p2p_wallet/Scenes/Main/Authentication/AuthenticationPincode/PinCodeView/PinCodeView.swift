@@ -30,6 +30,7 @@ struct PinCodeView: View {
                 pincodeLength: pincodeLength
             )
             NumpadView(
+                isDeleteButtonHidden: (viewModel.currentPincode?.count ?? 0) == 0,
                 didChooseNumber: viewModel.add(digit:),
                 didTapDelete: viewModel.backspace
             )
@@ -40,7 +41,7 @@ struct PinCodeView: View {
                 .padding(.top, 10)
             
             #if DEBUG
-            Text(viewModel.currentPincode)
+            Text(viewModel.currentPincode ?? "<debug: pincode>")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.red)
                 .multilineTextAlignment(.center)
