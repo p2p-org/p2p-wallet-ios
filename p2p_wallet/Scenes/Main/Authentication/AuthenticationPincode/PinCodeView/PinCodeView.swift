@@ -38,6 +38,14 @@ struct PinCodeView: View {
                 .foregroundColor(.red)
                 .multilineTextAlignment(.center)
                 .padding(.top, 10)
+            
+            #if DEBUG
+            Text(viewModel.currentPincode)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.red)
+                .multilineTextAlignment(.center)
+                .padding(.top, 10)
+            #endif
         }
         .onReceive(viewModel.$currentPincode) { _ in
             viewModel.validatePincode()
@@ -54,5 +62,23 @@ struct PinCodeView: View {
         .onReceive(viewModel.onFailedAndExceededMaxAttempts) { _ in
             onFailedAndExceededMaxAttempts?()
         }
+    }
+}
+
+struct PinCodeView_Previews: PreviewProvider {
+    static var previews: some View {
+        PinCodeView(
+            correctPincode: "111111",
+            maxAttemptsCount: 3,
+            onSuccess: {
+                
+            },
+            onFailed: {
+                
+            },
+            onFailedAndExceededMaxAttempts: {
+                
+            }
+        )
     }
 }

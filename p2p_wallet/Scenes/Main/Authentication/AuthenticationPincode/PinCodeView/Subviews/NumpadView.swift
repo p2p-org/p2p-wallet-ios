@@ -17,31 +17,37 @@ struct NumpadView: View {
     var didTapDelete: (() -> Void)?
 
     // MARK: - Body
-
+    
     var body: some View {
         VStack(spacing: vSpacing) {
             HStack(spacing: spacing) {
-                ForEach(1...3, id: \.self) { number in
-                    NumpadButton(number: number, size: buttonSize)
+                ForEach(1...3, id: \.self) {
+                    numpadButton($0)
                 }
             }
             
             HStack(spacing: spacing) {
-                ForEach(4...6, id: \.self) { number in
-                    NumpadButton(number: number, size: buttonSize)
+                ForEach(4...6, id: \.self) {
+                    numpadButton($0)
                 }
             }
             
             HStack(spacing: spacing) {
-                ForEach(7...9, id: \.self) { number in
-                    NumpadButton(number: number, size: buttonSize)
+                ForEach(7...9, id: \.self) {
+                    numpadButton($0)
                 }
             }
             HStack(spacing: spacing) {
                 Spacer().frame(width: 68, height: 68)
-                NumpadButton(number: 0, size: buttonSize)
+                numpadButton(0)
                 DeleteButton(size: buttonSize)
             }
+        }
+    }
+
+    private func numpadButton(_ number: Int) -> NumpadButton {
+        NumpadButton(number: number, size: buttonSize) {
+            didChooseNumber?(number)
         }
     }
 }
