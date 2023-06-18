@@ -38,7 +38,7 @@ struct NumpadView: View {
                 }
             }
             HStack(spacing: spacing) {
-                Spacer(minLength: buttonSize)
+                Spacer().frame(width: 68, height: 68)
                 NumpadButton(number: 0, size: buttonSize)
                 DeleteButton(size: buttonSize)
             }
@@ -49,6 +49,5 @@ struct NumpadView: View {
 struct NumpadView_Previews: PreviewProvider {
     static var previews: some View {
         NumpadView()
-            .frame(width: 68, height: 68)
     }
 }
