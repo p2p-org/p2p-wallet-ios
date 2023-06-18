@@ -20,16 +20,20 @@ struct _NumpadView: View {
     var body: some View {
         VStack(spacing: vSpacing) {
             ForEach(1...3, id: \.self) { number in
-                _NumpadButton(number: number)
+                NumpadButton(number: number)
+                    .frame(width: 68, height: 68)
             }
             ForEach(4...6, id: \.self) { number in
-                _NumpadButton(number: number)
+                NumpadButton(number: number)
+                    .frame(width: 68, height: 68)
             }
             ForEach(7...9, id: \.self) { number in
-                _NumpadButton(number: number)
+                NumpadButton(number: number)
+                    .frame(width: 68, height: 68)
             }
             HStack(spacing: spacing) {
-                _NumpadButton(number: 0)
+                NumpadButton(number: 0)
+                    .frame(width: 68, height: 68)
                 deleteButton
             }
         }
