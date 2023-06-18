@@ -18,10 +18,9 @@ struct NumpadButton: View {
 
     let number: Int
     let size: CGFloat
-    let isChoosen: (() -> Void)
+    var didTap: (() -> Void)?
     
     @GestureState private var isDetectingLongPress = false
-    @State private var completedLongPress = false
     
     // MARK: - Body
     
@@ -29,25 +28,22 @@ struct NumpadButton: View {
         Text("\(number)")
             .font(.system(size: textSize))
             .foregroundColor(Color(isDetectingLongPress ? textColor.tapped : textColor.normal))
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(isDetectingLongPress ? customBgColor.tapped : customBgColor.normal))
             .frame(width: size, height: size)
+            .background(Color(isDetectingLongPress ? customBgColor.tapped : customBgColor.normal))
             .cornerRadius(cornerRadius)
-            .gesture(longPress)
-    }
-    
-    // MARK: - Methods
-    
-    private var longPress: some Gesture {
-        LongPressGesture(minimumDuration: 3)
-            .updating($isDetectingLongPress) { currentState, gestureState,
-                transaction in
-                gestureState = currentState
-            }
-            .onEnded { finished in
-                completedLongPress = finished
-                isChoosen()
-            }
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.3)
+                    .updating($isDetectingLongPress) { currentState, gestureState,
+                        transaction in
+                        gestureState = currentState
+                    }
+            )
+            .simultaneousGesture(
+                TapGesture()
+                    .onEnded {
+                        didTap?()
+                    }
+            )
     }
 }
 

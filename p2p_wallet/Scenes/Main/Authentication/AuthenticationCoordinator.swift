@@ -16,8 +16,6 @@ final class AuthenticationCoordinator: Coordinator<Void> {
     private let isBackAvailable: Bool
     private let isFullscreen: Bool
 
-    private var navigationController: UINavigationController!
-
     // MARK: - Initializer
 
     init(
@@ -42,13 +40,15 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         }
         
         // Create pincode view
-        let pincodeViewModel = PincodeViewModel(
-            state: .check,
-            isBackAvailable: isBackAvailable,
-            successNotification: "",
-            ignoreAuthHandler: true
-        )
-        let pincodeViewController = PincodeViewController(viewModel: pincodeViewModel)
+        let authenticationPincodeViewModel = AuthenticationPincodeViewModel()
+        let authenticationPincodeView = AuthenticationPincodeView(viewModel: authenticationPincodeViewModel)
+//        let pincodeViewModel = PincodeViewModel(
+//            state: .check,
+//            isBackAvailable: isBackAvailable,
+//            successNotification: "",
+//            ignoreAuthHandler: true
+//        )
+//        let pincodeViewController = PincodeViewController(viewModel: pincodeViewModel)
 
         // info did tap
 //        pincodeViewModel.infoDidTap
@@ -68,22 +68,16 @@ final class AuthenticationCoordinator: Coordinator<Void> {
 //        }
 
         // Create navigation
-        navigationController = UINavigationController(
-            rootViewController: pincodeViewController
-        )
+        let vc = UIHostingController(rootView: authenticationPincodeView)
 
         // Show pincode view as full screen
         if isFullscreen {
-            navigationController.modalPresentationStyle = .fullScreen
+            vc.modalPresentationStyle = .fullScreen
         }
-        presentingViewController.present(navigationController, animated: true)
+        presentingViewController.present(vc, animated: true)
         
         // Return result on view deallocated
-        return pincodeViewModel.openMain
-            .map { _ in () }
-            .handleEvents(receiveOutput: { [weak navigationController] _ in
-                navigationController?.dismiss(animated: true)
-            })
+        return vc.deallocatedPublisher()
             .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             .prefix(1)
             .eraseToAnyPublisher()
