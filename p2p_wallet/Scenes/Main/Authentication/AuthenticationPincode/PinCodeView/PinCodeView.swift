@@ -14,6 +14,7 @@ struct PinCodeView: View {
         showBiometry: Bool,
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
+        resetingDelayInSeconds: Int? = nil,
         onSuccess: (() -> Void)? = nil,
         onFailed: (() -> Void)? = nil,
         onFailedAndExceededMaxAttempts: (() -> Void)? = nil
@@ -21,7 +22,8 @@ struct PinCodeView: View {
         _viewModel = StateObject(wrappedValue: PinCodeViewModel(
             showBiometry: showBiometry,
             correctPincode: correctPincode,
-            maxAttemptsCount: maxAttemptsCount
+            maxAttemptsCount: maxAttemptsCount,
+            resetingDelayInSeconds: resetingDelayInSeconds
         ))
         self.onSuccess = onSuccess
         self.onFailed = onFailed
@@ -41,13 +43,6 @@ struct PinCodeView: View {
                 didTapDelete: viewModel.backspace,
                 didTapBiometry: viewModel.validateBiometry
             )
-            #if DEBUG
-            Text(viewModel.currentPincode ?? "<debug: pincode>")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.red)
-                .multilineTextAlignment(.center)
-                .padding(.top, 10)
-            #endif
         }
         .onReceive(viewModel.$currentPincode) { _ in
             viewModel.validatePincode()

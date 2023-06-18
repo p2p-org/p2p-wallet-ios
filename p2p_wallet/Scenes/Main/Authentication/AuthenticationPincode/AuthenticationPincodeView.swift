@@ -10,6 +10,12 @@ struct AuthenticationPincodeView: View {
     }
     
     var body: some View {
+        NavigationView {
+            content
+        }
+    }
+    
+    private var content: some View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .ignoresSafeArea()
@@ -24,14 +30,15 @@ struct AuthenticationPincodeView: View {
                 Spacer()
                 
                 Text(viewModel.title)
-                    .font(uiFont: .font(of: .title2))
+                    .font(uiFont: .font(of: .title2, weight: .regular))
                     .multilineTextAlignment(.center)
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 20.adaptiveHeight) {
                     PinCodeView(
                         showBiometry: true,
                         correctPincode: "111111",
-                        maxAttemptsCount: 3
+                        maxAttemptsCount: 3,
+                        resetingDelayInSeconds: 1
                     ) {
                         // Handle pincode success
                     } onFailed: {
@@ -39,6 +46,7 @@ struct AuthenticationPincodeView: View {
                     } onFailedAndExceededMaxAttempts: {
                         // Handle pincode failure with maximum attempts exceeded
                     }
+                        .padding(.bottom, 27.adaptiveHeight)
                     
                     if viewModel.showForgetPin {
                         Button(action: {
@@ -48,6 +56,7 @@ struct AuthenticationPincodeView: View {
                                 .font(uiFont: .font(of: .text1))
                                 .foregroundColor(Color(Asset.Colors.sky.color))
                         })
+                        .padding(.bottom, 34.adaptiveHeight)
                     }
                 }
                 .padding(.top, 56)
