@@ -31,11 +31,14 @@ struct NumpadButton: View {
             .frame(width: size, height: size)
             .background(Color(isDetectingLongPress ? customBgColor.tapped : customBgColor.normal))
             .cornerRadius(cornerRadius)
-            .simultaneousGesture(
-                LongPressGesture(minimumDuration: 0.3)
+            .gesture(
+                LongPressGesture(minimumDuration: 2)
                     .updating($isDetectingLongPress) { currentState, gestureState,
                         transaction in
                         gestureState = currentState
+                    }
+                    .onEnded { value in
+                        didTap?()
                     }
             )
             .simultaneousGesture(
