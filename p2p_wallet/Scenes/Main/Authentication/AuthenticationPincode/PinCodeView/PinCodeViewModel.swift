@@ -4,6 +4,7 @@ class PinCodeViewModel: ObservableObject {
     @Published var currentPincode: String?
     @Published var attemptsCount: Int = 0
     
+    let showBiometry: Bool
     let correctPincode: String?
     let maxAttemptsCount: Int?
     let stackViewSpacing: CGFloat = 10
@@ -16,7 +17,8 @@ class PinCodeViewModel: ObservableObject {
     var onFailed = PassthroughSubject<Void, Never>()
     var onFailedAndExceededMaxAttempts = PassthroughSubject<Void, Never>()
     
-    init(correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int? = nil) {
+    init(showBiometry: Bool, correctPincode: String? = nil, maxAttemptsCount: Int? = nil, pincodeLength: Int = 6, resetingDelayInSeconds: Int? = nil) {
+        self.showBiometry = showBiometry
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
         self.pincodeLength = pincodeLength
@@ -53,6 +55,10 @@ class PinCodeViewModel: ObservableObject {
         
         vibrate()
         self.currentPincode = String(currentPincode.dropLast())
+    }
+    
+    func validateBiometry() {
+        // TODO: - Biometry
     }
     
     func validatePincode() {

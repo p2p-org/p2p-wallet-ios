@@ -11,13 +11,18 @@ struct PinCodeView: View {
     private var onFailedAndExceededMaxAttempts: (() -> Void)?
     
     init(
+        showBiometry: Bool,
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
         onSuccess: (() -> Void)? = nil,
         onFailed: (() -> Void)? = nil,
         onFailedAndExceededMaxAttempts: (() -> Void)? = nil
     ) {
-        _viewModel = StateObject(wrappedValue: PinCodeViewModel(correctPincode: correctPincode, maxAttemptsCount: maxAttemptsCount))
+        _viewModel = StateObject(wrappedValue: PinCodeViewModel(
+            showBiometry: showBiometry,
+            correctPincode: correctPincode,
+            maxAttemptsCount: maxAttemptsCount
+        ))
         self.onSuccess = onSuccess
         self.onFailed = onFailed
         self.onFailedAndExceededMaxAttempts = onFailedAndExceededMaxAttempts
@@ -30,16 +35,12 @@ struct PinCodeView: View {
                 pincodeLength: pincodeLength
             )
             NumpadView(
+                showBiometry: viewModel.showBiometry,
                 isDeleteButtonHidden: (viewModel.currentPincode?.count ?? 0) == 0,
                 didChooseNumber: viewModel.add(digit:),
-                didTapDelete: viewModel.backspace
+                didTapDelete: viewModel.backspace,
+                didTapBiometry: viewModel.validateBiometry
             )
-            Text("Error Label")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.red)
-                .multilineTextAlignment(.center)
-                .padding(.top, 10)
-            
             #if DEBUG
             Text(viewModel.currentPincode ?? "<debug: pincode>")
                 .font(.system(size: 13, weight: .semibold))
@@ -69,6 +70,7 @@ struct PinCodeView: View {
 struct PinCodeView_Previews: PreviewProvider {
     static var previews: some View {
         PinCodeView(
+            showBiometry: true,
             correctPincode: "111111",
             maxAttemptsCount: 3,
             onSuccess: {

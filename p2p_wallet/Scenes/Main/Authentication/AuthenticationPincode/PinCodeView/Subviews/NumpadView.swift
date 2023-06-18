@@ -13,9 +13,11 @@ struct NumpadView: View {
 
     @State private var deleteButtonColor = Color(Asset.Colors.night.color)
     
+    let showBiometry: Bool
     let isDeleteButtonHidden: Bool
     var didChooseNumber: ((Int) -> Void)?
     var didTapDelete: (() -> Void)?
+    var didTapBiometry: (() -> Void)?
 
     // MARK: - Body
     
@@ -39,7 +41,20 @@ struct NumpadView: View {
                 }
             }
             HStack(spacing: spacing) {
-                Spacer().frame(width: 68, height: 68)
+                if showBiometry {
+                    Button(action: {
+                        didTapBiometry?()
+                    }, label: {
+                        Image(uiImage: .faceId)
+                            .resizable()
+                            .frame(width: 32, height: 32)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .padding((buttonSize - 32) / 2)
+                    })
+                } else {
+                    Spacer().frame(width: buttonSize, height: buttonSize)
+                }
+                
                 numpadButton(0)
                 DeleteButton(size: buttonSize) {
                     didTapDelete?()
@@ -58,6 +73,6 @@ struct NumpadView: View {
 
 struct NumpadView_Previews: PreviewProvider {
     static var previews: some View {
-        NumpadView(isDeleteButtonHidden: false)
+        NumpadView(showBiometry: true, isDeleteButtonHidden: false)
     }
 }

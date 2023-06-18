@@ -17,24 +17,25 @@ struct AuthenticationPincodeView: View {
             VStack {
                 Image(uiImage: .lockPincode)
                     .resizable()
-                    .frame(width: 114, height: 107.adaptiveHeight)
+                    .frame(width: 113.adaptiveHeight, height: 106.adaptiveHeight)
                     .padding(.top, 70)
                     .padding(.bottom, 33)
                 
                 Spacer()
                 
                 Text(viewModel.title)
-                    .font(.title2)
+                    .font(uiFont: .font(of: .title2))
                     .multilineTextAlignment(.center)
                 
                 VStack(spacing: 20) {
                     PinCodeView(
+                        showBiometry: true,
                         correctPincode: "111111",
                         maxAttemptsCount: 3
                     ) {
                         // Handle pincode success
                     } onFailed: {
-                        // Handle pincode success
+                        // Handle pincode failed
                     } onFailedAndExceededMaxAttempts: {
                         // Handle pincode failure with maximum attempts exceeded
                     }
@@ -85,20 +86,6 @@ struct AuthenticationPincodeView: View {
                     .foregroundColor(.primary)
             })
         )
-        .toolbar(content: {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if viewModel.showFaceID {
-                    Button(action: {
-                        viewModel.biometricsTapped()
-                    }, label: {
-                        Image("faceId")
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                    })
-                }
-            }
-        })
         .onReceive(viewModel.back) { _ in
             // Handle back action
         }
