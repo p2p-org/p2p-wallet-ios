@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct _PinCodeDotsView: View {
+struct PinCodeDotsView: View {
     // MARK: - Constants
     
     private let dotSize: CGFloat = 12
@@ -26,7 +26,7 @@ struct _PinCodeDotsView: View {
     var body: some View {
         VStack {
             HStack(spacing: padding) {
-                ForEach(0..<pincodeLength) { index in
+                ForEach(0..<pincodeLength, id: \.self) { index in
                     Circle()
                         .fill(index < numberOfDigits ? highlightColor : defaultColor)
                         .frame(width: dotSize, height: dotSize)
@@ -52,6 +52,6 @@ struct _PinCodeDotsView: View {
 
 struct PinCodeDotsView_Previews: PreviewProvider {
     static var previews: some View {
-        _PinCodeDotsView(numberOfDigits: 6)
+        PinCodeDotsView(numberOfDigits: 6)
     }
 }

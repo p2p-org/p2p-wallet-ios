@@ -23,7 +23,7 @@ struct PinCodeView: View {
     
     var body: some View {
         VStack(spacing: viewModel.stackViewSpacing) {
-            _PinCodeDotsView(
+            PinCodeDotsView(
                 numberOfDigits: viewModel.currentPincode?.count ?? 0
             )
             NumpadView(
