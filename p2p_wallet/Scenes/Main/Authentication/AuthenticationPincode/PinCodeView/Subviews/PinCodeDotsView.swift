@@ -47,7 +47,7 @@ struct PinCodeDotsView_Previews: PreviewProvider {
     //A view which will wraps the actual view and holds state variable.
     struct ContainerView: View {
         @State private var numberOfDigits: Int = 0
-        let pincodeLength = 6
+        let pincodeLength: Int
         
         var body: some View {
             VStack {
@@ -64,6 +64,6 @@ struct PinCodeDotsView_Previews: PreviewProvider {
     }
     
     static var previews: some View {
-        ContainerView()
+        ContainerView(pincodeLength: 8)
     }
 }
