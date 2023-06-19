@@ -72,7 +72,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendViewed(lastScreen: String)
     case actionButtonSend
     case sendNewConfirmButtonClick(
-        source: String,
+        sendFlow: String,
         token: String,
         max: Bool,
         amountToken: Double,
@@ -84,19 +84,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     )
     // Bridges
     case sendBridgesScreenOpen
-    case sendBridgesConfirmButtonClick(
-        tokenName: String,
-        tokenValue: Double,
-        valueFiat: Double,
-        fee: Double
-    )
-    case sendClickChangeTokenChosen(source: String, sendFlow: String)
-    case sendClickChangeTokenValue(source: String)
-    case sendClickChangeTokenValue(source: String, sendFlow: String)
+    case sendClickChangeTokenChosen(sendFlow: String)
+    case sendClickChangeTokenValue(sendFlow: String)
     case sendClickStartCreateLink
     case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
     case sendClickChangeTokenValue(tokenName: String, tokenValue: Double, sendFlow: String)
-    case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendClickCreateLink(sendFlow: String, tokenName: String, tokenValue: Double, pubkey: String)
     case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
     case sendClickShareLink
     case sendClickCopyLink
@@ -109,9 +102,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewRecipientAdd(type: String, source: String)
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
-    case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
-    case sendnewFreeTransactionClick(source: String, sendFlow: String)
+    case sendnewInputScreen(sendFlow: String)
+    case sendnewTokenInputClick(tokenName: String, sendFlow: String)
+    case sendnewFreeTransactionClick(sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
     // MARK: - Swap

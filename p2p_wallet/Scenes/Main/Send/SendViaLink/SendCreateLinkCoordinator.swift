@@ -140,8 +140,8 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
 
 private extension SendCreateLinkCoordinator {
     func logSend(signature: String?) {
-        guard case let .sendNewConfirmButtonClick(source, token, max, amountToken, amountUSD, fee, fiatInput, _, _) = transaction.analyticEvent, let signature else { return }
-        analyticsManager.log(event: .sendNewConfirmButtonClick(source: source, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: intermediatePubKey))
+        guard case let .sendNewConfirmButtonClick(sendFlow, token, max, amountToken, amountUSD, fee, fiatInput, _, _) = transaction.analyticEvent, let signature else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(sendFlow: sendFlow, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: intermediatePubKey))
     }
 }
 

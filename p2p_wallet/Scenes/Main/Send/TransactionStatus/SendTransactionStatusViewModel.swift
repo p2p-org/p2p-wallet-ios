@@ -175,7 +175,7 @@ extension SendTransactionStatusViewModel {
 
 private extension SendTransactionStatusViewModel {
     func logSend(event: KeyAppAnalyticsEvent, signature: String) {
-        guard case let .sendNewConfirmButtonClick(source, token, max, amountToken, amountUSD, fee, fiatInput, _, pubKey) = event else { return }
-        analyticsManager.log(event: .sendNewConfirmButtonClick(source: source, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: pubKey))
+        guard case let .sendNewConfirmButtonClick(sendFlow, token, max, amountToken, amountUSD, fee, fiatInput, _, pubKey) = event else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(sendFlow: sendFlow, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: pubKey))
     }
 }

@@ -215,7 +215,7 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
                     feeAmount: .init(transaction: 10000, accountBalances: 2039280),
                     currency: "USD",
-                    analyticEvent: .sendNewConfirmButtonClick(source: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
+                    analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
                 )
             )
         )

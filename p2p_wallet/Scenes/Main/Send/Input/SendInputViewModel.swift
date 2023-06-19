@@ -87,7 +87,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Private
 
-    private let source: SendSource
+    private let flow: SendFlow
     private var wasMaxWarningToastShown: Bool = false
     private let preChosenAmount: Double?
     private let allowSwitchingMainAmountType: Bool
@@ -102,11 +102,11 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         recipient: Recipient,
         preChosenWallet: Wallet?,
         preChosenAmount: Double?,
-        source: SendSource,
+        flow: SendFlow,
         allowSwitchingMainAmountType: Bool,
         sendViaLinkSeed: String?
     ) {
-        self.source = source
+        self.flow = flow
         self.preChosenAmount = preChosenAmount
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
@@ -278,8 +278,7 @@ private extension SendInputViewModel {
                 guard let self, self.status != .initializing else { return }
                 self.logAmountChanged(
                     symbol: self.currentState.token.symbol,
-                    amount: value?.inToken ?? 0,
-                    isSendingViaLink: self.currentState.isSendingViaLink
+                    amount: value?.inToken ?? 0
                 )
             })
             .store(in: &subscriptions)
@@ -293,8 +292,7 @@ private extension SendInputViewModel {
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                     self.logAmountChanged(
                         symbol: self.currentState.token.symbol,
-                        amount: value.amount.inToken,
-                        isSendingViaLink: self.currentState.isSendingViaLink
+                        amount: value.amount.inToken
                     )
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
@@ -308,10 +306,7 @@ private extension SendInputViewModel {
                 guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
                 if self.status != .initializing {
-                    self.logTokenChosen(
-                        symbol: value.token.symbol,
-                        isSendingViaLink: self.currentState.isSendingViaLink
-                    )
+                    self.logTokenChosen(symbol: value.token.symbol)
                 }
                 _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
@@ -340,7 +335,7 @@ private extension SendInputViewModel {
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
                 {
-                    self.logEnjoyFeeTransaction(isSendingViaLink: self.currentState.isSendingViaLink)
+                    self.logEnjoyFeeTransaction()
                 }
             }
             .store(in: &subscriptions)
@@ -385,8 +380,7 @@ private extension SendInputViewModel {
             .sink { [weak self] in
                 guard let self = self else { return }
                 self.logChooseTokenClick(
-                    tokenName: self.currentState.token.symbol,
-                    isSendingViaLink: self.currentState.isSendingViaLink
+                    tokenName: self.currentState.token.symbol
                 )
             }
             .store(in: &subscriptions)
@@ -595,8 +589,6 @@ private extension SendInputViewModel {
 
         if isSendingViaLink {
             logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
-        } else {
-            logConfirmButtonClick()
         }
 
         await MainActor.run {
@@ -614,7 +606,7 @@ private extension SendInputViewModel {
                 feeAmount: currentState.feeInToken,
                 currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol,
                 analyticEvent: .sendNewConfirmButtonClick(
-                    source: source.rawValue,
+                    sendFlow: flow.rawValue,
                     token: currentState.token.symbol,
                     max: inputAmountViewModel.wasMaxUsed,
                     amountToken: currentState.amountInToken,
@@ -634,45 +626,41 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func logOpen() {
-        analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewInputScreen(sendFlow: flow.rawValue))
     }
 
-    func logEnjoyFeeTransaction(isSendingViaLink: Bool) {
-        analyticsManager.log(event: .sendnewFreeTransactionClick(
-            source: source.rawValue,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
-        ))
+    func logEnjoyFeeTransaction() {
+        analyticsManager.log(event: .sendnewFreeTransactionClick(sendFlow: flow.rawValue))
     }
 
-    func logChooseTokenClick(tokenName: String, isSendingViaLink: Bool) {
+    func logChooseTokenClick(tokenName: String) {
         analyticsManager.log(event: .sendnewTokenInputClick(
             tokenName: tokenName,
-            source: source.rawValue,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
-    func logTokenChosen(symbol: String, isSendingViaLink: Bool) {
+    func logTokenChosen(symbol: String) {
         analyticsManager.log(event: .sendClickChangeTokenChosen(
             tokenName: symbol,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
-        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: flow.rawValue))
     }
 
-    func logAmountChanged(symbol: String, amount: Double, isSendingViaLink: Bool) {
+    func logAmountChanged(symbol: String, amount: Double) {
         analyticsManager.log(event: .sendClickChangeTokenValue(
             tokenName: symbol,
             tokenValue: amount,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
     func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
-        analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
+        analyticsManager.log(event: .sendClickCreateLink(sendFlow: flow.rawValue, tokenName: symbol, tokenValue: amount, pubkey: pubkey))
     }
 }
 

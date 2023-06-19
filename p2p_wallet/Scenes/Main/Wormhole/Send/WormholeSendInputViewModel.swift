@@ -200,7 +200,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     await self.stateMachine.accept(action: .updateInput(amount: newAmount))
                 }
                 self.analyticsManager
-                    .log(event: .sendClickChangeTokenValue(source: SendSource.none.rawValue, sendFlow: "Bridge"))
+                    .log(event: .sendClickChangeTokenValue(sendFlow: SendFlow.bridge.rawValue))
             }
             .store(in: &subscriptions)
 
@@ -331,7 +331,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         guard let selectedAccount else { return }
 
         Task { _ = await stateMachine.accept(action: .updateSolanaAccount(account: selectedAccount)) }
-        analyticsManager.log(event: .sendClickChangeTokenChosen(source: SendSource.none.rawValue, sendFlow: "Bridge"))
+        analyticsManager.log(event: .sendClickChangeTokenChosen(sendFlow: SendFlow.bridge.rawValue))
     }
 
     func send() async {
@@ -365,14 +365,17 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         userActionService.execute(action: userAction)
 
         action.send(.send(userAction))
-        analyticsManager.log(event: .sendBridgesConfirmButtonClick(
-            tokenName: input.solanaAccount.data.token.symbol,
-            tokenValue: Double(input.amount.amount.description) ?? 0,
-            valueFiat: input.solanaAccount
-                .price != nil ?
-                (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 :
-                0.0,
-            fee: .zero
+
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
+            sendFlow: SendFlow.bridge.rawValue,
+            token: input.solanaAccount.data.token.symbol,
+            max: wasMaxUsed,
+            amountToken: Double(input.amount.amount.description) ?? 0,
+            amountUSD: input.solanaAccount.price != nil ? (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 : 0.0,
+            fee: false,
+            fiatInput: inputMode == .fiat,
+            signature: transactions.transaction,
+            pubKey: nil
         ))
     }
 }
@@ -414,6 +417,6 @@ extension WormholeSendInputViewModel {
 extension WormholeSendInputViewModel {
     func logChooseTokenClick() {
         analyticsManager
-            .log(event: .sendnewTokenInputClick(tokenName: "", source: SendSource.none.rawValue, sendFlow: "Bridge"))
+            .log(event: .sendnewTokenInputClick(tokenName: "", sendFlow: SendFlow.bridge.rawValue))
     }
 }

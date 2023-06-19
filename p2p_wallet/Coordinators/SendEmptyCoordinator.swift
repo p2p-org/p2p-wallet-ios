@@ -13,21 +13,20 @@ import SolanaSwift
 import UIKit
 
 final class SendEmptyCoordinator: Coordinator<Void> {
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
-    private let source: SendSource
+    private let flow: SendFlow
 
-    init(navigationController: UINavigationController, source: SendSource = .none) {
+    init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-        self.source = source
+        flow = .send
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = SendEmptyView(
             buyCrypto: {
-                self.log(event: .sendnewBuyClickButton(source: self.source.rawValue))
+                self.log(event: .sendnewBuyClickButton(source: self.flow.rawValue))
                 let coordinator = BuyCoordinator(
                     navigationController: self.navigationController,
                     context: .fromHome
@@ -37,7 +36,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
                     .store(in: &self.subscriptions)
             },
             receive: {
-                self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
+                self.log(event: .sendnewReceiveClickButton(source: self.flow.rawValue))
                 if available(.ethAddressEnabled) {
                     let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(self.navigationController))
                     self.coordinate(to: coordinator)

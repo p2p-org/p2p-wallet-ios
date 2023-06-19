@@ -252,7 +252,7 @@ struct SendInputView_Previews: PreviewProvider {
                 ),
                 preChosenWallet: nil,
                 preChosenAmount: nil,
-                source: .none,
+                flow: .send,
                 allowSwitchingMainAmountType: false,
                 sendViaLinkSeed: nil
             )
