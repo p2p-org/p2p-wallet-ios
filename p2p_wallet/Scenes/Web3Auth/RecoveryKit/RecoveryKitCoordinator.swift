@@ -108,10 +108,10 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
     }
 
     func openDevices() {
-        let view = UIHostingController(rootView: RecoveryKitDevicesView(viewModel: .init()))
-        view.title = "Devices"
-
-        navigationController.pushViewController(view, animated: true)
+        let coordinator = RecoveryKitDevicesCoordinator(navigationController: navigationController)
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }
 

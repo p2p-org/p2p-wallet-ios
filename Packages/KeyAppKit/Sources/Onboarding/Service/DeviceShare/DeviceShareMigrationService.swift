@@ -38,10 +38,9 @@ public class DeviceShareMigrationService {
     }
 
     /// Start migration of device share. The old share in old device will be invalid.
-    func migrate(
+    public func migrate(
         on facade: TKeyFacade,
         for userEthAddress: String,
-        currentMetadata: WalletMetaData,
         deviceShareStorage: DeviceShareManager,
         metadataService: WalletMetadataService
     ) async throws {
@@ -58,9 +57,12 @@ public class DeviceShareMigrationService {
         guard ethAddress == userEthAddress else {
             throw errorObserver.watchError(Error.ethAddressesAreDifference)
         }
+        
+        guard var currentMetadata = metadataService.metadata.value else {
+            throw errorObserver.watchError(Error.metadataError)
+        }
 
         // Update metadata
-        var currentMetadata = currentMetadata
         currentMetadata.deviceName = Device.currentDevice()
         let serializedMetadata = try currentMetadata.serialize()
         guard let serializedMetadataStr = String(data: serializedMetadata, encoding: .utf8) else {

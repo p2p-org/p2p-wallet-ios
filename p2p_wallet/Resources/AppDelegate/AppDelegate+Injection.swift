@@ -305,6 +305,10 @@ extension Resolver: ResolverRegistering {
 
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
+        
+        register { AuthServiceBridge() }
+            .implements(SocialAuthService.self)
+            .scope(.application)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
     }

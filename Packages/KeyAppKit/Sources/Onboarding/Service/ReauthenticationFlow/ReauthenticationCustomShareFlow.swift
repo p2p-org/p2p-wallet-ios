@@ -15,6 +15,7 @@ public enum ReauthenticationCustomShareEvent: Codable, Equatable {
     case start
     case resendOTP
     case enterOTP(String)
+    case back
 }
 
 public struct ReauthenticationCustomShareResult: Equatable {
@@ -28,14 +29,19 @@ public enum ReauthenticationCustomShareState: State, Equatable {
 
     public static var initialState: Self = .otpInput(
         phoneNumber: "",
-        solPrivateKey: Data()
+        solPrivateKey: Data(),
+        resendCounter: .init(.zero())
     )
 
     case otpInput(
         phoneNumber: String,
-        solPrivateKey: Data
+        solPrivateKey: Data,
+        resendCounter: Wrapper<ResendCounter>
     )
+
     case finish(result: ReauthenticationCustomShareResult)
+
+    case cancel
 
     public func accept(currentState: Self, event: Event, provider: Provider) async throws -> Self {
         switch currentState {
@@ -47,6 +53,9 @@ public enum ReauthenticationCustomShareState: State, Equatable {
             )
         case .finish:
             return currentState
+
+        case .cancel:
+            return currentState
         }
     }
 
@@ -55,7 +64,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
         event: Event,
         provider: Provider
     ) async throws -> Self {
-        guard case let .otpInput(phoneNumber, solPrivateKey) = state else {
+        guard case let .otpInput(phoneNumber, solPrivateKey, _) = state else {
             throw StateMachineError.invalidState
         }
 
@@ -69,6 +78,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
             )
 
             return self
+
         case let .enterOTP(code):
             let result = try await provider.apiGateway.confirmRestoreWallet(
                 solanaPrivateKey: solPrivateKey,
@@ -83,6 +93,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
                     encryptedMnemonic: result.encryptedPayload
                 )
             )
+
         case .resendOTP:
             try await provider.apiGateway.restoreWallet(
                 solPrivateKey: solPrivateKey,
@@ -92,6 +103,20 @@ public enum ReauthenticationCustomShareState: State, Equatable {
             )
 
             return self
+
+        case .back:
+            return .cancel
+        }
+    }
+}
+
+extension ReauthenticationCustomShareState: Step {
+    public var step: Float {
+        switch self {
+        case .otpInput:
+            return 1
+        default:
+            return 0
         }
     }
 }

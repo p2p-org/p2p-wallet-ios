@@ -134,7 +134,7 @@ public struct WalletMetaData: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case ethPublic = "eth_public"
         case deviceName = "device_name"
-        case deviceNameTimestamp = "device_name_timestamp3"
+        case deviceNameTimestamp = "device_name_timestamp"
         case email
         case emailTimestamp = "email_timestamp"
         case authProvider = "auth_provider"

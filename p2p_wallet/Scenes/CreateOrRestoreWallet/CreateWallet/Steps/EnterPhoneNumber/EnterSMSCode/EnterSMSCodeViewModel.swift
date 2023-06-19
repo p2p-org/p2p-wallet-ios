@@ -103,6 +103,12 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     }
 
     func viewDidLoad() {
+        coordinatorIO.onStart.sendProcess { [weak self] error in
+            if let error {
+                self?.notificationService.showInAppNotification(.error(error))
+            }
+        }
+
         switch strategy {
         case .create:
             analyticsManager.log(event: .createSmsScreen)
@@ -218,6 +224,7 @@ extension EnterSMSCodeViewModel {
         let error: PassthroughSubject<Error?, Never> = .init()
         let onConfirm: PassthroughSubject<String, Never> = .init()
         let onResend: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+        let onStart: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
         let showInfo: PassthroughSubject<Void, Never> = .init()
         let goBack: PassthroughSubject<Void, Never> = .init()
     }

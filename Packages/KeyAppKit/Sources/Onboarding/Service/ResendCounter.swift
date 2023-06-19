@@ -21,13 +21,13 @@ public struct ResendCounter: Codable, Equatable {
 
     private func interval(for attempt: Int) -> TimeInterval {
         let timeInterval = attempt >= EnterSMSCodeCountdownLegs.count
-        ? EnterSMSCodeCountdownLegs[EnterSMSCodeCountdownLegs.count - 1]
-        : EnterSMSCodeCountdownLegs[attempt]
+            ? EnterSMSCodeCountdownLegs[EnterSMSCodeCountdownLegs.count - 1]
+            : EnterSMSCodeCountdownLegs[attempt]
         return timeInterval
     }
 
-    static func zero() -> Self {
-        .init(attempt: 0, until:  Date().ceiled().addingTimeInterval(EnterSMSCodeCountdownLegs[0]))
+    public static func zero() -> Self {
+        .init(attempt: 0, until: Date().ceiled().addingTimeInterval(EnterSMSCodeCountdownLegs[0]))
     }
 }
 

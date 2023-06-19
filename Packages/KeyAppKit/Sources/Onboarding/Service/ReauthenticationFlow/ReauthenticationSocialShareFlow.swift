@@ -16,18 +16,20 @@ public struct ReauthenticationSocialShareProvider {
     let socialAuthService: SocialAuthService
 }
 
-public enum ReauthenticationSocialShareAction {
+public enum ReauthenticationSocialShareEvent {
     case signIn
+    case cancel
 }
 
 public enum ReauthenticationSocialShareState: State, Equatable {
-    public typealias Event = ReauthenticationSocialShareAction
+    public typealias Event = ReauthenticationSocialShareEvent
     public typealias Provider = ReauthenticationSocialShareProvider
 
     public static var initialState: Self = .signIn(socialProvider: .google)
 
     case signIn(socialProvider: SocialProvider)
     case finish(result: ReauthenticationSocialShareResult)
+    case cancel
 
     public func accept(currentState: Self, event: Event, provider: Provider) async throws -> Self {
         switch currentState {
@@ -37,7 +39,11 @@ public enum ReauthenticationSocialShareState: State, Equatable {
                 event: event,
                 provider: provider
             )
+
         case .finish:
+            return currentState
+
+        case .cancel:
             return currentState
         }
     }
@@ -54,6 +60,8 @@ public enum ReauthenticationSocialShareState: State, Equatable {
         switch event {
         case .signIn:
             let (tokenId, _) = try await provider.socialAuthService.auth(type: socialProvider)
+
+            try await provider.tkeyFacade.initialize()
             let torusKey = try await provider.tkeyFacade
                 .obtainTorusKey(
                     tokenID: TokenID(
@@ -63,6 +71,20 @@ public enum ReauthenticationSocialShareState: State, Equatable {
                 )
 
             return .finish(result: ReauthenticationSocialShareResult(torusKey: torusKey))
+
+        case .cancel:
+            return .cancel
+        }
+    }
+}
+
+extension ReauthenticationSocialShareState: Step {
+    public var step: Float {
+        switch self {
+        case .signIn:
+            return 1
+        default:
+            return 0
         }
     }
 }

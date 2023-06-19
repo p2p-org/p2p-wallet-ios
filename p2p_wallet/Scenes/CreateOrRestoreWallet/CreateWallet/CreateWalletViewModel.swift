@@ -29,7 +29,7 @@ final class CreateWalletViewModel: BaseViewModel, ObservableObject {
         onboardingStateMachine = .init(
             initialState: initialState,
             provider: .init(
-                authService: AuthServiceBridge(),
+                authService: Resolver.resolve(),
                 apiGatewayClient: Resolver.resolve(),
                 tKeyFacade: provider.createTKeyFacade(),
                 deviceName: modelCode ?? ""

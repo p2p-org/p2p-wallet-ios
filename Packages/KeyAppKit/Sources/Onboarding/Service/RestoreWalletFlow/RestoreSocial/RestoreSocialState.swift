@@ -174,6 +174,7 @@ private extension RestoreSocialState {
             )
             return .finish(.successful(seedPhrase: result.privateSOL, ethPublicKey: result.reconstructedETH))
         } catch let error as TKeyFacadeError {
+            debugPrint(error)
             let data = RestoreSocialData(torusKey: torusKey, email: email)
             switch error.code {
             case 1009:

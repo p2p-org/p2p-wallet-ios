@@ -78,13 +78,15 @@ final class TabBarController: UITabBarController {
         deviceShareMigration
             .isMigrationAvailablePublisher
             .sink { [weak self] migrationIsAvailable in
-                if migrationIsAvailable {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                        .selectedImage = .selectedTabBarSettingsWithAlert
-                } else {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                DispatchQueue.main.async {
+                    if migrationIsAvailable {
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                            .selectedImage = .selectedTabBarSettingsWithAlert
+                    } else {
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                    }
                 }
             }
             .store(in: &subscriptions)

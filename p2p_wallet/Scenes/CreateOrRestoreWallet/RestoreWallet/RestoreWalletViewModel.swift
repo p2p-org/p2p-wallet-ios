@@ -38,7 +38,7 @@ final class RestoreWalletViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(provider: RestoreWalletFlowContainer(
             tKeyFacade: provider.createTKeyFacade(),
             deviceShare: deviceShare,
-            authService: AuthServiceBridge(),
+            authService: Resolver.resolve(),
             apiGatewayClient: Resolver.resolve(),
             icloudAccountProvider: keychainStorage
         ))
