@@ -32,6 +32,12 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
 
     /// Subject that handles the result
     private let resultSubject = PassthroughSubject<AuthenticationCoordinatorResult, Never>()
+
+    /// Main viewController of the flow
+    private var mainViewController: UIViewController!
+
+    /// ForgetPIN viewController
+    private var forgetPinViewController: UIViewController?
     
     // MARK: - Initializer
     
@@ -115,20 +121,20 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
         }
         
         // Create hosting controller for pincode view
-        let vc = UIHostingController(rootView: authenticationPincodeView)
+        mainViewController = UIHostingController(rootView: authenticationPincodeView)
         
         // Show pincode view as full screen
         if isFullscreen {
-            vc.modalPresentationStyle = .fullScreen
+            mainViewController.modalPresentationStyle = .fullScreen
         }
         
         // Present pincode view from the presenting view controller
-        presentingViewController.present(vc, animated: true)
+        presentingViewController.present(mainViewController, animated: true)
         
         // Dismiss vc when receiving result
         resultSubject
-            .sink { [weak vc] _ in
-                vc?.dismiss(animated: true)
+            .sink { [weak self] _ in
+                self?.mainViewController.dismiss(animated: true)
             }
             .store(in: &subscriptions)
         
@@ -147,26 +153,13 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
     ) {
         var view = ForgetPinView(text: text ?? L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain)
         
-        let transition = PanelTransition()
-        transition.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
-        let forgetPinViewController = UIHostingController(rootView: view)
-        forgetPinViewController.view.layer.cornerRadius = 20
-        forgetPinViewController.transitioningDelegate = transition
-        forgetPinViewController.modalPresentationStyle = .custom
-        
-        transition.dimmClicked
-            .sink { [weak forgetPinViewController] in
-                forgetPinViewController?.dismiss(animated: true)
-            }
-            .store(in: &subscriptions)
-        
-        view.close = { [weak forgetPinViewController] in
-            forgetPinViewController?.dismiss(animated: true)
+        view.close = { [weak self] in
+            self?.forgetPinViewController?.dismiss(animated: true)
         }
-        view.onLogout = { [weak forgetPinViewController, weak self] in
+        view.onLogout = { [weak self] in
             guard let self else { return }
-            forgetPinViewController?.dismiss(animated: true, completion: {
-                self.presentingViewController.showAlert(
+            self.forgetPinViewController?.dismiss(animated: true, completion: {
+                self.mainViewController.showAlert(
                     title: L10n.doYouWantToLogOut,
                     message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
                     buttonTitles: [L10n.logOut, L10n.stay],
@@ -179,6 +172,19 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             })
         }
         
-        presentingViewController.present(forgetPinViewController, animated: true)
+        let transition = PanelTransition()
+        transition.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
+        forgetPinViewController = UIHostingController(rootView: view)
+        forgetPinViewController?.view.layer.cornerRadius = 20
+        forgetPinViewController?.transitioningDelegate = transition
+        forgetPinViewController?.modalPresentationStyle = .custom
+        
+        transition.dimmClicked
+            .sink { [weak self] in
+                self?.forgetPinViewController?.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+        
+        mainViewController.present(forgetPinViewController!, animated: true)
     }
 }
