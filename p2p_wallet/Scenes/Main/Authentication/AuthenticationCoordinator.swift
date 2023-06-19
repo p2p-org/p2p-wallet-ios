@@ -38,6 +38,9 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
 
     /// ForgetPIN viewController
     private var forgetPinViewController: UIViewController?
+
+    /// Transition for forgetPINViewController
+    private var transition: PanelTransition?
     
     // MARK: - Initializer
     
@@ -69,9 +72,15 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             return Just(.success).prefix(1).eraseToAnyPublisher()
         }
         
+        // Assert pincode
+        guard let correctPincode = Resolver.resolve(PincodeStorageType.self).pinCode else {
+            // Just logout without authentication
+            return Just(.logout).prefix(1).eraseToAnyPublisher()
+        }
+        
         // Create pincode view model and observe events
         let authenticationPincodeViewModel = AuthenticationPincodeViewModel(
-            correctPincode: "111111"
+            correctPincode: correctPincode
         )
 
         authenticationPincodeViewModel.pincodeSuccess
@@ -172,14 +181,14 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             })
         }
         
-        let transition = PanelTransition()
-        transition.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
+        transition = PanelTransition()
+        transition!.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
         forgetPinViewController = UIHostingController(rootView: view)
         forgetPinViewController?.view.layer.cornerRadius = 20
         forgetPinViewController?.transitioningDelegate = transition
         forgetPinViewController?.modalPresentationStyle = .custom
         
-        transition.dimmClicked
+        transition!.dimmClicked
             .sink { [weak self] in
                 self?.forgetPinViewController?.dismiss(animated: true)
             }
