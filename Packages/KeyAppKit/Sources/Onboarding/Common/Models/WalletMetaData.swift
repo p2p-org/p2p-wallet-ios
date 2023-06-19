@@ -33,6 +33,12 @@ public struct WalletMetaData: Codable, Equatable {
             case userId = "user_id"
             case userIdTimestamp = "user_id_timestamp"
         }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: WalletMetaData.Striga.CodingKeys.self)
+            try container.encodeIfPresent(self.userId, forKey: WalletMetaData.Striga.CodingKeys.userId)
+            try container.encode(self.userIdTimestamp.millisecondsSince1970, forKey: WalletMetaData.Striga.CodingKeys.userIdTimestamp)
+        }
 
         static func merge(lhs: Striga, rhs: Striga) -> Striga {
             Striga(
@@ -130,6 +136,20 @@ public struct WalletMetaData: Codable, Equatable {
         striga = try container.decodeIfPresent(Striga.self, forKey: .striga)
             ?? .init(userId: nil, userIdTimestamp: initialDate)
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.ethPublic, forKey: .ethPublic)
+        try container.encode(self.deviceName, forKey: .deviceName)
+        try container.encode(self.deviceNameTimestamp.millisecondsSince1970, forKey: .deviceNameTimestamp)
+        try container.encode(self.email, forKey: .email)
+        try container.encode(self.emailTimestamp.millisecondsSince1970, forKey: .emailTimestamp)
+        try container.encode(self.authProvider, forKey: .authProvider)
+        try container.encode(self.authProviderTimestamp.millisecondsSince1970, forKey: .authProviderTimestamp)
+        try container.encode(self.phoneNumber, forKey: .phoneNumber)
+        try container.encode(self.phoneNumberTimestamp.millisecondsSince1970, forKey: .phoneNumberTimestamp)
+        try container.encode(self.striga, forKey: .striga)
+    }
 
     enum CodingKeys: String, CodingKey {
         case ethPublic = "eth_public"
@@ -224,5 +244,15 @@ public extension WalletMetaData {
 
             striga: striga
         )
+    }
+}
+
+private extension Date {
+    var millisecondsSince1970: Int64 {
+        Int64((self.timeIntervalSince1970 * 1000.0).rounded())
+    }
+    
+    init(milliseconds:Int64) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
     }
 }
