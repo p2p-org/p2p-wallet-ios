@@ -12,11 +12,11 @@ import SolanaSwift
 
 extension AppCoordinator: AppEventHandlerDelegate {
     func didStartLoading() {
-        window?.showLoadingIndicatorView()
+        window.showLoadingIndicatorView()
     }
 
     func didStopLoading() {
-        window?.hideLoadingIndicatorView()
+        window.hideLoadingIndicatorView()
     }
 
     func userDidChangeAPIEndpoint(to _: APIEndPoint) {
@@ -43,7 +43,7 @@ extension AppCoordinator: AppEventHandlerDelegate {
     }
 
     func userDidChangeTheme(to style: UIUserInterfaceStyle) {
-        window?.overrideUserInterfaceStyle = style
+        window.overrideUserInterfaceStyle = style
     }
     
     func disablePincodeOnFirstAppear() {
