@@ -42,7 +42,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         
         // Delay a little bit for transaction to be completed
         DispatchQueue.main.async { [weak self] in
-            self?.bind()
+            self?.bind(authenticateWhenAppears: authenticateWhenAppears)
         }
     }
 
@@ -84,18 +84,26 @@ final class TabBarCoordinator: Coordinator<Void> {
     
     // MARK: - Helpers
 
-    private func bind() {
+    private func bind(authenticateWhenAppears: Bool) {
         listenToActionsButton()
         listenToWallet()
         
         // Deeplink
         // Observe appDidBecomeActive
-        NotificationCenter.default
+        var publisher = NotificationCenter.default
             .publisher(for: UIApplication.didBecomeActiveNotification)
             .map { _ in () }
+            .eraseToAnyPublisher()
+        
+        if !authenticateWhenAppears {
             // fill first event as first time opening app the appDidBecomeActive
             // will not be called
-            .prepend(())
+            publisher = publisher
+                .dropFirst(1)
+                .eraseToAnyPublisher()
+        }
+            
+        publisher
             // wait for auth scene to complete (if needed)
             .flatMap(maxPublishers: .max(1)) { [unowned self] in
                 coordinate(to: AuthenticationCoordinator(
