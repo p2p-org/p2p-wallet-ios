@@ -9,25 +9,28 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     /// Indicates whether the "Face ID" option should be shown.
     let showFaceID: Bool
     
-    /// Indicates whether the "Forgot Pin" modal is currently shown.
-    @Published var showForgotModal: Bool = false
-    
     /// The snackbar model to show a brief message to the user.
     @Published var snackbar: SnackbarModel?
     
     // MARK: - Subjects
     
     /// Publishes the pincode string when the pincode authentication is successful.
-    var pincodeSuccess = PassthroughSubject<String, Never>()
-    
-    /// Publishes a void value when the pincode authentication fails.
-    var pincodeFailed = PassthroughSubject<Void, Never>()
+    var pincodeSuccess = PassthroughSubject<Void, Never>()
     
     /// Publishes a void value when the back button is tapped.
     var back = PassthroughSubject<Void, Never>()
     
     /// Publishes a void value when the info button is tapped.
     var infoDidTap = PassthroughSubject<Void, Never>()
+    
+    /// Publishes a void value when the forgetPIN button is tapped.
+    var forgetPinDidTap = PassthroughSubject<Void, Never>()
+    
+    /// Publishes a void value when the forgetPIN button is tapped.
+    var showSnackbar = PassthroughSubject<SnackbarModel, Never>()
+    
+    /// Publishes a void value when need to show last warning message.
+    var showLastWarningMessage = PassthroughSubject<Void, Never>()
     
     /// Publishes a void value when the user logs out.
     var logout = PassthroughSubject<Void, Never>()
@@ -45,25 +48,25 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Actions
     
-    /// Handles the tap on the biometrics option.
-    func biometricsTapped() {
-        // Handle biometrics tap
-    }
-    
-    /// Resets the pincode.
-    func resetPincode() {
-        // Reset pincode logic
-    }
-    
-    /// Handles the action triggered by the snackbar.
-    func handleSnackbarAction() {
-        // Handle snackbar action
-    }
-    
-    /// Logs out the user.
-    func logoutUser() {
-        // Logout user
-    }
+//    /// Handles the tap on the biometrics option.
+//    func biometricsTapped() {
+//        // Handle biometrics tap
+//    }
+//
+//    /// Resets the pincode.
+//    func resetPincode() {
+//        // Reset pincode logic
+//    }
+//
+//    /// Handles the action triggered by the snackbar.
+//    func handleSnackbarAction() {
+//        // Handle snackbar action
+//    }
+//
+//    /// Logs out the user.
+//    func logoutUser() {
+//        // Logout user
+//    }
 }
 
 extension AuthenticationPincodeViewModel {

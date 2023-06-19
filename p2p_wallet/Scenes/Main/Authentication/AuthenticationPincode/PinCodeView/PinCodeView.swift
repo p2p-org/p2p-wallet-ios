@@ -2,6 +2,8 @@ import Foundation
 import SwiftUI
 import KeyAppUI
 
+typealias AttemptCount = Int
+
 struct PinCodeView: View {
     // MARK: - Constants
     
@@ -16,7 +18,7 @@ struct PinCodeView: View {
     private var onSuccess: (() -> Void)?
     
     /// A callback closure to be called when the PIN code entry fails.
-    private var onFailed: (() -> Void)?
+    private var onFailed: ((AttemptCount) -> Void)?
     
     /// A callback closure to be called when the maximum number of failed attempts is exceeded.
     private var onFailedAndExceededMaxAttempts: (() -> Void)?
@@ -46,7 +48,7 @@ struct PinCodeView: View {
         maxAttemptsCount: Int? = nil,
         resetingDelayInSeconds: Int?,
         onSuccess: (() -> Void)? = nil,
-        onFailed: (() -> Void)? = nil,
+        onFailed: ((AttemptCount) -> Void)? = nil,
         onFailedAndExceededMaxAttempts: (() -> Void)? = nil,
         onForgetPIN: (() -> Void)? = nil
     ) {
@@ -136,7 +138,7 @@ struct PinCodeView: View {
             onSuccess?()
         }
         .onReceive(viewModel.onFailed) { _ in
-            onFailed?()
+            onFailed?(viewModel.attemptsCount)
         }
         .onReceive(viewModel.onFailedAndExceededMaxAttempts) { _ in
             onFailedAndExceededMaxAttempts?()
@@ -156,7 +158,7 @@ struct PinCodeView_Previews: PreviewProvider {
             onSuccess: {
                 
             },
-            onFailed: {
+            onFailed: { _ in
                 
             },
             onFailedAndExceededMaxAttempts: {
