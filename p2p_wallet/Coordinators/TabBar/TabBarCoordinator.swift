@@ -102,9 +102,15 @@ final class TabBarCoordinator: Coordinator<Void> {
                 ))
                     .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             }
-            .sink { [weak self] in
-                // open deeplink of needed
-                self?.openDeeplinkIfNeeded()
+            .sink { [weak self] result in
+                switch result {
+                case .success:
+                    // open deeplink of needed
+                    self?.openDeeplinkIfNeeded()
+                case .logout:
+                    // TODO: - logout
+                    break
+                }
             }
             .store(in: &subscriptions)
             

@@ -21,19 +21,11 @@ struct AuthenticationPincodeView: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationView {
-            content
-        }
-    }
-    
-    // MARK: - Private Views
-    
-    private var content: some View {
         PinCodeView(
             title: L10n.enterYourPIN,
-            showBiometry: true,
+            showBiometry: viewModel.showBiometry,
             showForgetPin: true,
-            correctPincode: "111111",
+            correctPincode: viewModel.correctPincode,
             maxAttemptsCount: maxAttemptsCount,
             resetingDelayInSeconds: 1
         ) {
@@ -74,9 +66,7 @@ struct AuthenticationPincodeView: View {
 struct PincodeView_Previews: PreviewProvider {
     static var previews: some View {
         AuthenticationPincodeView(
-            viewModel: .init(
-                showFaceID: true
-            )
+            viewModel: .init(correctPincode: "111111")
         )
     }
 }

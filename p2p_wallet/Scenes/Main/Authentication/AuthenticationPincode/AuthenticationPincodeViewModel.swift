@@ -5,9 +5,11 @@ import SwiftUI
 class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
+
+    let correctPincode: String
     
-    /// Indicates whether the "Face ID" option should be shown.
-    let showFaceID: Bool
+    /// Indicates whether the biometry (FaceID, TouchID) option should be shown.
+    @Published var showBiometry: Bool
     
     /// The snackbar model to show a brief message to the user.
     @Published var snackbar: SnackbarModel?
@@ -16,9 +18,6 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     /// Publishes the pincode string when the pincode authentication is successful.
     var pincodeSuccess = PassthroughSubject<Void, Never>()
-    
-    /// Publishes a void value when the back button is tapped.
-    var back = PassthroughSubject<Void, Never>()
     
     /// Publishes a void value when the info button is tapped.
     var infoDidTap = PassthroughSubject<Void, Never>()
@@ -42,31 +41,10 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     ///   - title: The title to be displayed in the pincode view.
     ///   - showForgetPin: Indicates whether the "Forgot Pin" option should be shown.
     ///   - showFaceID: Indicates whether the "Face ID" option should be shown.
-    init(showFaceID: Bool) {
-        self.showFaceID = showFaceID
+    init(correctPincode: String) {
+        self.correctPincode = correctPincode
+        self.showBiometry = true
     }
-    
-    // MARK: - Actions
-    
-//    /// Handles the tap on the biometrics option.
-//    func biometricsTapped() {
-//        // Handle biometrics tap
-//    }
-//
-//    /// Resets the pincode.
-//    func resetPincode() {
-//        // Reset pincode logic
-//    }
-//
-//    /// Handles the action triggered by the snackbar.
-//    func handleSnackbarAction() {
-//        // Handle snackbar action
-//    }
-//
-//    /// Logs out the user.
-//    func logoutUser() {
-//        // Logout user
-//    }
 }
 
 extension AuthenticationPincodeViewModel {

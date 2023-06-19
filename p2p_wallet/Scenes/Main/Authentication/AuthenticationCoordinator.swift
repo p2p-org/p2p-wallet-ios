@@ -2,9 +2,18 @@ import Foundation
 import SwiftUI
 import Combine
 import UIKit
+import Resolver
+
+/// Structure that indicates the result of the `AuthenticationCoordinator`.
+enum AuthenticationCoordinatorResult {
+    /// Authentication success.
+    case success
+    /// Authentication failed and user has to log out.
+    case logout
+}
 
 /// Coordinator of the authentication flow.
-final class AuthenticationCoordinator: Coordinator<Void> {
+final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResult> {
     
     // MARK: - Dependencies
     
@@ -18,8 +27,11 @@ final class AuthenticationCoordinator: Coordinator<Void> {
     /// Indicates whether the back button is available in the authentication flow
     private let isBackAvailable: Bool
 
-    //. Indicates whether the authentication flow should be presented as full screen
+    /// Indicates whether the authentication flow should be presented as full screen
     private let isFullscreen: Bool
+
+    /// Subject that handles the result
+    private let resultSubject = PassthroughSubject<AuthenticationCoordinatorResult, Never>()
     
     // MARK: - Initializer
     
@@ -44,20 +56,64 @@ final class AuthenticationCoordinator: Coordinator<Void> {
     
     // MARK: - Methods
     
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<AuthenticationCoordinatorResult, Never> {
         // Detect if authentication is needed
         guard authenticationService.shouldAuthenticateUser() else {
             // Just return success without authentication
-            return Just(()).prefix(1).eraseToAnyPublisher()
+            return Just(.success).prefix(1).eraseToAnyPublisher()
         }
         
-        // Create pincode view
+        // Create pincode view model and observe events
         let authenticationPincodeViewModel = AuthenticationPincodeViewModel(
-            showFaceID: true
+            correctPincode: "111111"
         )
-        let authenticationPincodeView = AuthenticationPincodeView(
-            viewModel: authenticationPincodeViewModel
-        )
+
+        authenticationPincodeViewModel.pincodeSuccess
+            .sink { [weak resultSubject] in
+                resultSubject?.send(.success)
+            }
+            .store(in: &subscriptions)
+
+        authenticationPincodeViewModel.infoDidTap
+            .sink { _ in
+                Resolver.resolve(HelpCenterLauncher.self).launch()
+            }
+            .store(in: &subscriptions)
+
+        authenticationPincodeViewModel.forgetPinDidTap
+            .sink { _ in
+                // TODO: ForgetPINView
+                
+            }
+            .store(in: &subscriptions)
+
+        authenticationPincodeViewModel.showSnackbar
+            .sink { content in
+                // TODO: showSnackbar
+                
+            }
+            .store(in: &subscriptions)
+
+        authenticationPincodeViewModel.showLastWarningMessage
+            .sink { _ in
+                // TODO: showLastWarningMessage
+                
+            }
+            .store(in: &subscriptions)
+
+        authenticationPincodeViewModel.logout
+            .sink { _ in
+                // TODO: logout
+                
+            }
+            .store(in: &subscriptions)
+        
+        // Create view
+        let authenticationPincodeView = NavigationView {
+            AuthenticationPincodeView(
+                viewModel: authenticationPincodeViewModel
+            )
+        }
         
         // Create hosting controller for pincode view
         let vc = UIHostingController(rootView: authenticationPincodeView)
@@ -71,8 +127,7 @@ final class AuthenticationCoordinator: Coordinator<Void> {
         presentingViewController.present(vc, animated: true)
         
         // Return result on view deallocated
-        return vc.deallocatedPublisher()
-            .delay(for: .milliseconds(300), scheduler: RunLoop.main)
+        return resultSubject
             .prefix(1)
             .eraseToAnyPublisher()
     }
