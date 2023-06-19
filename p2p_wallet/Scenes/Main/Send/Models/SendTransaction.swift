@@ -18,6 +18,7 @@ struct SendTransaction: RawTransactionType {
     let payingFeeWallet: Wallet?
     let feeAmount: FeeAmount
     let currency: String
+    let analyticEvent: KeyAppAnalyticsEvent
     
     // MARK: - Computed properties
 
