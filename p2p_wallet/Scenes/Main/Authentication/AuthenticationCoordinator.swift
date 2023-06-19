@@ -83,11 +83,7 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             correctPincode: correctPincode
         )
 
-        Publishers.Merge(
-            viewModel.pincodeSuccess,
-            viewModel.biometrySuccess
-        )
-            .prefix(1)
+        viewModel.success
             .sink { [weak self] in
                 self?.mainViewController.dismiss(animated: true) {
                     self?.resultSubject.send(.success)

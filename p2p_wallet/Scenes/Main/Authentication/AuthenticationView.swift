@@ -30,10 +30,8 @@ struct AuthenticationView: View {
             resetingDelayInSeconds: 1
         ) { result in
             switch result {
-            case .successWithPinCode:
-                viewModel.pincodeSuccess.send(())
-            case .successWithBiometry:
-                viewModel.biometrySuccess.send(())
+            case .successWithPinCode, .successWithBiometry:
+                viewModel.success.send(())
             case let .failed(attemptCount, exeededMaxAttempt):
                 if exeededMaxAttempt {
                     viewModel.logout.send(())
