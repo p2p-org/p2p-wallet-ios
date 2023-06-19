@@ -3,10 +3,6 @@ import SwiftUI
 import KeyAppUI
 
 struct AuthenticationView: View {
-
-    // MARK: - Constants
-
-    private let maxAttemptsCount = 5
     
     // MARK: - Properties
     
@@ -26,19 +22,10 @@ struct AuthenticationView: View {
             isBiometryEnabled: Defaults.isBiometryEnabled,
             showForgetPin: true,
             correctPincode: viewModel.correctPincode,
-            maxAttemptsCount: maxAttemptsCount,
+            maxAttemptsCount: viewModel.maxAttemptsCount,
             resetingDelayInSeconds: 1
         ) { result in
-            switch result {
-            case .successWithPinCode, .successWithBiometry:
-                viewModel.success.send(())
-            case let .failed(attemptCount, exeededMaxAttempt):
-                if exeededMaxAttempt {
-                    viewModel.logout.send(())
-                } else if maxAttemptsCount - attemptCount == 2 {
-                    viewModel.showLastWarningMessage.send(())
-                }
-            }
+            viewModel.handleResult(result)
         } onForgetPIN: {
             // Handle on forgetPIN
             viewModel.forgetPinDidTap.send(())
@@ -66,7 +53,10 @@ struct AuthenticationView: View {
 struct PincodeView_Previews: PreviewProvider {
     static var previews: some View {
         AuthenticationView(
-            viewModel: .init(correctPincode: "111111")
+            viewModel: .init(
+                correctPincode: "111111",
+                maxAttemptsCount: 5
+            )
         )
     }
 }

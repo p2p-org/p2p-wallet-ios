@@ -80,7 +80,8 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
         
         // Create pincode view model and observe events
         let viewModel = AuthenticationViewModel(
-            correctPincode: correctPincode
+            correctPincode: correctPincode,
+            maxAttemptsCount: 5
         )
 
         viewModel.success

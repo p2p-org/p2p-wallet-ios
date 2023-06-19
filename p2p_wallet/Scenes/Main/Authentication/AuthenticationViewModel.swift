@@ -3,6 +3,11 @@ import SwiftUI
 
 /// The view model class that manages the authentication pincode view.
 class AuthenticationViewModel: BaseViewModel, ObservableObject {
+
+    // MARK: - Constants
+
+    /// Max attempts that user can try.
+    let maxAttemptsCount: Int
     
     // MARK: - Properties
 
@@ -39,8 +44,27 @@ class AuthenticationViewModel: BaseViewModel, ObservableObject {
     ///   - title: The title to be displayed in the pincode view.
     ///   - showForgetPin: Indicates whether the "Forgot Pin" option should be shown.
     ///   - showFaceID: Indicates whether the "Face ID" option should be shown.
-    init(correctPincode: String) {
+    init(
+        correctPincode: String,
+        maxAttemptsCount: Int
+    ) {
         self.correctPincode = correctPincode
+        self.maxAttemptsCount = maxAttemptsCount
+    }
+
+    // MARK: - Methods
+
+    func handleResult(_ result: PinCodeViewResult) {
+        switch result {
+        case .successWithPinCode, .successWithBiometry:
+            success.send(())
+        case let .failed(attemptCount, exeededMaxAttempt):
+            if exeededMaxAttempt {
+                logout.send(())
+            } else if maxAttemptsCount - attemptCount == 2 {
+                showLastWarningMessage.send(())
+            }
+        }
     }
 }
 
