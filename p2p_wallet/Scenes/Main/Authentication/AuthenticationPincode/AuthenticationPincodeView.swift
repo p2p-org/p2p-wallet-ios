@@ -23,7 +23,7 @@ struct AuthenticationPincodeView: View {
     var body: some View {
         PinCodeView(
             title: L10n.enterYourPIN,
-            showBiometry: viewModel.showBiometry,
+            isBiometryEnabled: Defaults.isBiometryEnabled,
             showForgetPin: true,
             correctPincode: viewModel.correctPincode,
             maxAttemptsCount: maxAttemptsCount,

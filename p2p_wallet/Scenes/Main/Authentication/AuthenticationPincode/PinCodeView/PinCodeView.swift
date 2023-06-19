@@ -42,7 +42,7 @@ struct PinCodeView: View {
     ///   - onForgetPIN: A closure to be called when the "Forgot PIN" button is tapped.
     init(
         title: String,
-        showBiometry: Bool,
+        isBiometryEnabled: Bool,
         showForgetPin: Bool,
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
@@ -55,7 +55,7 @@ struct PinCodeView: View {
         _viewModel = StateObject(wrappedValue: PinCodeViewModel(
             title: title,
             showForgetPin: showForgetPin,
-            showBiometry: showBiometry,
+            isBiometryEnabled: isBiometryEnabled,
             correctPincode: correctPincode,
             maxAttemptsCount: maxAttemptsCount,
             resetingDelayInSeconds: resetingDelayInSeconds
@@ -114,7 +114,7 @@ struct PinCodeView: View {
                 isPresentingError: viewModel.isPresentingError
             )
             NumpadView(
-                showBiometry: viewModel.showBiometry,
+                showBiometry: viewModel.isBiometryAvailable,
                 isDeleteButtonHidden: (viewModel.currentPincode?.count ?? 0) == 0,
                 isLocked: viewModel.isLocked,
                 didChooseNumber: { digit in
@@ -150,7 +150,7 @@ struct PinCodeView_Previews: PreviewProvider {
     static var previews: some View {
         PinCodeView(
             title: L10n.enterYourPIN,
-            showBiometry: true,
+            isBiometryEnabled: true,
             showForgetPin: true,
             correctPincode: "111111",
             maxAttemptsCount: 3,

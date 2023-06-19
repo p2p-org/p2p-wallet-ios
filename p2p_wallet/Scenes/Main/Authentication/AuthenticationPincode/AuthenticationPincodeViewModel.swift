@@ -6,10 +6,8 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
 
+    /// The expected pincode.
     let correctPincode: String
-    
-    /// Indicates whether the biometry (FaceID, TouchID) option should be shown.
-    @Published var showBiometry: Bool
     
     /// The snackbar model to show a brief message to the user.
     @Published var snackbar: SnackbarModel?
@@ -43,7 +41,6 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     ///   - showFaceID: Indicates whether the "Face ID" option should be shown.
     init(correctPincode: String) {
         self.correctPincode = correctPincode
-        self.showBiometry = true
     }
 }
 

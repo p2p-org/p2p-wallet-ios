@@ -1,13 +1,28 @@
 import Combine
+import LocalAuthentication
+import Resolver
 
 class PinCodeViewModel: BaseViewModel, ObservableObject {
+
+    // MARK: - Dependencies
+    
+    @Injected private var biometricsAuthProvider: BiometricsAuthProvider
+    
     // MARK: - Published Properties
     
+    @Published var isBiometryAvailable: Bool = false
     @Published var currentPincode: String?
     @Published var attemptsCount: Int = 0
     @Published var isPresentingError = false
     @Published var isLocked = false
+
+    // MARK: - Private properties
     
+    /// Status of biometry authentication.
+    private var bioAuthStatus: LABiometryType {
+        biometricsAuthProvider.availabilityStatus
+    }
+
     // MARK: - Constants
     
     /// The title to be displayed in the pincode view.
@@ -15,8 +30,7 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     
     /// Indicates whether the "Forgot Pin" option should be shown.
     let showForgetPin: Bool
-    
-    let showBiometry: Bool
+
     let correctPincode: String?
     let maxAttemptsCount: Int?
     let stackViewSpacing: CGFloat = 10
@@ -34,19 +48,26 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     init(
         title: String,
         showForgetPin: Bool,
-        showBiometry: Bool,
+        isBiometryEnabled: Bool,
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
         pincodeLength: Int = 6,
         resetingDelayInSeconds: Int?
     ) {
         self.title = title
-        self.showBiometry = showBiometry
         self.showForgetPin = showForgetPin
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
         self.pincodeLength = pincodeLength
         self.resetingDelayInSeconds = resetingDelayInSeconds
+        
+        super.init()
+        
+        // check if biometry available
+        isBiometryAvailable = isBiometryEnabled && (bioAuthStatus == .faceID || bioAuthStatus == .touchID)
+        
+        // start authenticating via biometry immediately
+        self.validateBiometry()
     }
     
     // MARK: - Public Methods
@@ -85,7 +106,17 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     }
     
     func validateBiometry() {
-        // TODO: - Biometry
+        guard isBiometryAvailable else { return }
+        biometricsAuthProvider.authenticate(
+            authenticationPrompt: L10n.enterPINCode, completion: { [weak self] success, _ in
+                if success {
+//                    self?.pincodeService.resetAttempts()
+//                    self.authenticationHandler.authenticate(presentationStyle: nil)
+//                    self.openMain.send((pin, success))
+                    self?.pincodeSuccess()
+                }
+            }
+        )
     }
     
     func validatePincode() {
