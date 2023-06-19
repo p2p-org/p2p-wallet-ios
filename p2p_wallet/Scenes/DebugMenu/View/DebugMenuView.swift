@@ -16,6 +16,8 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
+                metadata
+                
                 Group {
                     solanaEndpoint
                     swapEndpoint
@@ -38,6 +40,14 @@ struct DebugMenuView: View {
                 deviceShare
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
+        }
+    }
+    
+    var metadata: some View {
+        Section(header: Text("Metadata")) {
+            Button("Copy metdata") {
+                viewModel.copyMetadata()
+            }
         }
     }
     

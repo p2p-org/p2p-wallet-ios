@@ -101,6 +101,11 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         
         Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
     }
+    
+    func copyMetadata() {
+        UIPasteboard.general.string = Resolver.resolve(WalletMetadataService.self).metadata.value?.jsonString
+        Resolver.resolve(NotificationService.self).showToast(title: "Copied", text: "Metadata copied to clipboard")
+    }
 }
 
 extension DebugMenuViewModel {
