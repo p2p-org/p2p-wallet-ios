@@ -39,7 +39,11 @@ final class TabBarCoordinator: Coordinator<Void> {
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
-        bind()
+        
+        // Delay a little bit for transaction to be completed
+        DispatchQueue.main.async { [weak self] in
+            self?.bind()
+        }
     }
 
     // MARK: - Life cycle
