@@ -39,7 +39,8 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Subjects
     
-    var onSuccess = PassthroughSubject<Void, Never>()
+    var onSuccessWithPinCode = PassthroughSubject<Void, Never>()
+    var onSuccessWithBiometry = PassthroughSubject<Void, Never>()
     var onFailed = PassthroughSubject<Void, Never>()
     var onFailedAndExceededMaxAttempts = PassthroughSubject<Void, Never>()
     
@@ -113,7 +114,7 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
 //                    self?.pincodeService.resetAttempts()
 //                    self.authenticationHandler.authenticate(presentationStyle: nil)
 //                    self.openMain.send((pin, success))
-                    self?.pincodeSuccess()
+                    self?.biometrySuccess()
                 }
             }
         )
@@ -148,7 +149,13 @@ class PinCodeViewModel: BaseViewModel, ObservableObject {
     private func pincodeSuccess() {
         vibrate()
         attemptsCount = 0
-        onSuccess.send()
+        onSuccessWithPinCode.send(())
+    }
+    
+    private func biometrySuccess() {
+        vibrate()
+        attemptsCount = 0
+        onSuccessWithBiometry.send(())
     }
     
     private func pincodeFailed(exceededMaxAttempts: Bool) {

@@ -28,17 +28,19 @@ struct AuthenticationPincodeView: View {
             correctPincode: viewModel.correctPincode,
             maxAttemptsCount: maxAttemptsCount,
             resetingDelayInSeconds: 1
-        ) {
-            // Handle pincode success
-            viewModel.pincodeSuccess.send(())
-        } onFailed: { attemptCount in
-            // Show last warning message befor logging out
-            if maxAttemptsCount - attemptCount == 2 {
-                viewModel.showLastWarningMessage.send(())
+        ) { result in
+            switch result {
+            case .successWithPinCode:
+                viewModel.pincodeSuccess.send(())
+            case .successWithBiometry:
+                viewModel.biometrySuccess.send(())
+            case let .failed(attemptCount, exeededMaxAttempt):
+                if exeededMaxAttempt {
+                    viewModel.logout.send(())
+                } else if maxAttemptsCount - attemptCount == 2 {
+                    viewModel.showLastWarningMessage.send(())
+                }
             }
-        } onFailedAndExceededMaxAttempts: {
-            // Handle pincode failure with maximum attempts exceeded
-            viewModel.logout.send(())
         } onForgetPIN: {
             // Handle on forgetPIN
             viewModel.forgetPinDidTap.send(())

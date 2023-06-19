@@ -39,8 +39,7 @@ final class TabBarController: UITabBarController {
     private let authenticateWhenAppears: Bool
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
-    private lazy var blurEffectView: UIView = LockView()
-    private var localAuthVC: PincodeViewController?
+//    private lazy var blurEffectView: UIView = LockView()
 
     // MARK: - Initializers
 
@@ -104,8 +103,8 @@ final class TabBarController: UITabBarController {
         }
 
         // add blur EffectView for authentication scene
-        view.addSubview(blurEffectView)
-        blurEffectView.autoPinEdgesToSuperviewEdges()
+//        view.addSubview(blurEffectView)
+//        blurEffectView.autoPinEdgesToSuperviewEdges()
     }
 
     override func viewWillLayoutSubviews() {
@@ -120,93 +119,93 @@ final class TabBarController: UITabBarController {
 
     // MARK: - Authentications
     
-    private var lockWindow: UIWindow?
-    
-    private func setUpLockWindow() {
-        lockWindow = UIWindow(frame: UIScreen.main.bounds)
-        let lockVC = BaseVC()
-        let lockView = LockView()
-        lockVC.view.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
-        lockWindow?.rootViewController = lockVC
-    }
+//    private var lockWindow: UIWindow?
+//
+//    private func setUpLockWindow() {
+//        lockWindow = UIWindow(frame: UIScreen.main.bounds)
+//        let lockVC = BaseVC()
+//        let lockView = LockView()
+//        lockVC.view.addSubview(lockView)
+//        lockView.autoPinEdgesToSuperviewEdges()
+//        lockWindow?.rootViewController = lockVC
+//    }
+//
+//    private func showLockView() {
+//        setUpLockWindow()
+//        lockWindow?.makeKeyAndVisible()
+//        solanaTracker.stopTracking()
+//    }
+//
+//    private func removeLockWindow() {
+//        lockWindow?.rootViewController?.view.removeFromSuperview()
+//        lockWindow?.rootViewController = nil
+//        lockWindow?.isHidden = true
+//        lockWindow?.windowScene = nil
+//    }
+//
+//    private func hideLockView() {
+//        guard lockWindow != nil else { return }
+//        UIApplication.shared.windows.first?.makeKeyAndVisible()
+//        removeLockWindow()
+//    }
 
-    private func showLockView() {
-        setUpLockWindow()
-        lockWindow?.makeKeyAndVisible()
-        solanaTracker.stopTracking()
-    }
-    
-    private func removeLockWindow() {
-        lockWindow?.rootViewController?.view.removeFromSuperview()
-        lockWindow?.rootViewController = nil
-        lockWindow?.isHidden = true
-        lockWindow?.windowScene = nil
-    }
-
-    private func hideLockView() {
-        guard lockWindow != nil else { return }
-        UIApplication.shared.windows.first?.makeKeyAndVisible()
-        removeLockWindow()
-    }
-
-    private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
-        // dismiss
-        guard let authStyle = authStyle else {
-            localAuthVC?.dismiss(animated: true) { [unowned self] in
-                localAuthVC = nil
-            }
-            return
-        }
-        localAuthVC?.dismiss(animated: false)
-        let pincodeViewModel = PincodeViewModel(
-            state: .check,
-            isBackAvailable: !authStyle.options.contains(.required),
-            successNotification: ""
-        )
-        localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
-        if authStyle.options.contains(.fullscreen) {
-            localAuthVC?.modalPresentationStyle = .custom
-        }
-
-        var authSuccess = false
-        pincodeViewModel.openMain.eraseToAnyPublisher()
-            .sink { [weak self] _ in
-                authSuccess = true
-                self?.viewModel.authenticate(presentationStyle: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    authStyle.completion?(false)
-                }
-            }
-            .store(in: &subscriptions)
-        pincodeViewModel.infoDidTap
-            .sink(receiveValue: { [unowned self] in
-                helpLauncher.launch()
-            })
-            .store(in: &subscriptions)
-        localAuthVC?.onClose = { [weak self] in
-            self?.viewModel.authenticate(presentationStyle: nil)
-            if authSuccess == false {
-                authStyle.onCancel?()
-            }
-        }
-        presentLocalAuth()
-    }
-
-    private func presentLocalAuth() {
-        hideLockView()
-        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
-        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
-        if topController is UIAlertController {
-            let presenting = topController?.presentingViewController
-            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
-                guard let localAuthVC = localAuthVC else { return }
-                presenting?.present(localAuthVC, animated: true)
-            }
-        } else {
-            topController?.present(localAuthVC!, animated: true)
-        }
-    }
+//    private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
+//        // dismiss
+//        guard let authStyle = authStyle else {
+//            localAuthVC?.dismiss(animated: true) { [unowned self] in
+//                localAuthVC = nil
+//            }
+//            return
+//        }
+//        localAuthVC?.dismiss(animated: false)
+//        let pincodeViewModel = PincodeViewModel(
+//            state: .check,
+//            isBackAvailable: !authStyle.options.contains(.required),
+//            successNotification: ""
+//        )
+//        localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
+//        if authStyle.options.contains(.fullscreen) {
+//            localAuthVC?.modalPresentationStyle = .custom
+//        }
+//
+//        var authSuccess = false
+//        pincodeViewModel.openMain.eraseToAnyPublisher()
+//            .sink { [weak self] _ in
+//                authSuccess = true
+//                self?.viewModel.authenticate(presentationStyle: nil)
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                    authStyle.completion?(false)
+//                }
+//            }
+//            .store(in: &subscriptions)
+//        pincodeViewModel.infoDidTap
+//            .sink(receiveValue: { [unowned self] in
+//                helpLauncher.launch()
+//            })
+//            .store(in: &subscriptions)
+//        localAuthVC?.onClose = { [weak self] in
+//            self?.viewModel.authenticate(presentationStyle: nil)
+//            if authSuccess == false {
+//                authStyle.onCancel?()
+//            }
+//        }
+//        presentLocalAuth()
+//    }
+//
+//    private func presentLocalAuth() {
+//        hideLockView()
+//        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
+//        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
+//        if topController is UIAlertController {
+//            let presenting = topController?.presentingViewController
+//            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
+//                guard let localAuthVC = localAuthVC else { return }
+//                presenting?.present(localAuthVC, animated: true)
+//            }
+//        } else {
+//            topController?.present(localAuthVC!, animated: true)
+//        }
+//    }
 
     // MARK: - Helpers
 
@@ -241,11 +240,11 @@ final class TabBarController: UITabBarController {
 
     private func bind() {
         // delay authentication status
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-            self.viewModel.authenticationStatusPublisher
-                .sink(receiveValue: { [weak self] in self?.handleAuthenticationStatus($0) })
-                .store(in: &subscriptions)
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
+//            self.viewModel.authenticationStatusPublisher
+//                .sink(receiveValue: { [weak self] in self?.handleAuthenticationStatus($0) })
+//                .store(in: &subscriptions)
+//        }
 
         viewModel.moveToHistory
             .sink(receiveValue: { [unowned self] in
@@ -254,17 +253,17 @@ final class TabBarController: UITabBarController {
             .store(in: &subscriptions)
 
         // locking status
-        viewModel.isLockedPublisher
-            .sink(receiveValue: { [weak self] isLocked in
-                isLocked ? self?.showLockView() : self?.hideLockView()
-            })
-            .store(in: &subscriptions)
+//        viewModel.isLockedPublisher
+//            .sink(receiveValue: { [weak self] isLocked in
+//                isLocked ? self?.showLockView() : self?.hideLockView()
+//            })
+//            .store(in: &subscriptions)
 
         // blurEffectView
-        viewModel.authenticationStatusPublisher
-            .map { $0 == nil }
-            .assignWeak(to: \.isHidden, on: blurEffectView)
-            .store(in: &subscriptions)
+//        viewModel.authenticationStatusPublisher
+//            .map { $0 == nil }
+//            .assignWeak(to: \.isHidden, on: blurEffectView)
+//            .store(in: &subscriptions)
     }
 }
 

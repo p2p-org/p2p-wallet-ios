@@ -2,7 +2,16 @@ import Foundation
 import SwiftUI
 import KeyAppUI
 
-typealias AttemptCount = Int
+
+/// Result of authentication with `PinCodeView`
+enum PinCodeViewResult {
+    /// Success by using pincode
+    case successWithPinCode
+    /// Success by using biometry
+    case successWithBiometry
+    /// Failed with attemptCount and boolean indicates if exeededMaxAttempt
+    case failed(attemptCount: Int, exeededMaxAttempt: Bool)
+}
 
 struct PinCodeView: View {
     // MARK: - Constants
@@ -14,14 +23,8 @@ struct PinCodeView: View {
     
     @StateObject private var viewModel: PinCodeViewModel
     
-    /// A callback closure to be called when the PIN code is successfully entered.
-    private var onSuccess: (() -> Void)?
-    
-    /// A callback closure to be called when the PIN code entry fails.
-    private var onFailed: ((AttemptCount) -> Void)?
-    
-    /// A callback closure to be called when the maximum number of failed attempts is exceeded.
-    private var onFailedAndExceededMaxAttempts: (() -> Void)?
+    /// A callback closure to be called when one of result is called
+    private var onResult: ((PinCodeViewResult) -> Void)?
     
     /// A callback closure to be called when the "Forgot PIN" button is tapped.
     private var onForgetPIN: (() -> Void)?
@@ -47,9 +50,7 @@ struct PinCodeView: View {
         correctPincode: String? = nil,
         maxAttemptsCount: Int? = nil,
         resetingDelayInSeconds: Int?,
-        onSuccess: (() -> Void)? = nil,
-        onFailed: ((AttemptCount) -> Void)? = nil,
-        onFailedAndExceededMaxAttempts: (() -> Void)? = nil,
+        onResult: ((PinCodeViewResult) -> Void)? = nil,
         onForgetPIN: (() -> Void)? = nil
     ) {
         _viewModel = StateObject(wrappedValue: PinCodeViewModel(
@@ -60,9 +61,7 @@ struct PinCodeView: View {
             maxAttemptsCount: maxAttemptsCount,
             resetingDelayInSeconds: resetingDelayInSeconds
         ))
-        self.onSuccess = onSuccess
-        self.onFailed = onFailed
-        self.onFailedAndExceededMaxAttempts = onFailedAndExceededMaxAttempts
+        self.onResult = onResult
         self.onForgetPIN = onForgetPIN
     }
     
@@ -128,21 +127,24 @@ struct PinCodeView: View {
                 }
             )
         }
-        .onReceive(viewModel.$currentPincode) { _ in
-            viewModel.validatePincode()
-        }
-        .onAppear {
-            viewModel.reset()
-        }
-        .onReceive(viewModel.onSuccess) { _ in
-            onSuccess?()
-        }
-        .onReceive(viewModel.onFailed) { _ in
-            onFailed?(viewModel.attemptsCount)
-        }
-        .onReceive(viewModel.onFailedAndExceededMaxAttempts) { _ in
-            onFailedAndExceededMaxAttempts?()
-        }
+            .onReceive(viewModel.$currentPincode) { _ in
+                viewModel.validatePincode()
+            }
+            .onAppear {
+                viewModel.reset()
+            }
+            .onReceive(viewModel.onSuccessWithPinCode) { _ in
+                onResult?(.successWithPinCode)
+            }
+            .onReceive(viewModel.onSuccessWithBiometry) { _ in
+                onResult?(.successWithBiometry)
+            }
+            .onReceive(viewModel.onFailed) { _ in
+                onResult?(.failed(attemptCount: viewModel.attemptsCount, exeededMaxAttempt: false))
+            }
+            .onReceive(viewModel.onFailedAndExceededMaxAttempts) { _ in
+                onResult?(.failed(attemptCount: viewModel.attemptsCount, exeededMaxAttempt: true))
+            }
     }
 }
 
@@ -154,16 +156,7 @@ struct PinCodeView_Previews: PreviewProvider {
             showForgetPin: true,
             correctPincode: "111111",
             maxAttemptsCount: 3,
-            resetingDelayInSeconds: 1,
-            onSuccess: {
-                
-            },
-            onFailed: { _ in
-                
-            },
-            onFailedAndExceededMaxAttempts: {
-                
-            }
+            resetingDelayInSeconds: 1
         )
     }
 }

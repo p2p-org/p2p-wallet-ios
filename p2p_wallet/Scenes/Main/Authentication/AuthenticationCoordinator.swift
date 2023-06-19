@@ -83,9 +83,15 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             correctPincode: correctPincode
         )
 
-        authenticationPincodeViewModel.pincodeSuccess
-            .sink { [weak resultSubject] in
-                resultSubject?.send(.success)
+        Publishers.Merge(
+            authenticationPincodeViewModel.pincodeSuccess,
+            authenticationPincodeViewModel.biometrySuccess
+        )
+            .prefix(1)
+            .sink { [weak self] in
+                self?.mainViewController.dismiss(animated: true) {
+                    self?.resultSubject.send(.success)
+                }
             }
             .store(in: &subscriptions)
 
@@ -140,16 +146,8 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
         // Present pincode view from the presenting view controller
         presentingViewController.present(mainViewController, animated: true)
         
-        // Dismiss vc when receiving result
-        resultSubject
-            .sink { [weak self] _ in
-                self?.mainViewController.dismiss(animated: true)
-            }
-            .store(in: &subscriptions)
-        
         // Return result on view deallocated
         return resultSubject
-            .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             .prefix(1)
             .eraseToAnyPublisher()
     }
@@ -176,7 +174,9 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
                     destroingIndex: 0
                 ) { index in
                     guard index == 0 else { return }
-                    self.resultSubject.send(.logout)
+                    self.mainViewController.dismiss(animated: true) {
+                        self.resultSubject.send(.logout)
+                    }
                 }
             })
         }

@@ -14,8 +14,11 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Subjects
     
-    /// Publishes the pincode string when the pincode authentication is successful.
+    /// Publishes the pincode string when the pincode authentication is successful via pincode.
     var pincodeSuccess = PassthroughSubject<Void, Never>()
+
+    /// Publishes the pincode string when the pincode authentication is successful via biometry.
+    var biometrySuccess = PassthroughSubject<Void, Never>()
     
     /// Publishes a void value when the info button is tapped.
     var infoDidTap = PassthroughSubject<Void, Never>()
