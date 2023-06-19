@@ -81,9 +81,8 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             .store(in: &subscriptions)
 
         authenticationPincodeViewModel.forgetPinDidTap
-            .sink { _ in
-                // TODO: ForgetPINView
-                
+            .sink { [weak self] _ in
+                self?.openForgotPIN()
             }
             .store(in: &subscriptions)
 
@@ -126,9 +125,60 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
         // Present pincode view from the presenting view controller
         presentingViewController.present(vc, animated: true)
         
+        // Dismiss vc when receiving result
+        resultSubject
+            .sink { [weak vc] _ in
+                vc?.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+        
         // Return result on view deallocated
         return resultSubject
+            .delay(for: .milliseconds(300), scheduler: RunLoop.main)
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    // MARK: - Internal navigation
+
+    private func openForgotPIN(
+        text: String? = L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain,
+        height: CGFloat? = nil
+    ) {
+        var view = ForgetPinView(text: text ?? L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain)
+        
+        let transition = PanelTransition()
+        transition.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
+        let forgetPinViewController = UIHostingController(rootView: view)
+        forgetPinViewController.view.layer.cornerRadius = 20
+        forgetPinViewController.transitioningDelegate = transition
+        forgetPinViewController.modalPresentationStyle = .custom
+        
+        transition.dimmClicked
+            .sink { [weak forgetPinViewController] in
+                forgetPinViewController?.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+        
+        view.close = { [weak forgetPinViewController] in
+            forgetPinViewController?.dismiss(animated: true)
+        }
+        view.onLogout = { [weak forgetPinViewController, weak self] in
+            guard let self else { return }
+            forgetPinViewController?.dismiss(animated: true, completion: {
+                self.presentingViewController.showAlert(
+                    title: L10n.doYouWantToLogOut,
+                    message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
+                    buttonTitles: [L10n.logOut, L10n.stay],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) { index in
+                    guard index == 0 else { return }
+                    self.resultSubject.send(.logout)
+                }
+            })
+        }
+        
+        presentingViewController.present(forgetPinViewController, animated: true)
     }
 }
