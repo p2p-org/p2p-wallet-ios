@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import KeyAppUI
 
-struct AuthenticationPincodeView: View {
+struct AuthenticationView: View {
 
     // MARK: - Constants
 
@@ -10,11 +10,11 @@ struct AuthenticationPincodeView: View {
     
     // MARK: - Properties
     
-    @ObservedObject private var viewModel: AuthenticationPincodeViewModel
+    @ObservedObject private var viewModel: AuthenticationViewModel
     
     // MARK: - Initialization
     
-    init(viewModel: AuthenticationPincodeViewModel) {
+    init(viewModel: AuthenticationViewModel) {
         self.viewModel = viewModel
     }
     
@@ -67,7 +67,7 @@ struct AuthenticationPincodeView: View {
 
 struct PincodeView_Previews: PreviewProvider {
     static var previews: some View {
-        AuthenticationPincodeView(
+        AuthenticationView(
             viewModel: .init(correctPincode: "111111")
         )
     }

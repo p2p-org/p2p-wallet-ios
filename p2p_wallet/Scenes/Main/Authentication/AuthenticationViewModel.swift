@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 /// The view model class that manages the authentication pincode view.
-class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
+class AuthenticationViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
 
@@ -47,7 +47,7 @@ class AuthenticationPincodeViewModel: BaseViewModel, ObservableObject {
     }
 }
 
-extension AuthenticationPincodeViewModel {
+extension AuthenticationViewModel {
     /// Snackbar model to show to user
     struct SnackbarModel: Identifiable {
         /// The unique identifier for the snackbar model.

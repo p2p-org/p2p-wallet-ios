@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 import KeyAppUI
 
-
 /// Result of authentication with `PinCodeView`
 enum PinCodeViewResult {
     /// Success by using pincode

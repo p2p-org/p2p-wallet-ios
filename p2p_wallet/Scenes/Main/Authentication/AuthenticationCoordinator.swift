@@ -79,13 +79,13 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
         }
         
         // Create pincode view model and observe events
-        let authenticationPincodeViewModel = AuthenticationPincodeViewModel(
+        let viewModel = AuthenticationViewModel(
             correctPincode: correctPincode
         )
 
         Publishers.Merge(
-            authenticationPincodeViewModel.pincodeSuccess,
-            authenticationPincodeViewModel.biometrySuccess
+            viewModel.pincodeSuccess,
+            viewModel.biometrySuccess
         )
             .prefix(1)
             .sink { [weak self] in
@@ -95,48 +95,49 @@ final class AuthenticationCoordinator: Coordinator<AuthenticationCoordinatorResu
             }
             .store(in: &subscriptions)
 
-        authenticationPincodeViewModel.infoDidTap
+        viewModel.infoDidTap
             .sink { _ in
                 Resolver.resolve(HelpCenterLauncher.self).launch()
             }
             .store(in: &subscriptions)
 
-        authenticationPincodeViewModel.forgetPinDidTap
+        viewModel.forgetPinDidTap
             .sink { [weak self] _ in
                 self?.openForgotPIN()
             }
             .store(in: &subscriptions)
 
-        authenticationPincodeViewModel.showSnackbar
+        viewModel.showSnackbar
             .sink { content in
                 // TODO: showSnackbar
                 
             }
             .store(in: &subscriptions)
 
-        authenticationPincodeViewModel.showLastWarningMessage
+        viewModel.showLastWarningMessage
             .sink { _ in
                 // TODO: showLastWarningMessage
                 
             }
             .store(in: &subscriptions)
 
-        authenticationPincodeViewModel.logout
-            .sink { _ in
-                // TODO: logout
-                
+        viewModel.logout
+            .sink { [weak self] _ in
+                self?.mainViewController.dismiss(animated: true) {
+                    self?.resultSubject.send(.logout)
+                }
             }
             .store(in: &subscriptions)
         
         // Create view
-        let authenticationPincodeView = NavigationView {
-            AuthenticationPincodeView(
-                viewModel: authenticationPincodeViewModel
+        let authenticationView = NavigationView {
+            AuthenticationView(
+                viewModel: viewModel
             )
         }
         
         // Create hosting controller for pincode view
-        mainViewController = UIHostingController(rootView: authenticationPincodeView)
+        mainViewController = UIHostingController(rootView: authenticationView)
         
         // Show pincode view as full screen
         if isFullscreen {
