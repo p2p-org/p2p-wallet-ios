@@ -4,6 +4,7 @@ import SolanaSwift
 import TweetNacl
 
 class StrigaEndpointTests: XCTestCase {
+    let baseURL = "https://example.com/api"
     
     func testGetSignedTimestampMessage() async throws {
         let keyPair = try await KeyPair(
@@ -21,7 +22,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testGetKYC() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let userId = "userId"
         
@@ -32,7 +32,7 @@ class StrigaEndpointTests: XCTestCase {
         )
         
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/kyc/userId")
-        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertEqual(endpoint.method, .get)
         
         let expectedHeader = [
             "Content-Type": "application/json",
@@ -45,7 +45,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testVerifyMobileNumber() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let userId = "userId"
         let verificationCode = "code"
@@ -72,7 +71,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testGetUserDetails() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let userId = "abdicidjdi"
         
@@ -96,7 +94,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testCreateUser() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let body = StrigaCreateUserRequest(
             firstName: "Elon",
@@ -146,7 +143,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testResendSMS() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
 
@@ -171,7 +167,6 @@ class StrigaEndpointTests: XCTestCase {
     }
     
     func testKYCGetToken() throws {
-        let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
 
@@ -192,6 +187,33 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.header, expectedHeader)
 
         let expectedBody = "{\"userId\":\"ijivjiji-jfijdij\"}"
+        XCTAssertEqual(endpoint.body, expectedBody)
+    }
+    
+    func testGetAllWallets() throws {
+        let keyPair = try KeyPair()
+        let userId = "ijivjiji-jfijdij"
+        
+        let endpoint = try StrigaEndpoint.getAllWallets(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            startDate: Date(timeIntervalSince1970: 0),
+            endDate: Date(timeIntervalSince1970: 2),
+            page: 1
+        )
+        
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/get/all")
+        XCTAssertEqual(endpoint.method, .post)
+        
+        let expectedHeader = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+        
+        let expectedBody = "{\"endDate\":2000,\"page\":1,\"startDate\":0,\"userId\":\"ijivjiji-jfijdij\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
 }

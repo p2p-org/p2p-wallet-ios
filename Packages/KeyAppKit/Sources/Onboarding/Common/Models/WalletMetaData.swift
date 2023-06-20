@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 
 public struct WalletMetaData: Codable, Equatable {
     public static let ethPublicInfoKey = CodingUserInfoKey(rawValue: "ethPublic")!
@@ -244,11 +245,5 @@ public extension WalletMetaData {
 
             striga: striga
         )
-    }
-}
-
-private extension Date {
-    var millisecondsSince1970: Int64 {
-        Int64((self.timeIntervalSince1970 * 1000.0).rounded())
     }
 }

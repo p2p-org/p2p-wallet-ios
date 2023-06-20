@@ -1,5 +1,6 @@
 import Foundation
 import KeyAppNetworking
+import KeyAppKitCore
 import SolanaSwift
 import TweetNacl
 
@@ -18,6 +19,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     // MARK: - Initializer
 
     private init(
+        version: Int = 1,
         baseURL: String,
         path: String,
         method: HTTPMethod,
@@ -25,7 +27,7 @@ struct StrigaEndpoint: HTTPEndpoint {
         body: Encodable?
     ) throws {
         self.baseURL = baseURL
-        self.path = path
+        self.path = "/v\(version)" + path
         self.method = method
         self.keyPair = keyPair
         self.header = [
@@ -37,6 +39,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     }
 
     // MARK: - Factory methods
+
     static func getKYC(
         baseURL: String,
         keyPair: KeyPair,
@@ -44,7 +47,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/kyc/\(userId)",
+            path: "/user/kyc/\(userId)",
             method: .get,
             keyPair: keyPair,
             body: nil
@@ -59,7 +62,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/verify-mobile",
+            path: "/user/verify-mobile",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -76,7 +79,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/\(userId)",
+            path: "/user/\(userId)",
             method: .get,
             keyPair: keyPair,
             body: nil
@@ -90,7 +93,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/create",
+            path: "/user/create",
             method: .post,
             keyPair: keyPair,
             body: body
@@ -104,7 +107,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/resend-sms",
+            path: "/user/resend-sms",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -120,12 +123,34 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/kyc/start",
+            path: "/user/kyc/start",
             method: .post,
             keyPair: keyPair,
             body: [
                 "userId": userId
             ]
+        )
+    }
+
+    static func getAllWallets(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        startDate: Date,
+        endDate: Date,
+        page: Int
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/get/all",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": .init(userId),
+                "startDate": .init(startDate.millisecondsSince1970),
+                "endDate": .init(endDate.millisecondsSince1970),
+                "page": .init(page)
+            ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
 }
