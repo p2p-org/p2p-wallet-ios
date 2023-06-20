@@ -15,8 +15,8 @@ struct ReAuthSocialSignInView: View {
         VStack {
             Spacer()
             OnboardingContentView(data: .init(
-                image: .moneyDropsIllustration,
-                title: L10n.almostDone,
+                image: .easyToStart,
+                title: L10n.niceAlmostDone,
                 subtitle: "Confirm access to your account that was used to create the wallet"
             ))
             Spacer()
@@ -34,10 +34,21 @@ struct ReAuthSocialSignInView: View {
                     }
                 }
             }
+            .ignoresSafeArea()
             .background(
                 Color(Asset.Colors.lime.color)
-                    .ignoresSafeArea()
             )
+        }
+        .background(Color(Asset.Colors.lime.color))
+        .ignoresSafeArea()
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button() {
+                    viewModel.close()
+                } label: {
+                    Image(uiImage: UIImage.closeIcon)
+                }
+            }
         }
     }
 }

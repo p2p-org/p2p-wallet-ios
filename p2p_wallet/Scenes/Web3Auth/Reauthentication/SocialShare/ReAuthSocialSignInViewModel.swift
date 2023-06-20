@@ -20,6 +20,8 @@ class ReAuthSocialSignInViewModel: BaseViewModel, ObservableObject {
 
     let onContinue: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
 
+    let onClose: PassthroughSubject<Void, Never> = .init()
+    
     init(socialProvider: SocialProvider) {
         provider = socialProvider
     }
@@ -33,6 +35,10 @@ class ReAuthSocialSignInViewModel: BaseViewModel, ObservableObject {
                 self?.notificationService.showInAppNotification(.error(error))
             }
         }
+    }
+    
+    func close() {
+        onClose.send()
     }
 }
 

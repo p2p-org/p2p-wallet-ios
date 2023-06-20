@@ -17,6 +17,12 @@ class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<Reauthenticati
             let view = ReAuthSocialSignInView(viewModel: viewModel)
             let vc = UIHostingController(rootView: view)
 
+            viewModel.onClose.sink { [stateMachine] in
+                Task {
+                    try await stateMachine <- .cancel
+                }
+            }.store(in: &subscriptions)
+
             viewModel.onContinue.sinkAsync { [stateMachine] process in
                 process.start {
                     try await stateMachine <- .signIn

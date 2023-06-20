@@ -21,6 +21,11 @@ public enum ReauthenticationCustomShareEvent: Codable, Equatable {
 public struct ReauthenticationCustomShareResult: Equatable {
     let customShare: String
     let encryptedMnemonic: String
+    
+    public init(customShare: String, encryptedMnemonic: String) {
+        self.customShare = customShare
+        self.encryptedMnemonic = encryptedMnemonic
+    }
 }
 
 public enum ReauthenticationCustomShareState: State, Equatable {

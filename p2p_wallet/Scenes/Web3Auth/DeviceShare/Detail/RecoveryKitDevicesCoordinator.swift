@@ -27,7 +27,9 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
         let vm = RecoveryKitDevicesViewModel()
         let view = RecoveryKitDevicesView(viewModel: vm)
         let vc = UIHostingController(rootView: view)
-
+  
+        vc.title = L10n.devices
+        
         vm.action.sink { [weak self] action in
             switch action {
             case .setup:
