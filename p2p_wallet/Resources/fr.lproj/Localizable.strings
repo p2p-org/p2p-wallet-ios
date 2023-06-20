@@ -1376,3 +1376,4 @@
 "Security and privacy" = "Sécurité & confidentialité";
 "To access your account from another device, you need to use any 2 factors from the list below" = "Pour accéder à votre compte à partir d'un autre appareil, vous devez utiliser 2 facteurs parmi la liste ci-dessous";
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App respecte votre vie privée - il ne peut pas accéder à vos fonds ou à vos informations personnelles.  Vos informations restent stockées en toute sécurité sur votre appareil et dans la blockchain";
+"Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "La phrase de départ est le seul moyen d'accéder à vos fonds sur un autre appareil.  Key App n'a pas accès à ces informations.";

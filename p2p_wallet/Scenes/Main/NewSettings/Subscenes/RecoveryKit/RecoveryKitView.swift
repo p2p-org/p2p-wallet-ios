@@ -23,7 +23,12 @@ struct RecoveryKitView: View {
                     Text(L10n.securityAndPrivacy)
                         .fontWeight(.bold)
                         .apply(style: .title2)
-                    Text(L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow)
+                    Text(viewModel.model != nil ?
+                        // Web3Auth user
+                        L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow :
+                        // Seedphrase user
+                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice.keyAppDoesnTHaveAccessToThisInformation
+                    )
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
