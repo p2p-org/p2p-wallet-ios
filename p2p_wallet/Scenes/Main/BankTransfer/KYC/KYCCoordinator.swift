@@ -98,7 +98,9 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
                 }
             }
         }
-        
+
+        bindStatusChange()
+
         // present sdk
         presentKYC()
     }
@@ -117,5 +119,16 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     private func didFailToReceiveToken(error: Error?) {
         print(error)
         sdk.dismiss()
+    }
+
+    private func bindStatusChange() {
+        sdk.onStatusDidChange { (sdk, prevStatus) in
+            switch sdk.status {
+            case .initial, .incomplete, .temporarilyDeclined, .finallyRejected, .approved, .actionCompleted, .failed, .ready:
+                break
+            case .pending:
+                sdk.dismiss()
+            }
+        }
     }
 }
