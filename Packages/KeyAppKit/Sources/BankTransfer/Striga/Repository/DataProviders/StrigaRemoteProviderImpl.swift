@@ -76,8 +76,8 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             }
             return
         } catch HTTPClientError.invalidResponse(let response, let data) {
-            if response?.statusCode == 409,
-               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
+            if response?.statusCode == 409 {
+                let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
                 throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
             }
             throw HTTPClientError.invalidResponse(response, data)
@@ -88,12 +88,20 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.resendSMS(baseURL: baseURL, keyPair: keyPair, userId: userId)
         do {
-            _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+            let response = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+            // expect response to be Accepted
+            guard response == "Ok" else {
+                throw HTTPClientError.invalidResponse(nil, response.data(using: .utf8) ?? Data())
+            }
+            return
         } catch HTTPClientError.invalidResponse(let response, let data) {
             if response?.statusCode == 409,
-               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
-                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data),
+               error.errorCode == "00002"
+            {
+                throw BankTransferError.mobileAlreadyVerified
             }
+            throw HTTPClientError.invalidResponse(response, data)
         }
     }
 
@@ -106,8 +114,15 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     }
 }
 
+// MARK: - Error response
+
 struct StrigaRemoteProviderError: Codable {
+    let status: Int?
     let message: String?
     let errorCode: String?
-    let errorDetails: String?
+    let errorDetails: ErrorDetails?
+    
+    struct ErrorDetails: Codable {
+        let message: String
+    }
 }

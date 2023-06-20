@@ -118,9 +118,12 @@ final class StrigaRemoteProviderTests: XCTestCase {
         
         // Act
         try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
+        
+        // Assert
+        XCTAssertTrue(true)
     }
     
-    func testVerifyPhoneNumber_SuccessfulResponse_ReturnsEmpty400() async throws {
+    func testVerifyPhoneNumber_EmptyResponse400_ReturnsInvalidResponse() async throws {
         // Arrange
         let mockData = #"{}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
@@ -136,7 +139,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         }
     }
     
-    func testVerifyPhoneNumber_SuccessfulResponse_ReturnsErrorDetail409() async throws {
+    func testVerifyPhoneNumber_ErrorDetail409_ReturnsOtpExceededVerification() async throws {
         // Arrange
         let mockData = #"{"status":409,"errorCode":"30003","errorDetails":{"message":"Exceeded verification attempts"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
@@ -145,12 +148,59 @@ final class StrigaRemoteProviderTests: XCTestCase {
         do {
             try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
             XCTFail()
+        } catch BankTransferError.otpExceededVerification {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
+    }
+
+    // MARK: - Resend SMS
+
+    func testResendSMS_SuccessfulResponse_ReturnsAccepted() async throws {
+        // Arrange
+        let mockData = #"Ok"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+        
+        // Act
+        try await provider.resendSMS(userId: "123")
+        
+        // Assert
+        XCTAssertTrue(true)
+    }
+    
+    func testResendSMS_EmptyResponse400_ReturnsInvalidResponse() async throws {
+        // Arrange
+        let mockData = #"{}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 400)
+        
+        // Act
+        do {
+            try await provider.resendSMS(userId: "123")
+            XCTFail()
         } catch HTTPClientError.invalidResponse(_, _) {
             XCTAssertTrue(true)
         } catch {
             XCTFail()
         }
     }
+    
+    func testResendSMS_ErrorDetail409_ReturnsInvalidResponse() async throws {
+        // Arrange
+        let mockData = #"{"message":"Mobile is already verified","errorCode":"00002","errorDetails":{"message":"Mobile is already verified","errorDetails":"885d9dd3-56d1-416b-a85b-873fcec69071"}}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 409)
+        
+        // Act
+        do {
+            try await provider.resendSMS(userId: "123")
+            XCTFail()
+        } catch BankTransferError.mobileAlreadyVerified {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
+    }
+
     
     // ... Add more test methods for other StrigaRemoteProviderImpl methods ...
     
