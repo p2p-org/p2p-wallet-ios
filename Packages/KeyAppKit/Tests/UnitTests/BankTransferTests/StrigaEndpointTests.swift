@@ -269,18 +269,7 @@ class StrigaEndpointTests: XCTestCase {
         ]
         XCTAssertEqual(endpoint.header, expectedHeaders)
 
-        let expectedBody = [
-            "userId": userId,
-            "sourceAccountId": sourceAccountId,
-            "whitelistedAddressId": whitelistedAddressId,
-            "amount": amount
-        ]
-        XCTAssertEqual(
-            try! JSONDecoder().decode(
-                [String: String].self,
-                from: endpoint.body!.data(using: .utf8)!
-            ),
-            expectedBody
-        )
+        let expectedBody = "{\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
+        XCTAssertEqual(endpoint.body!, expectedBody)
     }
 }
