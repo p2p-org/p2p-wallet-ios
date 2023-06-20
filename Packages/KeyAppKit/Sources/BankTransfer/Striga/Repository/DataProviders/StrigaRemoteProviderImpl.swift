@@ -131,12 +131,5 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 // MARK: - Error response
 
 struct StrigaRemoteProviderError: Codable {
-    let status: Int?
-    let message: String?
     let errorCode: String?
-    let errorDetails: ErrorDetails?
-    
-    struct ErrorDetails: Codable {
-        let message: String
-    }
 }
