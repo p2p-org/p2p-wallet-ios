@@ -105,6 +105,27 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         }
     }
 
+    public func initiateOnChainWalletSend(
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) async throws -> StrigaWalletSendResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.initiateOnChainWalletSend(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            sourceAccountId: sourceAccountId,
+            whitelistedAddressId: whitelistedAddressId,
+            amount: amount
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaWalletSendResponse.self
+        )
+    }
+
     public func getKYCToken(userId: String) async throws -> String {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)

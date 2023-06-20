@@ -115,7 +115,29 @@ struct StrigaEndpoint: HTTPEndpoint {
             ]
         )
     }
-    
+
+    static func initiateOnChainWalletSend(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) throws -> Self {
+        return try .init(
+            baseURL: baseURL,
+            path: "/wallets/send/initiate/onchain",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "sourceAccountId": sourceAccountId,
+                "whitelistedAddressId": whitelistedAddressId,
+                "amount": amount
+            ]
+        )
+    }
+
     static func getKYCToken(
         baseURL: String,
         keyPair: KeyPair,
