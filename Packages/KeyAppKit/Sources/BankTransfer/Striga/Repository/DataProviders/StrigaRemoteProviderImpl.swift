@@ -134,17 +134,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             let response = try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
             return response.token
         } catch HTTPClientError.invalidResponse(let response, let data) {
-            do {
-                try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
-            } catch {
-                debugPrint(error)
-            }
-            // Response does not match StrigaRemoteProviderError for some reason and returns a string
-            let errorString = try JSONDecoder().decode(String.self, from: data)
-            for bankTransferError in [BankTransferError.kycVerificationInProgress, .kycAttemptLimitExceeded,
-                                      .kycRejectedCantRetry] {
-                if let regex = try? NSRegularExpression(pattern: "^(.*)\\\"\(bankTransferError.rawValue)\\\"(.*)$", options: []), regex.matches(errorString) {
-                    throw bankTransferError
+            if let errorCode = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data).errorCode {
+                for bankTransferError in [BankTransferError.kycVerificationInProgress, .kycAttemptLimitExceeded,
+                                          .kycRejectedCantRetry] {
+                    if String(bankTransferError.rawValue).elementsEqual(errorCode) {
+                        throw bankTransferError
+                    }
                 }
             }
             throw HTTPClientError.invalidResponse(response, data)
