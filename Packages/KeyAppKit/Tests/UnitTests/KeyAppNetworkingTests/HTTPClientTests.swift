@@ -26,6 +26,22 @@ class HTTPClientTests: XCTestCase {
         XCTAssertEqual(userModel.name, "John Doe")
     }
     
+    func testRequest_SuccessfulResponse_ReturnsString() async throws {
+        // Arrange
+        let mockString = "OK"
+        let mockURLSession = MockURLSession(responseString: mockString, statusCode: 200, error: nil)
+        let mockDecoder = JSONResponseDecoder()
+        
+        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .post, header: [:], body: nil)
+        
+        // Act
+        let response = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        
+        // Assert
+        XCTAssertEqual(response, "OK")
+    }
+    
     func testRequest_InvalidResponse_ThrowsError() async throws {
         // Arrange
         let mockData = Data()
