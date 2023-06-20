@@ -153,6 +153,24 @@ struct StrigaEndpoint: HTTPEndpoint {
             ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
+    
+    static func enrichAccount(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        accountId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/account/enrich",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "accountId": accountId
+            ]
+        )
+    }
 }
 
 extension KeyPair {

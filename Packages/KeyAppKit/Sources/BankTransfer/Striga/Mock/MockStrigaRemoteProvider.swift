@@ -114,4 +114,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {
         fatalError("Implementing")
     }
+    
+    public func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse {
+        fatalError("Implementing")
+    }
 }

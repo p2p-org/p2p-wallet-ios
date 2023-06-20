@@ -216,4 +216,31 @@ class StrigaEndpointTests: XCTestCase {
         let expectedBody = "{\"endDate\":2000,\"page\":1,\"startDate\":0,\"userId\":\"ijivjiji-jfijdij\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
+    
+    func testEnrichAccount() throws {
+        let keyPair = try KeyPair()
+        let userId = "19085577-4f74-40ad-a86c-0ad28d664170"
+        let accountId = "817c19ad473cd1bef869b408858156a2"
+        
+        let endpoint = try StrigaEndpoint.enrichAccount(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            accountId: accountId
+        )
+        
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/account/enrich")
+        XCTAssertEqual(endpoint.method, .post)
+        
+        let expectedHeader = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+        
+        let expectedBody = "{\"accountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\"}"
+        XCTAssertEqual(endpoint.body, expectedBody)
+    }
+
 }

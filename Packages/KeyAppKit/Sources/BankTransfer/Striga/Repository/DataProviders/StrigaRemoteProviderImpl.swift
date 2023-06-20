@@ -119,6 +119,13 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAllWalletsResponse.self)
     }
+    
+    public func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.enrichAccount(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId)
+        
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaEnrichedAccountResponse.self)
+    }
 }
 
 // MARK: - Error response

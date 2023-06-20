@@ -320,6 +320,24 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertTrue(usdcAccount?.enriched ?? false)
 
     }
+
+    // MARK: - Enrich account
+
+    func testEnrichAccount_SuccessfulResponse_ReturnsEnrichedAccount() async throws {
+        // Arrange
+        let mockData = #"{"blockchainDepositAddress":"0x59d42C04022E926DAF16d139aFCBCa0da33E2323","blockchainNetwork":{"name":"Binance USD (BSC Test)","type":"BEP20","contractAddress":"0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"}}"#
+    let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+    
+    // Act
+    let enrichedAccount = try await provider.enrichAccount(userId: "123", accountId: "456")
+    
+    // Assert
+    XCTAssertEqual(enrichedAccount.blockchainDepositAddress, "0x59d42C04022E926DAF16d139aFCBCa0da33E2323")
+    XCTAssertEqual(enrichedAccount.blockchainNetwork.name, "Binance USD (BSC Test)")
+    XCTAssertEqual(enrichedAccount.blockchainNetwork.type, "BEP20")
+    XCTAssertEqual(enrichedAccount.blockchainNetwork.contractAddress, "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee")
+}
+
     
     // MARK: - Helper Methods
     

@@ -10,4 +10,6 @@ public protocol StrigaRemoteProvider: AnyObject {
     func getKYCToken(userId: String) async throws -> String
     
     func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse
+    
+    func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse
 }
