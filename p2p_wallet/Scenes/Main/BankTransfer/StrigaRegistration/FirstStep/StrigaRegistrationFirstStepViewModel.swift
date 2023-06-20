@@ -194,7 +194,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func validate(credential: String, field: Field) {
-        if credential.isEmpty {
+        if credential.trimmed().isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
         } else if credential.count < Constants.minCredentialSymbols {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeLessThanSymbols(Constants.minCredentialSymbols))
@@ -241,8 +241,8 @@ private extension StrigaRegistrationFirstStepViewModel {
 
                 let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
                 let newData = currentData.updated(
-                    firstName: credentials.0,
-                    lastName: credentials.1,
+                    firstName: credentials.0.trimmed(),
+                    lastName: credentials.1.trimmed(),
                     mobile: mobile,
                     dateOfBirth: dateOfBirth.0,
                     placeOfBirth: dateOfBirth.1.alpha3Code
@@ -271,5 +271,11 @@ private extension StrigaRegistrationFirstStepViewModel {
 private extension Date {
     var year: Int {
         (Calendar.current.dateComponents([.year], from: self).year ?? 0)
+    }
+}
+
+private extension String {
+    func trimmed() -> String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

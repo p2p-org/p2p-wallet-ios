@@ -127,7 +127,7 @@ private extension StrigaRegistrationSecondStepViewModel {
     }
 
     func validate(value: String, field: Field, minLimit: Int? = nil, maxLimit: Int? = nil) {
-        if value.isEmpty {
+        if value.trimmed().isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
         } else if let minLimit, value.count < minLimit {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeLessThanSymbols(minLimit))
@@ -151,11 +151,11 @@ private extension StrigaRegistrationSecondStepViewModel {
 
                 let newData = currentData.updated(
                     address: StrigaUserDetailsResponse.Address(
-                        addressLine1: address2.0,
+                        addressLine1: address2.0.trimmed(),
                         addressLine2: nil,
-                        city: address1.1,
-                        postalCode: address2.1,
-                        state: address2.2.isEmpty ? nil : address2.2,
+                        city: address1.1.trimmed(),
+                        postalCode: address2.1.trimmed(),
+                        state: address2.2.trimmed().isEmpty ? nil : address2.2,
                         country: address1.0?.code
                     ),
                     occupation: .some(sourceOfFunds.0?.rawValue),
@@ -196,5 +196,11 @@ private extension StrigaRegistrationSecondStepViewModel {
                 }
             }
         }
+    }
+}
+
+private extension String {
+    func trimmed() -> String {
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
