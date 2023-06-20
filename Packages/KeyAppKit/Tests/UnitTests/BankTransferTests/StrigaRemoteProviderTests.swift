@@ -253,6 +253,73 @@ final class StrigaRemoteProviderTests: XCTestCase {
         }
     }
 
+    // MARK: - GetAllUserWallets
+
+    func testGetAllWalletsByUser_SuccessfulResponse_ReturnsStrigaGetAllWalletsResponse() async throws {
+        // Arrange
+        let mockData = #"{"wallets":[{"walletId":"3d57a943-8145-4183-8079-cd86b68d2993","accounts":{"EUR":{"accountId":"4dc6ecb29d74198e9e507f8025cad011","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"EUR","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.077Z","availableBalance":{"amount":"1888383","currency":"cents"},"linkedCardId":"UNLINKED","linkedBankAccountId":"EUR10112624134233","status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"USDC":{"accountId":"140ecf6f979975c8e868d14038004b37","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"USDC","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.078Z","availableBalance":{"amount":"5889","currency":"cents"},"linkedCardId":"UNLINKED","blockchainDepositAddress":"0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c","blockchainNetwork":{"name":"USD Coin Test (Goerli)","type":"ERC20","contractAddress":"0x07865c6E87B9F70255377e024ace6630C1Eaa37F"},"status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"syncedOwnerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.094Z","comment":"DEFAULT"}}],"count":1,"total":1}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+        
+        // Act
+        let response = try await provider.getAllWalletsByUser(userId: "123", startDate: Date(), endDate: Date(), page: 1)
+        
+        // Assert the count and total values
+        XCTAssertEqual(response.count, 1)
+        XCTAssertEqual(response.total, 1)
+        
+        // Assert the wallets array
+        XCTAssertEqual(response.wallets.count, 1)
+        
+        // Assert the first wallet
+        let wallet = response.wallets[0]
+        XCTAssertEqual(wallet.walletID, "3d57a943-8145-4183-8079-cd86b68d2993")
+        
+        // Assert the accounts within the wallet
+        let accounts = wallet.accounts
+        
+        // Assert the EUR account
+        let eurAccount = accounts.eur
+        XCTAssertEqual(eurAccount?.accountID, "4dc6ecb29d74198e9e507f8025cad011")
+        XCTAssertEqual(eurAccount?.currency, "EUR")
+        // ... continue asserting other properties of the EUR account
+        
+        // Assert the USDC account
+        let usdcAccount = accounts.usdc
+        XCTAssertEqual(usdcAccount?.accountID, "140ecf6f979975c8e868d14038004b37")
+        XCTAssertEqual(usdcAccount?.currency, "USDC")
+        XCTAssertEqual(usdcAccount?.parentWalletID, "3d57a943-8145-4183-8079-cd86b68d2993")
+        XCTAssertEqual(usdcAccount?.ownerID, "aa3534a1-d13d-4920-b023-97cb00d49bad")
+        XCTAssertEqual(usdcAccount?.ownerType, "CONSUMER")
+        XCTAssertEqual(usdcAccount?.createdAt, "2023-05-28T19:47:17.078Z")
+        
+        // Assert the available balance of USDC account
+        let usdcAvailableBalance = usdcAccount?.availableBalance
+        XCTAssertEqual(usdcAvailableBalance?.amount, "5889")
+        XCTAssertEqual(usdcAvailableBalance?.currency, "cents")
+        
+        // Assert the linked card ID of USDC account
+        XCTAssertEqual(usdcAccount?.linkedCardID, "UNLINKED")
+        
+        // Assert the blockchain deposit address of USDC account
+        XCTAssertEqual(usdcAccount?.blockchainDepositAddress, "0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c")
+        
+        // Assert the blockchain network details of USDC account
+        let usdcBlockchainNetwork = usdcAccount?.blockchainNetwork
+        XCTAssertEqual(usdcBlockchainNetwork?.name, "USD Coin Test (Goerli)")
+        XCTAssertEqual(usdcBlockchainNetwork?.type, "ERC20")
+        XCTAssertEqual(usdcBlockchainNetwork?.contractAddress, "0x07865c6E87B9F70255377e024ace6630C1Eaa37F")
+        
+        // Assert the status of USDC account
+        XCTAssertEqual(usdcAccount?.status, "ACTIVE")
+        
+        // Assert the permissions of USDC account
+        let usdcPermissions = usdcAccount?.permissions
+        XCTAssertEqual(usdcPermissions, ["CUSTODY", "TRADE", "INTER", "INTRA"])
+        
+        // Assert the enriched property of USDC account
+        XCTAssertTrue(usdcAccount?.enriched ?? false)
+
+    }
     
     // MARK: - Helper Methods
     

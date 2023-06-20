@@ -112,6 +112,13 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
             .token
     }
+
+    public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getAllWallets(baseURL: baseURL, keyPair: keyPair, userId: userId, startDate: startDate, endDate: endDate, page: page)
+        
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAllWalletsResponse.self)
+    }
 }
 
 // MARK: - Error response

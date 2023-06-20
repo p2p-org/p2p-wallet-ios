@@ -8,4 +8,6 @@ public protocol StrigaRemoteProvider: AnyObject {
     func resendSMS(userId: String) async throws
     
     func getKYCToken(userId: String) async throws -> String
+    
+    func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse
 }

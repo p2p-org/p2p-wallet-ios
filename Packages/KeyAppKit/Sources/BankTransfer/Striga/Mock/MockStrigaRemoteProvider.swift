@@ -110,4 +110,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             return mockKYCToken
         }
     }
+    
+    public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {
+        fatalError("Implementing")
+    }
 }
