@@ -17,6 +17,8 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    // MARK: - GetKYCStatus
+
     func testGetKYCStatus_SuccessfulResponse_ReturnsStrigaKYC() async throws {
         // Arrange
         let mockData = #"{"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","emailVerified":false,"mobileVerified":false,"status":"NOT_STARTED"}"#
@@ -29,7 +31,9 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(kycStatus.mobileVerified, false)
         XCTAssertEqual(kycStatus.status, .notStarted)
     }
-    
+
+    // MARK: - GetUserDetails
+
     func testGetUserDetails_SuccessfulResponse_ReturnsStrigaUserDetailsResponse() async throws {
         // Arrange
         let mockData = #"{"firstName":"Claudia","lastName":"Tracy Lind","email":"test_1655832993@mailinator.com","documentIssuingCountry":"PS","nationality":"RS","mobile":{"countryCode":"+372","number":"56316716"},"dateOfBirth":{"month":"1","day":"15","year":"2000"},"address":{"addressLine1":"Sepapaja 12","addressLine2":"Hajumaa","city":"Tallinn","state":"Tallinn","country":"EE","postalCode":"11412"},"occupation":"PRECIOUS_GOODS_JEWELRY","sourceOfFunds":"CIVIL_CONTRACT","purposeOfAccount":"CRYPTO_PAYMENTS","selfPepDeclaration":true,"placeOfBirth":"Antoniettamouth","expectedIncomingTxVolumeYearly":"MORE_THAN_15000_EUR","expectedOutgoingTxVolumeYearly":"MORE_THAN_15000_EUR","KYC":{"emailVerified":true,"mobileVerified":true,"status":"REJECTED","details":["UNSATISFACTORY_PHOTOS","SCREENSHOTS","PROBLEMATIC_APPLICANT_DATA"],"rejectionComments":{"userComment":"The full name on the profile is either missing or incorrect.","autoComment":"Please enter your first and last name exactly as they are written in your identity document."}},"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","createdAt":1655832993460}"#
@@ -71,7 +75,9 @@ final class StrigaRemoteProviderTests: XCTestCase {
 //        XCTAssertEqual(userDetails.KYC?.rejectionComments?.autoComment, "Please enter your first and last name exactly as they are written in your identity document.")
 //        XCTAssertEqual(userDetails.createdAt, 1655832993460)
     }
-    
+
+    // MARK: - Create User
+
     func testCreateUser_SuccessfulResponse_ReturnsCreateUserResponse() async throws {
         // Arrange
         let mockData = #"{"userId":"de13f7b0-c159-4955-a226-42ca2e4f0b76","email":"test_1652858341@mailinator.com","KYC":{"status":"NOT_STARTED"}}"#
@@ -201,8 +207,52 @@ final class StrigaRemoteProviderTests: XCTestCase {
         }
     }
 
+    // MARK: - GetKYCToken
+
+    func testGetKYCToken_SuccessfulResponse_ReturnsToken() async throws {
+        // Arrange
+        let mockData = #"{"provider":"SUMSUB","token":"_act-sbx-cc6a85f3-4315-4d26-b507-3e5ea31ff2f9","userId":"2f1853b2-927a-4aa9-8bb1-3e51fb119ace","verificationLink":"https://in.sumsub.com/idensic/l/#/sbx_Eke06K3fpzlbWuf3"}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+        
+        // Act
+        let token = try await provider.getKYCToken(userId: "123")
+        
+        // Assert
+        XCTAssertEqual(token, "_act-sbx-cc6a85f3-4315-4d26-b507-3e5ea31ff2f9")
+    }
     
-    // ... Add more test methods for other StrigaRemoteProviderImpl methods ...
+    func testGetKYCToken_InvalidFields400_ReturnsInvalidResponse() async throws {
+        // Arrange
+        let mockData = #"{"status":400,"errorCode":"00002","errorDetails":{"message":"Invalid fields","errorDetails":[{"msg":"Invalid value","param":"mobile.number","location":"body"}]}}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 400)
+        
+        // Act
+        do {
+            let _ = try await provider.getKYCToken(userId: "123")
+            XCTFail()
+        } catch HTTPClientError.invalidResponse(_, _) {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
+    }
+    
+    func testGetKYCToken_UserNotVerified409_ReturnsInvalidResponse() async throws {
+        // Arrange
+        let mockData = #"{"status":409,"errorCode":"30007","errorDetails":{"message":"User is not verified"}}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 409)
+        
+        // Act
+        do {
+            let _ = try await provider.getKYCToken(userId: "123")
+            XCTFail()
+        } catch HTTPClientError.invalidResponse(_, _) {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
+    }
+
     
     // MARK: - Helper Methods
     
