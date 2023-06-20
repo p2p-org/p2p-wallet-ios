@@ -20,10 +20,10 @@ struct RecoveryKitView: View {
                 VStack(spacing: 8) {
                     Image(uiImage: .lockOutline)
                         .padding(.top, 4)
-                    Text(L10n.yourRecoveryKit)
+                    Text(L10n.securityAndPrivacy)
                         .fontWeight(.bold)
                         .apply(style: .title2)
-                    Text(L10n.IfYouSwitchDevicesYouCanEasilyRestoreYourWallet.noPrivateKeysNeeded)
+                    Text(L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow)
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -72,9 +72,10 @@ struct RecoveryKitView: View {
                                 .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
                         )
 
-                        Text(L10n.YourPrivateKeyIsSplitIntoMultipleFactors
-                            .AtLeastYouShouldHaveThreeFactorsButYouCanCreateMore
-                            .toLogInToDifferentDevicesYouNeedAtLeastTwoFactors)
+                        Text(L10n
+                            .KeyAppRespectsYourPrivacyItCanTAccessYourFundsOrPersonalDetails
+                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain
+                        )
                             .apply(style: .label1)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .padding(.leading, 16)
