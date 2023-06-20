@@ -212,7 +212,7 @@ private extension HomeAccountsViewModel {
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { value in
                 HomeBannerParameters(status: value.value.kycStatus, action: { [weak self] in
-                    self?.navigation.send(.topUp)
+                    self?.navigation.send(.bankTransfer)
                     self?.bannerTapped = true
                 }, isSmallBanner: true)
             }

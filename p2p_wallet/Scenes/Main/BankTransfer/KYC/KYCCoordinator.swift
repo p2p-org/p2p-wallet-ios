@@ -18,7 +18,8 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     // MARK: - Dependencies
     
     @Injected private var bankTransferService: any BankTransferService
-    
+    @Injected private var notificationService: NotificationService
+
     // MARK: - Properties
     
     private var presentingViewController: UIViewController
@@ -43,19 +44,19 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
         Task {
             do {
                 try await startSDK()
-                
+                await hideHud()
+            } catch let error as NSError where error.isNetworkConnectionError {
+                notificationService.showConnectionErrorNotification()
+                await cancel()
+            } catch BankTransferError.kycVerificationInProgress {
                 await MainActor.run {
-                    presentingViewController.hideHud()
+                    showPendingAlert()
                 }
+                await cancel()
             } catch {
-                
-                await MainActor.run {
-                    presentingViewController.hideHud()
-                }
-                
-                // TODO: - Catch error
-
-                subject.send(.canceled)
+                // TODO: handle BankTransferError.kycRejectedCantRetry and BankTransferError.kycAttemptLimitExceeded when more info is provided
+                notificationService.showDefaultErrorNotification()
+                await cancel()
             }
         }
         
@@ -113,6 +114,35 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
         sdk.dismissHandler { [weak subject] (sdk, mainVC) in
             mainVC.dismiss(animated: true, completion: nil)
             subject?.send(.canceled)
+        }
+    }
+
+    private func showPendingAlert() {
+        let alert = UIAlertController(
+            title: L10n.yourDocumentsVerificationIsPending,
+            message: L10n.usuallyItTakesAFewHours,
+            preferredStyle: .alert
+        )
+
+        let okAction = UIAlertAction(
+            title: L10n.ok,
+            style: .default,
+            handler: nil
+        )
+
+        alert.addAction(okAction)
+
+        presentingViewController.present(alert, animated: true)
+    }
+
+    private func cancel() async {
+        await hideHud()
+        subject.send(.canceled)
+    }
+
+    private func hideHud() async {
+        await MainActor.run {
+            presentingViewController.hideHud()
         }
     }
 

@@ -129,9 +129,26 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func getKYCToken(userId: String) async throws -> String {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
-        
-        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
-            .token
+
+        do {
+            let response = try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
+            return response.token
+        } catch HTTPClientError.invalidResponse(let response, let data) {
+            do {
+                try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
+            } catch {
+                debugPrint(error)
+            }
+            // Response does not match StrigaRemoteProviderError for some reason and returns a string
+            let errorString = try JSONDecoder().decode(String.self, from: data)
+            for bankTransferError in [BankTransferError.kycVerificationInProgress, .kycAttemptLimitExceeded,
+                                      .kycRejectedCantRetry] {
+                if let regex = try? NSRegularExpression(pattern: "^(.*)\\\"\(bankTransferError.rawValue)\\\"(.*)$", options: []), regex.matches(errorString) {
+                    throw bankTransferError
+                }
+            }
+            throw HTTPClientError.invalidResponse(response, data)
+        }
     }
 
     public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {

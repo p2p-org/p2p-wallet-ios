@@ -64,14 +64,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         switch userData.kycStatus {
         case .approved:
             return .transfer
-        case .rejectedFinal:
-            return .kycRejected
-        case let status where status.isWaitingForUpload:
-            return .kyc
-        case let status where status.isBeingReviewed:
-            return .kycPendingReview
-        default:
-            // TODO: - Review later
+        case .initiated, .notStarted, .onHold, .pendingReview, .rejected, .rejectedFinal:
             return .kyc
         }
     }
@@ -115,46 +108,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
                     return BankTransferFlowResult.none
                 }
             }
-                .eraseToAnyPublisher()
-        case .kycPendingReview:
-            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
-            viewController.showAlert(
-                title: L10n.yourDocumentsVerificationIsPending,
-                message: L10n.usuallyItTakesAFewHours,
-                actions: [
-                    .init(
-                        title: L10n.ok,
-                        style: .default,
-                        handler: { [weak subject] action in
-                            subject?.send(.none)
-                        }
-                    )
-                ]
-            )
-            return subject.prefix(1).eraseToAnyPublisher()
-        case .kycRejected:
-            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
-            viewController.showAlert(
-                title: L10n.verificationIsRejected,
-                message: L10n.addMoneyViaBankTransferIsUnavailable,
-                actions: [
-                    .init(
-                        title: L10n.okay,
-                        style: .default,
-                        handler: { [weak subject] action in
-                            subject?.send(.none)
-                        }
-                    ),
-                    .init(
-                        title: "Appeal",
-                        style: .default,
-                        handler: { [weak subject] action in
-                            subject?.send(.none)
-                        }
-                    )
-                ]
-            )
-            return subject.prefix(1).eraseToAnyPublisher()
+            .eraseToAnyPublisher()
         case .transfer:
             return coordinate(
                 to: StrigaTransferCoordinator(
@@ -172,7 +126,5 @@ enum BankTransferStep {
     case registration
     case otp
     case kyc
-    case kycPendingReview
-    case kycRejected
     case transfer
 }

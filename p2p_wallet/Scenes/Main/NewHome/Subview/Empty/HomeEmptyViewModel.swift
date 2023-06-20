@@ -81,7 +81,7 @@ private extension HomeEmptyViewModel {
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
             .map { [weak self] value in
                 HomeBannerParameters(status: value.value.kycStatus, action: {
-                    self?.navigation.send(.topUp)
+                    self?.navigation.send(.bankTransfer)
                 }, isSmallBanner: false)
             }
             .assignWeak(to: \.banner, on: self)
