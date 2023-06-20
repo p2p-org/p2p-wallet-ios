@@ -109,6 +109,8 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(response.KYC.status, .notStarted)
     }
 
+    // MARK: - Verify phone number
+
     func testVerifyPhoneNumber_SuccessfulResponse_ReturnsAccepted() async throws {
         // Arrange
         let mockData = #"Accepted"#
@@ -116,6 +118,38 @@ final class StrigaRemoteProviderTests: XCTestCase {
         
         // Act
         try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
+    }
+    
+    func testVerifyPhoneNumber_SuccessfulResponse_ReturnsEmpty400() async throws {
+        // Arrange
+        let mockData = #"{}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 409)
+        
+        // Act
+        do {
+            try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
+            XCTFail()
+        } catch HTTPClientError.invalidResponse(_, _) {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
+    }
+    
+    func testVerifyPhoneNumber_SuccessfulResponse_ReturnsErrorDetail409() async throws {
+        // Arrange
+        let mockData = #"{"status":409,"errorCode":"30003","errorDetails":{"message":"Exceeded verification attempts"}}"#
+        let provider = try getMockProvider(responseString: mockData, statusCode: 409)
+        
+        // Act
+        do {
+            try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
+            XCTFail()
+        } catch HTTPClientError.invalidResponse(_, _) {
+            XCTAssertTrue(true)
+        } catch {
+            XCTFail()
+        }
     }
     
     // ... Add more test methods for other StrigaRemoteProviderImpl methods ...

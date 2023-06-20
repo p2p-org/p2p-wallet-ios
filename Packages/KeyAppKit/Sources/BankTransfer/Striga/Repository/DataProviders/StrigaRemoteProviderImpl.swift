@@ -69,12 +69,18 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             verificationCode: verificationCode
         )
         do {
-            _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+            let response = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+            // expect response to be Accepted
+            guard response == "Accepted" else {
+                throw HTTPClientError.invalidResponse(nil, response.data(using: .utf8) ?? Data())
+            }
+            return
         } catch HTTPClientError.invalidResponse(let response, let data) {
             if response?.statusCode == 409,
                let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
                 throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
             }
+            throw HTTPClientError.invalidResponse(response, data)
         }
     }
 
