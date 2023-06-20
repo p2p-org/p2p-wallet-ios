@@ -326,19 +326,84 @@ final class StrigaRemoteProviderTests: XCTestCase {
     func testEnrichAccount_SuccessfulResponse_ReturnsEnrichedAccount() async throws {
         // Arrange
         let mockData = #"{"blockchainDepositAddress":"0x59d42C04022E926DAF16d139aFCBCa0da33E2323","blockchainNetwork":{"name":"Binance USD (BSC Test)","type":"BEP20","contractAddress":"0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"}}"#
-    let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-    
-    // Act
-    let enrichedAccount = try await provider.enrichAccount(userId: "123", accountId: "456")
-    
-    // Assert
-    XCTAssertEqual(enrichedAccount.blockchainDepositAddress, "0x59d42C04022E926DAF16d139aFCBCa0da33E2323")
-    XCTAssertEqual(enrichedAccount.blockchainNetwork.name, "Binance USD (BSC Test)")
-    XCTAssertEqual(enrichedAccount.blockchainNetwork.type, "BEP20")
-    XCTAssertEqual(enrichedAccount.blockchainNetwork.contractAddress, "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee")
-}
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+        
+        // Act
+        let enrichedAccount = try await provider.enrichAccount(userId: "123", accountId: "456")
+        
+        // Assert
+        XCTAssertEqual(enrichedAccount.blockchainDepositAddress, "0x59d42C04022E926DAF16d139aFCBCa0da33E2323")
+        XCTAssertEqual(enrichedAccount.blockchainNetwork.name, "Binance USD (BSC Test)")
+        XCTAssertEqual(enrichedAccount.blockchainNetwork.type, "BEP20")
+        XCTAssertEqual(enrichedAccount.blockchainNetwork.contractAddress, "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee")
+    }
 
-    
+    func testInitiateOnChainWalletSend_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+    {
+        "challengeId": "eaec4a27-d78d-4f49-80bf-9c1ecba98853",
+        "dateExpires": "2023-03-30T05:21:47.402Z",
+        "transaction": {
+            "syncedOwnerId": "51a2ed48-3b70-4775-b549-0d7e4850b64d",
+            "sourceAccountId": "9c73b2f8a7c4e567c0460ef83c309ce1",
+            "parentWalletId": "2c24c517-c682-4472-bbde-627e4a26fcf8",
+            "currency": "ETH",
+            "amount": "10000000000000000",
+            "status": "PENDING_2FA_CONFIRMATION",
+            "txType": "ON_CHAIN_WITHDRAWAL_INITIATED",
+            "blockchainDestinationAddress": "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD",
+            "blockchainNetwork": {
+                "name": "Ethereum Test (Goerli)"
+            },
+            "transactionCurrency": "ETH"
+        },
+        "feeEstimate": {
+            "totalFee": "948640405755000",
+            "networkFee": "948640405755000",
+            "ourFee": "948640405755000",
+            "theirFee": "0",
+            "feeCurrency": "ETH",
+            "gasLimit": "21000",
+            "gasPrice": "21.044"
+        }
+    }
+"""
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let decodedData = try await provider.initiateOnChainWalletSend(
+            userId: "123",
+            sourceAccountId: "456",
+            whitelistedAddressId: "789",
+            amount: "100"
+        )
+
+        // Assert
+        XCTAssertEqual(decodedData.challengeId, "eaec4a27-d78d-4f49-80bf-9c1ecba98853")
+        XCTAssertEqual(decodedData.dateExpires, "2023-03-30T05:21:47.402Z")
+
+        XCTAssertEqual(decodedData.transaction.syncedOwnerId, "51a2ed48-3b70-4775-b549-0d7e4850b64d")
+        XCTAssertEqual(decodedData.transaction.sourceAccountId, "9c73b2f8a7c4e567c0460ef83c309ce1")
+        XCTAssertEqual(decodedData.transaction.parentWalletId, "2c24c517-c682-4472-bbde-627e4a26fcf8")
+        XCTAssertEqual(decodedData.transaction.currency, "ETH")
+        XCTAssertEqual(decodedData.transaction.amount, "10000000000000000")
+        XCTAssertEqual(decodedData.transaction.status, "PENDING_2FA_CONFIRMATION")
+        XCTAssertEqual(decodedData.transaction.txType, "ON_CHAIN_WITHDRAWAL_INITIATED")
+        XCTAssertEqual(decodedData.transaction.blockchainDestinationAddress, "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD")
+        XCTAssertEqual(decodedData.transaction.blockchainNetwork.name, "Ethereum Test (Goerli)")
+        XCTAssertEqual(decodedData.transaction.transactionCurrency, "ETH")
+
+        XCTAssertEqual(decodedData.feeEstimate.totalFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.networkFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.ourFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.theirFee, "0")
+        XCTAssertEqual(decodedData.feeEstimate.feeCurrency, "ETH")
+        XCTAssertEqual(decodedData.feeEstimate.gasLimit, "21000")
+        XCTAssertEqual(decodedData.feeEstimate.gasPrice, "21.044")
+
+    }
+
     // MARK: - Helper Methods
     
     func getMockProvider(responseString: String, statusCode: Int) throws -> StrigaRemoteProvider {
