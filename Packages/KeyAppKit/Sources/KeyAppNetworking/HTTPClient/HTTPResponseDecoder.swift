@@ -42,8 +42,10 @@ extension JSONResponseDecoder: HTTPResponseDecoder {
         switch response.statusCode {
         case 200 ... 299:
             // Special case when return type is string
-            if type == String.self {
-                return String(data: data, encoding: .utf8) as! T
+            if type == String.self,
+               let string = String(data: data, encoding: .utf8) as? T
+            {
+                return string
             }
             return try JSONDecoder().decode(type, from: data)
         default:
