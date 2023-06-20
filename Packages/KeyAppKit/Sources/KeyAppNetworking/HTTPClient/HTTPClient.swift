@@ -65,7 +65,7 @@ extension HTTPClient: IHTTPClient {
         }
         
         // Retrieve data
-        let (data, response) = try await urlSession.data(from: request)
+        let (data, response) = try await urlSession.data(for: request)
         
         // Check cancellation
         try Task.checkCancellation()
