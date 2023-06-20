@@ -389,7 +389,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(decodedData.transaction.currency, "ETH")
         XCTAssertEqual(decodedData.transaction.amount, "10000000000000000")
         XCTAssertEqual(decodedData.transaction.status, "PENDING_2FA_CONFIRMATION")
-        XCTAssertEqual(decodedData.transaction.txType, "ON_CHAIN_WITHDRAWAL_INITIATED")
+        XCTAssertEqual(decodedData.transaction.txType, .initiated)
         XCTAssertEqual(decodedData.transaction.blockchainDestinationAddress, "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD")
         XCTAssertEqual(decodedData.transaction.blockchainNetwork.name, "Ethereum Test (Goerli)")
         XCTAssertEqual(decodedData.transaction.transactionCurrency, "ETH")
