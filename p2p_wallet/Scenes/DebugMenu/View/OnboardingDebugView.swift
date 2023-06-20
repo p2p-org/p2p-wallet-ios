@@ -11,11 +11,16 @@ import SwiftUI
 
 class OnboardingViewModel: BaseViewModel, ObservableObject {
     @Injected var tkeyFacadeManager: TKeyFacadeManager
+    @Injected var userWalletManager: UserWalletManager
+    @Injected var remoteWalletMetadataProvider: RemoteWalletMetadataProvider
+    @Injected var localWalletMetadataProvider: LocalWalletMetadataProvider
 
     @Published var tkeyInstance: String = "Init"
     @Published var ethAddressTkeyInstance: String = "Running"
 
     @Published var torusUserData: String = ""
+    @Published var remoteMetadata: String = ""
+    @Published var localMetadata: String = ""
 
     override init() {
         super.init()
@@ -44,6 +49,26 @@ class OnboardingViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    func loadRemoteMetadata() {
+        Task {
+            guard let user = userWalletManager.wallet else {
+                return
+            }
+            let data = try await remoteWalletMetadataProvider.load(for: user)
+            remoteMetadata = data?.jsonString ?? "nil"
+        }
+    }
+
+    func loadLocalMetadata() {
+        Task {
+            guard let user = userWalletManager.wallet else {
+                return
+            }
+            let data = try await localWalletMetadataProvider.load(for: user)
+            localMetadata = data?.jsonString ?? "nil"
+        }
+    }
 }
 
 struct OnboardingDebugView: View {
@@ -64,14 +89,40 @@ struct OnboardingDebugView: View {
                 DebugTextField(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
             }
 
-            Section(header: Text("TKey")) {
+            Section(header: Text("TKey metadata")) {
                 DebugText(title: "Status", value: viewModel.tkeyInstance)
                 Button {
                     viewModel.load()
                 } label: {
                     Text("Load")
                 }
-                DebugText(title: "User data", value: viewModel.torusUserData)
+                if !viewModel.torusUserData.isEmpty {
+                    DebugText(title: nil, value: viewModel.torusUserData)
+                }
+            }
+
+            Section(header: Text("Local Metadata")) {
+                Button {
+                    viewModel.loadLocalMetadata()
+                } label: {
+                    Text("Load local metadata")
+                }
+
+                if !viewModel.localMetadata.isEmpty {
+                    DebugText(title: nil, value: viewModel.localMetadata)
+                }
+            }
+
+            Section(header: Text("Remote Metadata")) {
+                Button {
+                    viewModel.loadRemoteMetadata()
+                } label: {
+                    Text("Load remote metadata")
+                }
+
+                if !viewModel.remoteMetadata.isEmpty {
+                    DebugText(title: nil, value: viewModel.remoteMetadata)
+                }
             }
 
             Section(header: Text("Mocked device share")) {

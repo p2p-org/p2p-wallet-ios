@@ -14,7 +14,7 @@ struct DeviceShareMigrationView: View {
 
     var body: some View {
         LoadingAnimationLayout(
-            title: "Updating your authorization device",
+            title: L10n.updating,
             subtitle: "",
             isProgressVisible: true
         )

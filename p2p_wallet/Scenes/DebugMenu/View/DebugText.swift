@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct DebugText: View {
-    let title: String
+    let title: String?
     let value: String
 
     var body: some View {
@@ -17,8 +17,10 @@ struct DebugText: View {
             UIPasteboard.general.setValue(value, forPasteboardType: UTType.plainText.identifier)
         } label: {
             HStack {
-                Text(title)
-                Spacer()
+                if let title {
+                    Text(title)
+                    Spacer()
+                }
                 Text(value)
             }
         }

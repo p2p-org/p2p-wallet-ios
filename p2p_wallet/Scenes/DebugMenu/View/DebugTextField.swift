@@ -12,9 +12,10 @@ struct DebugTextField: View {
     let content: Binding<String>
 
     var body: some View {
-        HStack {
+        HStack(alignment: .center) {
             Text(title)
-            TextEditor(text: content)
+            Spacer()
+            TextField("Value", text: content)
         }
     }
 }

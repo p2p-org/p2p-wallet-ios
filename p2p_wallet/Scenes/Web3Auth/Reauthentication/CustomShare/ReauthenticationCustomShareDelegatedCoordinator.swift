@@ -17,7 +17,7 @@ class ReauthenticationCustomShareDelegatedCoordinator: DelegatedCoordinator<Reau
                 attemptCounter: resendCounter,
                 strategy: .create
             )
-            let vc = EnterSMSCodeViewController(viewModel: vm)
+            let vc = EnterSMSCodeViewController(viewModel: vm, disableRightButton: true)
             vc.title = "Confirm your number"
 
             vm.coordinatorIO.onConfirm.sinkAsync { [weak vm, stateMachine] opt in

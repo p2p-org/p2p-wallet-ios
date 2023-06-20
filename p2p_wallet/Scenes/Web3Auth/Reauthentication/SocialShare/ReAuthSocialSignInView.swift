@@ -17,7 +17,7 @@ struct ReAuthSocialSignInView: View {
             OnboardingContentView(data: .init(
                 image: .easyToStart,
                 title: L10n.niceAlmostDone,
-                subtitle: "Confirm access to your account that was used to create the wallet"
+                subtitle: L10n.confirmAccessToYourAccountThatWasUsedToCreateTheWallet
             ))
             Spacer()
             BottomActionContainer {
@@ -41,6 +41,7 @@ struct ReAuthSocialSignInView: View {
         }
         .background(Color(Asset.Colors.lime.color))
         .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button() {

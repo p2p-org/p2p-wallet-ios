@@ -15,7 +15,10 @@ class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<Reauthenticati
         case let .signIn(socialProvider):
             let viewModel = ReAuthSocialSignInViewModel(socialProvider: socialProvider)
             let view = ReAuthSocialSignInView(viewModel: viewModel)
-            let vc = UIHostingController(rootView: view)
+            
+            let vc = UICustomHostingController(rootView: view) { vc, animated in
+                vc.navigationItem.setHidesBackButton(true, animated: false)
+            }
 
             viewModel.onClose.sink { [stateMachine] in
                 Task {

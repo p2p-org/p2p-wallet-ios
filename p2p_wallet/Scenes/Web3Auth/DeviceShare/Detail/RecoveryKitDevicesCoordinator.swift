@@ -27,9 +27,9 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
         let vm = RecoveryKitDevicesViewModel()
         let view = RecoveryKitDevicesView(viewModel: vm)
         let vc = UIHostingController(rootView: view)
-  
+
         vc.title = L10n.devices
-        
+
         vm.action.sink { [weak self] action in
             switch action {
             case .setup:
@@ -125,11 +125,7 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                 switch result {
                 case .finish:
                     guard let prevVC = self?.prevVC else { return }
-                    self?.navigationController.popToViewController(
-                        prevVC,
-                        animated: false
-                    )
-
+                    self?.navigationController.popToViewController(prevVC, animated: true)
                     self?.result.send(completion: .finished)
 
                 case let .error(error):
