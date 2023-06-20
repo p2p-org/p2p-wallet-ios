@@ -14,6 +14,7 @@ protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get }
+    var authenticationStatus: AuthenticationPresentationStyle? { get }
     var isLockedPublisher: AnyPublisher<Bool, Never> { get }
 }
 
@@ -30,6 +31,14 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     private let authenticationStatusSubject = CurrentValueSubject<AuthenticationPresentationStyle?, Never>(nil)
     private let isLockedSubject = CurrentValueSubject<Bool, Never>(false)
+
+    // MARK: - Computed properties
+
+    var authenticationStatus: AuthenticationPresentationStyle? {
+        authenticationStatusSubject.value
+    }
+
+    // MARK: - Initializer
 
     init() {
         bind()

@@ -253,15 +253,6 @@ final class TabBarController: UITabBarController {
             })
             .store(in: &subscriptions)
 
-        viewModel.moveToIntercomSurvey
-            .sink { id in
-                guard !id.isEmpty else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    Intercom.presentSurvey(id)
-                }
-            }
-            .store(in: &subscriptions)
-
         // locking status
         viewModel.isLockedPublisher
             .sink(receiveValue: { [weak self] isLocked in

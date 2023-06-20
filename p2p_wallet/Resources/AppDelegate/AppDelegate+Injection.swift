@@ -1,10 +1,3 @@
-//
-//  AppDelegate+Injection.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 23/09/2021.
-//
-
 import AnalyticsManager
 import CountriesAPI
 import FeeRelayerSwift
@@ -29,6 +22,7 @@ import SwiftyUserDefaults
 import TransactionParser
 import Web3
 import Wormhole
+import Deeplinking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -207,6 +201,10 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register { EthereumTokensRepository(web3: resolve()) }
+            .scope(.application)
+        
+        register { DeeplinkingRouteManagerImpl() }
+            .implements(DeeplinkingRouteManager.self)
             .scope(.application)
     }
 

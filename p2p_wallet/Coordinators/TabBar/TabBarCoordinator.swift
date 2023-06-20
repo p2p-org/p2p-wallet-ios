@@ -1,10 +1,3 @@
-//
-//  TabBarCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 16.11.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,8 @@ import KeyAppBusiness
 import Resolver
 import Sell
 import SolanaSwift
+import Intercom
+import Deeplinking
 
 final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -80,33 +75,45 @@ final class TabBarCoordinator: Coordinator<Void> {
             UIApplication.shared.registerForRemoteNotifications()
         }
 
-        bind()
-
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
+    
+    // MARK: - Helpers
 
     private func bind() {
-        tabBarViewModel.moveToSendViaLinkClaim
-            .sink { [weak self] url in
-                guard let self = self else { return }
-                
-                UIApplication.dismissCustomPresentedViewController() {
-                    let claimCoordinator = ReceiveFundsViaLinkCoordinator(
-                        presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
-                        url: url
-                    )
-                    self.coordinate(to: claimCoordinator)
-                        .sink(receiveValue: {})
-                        .store(in: &self.subscriptions)
-                }
+        tabBarViewModel
+            .deeplinkingRoutePublisher
+            .sink { [weak self] route in
+                guard let route else { return }
+                self?.navigate(deeplinkingRoute: route)
             }
             .store(in: &subscriptions)
         
         listenToActionsButton()
         listenToWallet()
     }
-
-    // MARK: - Helpers
+    
+    private func navigate(deeplinkingRoute route: Deeplinking.Route) {
+        switch route {
+        case let .claimSentViaLink(url):
+            UIApplication.dismissCustomPresentedViewController() {
+                let claimCoordinator = ReceiveFundsViaLinkCoordinator(
+                    presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
+                    url: url
+                )
+                self.coordinate(to: claimCoordinator)
+                    .sink(receiveValue: {})
+                    .store(in: &self.subscriptions)
+            }
+        case let .intercomSurvey(id):
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                Intercom.presentSurvey(id)
+            }
+            return
+        case .debugLoginWithURL:
+            return
+        }
+    }
 
     /// Set up Home scene
     private func setUpHome() -> UIViewController {

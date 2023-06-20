@@ -1,18 +1,14 @@
-//
-//  TabBarViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 20.11.2022.
-//
-
 import Combine
 import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import Deeplinking
 
 final class TabBarViewModel {
-    // Dependencies
+
+    // MARK: - Dependencies
+
     @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
@@ -21,11 +17,12 @@ final class TabBarViewModel {
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 
-    // Input
+    // MARK: - Properties
+
+    private var subscriptions = Set<AnyCancellable>()
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
-    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - Initializer
 
     init() {
         pricesService.startObserving()
@@ -39,8 +36,6 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
-        
-        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -51,19 +46,6 @@ final class TabBarViewModel {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
     }
-    
-    private func listenDidBecomeActiveForDeeplinks() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.becomeActiveSubject.send()
-        }
-        
-        NotificationCenter.default
-            .publisher(for: UIApplication.didBecomeActiveNotification)
-            .sink(receiveValue: { [weak self] _ in
-                self?.becomeActiveSubject.send()
-            })
-            .store(in: &cancellables)
-    }
 }
 
 // MARK: - Output
@@ -73,6 +55,7 @@ extension TabBarViewModel {
         authenticationHandler.authenticationStatusPublisher
     }
 
+    // TODO: - Deeplink for history
     var moveToHistory: AnyPublisher<Void, Never> {
         Publishers.Merge(
             notificationService.showNotification
@@ -91,45 +74,36 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
-    var moveToIntercomSurvey: AnyPublisher<String, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.surveyID != nil && value == false
-                }
-                .map { _ in () },
-
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
-        )
-        .map { _ in () }
-        .map {
-            GlobalAppState.shared.surveyID ?? ""
-        }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.surveyID = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
-    }
-    
-    var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
-        Publishers.CombineLatest(
-            authenticationStatusPublisher,
-            becomeActiveSubject
-        )
-        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
-        .filter { $0.0 == nil }
-        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.sendViaLinkUrl = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
+    var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route?, Never> {
+        // Observe appDidBecomeActive
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .map { _ in () }
+            // fill first event as first time opening app the appDidBecomeActive
+            // will not be called
+            .prepend(())
+            // wait for latest from authenticationStatus
+            .map { [unowned self] in
+                let isAuthenticating = authenticationHandler.authenticationStatus != nil
+                return authenticationStatusPublisher
+                    .filter { $0 == nil }
+                    // delay to wait for authentication scene (if exists)
+                    // and animations to be closed
+                    .delay(for: .milliseconds(isAuthenticating ? 800: 100), scheduler: RunLoop.main)
+            }
+            // switch to latest appDidBecomeActive
+            .switchToLatest()
+            // get latest route
+            .map { _ in
+                Resolver.resolve(DeeplinkingRouteManager.self)
+                    .getActiveRoute()
+            }
+            // receive on main
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
-    var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
+    var isLockedPublisher: AnyPublisher<Bool, Never> {
+        authenticationHandler.isLockedPublisher
+    }
 }

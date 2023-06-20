@@ -110,6 +110,11 @@ let package = Package(
             name: "Jupiter",
             targets: ["Jupiter"]
         ),
+        
+        .library(
+            name: "Deeplinking",
+            targets: ["Deeplinking"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
@@ -372,6 +377,15 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
+        
+        .target(
+            name: "Deeplinking"
+        ),
+        .testTarget(
+            name: "DeeplinkingTests",
+            dependencies: ["Deeplinking"],
+            path: "Tests/UnitTests/DeeplinkingTests"
+        )
     ]
 )
 
