@@ -338,7 +338,136 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(enrichedAccount.blockchainNetwork.contractAddress, "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee")
     }
 
-    
+    func testInitiateOnChainWalletSend_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+    {
+        "challengeId": "eaec4a27-d78d-4f49-80bf-9c1ecba98853",
+        "dateExpires": "2023-03-30T05:21:47.402Z",
+        "transaction": {
+            "syncedOwnerId": "51a2ed48-3b70-4775-b549-0d7e4850b64d",
+            "sourceAccountId": "9c73b2f8a7c4e567c0460ef83c309ce1",
+            "parentWalletId": "2c24c517-c682-4472-bbde-627e4a26fcf8",
+            "currency": "ETH",
+            "amount": "10000000000000000",
+            "status": "PENDING_2FA_CONFIRMATION",
+            "txType": "ON_CHAIN_WITHDRAWAL_INITIATED",
+            "blockchainDestinationAddress": "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD",
+            "blockchainNetwork": {
+                "name": "Ethereum Test (Goerli)"
+            },
+            "transactionCurrency": "ETH"
+        },
+        "feeEstimate": {
+            "totalFee": "948640405755000",
+            "networkFee": "948640405755000",
+            "ourFee": "948640405755000",
+            "theirFee": "0",
+            "feeCurrency": "ETH",
+            "gasLimit": "21000",
+            "gasPrice": "21.044"
+        }
+    }
+"""
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let decodedData = try await provider.initiateOnChainWalletSend(
+            userId: "123",
+            sourceAccountId: "456",
+            whitelistedAddressId: "789",
+            amount: "100"
+        )
+
+        // Assert
+        XCTAssertEqual(decodedData.challengeId, "eaec4a27-d78d-4f49-80bf-9c1ecba98853")
+        XCTAssertEqual(decodedData.dateExpires, "2023-03-30T05:21:47.402Z")
+
+        XCTAssertEqual(decodedData.transaction.syncedOwnerId, "51a2ed48-3b70-4775-b549-0d7e4850b64d")
+        XCTAssertEqual(decodedData.transaction.sourceAccountId, "9c73b2f8a7c4e567c0460ef83c309ce1")
+        XCTAssertEqual(decodedData.transaction.parentWalletId, "2c24c517-c682-4472-bbde-627e4a26fcf8")
+        XCTAssertEqual(decodedData.transaction.currency, "ETH")
+        XCTAssertEqual(decodedData.transaction.amount, "10000000000000000")
+        XCTAssertEqual(decodedData.transaction.status, "PENDING_2FA_CONFIRMATION")
+        XCTAssertEqual(decodedData.transaction.txType, .initiated)
+        XCTAssertEqual(decodedData.transaction.blockchainDestinationAddress, "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD")
+        XCTAssertEqual(decodedData.transaction.blockchainNetwork.name, "Ethereum Test (Goerli)")
+        XCTAssertEqual(decodedData.transaction.transactionCurrency, "ETH")
+
+        XCTAssertEqual(decodedData.feeEstimate.totalFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.networkFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.ourFee, "948640405755000")
+        XCTAssertEqual(decodedData.feeEstimate.theirFee, "0")
+        XCTAssertEqual(decodedData.feeEstimate.feeCurrency, "ETH")
+        XCTAssertEqual(decodedData.feeEstimate.gasLimit, "21000")
+        XCTAssertEqual(decodedData.feeEstimate.gasPrice, "21.044")
+    }
+
+    func testTransactionResendOTP_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {
+                "challengeId": "f56aaf67-acc1-4397-ae6b-57b553bdc5b0",
+                "dateExpires": "2022-11-10T14:17:28.162Z",
+                "attempts": 1
+            }
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let result = try await provider.transactionResendOTP(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            challangeId: "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+        )
+
+        // Assert
+        XCTAssertEqual(result.challengeId, "f56aaf67-acc1-4397-ae6b-57b553bdc5b0")
+        XCTAssertEqual(result.dateExpires, "2022-11-10T14:17:28.162Z")
+        XCTAssertEqual(result.attempts, 1)
+    }
+
+    func testProcessTransaction_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+        {
+          "id": "e0a00ba5-6788-41c6-95f1-258b49b406a7",
+          "amount": "50",
+          "feeSats": "1",
+          "invoice": "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3",
+          "payeeNode": "020ec0c6a0c4fe5d8a79928ead294c36234a76f6e0dca896c35413612a3fd8dbf8",
+          "network": {
+            "bech32": "tb",
+            "pubKeyHash": 111,
+            "scriptHash": 196,
+            "validWitnessVersions": [
+              0,
+              1
+            ]
+          }
+        }
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let result = try await provider.transactionConfirmOTP(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            challangeId: "123",
+            code: "123456",
+            ip: "ipString"
+        )
+
+        // Assert
+        XCTAssertEqual(result.id, "e0a00ba5-6788-41c6-95f1-258b49b406a7")
+        XCTAssertEqual(result.amount, "50")
+        XCTAssertEqual(result.feeSats, "1")
+        XCTAssertEqual(result.invoice, "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3")
+        XCTAssertEqual(result.payeeNode, "020ec0c6a0c4fe5d8a79928ead294c36234a76f6e0dca896c35413612a3fd8dbf8")
+        XCTAssertEqual(result.network.bech32, "tb")
+        XCTAssertEqual(result.network.pubKeyHash, 111)
+        XCTAssertEqual(result.network.scriptHash, 196)
+        XCTAssertEqual(result.network.validWitnessVersions, [0, 1])
+    }
+
     // MARK: - Helper Methods
     
     func getMockProvider(responseString: String, statusCode: Int) throws -> StrigaRemoteProvider {

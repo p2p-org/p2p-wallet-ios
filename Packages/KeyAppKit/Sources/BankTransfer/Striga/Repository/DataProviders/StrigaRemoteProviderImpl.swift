@@ -105,6 +105,27 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         }
     }
 
+    public func initiateOnChainWalletSend(
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) async throws -> StrigaWalletSendResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.initiateOnChainWalletSend(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            sourceAccountId: sourceAccountId,
+            whitelistedAddressId: whitelistedAddressId,
+            amount: amount
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaWalletSendResponse.self
+        )
+    }
+
     public func getKYCToken(userId: String) async throws -> String {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
@@ -126,6 +147,45 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaEnrichedAccountResponse.self)
     }
+
+    public func transactionResendOTP(
+        userId: String,
+        challangeId: String
+    ) async throws -> StrigaTransactionResendOTPResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.transactionResendOTP(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            challengeId: challangeId
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaTransactionResendOTPResponse.self
+        )
+    }
+
+    public func transactionConfirmOTP(
+        userId: String,
+        challangeId: String,
+        code: String,
+        ip: String
+    ) async throws -> StrigaTransactionConfirmOTPResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.transactionConfirmOTP(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            challengeId: challangeId,
+            verificationCode: code,
+            ip: ip
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaTransactionConfirmOTPResponse.self
+        )
+    }
+
 }
 
 // MARK: - Error response

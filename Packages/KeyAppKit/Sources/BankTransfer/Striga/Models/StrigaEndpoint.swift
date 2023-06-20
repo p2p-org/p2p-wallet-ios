@@ -115,7 +115,29 @@ struct StrigaEndpoint: HTTPEndpoint {
             ]
         )
     }
-    
+
+    static func initiateOnChainWalletSend(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) throws -> Self {
+        return try .init(
+            baseURL: baseURL,
+            path: "/wallets/send/initiate/onchain",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "sourceAccountId": sourceAccountId,
+                "whitelistedAddressId": whitelistedAddressId,
+                "amount": amount
+            ]
+        )
+    }
+
     static func getKYCToken(
         baseURL: String,
         keyPair: KeyPair,
@@ -171,6 +193,47 @@ struct StrigaEndpoint: HTTPEndpoint {
             ]
         )
     }
+
+    static func transactionResendOTP(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        challengeId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/transaction/resend-otp",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "challengeId": challengeId
+            ]
+        )
+    }
+
+    static func transactionConfirmOTP(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        challengeId: String,
+        verificationCode: String,
+        ip: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/transaction/resend-otp",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "challengeId": challengeId,
+                "verificationCode": verificationCode,
+                "ip": ip
+            ]
+        )
+    }
+
 }
 
 extension KeyPair {

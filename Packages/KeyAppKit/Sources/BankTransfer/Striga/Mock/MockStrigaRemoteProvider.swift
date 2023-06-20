@@ -1,6 +1,7 @@
 import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
+    
     // MARK: - Properties
 
     private var useCase: MockStrigaUseCase
@@ -116,6 +117,18 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     }
     
     public func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse {
+        fatalError("Implementing")
+    }
+
+    public func initiateOnChainWalletSend(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> StrigaWalletSendResponse {
+        fatalError("Implementing")
+    }
+
+    public func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse {
+        fatalError("Implementing")
+    }
+
+    public func transactionConfirmOTP(userId: String, challangeId: String, code: String, ip: String) async throws -> StrigaTransactionConfirmOTPResponse {
         fatalError("Implementing")
     }
 }

@@ -243,4 +243,87 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.body, expectedBody)
     }
 
+    func testInitiateOnChainWalletSend() throws {
+        let keyPair = try KeyPair()
+        let userId = "19085577-4f74-40ad-a86c-0ad28d664170"
+        let sourceAccountId = "817c19ad473cd1bef869b408858156a2"
+        let whitelistedAddressId = "817c19ad473cd1bef869b408858156a2"
+        let amount = "123"
+
+        let endpoint = try StrigaEndpoint.initiateOnChainWalletSend(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            sourceAccountId: sourceAccountId,
+            whitelistedAddressId: whitelistedAddressId,
+            amount: amount
+        )
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/send/initiate/onchain")
+        XCTAssertEqual(endpoint.method, .post)
+
+        let expectedHeaders = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeaders)
+
+        let expectedBody = "{\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
+        XCTAssertEqual(endpoint.body!, expectedBody)
+    }
+
+    func testTransactionResendOTPEndpoint() throws {
+        let keyPair = try KeyPair()
+        let userId = "cecaea44-47f2-439b-99a1-a35fefaf1eb6"
+        let challengeId = "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+
+        let endpoint = try StrigaEndpoint.transactionResendOTP(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            challengeId: challengeId
+        )
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/resend-otp")
+        XCTAssertEqual(endpoint.method, .post)
+
+        let expectedHeader = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+
+        let expectedBody = "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\"}"
+        XCTAssertEqual(endpoint.body, expectedBody)
+    }
+
+    func testTransactionConfirmOTPEndpoint() throws {
+        let keyPair = try KeyPair()
+        let userId = "cecaea44-47f2-439b-99a1-a35fefaf1eb6"
+        let challengeId = "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+
+        let endpoint = try StrigaEndpoint.transactionConfirmOTP(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            challengeId: challengeId,
+            verificationCode: "123456",
+            ip: "ipString"
+        )
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/resend-otp")
+        XCTAssertEqual(endpoint.method, .post)
+
+        let expectedHeader = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+
+        let expectedBody = "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"ip\":\"ipString\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\",\"verificationCode\":\"123456\"}"
+        XCTAssertEqual(endpoint.body, expectedBody)
+    }
 }
