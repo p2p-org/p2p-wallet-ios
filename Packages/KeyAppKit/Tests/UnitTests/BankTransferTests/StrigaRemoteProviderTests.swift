@@ -401,7 +401,29 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(decodedData.feeEstimate.feeCurrency, "ETH")
         XCTAssertEqual(decodedData.feeEstimate.gasLimit, "21000")
         XCTAssertEqual(decodedData.feeEstimate.gasPrice, "21.044")
+    }
 
+    func testTransactionResendOTP_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {
+                "challengeId": "f56aaf67-acc1-4397-ae6b-57b553bdc5b0",
+                "dateExpires": "2022-11-10T14:17:28.162Z",
+                "attempts": 1
+            }
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let result = try await provider.transactionResendOTP(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            challangeId: "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+        )
+
+        // Assert
+        XCTAssertEqual(result.challengeId, "f56aaf67-acc1-4397-ae6b-57b553bdc5b0")
+        XCTAssertEqual(result.dateExpires, "2022-11-10T14:17:28.162Z")
+        XCTAssertEqual(result.attempts, 1)
     }
 
     // MARK: - Helper Methods

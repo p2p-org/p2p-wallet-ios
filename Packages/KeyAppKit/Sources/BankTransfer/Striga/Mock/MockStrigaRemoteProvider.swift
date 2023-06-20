@@ -123,4 +123,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     public func initiateOnChainWalletSend(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> StrigaWalletSendResponse {
         fatalError("Implementing")
     }
+
+    public func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse {
+        fatalError("Implementing")
+    }
 }
