@@ -82,18 +82,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 do {
                     try await self.bankTransfer.resendSMS()
                 } catch BankTransferError.otpExceededDailyLimit {
-                    var title = L10n.pleaseWait1DayForTheNextSMSRequest
-                    var subtitle = L10n.after5SMSRequestsWeDisabledItFor1DayToSecureYourAccount
-                    let errorController = StrigaOTPHardErrorView(
-                        title: title,
-                        subtitle: subtitle,
-                        onAction: { [weak self] in
-                            self?.viewController.popToRootViewController(animated: true)
-                        }, onSupport: { [weak self] in
-                            self?.helpLauncher.launch()
-                        }).asViewController(withoutUIKitNavBar: true)
-                    errorController.hidesBottomBarWhenPushed = true
-                    self.viewController.pushViewController(errorController, animated: true)
+                    self.handleOTPExceededDailyLimitError()
                 } catch {
                     viewModel.coordinatorIO.error.send(error)
                 }
@@ -121,8 +110,15 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         if resendCounter.until.timeIntervalSinceNow < 0 {
             // Get initial OTP
             increaseTimer(viewModel: viewModel)
+            // Sending the first OTP
             Task { [weak self] in
-                try await self?.bankTransfer.resendSMS()
+                do {
+                    try await self?.bankTransfer.resendSMS()
+                } catch BankTransferError.otpExceededDailyLimit {
+                    self?.handleOTPExceededDailyLimitError()
+                } catch {
+                    viewModel.coordinatorIO.error.send(error)
+                }
             }
         }
 
@@ -144,6 +140,21 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
         self.resendCounter = self.resendCounter.incremented()
         viewModel.attemptCounter = Wrapper(self.resendCounter)
+    }
+
+    private func handleOTPExceededDailyLimitError() {
+        let title = L10n.pleaseWait1DayForTheNextSMSRequest
+        let subtitle = L10n.after5SMSRequestsWeDisabledItFor1DayToSecureYourAccount
+        let errorController = StrigaOTPHardErrorView(
+            title: title,
+            subtitle: subtitle,
+            onAction: { [weak self] in
+                self?.viewController.popToRootViewController(animated: true)
+            }, onSupport: { [weak self] in
+                self?.helpLauncher.launch()
+            }).asViewController(withoutUIKitNavBar: true)
+        errorController.hidesBottomBarWhenPushed = true
+        self.viewController.pushViewController(errorController, animated: true)
     }
 
     private func present(controller: UIViewController) {
