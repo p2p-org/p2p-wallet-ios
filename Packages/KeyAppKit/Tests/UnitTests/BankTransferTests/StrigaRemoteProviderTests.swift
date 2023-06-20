@@ -426,6 +426,48 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(result.attempts, 1)
     }
 
+    func testProcessTransaction_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+        {
+          "id": "e0a00ba5-6788-41c6-95f1-258b49b406a7",
+          "amount": "50",
+          "feeSats": "1",
+          "invoice": "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3",
+          "payeeNode": "020ec0c6a0c4fe5d8a79928ead294c36234a76f6e0dca896c35413612a3fd8dbf8",
+          "network": {
+            "bech32": "tb",
+            "pubKeyHash": 111,
+            "scriptHash": 196,
+            "validWitnessVersions": [
+              0,
+              1
+            ]
+          }
+        }
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        // Act
+        let result = try await provider.transactionConfirmOTP(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            challangeId: "123",
+            code: "123456",
+            ip: "ipString"
+        )
+
+        // Assert
+        XCTAssertEqual(result.id, "e0a00ba5-6788-41c6-95f1-258b49b406a7")
+        XCTAssertEqual(result.amount, "50")
+        XCTAssertEqual(result.feeSats, "1")
+        XCTAssertEqual(result.invoice, "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3")
+        XCTAssertEqual(result.payeeNode, "020ec0c6a0c4fe5d8a79928ead294c36234a76f6e0dca896c35413612a3fd8dbf8")
+        XCTAssertEqual(result.network.bech32, "tb")
+        XCTAssertEqual(result.network.pubKeyHash, 111)
+        XCTAssertEqual(result.network.scriptHash, 196)
+        XCTAssertEqual(result.network.validWitnessVersions, [0, 1])
+    }
+
     // MARK: - Helper Methods
     
     func getMockProvider(responseString: String, statusCode: Int) throws -> StrigaRemoteProvider {

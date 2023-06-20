@@ -29,6 +29,19 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// Resend OTP for transaction
     /// - Parameter userId: The Id of the user who is sending this transaction
     /// - Parameter challangeId: The challengeId that you received when initiating the transaction
-    /// - SeeAlso: [Initiate Onchain Withdrawal](https://docs.striga.com/reference/initiate-onchain-withdrawal)
+    /// - SeeAlso: [Resend OTP for transaction](https://docs.striga.com/reference/resend-otp-for-transaction)
     func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse
+
+    /// Your API calls will appear here. Make a request to get started!
+    /// - Parameter userId: The Id of the user who is sending this transaction
+    /// - Parameter challangeId: The challengeId that you received when initiating the transaction
+    /// - Parameter code: 6 characters code. Default code for sandbox "123456".
+    /// - Parameter ip: IP address collected as the IP address from which the End User is making the withdrawal request. IMPORTANT - This will be a required parameter from the 15th of June 2023 and is optional until then.
+    /// - SeeAlso: [Confirm transaction with OTP](https://docs.striga.com/reference/confirm-transaction-with-otp)
+    func transactionConfirmOTP(
+        userId: String,
+        challangeId: String,
+        code: String,
+        ip: String
+    ) async throws -> StrigaTransactionConfirmOTPResponse
 }

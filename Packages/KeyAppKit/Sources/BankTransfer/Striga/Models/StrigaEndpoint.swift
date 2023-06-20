@@ -212,6 +212,28 @@ struct StrigaEndpoint: HTTPEndpoint {
         )
     }
 
+    static func transactionConfirmOTP(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        challengeId: String,
+        verificationCode: String,
+        ip: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/transaction/resend-otp",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "challengeId": challengeId,
+                "verificationCode": verificationCode,
+                "ip": ip
+            ]
+        )
+    }
+
 }
 
 extension KeyPair {

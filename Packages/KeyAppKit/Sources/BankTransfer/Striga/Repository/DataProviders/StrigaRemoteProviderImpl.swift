@@ -148,7 +148,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaEnrichedAccountResponse.self)
     }
 
-    public func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse {
+    public func transactionResendOTP(
+        userId: String,
+        challangeId: String
+    ) async throws -> StrigaTransactionResendOTPResponse {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.transactionResendOTP(
             baseURL: baseURL,
@@ -156,7 +159,31 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             userId: userId,
             challengeId: challangeId
         )
-        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaTransactionResendOTPResponse.self)
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaTransactionResendOTPResponse.self
+        )
+    }
+
+    public func transactionConfirmOTP(
+        userId: String,
+        challangeId: String,
+        code: String,
+        ip: String
+    ) async throws -> StrigaTransactionConfirmOTPResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.transactionConfirmOTP(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            challengeId: challangeId,
+            verificationCode: code,
+            ip: ip
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaTransactionConfirmOTPResponse.self
+        )
     }
 
 }
