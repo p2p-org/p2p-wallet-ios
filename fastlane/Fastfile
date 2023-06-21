@@ -43,6 +43,8 @@ DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
 
 DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
 
+DISCORD_MESSAGE_API_BEARER_TOKEN = ENV["DISCORD_MESSAGE_API_BEARER_TOKEN"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -121,7 +123,6 @@ def create_release_build(match_type, configuration)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
-    disable_package_automatic_updates: true,
     export_options: {
       provisioningProfiles: {
         appId => profileSpecifier
@@ -165,7 +166,8 @@ def notify(version, message)
     "curl", 
     "-v", 
     "-X", "POST", 
-    "-H", "Content-Type: application/json", 
+    "-H", "Content-Type: application/json",
+    "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
     "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
     DISCORD_MESSAGE_API_ENDPOINT
   )
@@ -393,7 +395,8 @@ platform :ios do
       "curl", 
       "-v", 
       "-X", "POST", 
-      "-H", "Content-Type: application/json", 
+      "-H", "Content-Type: application/json",
+      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
       "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
       DISCORD_MESSAGE_API_ENDPOINT
     )

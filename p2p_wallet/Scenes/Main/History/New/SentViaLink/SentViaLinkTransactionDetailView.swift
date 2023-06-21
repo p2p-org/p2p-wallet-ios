@@ -12,9 +12,16 @@ import KeyAppUI
 import Resolver
 import Send
 
-struct SentViaLinkTransactionDetailView: View {
-    // MARK: - Dependencies
+private extension String {
+    static let accessibilityTitleLabel = "SentViaLinkTransactionDetailView.titleLabel"
+    static let accessibilityCryptoAmountLabel = "SentViaLinkTransactionDetailView.cryptoAmountLabel"
+    static let accessibilityLinkLabel = "SentViaLinkTransactionDetailView.linkLabel"
+    static let accessibilityDescriptionView = "SentViaLinkTransactionDetailView.descriptionView"
+}
 
+struct SentViaLinkTransactionDetailView: View {
+    
+    // Dependencies
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationService: NotificationService
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
@@ -54,6 +61,7 @@ struct SentViaLinkTransactionDetailView: View {
                 .fontWeight(.semibold)
                 .apply(style: .title3)
                 .padding(.bottom, 4)
+                .accessibilityIdentifier(.accessibilityTitleLabel)
             
             // Subtitle
             Text("\(transaction?.creationDayInString ?? L10n.unknownDate) @ \(transaction?.creationTimeInString ?? L10n.unknownTime)")
@@ -103,6 +111,7 @@ struct SentViaLinkTransactionDetailView: View {
             Text(transaction?.amount.tokenAmountFormattedString(symbol: transaction?.token.symbol ?? ""))
                 .apply(style: .text2)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
+                .accessibilityIdentifier(.accessibilityCryptoAmountLabel)
         }
         .padding(.vertical, 32)
         .frame(maxWidth: .infinity)
@@ -115,6 +124,7 @@ struct SentViaLinkTransactionDetailView: View {
                 Text(link)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
+                    .accessibilityIdentifier(.accessibilityLinkLabel)
                 Text(L10n.uniqueOneTimeLinkWorksOnceOnly)
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -150,8 +160,9 @@ struct SentViaLinkTransactionDetailView: View {
             Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress
                 .theFundsCanBeClaimedByAnyoneWithALink
             )
-                .apply(style: .text4)
-                .fixedSize(horizontal: false, vertical: true)
+            .apply(style: .text4)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(.accessibilityDescriptionView)
             
             Spacer()
         }

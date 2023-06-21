@@ -28,6 +28,7 @@ struct SettingsView: View {
                 profileSection
                 securitySection
                 appearanceSection
+                communitySection
                 appVersionSection
                 #if !RELEASE
                     debugSection
@@ -139,6 +140,24 @@ struct SettingsView: View {
                     .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
                     .labelsHidden()
             }
+        }
+    }
+
+    private var communitySection: some View {
+        Section(header: headerText("community")) {
+            Button(
+                action: {
+                    viewModel.openTwitter()
+                },
+                label: { cellView(image: .twitter, title: L10n.followUsOnTwitter, withArrow: false) }
+            )
+
+            Button(
+                action: {
+                    viewModel.openDiscord()
+                },
+                label: { cellView(image: .discord, title: L10n.joinOurDiscord, withArrow: false) }
+            )
         }
     }
 

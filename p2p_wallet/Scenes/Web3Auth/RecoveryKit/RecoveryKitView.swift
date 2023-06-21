@@ -166,9 +166,9 @@ struct RecoveryKitView_Previews: PreviewProvider {
             localProvider: provider,
             remoteProvider: [provider]
         )
-
-        Task { try await service.synchronize() }
-
+        
+        Task { await service.synchronize() }
+        
         return NavigationView {
             RecoveryKitView(
                 viewModel: .init(walletMetadataService: service)

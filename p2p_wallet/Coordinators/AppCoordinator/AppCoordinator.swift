@@ -127,7 +127,7 @@ final class AppCoordinator: Coordinator<Void> {
         guard let window = window else { return }
 
         Task.detached {
-            try await Resolver.resolve(WalletMetadataService.self).synchronize()
+            await Resolver.resolve(WalletMetadataService.self).synchronize()
         }
 
         Task {

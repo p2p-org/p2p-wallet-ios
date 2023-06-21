@@ -29,7 +29,7 @@ final class RecoveryKitViewModel: ObservableObject {
         self.analyticsManager = analyticsManager
         self.userWalletManager = userWalletManager
 
-        Task.detached { try await walletMetadataService.synchronize() }
+        Task.detached { await walletMetadataService.synchronize() }
 
         Publishers
             .CombineLatest(
