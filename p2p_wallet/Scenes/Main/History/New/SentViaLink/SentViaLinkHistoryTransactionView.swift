@@ -1,10 +1,3 @@
-//
-//  SentViaLinkHistoryTransactionView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 28/03/2023.
-//
-
 import SwiftUI
 
 struct SentViaLinkHistoryTransactionView: View {
