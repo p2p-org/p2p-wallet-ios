@@ -123,6 +123,7 @@ extension Resolver: ResolverRegistering {
 
         // WalletManager
         register { UserWalletManager() }
+            .implements(CurrentUserWallet.self)
             .scope(.application)
 
         // WalletMetadata
@@ -137,8 +138,10 @@ extension Resolver: ResolverRegistering {
 
         register {
             WalletMetadataServiceImpl(
-                localProvider: resolve(LocalWalletMetadataProvider.self),
-                remoteProvider: [
+                currentUserWallet: resolve(),
+                errorObserver: resolve(),
+                localMetadataProvider: resolve(LocalWalletMetadataProvider.self),
+                remoteMetadataProvider: [
                     resolve(RemoteWalletMetadataProvider.self),
                     resolve(TKeyWalletMetadataProvider.self),
                 ]
@@ -305,7 +308,7 @@ extension Resolver: ResolverRegistering {
 
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
-        
+
         register { AuthServiceBridge() }
             .implements(SocialAuthService.self)
             .scope(.application)

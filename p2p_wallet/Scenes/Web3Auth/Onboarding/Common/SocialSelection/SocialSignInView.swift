@@ -20,7 +20,7 @@ struct SocialSignInView: View {
             onBack: viewModel.isBackAvailable ? { [weak viewModel] in viewModel?.onBack() } : nil,
             onInfo: { [weak viewModel] in viewModel?.onInfo() }
         )
-        .onboardingScreen()
+        .modifier(OnboardingScreen())
     }
 
     var content: some View {

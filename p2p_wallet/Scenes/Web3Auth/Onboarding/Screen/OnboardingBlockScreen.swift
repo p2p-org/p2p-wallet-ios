@@ -69,7 +69,6 @@ struct OnboardingBlockScreen: View {
                 }
             }
         }
-        .onboardingScreen()
         .onboardingNavigationBar(title: "", onInfo: onInfo)
     }
 

@@ -24,11 +24,6 @@ class UserWalletManager: ObservableObject {
         }
     }
 
-    /// Check if user logged in using web3 auth
-    var isUserLoggedInUsingWeb3: Bool {
-        wallet?.ethAddress != nil
-    }
-
     init() {}
 
     func refresh() async throws {
@@ -49,7 +44,6 @@ class UserWalletManager: ObservableObject {
             seedPhrase: account.phrase,
             derivablePath: storage.derivablePath,
             name: storage.getName(),
-            deviceShare: nil,
             ethAddress: storage.ethAddress,
             account: account,
             moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString,
@@ -73,7 +67,7 @@ class UserWalletManager: ObservableObject {
 
         // Services
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
-        
+
         if let deviceShare = deviceShare, ethAddress != nil {
             deviceShareManager.save(deviceShare: deviceShare)
         }
@@ -120,5 +114,15 @@ class UserWalletManager: ObservableObject {
         // Reset wallet
         wallet = nil
         solanaTracker.stopTracking()
+    }
+}
+
+extension UserWalletManager: CurrentUserWallet {
+    var value: UserWallet? {
+        wallet
+    }
+
+    var valuePublisher: AnyPublisher<UserWallet?, Never> {
+        $wallet.eraseToAnyPublisher()
     }
 }

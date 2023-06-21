@@ -5,9 +5,10 @@
 import KeyAppUI
 import SwiftUI
 
-extension View {
-    func onboardingScreen() -> some View {
-        background(Color(Asset.Colors.lime.color))
+struct OnboardingScreen: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(Color(Asset.Colors.lime.color))
             .edgesIgnoringSafeArea(.all)
             .frame(maxHeight: .infinity)
     }

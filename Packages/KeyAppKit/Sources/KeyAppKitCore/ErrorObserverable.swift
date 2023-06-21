@@ -31,3 +31,15 @@ public extension ErrorObserver {
             .sink { error in handleError(error) }
     }
 }
+
+public class MockErroObserver: ErrorObserver {
+    public init() {}
+
+    public func handleError(_ error: Error) {
+        debugPrint(error)
+    }
+
+    public func handleError(_ error: Error, userInfo: [String: Any]?) {
+        debugPrint(error, userInfo)
+    }
+}

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import Onboarding
 import Resolver
 

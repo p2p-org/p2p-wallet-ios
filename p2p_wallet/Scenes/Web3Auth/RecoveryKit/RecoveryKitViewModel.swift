@@ -29,8 +29,6 @@ final class RecoveryKitViewModel: ObservableObject {
         self.analyticsManager = analyticsManager
         self.userWalletManager = userWalletManager
 
-        Task.detached { await walletMetadataService.synchronize() }
-
         Publishers
             .CombineLatest(
                 walletMetadataService.metadataPublisher,
@@ -56,6 +54,12 @@ final class RecoveryKitViewModel: ObservableObject {
                     )
                 }
             }.store(in: &subscriptions)
+    }
+
+    func onAppear() {
+        Task {
+            await walletMetadataService.synchronize()
+        }
     }
 
     func openSeedPhrase() {

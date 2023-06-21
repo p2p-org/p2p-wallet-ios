@@ -55,6 +55,6 @@ struct SocialSignInAccountHasBeenUsedView: View {
             onBack: { [weak viewModel] in viewModel?.back() },
             onInfo: { [weak viewModel] in viewModel?.info() }
         )
-        .onboardingScreen()
+        .modifier(OnboardingScreen())
     }
 }

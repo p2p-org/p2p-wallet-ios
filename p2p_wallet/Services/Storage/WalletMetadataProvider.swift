@@ -6,26 +6,10 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import KeychainSwift
 import Onboarding
 import Resolver
-
-enum WalletMetadataProviderError: Error {
-    case invalidAction
-    case unauthorised
-    case deleteIsNotAllowed
-}
-
-protocol WalletMetadataProvider {
-    /// The flag indicated ready for usage the provider
-    var ready: Bool { get async }
-
-    func acquireWrite() async
-    func releaseWrite() async
-
-    func save(for wallet: UserWallet, metadata: WalletMetaData?) async throws
-    func load(for wallet: UserWallet) async throws -> WalletMetaData?
-}
 
 actor LocalWalletMetadataProvider: WalletMetadataProvider {
     /// Local device keychain
@@ -136,9 +120,9 @@ class MockedWalletMeradataProvider: WalletMetadataProvider {
     let ready: Bool = true
 
     init(_ value: WalletMetaData?) { self.value = value }
-    
+
     func acquireWrite() async {}
-    
+
     func releaseWrite() async {}
 
     func save(for _: UserWallet, metadata _: WalletMetaData?) async throws {}

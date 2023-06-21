@@ -40,8 +40,8 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
             OnboardingContentView(
                 data: contentData
             )
-                .padding(.top, 60)
-                .padding(.bottom, 48)
+            .padding(.top, 60)
+            .padding(.bottom, 48)
             BottomActionContainer {
                 VStack {
                     customActions
@@ -54,7 +54,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
                             leading: Asset.MaterialIcon.newReleasesOutlined.image,
                             onPressed: { help() }
                         )
-                            .frame(height: TextButton.Size.large.height)
+                        .frame(height: TextButton.Size.large.height)
                     }
 
                     if let back = back {
@@ -72,7 +72,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
                                 }
                             }
                         )
-                            .frame(height: TextButton.Size.large.height)
+                        .frame(height: TextButton.Size.large.height)
                     }
                 }
             }
@@ -82,7 +82,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
             onBack: nil,
             onInfo: info != nil ? { info!() } : nil
         )
-        .onboardingScreen()
+        .modifier(OnboardingScreen())
     }
 }
 

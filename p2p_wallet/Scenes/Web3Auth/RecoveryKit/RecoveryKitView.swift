@@ -120,6 +120,9 @@ struct RecoveryKitView: View {
         }
         .background(Color(Asset.Colors.cloud.color))
         .edgesIgnoringSafeArea(.top)
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 
     var helpButton: some View {
@@ -163,12 +166,14 @@ struct RecoveryKitView_Previews: PreviewProvider {
         )
 
         let service = WalletMetadataServiceImpl(
-            localProvider: provider,
-            remoteProvider: [provider]
+            currentUserWallet: MockCurrentUserWallet.random(),
+            errorObserver: MockErroObserver(),
+            localMetadataProvider: provider,
+            remoteMetadataProvider: [provider]
         )
-        
+
         Task { await service.synchronize() }
-        
+
         return NavigationView {
             RecoveryKitView(
                 viewModel: .init(walletMetadataService: service)

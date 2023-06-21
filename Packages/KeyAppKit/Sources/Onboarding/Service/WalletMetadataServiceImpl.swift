@@ -5,31 +5,27 @@
 import Combine
 import Foundation
 import KeyAppKitCore
-import Onboarding
-import Resolver
 
-actor WalletMetadataServiceImpl: WalletMetadataService {
-    @Injected var userWalletManager: UserWalletManager
-    @Injected var errorObserver: ErrorObserver
+public actor WalletMetadataServiceImpl: WalletMetadataService {
+    let currentUserWallet: CurrentUserWallet
+    let errorObserver: ErrorObserver
+    let localMetadataProvider: WalletMetadataProvider
+    let remoteMetadataProvider: [WalletMetadataProvider]
 
     private let metadataSubject: CurrentValueSubject<AsyncValueState<WalletMetaData?>, Never> = .init(.init(value: nil))
 
-    public nonisolated var metadata: AsyncValueState<WalletMetaData?> {
-        metadataSubject.value
-    }
-
-    public nonisolated var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
-        metadataSubject.eraseToAnyPublisher()
-    }
-
-    private let localMetadataProvider: WalletMetadataProvider
-    private let remoteMetadataProvider: [WalletMetadataProvider]
-
     var subscription: [AnyCancellable] = []
 
-    init(localProvider: WalletMetadataProvider, remoteProvider: [WalletMetadataProvider]) {
-        localMetadataProvider = localProvider
-        remoteMetadataProvider = remoteProvider
+    public init(
+        currentUserWallet: CurrentUserWallet,
+        errorObserver: ErrorObserver,
+        localMetadataProvider: WalletMetadataProvider,
+        remoteMetadataProvider: [WalletMetadataProvider]
+    ) {
+        self.currentUserWallet = currentUserWallet
+        self.errorObserver = errorObserver
+        self.localMetadataProvider = localMetadataProvider
+        self.remoteMetadataProvider = remoteMetadataProvider
     }
 
     /// Indicator for availability of metadata.
@@ -38,8 +34,8 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
     }
 
     /// Synchornize data between local storage and remote storage.
-    func synchronize() async {
-        guard let userWallet = userWalletManager.wallet else {
+    public func synchronize() async {
+        guard let userWallet = currentUserWallet.value else {
             let error = Error.unauthorized
             errorObserver.handleError(error)
             return
@@ -112,8 +108,8 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
     }
 
     /// Update metadata
-    func update(_ newMetadata: WalletMetaData) async {
-        guard let userWallet = userWalletManager.wallet else {
+    public func update(_ newMetadata: WalletMetaData) async {
+        guard let userWallet = currentUserWallet.value else {
             errorObserver.handleError(Error.unauthorized)
             return
         }
@@ -214,6 +210,14 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
         }
 
         return (remoteMetadata, sync)
+    }
+
+    public nonisolated var metadata: AsyncValueState<WalletMetaData?> {
+        metadataSubject.value
+    }
+
+    public nonisolated var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
+        metadataSubject.eraseToAnyPublisher()
     }
 }
 
