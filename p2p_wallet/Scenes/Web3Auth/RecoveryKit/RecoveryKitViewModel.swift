@@ -21,7 +21,7 @@ final class RecoveryKitViewModel: ObservableObject {
 
     init(
         userWalletManager: UserWalletManager = Resolver.resolve(),
-        walletMetadataService: WalletMetadataServiceImpl = Resolver.resolve(),
+        walletMetadataService: WalletMetadataService = Resolver.resolve(),
         deviceShareMigrationService: DeviceShareMigrationService = Resolver.resolve(),
         analyticsManager: AnalyticsManager = Resolver.resolve()
     ) {

@@ -10,7 +10,9 @@ import Foundation
 import KeyAppKitCore
 
 public protocol WalletMetadataService {
-    func synchronize() async throws
+    func synchronize() async
+    
+    func update(_ newMetadata: WalletMetaData) async
 
     var metadata: AsyncValueState<WalletMetaData?> { get }
 

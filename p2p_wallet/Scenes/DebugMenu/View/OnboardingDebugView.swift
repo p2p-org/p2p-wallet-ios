@@ -127,9 +127,9 @@ struct OnboardingDebugView: View {
 
             Section(header: Text("Mocked device share")) {
                 Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
-                    .valueChanged(value: onboardingConfig.isDeviceShareMocked) { newValue in
+                    .onChange(of: onboardingConfig.isDeviceShareMocked, perform: { newValue in
                         onboardingConfig.isDeviceShareMocked = newValue
-                    }
+                    })
                 DebugTextField(title: "Share:", content: $onboardingConfig.mockDeviceShare)
                     .disabled(!onboardingConfig.isDeviceShareMocked)
                     .foregroundColor(!onboardingConfig.isDeviceShareMocked ? Color.gray : Color.black)

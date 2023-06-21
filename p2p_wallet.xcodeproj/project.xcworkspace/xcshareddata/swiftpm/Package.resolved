@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amplitude/Amplitude-iOS.git",
         "state": {
           "branch": null,
-          "revision": "b9512600a0367f5b38c75ad71e822be9ebd9406a",
-          "version": "8.16.1"
+          "revision": "084a48e2ecd904c00cc5c9345d233f9395e196fa",
+          "version": "8.16.3"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
         "state": {
           "branch": null,
-          "revision": "eee9ad754926c40a0f7e73f152357d37b119b7fa",
-          "version": "1.7.1"
+          "revision": "32f641cf24fc7abc1c591a2025e9f2f572648b0f",
+          "version": "1.7.2"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk.git",
         "state": {
           "branch": null,
-          "revision": "5034479ca0c4f32f299677fb0ba1fe4d3e3e20b4",
-          "version": "10.10.0"
+          "revision": "e700a8f40c87c31cab7984875fcc1225d96b25bf",
+          "version": "10.11.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
         "state": {
           "branch": null,
-          "revision": "69f5b8425dd473d2f2475bba7f88f82cd9da0e36",
-          "version": "10.10.0"
+          "revision": "62e3a0c09a75e2637f5300d46f05a59313f1c286",
+          "version": "10.11.0"
         }
       },
       {
@@ -204,8 +204,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "e8625b80c413457b13ea9be75d07f6e9f5830c19",
-          "version": "7.7.0"
+          "revision": "c1f60c63f356d364f4284ba82961acbe7de79bcc",
+          "version": "7.8.1"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "f901c4e6191cfc3b5cb73eee1d66217fe9f3eaca",
-          "version": "3.6.0"
+          "revision": "83e68b5fea032939fd9dcb178cd5bc01fde7ee58",
+          "version": "3.6.2"
         }
       },
       {
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "5a0feeb88f5607a936ba15a574ac6d911e377456",
+          "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
           "version": null
         }
       },
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "546eaa261ec5028b9cc5c7fa883fba9dd5881a3b",
-          "version": "2.52.0"
+          "revision": "6213ba7a06febe8fef60563a4a7d26a4085783cf",
+          "version": "2.54.0"
         }
       },
       {
@@ -510,8 +510,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "2166cbe932b29b6419f9cd751e8b27c647e1238e",
-          "version": "2.8.0"
+          "revision": "53fe0639a98903858d0196b699720decb42aee7b",
+          "version": "2.14.0"
         }
       }
     ]

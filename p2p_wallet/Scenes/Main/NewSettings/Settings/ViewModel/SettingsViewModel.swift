@@ -19,7 +19,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
-    @Injected private var metadataService: WalletMetadataServiceImpl
+    @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
     @Injected private var deviceShareMigrationService: DeviceShareMigrationService
 

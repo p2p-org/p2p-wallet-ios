@@ -29,10 +29,6 @@ struct DebugMenuView: View {
                 modules
                 
                 feeRelayer
-                
-                onboarding
-                
-                deviceShare
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
         }
@@ -51,9 +47,9 @@ struct DebugMenuView: View {
     
     var application: some View {
         Section(header: Text("Application")) {
-            TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
-            TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
-            TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
+            DebugTextField(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+            DebugTextField(title: "Push:", content: $globalAppState.pushServiceEndpoint)
+            DebugTextField(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
             Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
             Button {
                 Task {
@@ -89,13 +85,6 @@ struct DebugMenuView: View {
                     Text(endpoint).tag(endpoint as String?)
                 }
             }
-        }
-    }
-    
-    var onboarding: some View {
-        Section(header: Text("Onboarding configurations")) {
-            TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
-            TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
         }
     }
     

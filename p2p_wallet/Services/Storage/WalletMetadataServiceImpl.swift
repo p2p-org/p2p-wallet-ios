@@ -38,27 +38,30 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
     }
 
     /// Synchornize data between local storage and remote storage.
-    func synchronize() async throws {
+    func synchronize() async {
         guard let userWallet = userWalletManager.wallet else {
-            let error = WalletMetadataServiceImpl.Error.unauthorized
+            let error = Error.unauthorized
             errorObserver.handleError(error)
-            throw error
+            return
         }
 
         guard userWallet.ethAddress != nil else {
             metadataSubject.value.status = .ready
             metadataSubject.value.value = nil
 
-            throw WalletMetadataServiceImpl.Error.notWeb3AuthUser
+            errorObserver.handleError(Error.notWeb3AuthUser)
+            return
         }
 
-        // Warm up with local data
-        metadataSubject.value.value = try await localMetadataProvider.load(for: userWallet)
-
         do {
+            // Warm up with local data
+            metadataSubject.value.value = try await localMetadataProvider.load(for: userWallet)
+
+            // Start fetching
             metadataSubject.value.status = .fetching
             metadataSubject.value.error = nil
 
+            // Acquire write access
             await acquireWrite()
 
             defer {
@@ -85,7 +88,7 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
                     try await write(userWallet: userWallet, metadata: mergedMetadata)
                 } catch {
                     errorObserver.handleError(error)
-                    throw WalletMetadataServiceImpl.Error.remoteSynchronizationFailure
+                    throw Error.remoteSynchronizationFailure
                 }
             } else {
                 if let remoteMetadata {
@@ -104,25 +107,31 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
         } catch {
             await releaseWrite()
             metadataSubject.value.error = error
-            throw error
+            errorObserver.handleError(error)
         }
     }
 
     /// Update metadata
-    func update(_ newMetadata: WalletMetaData) async throws {
+    func update(_ newMetadata: WalletMetaData) async {
         guard let userWallet = userWalletManager.wallet else {
-            throw WalletMetadataServiceImpl.Error.unauthorized
+            errorObserver.handleError(Error.unauthorized)
+            return
         }
 
         guard userWallet.ethAddress != nil else {
-            throw WalletMetadataServiceImpl.Error.notWeb3AuthUser
+            errorObserver.handleError(Error.notWeb3AuthUser)
+            return
         }
 
-        // Push updated data to local storage
-        try await localMetadataProvider.save(for: userWallet, metadata: newMetadata)
-        metadataSubject.value.value = newMetadata
+        do {
+            // Push updated data to local storage
+            try await localMetadataProvider.save(for: userWallet, metadata: newMetadata)
+            metadataSubject.value.value = newMetadata
 
-        try await synchronize()
+            await synchronize()
+        } catch {
+            errorObserver.handleError(error)
+        }
     }
 
     private func acquireWrite() async {
@@ -145,7 +154,7 @@ actor WalletMetadataServiceImpl: WalletMetadataService {
 
     private func fetchRemote(userWallet: UserWallet) async throws
     -> (metadata: WalletMetaData?, sync: Bool) {
-        var multipleRemoteMetadata: [WalletMetaData?] = try await withThrowingTaskGroup(
+        let multipleRemoteMetadata: [WalletMetaData?] = try await withThrowingTaskGroup(
             of: WalletMetaData?.self
         ) { group in
             for remoteProvider in remoteMetadataProvider {
