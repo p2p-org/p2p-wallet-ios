@@ -52,6 +52,7 @@ struct StrigaRegistrationPhoneTextField: View {
 
                 TextField(L10n.enter, text: $text, onEditingChanged: { changed in
                     guard !changed else { return }
+                    // updating value on unfocus
                     updateUnderlyingValue()
                 }, onCommit: updateUnderlyingValue)
                 .font(uiFont: .font(of: .title2))
