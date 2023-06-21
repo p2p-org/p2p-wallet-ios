@@ -7,18 +7,18 @@
 
 import Foundation
 
-public struct ReauthenticationCustomShareProvider {
+public struct ReAuthCustomShareProvider {
     let apiGateway: APIGatewayClient
 }
 
-public enum ReauthenticationCustomShareEvent: Codable, Equatable {
+public enum ReAuthCustomShareEvent: Codable, Equatable {
     case start
     case resendOTP
     case enterOTP(String)
     case back
 }
 
-public struct ReauthenticationCustomShareResult: Equatable {
+public struct ReAuthenticationCustomShareResult: Equatable {
     let customShare: String
     let encryptedMnemonic: String
     
@@ -28,9 +28,9 @@ public struct ReauthenticationCustomShareResult: Equatable {
     }
 }
 
-public enum ReauthenticationCustomShareState: State, Equatable {
-    public typealias Event = ReauthenticationCustomShareEvent
-    public typealias Provider = ReauthenticationCustomShareProvider
+public enum ReAuthCustomShareState: State, Equatable {
+    public typealias Event = ReAuthCustomShareEvent
+    public typealias Provider = ReAuthCustomShareProvider
 
     public static var initialState: Self = .otpInput(
         phoneNumber: "",
@@ -44,7 +44,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
         resendCounter: Wrapper<ResendCounter>
     )
 
-    case finish(result: ReauthenticationCustomShareResult)
+    case finish(result: ReAuthenticationCustomShareResult)
 
     case cancel
 
@@ -93,7 +93,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
             )
 
             return .finish(
-                result: ReauthenticationCustomShareResult(
+                result: ReAuthenticationCustomShareResult(
                     customShare: result.encryptedShare,
                     encryptedMnemonic: result.encryptedPayload
                 )
@@ -115,7 +115,7 @@ public enum ReauthenticationCustomShareState: State, Equatable {
     }
 }
 
-extension ReauthenticationCustomShareState: Step {
+extension ReAuthCustomShareState: Step {
     public var step: Float {
         switch self {
         case .otpInput:

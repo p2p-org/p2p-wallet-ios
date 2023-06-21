@@ -9,18 +9,18 @@ import Combine
 import Foundation
 import Onboarding
 
-enum ReauthenticationWithoutDeviceShareResult {
+enum ReAuthWithoutDeviceShareResult {
     case success(TKeyFacade)
     case failure(Error)
     case cancel
 }
 
-final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<ReauthenticationWithoutDeviceShareResult> {
+final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<ReAuthWithoutDeviceShareResult> {
     private let navigationController: UINavigationController
 
-    let viewModel: ReauthenticationWithoutDeviceShareViewModel
+    let viewModel: ReAuthWithoutDeviceShareViewModel
 
-    let customShareDelegatedCoordinator: ReauthenticationCustomShareDelegatedCoordinator
+    let customShareDelegatedCoordinator: ReAuthCustomShareDelegatedCoordinator
     let socialShareDelegatedCoordinator: ReAuthSocialShareDelegatedCoordinator
 
     var previousNavigationStack: [UIViewController] = []
@@ -33,7 +33,7 @@ final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<Reauthent
         }
     }
 
-    let result = PassthroughSubject<ReauthenticationWithoutDeviceShareResult, Never>()
+    let result = PassthroughSubject<ReAuthWithoutDeviceShareResult, Never>()
 
     init(
         facade: TKeyFacade,
@@ -52,7 +52,7 @@ final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<Reauthent
         }))
     }
 
-    override func start() -> AnyPublisher<ReauthenticationWithoutDeviceShareResult, Never> {
+    override func start() -> AnyPublisher<ReAuthWithoutDeviceShareResult, Never> {
         customShareDelegatedCoordinator.rootViewController = navigationController
         socialShareDelegatedCoordinator.rootViewController = navigationController
 
@@ -79,7 +79,7 @@ final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<Reauthent
             .eraseToAnyPublisher()
     }
 
-    private func buildViewController(state: ReauthenticationWithoutDeviceShareState) -> UIViewController? {
+    private func buildViewController(state: ReAuthWithoutDeviceShareState) -> UIViewController? {
         switch state {
         case let .customShare(innerState):
             return customShareDelegatedCoordinator.buildViewController(for: innerState)
@@ -91,8 +91,8 @@ final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<Reauthent
     }
 
     private func stateChangeHandler(
-        from: ReauthenticationWithoutDeviceShareState?,
-        to: ReauthenticationWithoutDeviceShareState
+        from: ReAuthWithoutDeviceShareState?,
+        to: ReAuthWithoutDeviceShareState
     ) {
         switch to {
         case .finish:
@@ -109,7 +109,6 @@ final class ReauthenticationWithoutDeviceShareCoordinator: Coordinator<Reauthent
             break
         }
 
-        // TODO: Add empty screen
         let vc = buildViewController(state: to) ?? UIViewController()
 
         if to.step >= (from?.step ?? -1) {

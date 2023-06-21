@@ -9,8 +9,8 @@ import Foundation
 import Onboarding
 import SwiftUI
 
-class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<ReauthenticationSocialShareState> {
-    override func buildViewController(for state: ReauthenticationSocialShareState) -> UIViewController? {
+class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<ReAuthSocialShareState> {
+    override func buildViewController(for state: ReAuthSocialShareState) -> UIViewController? {
         switch state {
         case let .signIn(socialProvider):
             let viewModel = ReAuthSocialSignInViewModel(socialProvider: socialProvider)

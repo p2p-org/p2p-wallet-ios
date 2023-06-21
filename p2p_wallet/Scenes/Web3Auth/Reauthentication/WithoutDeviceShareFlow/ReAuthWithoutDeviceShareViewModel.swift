@@ -10,9 +10,9 @@ import Foundation
 import Onboarding
 import Resolver
 
-final class ReauthenticationWithoutDeviceShareViewModel: BaseViewModel, ObservableObject {
+final class ReAuthWithoutDeviceShareViewModel: BaseViewModel, ObservableObject {
     let facade: TKeyFacade
-    let stateMachine: StateMachine<ReauthenticationWithoutDeviceShareState>
+    let stateMachine: StateMachine<ReAuthWithoutDeviceShareState>
 
     init(facade: TKeyFacade, metadata: WalletMetaData) {
         self.facade = facade

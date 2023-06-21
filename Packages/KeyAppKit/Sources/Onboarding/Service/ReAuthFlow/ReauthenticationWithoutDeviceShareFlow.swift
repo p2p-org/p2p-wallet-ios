@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ReauthenticationWithoutDeviceShareProvider {
+public struct ReAuthWithoutDeviceShareProvider {
     let apiGateway: APIGatewayClient
     let facade: TKeyFacade
     let socialAuthService: SocialAuthService
@@ -19,27 +19,27 @@ public struct ReauthenticationWithoutDeviceShareProvider {
     }
 }
 
-public enum ReauthenticationWithoutDeviceShareEvent: Equatable {
-    case customShareEvent(ReauthenticationCustomShareEvent)
-    case socialShareEvent(ReauthenticationSocialShareEvent)
+public enum ReAuthWithoutDeviceShareEvent: Equatable {
+    case customShareEvent(ReAuthCustomShareEvent)
+    case socialShareEvent(ReAuthSocialShareEvent)
 }
 
-public enum ReauthenticationWithoutDeviceShareState: State, Equatable {
-    public typealias Event = ReauthenticationWithoutDeviceShareEvent
-    public typealias Provider = ReauthenticationWithoutDeviceShareProvider
+public enum ReAuthWithoutDeviceShareState: State, Equatable {
+    public typealias Event = ReAuthWithoutDeviceShareEvent
+    public typealias Provider = ReAuthWithoutDeviceShareProvider
 
     public static var initialState: Self = .customShare(.initialState)
 
-    case customShare(ReauthenticationCustomShareState)
-    case socialShare(ReauthenticationSocialShareState, ReauthenticationCustomShareResult)
+    case customShare(ReAuthCustomShareState)
+    case socialShare(ReAuthSocialShareState, ReAuthenticationCustomShareResult)
 
     case finish
     case cancel
 
     public func accept(
-        currentState: ReauthenticationWithoutDeviceShareState,
-        event: ReauthenticationWithoutDeviceShareEvent,
-        provider: ReauthenticationWithoutDeviceShareProvider
+        currentState: ReAuthWithoutDeviceShareState,
+        event: ReAuthWithoutDeviceShareEvent,
+        provider: ReAuthWithoutDeviceShareProvider
     ) async throws -> Self {
         switch currentState {
         case let .customShare(innerState):
@@ -99,7 +99,7 @@ public enum ReauthenticationWithoutDeviceShareState: State, Equatable {
     }
 }
 
-extension ReauthenticationWithoutDeviceShareState: Step {
+extension ReAuthWithoutDeviceShareState: Step {
     public var step: Float {
         switch self {
         case let .customShare(innerState):

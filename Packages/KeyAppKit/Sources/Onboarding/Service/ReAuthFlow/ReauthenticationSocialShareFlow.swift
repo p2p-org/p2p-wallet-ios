@@ -7,28 +7,28 @@
 
 import Foundation
 
-public struct ReauthenticationSocialShareResult: Equatable {
+public struct ReAuthSocialShareResult: Equatable {
     public let torusKey: TorusKey
 }
 
-public struct ReauthenticationSocialShareProvider {
+public struct ReAuthSocialShareProvider {
     let tkeyFacade: TKeyFacade
     let socialAuthService: SocialAuthService
 }
 
-public enum ReauthenticationSocialShareEvent {
+public enum ReAuthSocialShareEvent {
     case signIn
     case cancel
 }
 
-public enum ReauthenticationSocialShareState: State, Equatable {
-    public typealias Event = ReauthenticationSocialShareEvent
-    public typealias Provider = ReauthenticationSocialShareProvider
+public enum ReAuthSocialShareState: State, Equatable {
+    public typealias Event = ReAuthSocialShareEvent
+    public typealias Provider = ReAuthSocialShareProvider
 
     public static var initialState: Self = .signIn(socialProvider: .google)
 
     case signIn(socialProvider: SocialProvider)
-    case finish(result: ReauthenticationSocialShareResult)
+    case finish(result: ReAuthSocialShareResult)
     case cancel
 
     public func accept(currentState: Self, event: Event, provider: Provider) async throws -> Self {
@@ -70,7 +70,7 @@ public enum ReauthenticationSocialShareState: State, Equatable {
                     )
                 )
 
-            return .finish(result: ReauthenticationSocialShareResult(torusKey: torusKey))
+            return .finish(result: ReAuthSocialShareResult(torusKey: torusKey))
 
         case .cancel:
             return .cancel
@@ -78,7 +78,7 @@ public enum ReauthenticationSocialShareState: State, Equatable {
     }
 }
 
-extension ReauthenticationSocialShareState: Step {
+extension ReAuthSocialShareState: Step {
     public var step: Float {
         switch self {
         case .signIn:

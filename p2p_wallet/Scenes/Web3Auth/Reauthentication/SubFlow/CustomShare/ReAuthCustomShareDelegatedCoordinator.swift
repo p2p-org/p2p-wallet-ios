@@ -8,8 +8,8 @@
 import Foundation
 import Onboarding
 
-class ReauthenticationCustomShareDelegatedCoordinator: DelegatedCoordinator<ReauthenticationCustomShareState> {
-    override func buildViewController(for state: ReauthenticationCustomShareState) -> UIViewController? {
+class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomShareState> {
+    override func buildViewController(for state: ReAuthCustomShareState) -> UIViewController? {
         switch state {
         case let .otpInput(phoneNumber, _, resendCounter):
             let vm = EnterSMSCodeViewModel(
