@@ -1461,3 +1461,10 @@
 "Open my blank" = "Ouvre mon blanc";
 "Follow us on Twitter" = "Suivez-nous sur Twitter";
 "Join our Discord" = "Rejoignez notre Discord";
+"Use these details to receive transfers\nfrom a Euro bank account" = "Utilisez ces informations pour recevoir des virements\nd'un compte bancaire en euros";
+"IBAN" = "IBAN";
+"BIC" = "BIC";
+"Beneficiary" = "Bénéficiaire";
+"Transfers usually take from 1 to 3 working days to appear in your KeyApp account" = "Les virements prennent généralement de 1 à 3 jours ouvrables pour apparaître dans votre compte KeyApp";
+"Euro account" = "Compte en euros";
+"Your money is held and protected by licensed banks." = "Votre argent est détenu et protégé par des banques agréées.";
