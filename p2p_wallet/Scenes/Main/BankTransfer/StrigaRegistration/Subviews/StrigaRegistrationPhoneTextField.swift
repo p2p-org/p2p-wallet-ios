@@ -50,16 +50,13 @@ struct StrigaRegistrationPhoneTextField: View {
                     .apply(style: .title2)
                     .foregroundColor(Color(asset: Asset.Colors.night))
 
-                TextField(L10n.enter, text: $text, onEditingChanged: { changed in
-                    guard !changed else { return }
-                    updateUnderlyingValue()
-                }, onCommit: updateUnderlyingValue)
-                .font(uiFont: .font(of: .title2))
-                .foregroundColor(Color(asset: Asset.Colors.night))
-                .keyboardType(.numberPad)
-                .onAppear(perform: { updateEnteredString(newUnderlyingString: underlyingString) })
-                .onChange(of: text, perform: updateUndelyingString)
-                .onChange(of: underlyingString, perform: updateEnteredString)
+                TextField(L10n.enter, text: $text, onCommit: updateUnderlyingValue)
+                     .font(uiFont: .font(of: .title2))
+                     .foregroundColor(Color(asset: Asset.Colors.night))
+                     .keyboardType(.numberPad)
+                     .onAppear(perform: { updateEnteredString(newUnderlyingString: underlyingString) })
+                     .onChange(of: text, perform: updateUndelyingString)
+                     .onChange(of: underlyingString, perform: updateEnteredString)
 
                 if !text.isEmpty {
                     Button(action: { text = "" }) {
