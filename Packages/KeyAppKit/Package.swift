@@ -7,7 +7,7 @@ let package = Package(
     name: "KeyAppKit",
     platforms: [
         .macOS(.v12),
-        .iOS(.v14),
+        .iOS(.v15),
         .tvOS(.v13),
         .watchOS(.v6),
 
@@ -27,6 +27,11 @@ let package = Package(
         .library(
             name: "NameService",
             targets: ["NameService"]
+        ),
+
+        .library(
+            name: "KeyAppNetworking",
+            targets: ["KeyAppNetworking"]
         ),
 
         // Analytics manager for wallet
@@ -165,6 +170,15 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
             ],
             path: "Tests/IntegrationTests/NameServiceIntegrationTests"
+        ),
+
+        .target(name: "KeyAppNetworking"),
+        .testTarget(
+            name: "KeyAppNetworkingTests",
+            dependencies: [
+                "KeyAppNetworking"
+            ],
+            path: "Tests/UnitTests/KeyAppNetworkingTests"
         ),
 
         // AnalyticsManager

@@ -62,7 +62,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
             guard let response = response as? HTTPURLResponse else {
                 throw MoonpayProviderError.unknown
             }
@@ -103,7 +103,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
             guard let response = response as? HTTPURLResponse else {
                 throw MoonpayProviderError.unknown
             }
@@ -125,7 +125,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
             guard let json = try? JSONDecoder().decode([String: Double].self, from: data)
             else { return 0 }
             return json[currency] ?? 0
@@ -140,7 +140,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
             guard let response = response as? HTTPURLResponse else {
                 throw MoonpayProviderError.unknown
             }
@@ -166,7 +166,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
             guard
                 let json = try? JSONDecoder().decode(IpAddress.self, from: data),
                 let alpha3 = json.alpha3 else { return .init() }
@@ -185,7 +185,7 @@ extension Moonpay {
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
-            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
             return try JSONDecoder().decode(IpAddressResponse.self, from: data)
         }
         
@@ -193,7 +193,7 @@ extension Moonpay {
             var components = URLComponents(string: api.endpoint + "v3/countries")!
             var urlRequest = URLRequest(url: components.url!)
             urlRequest.httpMethod = "GET"
-            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
             return try JSONDecoder().decode([MoonpayCountry].self, from: data)
         }
     }
@@ -261,38 +261,5 @@ extension Moonpay.Provider {
         public let isAllowed: Bool
         public let isBuyAllowed: Bool
         public let isSellAllowed: Bool
-    }
-}
-
-@available(iOS, deprecated: 15.0, message: "This extension is no longer necessary. Use API built into SDK")
-extension URLSession {
-    func data(from urlRequest: URLRequest) async throws -> (Data, URLResponse) {
-        try await withCheckedThrowingContinuation { continuation in
-            let task = self.dataTask(with: urlRequest) { data, response, error in
-                guard let data = data, let response = response else {
-                    let error = error ?? URLError(.badServerResponse)
-                    return continuation.resume(throwing: error)
-                }
-
-                continuation.resume(returning: (data, response))
-            }
-
-            task.resume()
-        }
-    }
-
-    func data(from url: URL) async throws -> (Data, URLResponse) {
-        try await withCheckedThrowingContinuation { continuation in
-            let task = self.dataTask(with: url) { data, response, error in
-                guard let data = data, let response = response else {
-                    let error = error ?? URLError(.badServerResponse)
-                    return continuation.resume(throwing: error)
-                }
-
-                continuation.resume(returning: (data, response))
-            }
-
-            task.resume()
-        }
     }
 }

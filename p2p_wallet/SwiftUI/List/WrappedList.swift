@@ -9,19 +9,11 @@ struct WrappedList<Content: View>: View {
     }
 
     var body: some View {
-        if #available(iOS 15, *) {
-            List {
-                content()
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets())
-            }
-            .listStyle(.plain)
-        } else {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    content()
-                }
-            }
+        List {
+            content()
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets())
         }
+        .listStyle(.plain)
     }
 }

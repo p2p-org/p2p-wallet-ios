@@ -207,7 +207,7 @@ struct SendInputView: View {
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.actionButtonData,
                 showFinished: viewModel.showFinished
-           ) .accessibilityIdentifier("send-slider")
+           ).accessibilityIdentifier("send-slider")
         }
     }
     

@@ -4,8 +4,8 @@
 
 import Foundation
 import KeychainSwift
-import SolanaSwift
 import Resolver
+import SolanaSwift
 
 class KeychainStorage: StorageType {
     // MARK: - Constants
@@ -30,7 +30,10 @@ class KeychainStorage: StorageType {
     // MARK: - Services
 
     /// This keychain storage will only locally store in device
-    let localKeychain: KeychainSwift = .init()
+    let localKeychain = KeychainSwift()
+
+    /// This keychain storage for storage metadata
+    let metadataKeychain = KeychainSwift(keyPrefix: "metadata_")
 
     // MARK: - Initializers
 

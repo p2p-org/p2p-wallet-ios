@@ -40,7 +40,7 @@ struct RecoveryKitView: View {
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
-                if let metadata = viewModel.walletMetadata {
+                if let metadata = viewModel.model {
                     VStack(alignment: .leading) {
                         Text(L10n.multiFactorAuthentication)
                             .apply(style: .caps)
@@ -154,6 +154,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
         
         let provider = MockedWalletMeradataProvider(
             .init(
+                ethPublic: "1234",
                 deviceName: "iPhone 11",
                 email: "abc@gmail.com",
                 authProvider: "google",
@@ -166,7 +167,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
             remoteProvider: provider
         )
         
-        Task { try await service.update() }
+        Task { await service.synchronize() }
         
         return NavigationView {
             RecoveryKitView(
