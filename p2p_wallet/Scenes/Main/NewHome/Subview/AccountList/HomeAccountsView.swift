@@ -58,9 +58,12 @@ struct HomeAccountsView: View {
                     .animation(.linear, value: smallBanner)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
-                    .onChange(of: viewModel.bannerTapped) { [weak viewModel] output in
+                    .onChange(of: viewModel.shouldCloseBanner) { [weak viewModel] output in
                         guard output else { return }
                         withAnimation { viewModel?.closeBanner() }
+                    }
+                    .onTapGesture {
+                        viewModel.bannerTapped.send()
                     }
             }
             Text(L10n.tokens)

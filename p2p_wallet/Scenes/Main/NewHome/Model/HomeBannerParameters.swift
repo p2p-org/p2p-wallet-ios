@@ -3,13 +3,17 @@ import BankTransfer
 import SwiftUI
 
 struct HomeBannerParameters {
+    struct Button {
+        let title: String
+        let handler: () -> Void
+    }
+
     let backgroundColor: UIColor
     let image: UIImage
     let imageSize: CGSize
     let title: String
     let subtitle: String?
-    let actionTitle: String
-    let action: () -> Void
+    let button: Button?
 
     init(
         backgroundColor: UIColor,
@@ -17,16 +21,14 @@ struct HomeBannerParameters {
         imageSize: CGSize,
         title: String,
         subtitle: String?,
-        actionTitle: String,
-        action: @escaping () -> Void
+        button: Button?
     ) {
         self.title = title
         self.subtitle = subtitle
-        self.actionTitle = actionTitle
+        self.button = button
         self.image = image
         self.imageSize = imageSize
         self.backgroundColor = backgroundColor
-        self.action = action
     }
 
     init(
@@ -34,8 +36,6 @@ struct HomeBannerParameters {
         action: @escaping () -> Void,
         isSmallBanner: Bool
     ) {
-        self.action = action
-
         switch status {
         case .notStarted, .initiated:
             backgroundColor = Asset.Colors.lightSea.color
@@ -51,7 +51,7 @@ struct HomeBannerParameters {
                 title = L10n.finishIdentityVerificationToSendMoneyWorldwide
             }
             subtitle = nil
-            actionTitle = L10n.continue
+            self.button = Button(title: L10n.continue, handler: action)
 
         case .pendingReview, .onHold:
             backgroundColor = Asset.Colors.lightSea.color
@@ -59,11 +59,12 @@ struct HomeBannerParameters {
             if isSmallBanner {
                 imageSize = CGSize(width: 100, height: 100)
             } else {
-                imageSize = CGSize(width: 110, height: 107)
+                imageSize = CGSize(width: 120, height: 117)
             }
             title = L10n.HomeBanner.yourDocumentsVerificationIsPending
             subtitle = L10n.usuallyItTakesAFewHours
-            actionTitle = L10n.view
+            self.button = nil
+
         case .approved:
             backgroundColor = Asset.Colors.lightGrass.color
             image = .kycSend
@@ -74,7 +75,8 @@ struct HomeBannerParameters {
             }
             title = L10n.verificationIsDone
             subtitle = L10n.continueYourTopUpViaABankTransfer
-            actionTitle = L10n.topUp
+            self.button = Button(title: L10n.topUp, handler: action)
+
         case .rejected:
             backgroundColor = Asset.Colors.lightSun.color
             image = .kycShow
@@ -85,7 +87,8 @@ struct HomeBannerParameters {
             }
             title = L10n.actionRequired
             subtitle = L10n.pleaseCheckTheDetailsAndUpdateYourData
-            actionTitle = L10n.checkDetails
+            self.button = Button(title: L10n.checkDetails, handler: action)
+
         case .rejectedFinal:
             backgroundColor = Asset.Colors.lightRose.color
             image = .kycFail
@@ -96,13 +99,14 @@ struct HomeBannerParameters {
             }
             title = L10n.verificationIsRejected
             subtitle = L10n.addMoneyViaBankTransferIsUnavailable
-            actionTitle = L10n.seeDetails
+            self.button = Button(title: L10n.seeDetails, handler: action)
+
         }
     }
 }
 
 extension HomeBannerParameters: Equatable {
     static func == (lhs: HomeBannerParameters, rhs: HomeBannerParameters) -> Bool {
-        return lhs.title == rhs.title && lhs.actionTitle == rhs.title && lhs.backgroundColor == rhs.backgroundColor && lhs.image == rhs.image && lhs.imageSize == rhs.imageSize && lhs.subtitle == rhs.subtitle
+        return lhs.title == rhs.title && lhs.button?.title == rhs.button?.title && lhs.backgroundColor == rhs.backgroundColor && lhs.image == rhs.image && lhs.imageSize == rhs.imageSize && lhs.subtitle == rhs.subtitle
     }
 }

@@ -21,25 +21,27 @@ struct HomeSmallBannerView: View {
                             .padding(.top, 4)
                     }
 
-                    Button(action: params.action) {
-                        HStack(spacing: 8) {
-                            Text(params.actionTitle)
-                                .fontWeight(.medium)
-                                .apply(style: .text4)
-                                .padding(.vertical, 8)
-                                .foregroundColor(Color(asset: Asset.Colors.snow))
-                            Image(uiImage: .arrowForward)
-                                .renderingMode(.template)
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .foregroundColor(Color(asset: Asset.Colors.snow))
+                    if let button = params.button {
+                        Button(action: button.handler) {
+                            HStack(spacing: 8) {
+                                Text(button.title)
+                                    .fontWeight(.medium)
+                                    .apply(style: .text4)
+                                    .padding(.vertical, 8)
+                                    .foregroundColor(Color(asset: Asset.Colors.snow))
+                                Image(uiImage: .arrowForward)
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                    .foregroundColor(Color(asset: Asset.Colors.snow))
+                            }
+                            .padding(.leading, 16)
+                            .padding(.trailing, 12)
                         }
-                        .padding(.leading, 16)
-                        .padding(.trailing, 12)
+                        .background(Color(asset: Asset.Colors.night))
+                        .cornerRadius(radius: 8, corners: .allCorners)
+                        .padding(.top, 16)
                     }
-                    .background(Color(asset: Asset.Colors.night))
-                    .cornerRadius(radius: 8, corners: .allCorners)
-                    .padding(.top, 16)
                 }
 
                 Spacer()

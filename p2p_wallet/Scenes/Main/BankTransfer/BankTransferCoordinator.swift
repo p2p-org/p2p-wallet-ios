@@ -64,7 +64,9 @@ final class BankTransferCoordinator: Coordinator<Void> {
         switch userData.kycStatus {
         case .approved:
             return .transfer
-        case .initiated, .notStarted, .onHold, .pendingReview, .rejected, .rejectedFinal:
+        case .onHold, .pendingReview:
+            return .kycPendingReview
+        case .initiated, .notStarted, .rejected, .rejectedFinal:
             return .kyc
         }
     }
@@ -109,22 +111,26 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 }
             }
             .eraseToAnyPublisher()
+        case .kycPendingReview:
+            return coordinate(
+                to: StrigaVerificationPendingSheetCoordinator(presentingViewController: viewController)
+            )
+            .map { _ in return BankTransferFlowResult.none }
+            .eraseToAnyPublisher()
         case .transfer:
             return coordinate(
-                to: StrigaTransferCoordinator(
-                    navigation: viewController
-                )
+                to: IBANDetailsCoordinator(navigationController: viewController)
             )
-                .map { BankTransferFlowResult.completed }
-                .eraseToAnyPublisher()
+            .map { BankTransferFlowResult.completed }
+            .eraseToAnyPublisher()
         }
     }
-
 }
 
 enum BankTransferStep {
     case registration
     case otp
     case kyc
+    case kycPendingReview
     case transfer
 }

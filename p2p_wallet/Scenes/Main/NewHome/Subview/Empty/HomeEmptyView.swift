@@ -10,6 +10,9 @@ struct HomeEmptyView: View {
             VStack(spacing: 36) {
                 HomeBannerView(params: viewModel.banner)
                     .animation(.easeInOut, value: viewModel.banner)
+                    .onTapGesture {
+                        viewModel.bannerTapped.send()
+                    }
                 scrollingContent
             }
             .padding(.horizontal, 16)

@@ -28,22 +28,25 @@ struct HomeBannerView: View {
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
                     }
-                    Button(
-                        action: params.action,
-                        label: {
-                            Text(params.actionTitle)
-                                .foregroundColor(Color(Asset.Colors.night.color))
-                                .fontWeight(.semibold)
-                                .apply(style: .text4)
-                                .frame(height: 48)
-                                .frame(maxWidth: .infinity)
-                                .background(Color(Asset.Colors.snow.color))
-                                .cornerRadius(8)
-                        }
-                    )
+                    if let button = params.button {
+                        Button(
+                            action: button.handler,
+                            label: {
+                                Text(button.title)
+                                    .foregroundColor(Color(Asset.Colors.night.color))
+                                    .fontWeight(.semibold)
+                                    .apply(style: .text4)
+                                    .frame(height: 48)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color(Asset.Colors.snow.color))
+                                    .cornerRadius(8)
+                            }
+                        )
+                    }
                 }
                 .padding(.horizontal, 24)
-                .frame(height: 200)
+                .frame(height: params.button == nil ? 164 : 200)
+                .frame(maxWidth: .infinity)
                 .background(Color(params.backgroundColor).cornerRadius(16))
             }
 
@@ -66,8 +69,7 @@ struct HomeBannerView_Previews: PreviewProvider {
                     imageSize: CGSize(width: 198, height: 142),
                     title: L10n.topUpYourAccountToGetStarted,
                     subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                    actionTitle: L10n.addMoney,
-                    action: { }
+                    button: HomeBannerParameters.Button(title: L10n.addMoney, handler: { })
                 )
             )
 
