@@ -19,4 +19,5 @@ jobs:
         run: |
           chmod +x Scripts/jiraMapVersionToTasks.sh
           BRANCH_NAME=$(echo "${{ github.ref }}" | awk -F/ '{print $3}')
+          echo "$BRANCH_NAME"
           Scripts/jiraMapVersionToTasks.sh $BRANCH_NAME
