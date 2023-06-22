@@ -67,7 +67,7 @@ final class WalletMetaDataTests: XCTestCase {
             authProviderTimestamp: past15SecondsAgo,
             phoneNumber: "7890",
             phoneNumberTimestamp: past5SecondsAgo,
-            striga: .init(userIdTimestamp: past15SecondsAgo)
+            striga: .init(userId: "1",userIdTimestamp: past5SecondsAgo)
         )
 
         let remote = WalletMetaData(
