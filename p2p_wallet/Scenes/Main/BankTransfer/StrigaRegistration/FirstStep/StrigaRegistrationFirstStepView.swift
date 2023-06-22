@@ -3,7 +3,6 @@ import KeyAppUI
 import CountriesAPI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias InfoView = StrigaRegistrationInfoView
 fileprivate typealias Cell = StrigaRegistrationCell
 fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
@@ -21,7 +20,7 @@ struct StrigaRegistrationFirstStepView: View {
             ColoredBackground {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        InfoView(appearance: .credentials)
+                        BaseInformerView(data: StrigaRegistrationInfoViewModel.credentials)
                             .padding(.top, 22)
 
                         contactsSection

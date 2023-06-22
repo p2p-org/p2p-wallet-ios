@@ -1458,3 +1458,10 @@
 "Open my blank" = "Откройте мой бланк";
 "Follow us on Twitter" = "Следуйте за нами на Twitter";
 "Join our Discord" = "Присоединяйтесь к нашему дискорду";
+"Use these details to receive transfers\nfrom a Euro bank account" = "Используйте эти данные для получения переводов\nс банковского счета в евро.";
+"IBAN" = "IBAN";
+"BIC" = "БИК";
+"Beneficiary" = "Бенефициар";
+"Transfers usually take from 1 to 3 working days to appear in your KeyApp account" = "Переводы обычно занимают от 1 до 3 рабочих дней, чтобы появиться в вашей учетной записи KeyApp.";
+"Euro account" = "евро счет";
+"Your money is held and protected by licensed banks." = "Ваши деньги хранятся и защищаются лицензированными банками.";
