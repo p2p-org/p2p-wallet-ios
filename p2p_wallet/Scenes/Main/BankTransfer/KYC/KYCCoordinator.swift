@@ -49,10 +49,13 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
                 notificationService.showConnectionErrorNotification()
                 await cancel()
             } catch BankTransferError.kycVerificationInProgress {
+                await hideHud()
                 await MainActor.run {
-                    showPendingAlert()
+                    coordinate(to: StrigaVerificationPendingSheetCoordinator(presentingViewController: presentingViewController))
+                    .map { _ in return KYCCoordinatorResult.canceled }
+                    .sink { [weak self] in self?.subject.send($0) }
+                    .store(in: &subscriptions)
                 }
-                await cancel()
             } catch {
                 // TODO: handle BankTransferError.kycRejectedCantRetry and BankTransferError.kycAttemptLimitExceeded when more info is provided
                 notificationService.showDefaultErrorNotification()
@@ -115,24 +118,6 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
             mainVC.dismiss(animated: true, completion: nil)
             subject?.send(.canceled)
         }
-    }
-
-    private func showPendingAlert() {
-        let alert = UIAlertController(
-            title: L10n.yourDocumentsVerificationIsPending,
-            message: L10n.usuallyItTakesAFewHours,
-            preferredStyle: .alert
-        )
-
-        let okAction = UIAlertAction(
-            title: L10n.ok,
-            style: .default,
-            handler: nil
-        )
-
-        alert.addAction(okAction)
-
-        presentingViewController.present(alert, animated: true)
     }
 
     private func cancel() async {
