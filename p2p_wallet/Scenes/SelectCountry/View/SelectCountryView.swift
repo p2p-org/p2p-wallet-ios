@@ -127,7 +127,7 @@ struct SelectCountryView: View {
 private extension SelectCountryView {
     var notFoundView: some View {
         VStack(spacing: 20) {
-            Image(uiImage: .womanNotFound)
+            Image(.womanNotFound)
             Text(L10n.sorryWeDonTKnowThatCountry)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))

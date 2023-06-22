@@ -16,7 +16,7 @@ struct SwapEthBanner: View {
                 Button {
                     close()
                 } label: {
-                    Image(uiImage: UIImage.closeIcon)
+                    Image(.closeIcon)
                 }
             }
             TextButtonView(
@@ -29,7 +29,7 @@ struct SwapEthBanner: View {
         }
         .padding(.all, 16)
         .background(
-            Image(uiImage: UIImage.swapBannerBackground)
+            Image(.swapBannerBackground)
                 .resizable()
         )
     }

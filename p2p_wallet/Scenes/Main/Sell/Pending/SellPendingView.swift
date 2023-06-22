@@ -100,7 +100,7 @@ struct SellPendingView: View {
 
     private var infoBlockView: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(uiImage: .sellPendingWarning)
+            Image(.sellPendingWarning)
             Text(L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
@@ -120,7 +120,7 @@ struct SellPendingView: View {
                 Text(viewModel.receiverAddress)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: .font(of: .label1))
-                Image(uiImage: .copyReceiverAddress)
+                Image(.copyReceiverAddress)
             }
             .disabled(viewModel.isRemoving)
             .onTapGesture {

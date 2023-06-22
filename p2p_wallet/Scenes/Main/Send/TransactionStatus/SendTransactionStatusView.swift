@@ -141,7 +141,7 @@ struct SendTransactionStatusStatusView: View {
                     }
 
                     if case .loading = viewModel.state {
-                        Image(uiImage: .transactionStatusLoadingWrapper)
+                        Image(.transactionStatusLoadingWrapper)
                             .resizable()
                             .frame(width: 48, height: 48)
                             .rotationEffect(.degrees(isRotatingAnimation ? 360 : 0.0))

@@ -18,7 +18,7 @@ extension PaymentType {
                 fee: "1%",
                 duration: "~17 hours",
                 name: "Bank transfer",
-                icon: UIImage.buyBank
+                icon: UIImage(resource: .buyBank)
             )
         case .card:
             return .init(
@@ -26,7 +26,7 @@ extension PaymentType {
                 fee: "4.5%",
                 duration: "Instant",
                 name: "Card",
-                icon: UIImage.buyCard
+                icon: UIImage(resource: .buyCard)
             )
         }
     }

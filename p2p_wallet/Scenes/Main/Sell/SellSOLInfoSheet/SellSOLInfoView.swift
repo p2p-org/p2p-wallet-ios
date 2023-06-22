@@ -12,7 +12,7 @@ struct SellSOLInfoView: View {
                 .cornerRadius(2)
                 .padding(.vertical, 6)
             Spacer()
-            Image(uiImage: .fee)
+            Image(.fee)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 215)

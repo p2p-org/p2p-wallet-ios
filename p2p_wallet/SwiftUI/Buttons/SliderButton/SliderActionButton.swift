@@ -33,7 +33,7 @@ struct SliderActionButton: View {
                     .background(Circle().fill(Color(Asset.Colors.lime.color)))
                     .frame(width: 56, height: 56)
                     .overlay(
-                        Image(uiImage: .check)
+                        Image(.check)
                             .renderingMode(.template)
                             .foregroundColor(Color(Asset.Colors.night.color))
                     )

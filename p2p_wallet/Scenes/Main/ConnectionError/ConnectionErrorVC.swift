@@ -40,7 +40,7 @@ class ConnectionErrorView: BEView {
 
     private lazy var contentView: UIView = {
         let view = UIView(backgroundColor: .white)
-        let imageView = UIImageView(width: 65, height: 65, image: .connectionError)
+        let imageView = UIImageView(width: 65, height: 65, image: UIImage(resource: .connectionError))
         let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
             imageView.centeredHorizontallyView
 

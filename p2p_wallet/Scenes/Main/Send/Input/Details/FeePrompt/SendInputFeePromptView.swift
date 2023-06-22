@@ -14,7 +14,7 @@ struct SendInputFeePromptView: View {
     var body: some View {
         ColoredBackground {
             VStack(alignment: .center, spacing: 0) {
-                Image(uiImage: .fee)
+                Image(.fee)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)

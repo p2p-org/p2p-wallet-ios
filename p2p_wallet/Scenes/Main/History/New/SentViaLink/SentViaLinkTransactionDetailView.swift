@@ -138,7 +138,7 @@ struct SentViaLinkTransactionDetailView: View {
                 pasteboard.string = link
                 notificationService.showInAppNotification(.done(L10n.copied))
             } label: {
-                Image(uiImage: .copyFill)
+                Image(.copyFill)
                     .resizable()
                     .frame(width: 24, height: 24)
             }
@@ -149,7 +149,7 @@ struct SentViaLinkTransactionDetailView: View {
     private var oneTimeLinkInfo: some View {
         HStack(alignment: .center, spacing: 12) {
             
-            Image(uiImage: .infoFill)
+            Image(.infoFill)
                 .resizable()
                 .frame(width: 20, height: 20)
                 .foregroundColor(Color(Asset.Colors.night.color))

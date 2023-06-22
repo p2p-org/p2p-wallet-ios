@@ -10,7 +10,7 @@ final class ContinueViewModel: BaseViewModel, ObservableObject {
 
     init(subtitle: String) {
         data = OnboardingContentData(
-            image: .emailLetsContinue,
+            image: UIImage(resource: .emailLetsContinue),
             title: L10n.letSContinue,
             subtitle: subtitle
         )

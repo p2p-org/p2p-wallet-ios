@@ -39,6 +39,6 @@ struct CircleButton: View {
 
 struct NewHistoryButtonAction_Previews: PreviewProvider {
     static var previews: some View {
-        CircleButton(title: "Share", image: .share2) {}
+        CircleButton(title: "Share", image: UIImage(resource: .share2)) {}
     }
 }

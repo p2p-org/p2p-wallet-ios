@@ -7,7 +7,7 @@ struct SwapSwitchButton: View {
 
     var body: some View {
         Button(action: action.send, label: {
-            Image(uiImage: .swapArrows)
+            Image(.swapArrows)
         })
         .accessibilityIdentifier("SwapView.switchButton")
         .background(

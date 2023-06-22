@@ -8,7 +8,7 @@ struct WormholeClaimFeeView: View {
 
     var body: some View {
         VStack {
-            Image(uiImage: .fee)
+            Image(.fee)
                 .padding(.top, 33)
 
             HStack {
@@ -16,7 +16,7 @@ struct WormholeClaimFeeView: View {
                     .fill(Color(Asset.Colors.smoke.color))
                     .frame(width: 48, height: 48)
                     .overlay(
-                        Image(uiImage: .lightningFilled)
+                        Image(.lightningFilled)
                             .renderingMode(.template)
                             .resizable()
                             .foregroundColor(Color(Asset.Colors.mountain.color))

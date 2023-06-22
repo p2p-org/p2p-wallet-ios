@@ -45,7 +45,7 @@ struct CreateUsernameView: View {
 private extension CreateUsernameView {
     var informativeContent: some View {
         VStack(spacing: 0) {
-            Image(uiImage: .nameWallet)
+            Image(.nameWallet)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: 187.5)

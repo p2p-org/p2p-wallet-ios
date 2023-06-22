@@ -25,7 +25,8 @@ struct ReceiveView: View {
                     title: L10n.copyAddress,
                     style: .primaryWhite,
                     size: .large,
-                    trailing: UIImage.transactionsCopy.withTintColor(Asset.Colors.snow.color),
+                    trailing: UIImage(resource: .transactionsCopy)
+                        .withTintColor(Asset.Colors.snow.color),
                     onPressed: {
                         viewModel.buttonTapped()
                     }
@@ -87,7 +88,7 @@ struct ReceiveView: View {
         Circle()
             .fill(Color(Asset.Colors.smoke.color))
             .overlay(
-                Image(uiImage: .imageOutlineIcon)
+                Image(.imageOutlineIcon)
                     .renderingMode(.template)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             )
@@ -99,6 +100,6 @@ struct ReceiveView: View {
 // TODO: Refactor
 //struct ReceiveView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage.usdc))
+//        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage(resource: .usdc)))
 //    }
 //}

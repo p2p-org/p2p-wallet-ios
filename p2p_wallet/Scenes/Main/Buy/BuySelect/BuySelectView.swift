@@ -87,7 +87,7 @@ View where Model == Cell.Model {
                             }
                             Spacer()
                             if viewModel.selectedModel == model {
-                                Image(uiImage: UIImage.checkBoxIOS)
+                                Image(.checkBoxIOS)
                                     .frame(width: 15, height: 44)
                                     .padding(.trailing, 8)
                             }

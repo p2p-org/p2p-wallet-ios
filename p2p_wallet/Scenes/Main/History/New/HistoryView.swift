@@ -117,7 +117,7 @@ struct NewHistoryView<Header: View>: View {
     var sendViaLinkView: some View {
         VStack {
             HStack(alignment: .center, spacing: 12) {
-                Image(uiImage: .sendViaLinkPlain)
+                Image(.sendViaLinkPlain)
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundColor(Color(Asset.Colors.night.color))
@@ -134,7 +134,7 @@ struct NewHistoryView<Header: View>: View {
 
                 Spacer()
 
-                Image(uiImage: .nextArrow)
+                Image(.nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
                     .padding(.vertical, (24 - 12) / 2)

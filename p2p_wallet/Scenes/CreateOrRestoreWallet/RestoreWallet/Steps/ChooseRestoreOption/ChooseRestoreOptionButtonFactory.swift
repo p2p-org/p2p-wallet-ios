@@ -2,11 +2,11 @@ final class ChooseRestoreOptionButtonFactory {
     func createMain(for option: RestoreOption) -> ChooseRestoreOptionButton {
         switch option {
         case .keychain:
-            return .init(option: .keychain, title: L10n.continueWithICloudKeyChain, icon: .cloud)
+            return .init(option: .keychain, title: L10n.continueWithICloudKeyChain, icon: UIImage(resource: .cloud))
         case .socialApple:
-            return .init(option: .socialApple, title: L10n.continueWithApple, icon: .appleLogo)
+            return .init(option: .socialApple, title: L10n.continueWithApple, icon: UIImage(resource: .appleLogo))
         case .socialGoogle:
-            return .init(option: .socialGoogle, title: L10n.continueWithGoogle, icon: .google)
+            return .init(option: .socialGoogle, title: L10n.continueWithGoogle, icon: UIImage(resource: .google))
         case .custom:
             return .init(option: .custom, title: L10n.continueUsingPhoneNumber)
         default:

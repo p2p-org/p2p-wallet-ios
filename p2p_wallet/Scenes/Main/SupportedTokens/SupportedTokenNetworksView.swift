@@ -71,7 +71,7 @@ struct SupportedTokenNetworksView: View {
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.night.color))
                 Spacer()
-                Image(uiImage: .cellArrow)
+                Image(.cellArrow)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             .padding(.horizontal, 16)

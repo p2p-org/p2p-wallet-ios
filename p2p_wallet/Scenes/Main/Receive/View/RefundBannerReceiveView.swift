@@ -12,7 +12,7 @@ struct RefundBannerReceiveView: View {
                 .apply(style: .text3)
                 .multilineTextAlignment(.leading)
             Spacer()
-            Image(uiImage: .moneyDropsIllustration)
+            Image(.moneyDropsIllustration)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 4)

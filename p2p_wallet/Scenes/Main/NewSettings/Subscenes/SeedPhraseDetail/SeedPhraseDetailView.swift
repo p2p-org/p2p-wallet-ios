@@ -11,7 +11,7 @@ struct SeedPhraseDetailView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: viewModel.state == .lock ? UIImage.fogOpen : UIImage.fogClose)
+                Image(viewModel.state == .lock ? .fogOpen : .fogClose)
                 Text(viewModel.state == .lock ? L10n.showSeedPhrase : L10n.yourSeedPhrase)
                     .fontWeight(.bold)
                     .apply(style: .title1)

@@ -16,7 +16,7 @@ final class CustomTabBar: UITabBar {
         middleButton.backgroundColor = Asset.Colors.snow.color
         middleButton.layer.cornerRadius = 34
         middleButton.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
-        middleButton.setImage(.tabBarCenter, for: .normal)
+        middleButton.setImage(UIImage(resource: .tabBarCenter), for: .normal)
         middleButton.addTarget(self, action: #selector(middleButtonAction), for: .touchUpInside)
         addSubview(middleButton)
         return middleButton

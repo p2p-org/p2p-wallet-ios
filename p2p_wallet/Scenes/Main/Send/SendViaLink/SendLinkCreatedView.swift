@@ -46,7 +46,7 @@ struct SendLinkCreatedView: View {
             
             // Recipient
             RecipientCell(
-                image: Image(uiImage: .sendViaLinkCircleCompleted)
+                image: Image(.sendViaLinkCircleCompleted)
                     .castToAnyView(),
                 title: viewModel.formatedAmount,
                 subtitle: viewModel.link,
@@ -55,7 +55,7 @@ struct SendLinkCreatedView: View {
                         viewModel.copyClicked()
                     },
                     label: {
-                        Image(uiImage: .copyFill)
+                        Image(.copyFill)
                             .resizable()
                             .frame(width: 24, height: 24)
                     }

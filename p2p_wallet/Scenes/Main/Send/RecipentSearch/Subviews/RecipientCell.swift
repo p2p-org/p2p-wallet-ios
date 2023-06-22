@@ -40,21 +40,21 @@ struct RecipientCell: View {
         case let .username(name, domain):
             switch domain {
             case "key":
-                image = Image(uiImage: .appIconSmall).castToAnyView()
+                image = Image(.appIconSmall).castToAnyView()
                 title = "@\(name).key"
                 self.subtitle = subtitle
             default:
-                image = Image(uiImage: .newWalletCircle).castToAnyView()
+                image = Image(.newWalletCircle).castToAnyView()
                 title = RecipientFormatter.username(name: name, domain: domain)
                 self.subtitle = RecipientFormatter.format(destination: recipient.address)
             }
         case .solanaAddress:
-            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            image = Image(.newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
 
         case .ethereumAddress:
-            image = Image(uiImage: .ethereumIcon).castToAnyView()
+            image = Image(.ethereumIcon).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = nil
 
@@ -63,7 +63,7 @@ struct RecipientCell: View {
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
-            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            image = Image(.newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
         }

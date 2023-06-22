@@ -28,7 +28,7 @@ struct BuyTransactionDetailsView: View {
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                 VStack(spacing: 34) {
                     VStack(spacing: 46) {
-                        Image(uiImage: .transactionDetailsCat)
+                        Image(.transactionDetailsCat)
                         amounts
                     }
                     .padding(.horizontal, 14)

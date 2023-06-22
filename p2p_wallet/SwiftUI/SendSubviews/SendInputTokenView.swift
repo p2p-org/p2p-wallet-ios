@@ -35,7 +35,7 @@ struct SendInputTokenView: View {
                         .skeleton(with: skeleton, size: .init(width: 120, height: 20))
 
                     HStack(spacing: 0) {
-                        Image(uiImage: UIImage.buyWallet)
+                        Image(.buyWallet)
                             .renderingMode(.template)
                             .resizable()
                             .scaledToFit()

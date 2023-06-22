@@ -93,23 +93,23 @@ struct InvestSolendBlindView: View {
             switch viewModel.model.strategy {
             case .withoutAnyTokens:
                 HStack(spacing: -24) {
-                    Image(uiImage: .solendUsd)
+                    Image(.solendUsd)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 64, height: 64)
-                    Image(uiImage: .solendEur)
+                    Image(.solendEur)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 64, height: 64)
-                    Image(uiImage: .solendGbp)
+                    Image(.solendGbp)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 64, height: 64)
                 }
             case .withoutOnlyTokenForDeposit:
-                Image(uiImage: .solendBlindQuestion)
+                Image(.solendBlindQuestion)
             }
-            Image(uiImage: .arrowForward)
+            Image(.arrowForward)
                 .frame(width: 24, height: 24)
             if let url = viewModel.imageUrl {
                 CoinLogoView(

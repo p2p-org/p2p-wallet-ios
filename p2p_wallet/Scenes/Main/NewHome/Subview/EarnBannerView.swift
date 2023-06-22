@@ -21,7 +21,7 @@ struct EarnBannerView: View {
 
             HStack {
                 Spacer()
-                Image(uiImage: .earnBanner)
+                Image(.earnBanner)
                     .frame(width: 206, height: 142)
             }
             .frame(maxWidth: .infinity)
@@ -61,7 +61,7 @@ struct EarnBannerView: View {
                     Button {
                         closeAction()
                     } label: {
-                        Image(uiImage: .bannerClose)
+                        Image(.bannerClose)
                             .resizable()
                             .frame(width: 28, height: 28)
                     }

@@ -17,10 +17,10 @@ struct SupportedTokensBannerView: View {
             Spacer()
 
             ZStack {
-                Image(uiImage: .ethereumIcon)
+                Image(.ethereumIcon)
                     .cornerRadius(44)
                     .clipShape(Circle())
-                Image(uiImage: .solanaIcon)
+                Image(.solanaIcon)
                     .clipShape(Circle())
                     .offset(x: -33)
             }

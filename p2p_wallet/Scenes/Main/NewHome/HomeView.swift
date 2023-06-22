@@ -66,7 +66,7 @@ struct HomeView: View {
                                     Color(Asset.Colors.rain.color)
                                         .cornerRadius(80)
                                     HStack(spacing: 9) {
-                                        Image(uiImage: .walletNavigation)
+                                        Image(.walletNavigation)
                                         Text(viewModel.address)
                                             .foregroundColor(Color(Asset.Colors.mountain.color))
                                             .font(uiFont: .font(of: .text1, weight: .semibold))

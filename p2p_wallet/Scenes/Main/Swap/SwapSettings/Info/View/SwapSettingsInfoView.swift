@@ -16,7 +16,7 @@ struct SwapSettingsInfoView: View {
         VStack {
             Image(uiImage: viewModel.image)
             HStack(spacing: 16) {
-                Image(uiImage: .transactionFee)
+                Image(.transactionFee)
                     .frame(width: 48, height: 48)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(viewModel.title)

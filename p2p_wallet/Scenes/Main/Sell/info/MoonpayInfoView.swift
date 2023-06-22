@@ -12,7 +12,7 @@ struct MoonpayInfoView: View {
                    .frame(width: 31, height: 4)
                    .cornerRadius(2)
                    .padding(.vertical, 6)
-            Image(uiImage: .moonpayLogo)
+            Image(.moonpayLogo)
                 .padding(.top, 18)
             Text(L10n.serviceIsNextStep)
                 .fontWeight(.bold)
@@ -111,9 +111,9 @@ struct CheckboxView: View {
             isChecked.toggle()
         } label: {
             if isChecked {
-                Image(uiImage: .checkboxFill)
+                Image(.checkboxFill)
             } else {
-                Image(uiImage: .checkboxEmpty)
+                Image(.checkboxEmpty)
             }
         }
     }

@@ -34,7 +34,7 @@ struct WormholeClaimView: View {
                 Circle()
                     .fill(Color(Asset.Colors.smoke.color))
                     .overlay(
-                        Image(uiImage: .imageOutlineIcon)
+                        Image(.imageOutlineIcon)
                             .renderingMode(.template)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                     )
@@ -79,7 +79,7 @@ struct WormholeClaimView: View {
                         Button {
                             viewModel.openFees()
                         } label: {
-                            Image(uiImage: .info)
+                            Image(.info)
                                 .resizable()
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .frame(width: 20, height: 20)

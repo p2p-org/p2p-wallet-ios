@@ -13,6 +13,6 @@ extension WrappingToken {
         // swiftlint:disable swiftgen_assets
 //        UIImage(named: "wrapped-by-" + rawValue)
         // swiftlint:enable swiftgen_assets
-        UIImage.wrappedToken
+        UIImage(resource: .wrappedToken)
     }
 }

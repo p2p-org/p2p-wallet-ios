@@ -18,7 +18,7 @@ struct DeleteMyAccountView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: .shield)
+                Image(.shield)
                 Text(L10n.deleteMyAccount)
                     .fontWeight(.bold)
                     .apply(style: .title1)

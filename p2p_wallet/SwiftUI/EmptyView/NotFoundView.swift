@@ -12,7 +12,7 @@ struct NotFoundView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Image(uiImage: .womanNotFound)
+            Image(.womanNotFound)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 220)

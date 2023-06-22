@@ -18,7 +18,7 @@ struct RecoveryKitView: View {
             VStack(spacing: 24) {
                 // Card
                 VStack(spacing: 8) {
-                    Image(uiImage: .lockOutline)
+                    Image(.lockOutline)
                         .padding(.top, 4)
                     Text(L10n.yourRecoveryKit)
                         .fontWeight(.bold)

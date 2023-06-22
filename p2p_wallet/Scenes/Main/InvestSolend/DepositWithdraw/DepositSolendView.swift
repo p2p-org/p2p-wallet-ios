@@ -22,7 +22,7 @@ struct DepositSolendView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack {
-                    Image(uiImage: .solend)
+                    Image(.solend)
                     Text(viewModel.title)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
@@ -37,7 +37,7 @@ struct DepositSolendView: View {
                         viewModel.showAboutSolend()
                     },
                     label: {
-                        Image(uiImage: .questionNavBar)
+                        Image(.questionNavBar)
                     }
                 )
             }
@@ -110,7 +110,7 @@ struct DepositSolendView: View {
                     Circle()
                         .fill(Color(Asset.Colors.mint.color))
                         .frame(width: 56, height: 56)
-                        .overlay(Image(uiImage: UIImage.check))
+                        .overlay(Image(.check))
                     Spacer()
                 }
             } else {
@@ -118,7 +118,7 @@ struct DepositSolendView: View {
                     HStack(spacing: 8) {
                         SliderButtonView(
                             title: viewModel.sliderTitle,
-                            image: UIImage.arrowRight,
+                            image: UIImage(resource: .arrowRight),
                             style: .black,
                             isOn: .init(get: { [weak viewModel] in
                                 viewModel?.isSliderOn ?? false
@@ -139,7 +139,7 @@ struct DepositSolendView: View {
                             Circle()
                                 .fill(Color(Asset.Colors.lime.color))
                                 .frame(width: 56, height: 56)
-                                .overlay(Image(uiImage: UIImage.infoStraight))
+                                .overlay(Image(.infoStraight))
                         }
                     }
                 } else {
@@ -159,7 +159,7 @@ struct DepositSolendView: View {
                                 Circle()
                                     .fill(Color(Asset.Colors.rose.color.withAlphaComponent(0.2)))
                                     .frame(width: 56, height: 56)
-                                    .overlay(Image(uiImage: UIImage.solendSubtract))
+                                    .overlay(Image(.solendSubtract))
                             }
                             .alert(
                                 isPresented: $showingAlert

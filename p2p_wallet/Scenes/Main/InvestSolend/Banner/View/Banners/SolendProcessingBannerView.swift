@@ -20,7 +20,7 @@ struct SolendProcessingBannerView: View {
     var body: some View {
         VStack {
             VStack(alignment: .leading) {
-                Image(uiImage: .rocket)
+                Image(.rocket)
                     .offset(x: xOffset, y: 0)
             }
             Spacer()

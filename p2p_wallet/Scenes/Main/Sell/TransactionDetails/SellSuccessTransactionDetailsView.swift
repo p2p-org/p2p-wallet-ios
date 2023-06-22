@@ -72,7 +72,7 @@ struct SellSuccessTransactionDetailsView: View {
             Color(.cdf6cd.withAlphaComponent(0.3))
                 .cornerRadius(12)
             HStack(spacing: 12) {
-                Image(uiImage: .successSellTransaction)
+                Image(.successSellTransaction)
                 Text(L10n.theTransactionHasBeenSuccessfullyCompleted)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text4))

@@ -34,7 +34,7 @@ final class PincodeViewController: BaseViewController {
                 UIImageView(
                     width: 114,
                     height: 107.adaptiveHeight,
-                    image: UIImage.lockPincode,
+                    image: UIImage(resource: .lockPincode),
                     contentMode: .scaleAspectFit
                 )
                     .padding(.init(
@@ -83,7 +83,7 @@ final class PincodeViewController: BaseViewController {
     func bottomLeftButton() -> UIView? {
         if viewModel.showFaceid {
             let button = UIButton(width: 32, height: 32)
-            button.setImage(UIImage.faceId, for: .normal)
+            button.setImage(UIImage(resource: .faceId), for: .normal)
             button.tintColor = Asset.Colors.night.color
             button.imageView?.contentMode = .scaleAspectFill
             button.onTap { [weak viewModel] in

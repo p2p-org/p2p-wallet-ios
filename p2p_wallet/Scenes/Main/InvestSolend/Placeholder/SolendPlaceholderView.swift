@@ -12,7 +12,7 @@ struct SolendPlaceholderView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    Image(uiImage: .solendPlaceholder)
+                    Image(.solendPlaceholder)
                         .padding(.top, 24)
                     Group {
                         VStack(spacing: 10) {

@@ -88,7 +88,7 @@ struct InvestSolendView: View {
 
     private var ratesError: some View {
         HStack(spacing: 8) {
-            Image(uiImage: .solendSubtract)
+            Image(.solendSubtract)
             Text(L10n.ThereSAProblemShowingTheRates.tryAgainLater)
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(Asset.Colors.rose.color))

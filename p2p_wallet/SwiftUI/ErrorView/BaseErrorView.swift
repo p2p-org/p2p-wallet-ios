@@ -16,7 +16,7 @@ struct BaseErrorView: View {
         VStack {
             Spacer()
             VStack(spacing: appearance.imageTextPadding) {
-                Image(uiImage: .catFail)
+                Image(.catFail)
                     .accessibilityIdentifier("BaseErrorView.image")
                 VStack(spacing: 8) {
                     Text(L10n.sorry)

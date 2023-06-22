@@ -73,7 +73,7 @@ private extension SwapInputView {
                     .if(viewModel.isLoading) { view in
                         view.skeleton(with: true, size: CGSize(width: 84, height: 20))
                     }
-                Image(uiImage: .expandIcon)
+                Image(.expandIcon)
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

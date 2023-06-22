@@ -57,12 +57,12 @@ struct SupportedTokenItemView: View {
             switch true {
             case item.availableNetwork.contains(.solana) && item.availableNetwork.contains(.ethereum):
                 ZStack {
-                    Image(uiImage: .ethereumIcon)
+                    Image(.ethereumIcon)
                         .resizable()
                         .frame(width: networkSize, height: networkSize)
                         .cornerRadius(networkSize)
 
-                    Image(uiImage: .solanaIcon)
+                    Image(.solanaIcon)
                         .resizable()
                         .frame(width: networkSize, height: networkSize)
                         .cornerRadius(networkSize)
@@ -75,12 +75,12 @@ struct SupportedTokenItemView: View {
                 }
 
             case item.availableNetwork.contains(.ethereum):
-                Image(uiImage: .ethereumIcon)
+                Image(.ethereumIcon)
                     .resizable()
                     .frame(width: networkSize, height: networkSize)
                     .cornerRadius(networkSize)
             case item.availableNetwork.contains(.solana):
-                Image(uiImage: .solanaIcon)
+                Image(.solanaIcon)
                     .resizable()
                     .frame(width: networkSize, height: networkSize)
                     .cornerRadius(networkSize)
@@ -95,7 +95,7 @@ struct SupportedTokenItemView: View {
         Circle()
             .fill(Color(Asset.Colors.smoke.color))
             .overlay(
-                Image(uiImage: .imageOutlineIcon)
+                Image(.imageOutlineIcon)
                     .renderingMode(.template)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             )

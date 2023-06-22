@@ -35,7 +35,7 @@ class SentViaLinkActivityItemSource: NSObject, UIActivityItemSource {
     func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
         metadata.title = title
-        metadata.iconProvider = NSItemProvider(object: UIImage.appIconSquare)
+        metadata.iconProvider = NSItemProvider(object: UIImage(resource: .appIconSquare))
         metadata.imageProvider = nil
         //This is a bit ugly, though I could not find other ways to show text content below title.
         //https://stackoverflow.com/questions/60563773/ios-13-share-sheet-changing-subtitle-item-description

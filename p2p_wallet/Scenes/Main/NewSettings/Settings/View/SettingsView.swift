@@ -50,7 +50,7 @@ struct SettingsView: View {
                                 Text(viewModel.name)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
                                     .font(uiFont: .font(of: .label1))
-                                Image(uiImage: .cellArrow)
+                                Image(.cellArrow)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
                             }
                         }
@@ -71,7 +71,7 @@ struct SettingsView: View {
                         Spacer()
                         Text(L10n.logOut)
                             .font(uiFont: .font(of: .text2, weight: .semibold))
-                        Image(uiImage: .settingsSignOut)
+                        Image(.settingsSignOut)
                         Spacer()
                     }
                     .foregroundColor(Color(Asset.Colors.rose.color))
@@ -193,7 +193,7 @@ struct SettingsView: View {
                 .lineLimit(1)
             if withArrow {
                 Spacer()
-                Image(uiImage: .cellArrow)
+                Image(.cellArrow)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
         }

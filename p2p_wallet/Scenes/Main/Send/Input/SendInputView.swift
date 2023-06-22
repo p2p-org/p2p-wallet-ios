@@ -90,7 +90,7 @@ struct SendInputView: View {
                             .frame(width: 16, height: 16)
                         } else {
                             Button(action: viewModel.feeInfoPressed.send, label: {
-                                Image(uiImage: UIImage.infoSend)
+                                Image(.infoSend)
                                     .resizable()
                                     .frame(width: 16, height: 16)
                             })
@@ -183,7 +183,7 @@ struct SendInputView: View {
                         animated: .default
                     )
             }
-            Image(uiImage: UIImage.arrowUpDown)
+            Image(.arrowUpDown)
                 .renderingMode(.template)
                 .foregroundColor(Color(Asset.Colors.rain.color))
                 .frame(width: 16, height: 16)

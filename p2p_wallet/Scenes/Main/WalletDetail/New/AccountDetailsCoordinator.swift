@@ -174,7 +174,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         if account.data.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
-                var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+                var icon: SupportedTokenItemIcon = .image(UIImage(resource: .imageOutlineIcon))
                 if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
@@ -192,7 +192,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
 
         if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.data.token.address) {
-            var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+            var icon: SupportedTokenItemIcon = .image(UIImage(resource: .imageOutlineIcon))
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }

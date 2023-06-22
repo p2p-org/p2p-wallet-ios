@@ -124,7 +124,7 @@ struct SwapSettingsView: View {
             title: L10n.swappingThrough,
             subtitle: viewModel.info.currentRoute?.tokensChain,
             trailingSubtitle: viewModel.info.currentRoute?.description,
-            trailingView: Image(uiImage: .nextArrow)
+            trailingView: Image(.nextArrow)
                 .resizable()
                 .frame(width: 7.41, height: 12)
                 .padding(.vertical, (20 - 12) / 2)
@@ -172,7 +172,7 @@ struct SwapSettingsView: View {
         subtitle: String?,
         subtitleColor: UIColor = Asset.Colors.mountain.color,
         trailingSubtitle: String? = nil,
-        trailingView: AnyView = Image(uiImage: .infoStraight)
+        trailingView: AnyView = Image(.infoStraight)
             .resizable()
             .foregroundColor(Color(Asset.Colors.mountain.color))
             .frame(width: 20, height: 20)

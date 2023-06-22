@@ -160,7 +160,7 @@ class CoinLogoImageView: BEView {
         // wrapped by
         if wrapped {
             wrappingView.alpha = 1
-            wrappingTokenIcon.image = .wrappedToken
+            wrappingTokenIcon.image = UIImage(resource: .wrappedToken)
         }
     }
 }

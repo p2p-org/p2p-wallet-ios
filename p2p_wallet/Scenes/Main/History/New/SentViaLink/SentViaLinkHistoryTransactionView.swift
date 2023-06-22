@@ -16,7 +16,7 @@ struct SentViaLinkHistoryTransactionView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            Image(uiImage: .sendViaLinkCircleCompleted)
+            Image(.sendViaLinkCircleCompleted)
                 .resizable()
                 .frame(width: 48, height: 48)
             

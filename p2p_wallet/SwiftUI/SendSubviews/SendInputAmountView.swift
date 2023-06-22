@@ -113,7 +113,7 @@ struct SendInputAmountView: View {
                         Button(
                             action: switchPressed.send,
                             label: {
-                                Image(uiImage: UIImage.arrowUpDown)
+                                Image(.arrowUpDown)
                                     .renderingMode(.template)
                                     .foregroundColor(Color(Constants.mainColor))
                                     .frame(width: 16, height: 16)

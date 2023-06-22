@@ -41,7 +41,7 @@ final class BuyViewModel: ObservableObject {
     @Published var targetSymbol: String?
     @Published var buttonItem: ButtonItem = .init(
         title: L10n.buy + " \(defaultToken.symbol)",
-        icon: .buyWallet,
+        icon: UIImage(resource: .buyWallet),
         enabled: true
     )
 
@@ -158,7 +158,7 @@ final class BuyViewModel: ObservableObject {
         form.debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .map { aFiat, aToken, anAmount, _ in
                 var enabled = true
-                var icon: UIImage? = .buyWallet
+                var icon: UIImage? = UIImage(resource: .buyWallet)
                 var title = L10n.buy + " \(self.token.symbol)"
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
                 if minAmount > anAmount {
@@ -273,7 +273,7 @@ final class BuyViewModel: ObservableObject {
             state = .usual
         } else {
             let model = ChangeCountryErrorView.ChangeCountryModel(
-                image: .connectionErrorCat,
+                image: UIImage(resource: .connectionErrorCat),
                 title: L10n.sorry,
                 subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(title),
                 buttonTitle: L10n.goBack,

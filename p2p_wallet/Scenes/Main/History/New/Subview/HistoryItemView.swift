@@ -49,13 +49,13 @@ struct HistoryItemView: View {
                     HStack(spacing: 4) {
                         switch item.status {
                         case .failed:
-                            Image(uiImage: .crossIcon)
+                            Image(.crossIcon)
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundColor(Color(Asset.Colors.rose.color))
                                 .frame(width: 14, height: 14)
                         case .pending:
-                            Image(uiImage: .transactionIndicatorSellPending)
+                            Image(.transactionIndicatorSellPending)
                                 .resizable()
                                 .renderingMode(.template)
                                 .foregroundColor(Color(Asset.Colors.sun.color))

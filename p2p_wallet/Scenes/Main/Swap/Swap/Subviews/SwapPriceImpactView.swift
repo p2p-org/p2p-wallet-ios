@@ -7,7 +7,7 @@ struct SwapPriceImpactView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Image(uiImage: .solendSubtract)
+            Image(.solendSubtract)
                 .renderingMode(.template)
                 .foregroundColor(mainColor)
             Text(model.title)

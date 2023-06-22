@@ -19,7 +19,7 @@ public struct ErrorView: View {
     
     public var body: some View {
         VStack(spacing: 0) {
-            Image(uiImage: .catFail)
+            Image(.catFail)
                 .padding(.top, 24)
                 .padding(.bottom, title == nil ? 32: 20)
 

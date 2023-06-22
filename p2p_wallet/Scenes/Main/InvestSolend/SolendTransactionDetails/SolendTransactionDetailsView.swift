@@ -35,7 +35,7 @@ struct SolendTransactionDetailsView: View {
                         closeSubject.send()
                     },
                     label: {
-                        Image(uiImage: .closeAction)
+                        Image(.closeAction)
                     }
                 )
             }
@@ -143,7 +143,7 @@ struct SolendTransactionDetailsView: View {
             HStack(spacing: 6) {
                 Text(L10n.free)
                     .font(uiFont: .font(of: .text2))
-                Image(uiImage: .feeInfo)
+                Image(.feeInfo)
                     .frame(width: 16, height: 16)
             }
             .foregroundColor(Color(Asset.Colors.mint.color))

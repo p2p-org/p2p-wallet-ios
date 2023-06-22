@@ -23,7 +23,7 @@ struct PincodeVerifyView: View {
         VStack {
             // Header
             VStack {
-                Image(uiImage: .changePincode)
+                Image(.changePincode)
                     .resizable()
                     .frame(
                         minWidth: 85,

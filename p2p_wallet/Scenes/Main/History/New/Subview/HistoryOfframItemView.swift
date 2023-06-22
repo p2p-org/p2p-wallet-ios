@@ -31,7 +31,7 @@ struct HistoryOfframItemView: View {
                     Circle()
                         .fill(Color(Asset.Colors.rain.color))
                         .overlay(
-                            Image(uiImage: .transactionIndicatorSellPending)
+                            Image(.transactionIndicatorSellPending)
                                 .renderingMode(.template)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         )
@@ -41,7 +41,7 @@ struct HistoryOfframItemView: View {
                     Circle()
                         .fill(Color(UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)))
                         .overlay(
-                            Image(uiImage: .transactionIndicatorSellPending)
+                            Image(.transactionIndicatorSellPending)
                                 .renderingMode(.template)
                                 .foregroundColor(Color(Asset.Colors.rose.color))
                         )

@@ -38,7 +38,7 @@ struct HomeEmptyView: View {
                         .frame(height: 200)
                         .cornerRadius(16)
                 }
-                Image(uiImage: .homeBannerPerson)
+                Image(.homeBannerPerson)
             }
             VStack(spacing: 19) {
                 VStack(spacing: 8) {

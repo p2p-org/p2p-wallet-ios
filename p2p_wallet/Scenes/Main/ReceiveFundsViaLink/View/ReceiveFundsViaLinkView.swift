@@ -160,7 +160,7 @@ struct ReceiveFundsViaLinkView: View {
         ZStack {
             VStack(spacing: 32) {
                 Spacer()
-                Image(uiImage: .accountCreationFeeHand)
+                Image(.accountCreationFeeHand)
                 VStack(spacing: 8) {
                     Text("\(L10n.youVeGot) \(cryptoAmount)!")
                         .multilineTextAlignment(.center)

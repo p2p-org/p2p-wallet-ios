@@ -12,7 +12,7 @@ struct PincodeChangeStartView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: .pincodeIllustration)
+                Image(.pincodeIllustration)
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 192)

@@ -41,7 +41,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                             HStack(spacing: 10) {
                                 Text(viewModel.flag)
                                     .font(uiFont: .font(of: .title1, weight: .bold))
-                                Image(uiImage: .chevronDown)
+                                Image(.chevronDown)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
                             }
                         }
@@ -144,7 +144,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
     }
 
     var icon: some View {
-        Image(uiImage: UIImage.buyIcon)
+        Image(.buyIcon)
             .resizable()
             .scaledToFit()
             .frame(height: 48)
@@ -270,14 +270,14 @@ struct BuyView: View, KeyboardVisibilityReadable {
                 }
                 Spacer()
                 if viewModel?.selectedPayment == item.type {
-                    Image(uiImage: .checkmarkFilled)
+                    Image(.checkmarkFilled)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)
                         .padding(.trailing, 13)
                         .padding(.top, -3)
                 } else {
-                    Image(uiImage: .checkmarkEmpty)
+                    Image(.checkmarkEmpty)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)

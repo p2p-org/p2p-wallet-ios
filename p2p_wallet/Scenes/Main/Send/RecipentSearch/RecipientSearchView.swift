@@ -149,7 +149,7 @@ struct RecipientSearchView: View {
         } label: {
             VStack {
                 RecipientCell(
-                    image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
+                    image: Image(viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
                         .castToAnyView(),
                     title: L10n.sendMoneyViaLink,
                     subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.withoutAccountDetails: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinks.tryTomorrow,

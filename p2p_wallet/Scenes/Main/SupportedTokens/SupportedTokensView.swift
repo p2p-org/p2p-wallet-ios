@@ -14,7 +14,7 @@ struct SupportedTokensView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(uiImage: UIImage.buttonSearch)
+                Image(.buttonSearch)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                 TextField(L10n.search, text: $viewModel.filter)
                     .introspectTextField { field in
@@ -35,7 +35,7 @@ struct SupportedTokensView: View {
                 } else if !viewModel.filter.isEmpty {
                     if viewModel.tokens.isEmpty {
                         VStack(spacing: 12) {
-                            Image(uiImage: .womanNotFound)
+                            Image(.womanNotFound)
                                 .resizable()
                                 .frame(width: 220, height: 165)
                                 .padding(.top, 40)

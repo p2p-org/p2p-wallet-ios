@@ -78,7 +78,7 @@ struct WormholeSendInputView: View {
                                     .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
                                     Color(Asset.Colors.mountain.color))
 
-                            Image(uiImage: UIImage.warningIcon)
+                            Image(.warningIcon)
                                 .resizable()
                                 .foregroundColor(viewModel.adapter
                                     .isFeeGTAverage ? Color(Asset.Colors.rose.color) :

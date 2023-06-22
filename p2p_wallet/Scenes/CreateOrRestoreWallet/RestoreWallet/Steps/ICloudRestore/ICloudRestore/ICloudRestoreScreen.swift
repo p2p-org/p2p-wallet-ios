@@ -29,7 +29,7 @@ struct ICloudRestoreScreen: View {
     var content: some View {
         VStack(spacing: .zero) {
             if viewModel.accounts.count <= 5 {
-                Image(uiImage: .icloud)
+                Image(.icloud)
                     .resizable()
                     .scaledToFit()
                     .frame(minHeight: viewModel.accounts.count < 3 ? 200 : 90)

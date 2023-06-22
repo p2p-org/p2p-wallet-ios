@@ -17,7 +17,7 @@ struct SendEmptyView: View {
                 .ignoresSafeArea()
             VStack(alignment: .leading, spacing: 24) {
                 Spacer()
-                Image(uiImage: .emptySend)
+                Image(.emptySend)
                     .frame(maxWidth: .infinity)
                 Text(L10n.sendingTokensHasNeverBeenEASIER)
                     .foregroundColor(Color(Asset.Colors.night.color))

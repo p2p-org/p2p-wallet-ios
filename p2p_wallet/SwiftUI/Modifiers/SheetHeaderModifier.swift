@@ -71,7 +71,7 @@ private struct SheetHeaderView: View {
                             close()
                         },
                         label: {
-                            Image(uiImage: .closeAction)
+                            Image(.closeAction)
                         }
                     )
                 }

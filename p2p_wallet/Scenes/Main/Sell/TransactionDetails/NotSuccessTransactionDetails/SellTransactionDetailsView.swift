@@ -54,7 +54,7 @@ struct SellTransactionDetailsView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text4, weight: .semibold))
                 if viewModel.strategy.isYouNeedToSend {
-                    Image(uiImage: .copyReceiverAddress)
+                    Image(.copyReceiverAddress)
                 }
             }
             .onTapGesture {

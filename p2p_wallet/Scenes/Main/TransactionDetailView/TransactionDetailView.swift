@@ -138,7 +138,7 @@ struct DetailTransactionView: View {
                                         .foregroundColor(Color(Asset.Colors.night.color))
 
                                     if infoItem.copyableValue != nil {
-                                        Image(uiImage: .copyReceiverAddress)
+                                        Image(.copyReceiverAddress)
                                     }
                                 }
                             }

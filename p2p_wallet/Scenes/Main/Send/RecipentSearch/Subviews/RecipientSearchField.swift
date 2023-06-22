@@ -48,7 +48,7 @@ struct RecipientSearchField: View {
                 } else {
                     Button { text = "" }
                     label: {
-                            Image(uiImage: .crossIcon)
+                            Image(.crossIcon)
                                 .resizable()
                                 .frame(width: 12, height: 12)
                                 .foregroundColor(Color(Asset.Colors.night.color))
