@@ -53,7 +53,6 @@ for match in "${unique_matches[@]}"; do
             echo "$update_response"
         fi
 
-        exit 0
     else
         echo "- No Jira task found for '$match'"
     fi
