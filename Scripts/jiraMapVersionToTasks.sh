@@ -13,7 +13,13 @@ if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
 fi
 
 # Run git log commands and concatenate the outputs into log_output
-log_output=$(git log origin/main..origin/"$1" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+baseBranchPath=$(git branch -r | grep main | xargs)
+secondaryBranchPath=$(git branch -r | grep "$1" | xargs)
+
+echo "$baseBranchPath"
+echo "$secondaryBranchPath"
+
+log_output=$(git log baseBranchPath..secondaryBranchPath --grep='PWN' --regexp-ignore-case --pretty=format:%s)
 
 # Extract the release version from the provided parameter
 release=$(echo "$1" | sed 's/^release\///')
