@@ -3,26 +3,27 @@ import KeyAppUI
 
 struct SwapPriceImpactView: View {
 
-    @State var priceImpact: JupiterSwapState.SwapPriceImpact
+    let model: Model
 
     var body: some View {
         HStack(spacing: 10) {
             Image(uiImage: .solendSubtract)
                 .renderingMode(.template)
                 .foregroundColor(mainColor)
-
-            Text(L10n.ThePriceIsHigherBecauseOfYourTradeSize.considerSplittingYourTransactionIntoMultipleSwaps)
+            Text(model.title)
                 .apply(style: .text3)
                 .foregroundColor(textColor)
                 .multilineTextAlignment(.leading)
+            Spacer()
         }
-        .padding(.all, 12)
+        .padding(.vertical, 12)
+        .padding(.leading, 12)
         .background(backgroundColor)
         .addBorder(mainColor, cornerRadius: 8)
     }
 
     private var mainColor: Color {
-        switch priceImpact {
+        switch model.impact {
         case .medium:
             return Color(Asset.Colors.sun.color)
         case .high:
@@ -31,7 +32,7 @@ struct SwapPriceImpactView: View {
     }
 
     private var backgroundColor: Color {
-        switch priceImpact {
+        switch model.impact {
         case .medium:
             return Color(Asset.Colors.lightSun.color)
         case .high:
@@ -40,11 +41,20 @@ struct SwapPriceImpactView: View {
     }
 
     private var textColor: Color {
-        switch priceImpact {
+        switch model.impact {
         case .medium:
             return Color(Asset.Colors.night.color)
         case .high:
             return Color(Asset.Colors.rose.color)
         }
+    }
+}
+
+// MARK: - Model
+
+extension SwapPriceImpactView {
+    struct Model {
+        let title: String
+        let impact: JupiterSwapState.SwapPriceImpact
     }
 }

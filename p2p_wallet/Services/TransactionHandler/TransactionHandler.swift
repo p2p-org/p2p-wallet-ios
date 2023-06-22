@@ -8,6 +8,8 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -38,6 +40,7 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var apiClient: SolanaAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
+    @Injected var errorObserver: ErrorObserver
 
     // MARK: - Properties
 

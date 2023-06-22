@@ -23,16 +23,24 @@ struct ChooseItemSearchableItemView<Content: View>: View {
     }
 
     var body: some View {
-        content(model)
-            .padding(.horizontal, 16)
-            .frame(height: 72)
-            .background(
+        ZStack(alignment: .bottom) {
+            content(model)
+                .padding(.horizontal, 16)
+                .frame(height: 72)
+            if state == .first || state == .other {
                 Rectangle()
-                    .cornerRadius(radius: state == .other ? 0 : 16, corners: cornerRadius())
-                    .foregroundColor(Color(Asset.Colors.snow.color))
-            )
-            .padding(.horizontal, 16)
-            .listRowBackground(Color(Asset.Colors.smoke.color))
+                    .foregroundColor(Color(Asset.Colors.rain.color))
+                    .frame(height: 1)
+                    .padding(.leading, 20)
+            }
+        }
+        .background(
+            Rectangle()
+                .cornerRadius(radius: state == .other ? 0 : 16, corners: cornerRadius())
+                .foregroundColor(Color(Asset.Colors.snow.color))
+        )
+        .padding(.horizontal, 16)
+        .listRowBackground(Color(Asset.Colors.smoke.color))
     }
 
     func cornerRadius() -> UIRectCorner {

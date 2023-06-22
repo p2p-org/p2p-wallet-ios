@@ -111,7 +111,7 @@ struct DetailTransactionView: View {
     var info: some View {
         VStack(spacing: 10) {
             ForEach(viewModel.rendableTransaction.extra, id: \.title) { infoItem in
-                HStack {
+                HStack(alignment: .top) {
                     Text(infoItem.title)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -123,12 +123,25 @@ struct DetailTransactionView: View {
                         let notification: NotificationService = Resolver.resolve()
                         notification.showInAppNotification(.done(L10n.theAddressWasCopiedToClipboard))
                     } label: {
-                        Text(infoItem.value)
-                            .fontWeight(.bold)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                        if infoItem.copyableValue != nil {
-                            Image(uiImage: .copyReceiverAddress)
+                        VStack(alignment: .trailing) {
+                            ForEach(infoItem.values) { value in
+                                HStack {
+                                    Text(value.text)
+                                        .fontWeight(.bold)
+                                        .apply(style: .text4)
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundColor(Color(Asset.Colors.night.color))
+
+                                    Text(value.secondaryText)
+                                        .apply(style: .label1)
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundColor(Color(Asset.Colors.night.color))
+
+                                    if infoItem.copyableValue != nil {
+                                        Image(uiImage: .copyReceiverAddress)
+                                    }
+                                }
+                            }
                         }
                     }.allowsHitTesting(infoItem.copyableValue != nil)
                 }
@@ -138,10 +151,14 @@ struct DetailTransactionView: View {
     }
 
     var status: some View {
-        if
-            case let .succeed(message) = viewModel.rendableTransaction.status,
-            message.isEmpty
-        {
+        if viewModel.forceHidingStatus {
+            return AnyView(
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .padding(.bottom, 12)
+            )
+        } else if case let .succeed(message) = viewModel.rendableTransaction.status, message.isEmpty {
             return AnyView(
                 Rectangle()
                     .fill(.clear)
@@ -175,7 +192,7 @@ struct DetailTransactionView: View {
                 viewModel.action.send(.close)
             },
             label: {
-                Text(viewModel.closeButtonTitle)
+                Text(viewModel.rendableTransaction.buttonTitle)
                     .font(uiFont: style.font(size: .large))
                     .foregroundColor(Color(style.foreground))
                     .frame(maxWidth: .infinity)

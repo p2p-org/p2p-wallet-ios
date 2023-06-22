@@ -45,7 +45,7 @@ struct SendTransactionStatusView: View {
         VStack(alignment: .center, spacing: 0) {
             CoinLogoImageViewRepresentable(
                 size: 66,
-                token: viewModel.token
+                args: .token(viewModel.token)
             )
             .frame(width: 66, height: 66)
             .cornerRadius(radius: 66 / 2, corners: .allCorners)
@@ -203,14 +203,19 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
         SendTransactionStatusView(
             viewModel: SendTransactionStatusViewModel(
                 transaction: .init(
-                    state: .zero(
-                        recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
-                        token: .nativeSolana,
-                        feeToken: .nativeSolana,
-                        userWalletState: .empty,
-                        sendViaLinkSeed: nil
-                    )
-                ) { "0123abc" }
+                    isFakeSendTransaction: false,
+                    isFakeSendTransactionError: false,
+                    isFakeSendTransactionNetworkError: false,
+                    recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
+                    sendViaLinkSeed: nil,
+                    amount: 0.01,
+                    amountInFiat: 0.01,
+                    walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                    address: "adfasdf",
+                    payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                    feeAmount: .init(transaction: 10000, accountBalances: 2039280),
+                    currency: "USD"
+                )
             )
         )
     }

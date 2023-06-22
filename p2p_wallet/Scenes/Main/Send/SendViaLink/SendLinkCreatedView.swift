@@ -8,6 +8,12 @@
 import SwiftUI
 import KeyAppUI
 
+private extension String {
+    static let accessibilityTitleLabel = "SendLinkCreatedView.titleLabel"
+    static let accessibilityCopyButton = "SendLinkCreatedView.copyButton"
+    static let accessibilitySubtitleLabel = "SendLinkCreatedView.subtitleLabel"
+}
+
 struct SendLinkCreatedView: View {
     
     let viewModel: SendLinkCreatedViewModel
@@ -36,6 +42,7 @@ struct SendLinkCreatedView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.bottom, 24)
+                .accessibilityIdentifier(.accessibilityTitleLabel)
             
             // Recipient
             RecipientCell(
@@ -53,15 +60,16 @@ struct SendLinkCreatedView: View {
                             .frame(width: 24, height: 24)
                     }
                 )
+                .accessibilityIdentifier(.accessibilityCopyButton)
                 .castToAnyView()
             )
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
-                )
-                .padding(.bottom, 28)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .foregroundColor(Color(Asset.Colors.snow.color))
+            )
+            .padding(.bottom, 28)
             
             // Subtitle
             Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
@@ -69,6 +77,7 @@ struct SendLinkCreatedView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.horizontal, 16)
+                .accessibilityIdentifier(.accessibilitySubtitleLabel)
             
             Spacer()
             

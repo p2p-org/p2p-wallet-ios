@@ -32,15 +32,11 @@ enum NewHistoryItem: Identifiable, Equatable {
             return item.id
         case let .rendableOffram(item):
             return item.id
-        case let .button(id, _, _):
-            return id
-        case let .placeHolder(id):
-            return id
-        case let .fetch(id):
+        case let .button(id, _, _), let .placeHolder(id), let .fetch(id):
             return id
         }
     }
-    
+
     var date: Date {
         switch self {
         case let .rendableTransaction(item):

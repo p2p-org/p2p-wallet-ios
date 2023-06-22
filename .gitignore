@@ -80,6 +80,15 @@ fastlane/screenshots
 fastlane/test_output
 *.xcconfig
 
-# Project files
-p2p_wallet.xcodeproj/
-p2p_wallet.xcworkspace/
+# Project files except Package.resolved
+p2p_wallet.xcodeproj/*
+!p2p_wallet.xcodeproj/project.xcworkspace/
+p2p_wallet.xcodeproj/project.xcworkspace/*
+!p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/
+p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/*
+!p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+# KeyAppKit
+Packages/KeyAppKit/.swiftpm/xcode/xcshareddata/xcschemes

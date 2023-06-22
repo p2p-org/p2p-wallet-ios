@@ -7,12 +7,12 @@
 
 import Combine
 import Foundation
-import TransactionParser
 import SolanaSwift
+import TransactionParser
 
-struct RendableDetailParsedTransaction: RendableTransactionDetail {
+struct RendableDetailParsedTransaction: RenderableTransactionDetail {
     let trx: ParsedTransaction
-    
+
     var status: TransactionDetailStatus {
         switch trx.status {
         case .confirmed:
@@ -23,7 +23,7 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
             return .error(message: NSAttributedString(string: error ?? ""), error: trx.status.getError())
         }
     }
-    
+
     var title: String {
         switch trx.status {
         case .confirmed:
@@ -34,15 +34,15 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
             return L10n.transactionFailed
         }
     }
-    
+
     var subtitle: String {
         trx.blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
     }
-    
+
     var signature: String? {
         trx.signature ?? ""
     }
-    
+
     var icon: TransactionDetailIcon {
         if let info = trx.info as? SwapInfo {
             if
@@ -69,11 +69,11 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
 
         return .icon(.planet)
     }
-    
+
     var amountInFiat: TransactionDetailChange {
         .unchanged("")
     }
-    
+
     var amountInToken: String {
         if let info = trx.info as? SwapInfo {
             if let amount = info.destinationAmount {
@@ -86,29 +86,52 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
         }
         return ""
     }
-    
+
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
-        
+
         if let info = trx.info as? TransferInfo {
             result.append(
-                .init(title: L10n.sendTo, value: RecipientFormatter.format(destination: info.destination?.pubkey ?? ""))
+                .init(
+                    title: L10n.sendTo,
+                    values: [.init(text: RecipientFormatter.format(destination: info.destination?.pubkey ?? ""))]
+                )
             )
         } else if let info = trx.info as? CloseAccountInfo {
             result.append(
-                .init(title: "Account closed", value: RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? ""))
+                .init(
+                    title: "Account closed",
+                    values: [.init(text: RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? ""))]
+                )
             )
         } else if let info = trx.info as? CreateAccountInfo {
             result.append(
-                .init(title: "Account created", value: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? ""))
+                .init(
+                    title: "Account created",
+                    values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? ""))]
+                )
             )
         }
-        
+
         let feeAmountFormatted: Double = trx.fee?.total.convertToBalance(decimals: Token.nativeSolana.decimals) ?? 0.0
-        result.append(.init(title: L10n.transactionFee, value: trx.paidByP2POrg ? L10n.freePaidByKeyApp : "\(feeAmountFormatted) SOL"))
-        
+        result
+            .append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: trx.paidByP2POrg ? L10n.freePaidByKeyApp : "\(feeAmountFormatted) SOL")]
+                )
+            )
+
         return result
     }
-    
+
     var actions: [TransactionDetailAction] = [.share, .explorer]
+
+    var buttonTitle: String {
+        L10n.done
+    }
+
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
+    }
 }

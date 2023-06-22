@@ -120,7 +120,7 @@ struct BuySelectTokenCellView: BuySelectViewModelCell {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            CoinLogoImageViewRepresentable(size: 48, token: model.token)
+            CoinLogoImageViewRepresentable(size: 48, args: .token(model.token))
                 .frame(width: 48, height: 48)
                 .cornerRadius(16)
             VStack(alignment: .leading, spacing: 4) {

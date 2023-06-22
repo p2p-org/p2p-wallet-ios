@@ -10,7 +10,6 @@ import Send
 import SwiftUI
 
 struct RecipientCell: View {
-    
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
     let image: AnyView
     let title: String
@@ -53,8 +52,14 @@ struct RecipientCell: View {
             image = Image(uiImage: .newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
+
+        case .ethereumAddress:
+            image = Image(uiImage: .ethereumIcon).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = nil
+
         case let .solanaTokenAddress(_, token):
-            image = CoinLogoImageViewRepresentable(size: 48, token: token).castToAnyView()
+            image = CoinLogoImageViewRepresentable(size: 48, args: .token(token)).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
@@ -62,7 +67,7 @@ struct RecipientCell: View {
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
         }
-        
+
         if let date = recipient.createdData {
             trailingView = Text(date.timeAgoDisplay())
                 .apply(style: .label1)
@@ -78,6 +83,7 @@ struct RecipientCell: View {
     var body: some View {
         HStack {
             image
+                .clipShape(Circle())
                 .frame(width: 48, height: 48)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)

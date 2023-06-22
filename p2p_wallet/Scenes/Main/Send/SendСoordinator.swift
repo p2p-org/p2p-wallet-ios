@@ -9,15 +9,17 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
+import Wormhole
 
 enum SendResult {
     case sent(SendTransaction)
+    case wormhole(WormholeSendUserAction)
     case sentViaLink(link: String, transaction: SendTransaction)
     case cancelled
 }
 
 enum SendSource: String {
-    case sell, none
+    case sell, none, bridge
 }
 
 final class SendCoordinator: Coordinator<SendResult> {
@@ -62,26 +64,19 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if walletsRepository.state == .loaded {
-            let hasToken = walletsRepository.getWallets().contains { wallet in
-                (wallet.lamports ?? 0) > 0
-            }
-            
-            if hasToken {
-                // normal flow with no preChosenRecipient
-                if let recipient = preChosenRecipient {
-                    startFlowWithPreChosenRecipient(recipient)
-                } else {
-                    startFlowWithNoPreChosenRecipient()
-                }
-            } else {
-                showEmptyState()
-            }
+        let hasToken = walletsRepository.getWallets().contains { wallet in
+            (wallet.lamports ?? 0) > 0
+        }
 
+        if hasToken {
+            // normal flow with no preChosenRecipient
+            if let recipient = preChosenRecipient {
+                startFlowWithPreChosenRecipient(recipient)
+            } else {
+                startFlowWithNoPreChosenRecipient()
+            }
         } else {
-            // Show not ready
-            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
-            result.send(completion: .finished)
+            showEmptyState()
         }
 
         // Back
@@ -108,6 +103,8 @@ final class SendCoordinator: Coordinator<SendResult> {
                 self?.result.send(.sent(transaction))
             case .sentViaLink:
                 break
+            case let .wormhole(trx):
+                self?.result.send(.wormhole(trx))
             case .cancelled:
                 break
             }
@@ -119,6 +116,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
+            .filter { $0.category != .ethereumAddress }
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
@@ -133,10 +131,31 @@ final class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
+                case let .wormhole(transaction):
+                    self?.result.send(.wormhole(transaction))
                 case .sentViaLink:
                     break
                 case .cancelled:
                     break
+                }
+            }
+            .store(in: &subscriptions)
+
+        vm.coordinator.selectRecipientPublisher
+            .filter { $0.category == .ethereumAddress }
+            .flatMap { [unowned self] in
+                self.coordinate(
+                    to: WormholeSendInputCoordinator(
+                        recipient: $0,
+                        from: rootViewController,
+                        preChosenWallet: preChosenWallet
+                    )
+                )
+            }
+            .sink { [weak self] result in
+                switch result {
+                case let .transaction(transaction):
+                    self?.result.send(.wormhole(transaction))
                 }
             }
             .store(in: &subscriptions)
@@ -150,7 +169,7 @@ final class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
-        
+
         vm.coordinator.sendViaLinkPublisher
             .sinkAsync { [weak self] in
                 guard let self else { return }
@@ -159,7 +178,7 @@ final class SendCoordinator: Coordinator<SendResult> {
                 self.rootViewController.view.hideHud()
             }
             .store(in: &subscriptions)
-        
+
         Task {
             await vm.load()
         }
@@ -167,7 +186,16 @@ final class SendCoordinator: Coordinator<SendResult> {
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana network")
+
+        let bridgeTokens = SupportedToken.bridges.map(\.solAddress)
+        if preChosenWallet == nil {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else if bridgeTokens.contains(preChosenWallet?.token.address) {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana networks")
+        }
+
         vc.hidesBottomBarWhenPushed = hideTabBar
 
         // Push strategy
@@ -184,19 +212,19 @@ final class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
             .store(in: &subscriptions)
     }
-    
+
     private func startSendViaLinkFlow() async throws {
         // create recipient
         let url = sendViaLinkDataService.createURL()
         let keypair = try await sendViaLinkDataService.generateKeyPair(url: url)
         let seed = try sendViaLinkDataService.getSeedFromURL(url)
-        
+
         let recipient = Recipient(
             address: keypair.publicKey.base58EncodedString,
             category: .solanaAddress,
             attributes: [.funds]
         )
-        
+
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
@@ -213,17 +241,20 @@ final class SendCoordinator: Coordinator<SendResult> {
             case let .sentViaLink(link, transaction):
                 self?.startSendViaLinkCompletionFlow(
                     link: link,
-                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    formatedAmount: transaction.amount
+                        .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
                     transaction: transaction,
                     intermediatePubKey: keypair.publicKey.base58EncodedString
                 )
+            case let .wormhole(trx):
+                self?.result.send(.wormhole(trx))
             case .cancelled:
                 break
             }
         }
         .store(in: &subscriptions)
     }
-    
+
     private func startSendViaLinkCompletionFlow(
         link: String,
         formatedAmount: String,
@@ -237,9 +268,9 @@ final class SendCoordinator: Coordinator<SendResult> {
             transaction: transaction,
             intermediatePubKey: intermediatePubKey
         )
-        
+
         coordinate(to: coordinator)
-            .sink(receiveValue: { [weak self] result  in
+            .sink(receiveValue: { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success:

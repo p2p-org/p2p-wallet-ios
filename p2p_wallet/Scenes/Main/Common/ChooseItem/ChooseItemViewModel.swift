@@ -12,7 +12,6 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     @Published var isSearchGoing: Bool = false
     @Published var isLoading: Bool = true
 
-    var chosenTokenTitle: String { service.chosenTokenTitle }
     var otherTokensTitle: String { service.otherTokensTitle }
 
     let chosenToken: any ChooseItemSearchableItem
@@ -20,32 +19,52 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     private let service: ChooseItemService
     private var allItems: [ChooseItemListSection] = [] // All available items
 
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var notifications: NotificationService
 
     init(service: ChooseItemService, chosenToken: any ChooseItemSearchableItem) {
         self.chosenToken = chosenToken
         self.service = service
         super.init()
+        bind()
+    }
+}
 
-        self.isLoading = true
-        Task {
-            do {
-                let data = try await service.fetchItems()
-                let dataWithoutChosen = data.map { section in
-                    ChooseItemListSection(
-                        items: section.items.filter { $0.id != chosenToken.id }
-                    )
+private extension ChooseItemViewModel {
+    func bind() {
+        service.state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state.status {
+                case .ready:
+                    _ = state.apply { data in
+                        let dataWithoutChosen = data.map { section in
+                            ChooseItemListSection(
+                                items: section.items.filter { $0.id != self.chosenToken.id }
+                            )
+                        }
+                        self.allItems = self.service.sort(items: dataWithoutChosen)
+                        
+                        if !self.isSearchGoing {
+                            self.sections = self.allItems
+                        }
+                    }
+
+                    if self.isLoading {
+                        // Show skeleton only once, after that only seamless updates
+                        self.isLoading = false
+                    }
+
+                default:
+                    break
                 }
-                self.allItems = self.service.sort(items: dataWithoutChosen)
-                self.sections = self.allItems
-            }
-            catch {
-                self.notifications.showDefaultErrorNotification()
-            }
-            self.isLoading = false
-        }
 
+                if state.hasError {
+                    self.notifications.showDefaultErrorNotification()
+                }
+            }
+            .store(in: &subscriptions)
+        
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in

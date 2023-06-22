@@ -13,14 +13,13 @@ struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
 
     let header: Header
-    
+
     var body: some View {
         ScrollView {
             header
-            
+
             // Send via link
-            if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty
-            {
+            if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty {
                 sendViaLinkView
             }
 
@@ -58,42 +57,15 @@ struct NewHistoryView<Header: View>: View {
                         .padding(.bottom, 12)
 
                     ForEach(section.items, id: \.id) { (item: NewHistoryItem) in
-                        Group {
-                            switch item {
-                            case let .rendableTransaction(item):
-                                HistoryItemView(item: item) {
-                                    item.onTap?()
-                                }
-                            case let .rendableOffram(item):
-                                HistoryOfframItemView(item: item) {
-                                    item.onTap?()
-                                }
-                            case .placeHolder:
-                                HistoryListSkeletonView()
-                            case let .button(_, title, action):
-                                TextButtonView(
-                                    title: title,
-                                    style: .second,
-                                    size: .large,
-                                    onPressed: action
-                                )
-                                .frame(height: TextButton.Size.large.height)
-                                .padding(.all, 16)
-                            case .fetch:
-                                Rectangle()
-                                    .fill(.clear)
-                                    .contentShape(Rectangle())
-                                    .onAppear { viewModel.fetch() }
-                            }
-                        }
-                        .padding(.top, section.items.first == item ? 4 : 0)
-                        .padding(.bottom, section.items.last == item ? 4 : 0)
-                        .background(Color(Asset.Colors.snow.color))
-                        .roundedList(
-                            radius: 16,
-                            isFirst: section.items.first == item,
-                            isLast: section.items.last == item
-                        )
+                        listItem(item: item)
+                            .padding(.top, section.items.first == item ? 4 : 0)
+                            .padding(.bottom, section.items.last == item ? 4 : 0)
+                            .background(Color(Asset.Colors.snow.color))
+                            .roundedList(
+                                radius: 16,
+                                isFirst: section.items.first == item,
+                                isLast: section.items.last == item
+                            )
                     }
                 }.padding(.horizontal, 16)
             }
@@ -105,9 +77,42 @@ struct NewHistoryView<Header: View>: View {
             viewModel.onAppear()
         }
     }
-    
+
+    private func listItem(item: NewHistoryItem) -> AnyView {
+        AnyView(
+            Group {
+                switch item {
+                case let .rendableTransaction(item):
+                    HistoryItemView(item: item) {
+                        item.onTap?()
+                    }
+                case let .rendableOffram(item):
+                    HistoryOfframItemView(item: item) {
+                        item.onTap?()
+                    }
+                case .placeHolder:
+                    HistoryListSkeletonView()
+                case let .button(_, title, action):
+                    TextButtonView(
+                        title: title,
+                        style: .second,
+                        size: .large,
+                        onPressed: action
+                    )
+                    .frame(height: TextButton.Size.large.height)
+                    .padding(.all, 16)
+                case .fetch:
+                    Rectangle()
+                        .fill(.clear)
+                        .contentShape(Rectangle())
+                        .onAppear { viewModel.fetch() }
+                }
+            }
+        )
+    }
+
     // MARK: - View builder
-    
+
     @ViewBuilder
     var sendViaLinkView: some View {
         VStack {
@@ -116,28 +121,28 @@ struct NewHistoryView<Header: View>: View {
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundColor(Color(Asset.Colors.night.color))
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.sentViaOneTimeLink)
                         .fontWeight(.semibold)
                         .apply(style: .text3)
-                    
+
                     Text(viewModel.linkTransactionsTitle)
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }
-                
+
                 Spacer()
-                
+
                 Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
-                    .padding(.vertical, (24-12)/2)
-                    .padding(.horizontal, (24-7.41)/2)
+                    .padding(.vertical, (24 - 12) / 2)
+                    .padding(.horizontal, (24 - 7.41) / 2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
-            
+
             // Divider
             Divider()
                 .frame(height: 1)
@@ -169,11 +174,10 @@ private extension View {
 
         if isFirst || isLast {
             return AnyView(
-                self
-                    .cornerRadius(
-                        radius: radius,
-                        corners: corner
-                    )
+                cornerRadius(
+                    radius: radius,
+                    corners: corner
+                )
             )
         } else {
             return AnyView(self)

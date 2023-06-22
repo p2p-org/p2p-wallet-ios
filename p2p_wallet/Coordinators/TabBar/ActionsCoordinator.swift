@@ -13,7 +13,6 @@ import SolanaSwift
 import UIKit
 
 final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
 
     private unowned var viewController: UIViewController
@@ -53,6 +52,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
+
         view.action
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
@@ -61,14 +61,12 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                         subject.send(.action(type: .buy))
                     }
                 case .receive:
-                    guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-                    let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
-                    coordinate(to: coordinator)
-                        .sink { _ in }
-                        .store(in: &subscriptions)
                     analyticsManager.log(event: .actionButtonReceive)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .receive))
+                    }
                 case .swap:
                     analyticsManager.log(event: .actionButtonSwap)
                     analyticsManager.log(event: .mainScreenSwapOpen)

@@ -6,16 +6,12 @@
 //
 
 @_exported import BEPureLayout
-import FeeRelayerSwift
 import Firebase
 import Intercom
-import KeyAppKitLogger
 import KeyAppUI
 import Lokalise
 import Resolver
 import Sentry
-import SolanaSwift
-import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -92,7 +88,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
-            try await notificationService.sendRegisteredDeviceToken(deviceToken)
+            let userWalletManager: UserWalletManager = Resolver.resolve()
+            let ethAddress = available(.ethAddressEnabled) ? userWalletManager.wallet?.ethAddress : nil
+            try await notificationService.sendRegisteredDeviceToken(deviceToken, ethAddress: ethAddress)
         }
         Intercom.setDeviceToken(deviceToken) { error in
             guard let error else { return }
@@ -155,14 +153,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupLoggers() {
         var loggers: [LogManagerLogger] = [
             SentryLogger(),
+            AlertLogger()
         ]
         if Environment.current == .debug {
             loggers.append(LoggerSwiftLogger())
         }
-
-        SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
-        FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
-        KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
         DefaultLogManager.shared.setProviders(loggers)
     }
 
