@@ -12,11 +12,11 @@ if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
     exit 1
 fi
 
-# Extract the release parameter
-release="$1"
-
 # Run git log command and store the output in a variable
-log_output=$(git log "$release"..develop --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+log_output=$(git log "$1"..develop --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+
+# Extract the release version from the provided parameter
+release=$(echo "$1" | sed 's/^release\///')
 
 # Extract strings matching the format PWN-[number] (ignoring case)
 regex="PWN-[0-9]+"
@@ -39,17 +39,20 @@ for match in "${unique_matches[@]}"; do
     if [ "$key" != "null" ]; then
         echo "- $key"
 
-        # Add a comment to the Jira issue
-        comment_response=$(curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" -X POST \
+        # Update the fix version of the Jira issue
+        update_response=$(curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" -X PUT \
             -H "Content-Type: application/json" \
-            --data "{\"body\":\"This is a test comment. $1\"}" \
-            "$JIRA_BASE_URL/rest/api/2/issue/$key/comment")
+            --data "{\"update\":{\"fixVersions\":[{\"set\":[{\"name\":\"iOS $release\"}]}]}}" \
+            "$JIRA_BASE_URL/rest/api/2/issue/$key")
 
-        if [ "$(echo "$comment_response" | jq -r '.id')" != "null" ]; then
-            echo "  - Comment added successfully"
+        if [ "$(echo "$update_response" | jq -r '.id')" != "null" ]; then
+            echo "  - Fix version updated successfully"
         else
-            echo "  - Failed to add comment"
+            echo "  - Failed to update fix version"
+            echo "$update_response"
         fi
+
+        exit 0
     else
         echo "- No Jira task found for '$match'"
     fi
