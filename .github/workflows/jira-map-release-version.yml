@@ -17,7 +17,7 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         run: |
-          chmod +x Scripts/jiraMapVersionToTasks.sh
+          chmod u+x Scripts/jiraMapVersionToTasks.sh
           BRANCH_NAME=${{ github.ref }}
           BRANCH_NAME=${BRANCH_NAME#refs/heads/}
           Scripts/jiraMapVersionToTasks.sh $BRANCH_NAME

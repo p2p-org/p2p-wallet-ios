@@ -14,9 +14,7 @@ fi
 
 # Run git log commands and concatenate the outputs into log_output
 git fetch origin main
-baseBranchPath=$(git branch -r | grep main | xargs)
-
-log_output=$(git log "$baseBranchPath".."$1" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+log_output=$(git log main.."$1" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
 
 # Extract the release version from the provided parameter
 release=$(echo "$1" | sed 's/^release\///')
