@@ -13,7 +13,7 @@ if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
 fi
 
 # Run git log command and store the output in a variable
-log_output=$(git log "$1"..develop --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+log_output=$(git log "$1".."$2" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
 
 # Extract the release version from the provided parameter
 release=$(echo "$1" | sed 's/^release\///')
