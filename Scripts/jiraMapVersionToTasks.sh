@@ -13,7 +13,7 @@ if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
 fi
 
 # Run git log commands and concatenate the outputs into log_output
-git fetch --all
+git fetch origin main
 baseBranchPath=$(git branch -r | grep main | xargs)
 secondaryBranchPath=$(git branch -r | grep "$1" | xargs)
 
