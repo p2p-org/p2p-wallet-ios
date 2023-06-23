@@ -19,13 +19,13 @@ jobs:
         id: retrieve_last_person_id
         run: |
           LAST_ON_DUTY_PERSON_ID=${{ secrets.LAST_ON_DUTY_PERSON_ID }}
-          echo "::set-output name=last_person_id::$LAST_ON_DUTY_PERSON_ID"
+          echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
       - name: Retrieve person_ids from secret
         id: retrieve_person_ids
         run: |
           ON_DUTY_PERSON_IDS=$(echo "${{ secrets.ON_DUTY_PERSON_IDS }}" | tr '\n' ' ' | xargs)
-          echo "::set-output name=person_ids::$PERSON_IDS"
+          echo "person_ids=$ON_DUTY_PERSON_IDS" >>$GITHUB_OUTPUT
 
       - name: Calculate Next Person ID
         id: calculate_next_person_id
