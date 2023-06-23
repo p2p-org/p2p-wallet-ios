@@ -24,8 +24,8 @@ jobs:
       - name: Retrieve person_ids from secret
         id: retrieve_person_ids
         run: |
-          ON_DUTY_PERSON_IDS=${{ secrets.ON_DUTY_PERSON_IDS }}
-          echo "::set-output name=person_ids::$ON_DUTY_PERSON_IDS"
+          ON_DUTY_PERSON_IDS=$(echo "${{ secrets.ON_DUTY_PERSON_IDS }}" | tr '\n' ' ' | xargs)
+          echo "::set-output name=person_ids::$PERSON_IDS"
 
       - name: Calculate Next Person ID
         id: calculate_next_person_id
