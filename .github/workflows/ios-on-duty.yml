@@ -37,7 +37,7 @@ jobs:
           ON_DUTY_PERSON_IDS="${{ steps.retrieve_person_ids.outputs.person_ids }}"
 
           # Convert the person IDs to an array
-          IFS=$'\n' read -r -a person_ids <<< "$ON_DUTY_PERSON_IDS"
+          IFS=$' ' read -r -a person_ids <<< "$ON_DUTY_PERSON_IDS"
 
           # Find the index of the last person ID in the predefined list
           last_person_index=-1
