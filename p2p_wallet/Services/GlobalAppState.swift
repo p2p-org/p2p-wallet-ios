@@ -80,7 +80,12 @@ class GlobalAppState: ObservableObject {
         if let forcedValue = Defaults.forcedStrigaEndpoint {
             strigaEndpoint = forcedValue
         } else {
-            strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!
+            switch Environment.current {
+            case .debug, .test:
+                strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!
+            case .release:
+                strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!
+            }
         }
     }
 
