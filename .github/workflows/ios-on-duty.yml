@@ -77,7 +77,7 @@ jobs:
 
       - name: Update LAST_ON_DUTY_PERSON_ID secret
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_REPO_WRITE_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GIT_AUTHORIZATION }}
         run: |
           # Retrieve the next person ID from the previous step
           next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
