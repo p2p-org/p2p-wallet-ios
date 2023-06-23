@@ -1,0 +1,79 @@
+name: Call a person to take on-duty job every Monday
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * 1"  # Trigger every Monday at 7:00 AM UTC (10:AM MSK)
+
+jobs:
+  call_person:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Retrieve last_person_id from secret
+        id: retrieve_last_person_id
+        run: |
+          LAST_ON_DUTY_PERSON_ID=${{ secrets.LAST_ON_DUTY_PERSON_ID }}
+          echo "::set-output name=last_person_id::$LAST_ON_DUTY_PERSON_ID"
+
+      - name: Retrieve person_ids from secret
+        id: retrieve_person_ids
+        run: |
+          ON_DUTY_PERSON_IDS=${{ secrets.ON_DUTY_PERSON_IDS }}
+          echo "::set-output name=person_ids::$ON_DUTY_PERSON_IDS"
+
+      - name: Calculate Next Person ID
+        id: calculate_next_person_id
+        run: |
+          # Retrieve the last person ID from the previous step
+          LAST_ON_DUTY_PERSON_ID="${{ steps.retrieve_last_person_id.outputs.last_person_id }}"
+
+          # Retrieve the person IDs list from the previous step
+          ON_DUTY_PERSON_IDS="${{ steps.retrieve_person_ids.outputs.person_ids }}"
+
+          # Convert the person IDs to an array
+          IFS=$'\n' read -r -a person_ids <<< "$ON_DUTY_PERSON_IDS"
+
+          # Find the index of the last person ID in the predefined list
+          last_person_index=-1
+          for i in "${!person_ids[@]}"; do
+            if [[ "${person_ids[$i]}" == "$LAST_ON_DUTY_PERSON_ID" ]]; then
+              last_person_index=$i
+              break
+            fi
+          done
+
+          # Calculate the index of the next person ID
+          next_person_index=$(( (last_person_index + 1) % ${#person_ids[@]} ))
+
+          # Retrieve the next person ID
+          next_person_id="${person_ids[$next_person_index]}"
+
+          # Export the next person ID as an environment variable for subsequent steps
+          echo "::set-output name=next_person_id::$next_person_id"
+
+      - name: Call Person
+        env:
+          DISCORD_MESSAGE_API_BEARER_TOKEN: ${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}
+          DISCORD_MESSAGE_API_ENDPOINT: ${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}
+        run: |
+          next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}" |
+
+          curl -v -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
+          "-d", "{\"message\":\"<@$next_person_id> Duty call! This week is your turn to handle iOS-On-Duty role.\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}" \
+          $DISCORD_MESSAGE_API_ENDPOINT
+
+      - name: Update LAST_ON_DUTY_PERSON_ID secret
+        run: |
+          # Retrieve the next person ID from the previous step
+          next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
+
+          # Update the LAST_ON_DUTY_PERSON_ID secret with the next person ID
+          echo -n "$next_person_id" | gh secret set LAST_ON_DUTY_PERSON_ID -
