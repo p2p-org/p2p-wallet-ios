@@ -29,7 +29,7 @@ jobs:
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
         run: |
-          LAST_ON_DUTY_PERSON_ID=${{ runner.workspace }}/last_person_id.txt
+          LAST_ON_DUTY_PERSON_ID="./last_person_id.txt"
           echo $last_person_id
           echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
@@ -96,4 +96,4 @@ jobs:
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           echo "$LAST_ON_DUTY_PERSON_ID"
-          echo "$LAST_ON_DUTY_PERSON_ID" > ${{ runner.workspace }}/last_person_id.txt
+          echo "$LAST_ON_DUTY_PERSON_ID" > ./last_person_id.txt
