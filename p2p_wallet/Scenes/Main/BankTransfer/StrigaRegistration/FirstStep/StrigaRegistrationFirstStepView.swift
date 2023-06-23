@@ -35,12 +35,18 @@ struct StrigaRegistrationFirstStepView: View {
                             style: .primaryWhite,
                             isEnabled: viewModel.isDataValid,
                             trailing: viewModel.isDataValid ? .arrowForward : nil,
-                            action: viewModel.actionPressed.send
+                            action: {
+                                resignFirstResponder()
+                                viewModel.actionPressed.send()
+                            }
                         )
-                            .padding(.bottom, 20)
+                        .padding(.bottom, 20)
                     }
-                        .padding(.horizontal, 16)
+                    .padding(.horizontal, 16)
                 }
+            }
+            .onDisappear {
+                resignFirstResponder()
             }
         }
     }
@@ -68,6 +74,7 @@ struct StrigaRegistrationFirstStepView: View {
                         action: { [weak viewModel] in
                             guard let viewModel else { return }
                             viewModel.choosePhoneCountryCode.send(viewModel.selectedPhoneCountryCode)
+                            resignFirstResponder()
                         }
                     )
                 }
@@ -118,11 +125,23 @@ struct StrigaRegistrationFirstStepView: View {
                         action: { [weak viewModel] in
                             guard let viewModel else { return }
                             viewModel.chooseCountry.send(viewModel.selectedCountryOfBirth)
+                            resignFirstResponder()
                         }
                     )
                 }
             }
         }
+    }
+
+    // When screen disappear via some action, you should called this method twice for some reason: on action and on disappear function
+    // Seems like a UI bug of iOS https://stackoverflow.com/a/74124962
+    private func resignFirstResponder() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
 
