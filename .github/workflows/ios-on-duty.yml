@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "0 7 * * 1"  # Trigger every Monday at 7:00 AM UTC (10:AM MSK)
 
+permissions:
+  contents: write
+
 jobs:
   call_person:
     runs-on: ubuntu-latest
