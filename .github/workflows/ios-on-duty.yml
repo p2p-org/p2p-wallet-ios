@@ -55,7 +55,7 @@ jobs:
           next_person_id="${person_ids[$next_person_index]}"
 
           # Export the next person ID as an environment variable for subsequent steps
-          echo "::set-output name=next_person_id::$next_person_id"
+          echo "next_person_id=$next_person_id" >>$GITHUB_OUTPUT
 
       - name: Call Person
         env:
