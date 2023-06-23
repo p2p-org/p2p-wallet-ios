@@ -64,7 +64,7 @@ jobs:
           DISCORD_IOS_CHANNEL_ID: ${{ secrets.DISCORD_IOS_CHANNEL_ID }}
         run: |
           next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
-          MESSAGE="Hi! <@$next_person_id>! Duty call! This week is your turn to handle <@iOS-on-duty> role.\n<@QA-on-duty> cc"
+          MESSAGE="Hi! <@$next_person_id>! Duty call! This week is your turn to handle <@&1111282130476093460> role.\n<@&1111281802858995753> cc"
 
           curl -X POST \
             -H "Content-Type: application/json" \
@@ -74,7 +74,7 @@ jobs:
 
       - name: Update LAST_ON_DUTY_PERSON_ID secret
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_REPO_WRITE_SECRET }}
         run: |
           # Retrieve the next person ID from the previous step
           next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
