@@ -29,6 +29,7 @@ jobs:
         id: retrieve_last_person_id
         run: |
           LAST_ON_DUTY_PERSON_ID=${{ runner.workspace }}/last_person_id.txt
+          echo $last_person_id
           echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
       - name: Retrieve person_ids from secret
