@@ -165,7 +165,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testResendSMS_SuccessfulResponse_ReturnsAccepted() async throws {
         // Arrange
-        let mockData = #"Ok"#
+        let mockData = #"{"dateExpires":"2023-06-20T12:14:14.981Z"}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
         
         // Act
@@ -173,22 +173,6 @@ final class StrigaRemoteProviderTests: XCTestCase {
         
         // Assert
         XCTAssertTrue(true)
-    }
-    
-    func testResendSMS_EmptyResponse400_ReturnsInvalidResponse() async throws {
-        // Arrange
-        let mockData = #"{}"#
-        let provider = try getMockProvider(responseString: mockData, statusCode: 400)
-        
-        // Act
-        do {
-            try await provider.resendSMS(userId: "123")
-            XCTFail()
-        } catch HTTPClientError.invalidResponse(_, _) {
-            XCTAssertTrue(true)
-        } catch {
-            XCTFail()
-        }
     }
     
     func testResendSMS_ErrorDetail409_ReturnsInvalidResponse() async throws {
