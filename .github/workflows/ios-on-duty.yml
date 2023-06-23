@@ -22,14 +22,14 @@ jobs:
         id: cache_last_person_id
         uses: actions/cache@v2
         with:
-          key: last-person-id-${{ hashFiles('./last_person_id.txt') }}
+          key: last-person-id-${{ hashFiles('last_person_id.txt') }}
           restore-keys: last-person-id-
-          path: ./last_person_id.txt
+          path: last_person_id.txt
 
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
         run: |
-          LAST_ON_DUTY_PERSON_ID="./last_person_id.txt"
+          LAST_ON_DUTY_PERSON_ID=$(cat last_person_id.txt)
           echo $last_person_id
           echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
@@ -96,4 +96,5 @@ jobs:
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           echo "$LAST_ON_DUTY_PERSON_ID"
-          echo "$LAST_ON_DUTY_PERSON_ID" > ./last_person_id.txt
+          echo "$LAST_ON_DUTY_PERSON_ID" > last_person_id.txt
+          cat last_person_id.txt
