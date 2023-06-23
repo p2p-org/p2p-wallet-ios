@@ -18,6 +18,13 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Cache Last Person ID
+        id: cache_last_person_id
+        uses: actions/cache@v2
+        with:
+          key: last-person-id
+          path: ${{ runner.workspace }}/last_person_id.txt
+
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
         run: |
@@ -87,10 +94,3 @@ jobs:
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           echo "$LAST_ON_DUTY_PERSON_ID" > ${{ runner.workspace }}/last_person_id.txt
-
-      - name: Cache Last Person ID
-        id: cache_last_person_id
-        uses: actions/cache@v2
-        with:
-          key: last-person-id
-          path: ${{ runner.workspace }}/last_person_id.txt
