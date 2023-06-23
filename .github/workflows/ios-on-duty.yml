@@ -22,8 +22,9 @@ jobs:
         id: cache_last_person_id
         uses: actions/cache@v2
         with:
-          key: last-person-id
-          path: ${{ runner.workspace }}/last_person_id.txt
+          key: last-person-id-${{ hashFiles('./last_person_id.txt') }}
+          restore-keys: last-person-id-
+          path: ./last_person_id.txt
 
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
