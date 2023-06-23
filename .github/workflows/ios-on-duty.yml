@@ -78,4 +78,4 @@ jobs:
           next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
 
           # Update the LAST_ON_DUTY_PERSON_ID secret with the next person ID
-          echo -n "$next_person_id" | gh secret set LAST_ON_DUTY_PERSON_ID -
+          gh secret set LAST_ON_DUTY_PERSON_ID -b"$next_person_id"
