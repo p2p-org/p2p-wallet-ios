@@ -69,7 +69,7 @@ jobs:
           curl -X POST \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
-            -d "{\"channel_id\": \"$DISCORD_IOS_BUILD_CHANNEL_ID\", \"message\": \"$MESSAGE\"}" \
+            -d "{\"channel_id\": $DISCORD_IOS_BUILD_CHANNEL_ID, \"message\": \"$MESSAGE\"}" \
             $DISCORD_MESSAGE_API_ENDPOINT
 
       - name: Update LAST_ON_DUTY_PERSON_ID secret
