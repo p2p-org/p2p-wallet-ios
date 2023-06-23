@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 13/06/2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -57,7 +50,7 @@ public class DeviceShareMigrationService {
         guard ethAddress == userEthAddress else {
             throw errorObserver.watchError(Error.ethAddressesAreDifference)
         }
-        
+
         guard var currentMetadata = metadataService.metadata.value else {
             throw errorObserver.watchError(Error.metadataError)
         }
@@ -74,6 +67,8 @@ public class DeviceShareMigrationService {
 
         // Save new device share to current device
         deviceShareStorage.save(deviceShare: result.share)
+
+        await metadataService.update(currentMetadata)
     }
 
     /// Static method for determine availibitly of device share migration.

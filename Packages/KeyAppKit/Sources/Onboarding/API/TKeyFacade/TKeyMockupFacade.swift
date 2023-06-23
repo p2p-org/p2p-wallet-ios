@@ -10,7 +10,9 @@ import WebKit
 public class TKeyMockupFacade: TKeyFacade {
     public var ethAddress: String?
 
-    public init() {}
+    public init(ethAddress: String? = nil) {
+        self.ethAddress = ethAddress
+    }
 
     public func initialize() async throws {}
 
@@ -49,7 +51,7 @@ public class TKeyMockupFacade: TKeyFacade {
     }
 
     public func refreshDeviceShare(userData _: String) async throws -> RefreshDeviceShareResult {
-        fatalError()
+        .init(share: "newDeviceShare")
     }
 
     public func getUserData() async throws -> String? {
