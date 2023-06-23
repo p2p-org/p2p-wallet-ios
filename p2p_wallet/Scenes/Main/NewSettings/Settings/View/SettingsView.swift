@@ -95,7 +95,7 @@ struct SettingsView: View {
             Button(
                 action: { viewModel.showView(.recoveryKit) },
                 label: {
-                    SettingsRow(title: L10n.recoveryKit, withArrow: true) {
+                    SettingsRow(title: L10n.securityAndPrivacy, withArrow: true) {
                         Image(uiImage: UIImage.recoveryKit)
                             .overlay(
                                 AlertIndicator(fillColor: Color(Asset.Colors.rose.color))
