@@ -63,13 +63,14 @@ jobs:
           DISCORD_MESSAGE_API_ENDPOINT: ${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}
           DISCORD_IOS_BUILD_CHANNEL_ID: ${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}
         run: |
-          next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}" |
+          next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
+          MESSAGE="Hi! @<$next_person_id>! Duty call! This week is your turn to handle iOS-On-Duty role."
 
-          curl -v -X POST \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
-          "-d", '{"message":"<@${{ next_person_id }}> Duty call! This week is your turn to handle iOS-On-Duty role.", "channel_id":"$DISCORD_IOS_BUILD_CHANNEL_ID"}" \
-          $DISCORD_MESSAGE_API_ENDPOINT
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
+            -d "{\"channel_id\": \"$DISCORD_IOS_BUILD_CHANNEL_ID\", \"message\": \"$MESSAGE\"}" \
+            $DISCORD_MESSAGE_API_ENDPOINT
 
       - name: Update LAST_ON_DUTY_PERSON_ID secret
         run: |
