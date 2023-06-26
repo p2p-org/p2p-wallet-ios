@@ -7,6 +7,7 @@ import Foundation
 import KeyAppKitCore
 import NIO
 import SolanaSwift
+import SolanaToken
 import WebSocketKit
 
 public enum RealtimeSolanaAccountState: Equatable {
@@ -56,7 +57,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     let owner: String
 
     let apiClient: SolanaAPIClient
-    let tokensService: SolanaTokensRepository
+    let tokensService: SolanaTokensService
     var proxyConfiguration: ProxyConfiguration?
     let errorObserver: ErrorObserver
 
@@ -79,7 +80,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     init(
         owner: String,
         apiClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
+        tokensService: SolanaTokensService,
         proxyConfiguration: ProxyConfiguration?,
         errorObserver: ErrorObserver
     ) {
@@ -268,9 +269,13 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
             do {
                 // Updating native account balance and get spl tokens
                 // TODO: Need to optimize
-                let (balance, splAccounts) = try await(
+                let (balance, (resolved, unresolved)) = try await(
                     apiClient.getBalance(account: owner, commitment: "confirmed"),
-                    apiClient.getTokenWallets(account: owner, tokensRepository: tokensService, commitment: "confirmed")
+                    apiClient.getAccountBalances(
+                        for: owner,
+                        tokensRepository: tokensService,
+                        commitment: "confirmed"
+                    )
                 )
 
                 if Task.isCancelled { return }
@@ -282,7 +287,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                     )
                 )
 
-                let accounts = [solanaAccount] + splAccounts.map { SolanaAccount(data: $0, price: nil) }
+                let accounts = [solanaAccount] + resolved.map { SolanaAccount(data: $0, price: nil) }
 
                 for account in accounts {
                     accountsSubject.send(account)
@@ -311,22 +316,20 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                     // Parse
                     var reader = BinaryReader(bytes: data.bytes)
-                    let tokenAccountData = try AccountInfo(from: &reader)
+                    let tokenAccountData = try SPLAccountState(from: &reader)
 
-                    // Bad code because of O(n)
-                    let tokens = try await tokensService.getTokensList(useCache: true)
-                    let token = tokens.first { $0.address == tokenAccountData.mint.base58EncodedString }
+                    // Get token
+                    let token = try await tokensService.get(address: tokenAccountData.mint.base58EncodedString)
 
                     // TODO: Add case when token info is invalid
                     if let token {
-                        let wallet = SolanaSwift.Wallet(
+                        let data = AccountBalance(
                             pubkey: pubKey,
                             lamports: tokenAccountData.lamports,
-                            supply: nil,
                             token: token
                         )
 
-                        let splAccount = SolanaAccount(data: wallet)
+                        let splAccount = SolanaAccount(data: data)
                         accountsSubject.send(splAccount)
                     }
 
@@ -338,14 +341,13 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     }
 
     func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) {
-        let wallet = SolanaSwift.Wallet(
+        let data = AccountBalance(
             pubkey: owner,
             lamports: notification.result.value.lamports,
-            supply: nil,
             token: .nativeSolana
         )
 
-        let nativeSolanaAccount = SolanaAccount(data: wallet)
+        let nativeSolanaAccount = SolanaAccount(data: data)
         accountsSubject.send(nativeSolanaAccount)
     }
 }

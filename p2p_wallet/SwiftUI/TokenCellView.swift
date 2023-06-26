@@ -5,15 +5,17 @@
 //  Created by Ivan on 05.08.2022.
 //
 
+import KeyAppKitCore
 import KeyAppUI
 import SolanaSwift
+import SolanaToken
 import SwiftUI
 
 struct TokenCellViewItem: Hashable {
-    init(wallet: Wallet) {
-        token = wallet.token
-        amount = wallet.amount
-        amountInCurrentFiat = wallet.priceInCurrentFiat == nil ? nil : wallet.amountInCurrentFiat
+    init(wallet: SolanaAccount) {
+        token = wallet.data.token
+        amount = wallet.data.amount
+        amountInCurrentFiat = wallet.amountInFiat?.doubleValue
     }
 
     init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {

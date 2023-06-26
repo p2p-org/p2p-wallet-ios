@@ -1,6 +1,7 @@
 import Foundation
 import SolanaSwift
 import OrcaSwapSwift
+import SolanaToken
 
 protocol RawTransactionType {
     func createRequest() async throws -> String

@@ -6,9 +6,10 @@ import Foundation
 import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
+import SolanaToken
 
 final class SolanaAccountsAggregator: DataAggregator {
-    func transform(input: (accounts: [SolanaAccount], fiat: String, prices: [Token: CurrentPrice?]))
+    func transform(input: (accounts: [SolanaAccount], fiat: String, prices: [SolanaToken: CurrentPrice?]))
     -> [SolanaAccount] {
         let (accounts, fiat, prices) = input
 
@@ -25,9 +26,6 @@ final class SolanaAccountsAggregator: DataAggregator {
                 }
 
                 account.price = TokenPrice(currencyCode: fiat, value: value, token: token)
-
-                // Legacy code
-                account.data.price = price
             }
 
             return account

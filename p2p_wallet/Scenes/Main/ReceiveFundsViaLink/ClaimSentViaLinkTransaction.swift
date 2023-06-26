@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import SolanaToken
 import Send
 import Resolver
 import FeeRelayerSwift

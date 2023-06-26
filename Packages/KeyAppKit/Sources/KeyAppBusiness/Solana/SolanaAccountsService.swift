@@ -10,6 +10,7 @@ import Foundation
 import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
+import SolanaToken
 
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating
 /// timer.
@@ -33,7 +34,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     let realtimeStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     /// Requested token price base on final stream.
-    let priceStream: CurrentValueSubject<[Token: CurrentPrice?], Never> = .init([:])
+    let priceStream: CurrentValueSubject<[SolanaToken: CurrentPrice?], Never> = .init([:])
 
     // MARK: - Output
 
@@ -55,9 +56,9 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     ///   - proxyConfiguration: Proxy configuration for socket
     ///   - errorObservable: Error observable service
     public init(
-        accountStorage: SolanaAccountStorage,
+        accountStorage: CurrentKeyPair,
         solanaAPIClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
+        tokensService: SolanaTokensService,
         priceService: SolanaPriceService,
         fiat: String,
         proxyConfiguration: ProxyConfiguration?,
@@ -65,7 +66,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     ) {
         // Setup async value
         originStream = .init(initialItem: []) {
-            guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
+            guard let accountAddress = accountStorage.value?.publicKey.base58EncodedString else {
                 return (nil, Error.authorityError)
             }
 
@@ -73,24 +74,23 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, splAccounts) = try await(
-                    // TODO: Check commitment value! Previously was ``recent``
+                let (balance, (resolvedSPLAccounts, _)) = try await(
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
-                    solanaAPIClient.getTokenWallets(
-                        account: accountAddress,
+                    solanaAPIClient.getAccountBalances(
+                        for: accountAddress,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
                     )
                 )
 
                 let solanaAccount = Account(
-                    data: Wallet.nativeSolana(
+                    data: AccountBalance.nativeSolana(
                         pubkey: accountAddress,
                         lamport: balance
                     )
                 )
 
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
+                newAccounts = [solanaAccount] + resolvedSPLAccounts.map { Account(data: $0, price: nil) }
 
                 return (newAccounts, nil)
             } catch {

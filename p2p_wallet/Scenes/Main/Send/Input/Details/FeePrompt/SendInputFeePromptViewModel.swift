@@ -1,6 +1,7 @@
 import Combine
 import Resolver
 import SolanaSwift
+import SolanaToken
 
 final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
 

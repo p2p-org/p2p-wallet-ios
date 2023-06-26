@@ -1,6 +1,9 @@
 import SolanaSwift
+import SolanaToken
 
-extension Wallet: ChooseItemSearchableItem {
+extension AccountBalance: ChooseItemSearchableItem {
+    public var id: String { pubkey ?? "" }
+    
     func matches(keyword: String) -> Bool {
         token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
             token.symbol.lowercased().contains(keyword.lowercased()) ||

@@ -1,6 +1,7 @@
 import Foundation
 import NameService
 import SolanaSwift
+import SolanaToken
 
 extension RecipientSearchServiceImpl {
     /// Search by name

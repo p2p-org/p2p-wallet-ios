@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 /// Generic protocol to define a cryptocurrency prices provider
 public protocol SolanaPricesAPI {

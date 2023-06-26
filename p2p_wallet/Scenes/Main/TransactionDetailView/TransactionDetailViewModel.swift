@@ -4,7 +4,6 @@ import History
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
-import TransactionParser
 
 enum TransactionDetailStyle {
     case active
@@ -35,11 +34,6 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         rendableTransaction = rendableDetailTransaction
     }
 
-    init(parsedTransaction: ParsedTransaction) {
-        style = .passive
-        rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
-    }
-
     init(historyTransaction: HistoryTransaction) {
         style = .passive
         rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
@@ -47,10 +41,10 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         Task {
-            let tokenRepository: TokensRepository = Resolver.resolve()
+            let tokenRepository: SolanaTokensService = Resolver.resolve()
             self.rendableTransaction = try await RendableDetailHistoryTransaction(
                 trx: historyTransaction,
-                allTokens: tokenRepository.getTokensList(useCache: true)
+                allTokens: tokenRepository.all()
             )
         }
     }

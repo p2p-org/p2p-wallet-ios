@@ -3,7 +3,6 @@ import FeeRelayerSwift
 import KeyAppUI
 import Resolver
 import SolanaSwift
-import TransactionParser
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler

@@ -3,6 +3,7 @@ import Foundation
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import SolanaToken
 
 typealias TokenPriceMap = [String: CurrentPrice]
 

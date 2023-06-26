@@ -17,10 +17,6 @@ packages:
 #    Cache:
 #        url: https://github.com/hyperoslo/Cache.git
 #        from: 6.0.0
-    SolanaSwift:
-        url: https://github.com/p2p-org/solana-swift.git
-        branch: main
-
     KeyAppKit:
         path: ./Packages/KeyAppKit
     KeyAppUI:
@@ -253,8 +249,6 @@ targets:
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
-              product: TransactionParser
-            - package: KeyAppKit
               product: NameService
             - package: KeyAppKit
               product: AnalyticsManager
@@ -280,8 +274,6 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
-
-            - package: SolanaSwift
 
             - package: KeyAppUI
             - package: BEPureLayout

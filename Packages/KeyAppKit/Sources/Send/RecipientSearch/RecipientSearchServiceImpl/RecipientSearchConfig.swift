@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
+import SolanaToken
 
 public struct RecipientSearchConfig {
     public var wallets: [Wallet]
     public var ethereumAccount: String?
-    public var tokens: [String: Token]
+    public var tokens: [String: SolanaToken]
 
     public var ethereumSearch: Bool
 

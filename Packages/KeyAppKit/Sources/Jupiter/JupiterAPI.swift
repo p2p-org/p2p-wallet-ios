@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 public enum SwapMode: String {
     case exactIn = "ExactIn"

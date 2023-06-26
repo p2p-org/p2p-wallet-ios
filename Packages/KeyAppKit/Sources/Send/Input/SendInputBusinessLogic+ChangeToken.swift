@@ -5,6 +5,7 @@
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 extension SendInputBusinessLogic {
     static func changeToken(
@@ -33,7 +34,7 @@ extension SendInputBusinessLogic {
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
             }
-            
+
             var state = state.copy(
                 token: token,
                 fee: fee
@@ -49,13 +50,13 @@ extension SendInputBusinessLogic {
                     token: state.token,
                     services: services
                 )
-                
+
                 state = state.copy(
                     tokenFee: feeInfo.token,
                     feeInToken: fee == .zero ? .zero : feeInfo.fee
                 )
             }
-            
+
             state = await sendInputChangeAmountInToken(state: state, amount: state.amountInToken, services: services)
             state = await validateFee(state: state)
 

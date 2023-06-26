@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 import KeyAppUI
 import SolanaSwift
+import SolanaToken
 
 struct TransactionDetailIconView: View {
     private let size: CGFloat = 64

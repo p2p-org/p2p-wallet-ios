@@ -6,6 +6,6 @@
 //
 
 import Foundation
-import SolanaSwift
+import SolanaToken
 
-public typealias SolanaTokensService = TokensRepository
+public typealias SolanaTokensService = TokenRepository

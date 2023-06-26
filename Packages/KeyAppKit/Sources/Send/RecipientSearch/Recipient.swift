@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 public struct Recipient: Hashable, Codable {
@@ -25,7 +26,7 @@ public struct Recipient: Hashable, Codable {
         case username(name: String, domain: String)
 
         case solanaAddress
-        case solanaTokenAddress(walletAddress: PublicKey, token: Token)
+        case solanaTokenAddress(walletAddress: PublicKey, token: SolanaToken)
 
         case bitcoinAddress
         case ethereumAddress

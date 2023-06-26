@@ -2,6 +2,7 @@ import Send
 import SolanaSwift
 import Resolver
 import FeeRelayerSwift
+import SolanaToken
 
 struct SendTransaction: RawTransactionType {
     // MARK: - Properties

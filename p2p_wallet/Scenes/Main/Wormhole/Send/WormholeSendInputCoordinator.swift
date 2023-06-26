@@ -8,6 +8,7 @@
 import Foundation
 import Send
 import SolanaSwift
+import SolanaToken
 import SwiftUI
 
 enum WormholeSendInputCoordinatorResult {

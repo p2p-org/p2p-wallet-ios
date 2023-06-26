@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 struct MockedRendableDetailTransaction: RenderableTransactionDetail {
     var status: TransactionDetailStatus

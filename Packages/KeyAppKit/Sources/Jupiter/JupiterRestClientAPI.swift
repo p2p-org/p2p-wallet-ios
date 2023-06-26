@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 public class JupiterRestClientAPI: JupiterAPI {
     private let host: String

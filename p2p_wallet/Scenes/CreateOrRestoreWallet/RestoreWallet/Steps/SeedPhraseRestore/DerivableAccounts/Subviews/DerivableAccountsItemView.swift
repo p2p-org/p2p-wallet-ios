@@ -1,6 +1,7 @@
 import SwiftUI
 import KeyAppUI
 import SolanaSwift
+import SolanaToken
 
 struct DerivableAccountsItemView: View {
 

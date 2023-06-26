@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import SwiftUI
+import SolanaToken
 import UIKit
 
 struct CoinLogoImageViewRepresentable: UIViewRepresentable {

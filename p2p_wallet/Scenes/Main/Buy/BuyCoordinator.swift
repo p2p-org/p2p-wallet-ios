@@ -4,6 +4,7 @@ import Foundation
 import Resolver
 import SafariServices
 import SolanaSwift
+import SolanaToken
 import SwiftUI
 import Moonpay
 

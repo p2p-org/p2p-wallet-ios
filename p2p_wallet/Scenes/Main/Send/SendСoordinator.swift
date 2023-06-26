@@ -8,6 +8,7 @@ import Foundation
 import Resolver
 import Send
 import SolanaSwift
+import SolanaToken
 import SwiftUI
 import Wormhole
 

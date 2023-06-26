@@ -6,6 +6,7 @@ import Foundation
 import NameService
 import SolanaSwift
 import Wormhole
+import SolanaToken
 
 public class RecipientSearchServiceImpl: RecipientSearchService {
     let nameService: NameService

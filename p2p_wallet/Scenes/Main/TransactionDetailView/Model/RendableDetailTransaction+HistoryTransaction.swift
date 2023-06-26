@@ -9,11 +9,12 @@ import Combine
 import Foundation
 import History
 import SolanaSwift
+import SolanaToken
 
 struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     let trx: HistoryTransaction
 
-    let allTokens: Set<SolanaSwift.Token>
+    let allTokens: Set<Token>
 
     var status: TransactionDetailStatus {
         switch trx.status {

@@ -52,6 +52,11 @@ public struct CurrencyAmount: Hashable, Codable, Equatable {
     public func with(amount: BigDecimal) -> Self {
         .init(value: amount, currencyCode: currencyCode)
     }
+
+    @available(*, deprecated, message: "Do not work with double")
+    public var doubleValue: Double {
+        Double(String(value)) ?? 0.0
+    }
 }
 
 public extension CurrencyAmount {

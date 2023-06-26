@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 public enum RecipientSearchResult: Equatable {
     case ok([Recipient])

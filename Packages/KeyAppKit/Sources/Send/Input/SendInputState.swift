@@ -5,6 +5,7 @@
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 public enum Amount: Equatable {
     case fiat(value: Double, currency: String)
@@ -65,7 +66,7 @@ public struct SendInputState: Equatable {
         case requiredInitialize
         case missingFeeRelayer
         case initializeFailed(NSError)
-        
+
         case unknown(NSError)
     }
 
@@ -119,7 +120,7 @@ public struct SendInputState: Equatable {
     ///
     /// Current state for free transactions
     public let feeRelayerContext: RelayContext?
-    
+
     /// Send via link
     public let sendViaLinkSeed: String?
     public var isSendingViaLink: Bool {

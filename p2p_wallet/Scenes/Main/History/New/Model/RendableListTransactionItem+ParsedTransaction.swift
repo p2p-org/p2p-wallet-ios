@@ -9,7 +9,6 @@ import Foundation
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
-import TransactionParser
 
 struct RendableListParsedTransactionItem: RendableListTransactionItem {
     let trx: ParsedTransaction

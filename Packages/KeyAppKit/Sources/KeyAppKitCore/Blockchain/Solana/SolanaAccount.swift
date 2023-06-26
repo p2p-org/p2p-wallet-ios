@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 /// Solana account data structure.
 /// This class is combination of raw account data and additional application data.
@@ -16,12 +17,12 @@ public struct SolanaAccount: Identifiable, Equatable {
     }
 
     /// Data field
-    public var data: Wallet
+    public var data: AccountBalance
 
     /// The fetched price at current moment of time.
     public var price: TokenPrice?
 
-    public init(data: Wallet, price: TokenPrice? = nil) {
+    public init(data: AccountBalance, price: TokenPrice? = nil) {
         self.data = data
         self.price = price
     }

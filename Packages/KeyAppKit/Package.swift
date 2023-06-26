@@ -19,10 +19,6 @@ let package = Package(
             name: "KeyAppKitLogger",
             targets: ["KeyAppKitLogger"]
         ),
-        .library(
-            name: "TransactionParser",
-            targets: ["TransactionParser"]
-        ),
 
         .library(
             name: "NameService",
@@ -117,8 +113,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        //        .package(url: "https://github.com/p2p-org/solana-swift", branch: "version-4"),
-        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
+        .package(url: "https://github.com/p2p-org/solana-swift", branch: "version-4"),
+//        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
@@ -143,21 +139,6 @@ let package = Package(
 
         // KeyAppKitLogger
         .target(name: "KeyAppKitLogger"),
-
-        // Transaction Parser
-        .target(
-            name: "TransactionParser",
-            dependencies: [
-                "Cache",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
-        ),
-        .testTarget(
-            name: "TransactionParserUnitTests",
-            dependencies: ["TransactionParser"],
-            path: "Tests/UnitTests/TransactionParserUnitTests",
-            resources: [.process("./Resource")]
-        ),
 
         // Name Service
         .target(
@@ -200,7 +181,11 @@ let package = Package(
         // PricesService
         .target(
             name: "SolanaPricesAPIs",
-            dependencies: ["Cache", .product(name: "SolanaSwift", package: "solana-swift")]
+            dependencies: [
+                "Cache",
+                .product(name: "SolanaSwift", package: "solana-swift"),
+                .product(name: "SolanaToken", package: "solana-swift"),
+            ]
         ),
         .testTarget(
             name: "SolanaPricesAPIsUnitTests",
@@ -268,7 +253,6 @@ let package = Package(
                 "FeeRelayerSwift",
                 "NameService",
                 "SolanaPricesAPIs",
-                "TransactionParser",
                 "History",
                 "Wormhole",
             ]
@@ -322,6 +306,7 @@ let package = Package(
             name: "Jupiter",
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
+                .product(name: "SolanaToken", package: "solana-swift"),
             ]
         ),
 
@@ -333,6 +318,7 @@ let package = Package(
                 "SolanaPricesAPIs",
                 "WalletCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
+                .product(name: "SolanaToken", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
             ]

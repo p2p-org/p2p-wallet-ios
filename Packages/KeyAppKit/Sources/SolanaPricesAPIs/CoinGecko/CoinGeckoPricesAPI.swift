@@ -1,6 +1,7 @@
 import Cache
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 /// Prices provider from cryptocompare.com
 public class CoinGeckoPricesAPI: SolanaPricesAPI {

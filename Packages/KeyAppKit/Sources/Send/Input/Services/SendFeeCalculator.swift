@@ -1,10 +1,11 @@
 import FeeRelayerSwift
+import KeyAppKitCore
 import OrcaSwapSwift
 import SolanaSwift
 
 public protocol SendFeeCalculator: AnyObject {
     func getFees(
-        from token: Token,
+        from token: SolanaToken,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -20,7 +21,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
     // MARK: - Fees calculator
 
     public func getFees(
-        from token: Token,
+        from token: SolanaToken,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -62,7 +63,8 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             }
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
             // subtract the fee payer signature cost
             transactionFee -= context.lamportsPerSignature
@@ -73,11 +75,12 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             accountBalances: isAssociatedTokenUnregister ? context.minimumTokenAccountBalance : 0
         )
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
             return expectedFee
         }
-        
+
         return try await feeRelayerCalculator.calculateNeededTopUpAmount(
             context,
             expectedFee: expectedFee,

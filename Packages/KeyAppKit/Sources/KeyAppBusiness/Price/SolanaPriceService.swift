@@ -27,7 +27,7 @@ public class SolanaPriceService {
     }
 
     /// Get exchange rate for solana token.
-    public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice {
+    public func getPrice(token: SolanaToken, fiat: String) async throws -> CurrentPrice {
         if let cachedValue = cache.value(forKey: primaryKey(token.address, fiat)) {
             return cachedValue
                 .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
@@ -46,7 +46,7 @@ public class SolanaPriceService {
 
     /// Batch request exchange rate for solana tokens
     // TODO: Optimize batch requesting
-    public func getPrices(tokens: [Token], fiat: String) async throws -> [Token: CurrentPrice?] {
+    public func getPrices(tokens: [SolanaToken], fiat: String) async throws -> [SolanaToken: CurrentPrice?] {
         guard !tokens.isEmpty else {
             return [:]
         }
@@ -79,15 +79,15 @@ public class SolanaPriceService {
     }
     
     /// Return current cached price of a token
-    public func getPriceFromCache(token: Token, fiat: String) -> CurrentPrice? {
+    public func getPriceFromCache(token: SolanaToken, fiat: String) -> CurrentPrice? {
         cache.value(forKey: primaryKey(token.address, fiat))
     }
     
     // MARK: - Helpers
 
     /// Return all requested prices for token from cache. Return nil if one of them is missing
-    func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
-        var result: [Token: CurrentPrice?] = [:]
+    func getPricesFromCache(tokens: [SolanaToken], fiat: String) -> [SolanaToken: CurrentPrice?]? {
+        var result: [SolanaToken: CurrentPrice?] = [:]
         
         for token in tokens {
             if let value = getPriceFromCache(token: token, fiat: fiat) {
@@ -109,7 +109,7 @@ public class SolanaPriceService {
 
 // MARK: - Stable coin price adjusting
 
-private extension Dictionary where Key == Token, Value == Optional<CurrentPrice> {
+private extension Dictionary where Key == SolanaToken, Value == Optional<CurrentPrice> {
     func fixedForStableCoin(fiat: String) -> Self {
         var adjustedSelf = self
         for price in self {
@@ -125,7 +125,7 @@ private extension CurrentPrice {
         // assertion
         guard fiat.uppercased() == "USD", // current fiat is USD
               let value, // current price is not nil
-              [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
+              [SolanaToken.usdc.address, SolanaToken.usdt.address].contains(tokenMint), // token is usdc, usdt
               (abs(value - 1.0) * 100).rounded(to: 1) <= 2 // usdc, usdt wasn't depegged greater than 2%
         else {
             // otherwise return current value

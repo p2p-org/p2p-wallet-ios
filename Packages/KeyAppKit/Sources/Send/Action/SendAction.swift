@@ -1,7 +1,7 @@
-import SolanaSwift
-import Foundation
 import FeeRelayerSwift
+import Foundation
 import SolanaSwift
+import SolanaToken
 
 public protocol SendActionService {
     func send(
@@ -16,7 +16,6 @@ public protocol SendActionService {
 }
 
 public class SendActionServiceImpl: SendActionService {
-
     private let contextManager: RelayContextManager
     private let solanaAPIClient: SolanaAPIClient
     private let blockchainClient: BlockchainClient
@@ -48,7 +47,7 @@ public class SendActionServiceImpl: SendActionService {
     ) async throws -> String {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else { throw SendError.invalidSourceWallet }
-        
+
         // assert payingFeeWallet
         if !ignoreTopUp && feeWallet == nil {
             throw SendError.invalidPayingFeeWallet
@@ -93,7 +92,7 @@ public class SendActionServiceImpl: SendActionService {
 
         if useFeeRelayer {
             let feePayerSignature: String
-            
+
             if ignoreTopUp {
                 feePayerSignature = try await relayService.signRelayTransaction(
                     preparedTransaction,
@@ -103,17 +102,17 @@ public class SendActionServiceImpl: SendActionService {
                         autoPayback: false
                     )
                 )
-                
+
                 // get feePayerPubkey and user account
                 guard let feePayerPubKey = contextManager.currentContext?.feePayerAddress,
                       let account
                 else {
                     throw SolanaError.unauthorized
                 }
-                
+
                 // sign transaction by user
                 try preparedTransaction.transaction.sign(signers: [account])
-                
+
                 // add feePayer's signature
                 try preparedTransaction.transaction.addSignature(
                     .init(
@@ -121,13 +120,16 @@ public class SendActionServiceImpl: SendActionService {
                         publicKey: feePayerPubKey
                     )
                 )
-                
+
                 // serialize transaction
                 let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-                
+
                 // send to solanaBlockchain
-                return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
-                
+                return try await solanaAPIClient.sendTransaction(
+                    transaction: serializedTransaction,
+                    configs: RequestConfiguration(encoding: "base64")!
+                )
+
             } else {
                 // FIXME: - SignRelayTransaction return different transaction, fall back to relay_transaction
                 return try await relayService.topUpIfNeededAndRelayTransaction(
@@ -162,7 +164,8 @@ public class SendActionServiceImpl: SendActionService {
         let feePayer: PublicKey?
         let useFeeRelayer: Bool
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
             context,
             payingTokenMint: payingFeeToken?.mint.base58EncodedString
@@ -195,14 +198,14 @@ public class SendActionServiceImpl: SendActionService {
                 minRentExemption: minRentExemption
             ).preparedTransaction
         }
-        
+
         // add memo
         if let memo {
             preparedTransaction.transaction.instructions.append(
                 try MemoProgram.createMemoInstruction(memo: memo)
             )
         }
-        
+
         // send transaction
         preparedTransaction.transaction.recentBlockhash = recentBlockhash
         return (preparedTransaction: preparedTransaction, useFeeRelayer: useFeeRelayer)

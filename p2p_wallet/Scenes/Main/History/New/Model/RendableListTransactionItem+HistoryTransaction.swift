@@ -8,14 +8,15 @@
 import Foundation
 import History
 import SolanaSwift
+import SolanaToken
 
 struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     let trx: HistoryTransaction
 
     // Use to map history token to solana token. They are identical but we need to extract png images.
-    private let allTokens: Set<SolanaSwift.Token>
+    private let allTokens: Set<Token>
 
-    init(trx: HistoryTransaction, allTokens: Set<SolanaSwift.Token>, onTap: (() -> Void)? = nil) {
+    init(trx: HistoryTransaction, allTokens: Set<Token>, onTap: (() -> Void)? = nil) {
         self.trx = trx
         self.allTokens = allTokens
         self.onTap = onTap

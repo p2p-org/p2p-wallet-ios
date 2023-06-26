@@ -1,8 +1,9 @@
 import Combine
+import Resolver
 import Send
 import SolanaSwift
+import SolanaToken
 import SwiftUI
-import Resolver
 
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
@@ -13,7 +14,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let source: SendSource
     private let pushedWithoutRecipientSearchView: Bool
     private let allowSwitchingMainAmountType: Bool
-    
+
     private let sendViaLinkSeed: String?
 
     init(
@@ -37,7 +38,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, sendViaLinkSeed: sendViaLinkSeed)
+        let viewModel = SendInputViewModel(
+            recipient: recipient,
+            preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
+            source: source,
+            allowSwitchingMainAmountType: allowSwitchingMainAmountType,
+            sendViaLinkSeed: sendViaLinkSeed
+        )
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
@@ -106,7 +114,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 }
             }
             .store(in: &subscriptions)
-        
+
         if pushedWithoutRecipientSearchView {
             Task { await viewModel.load() }
         }
@@ -153,8 +161,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             parentController: vc,
             isFreeTransactionsLimited: !isSendingViaLink
         ))
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+        .sink(receiveValue: {})
+        .store(in: &subscriptions)
     }
 
     private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [Wallet]) {

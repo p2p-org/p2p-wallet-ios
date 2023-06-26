@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import SolanaToken
 
 extension RecipientSearchServiceImpl {
     /// Search by solana address
@@ -53,7 +54,7 @@ extension RecipientSearchServiceImpl {
                     // detect token
                     let token = config
                         .tokens[accountInfo.mint.base58EncodedString] ??
-                        .unsupported(mint: accountInfo.mint.base58EncodedString)
+                        .unsupported(mint: accountInfo.mint.base58EncodedString, decimals: 1, symbol: "", supply: nil)
 
                     // detect category
                     let category = Recipient.Category.solanaTokenAddress(

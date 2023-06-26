@@ -1,7 +1,9 @@
 import Combine
-import SolanaSwift
-import SwiftUI
+import KeyAppKitCore
 import KeyAppUI
+import SolanaSwift
+import SolanaToken
+import SwiftUI
 
 enum ChooseWalletTokenStrategy {
     case feeToken(tokens: [Wallet], feeInFiat: Double)
@@ -19,7 +21,7 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
         self.strategy = strategy
         self.chosenWallet = chosenWallet
         self.parentController = parentController
-        self.navigationController = UINavigationController()
+        navigationController = UINavigationController()
     }
 
     override func start() -> AnyPublisher<Wallet?, Never> {
@@ -28,12 +30,17 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
             chosenToken: chosenWallet
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
-            TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
+            TokenCellView(item: .init(wallet: model.item as! SolanaAccount), appearance: .other)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
         configureTitle(strategy: strategy, vc: controller)
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Asset.MaterialIcon.close.image, style: .plain, target: self, action: #selector(closeButtonTapped))
+        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: Asset.MaterialIcon.close.image,
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonTapped)
+        )
         parentController.present(navigationController, animated: true)
 
         controller.onClose = { [weak self] in
@@ -55,7 +62,7 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
     }
 
     @objc private func closeButtonTapped() {
-        self.close(wallet: nil)
+        close(wallet: nil)
     }
 
     private func configureTitle(strategy: ChooseWalletTokenStrategy, vc: UIViewController) {
@@ -69,7 +76,7 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
 
     private func buildService(strategy: ChooseWalletTokenStrategy) -> ChooseItemService {
         switch strategy {
-        case .feeToken(let tokens, _):
+        case let .feeToken(tokens, _):
             return ChooseSendFeeTokenService(tokens: tokens)
         case .sendToken:
             return ChooseSendTokenService()

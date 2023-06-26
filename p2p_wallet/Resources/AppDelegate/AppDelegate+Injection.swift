@@ -24,7 +24,6 @@ import Send
 import SolanaPricesAPIs
 import SolanaSwift
 import SwiftyUserDefaults
-import TransactionParser
 import Web3
 import Wormhole
 

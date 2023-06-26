@@ -11,6 +11,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
+import SolanaToken
 
 enum BEFetcherState {
     case initializing
@@ -60,11 +61,11 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
             .store(in: &subscriptions)
     }
 
-    var nativeWallet: SolanaSwift.Wallet? {
+    var nativeWallet: Wallet? {
         solanaAccountsService.state.value.nativeWallet?.data
     }
 
-    func getWallets() -> [SolanaSwift.Wallet] {
+    func getWallets() -> [Wallet] {
         solanaAccountsService.state.value.map(\.data)
     }
 
@@ -106,7 +107,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
             .eraseToAnyPublisher()
     }
 
-    var dataPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
+    var dataPublisher: AnyPublisher<[Wallet], Never> {
         solanaAccountsService
             .statePublisher
             .map { state in state.value.map(\.data) }

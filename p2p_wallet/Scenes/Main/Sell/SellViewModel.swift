@@ -6,6 +6,7 @@ import Reachability
 import Resolver
 import KeyAppUI
 import SolanaSwift
+import SolanaToken
 import Sell
 
 enum SellViewModelInputError: Error, Equatable {
