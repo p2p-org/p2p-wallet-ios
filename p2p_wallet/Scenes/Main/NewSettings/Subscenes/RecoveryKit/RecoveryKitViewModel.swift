@@ -8,12 +8,11 @@ import Foundation
 import Onboarding
 import Resolver
 
-struct RecoveryKitTKeyData {
-    let device: String
-    let phone: String
-
-    let social: String
-    let socialProvider: String
+struct RecoveryKitModel {
+    let deviceName: String
+    let email: String
+    let authProvider: String
+    let phoneNumber: String
 }
 
 final class RecoveryKitViewModel: ObservableObject {
@@ -21,7 +20,7 @@ final class RecoveryKitViewModel: ObservableObject {
     private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
-    @Published var walletMetadata: WalletMetaData?
+    @Published var model: RecoveryKitModel?
 
     private var subscriptions = [AnyCancellable]()
 
@@ -41,13 +40,21 @@ final class RecoveryKitViewModel: ObservableObject {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
         self.userWalletManager = userWalletManager
-        
-        walletMetadataService.$metadata
-            .sink { [weak self, weak userWalletManager] metadata in
-                if let metadata {
-                    self?.walletMetadata = metadata
+
+        Task.detached { await walletMetadataService.synchronize() }
+
+        walletMetadataService.metadataPublisher
+            .subscribe(on: RunLoop.main)
+            .sink { [weak self, weak userWalletManager] state in
+                if let metadata = state.value {
+                    self?.model = .init(
+                        deviceName: metadata.deviceName,
+                        email: metadata.email,
+                        authProvider: metadata.authProvider,
+                        phoneNumber: metadata.phoneNumber
+                    )
                 } else if userWalletManager?.wallet?.ethAddress != nil {
-                    self?.walletMetadata = .init(
+                    self?.model = .init(
                         deviceName: L10n.notAvailableForNow,
                         email: L10n.notAvailableForNow,
                         authProvider: "apple",

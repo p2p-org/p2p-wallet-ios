@@ -13,7 +13,7 @@ final class AlertLogger: LogManagerLogger {
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let body = AlertLoggerError(title: event, message: data ?? "")
             urlRequest.httpBody = try JSONEncoder().encode(body)
-            _ = try? await URLSession.shared.data(from: urlRequest)
+            _ = try? await URLSession.shared.data(for: urlRequest)
         }
     }
 

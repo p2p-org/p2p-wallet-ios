@@ -194,8 +194,8 @@ private extension SwapViewModel {
 
         walletsRepository.dataPublisher.removeDuplicates()
             .filter { [weak self] _ in
-                // update user wallets only when initializingState is success and view is appeared
-                self?.viewState == .success && self?.isViewAppeared == true
+                // update user wallets only when initializingState is success
+                self?.viewState == .success
             }
             .sinkAsync { [weak self] userWallets in
                 await self?.stateMachine.accept(

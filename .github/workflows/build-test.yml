@@ -24,7 +24,7 @@ jobs:
       # Override fastlane tooling variables
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
       FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
-      XCODE_VERSION: 14.3
+      XCODE_VERSION: 14.3.1
     steps:
 
       - name: Cleanup build folder
@@ -50,15 +50,16 @@ jobs:
         run: |
           echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
-      - name: Copy xcconfig file
+      - name: Generate secret files and check it
         run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
+          chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
       - name: Install project
+        shell: bash
         run: |
           chmod u+x Scripts/install.sh && Scripts/install.sh
-        shell: bash
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
@@ -94,6 +95,9 @@ jobs:
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
+          DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
+          DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
+          DISCORD_MESSAGE_API_BEARER_TOKEN: '${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}'
     
       - name: Login to JIRA
         uses: atlassian/gajira-login@master

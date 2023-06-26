@@ -63,7 +63,7 @@ struct ActionsPanelView: View {
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .padding(.top, 24)
-                    .padding(.bottom, usdAmount.isEmpty ? 32 : 12)
+                    .padding(.bottom, usdAmount.isEmpty ? 46 : 12)
             } else {
                 Rectangle()
                     .fill(Color.clear)
@@ -73,7 +73,7 @@ struct ActionsPanelView: View {
                 Text(usdAmount)
                     .font(uiFont: .font(of: .text3))
                     .foregroundColor(Color(Asset.Colors.night.color))
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 46)
             }
             HStack(spacing: 32) {
                 ForEach(actions, id: \.text) { actionType in
@@ -83,7 +83,7 @@ struct ActionsPanelView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 32)
+            .padding(.bottom, 2)
         }
         .background(Color(Asset.Colors.smoke.color))
     }
@@ -95,12 +95,13 @@ struct ActionsPanelView: View {
                 VStack(spacing: 4) {
                     Image(uiImage: image)
                         .resizable()
+                        .frame(width: 53, height: 53)
                         .scaledToFit()
                     Text(title)
-                        .font(uiFont: .font(of: .label2, weight: .semibold))
+                        .fontWeight(.semibold)
+                        .apply(style: .label2)
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
-                .frame(width: 56, height: 68)
             }
         )
     }

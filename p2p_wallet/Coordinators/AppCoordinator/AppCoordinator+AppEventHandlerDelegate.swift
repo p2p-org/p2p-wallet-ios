@@ -43,9 +43,7 @@ extension AppCoordinator: AppEventHandlerDelegate {
     }
 
     func userDidChangeTheme(to style: UIUserInterfaceStyle) {
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = style
-        }
+        window?.overrideUserInterfaceStyle = style
     }
     
     func disablePincodeOnFirstAppear() {

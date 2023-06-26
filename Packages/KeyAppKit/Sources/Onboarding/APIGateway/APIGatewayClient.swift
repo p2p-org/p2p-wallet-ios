@@ -70,6 +70,13 @@ public protocol APIGatewayClient {
     /// - Returns: Encrypted base64 metadata
     /// - Throws:
     func getMetadata(ethAddress: String, solanaPrivateKey: String, timestampDevice: Date) async throws -> String
+    
+    /// Update metadata
+    /// - Parameters:
+    ///   - ethAddress: Ethereum address.
+    ///   - solanaPrivateKey: Base58 key.
+    ///   - encryptedMetadata: Encrypted base64 metadata
+    func setMetadata(ethAddress: String, solanaPrivateKey: String, encryptedMetadata: String) async throws
 
     /// Binding a phone number to solana wallet
     ///

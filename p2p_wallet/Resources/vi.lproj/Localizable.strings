@@ -1373,3 +1373,9 @@
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
+"Follow us on Twitter" = "theo dõi chúng tối trên Twitter";
+"Join our Discord" = "Tham gia bất hòa của chúng tôi";
+"Security and privacy" = "Bảo mật & quyền riêng tư";
+"To access your account from another device, you need to use any 2 factors from the list below" = "Để truy cập tài khoản của bạn từ một thiết bị khác, bạn cần sử dụng 2 yếu tố bất kỳ trong danh sách bên dưới";
+"Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App tôn trọng quyền riêng tư của bạn - nó không thể truy cập vào tiền hoặc thông tin cá nhân của bạn. Thông tin của bạn được lưu trữ an toàn trên thiết bị của bạn và trong blockchain";
+"Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Cụm từ hạt giống là cách duy nhất để truy cập tiền của bạn trên một thiết bị khác.  Ứng dụng chính không có quyền truy cập vào thông tin này.";
