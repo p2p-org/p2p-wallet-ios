@@ -26,3 +26,17 @@ extension UIColor {
         {% endfor %}
     {% endfor %}
 }
+
+{# Create an UIImage extension for all image assets in asset catalogs #}
+// MARK: - Images -
+
+extension UIImage {
+    {% for catalog in catalogs %}
+        {% for asset in catalog.assets %}
+            {% if asset.type == "image" %}
+                {% filter indent:4 %}{% call staticAsset "UIImage" asset %}{% endfilter %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+}
+
