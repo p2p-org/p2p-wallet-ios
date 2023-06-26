@@ -19,6 +19,10 @@ public struct StrigaCreateUserRequest: Encodable {
     struct Mobile: Encodable {
         let countryCode: String
         let number: String
+
+        var isEmpty: Bool {
+            countryCode.isEmpty || number.isEmpty
+        }
     }
     
     struct DateOfBirth: Encodable {
