@@ -33,7 +33,7 @@ public protocol JupiterAPI {
         asLegacyTransaction: Bool?,
         computeUnitPriceMicroLamports: Int?,
         destinationWallet: String?
-    ) async throws -> String?
+    ) async throws -> SwapTransaction
     
     func routeMap() async throws -> RouteMap
 }
@@ -45,7 +45,7 @@ extension JupiterAPI {
         wrapUnwrapSol: Bool,
         feeAccount: String?,
         computeUnitPriceMicroLamports: Int?
-    ) async throws -> String? {
+    ) async throws -> SwapTransaction {
         try await swap(
             route: route,
             userPublicKey: userPublicKey,

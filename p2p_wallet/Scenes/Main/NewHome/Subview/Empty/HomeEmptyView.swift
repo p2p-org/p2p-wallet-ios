@@ -1,10 +1,3 @@
-//
-//  HomeEmptyView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 01.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
@@ -19,7 +12,7 @@ struct HomeEmptyView: View {
                 scrollingContent
             }
             .padding(.horizontal, 16)
-            .padding(.top, 10)
+            .padding(.top, 22)
             .padding(.bottom, 16)
         }
         .background(Color(Asset.Colors.smoke.color))
@@ -32,7 +25,7 @@ struct HomeEmptyView: View {
         ZStack(alignment: .bottom) {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    Color(.clear)
+                    Color(Asset.Colors.smoke.color)
                         .frame(height: 87)
                     Color(.fern)
                         .frame(height: 200)
@@ -41,7 +34,7 @@ struct HomeEmptyView: View {
                 Image(.homeBannerPerson)
             }
             VStack(spacing: 19) {
-                VStack(spacing: 8) {
+                VStack(spacing: 13) {
                     Text(L10n.topUpYourAccountToGetStarted)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .fontWeight(.bold)
@@ -81,6 +74,7 @@ struct HomeEmptyView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.horizontal, 16)
+                .padding(.top, 3)
             VStack(spacing: 12) {
                 ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
                     let coin = viewModel.popularCoins[index]

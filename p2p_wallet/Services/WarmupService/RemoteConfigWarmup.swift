@@ -92,6 +92,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
         Defaults.solanaNegativeStatusFrequency = remoteConfig.solanaNegativeStatusFrequency
         Defaults.solanaNegativeStatusPercent = remoteConfig.solanaNegativeStatusPercent
         Defaults.solanaNegativeStatusTimeFrequency = remoteConfig.solanaNegativeStatusTimeFrequency
+        Defaults.swapRouteRefeshRate = remoteConfig.swapRouteRefresh
     }
 }
 
