@@ -19,7 +19,8 @@ jobs:
         with:
           python-version: "3.x"
 
-      - uses: actions/cache/restore@v3
+      - name: Restore file
+        uses: actions/cache/restore@v3
         id: cache
         with:
           path: ./last_on_duty_person_id.txt
