@@ -29,7 +29,7 @@ jobs:
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
         run: |
-          LAST_ON_DUTY_PERSON_ID=$(cat last_person_id.txt 2>/dev/null || echo "")
+          LAST_ON_DUTY_PERSON_ID=$(cat last_on_duty_person_id.txt 2>/dev/null || echo "")
           echo $last_person_id
           echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
@@ -96,8 +96,8 @@ jobs:
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           echo "$LAST_ON_DUTY_PERSON_ID"
-          echo "$LAST_ON_DUTY_PERSON_ID" > ./last_on_duty_person_id.txt
-          cat ./last_on_duty_person_id.txt
+          echo "$LAST_ON_DUTY_PERSON_ID" > last_on_duty_person_id.txt
+          cat last_on_duty_person_id.txt
 
       - name: Save file cache
         uses: actions/cache/save@v3
