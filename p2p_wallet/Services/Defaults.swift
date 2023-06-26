@@ -105,6 +105,13 @@ extension DefaultsKeys {
         )
     }
     
+    var swapRouteRefeshRate: DefaultsKey<Double?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().swapRouteRefresh
+        )
+    }
+    
     #if !RELEASE
     var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }

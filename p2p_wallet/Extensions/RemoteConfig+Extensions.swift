@@ -1,10 +1,3 @@
-//
-//  RemoteConfig+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 10.06.2022.
-//
-
 import FirebaseRemoteConfig
 import SolanaSwift
 
@@ -51,6 +44,13 @@ extension RemoteConfig {
 
     var solanaNegativeStatusTimeFrequency: Int? {
         configValues(Int.self, forKey: "solana_negative_status_time_frequency")
+    }
+}
+
+// MARK: - Swap
+extension RemoteConfig {
+    var swapRouteRefresh: Double? {
+        configValues(Double.self, forKey: "swap_route_refresh")
     }
 }
 
