@@ -76,7 +76,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func verify(OTP: String) async throws {
-        guard let userId = subject.value.value.userId else { return }
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
         
         subject.send(
@@ -91,7 +91,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func resendSMS() async throws {
-        guard let userId = subject.value.value.userId else { return }
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.resendSMS(userId: userId)
     }
     

@@ -24,6 +24,10 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
             self.countryCode = countryCode
             self.number = number
         }
+
+        public var isEmpty: Bool {
+            return countryCode.isEmpty || number.isEmpty
+        }
     }
     
     public struct DateOfBirth: Codable {

@@ -107,12 +107,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
-        // get metadata
-        guard let metadata = await metadataProvider.getStrigaMetadata()
-        else {
-            throw BankTransferError.missingMetadata
-        }
-        
         // get cached data from local provider
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
@@ -128,6 +122,12 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             
             // if not response cached data
             return cachedData
+        }
+
+        // get metadata
+        guard let metadata = await metadataProvider.getStrigaMetadata()
+        else {
+            throw BankTransferError.missingMetadata
         }
         
         // return empty data

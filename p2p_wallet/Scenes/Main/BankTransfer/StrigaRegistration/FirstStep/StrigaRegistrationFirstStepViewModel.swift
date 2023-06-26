@@ -153,9 +153,18 @@ private extension StrigaRegistrationFirstStepViewModel {
 
     func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
         let countries = try? await countriesService.fetchCountries()
-        let metadata = await self.strigaMetadata.getStrigaMetadata()
+        let metadataService: WalletMetadataService = Resolver.resolve()
+        // Web3 phone by default
+        var metaPhoneNumber: String = metadataService.metadata.value?.phoneNumber ?? ""
+        // Use a phone from the local state if we have one
+        if !data.mobile.isEmpty, let dataMobileNumber = data.mobileNumber {
+            metaPhoneNumber = dataMobileNumber
+        } else if data.mobile.isEmpty, let strigaPhoneNumber = await self.strigaMetadata.getStrigaMetadata()?.phoneNumber {
+            metaPhoneNumber = strigaPhoneNumber
+        }
         await MainActor.run {
-            if let metadata = metadata, let number = try? phoneNumberKit.parse(metadata.phoneNumber) {
+            phoneNumber = metaPhoneNumber
+            if let number = try? phoneNumberKit.parse(phoneNumber) {
                 phoneNumberModel = number
                 selectedPhoneCountryCode = countries?.first(where: {
                     if let regionId = number.regionID {
@@ -164,7 +173,8 @@ private extension StrigaRegistrationFirstStepViewModel {
                         return $0.dialCode == "+\(number.countryCode)"
                     }
                 })
-                phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
+                metaPhoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
+                    .replacingOccurrences(of: "-", with: "")
             } else {
                 selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
                 phoneNumber = data.mobile.number
