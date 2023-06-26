@@ -104,4 +104,4 @@ jobs:
         if: always()
         with:
           path: last_on_duty_person_id.txt
-          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
+          key: last-on-duty-person-id-${{ hashFiles('last_on_duty_person_id.txt') }}
