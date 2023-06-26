@@ -1,0 +1,103 @@
+name: Call a person to take on-duty job every Monday
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * 1"  # Trigger every Monday at 7:00 AM UTC (10:00 AM MSK)
+
+permissions:
+  contents: write
+
+jobs:
+  call_person:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Restore file
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: last_on_duty_person_id.txt
+          key: last-on-duty-person-id
+
+      - name: Retrieve Last Person ID
+        id: retrieve_last_person_id
+        run: |
+          LAST_ON_DUTY_PERSON_ID=$(cat last_on_duty_person_id.txt 2>/dev/null || echo "")
+          echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
+
+      - name: Retrieve person_ids from secret
+        id: retrieve_person_ids
+        run: |
+          ON_DUTY_PERSON_IDS=$(echo "${{ secrets.ON_DUTY_PERSON_IDS }}" | tr '\n' ' ' | xargs)
+          echo "person_ids=$ON_DUTY_PERSON_IDS" >>$GITHUB_OUTPUT
+
+      - name: Calculate Next Person ID
+        id: calculate_next_person_id
+        run: |
+          # Retrieve the last person ID from the previous step
+          LAST_ON_DUTY_PERSON_ID="${{ steps.retrieve_last_person_id.outputs.last_person_id }}"
+
+          # Retrieve the person IDs list from the previous step
+          ON_DUTY_PERSON_IDS="${{ steps.retrieve_person_ids.outputs.person_ids }}"
+
+          # Convert the person IDs to an array
+          IFS=$' ' read -r -a person_ids <<< "$ON_DUTY_PERSON_IDS"
+
+          # If LAST_ON_DUTY_PERSON_ID is empty, set it to the first person in PERSON_IDS
+          if [ -z "$LAST_ON_DUTY_PERSON_ID" ]; then
+            LAST_ON_DUTY_PERSON_ID="${person_ids[0]}"
+          fi
+
+          # Find the index of the last person ID in the predefined list
+          last_person_index=-1
+          for i in "${!person_ids[@]}"; do
+            if [[ "${person_ids[$i]}" == "$LAST_ON_DUTY_PERSON_ID" ]]; then
+              last_person_index=$i
+              break
+            fi
+          done
+
+          # Calculate the index of the next person ID
+          next_person_index=$(( (last_person_index + 1) % ${#person_ids[@]} ))
+
+          echo $next_person_index
+
+          # Retrieve the next person ID
+          next_person_id="${person_ids[$next_person_index]}"
+
+          # Export the next person ID as an environment variable for subsequent steps
+          echo "next_person_id=$next_person_id" >>$GITHUB_OUTPUT
+
+      - name: Call Person
+        env:
+          DISCORD_MESSAGE_API_BEARER_TOKEN: ${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}
+          DISCORD_MESSAGE_API_ENDPOINT: ${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}
+          DISCORD_IOS_CHANNEL_ID: ${{ secrets.DISCORD_IOS_CHANNEL_ID }}
+        run: |
+          next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
+          MESSAGE="Hi! <@$next_person_id>! Duty call! This week is your turn to handle <@&1111282130476093460> role.\n<@&1111281802858995753> cc"
+
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
+            -d "{\"channel_id\": $DISCORD_IOS_CHANNEL_ID, \"message\": \"$MESSAGE\"}" \
+            $DISCORD_MESSAGE_API_ENDPOINT
+
+      - name: Set Last Person ID
+        id: set_last_person_id
+        run: |
+          LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
+          echo "$LAST_ON_DUTY_PERSON_ID" > last_on_duty_person_id.txt
+
+      - name: Save file
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: last_on_duty_person_id.txt
+          key: last-on-duty-person-id-${{ hashFiles('last_on_duty_person_id.txt') }}

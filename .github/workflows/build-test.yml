@@ -24,7 +24,7 @@ jobs:
       # Override fastlane tooling variables
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
       FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
-      XCODE_VERSION: 14.3
+      XCODE_VERSION: 14.3.1
     steps:
 
       - name: Cleanup build folder

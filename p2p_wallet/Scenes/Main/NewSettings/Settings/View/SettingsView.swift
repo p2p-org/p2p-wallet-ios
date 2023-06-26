@@ -94,7 +94,7 @@ struct SettingsView: View {
         Section(header: headerText(L10n.security)) {
             Button(
                 action: { viewModel.showView(.recoveryKit) },
-                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
+                label: { cellView(image: .recoveryKit, title: L10n.securityAndPrivacy) }
             )
             Button(
                 action: { viewModel.showView(.yourPin) },
