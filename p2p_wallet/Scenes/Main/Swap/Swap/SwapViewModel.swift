@@ -153,7 +153,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     func scheduleUpdate() {
         cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+        timer = .scheduledTimer(withTimeInterval: Defaults.swapRouteRefeshRate ?? 20, repeats: true) { [weak self] _ in
             Task {
                 await self?.update()
             }
