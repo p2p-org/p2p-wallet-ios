@@ -158,7 +158,7 @@ private extension StrigaRegistrationFirstStepViewModel {
         var metaPhoneNumber: String = metadataService.metadata.value?.phoneNumber ?? ""
         // Use a phone from the local state if we have one
         if !data.mobile.isEmpty {
-            metaPhoneNumber = data.mobile.number
+            metaPhoneNumber = data.mobileNumber ?? ""
         } else if data.mobile.isEmpty, let strigaPhoneNumber = await self.strigaMetadata.getStrigaMetadata()?.phoneNumber {
             metaPhoneNumber = strigaPhoneNumber
         }
@@ -173,7 +173,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                         return $0.dialCode == "+\(number.countryCode)"
                     }
                 })
-                metaPhoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
+                phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
                     .replacingOccurrences(of: "-", with: "")
             } else {
                 selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
