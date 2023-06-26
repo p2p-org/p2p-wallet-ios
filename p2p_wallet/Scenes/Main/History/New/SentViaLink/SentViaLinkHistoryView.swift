@@ -25,24 +25,33 @@ struct SentViaLinkHistoryView: View {
         ScrollView {
             LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                 ForEach(sections) { section in
-                    Section(header: sectionHeaderView(section: section)) {
-                        ForEach(section.transactions) { transaction in
-                            SentViaLinkHistoryTransactionView(
-                                transaction: transaction
-                            )
-                            .onTapGesture {
-                                Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
-                                onSelectTransaction(transaction)
-                            }
-                        }
-                    }
+                    sectionView(section: section)
                 }
             }
         }
+            .background(Color(Asset.Colors.smoke.color))
             .onReceive(transactionsPublisher, perform: onReceive(transactions:))
     }
     
     // MARK: - ViewBuilders
+    
+    @ViewBuilder
+    private func sectionView(section: SVLSection) -> some View {
+        Section(header: sectionHeaderView(section: section)) {
+            ForEach(0..<section.transactions.count, id: \.self) { index in
+                SentViaLinkHistoryTransactionView(
+                    transaction: section.transactions[index]
+                )
+                    .background(Color(Asset.Colors.snow.color))
+                    .cornerRadius(radius: 16, index: index, itemsCount: section.transactions.count)
+                    .onTapGesture {
+                        Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
+                        onSelectTransaction(section.transactions[index])
+                    }
+            }
+        }
+            .padding(.horizontal, 12)
+    }
     
     @ViewBuilder
     private func sectionHeaderView(section: SVLSection) -> some View {
@@ -85,6 +94,19 @@ struct SentViaLinkHistoryView: View {
             }
         }
         self.sections = sections
+    }
+}
+
+private extension View {
+    func cornerRadius(radius: CGFloat, index: Int, itemsCount: Int) -> some View {
+        var corner = UIRectCorner()
+        if index == 0 {
+            corner.insert([.topLeft, .topRight])
+        }
+        if index == itemsCount - 1 {
+            corner.insert([.bottomLeft, .bottomRight])
+        }
+        return cornerRadius(radius: radius, corners: corner)
     }
 }
 
