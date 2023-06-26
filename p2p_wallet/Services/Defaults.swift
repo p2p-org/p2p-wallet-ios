@@ -155,6 +155,14 @@ extension DefaultsKeys {
         .init(#function, defaultValue: .zero())
     }
 
+    var strigaOTPConfirmErrorDate: DefaultsKey<Date?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var strigaOTPResendErrorDate: DefaultsKey<Date?> {
+        .init(#function, defaultValue: nil)
+    }
+
     var bankTransferLastCountry: DefaultsKey<Country?> {
         .init(#function, defaultValue: nil)
     }
