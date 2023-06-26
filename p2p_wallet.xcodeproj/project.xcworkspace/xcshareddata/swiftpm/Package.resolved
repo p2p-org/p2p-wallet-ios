@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amplitude/Amplitude-iOS.git",
         "state": {
           "branch": null,
-          "revision": "084a48e2ecd904c00cc5c9345d233f9395e196fa",
-          "version": "8.16.3"
+          "revision": "94b4dcfda9ed9edd6463d9a657bf30c9cf075f09",
+          "version": "8.16.4"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "83e68b5fea032939fd9dcb178cd5bc01fde7ee58",
-          "version": "3.6.2"
+          "revision": "1bc568dc14e098880f8698e0d3d60b24e7351bbb",
+          "version": "3.6.3"
         }
       },
       {

@@ -15,6 +15,7 @@ struct HomeHeaderCard<Action: View>: View {
         case icon(image: UIImage)
     }
     
+    let title: String
     let balance: String
     let balanceDetail: BalanceDetail
     @ViewBuilder var actionView: Action
@@ -24,7 +25,7 @@ struct HomeHeaderCard<Action: View>: View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 12) {
                 Button {} label: {
-                    Text("All Accounts")
+                    Text(title)
                         .font(.custom("SF Pro Text", size: 16))
                         .fontWeight(.regular)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -58,7 +59,7 @@ struct HomeHeaderCard<Action: View>: View {
 
 struct HomeHeaderCard_Previews: PreviewProvider {
     static var previews: some View {
-        HomeHeaderCard(balance: "$0", balanceDetail: .icon(image: UIImage.appleIcon)) {
+        HomeHeaderCard(title: "Home", balance: "$0", balanceDetail: .icon(image: UIImage.appleIcon)) {
             HStack(spacing: 12) {
                 NewTextButton(
                     title: "Add money",

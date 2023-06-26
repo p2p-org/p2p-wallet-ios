@@ -64,7 +64,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         // home view
         let viewModel = HomeViewModel()
-        let homeView = UIHostingController(rootView: HomeViewVersion2(viewModel: .init()))
+        let homeView = UIHostingController(rootView: HomeVersion2View(viewModel: .init()))
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
