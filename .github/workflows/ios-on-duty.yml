@@ -19,13 +19,11 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Cache Last Person ID
-        id: cache_last_person_id
-        uses: actions/cache@v2
+      - uses: actions/cache/restore@v3
+        id: cache
         with:
-          key: last-person-id-${{ hashFiles('last_person_id.txt') }}
-          restore-keys: last-person-id-
-          path: last_person_id.txt
+          path: last_on_duty_person_id.txt
+          key: last-on-duty-person-id
 
       - name: Retrieve Last Person ID
         id: retrieve_last_person_id
@@ -99,3 +97,9 @@ jobs:
           echo "$LAST_ON_DUTY_PERSON_ID"
           echo "$LAST_ON_DUTY_PERSON_ID" > last_person_id.txt
           cat last_person_id.txt
+
+      - uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: last_on_duty_person_id.txt
+          key: last-on-duty-person-id
