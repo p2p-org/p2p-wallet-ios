@@ -22,7 +22,7 @@ jobs:
       - uses: actions/cache/restore@v3
         id: cache
         with:
-          path: last_on_duty_person_id.txt
+          path: ./last_on_duty_person_id.txt
           key: last-on-duty-person-id
 
       - name: Retrieve Last Person ID
@@ -95,11 +95,11 @@ jobs:
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           echo "$LAST_ON_DUTY_PERSON_ID"
-          echo "$LAST_ON_DUTY_PERSON_ID" > last_person_id.txt
-          cat last_person_id.txt
+          echo "$LAST_ON_DUTY_PERSON_ID" > ./last_on_duty_person_id.txt
+          cat ./last_on_duty_person_id.txt
 
       - uses: actions/cache/save@v3
         if: always()
         with:
-          path: last_on_duty_person_id.txt
+          path: ./last_on_duty_person_id.txt
           key: last-on-duty-person-id
