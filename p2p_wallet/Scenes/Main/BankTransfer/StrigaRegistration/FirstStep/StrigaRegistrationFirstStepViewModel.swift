@@ -173,7 +173,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                         return $0.dialCode == "+\(number.countryCode)"
                     }
                 })
-                metaPhoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
+                phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
                     .replacingOccurrences(of: "-", with: "")
             } else {
                 selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
