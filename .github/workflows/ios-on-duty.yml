@@ -2,6 +2,7 @@ name: Call a person to take on-duty job every Monday
 
 on:
   workflow_dispatch:
+  push:
   schedule:
     - cron: "0 7 * * 1"  # Trigger every Monday at 7:00 AM UTC (10:AM MSK)
 
