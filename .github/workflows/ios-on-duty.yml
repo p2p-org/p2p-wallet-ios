@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Restore file cache
+      - name: Restore file
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
