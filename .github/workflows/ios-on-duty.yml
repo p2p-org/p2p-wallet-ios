@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          path: ./last_on_duty_person_id.txt
+          path: last_on_duty_person_id.txt
           key: last-on-duty-person-id
 
       - name: Retrieve Last Person ID
@@ -103,5 +103,5 @@ jobs:
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ./last_on_duty_person_id.txt
+          path: last_on_duty_person_id.txt
           key: ${{ steps.restore-cache.outputs.cache-primary-key }}
