@@ -1338,3 +1338,7 @@
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ is the minimum amount to receive from the Ethereum Network";
 "Follow us on Twitter" = "Follow us on Twitter";
 "Join our Discord" = "Join our Discord";
+"Security and privacy" = "Security & privacy";
+"To access your account from another device, you need to use any 2 factors from the list below" = "To access your account from another device, you need to use any 2 factors from the list below";
+"Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain";
+"Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information.";
