@@ -1,0 +1,21 @@
+name: Up version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'     
+        required: true
+
+jobs:
+  upversion:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: upversion
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      run: |
+        brew install gnu-sed
+        ./upversion ${{ github.event.inputs.version }}

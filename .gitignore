@@ -92,3 +92,4 @@ p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
 
 # KeyAppKit
 Packages/KeyAppKit/.swiftpm/xcode/xcshareddata/xcschemes
+Packages/FeeRelayerSwift/.swiftpm/xcode
