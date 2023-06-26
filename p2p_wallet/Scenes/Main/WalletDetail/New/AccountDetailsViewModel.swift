@@ -47,6 +47,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             case .receive:
                 actionSubject?.send(.openReceive)
             }
+            return
         }
 
         // Render solana wallet (account)

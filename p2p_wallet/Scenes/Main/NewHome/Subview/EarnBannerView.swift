@@ -33,7 +33,7 @@ struct EarnBannerView: View {
                         .foregroundColor(.white)
 
                     Text(L10n.stakeYourTokensAndGetRewardsEveryDay)
-                        ._lineHeightMultiple(1.26)
+//                        ._lineHeightMultiple(1.26)
                         .font(uiFont: .systemFont(ofSize: 14))
                         .foregroundColor(Color(.bdbdbd))
                 }

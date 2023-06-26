@@ -15,7 +15,7 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
         // create bottomsheet
         let vc = UIBottomSheetHostingController(
             rootView: DetailTransactionView(viewModel: viewModel),
-            ignoresKeyboard: true
+            shouldIgnoresKeyboard: true
         )
         vc.view.layer.cornerRadius = 20
         vc.onClose = { [weak self] in

@@ -32,3 +32,15 @@ class UIBottomSheetHostingController<Content: View>: UIHostingController<Content
         return expectedHeight
     }
 }
+
+extension UIBottomSheetHostingController {
+    /// Convenience init for overriding default avoiding-keyboard behavior in UIHostingController
+    /// WARNING: Don't know why convenience init(rootView:ignoresKeyboard:) not recognizable for UIBottomSheetHostingController in xcode 15, so I need to put this additional method.
+    convenience public init(rootView: Content, shouldIgnoresKeyboard: Bool) {
+        self.init(rootView: rootView)
+        
+        if shouldIgnoresKeyboard {
+            disableLayoutWithKeyboard()
+        }
+    }
+}

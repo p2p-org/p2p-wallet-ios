@@ -24,7 +24,7 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
         let view = SendTransactionDetailView(viewModel: viewModel)
 
-        let viewController = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
+        let viewController = UIBottomSheetHostingController(rootView: view, shouldIgnoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
         
         var shouldSendCompletion = true
