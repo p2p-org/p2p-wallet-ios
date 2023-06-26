@@ -23,15 +23,22 @@ public struct StrigaGetAllWalletsResponse: Codable {
 public struct StrigaWallet: Codable {
     public let walletID: String
     public let accounts: StrigaWalletAccounts
-    
+    public let syncedOwnerID, ownerType, createdAt, comment: String
+
     enum CodingKeys: String, CodingKey {
         case walletID = "walletId"
         case accounts
+        case syncedOwnerID = "syncedOwnerId"
+        case ownerType, createdAt, comment
     }
-    
-    public init(walletID: String, accounts: StrigaWalletAccounts) {
+
+    public init(walletID: String, accounts: StrigaWalletAccounts, syncedOwnerID: String, ownerType: String, createdAt: String, comment: String) {
         self.walletID = walletID
         self.accounts = accounts
+        self.syncedOwnerID = syncedOwnerID
+        self.ownerType = ownerType
+        self.createdAt = createdAt
+        self.comment = comment
     }
 }
 
@@ -40,22 +47,15 @@ public struct StrigaWallet: Codable {
 public struct StrigaWalletAccounts: Codable {
     public let eur: StrigaWalletAccount?
     public let usdc: StrigaWalletAccount?
-    public let syncedOwnerID, ownerType, createdAt, comment: String
-    
+
     enum CodingKeys: String, CodingKey {
         case eur = "EUR"
         case usdc = "USDC"
-        case syncedOwnerID = "syncedOwnerId"
-        case ownerType, createdAt, comment
     }
-    
-    public init(eur: StrigaWalletAccount, usdc: StrigaWalletAccount, syncedOwnerID: String, ownerType: String, createdAt: String, comment: String) {
+
+    public init(eur: StrigaWalletAccount, usdc: StrigaWalletAccount) {
         self.eur = eur
         self.usdc = usdc
-        self.syncedOwnerID = syncedOwnerID
-        self.ownerType = ownerType
-        self.createdAt = createdAt
-        self.comment = comment
     }
 }
 

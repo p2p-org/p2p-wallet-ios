@@ -103,7 +103,17 @@ extension BankTransferServiceImpl: BankTransferService {
     public func clearCache() async {
         await repository.clearCache()
     }
-    
+
+    public func getAllWalletsByUser() async throws -> UserAccounts {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        return try await repository.getAllWalletsByUser(userId: userId)
+    }
+
+    public func enrichAccount<T: Decodable>(accountId: String) async throws -> T {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        return try await repository.enrichAccount(userId: userId, accountId: accountId)
+    }
+
     // MARK: - Helpers
 
     private func handleRegisteredUser(userId: String, mobileNumber: String) async throws {
