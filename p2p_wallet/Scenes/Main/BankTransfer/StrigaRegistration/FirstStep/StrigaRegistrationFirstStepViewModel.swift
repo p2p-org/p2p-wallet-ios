@@ -157,8 +157,8 @@ private extension StrigaRegistrationFirstStepViewModel {
         // Web3 phone by default
         var metaPhoneNumber: String = metadataService.metadata.value?.phoneNumber ?? ""
         // Use a phone from the local state if we have one
-        if !data.mobile.isEmpty {
-            metaPhoneNumber = data.mobileNumber ?? ""
+        if !data.mobile.isEmpty, let dataMobileNumber = data.mobile.number {
+            metaPhoneNumber = dataMobileNumber
         } else if data.mobile.isEmpty, let strigaPhoneNumber = await self.strigaMetadata.getStrigaMetadata()?.phoneNumber {
             metaPhoneNumber = strigaPhoneNumber
         }
