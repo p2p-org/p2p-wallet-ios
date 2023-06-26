@@ -30,7 +30,6 @@ jobs:
         id: retrieve_last_person_id
         run: |
           LAST_ON_DUTY_PERSON_ID=$(cat last_on_duty_person_id.txt 2>/dev/null || echo "")
-          echo $last_person_id
           echo "last_person_id=$LAST_ON_DUTY_PERSON_ID" >>$GITHUB_OUTPUT
 
       - name: Retrieve person_ids from secret
@@ -85,19 +84,17 @@ jobs:
           next_person_id="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
           MESSAGE="Hi! <@$next_person_id>! Duty call! This week is your turn to handle <@&1111282130476093460> role.\n<@&1111281802858995753> cc"
 
-          # curl -X POST \
-          #   -H "Content-Type: application/json" \
-          #   -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
-          #   -d "{\"channel_id\": $DISCORD_IOS_CHANNEL_ID, \"message\": \"$MESSAGE\"}" \
-          #   $DISCORD_MESSAGE_API_ENDPOINT
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DISCORD_MESSAGE_API_BEARER_TOKEN" \
+            -d "{\"channel_id\": $DISCORD_IOS_CHANNEL_ID, \"message\": \"$MESSAGE\"}" \
+            $DISCORD_MESSAGE_API_ENDPOINT
 
       - name: Set Last Person ID
         id: set_last_person_id
         run: |
           LAST_ON_DUTY_PERSON_ID="${{ steps.calculate_next_person_id.outputs.next_person_id }}"
-          echo "$LAST_ON_DUTY_PERSON_ID"
           echo "$LAST_ON_DUTY_PERSON_ID" > last_on_duty_person_id.txt
-          cat last_on_duty_person_id.txt
 
       - name: Save file
         uses: actions/cache/save@v3
