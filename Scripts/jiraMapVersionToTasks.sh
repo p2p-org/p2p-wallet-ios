@@ -49,7 +49,6 @@ for match in "${unique_matches[@]}"; do
             echo "  - Fix version updated successfully"
         else
             echo "  - Failed to update fix version"
-            echo "$update_response"
         fi
 
     else
