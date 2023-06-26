@@ -45,6 +45,8 @@ for match in "${unique_matches[@]}"; do
             --data "{\"update\":{\"fixVersions\":[{\"set\":[{\"name\":\"iOS $release\"}]}]}}" \
             "$JIRA_BASE_URL/rest/api/2/issue/$key")
 
+        echo "$update_response"
+
         if [ "$(echo "$update_response" | jq -r '.id')" != "null" ]; then
             echo "  - Fix version updated successfully"
         else
