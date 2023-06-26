@@ -21,7 +21,7 @@ jobs:
 
       - name: Restore file
         uses: actions/cache/restore@v3
-        id: cache
+        id: restore-cache
         with:
           path: ./last_on_duty_person_id.txt
           key: last-on-duty-person-id
@@ -104,4 +104,4 @@ jobs:
         if: always()
         with:
           path: ./last_on_duty_person_id.txt
-          key: last-on-duty-person-id
+          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
