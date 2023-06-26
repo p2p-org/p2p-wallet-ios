@@ -40,7 +40,7 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
         }
 
         let vc = KeyAppHostingController(rootView: RecoveryKitView(viewModel: vm))
-        vc.title = L10n.walletProtection
+        vc.title = L10n.securityAndPrivacy
         vc.hidesBottomBarWhenPushed = true
         vc.onClose = {
             result.send()

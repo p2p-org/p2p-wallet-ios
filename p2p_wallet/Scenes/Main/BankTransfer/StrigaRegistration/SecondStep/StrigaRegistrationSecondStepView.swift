@@ -28,6 +28,7 @@ struct StrigaRegistrationSecondStepView: View {
                     NewTextButton(
                         title: viewModel.actionTitle.uppercaseFirst,
                         style: .primaryWhite,
+                        expandable: true,
                         isEnabled: viewModel.isDataValid,
                         isLoading: viewModel.isLoading,
                         trailing: viewModel.isDataValid ? .arrowForward : nil,

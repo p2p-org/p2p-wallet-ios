@@ -26,7 +26,7 @@ struct StrigaVerificationPendingSheetView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    NewTextButton(title: L10n.gotIt, style: .primary, action: action)
+                    NewTextButton(title: L10n.gotIt, style: .primary, expandable: true, action: action)
                         .padding(.top, 40)
                 }
                 .padding(.horizontal, 20)

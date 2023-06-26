@@ -16,6 +16,7 @@ extension ButtonListCellItem: Renderable {
         NewTextButton(
             title: title,
             style: style,
+            expandable: true,
             leading: leadingImage,
             trailing: trailingImage,
             action: action

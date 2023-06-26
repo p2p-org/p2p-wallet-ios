@@ -33,6 +33,7 @@ struct StrigaRegistrationFirstStepView: View {
                         NewTextButton(
                             title: viewModel.actionTitle.uppercaseFirst,
                             style: .primaryWhite,
+                            expandable: true,
                             isEnabled: viewModel.isDataValid,
                             trailing: viewModel.isDataValid ? .arrowForward : nil,
                             action: viewModel.actionPressed.send

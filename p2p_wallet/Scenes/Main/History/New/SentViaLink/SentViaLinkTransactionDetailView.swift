@@ -154,7 +154,7 @@ struct SentViaLinkTransactionDetailView: View {
                 .frame(width: 20, height: 20)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(14)
-                .background(Color(.f2F5Fa))
+                .background(Color(.f2f5fa))
                 .cornerRadius(radius: 24, corners: .allCorners)
             
             Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress

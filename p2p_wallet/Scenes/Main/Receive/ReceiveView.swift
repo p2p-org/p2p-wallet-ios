@@ -8,7 +8,7 @@ struct ReceiveView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.f2F5Fa)
+            Color(UIColor.f2f5fa)
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 ScrollView {

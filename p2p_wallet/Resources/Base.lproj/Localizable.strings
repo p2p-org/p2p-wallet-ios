@@ -1435,3 +1435,7 @@
 "Your money is held and protected by licensed banks." = "Your money is held and protected by licensed banks.";
 "Your KYC verification\nis pending" = "Your KYC verification\nis pending";
 "We will update the status\nonce it is finished" = "We will update the status\nonce it is finished";
+"Security and privacy" = "Security & privacy";
+"To access your account from another device, you need to use any 2 factors from the list below" = "To access your account from another device, you need to use any 2 factors from the list below";
+"Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain";
+"Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information.";
