@@ -17,14 +17,12 @@ import Moonpay
 import NameService
 import Onboarding
 import OrcaSwapSwift
-import P2PSwift
 import Reachability
 import Resolver
 import Sell
 import Send
 import SolanaPricesAPIs
 import SolanaSwift
-import Solend
 import SwiftyUserDefaults
 import TransactionParser
 import Web3
@@ -594,36 +592,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(RecipientSearchService.self)
         .scope(.shared)
-
-        // Solend
-        register { SolendFFIWrapper() }
-            .implements(Solend.self)
-            .scope(.application)
-        register {
-            SolendDataServiceImpl(
-                solend: resolve(),
-                owner: resolve(AccountStorageType.self).account!,
-                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
-                cache: resolve(UserSessionCache.self)
-            )
-        }
-        .implements(SolendDataService.self)
-        .scope(.session)
-
-        register {
-            SolendActionServiceImpl(
-                rpcUrl: Defaults.apiEndPoint.getURL(),
-                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
-                userAccountStorage: resolve(),
-                solend: resolve(),
-                solana: resolve(),
-                feeRelayApi: resolve(),
-                relayService: resolve(),
-                relayContextManager: resolve()
-            )
-        }
-        .implements(SolendActionService.self)
-        .scope(.session)
 
         // Solana tracker
         register {

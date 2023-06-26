@@ -64,12 +64,6 @@ let package = Package(
             targets: ["Onboarding"]
         ),
 
-        // Solend
-        .library(
-            name: "Solend",
-            targets: ["Solend"]
-        ),
-
         // Send
         .library(
             name: "Send",
@@ -100,6 +94,17 @@ let package = Package(
             targets: ["Wormhole"]
         ),
 
+        // Library
+        .library(
+            name: "FeeRelayerSwift",
+            targets: ["FeeRelayerSwift"]
+        ),
+
+        .library(
+            name: "OrcaSwapSwift",
+            targets: ["OrcaSwapSwift"]
+        ),
+
         // KeyAppBusiness
         .library(
             name: "KeyAppBusiness",
@@ -112,8 +117,8 @@ let package = Package(
         ),
     ],
     dependencies: [
+        //        .package(url: "https://github.com/p2p-org/solana-swift", branch: "version-4"),
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
-        .package(path: "../FeeRelayerSwift"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
@@ -176,7 +181,7 @@ let package = Package(
         .testTarget(
             name: "KeyAppNetworkingTests",
             dependencies: [
-                "KeyAppNetworking"
+                "KeyAppNetworking",
             ],
             path: "Tests/UnitTests/KeyAppNetworkingTests"
         ),
@@ -240,20 +245,6 @@ let package = Package(
         ),
         .testTarget(name: "OnboardingTests", dependencies: ["Onboarding"]),
 
-        // Solend
-        .target(
-            name: "Solend",
-            dependencies: [
-                "P2PSwift",
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
-            ]
-        ),
-        .testTarget(
-            name: "SolendUnitTests",
-            dependencies: ["Solend"],
-            path: "Tests/UnitTests/SolendUnitTests"
-        ),
-
         // MARK: - P2P SDK
 
         .target(name: "P2PSwift"),
@@ -274,7 +265,7 @@ let package = Package(
             name: "Send",
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
+                "FeeRelayerSwift",
                 "NameService",
                 "SolanaPricesAPIs",
                 "TransactionParser",
@@ -318,7 +309,7 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
+                "FeeRelayerSwift",
             ]
         ),
         .testTarget(
@@ -350,6 +341,36 @@ let package = Package(
             name: "KeyAppBusinessTests",
             dependencies: ["KeyAppBusiness"],
             path: "Tests/UnitTests/KeyAppBusinessTests"
+        ),
+
+        // Fee relayer
+        .target(
+            name: "FeeRelayerSwift",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+                "OrcaSwapSwift",
+            ]
+        ),
+        .testTarget(
+            name: "FeeRelayerSwiftUnitTests",
+            dependencies: ["FeeRelayerSwift"]
+        ),
+
+        // Orca swap
+        .target(
+            name: "OrcaSwapSwift",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+            ]
+        ),
+        .testTarget(
+            name: "OrcaSwapUnitTests",
+            dependencies: ["OrcaSwapSwift"]
+        ),
+
+        .testTarget(
+            name: "OrcaSwapIntegrationTests",
+            dependencies: ["OrcaSwapSwift"]
         ),
 
         // Core

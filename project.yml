@@ -20,9 +20,7 @@ packages:
     SolanaSwift:
         url: https://github.com/p2p-org/solana-swift.git
         branch: main
-    OrcaSwapSwift:
-        url: https://github.com/p2p-org/OrcaSwapSwift.git
-        branch: main
+
     KeyAppKit:
         path: ./Packages/KeyAppKit
     KeyAppUI:
@@ -269,8 +267,6 @@ targets:
             - package: KeyAppKit
               product: Onboarding
             - package: KeyAppKit
-              product: Solend
-            - package: KeyAppKit
               product: Send
             - package: KeyAppKit
               product: History
@@ -286,7 +282,6 @@ targets:
               product: Jupiter
 
             - package: SolanaSwift
-            - package: OrcaSwapSwift
 
             - package: KeyAppUI
             - package: BEPureLayout

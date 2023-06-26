@@ -53,7 +53,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
         let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setUpSolendSwapOrHistory()
+        let (secondTab, thirdTab) = setupHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -89,8 +89,8 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarViewModel.moveToSendViaLinkClaim
             .sink { [weak self] url in
                 guard let self = self else { return }
-                
-                UIApplication.dismissCustomPresentedViewController() {
+
+                UIApplication.dismissCustomPresentedViewController {
                     let claimCoordinator = ReceiveFundsViaLinkCoordinator(
                         presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
                         url: url
@@ -101,7 +101,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 }
             }
             .store(in: &subscriptions)
-        
+
         listenToActionsButton()
         listenToWallet()
     }
@@ -134,13 +134,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        // solen tutorial clicked
-        tabBarController.solendTutorialClicked
-            .sink(receiveValue: { [weak self] in
-                self?.navigateToSolendTutorial()
-            })
-            .store(in: &subscriptions)
-
         tabBarController.jupiterSwapClicked
             .sink { [weak self] in
                 self?.jupiterSwapTabCoordinator?.logOpenFromTab()
@@ -150,21 +143,14 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
 
     /// Set up Solend, history or feedback scene
-    private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
+    private func setupHistory() -> (UIViewController, UIViewController) {
         let solendOrSwapNavigation = UINavigationController()
 
-        if available(.investSolendFeature) {
-            let solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
-            coordinate(to: solendCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
-        }
+        routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
 
         let historyNavigation = UINavigationController()
         historyNavigation.navigationBar.prefersLargeTitles = true
-        
+
         let historyCoordinator = NewHistoryCoordinator(
             presentation: SmartCoordinatorPushPresentation(historyNavigation)
         )
@@ -222,17 +208,6 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     // MARK: - Helpers
 
-    /// Navigate to SolendTutorial scene
-    private func navigateToSolendTutorial() {
-        var view = SolendTutorialView(viewModel: .init())
-        view.doneHandler = { [weak self] in
-            self?.tabBarController.changeItem(to: .invest)
-        }
-        let vc = UIHostingControllerWithoutNavigation(rootView: view)
-        vc.modalPresentationStyle = .fullScreen
-        tabBarController.present(vc, animated: true)
-    }
-
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
@@ -263,7 +238,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            if walletsRepository.getWallets().count > 0 {
+            if !walletsRepository.getWallets().isEmpty {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
@@ -298,7 +273,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
         case .cashOut:
             guard available(.sellScenarioEnabled) else { return }
-            
+
             let sellCoordinator = SellCoordinator(navigationController: navigationController)
             coordinate(to: sellCoordinator)
                 .sink(receiveValue: { [weak self] result in

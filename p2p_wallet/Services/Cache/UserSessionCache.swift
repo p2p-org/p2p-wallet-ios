@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import Foundation
-import Solend
 
 class UserSessionCache {
     let storage = UserDefaults(suiteName: "appSuite")
@@ -25,5 +24,3 @@ class UserSessionCache {
         storage?.removeAll()
     }
 }
-
-extension UserSessionCache: SolendCache {}
