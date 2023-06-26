@@ -64,19 +64,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         // home view
         let viewModel = HomeViewModel()
-        let homeView = HomeView(
-            viewModel: viewModel,
-            viewModelWithTokens: tokensViewModel!,
-            emptyViewModel: emptyViewModel
-        ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
-
-        // bind
-        Publishers.Merge(
-            homeView.viewWillAppear.map { true },
-            homeView.viewWillDisappear.map { false }
-        )
-        .assignWeak(to: \.navigationIsHidden, on: homeView)
-        .store(in: &subscriptions)
+        let homeView = UIHostingController(rootView: HomeViewVersion2(viewModel: .init()))
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
