@@ -24,7 +24,7 @@ public protocol StrigaRemoteProvider: AnyObject {
         amount: String
     ) async throws -> StrigaWalletSendResponse
 
-    func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse
+    func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T
 
     /// Resend OTP for transaction
     /// - Parameter userId: The Id of the user who is sending this transaction

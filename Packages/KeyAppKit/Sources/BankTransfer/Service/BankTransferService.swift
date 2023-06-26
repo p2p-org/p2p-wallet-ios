@@ -20,4 +20,8 @@ public protocol BankTransferService {
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
+
+    // MARK: - Accounts data
+    func getAllWalletsByUser() async throws -> UserAccounts
+    func enrichAccount<T: Decodable>(accountId: String) async throws -> T
 }

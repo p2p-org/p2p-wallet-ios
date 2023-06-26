@@ -14,4 +14,7 @@ public protocol BankTransferUserDataRepository {
 
     func updateUserLocally(registrationData: BankTransferRegistrationData) async throws
     func clearCache() async
+
+    func getAllWalletsByUser(userId: String) async throws -> UserAccounts
+    func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T
 }
