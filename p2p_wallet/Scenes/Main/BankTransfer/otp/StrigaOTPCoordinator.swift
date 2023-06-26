@@ -108,19 +108,18 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         }.store(in: &subscriptions)
 
         if resendCounter.until.timeIntervalSinceNow < 0 {
-            // Get initial OTP
+            // Get initial OTP if timer is off (it cand be also launched on previous screen)
             increaseTimer(viewModel: viewModel)
             // Sending the first OTP
-            // DISABLED: After createUser, the OTP is automatically sent
-//            Task { [weak self] in
-//                do {
-//                    try await self?.bankTransfer.resendSMS()
-//                } catch BankTransferError.otpExceededDailyLimit {
-//                    self?.handleOTPExceededDailyLimitError()
-//                } catch {
-//                    viewModel.coordinatorIO.error.send(error)
-//                }
-//            }
+            Task { [weak self] in
+                do {
+                    try await self?.bankTransfer.resendSMS()
+                } catch BankTransferError.otpExceededDailyLimit {
+                    self?.handleOTPExceededDailyLimitError()
+                } catch {
+                    viewModel.coordinatorIO.error.send(error)
+                }
+            }
         }
 
         present(controller: controller)

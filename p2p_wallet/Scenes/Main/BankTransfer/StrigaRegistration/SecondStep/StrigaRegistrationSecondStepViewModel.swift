@@ -1,7 +1,9 @@
 import Combine
+import Onboarding
 import BankTransfer
 import Resolver
 import CountriesAPI
+import SwiftyUserDefaults
 
 final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObject {
 
@@ -21,7 +23,10 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @Injected private var countriesService: CountriesAPI
     private let industryProvider: ChooseIndustryDataLocalProvider
 
-    @Published var isLoading = false
+    // Request otp timer properties
+    @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
+    private var resendCounter: ResendCounter
+
     // Fields
     @Published var occupationIndustry: String = ""
     @Published var sourceOfFunds: String = ""
@@ -32,6 +37,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @Published var stateRegion: String = ""
 
     // Other views
+    @Published var isLoading = false
     @Published var actionTitle: String = L10n.confirm
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
@@ -183,6 +189,7 @@ private extension StrigaRegistrationSecondStepViewModel {
                 await MainActor.run {
                     self.isLoading = false
                 }
+                self.increaseTimer()
                 self.openNextStep.send(())
             } catch BankTransferError.mobileAlreadyExists {
                 await MainActor.run {
@@ -196,6 +203,11 @@ private extension StrigaRegistrationSecondStepViewModel {
                 }
             }
         }
+    }
+
+    // Start OTP request timer
+    func increaseTimer() {
+        self.resendCounter = self.resendCounter.incremented()
     }
 }
 
