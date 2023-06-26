@@ -110,7 +110,7 @@ private extension SwapView {
                 if let swapTransaction = viewModel.currentState.swapTransaction {
                     Text("Transaction:")
                         .apply(style: .label2)
-                    Text(swapTransaction)
+                    Text(swapTransaction.stringValue)
                         .apply(style: .label2)
                 }
                 
