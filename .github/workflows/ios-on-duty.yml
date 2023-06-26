@@ -99,7 +99,8 @@ jobs:
           echo "$LAST_ON_DUTY_PERSON_ID" > ./last_on_duty_person_id.txt
           cat ./last_on_duty_person_id.txt
 
-      - uses: actions/cache/save@v3
+      - name: Save file
+        uses: actions/cache/save@v3
         if: always()
         with:
           path: ./last_on_duty_person_id.txt
