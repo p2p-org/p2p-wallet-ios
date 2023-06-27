@@ -203,10 +203,22 @@ private extension StrigaRegistrationSecondStepViewModel {
     // MARK: - Helpers
 
     private func logAlertMessage(error: Error) {
+        let loggerData = AlertLoggerDataBuilder.buildLoggerData(error: error)
+        
         DefaultLogManager.shared.log(
             event: "Striga Registration iOS Alarm",
             logLevel: .alert,
-            data: <#T##any Encodable?#>
+            data: StrigaRegistrationAlertLoggerMessage(
+                userPubkey: loggerData.userPubkey,
+                platform: loggerData.platform,
+                appVersion: loggerData.appVersion,
+                timestamp: loggerData.timestamp,
+                error: .init(
+                    source: "striga api",
+                    kycSDKState: "initial",
+                    error: loggerData.otherError ?? ""
+                )
+            )
         )
     }
 }
