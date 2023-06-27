@@ -1,0 +1,23 @@
+name: Map release version for tasks in Jira
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  map_fix_version_to_tasks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run script
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          chmod u+x Scripts/jiraMapVersionToTasks.sh
+          BRANCH_NAME=${{ github.ref }}
+          BRANCH_NAME=${BRANCH_NAME#refs/heads/}
+          Scripts/jiraMapVersionToTasks.sh $BRANCH_NAME

@@ -96,6 +96,8 @@ struct HomeAccountsView: View {
                 }
             }
         }
+        .padding(.top, 32)
+        .background(Color(Asset.Colors.snow.color))
     }
 
     private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {
