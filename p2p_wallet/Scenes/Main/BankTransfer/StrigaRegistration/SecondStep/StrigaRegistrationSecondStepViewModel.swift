@@ -189,13 +189,37 @@ private extension StrigaRegistrationSecondStepViewModel {
                     self.isLoading = false
                     self.openHardError.send(())
                 }
+                await logAlertMessage(error: BankTransferError.mobileAlreadyExists)
             } catch {
                 self.notificationService.showDefaultErrorNotification()
                 await MainActor.run {
                     self.isLoading = false
                 }
+                await logAlertMessage(error: error)
             }
         }
+    }
+    
+    // MARK: - Helpers
+
+    private func logAlertMessage(error: Error) async {
+        let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+        
+        DefaultLogManager.shared.log(
+            event: "Striga Registration iOS Alarm",
+            logLevel: .alert,
+            data: StrigaRegistrationAlertLoggerMessage(
+                userPubkey: loggerData.userPubkey,
+                platform: loggerData.platform,
+                appVersion: loggerData.appVersion,
+                timestamp: loggerData.timestamp,
+                error: .init(
+                    source: "striga api",
+                    kycSDKState: "initial",
+                    error: loggerData.otherError ?? ""
+                )
+            )
+        )
     }
 }
 
