@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 08.06.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation

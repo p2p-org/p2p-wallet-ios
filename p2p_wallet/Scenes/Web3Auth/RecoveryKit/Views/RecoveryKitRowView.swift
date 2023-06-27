@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct RecoveryKitRow: View {
+struct RecoveryKitRowView: View {
     let icon: UIImage
     let title: String
     let subtitle: String
@@ -80,8 +80,8 @@ struct RecoveryKitRow: View {
 struct RecoveryKitRow_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            RecoveryKitRow(icon: .appleIcon, title: "Apple", subtitle: "dragon@apple.com")
-            RecoveryKitRow(
+            RecoveryKitRowView(icon: .appleIcon, title: "Apple", subtitle: "dragon@apple.com")
+            RecoveryKitRowView(
                 icon: .appleIcon,
                 title: "Apple",
                 subtitle: "dragon@apple.com",

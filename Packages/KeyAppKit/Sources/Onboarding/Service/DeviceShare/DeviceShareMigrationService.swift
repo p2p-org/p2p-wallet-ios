@@ -73,9 +73,7 @@ public class DeviceShareMigrationService {
 
     /// Static method for determine availibitly of device share migration.
     static func isMigrationAvailable(isWeb3User: Bool?, hasDeviceShare: Bool) -> Bool {
-        guard let isWeb3User else { return false }
-
-        if isWeb3User, !hasDeviceShare {
+        if isWeb3User == true, !hasDeviceShare {
             return true
         } else {
             return false

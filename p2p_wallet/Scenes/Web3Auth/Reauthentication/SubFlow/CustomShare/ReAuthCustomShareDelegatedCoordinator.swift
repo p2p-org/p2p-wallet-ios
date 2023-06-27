@@ -18,7 +18,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
                 strategy: .create
             )
             let vc = EnterSMSCodeViewController(viewModel: vm, disableRightButton: true)
-            vc.title = "Confirm your number"
+            vc.title = L10n.confirmYourNumber
 
             vm.coordinatorIO.onConfirm.sinkAsync { [weak vm, stateMachine] opt in
                 vm?.isLoading = true

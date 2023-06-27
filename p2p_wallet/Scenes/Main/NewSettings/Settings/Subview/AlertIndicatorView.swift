@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import KeyAppUI
 
-struct AlertIndicator: View {
+struct AlertIndicatorView: View {
     let fillColor: Color
     
     var body: some View {
@@ -25,7 +25,7 @@ struct AlertIndicator_Preview: PreviewProvider {
         ScrollView {
             HStack {
                 Spacer()
-                AlertIndicator(fillColor: Color(Asset.Colors.rose.color))
+                AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color))
                 Spacer()
             }
         }

@@ -50,7 +50,7 @@ struct RecoveryKitView: View {
                             .padding(.leading, 16)
 
                         VStack(spacing: 0) {
-                            RecoveryKitRow(
+                            RecoveryKitRowView(
                                 icon: .deviceIcon,
                                 title: L10n.device,
                                 subtitle: Device.getDeviceNameFromIdentifier(metadata.deviceName),
@@ -59,12 +59,12 @@ struct RecoveryKitView: View {
                                 titleAction: "Manage",
                                 action: metadata.isAnotherDevice ? { viewModel.openDevices() } : nil
                             )
-                            RecoveryKitRow(
+                            RecoveryKitRowView(
                                 icon: .callIcon,
                                 title: L10n.phone,
                                 subtitle: metadata.phoneNumber
                             )
-                            RecoveryKitRow(
+                            RecoveryKitRowView(
                                 icon: authProviderIcon(provider: metadata.authProvider) ?? .appleIcon,
                                 title: authProviderName(provider: metadata.authProvider),
                                 subtitle: metadata.email
@@ -107,7 +107,7 @@ struct RecoveryKitView: View {
                     Button {
                         viewModel.deleteAccount()
                     } label: {
-                        RecoveryKitRow(
+                        RecoveryKitRowView(
                             icon: .alertIcon,
                             title: L10n.deleteMyAccount,
                             subtitle: L10n.pending.uppercaseFirst + "..."

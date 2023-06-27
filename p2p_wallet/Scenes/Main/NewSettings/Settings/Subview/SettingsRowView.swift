@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import KeyAppUI
 
-struct SettingsRow<Leading: View>: View {
+struct SettingsRowView<Leading: View>: View {
     
     let title: String
     let withArrow: Bool
@@ -34,10 +34,10 @@ struct SettingsRow<Leading: View>: View {
 
 struct SettingsRow_Preview: PreviewProvider {
     static var previews: some View {
-        SettingsRow(title: "Example", withArrow: true) {
+        SettingsRowView(title: "Example", withArrow: true) {
             Image(uiImage: UIImage.recoveryKit)
                 .overlay(
-                    AlertIndicator(fillColor: Color(Asset.Colors.rose.color)).offset(x: 2.5, y: -2.5),
+                    AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color)).offset(x: 2.5, y: -2.5),
                     alignment: .topTrailing
                 )
         }
