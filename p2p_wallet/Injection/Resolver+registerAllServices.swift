@@ -1,10 +1,3 @@
-//
-//  AppDelegate+Injection.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 23/09/2021.
-//
-
 import AnalyticsManager
 import CountriesAPI
 import FeeRelayerSwift

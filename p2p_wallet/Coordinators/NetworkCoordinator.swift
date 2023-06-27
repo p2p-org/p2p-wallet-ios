@@ -1,10 +1,3 @@
-//
-//  NetworkCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import Combine
 import Foundation
 import UIKit
