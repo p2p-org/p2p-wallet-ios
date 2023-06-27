@@ -48,7 +48,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaAccountsService: SolanaAccountsService
-    @Injected private var tokensRepository: TokensRepository
+    @Injected private var tokensRepository: TokenRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
 
@@ -111,7 +111,8 @@ class RecipientSearchViewModel: ObservableObject {
         if let preChosenWallet {
             // Check token is support wormhole
             if WormholeSupportedTokens.bridges
-                .map(\.solAddress).contains(preChosenWallet.token.address) {
+                .map(\.solAddress).contains(preChosenWallet.token.address)
+            {
                 ethereumSearch = true
             } else {
                 ethereumSearch = false
@@ -129,7 +130,7 @@ class RecipientSearchViewModel: ObservableObject {
         )
 
         Task {
-            let tokens = try await tokensRepository.getTokensList()
+            let tokens = try await tokensRepository.all()
             await MainActor.run { [weak self] in
                 guard let self = self else { return }
                 self.config.tokens = Dictionary(tokens.map { ($0.address, $0) }, uniquingKeysWith: { lhs, _ in lhs })

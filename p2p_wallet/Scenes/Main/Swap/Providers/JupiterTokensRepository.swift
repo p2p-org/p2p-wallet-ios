@@ -1,7 +1,8 @@
-import Jupiter
 import Combine
-import SolanaSwift
+import Jupiter
+import KeyAppBusiness
 import Resolver
+import SolanaSwift
 
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
@@ -17,26 +18,26 @@ enum JupiterDataStatus {
 }
 
 final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
-
     var status: AnyPublisher<JupiterDataStatus, Never> {
         statusSubject.eraseToAnyPublisher()
     }
+
     // MARK: - Dependencies
 
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
-    @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
+    @Injected private var tokensService: SolanaTokensService
 
     // MARK: - Private params
 
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
     private var task: Task<Void, Never>?
-    
+
     let loadingPeriodInMinutes: Int = 60 * 24 // 1 days
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
-        self.localProvider = provider
+        localProvider = provider
         self.jupiterClient = jupiterClient
     }
 
@@ -44,27 +45,27 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
         // cancel previous task
         task?.cancel()
         task = nil
-        
+
         // assign task
         task = Task { [weak self] in
             await self?.fetch()
         }
-        
+
         await task?.value
     }
-    
+
     private func fetch() async {
         statusSubject.send(.loading)
         do {
             var jupiterTokens: [Token]
             let routeMap: RouteMap
-            
+
             try Task.checkCancellation()
-            
+
             // get the date component
             var dayComponent = DateComponents()
             dayComponent.minute = loadingPeriodInMinutes
-            
+
             // get cachedData if it is not expired
             if let cachedData = localProvider.getCachedData(),
                let dateToExpired = Calendar.current.date(byAdding: dayComponent, to: cachedData.created),
@@ -73,33 +74,33 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 jupiterTokens = cachedData.tokens
                 routeMap = cachedData.routeMap
             }
-            
+
             // retrive to get data
             else {
                 // clear expired data
                 localProvider.clear()
-                
+
                 // get new data
                 (jupiterTokens, routeMap) = try await(
                     jupiterClient.getTokens(),
                     jupiterClient.routeMap()
                 )
-                
+
                 // save new data
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
-            
+
             // get solana cached token list
-            let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
-            
+            let solanaTokens = try await tokensService.all() ?? []
+
             // map solanaTokens to jupiter token
             jupiterTokens = jupiterTokens.map { jupiterToken in
-                if let token = solanaTokens.first(where: {$0.address == jupiterToken.address}) {
+                if let token = solanaTokens.first(where: { $0.address == jupiterToken.address }) {
                     return token
                 }
                 return jupiterToken
             }
-            
+
             // return status ready
             try Task.checkCancellation()
             statusSubject.send(.ready(jupiterTokens: jupiterTokens, routeMap: routeMap))

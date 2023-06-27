@@ -2,7 +2,6 @@ import Combine
 import Foundation
 import History
 import SolanaSwift
-import TransactionParser
 
 protocol RenderableTransactionDetail {
     var status: TransactionDetailStatus { get }

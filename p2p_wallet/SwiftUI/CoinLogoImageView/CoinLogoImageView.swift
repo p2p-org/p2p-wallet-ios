@@ -7,6 +7,7 @@
 
 import Foundation
 import JazziconSwift
+import KeyAppKitCore
 import SolanaSwift
 import UIKit
 
@@ -121,10 +122,12 @@ class CoinLogoImageView: BEView {
         }
 
         // wrapped by
-        if let wrappedBy = token?.wrappedBy {
-            wrappingView.alpha = 1
-            wrappingTokenIcon.image = wrappedBy.image
-        }
+        /*
+         if let wrappedBy = token?.wrapped {
+             wrappingView.alpha = 1
+             wrappingTokenIcon.image = wrappedBy.image
+         }
+          */
     }
 
     func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {

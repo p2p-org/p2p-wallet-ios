@@ -165,7 +165,10 @@ extension Resolver: ResolverRegistering {
         register {
             DefaultTransactionParserRepository(
                 p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
-                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
+                parser: TransactionParserServiceImpl.default(
+                    apiClient: Resolver.resolve(),
+                    tokensRepository: Resolver.resolve()
+                )
             )
         }
         .implements(TransactionParsedRepository.self)
@@ -196,9 +199,16 @@ extension Resolver: ResolverRegistering {
             .implements(SolanaPricesAPI.self)
             .scope(.application)
 
-        register { InMemoryTokensRepositoryCache() }
-            .implements(SolanaTokensRepositoryCache.self)
-            .scope(.application)
+        register {
+            SolanaTokenListRepository(
+                tokenListSource: SolanaTokenListSourceImpl.p2p(
+                    networkManager: URLSession.shared
+                ),
+                storage: InMemorySolanaTokenListStorage()
+            )
+        }
+        .implements(SolanaTokensService.self)
+        .scope(.application)
 
         register { CreateNameServiceImpl() }
             .implements(CreateNameService.self)
@@ -243,16 +253,6 @@ extension Resolver: ResolverRegistering {
         // SolanaBlockchainClient
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
-
-        register { TokensRepository(
-            endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(
-                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
-            ),
-            cache: resolve()
-        ) }
-        .implements(SolanaTokensRepository.self)
-        .scope(.application)
 
         // QrCodeImageRender
         register { QrCodeImageRenderImpl() }

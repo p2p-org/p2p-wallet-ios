@@ -56,7 +56,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     let owner: String
 
     let apiClient: SolanaAPIClient
-    let tokensService: SolanaTokensRepository
+    let tokensService: SolanaTokensService
     var proxyConfiguration: ProxyConfiguration?
     let errorObserver: ErrorObserver
 
@@ -79,7 +79,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     init(
         owner: String,
         apiClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
+        tokensService: SolanaTokensService,
         proxyConfiguration: ProxyConfiguration?,
         errorObserver: ErrorObserver
     ) {
@@ -267,22 +267,25 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         getLatestAccountsStateTask = Task {
             do {
                 // Updating native account balance and get spl tokens
-                // TODO: Need to optimize
-                let (balance, splAccounts) = try await(
+                let (balance, (resolved, _)) = try await(
                     apiClient.getBalance(account: owner, commitment: "confirmed"),
-                    apiClient.getTokenWallets(account: owner, tokensRepository: tokensService, commitment: "confirmed")
+                    apiClient.getAccountBalances(
+                        for: owner,
+                        tokensRepository: tokensService,
+                        commitment: "confirmed"
+                    )
                 )
 
                 if Task.isCancelled { return }
 
                 let solanaAccount = SolanaAccount(
-                    data: Wallet.nativeSolana(
+                    data: AccountBalance.nativeSolana(
                         pubkey: owner,
                         lamport: balance
                     )
                 )
 
-                let accounts = [solanaAccount] + splAccounts.map { SolanaAccount(data: $0, price: nil) }
+                let accounts = [solanaAccount] + resolved.map { SolanaAccount(data: $0, price: nil) }
 
                 for account in accounts {
                     accountsSubject.send(account)
@@ -313,9 +316,8 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                     var reader = BinaryReader(bytes: data.bytes)
                     let tokenAccountData = try AccountInfo(from: &reader)
 
-                    // Bad code because of O(n)
-                    let tokens = try await tokensService.getTokensList(useCache: true)
-                    let token = tokens.first { $0.address == tokenAccountData.mint.base58EncodedString }
+                    // Get token
+                    let token = try await tokensService.get(address: tokenAccountData.mint)
 
                     // TODO: Add case when token info is invalid
                     if let token {

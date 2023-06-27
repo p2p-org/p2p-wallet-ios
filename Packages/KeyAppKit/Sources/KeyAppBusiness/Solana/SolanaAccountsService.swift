@@ -33,7 +33,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     let realtimeStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     /// Requested token price base on final stream.
-    let priceStream: CurrentValueSubject<[Token: CurrentPrice?], Never> = .init([:])
+    let priceStream: CurrentValueSubject<[SolanaToken: CurrentPrice?], Never> = .init([:])
 
     // MARK: - Output
 
@@ -57,7 +57,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     public init(
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
+        tokensService: SolanaTokensService,
         priceService: SolanaPriceService,
         fiat: String,
         proxyConfiguration: ProxyConfiguration?,
@@ -73,24 +73,24 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, splAccounts) = try await(
+                let (balance, (resolved, _)) = try await(
                     // TODO: Check commitment value! Previously was ``recent``
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
-                    solanaAPIClient.getTokenWallets(
-                        account: accountAddress,
+                    solanaAPIClient.getAccountBalances(
+                        for: accountAddress,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
                     )
                 )
 
                 let solanaAccount = Account(
-                    data: Wallet.nativeSolana(
+                    data: AccountBalance.nativeSolana(
                         pubkey: accountAddress,
                         lamport: balance
                     )
                 )
 
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
+                newAccounts = [solanaAccount] + resolved.map { Account(data: $0, price: nil) }
 
                 return (newAccounts, nil)
             } catch {

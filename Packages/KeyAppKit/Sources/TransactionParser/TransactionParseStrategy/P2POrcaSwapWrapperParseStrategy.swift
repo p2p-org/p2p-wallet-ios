@@ -13,9 +13,9 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
     ]
 
     private let apiClient: SolanaAPIClient
-    private let tokensRepository: SolanaTokensRepository
+    private let tokensRepository: TokenRepository
 
-    init(apiClient: SolanaAPIClient, tokensRepository: SolanaTokensRepository) {
+    init(apiClient: SolanaAPIClient, tokensRepository: TokenRepository) {
         self.apiClient = apiClient
         self.tokensRepository = tokensRepository
     }
@@ -62,7 +62,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
         else { return nil }
 
         let totalInstructions = transactionInfo.transaction.message.instructions.count
-        
+
         // Swap from native SOL
         if sourceChange == .zero, swapInstructionIndex + 1 < totalInstructions {
             let closeInstruction = transactionInfo.transaction.message.instructions[swapInstructionIndex + 1]
@@ -138,7 +138,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
                 .first(where: { $0.accountIndex == addressIndex })?.uiTokenAmount.uiAmount ?? 0
         }
 
-        let sourceToken: Token = try await tokensRepository.getTokenWithMint(mintAddress)
+        let sourceToken: Token = try await tokensRepository.safeGet(address: mintAddress)
 
         let wallet = Wallet(
             pubkey: try? PublicKey(string: address).base58EncodedString,
