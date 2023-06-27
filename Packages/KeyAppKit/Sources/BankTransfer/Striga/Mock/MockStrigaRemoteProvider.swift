@@ -116,7 +116,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         fatalError("Implementing")
     }
     
-    public func enrichAccount(userId: String, accountId: String) async throws -> StrigaEnrichedAccountResponse {
+    public func enrichAccount<T>(userId: String, accountId: String) async throws -> T where T : Decodable {
         fatalError("Implementing")
     }
 

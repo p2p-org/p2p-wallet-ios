@@ -17,7 +17,7 @@ struct RecipientSearchField: View {
     let scan: () -> Void
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 6) {
             HStack {
                 FocusedTextField(text: $text, isFirstResponder: $isFirstResponder) { textField in
                     textField.placeholder = L10n.usernameOrAddress
@@ -75,6 +75,7 @@ struct RecipientSearchField: View {
                         .opacity(0)
                 }
             }
+            .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 0))
             .accessibilityIdentifier("RecipientSearchField.qr")
         }
     }

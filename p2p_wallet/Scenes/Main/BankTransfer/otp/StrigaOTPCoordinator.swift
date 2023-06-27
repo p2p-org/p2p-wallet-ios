@@ -18,6 +18,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: ResendCounter
+    @SwiftyUserDefault(keyPath: \.strigaOTPConfirmErrorDate, options: .cached)
+    private var lastConfirmErrorData: Date?
+    @SwiftyUserDefault(keyPath: \.strigaOTPResendErrorDate, options: .cached)
+    private var lastResendErrorDate: Date?
 
     private var numberVerifiedSubject = PassthroughSubject<Void, Never>()
 
@@ -52,20 +56,12 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 self?.numberVerifiedSubject.send(())
                 self?.resendCounter = .zero()
             } catch BankTransferError.otpExceededVerification {
-                var title = L10n.pleaseWait1DayForTheNextTry
-                var subtitle = L10n.after5IncorrectAttemptsWeDisabledSMSVerificationFor1DayToSecureYourAccount
-                let errorController = StrigaOTPHardErrorView(
-                    title: title,
-                    subtitle: subtitle,
-                    onAction: {
-                        self?.viewController.popToRootViewController(animated: true)
-                    }, onSupport: {
-                        self?.helpLauncher.launch()
-                    }).asViewController(withoutUIKitNavBar: true)
-                errorController.hidesBottomBarWhenPushed = true
-                self?.viewController.pushViewController(errorController, animated: true)
+                self?.lastConfirmErrorData = Date().addingTimeInterval(60 * 60 * 24)
+                self?.handleOTPConfirmLimitError()
+                await self?.logAlertMessage(error: BankTransferError.otpExceededVerification)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
+                await self?.logAlertMessage(error: error)
             }
         }.store(in: &subscriptions)
 
@@ -83,8 +79,11 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     try await self.bankTransfer.resendSMS()
                 } catch BankTransferError.otpExceededDailyLimit {
                     self.handleOTPExceededDailyLimitError()
+                    self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
+                    await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
                 } catch {
                     viewModel.coordinatorIO.error.send(error)
+                    await self.logAlertMessage(error: error)
                 }
             }
         }.store(in: &subscriptions)
@@ -107,8 +106,16 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
+        if let lastResendErrorDate, lastResendErrorDate.timeIntervalSinceNow > 0 {
+            handleOTPExceededDailyLimitError()
+        } else if let lastConfirmErrorData, lastConfirmErrorData.timeIntervalSinceNow > 0 {
+            handleOTPConfirmLimitError()
+        } else {
+            present(controller: controller)
+        }
+
         if resendCounter.until.timeIntervalSinceNow < 0 {
-            // Get initial OTP
+            // Get initial OTP if timer is off (it cand be also launched on previous screen)
             increaseTimer(viewModel: viewModel)
             // Sending the first OTP
             Task { [weak self] in
@@ -122,16 +129,14 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             }
         }
 
-        present(controller: controller)
-
         numberVerifiedSubject.flatMap { [unowned self] _ in
-            self.coordinate(
+            coordinate(
                 to: StrigaOTPSuccessCoordinator(
                     navigationController: self.viewController
                 )
             )
         }.sink { [unowned self] _ in
-            self.resultSubject.send(.verified)
+            resultSubject.send(.verified)
         }.store(in: &subscriptions)
 
         return resultSubject.prefix(1).eraseToAnyPublisher()
@@ -150,11 +155,28 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             subtitle: subtitle,
             onAction: { [weak self] in
                 self?.viewController.popToRootViewController(animated: true)
+                self?.resultSubject.send(.canceled)
             }, onSupport: { [weak self] in
                 self?.helpLauncher.launch()
             }).asViewController(withoutUIKitNavBar: true)
         errorController.hidesBottomBarWhenPushed = true
-        self.viewController.pushViewController(errorController, animated: true)
+        viewController.pushViewController(errorController, animated: true)
+    }
+
+    private func handleOTPConfirmLimitError() {
+        let title = L10n.pleaseWait1DayForTheNextTry
+        let subtitle = L10n.after5IncorrectAttemptsWeDisabledSMSVerificationFor1DayToSecureYourAccount
+        let errorController = StrigaOTPHardErrorView(
+            title: title,
+            subtitle: subtitle,
+            onAction: { [weak self] in
+                self?.viewController.popToRootViewController(animated: true)
+                self?.resultSubject.send(.canceled)
+            }, onSupport: { [weak self] in
+                self?.helpLauncher.launch()
+            }).asViewController(withoutUIKitNavBar: true)
+        errorController.hidesBottomBarWhenPushed = true
+        viewController.pushViewController(errorController, animated: true)
     }
 
     private func present(controller: UIViewController) {
@@ -173,6 +195,25 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         resultSubject.send(.canceled)
     }
 
+    private func logAlertMessage(error: Error) async {
+        let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+        
+        DefaultLogManager.shared.log(
+            event: "Striga Registration iOS Alarm",
+            logLevel: .alert,
+            data: StrigaRegistrationAlertLoggerMessage(
+                userPubkey: loggerData.userPubkey,
+                platform: loggerData.platform,
+                appVersion: loggerData.appVersion,
+                timestamp: loggerData.timestamp,
+                error: .init(
+                    source: "striga api",
+                    kycSDKState: "initial",
+                    error: loggerData.otherError ?? ""
+                )
+            )
+        )
+    }
 }
 
 extension ResendCounter: DefaultsSerializable {}

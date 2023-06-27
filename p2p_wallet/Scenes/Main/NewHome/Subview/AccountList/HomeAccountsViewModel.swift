@@ -27,13 +27,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
     let navigation: PassthroughSubject<HomeNavigation, Never>
+    let bannerTapped = PassthroughSubject<Void, Never>()
 
     @Published private(set) var balance: String = ""
     @Published private(set) var actions: [WalletActionType] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     @Published private(set) var smallBanner: HomeBannerParameters?
-    @Published private(set) var bannerTapped: Bool = false
+    @Published private(set) var shouldCloseBanner = false
 
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
@@ -194,7 +195,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     func closeBanner() {
         smallBanner = nil
-        bannerTapped = false
+        shouldCloseBanner = false
     }
 }
 
@@ -212,11 +213,19 @@ private extension HomeAccountsViewModel {
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { value in
                 HomeBannerParameters(status: value.value.kycStatus, action: { [weak self] in
-                    self?.navigation.send(.topUp)
-                    self?.bannerTapped = true
+                    self?.navigation.send(.bankTransfer)
+                    self?.shouldCloseBanner = true
                 }, isSmallBanner: true)
             }
             .assignWeak(to: \.smallBanner, on: self)
+            .store(in: &subscriptions)
+
+        bannerTapped
+            .withLatestFrom(bankTransferService.state)
+            .filter { $0.value.kycStatus == .onHold || $0.value.kycStatus == .pendingReview }
+            .sink { [weak self] _ in
+                self?.navigation.send(.bankTransfer)
+            }
             .store(in: &subscriptions)
     }
 }

@@ -121,7 +121,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             }
         
         let logsInfo = SwapLogsInfo(
-            swapTransaction: currentState.swapTransaction,
+            swapTransaction: currentState.swapTransaction?.stringValue,
             route: stateMachine.currentState.route,
             routeInSymbols: getRouteInSymbols()?.joined(separator: " -> "),
             amountFrom: stateMachine.currentState.amountFrom,
@@ -153,7 +153,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     func scheduleUpdate() {
         cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+        timer = .scheduledTimer(withTimeInterval: Defaults.swapRouteRefeshRate ?? 20, repeats: true) { [weak self] _ in
             Task {
                 await self?.update()
             }
@@ -427,7 +427,7 @@ private extension SwapViewModel {
         #endif
 
         if let swapTransaction = currentState.swapTransaction {
-            logSwapApprove(signature: swapTransaction)
+            logSwapApprove(signature: swapTransaction.stringValue)
         }
 
         // form transaction

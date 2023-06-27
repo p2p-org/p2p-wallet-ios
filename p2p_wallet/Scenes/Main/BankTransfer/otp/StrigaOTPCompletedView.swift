@@ -48,6 +48,7 @@ struct StrigaOTPCompletedView: View {
                     NewTextButton(
                         title: actionTitle,
                         style: .primaryWhite,
+                        expandable: true,
                         trailing: .arrowForward,
                         action: onAction
                     )

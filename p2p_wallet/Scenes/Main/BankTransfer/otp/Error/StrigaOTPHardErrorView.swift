@@ -16,12 +16,14 @@ struct StrigaOTPHardErrorView: View {
                 VStack(spacing: 30) {
                     NewTextButton(
                         title: L10n.openWalletScreen,
-                        style: .inverted) {
+                        style: .inverted,
+                        expandable: true) {
                             onAction()
                         }
                     NewTextButton(
                         title: L10n.writeToSuppot,
-                        style: .primaryWhite) {
+                        style: .primaryWhite,
+                        expandable: true) {
                             onSupport()
                         }
                 }

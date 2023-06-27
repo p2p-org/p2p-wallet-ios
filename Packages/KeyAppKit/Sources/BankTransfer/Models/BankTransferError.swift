@@ -8,4 +8,9 @@ public enum BankTransferError: Int, Error {
     case otpExceededDailyLimit = 31008
     case mobileAlreadyExists = 30041
     case mobileAlreadyVerified
+
+    // KYC start
+    case kycVerificationInProgress = 30009
+    case kycRejectedCantRetry = 30010
+    case kycAttemptLimitExceeded = 30011
 }

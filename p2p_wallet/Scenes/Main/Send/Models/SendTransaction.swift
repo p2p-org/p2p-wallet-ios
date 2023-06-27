@@ -106,7 +106,7 @@ struct SendTransaction: RawTransactionType {
                     userPubkey: data.userPubkey,
                     platform: data.platform,
                     blockchainError: data.blockchainError,
-                    feeRelayerError: data.feeRelayerError,
+                    feeRelayerError: data.feeRelayerError ?? data.otherError,
                     appVersion: data.appVersion,
                     timestamp: data.timestamp
                 )
@@ -117,7 +117,7 @@ struct SendTransaction: RawTransactionType {
                         userPubkey: data.userPubkey,
                         platform: data.platform,
                         blockchainError: data.blockchainError,
-                        feeRelayerError: data.feeRelayerError,
+                        feeRelayerError: data.feeRelayerError ?? data.feeRelayerError,
                         appVersion: data.appVersion,
                         timestamp: data.timestamp
                     )

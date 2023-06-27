@@ -133,9 +133,9 @@ public extension NSAttributedString {
 }
 
 public extension Text {
-    func apply(style: UIFont.Style) -> some View {
+    func apply(style: UIFont.Style, weight: UIFont.Weight = .regular) -> some View {
         self.kerning(UIFont.letterSpacing(for: style))
-            .font(Font(UIFont.font(of: style).withSize(UIFont.fontSize(of: style)) as CTFont))
+            .font(Font(UIFont.font(of: style, weight: weight).withSize(UIFont.fontSize(of: style)) as CTFont))
             .lineSpacing(UIFont.lineHeight(for: style))
     }
 }

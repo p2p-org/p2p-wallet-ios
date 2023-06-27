@@ -14,12 +14,14 @@ struct StrigaRegistrationHardErrorView: View {
                 VStack(spacing: 12) {
                     NewTextButton(
                         title: L10n.openMyBlank,
-                        style: .inverted) {
+                        style: .inverted,
+                        expandable: true) {
                             onAction()
                         }
                     NewTextButton(
                         title: L10n.support,
-                        style: .primary) {
+                        style: .primary,
+                        expandable: true) {
                             onSupport()
                         }
                 }

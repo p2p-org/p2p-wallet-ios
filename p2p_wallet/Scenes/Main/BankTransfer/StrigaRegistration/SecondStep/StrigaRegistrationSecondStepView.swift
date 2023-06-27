@@ -2,7 +2,6 @@ import SwiftUI
 import KeyAppUI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias InfoView = StrigaRegistrationInfoView
 fileprivate typealias Cell = StrigaRegistrationCell
 fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
@@ -17,18 +16,19 @@ struct StrigaRegistrationSecondStepView: View {
         ColoredBackground {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    InfoView(appearance: .credentials)
+                    BaseInformerView(data: StrigaRegistrationInfoViewModel.credentials)
                         .padding(.top, 22)
                     sourceOfFundsSection
                     ListSpacerCellView(height: 10, backgroundColor: .clear)
                     VStack(spacing: 32) {
                         addressSection
-                        InfoView(appearance: .confirm)
+                        BaseInformerView(data: StrigaRegistrationInfoViewModel.confirm)
                     }
                     ListSpacerCellView(height: 12, backgroundColor: .clear)
                     NewTextButton(
                         title: viewModel.actionTitle.uppercaseFirst,
                         style: .primaryWhite,
+                        expandable: true,
                         isEnabled: viewModel.isDataValid,
                         isLoading: viewModel.isLoading,
                         trailing: viewModel.isDataValid ? .arrowForward : nil,
