@@ -107,12 +107,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
-        // get metadata
-        guard let metadata = await metadataProvider.getStrigaMetadata()
-        else {
-            throw BankTransferError.missingMetadata
-        }
-        
         // get cached data from local provider
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
@@ -128,6 +122,12 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             
             // if not response cached data
             return cachedData
+        }
+
+        // get metadata
+        guard let metadata = await metadataProvider.getStrigaMetadata()
+        else {
+            throw BankTransferError.missingMetadata
         }
         
         // return empty data
@@ -148,6 +148,30 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func clearCache() async {
         await localProvider.clearRegistrationData()
+    }
+
+    public func getAllWalletsByUser(userId: String) async throws -> UserAccounts {
+        let fixedStartDate = Date(timeIntervalSince1970: 1687564800)
+        let fixedEndDate = Date()
+        let allWallets = try await remoteProvider.getAllWalletsByUser(
+            userId: userId,
+            startDate: fixedStartDate,
+            endDate: fixedEndDate,
+            page: 1
+        ).wallets.first
+        var eur: WalletAccount?
+        if let eurAccount = allWallets?.accounts.eur {
+            eur = WalletAccount(accountID: eurAccount.accountID)
+        }
+        var usdc: WalletAccount?
+        if let usdcAccount = allWallets?.accounts.usdc {
+            usdc = WalletAccount(accountID: usdcAccount.accountID)
+        }
+        return UserAccounts(eur: eur, usdc: usdc)
+    }
+
+    public func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
+        try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
 }
 

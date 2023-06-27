@@ -76,7 +76,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func verify(OTP: String) async throws {
-        guard let userId = subject.value.value.userId else { return }
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
         
         subject.send(
@@ -91,7 +91,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func resendSMS() async throws {
-        guard let userId = subject.value.value.userId else { return }
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.resendSMS(userId: userId)
     }
     
@@ -103,7 +103,17 @@ extension BankTransferServiceImpl: BankTransferService {
     public func clearCache() async {
         await repository.clearCache()
     }
-    
+
+    public func getAllWalletsByUser() async throws -> UserAccounts {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        return try await repository.getAllWalletsByUser(userId: userId)
+    }
+
+    public func enrichAccount<T: Decodable>(accountId: String) async throws -> T {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        return try await repository.enrichAccount(userId: userId, accountId: accountId)
+    }
+
     // MARK: - Helpers
 
     private func handleRegisteredUser(userId: String, mobileNumber: String) async throws {
