@@ -78,6 +78,7 @@ public struct NewTextButton: View {
                 }
             }
             .frame(height: size.height)
+            .frame(maxWidth: expandable ? .infinity : nil)
         }
         .frame(maxWidth: expandable ? .infinity : nil)
         .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
@@ -112,57 +113,51 @@ struct NewTextButton_Previews: PreviewProvider {
 
             NewTextButton(
                 title: "Title",
-                size: .large,
+                size: .medium,
                 style: .primary,
-                trailing: Asset.MaterialIcon.arrowForward.image,
-                action: {}
-            )
-            
+                trailing: Asset.MaterialIcon.arrowForward.image
+            ) { }
+
             NewTextButton(
                 title: "Title",
                 size: .large,
                 style: .second,
-                leading: Asset.MaterialIcon.arrowForward.image,
-                action: {}
-            )
-            
+                leading: Asset.MaterialIcon.arrowForward.image
+            ) { }
+
             NewTextButton(
                 title: "Title",
-                size: .large,
+                size: .medium,
                 style: .invertedRed,
-                action: {}
-            )
-            
+                expandable: true
+            ) { }
+
             NewTextButton(
                 title: "Title",
                 size: .large,
                 style: .outlineLime,
                 isLoading: true,
-                trailing: Asset.MaterialIcon.arrowForward.image,
-                action: {}
-            )
-            
+                trailing: Asset.MaterialIcon.arrowForward.image
+            ) { }
+
             NewTextButton(
                 title: "Title",
                 size: .large,
                 style: .primaryWhite,
                 expandable: true,
-                isEnabled: false,
-                action: {}
-            )
-            .frame(width: .infinity)
-            
+                isEnabled: false
+            ) { }
+
             NewTextButton(
                 title: "Title",
                 size: .small,
                 style: .primaryWhite,
-                isEnabled: false,
-                action: {}
-            )
+                isEnabled: false
+            ) { }
 
             Spacer()
         }
-        .padding(.horizontal, 16)
+        .padding(.all, 16)
         .background(Color.orange)
     }
 }
