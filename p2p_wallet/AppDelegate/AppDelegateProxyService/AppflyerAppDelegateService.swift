@@ -1,10 +1,3 @@
-//
-//  AppflyerAppDelegateService.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 04/04/2023.
-//
-
 import Foundation
 import AppsFlyerLib
 import AppTrackingTransparency
