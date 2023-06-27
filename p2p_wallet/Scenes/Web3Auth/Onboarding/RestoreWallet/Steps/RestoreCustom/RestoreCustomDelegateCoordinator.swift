@@ -200,7 +200,7 @@ private extension RestoreCustomDelegatedCoordinator {
                 }
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
 
         viewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
@@ -281,7 +281,7 @@ private extension RestoreCustomDelegatedCoordinator {
                     }
                 }
             })
-                .store(in: &subscriptions)
+            .store(in: &subscriptions)
 
             viewModel.openStart.sinkAsync { [stateMachine] in
                 _ = try await stateMachine <- .start
@@ -319,8 +319,8 @@ private extension RestoreCustomDelegatedCoordinator {
         let subtitle: (_ value: Any) -> String
         switch reason {
         case .blockEnterOTP:
-            title = L10n.itSOkayToBeWrong
-            subtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
+            title = L10n.confirmationCodeLimitHit
+            subtitle = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
         case .blockEnterPhoneNumber:
             title = L10n.itSOkayToBeWrong
             subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
@@ -329,6 +329,7 @@ private extension RestoreCustomDelegatedCoordinator {
             subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
         }
         let view = OnboardingBlockScreen(
+            primaryButtonAction: L10n.startingScreen,
             contentTitle: title,
             contentSubtitle: subtitle,
             untilTimestamp: until,
@@ -390,7 +391,7 @@ private extension RestoreCustomDelegatedCoordinator {
                 }
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
         }

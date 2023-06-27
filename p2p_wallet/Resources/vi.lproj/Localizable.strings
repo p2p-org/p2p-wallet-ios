@@ -1395,3 +1395,7 @@
 "Update" = "Cập nhật";
 "For security, change your authorization device to restore access if needed." = "Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập nếu cần.";
 "The device was successfully changed" = "Thiết bị đã được thay đổi thành công";
+"Confirmation Code Limit Hit" = "Lượt giới hạn mã xác nhận";
+"You've used all 5 codes. Try again in %@. For help, contact support." = "Bạn đã sử dụng tất cả 5 mã.  Hãy thử lại trong %@.  Để được giúp đỡ, hãy liên hệ với bộ phận hỗ trợ.";
+"Incorrect %@ ID" = "ID %@ không chính xác";
+"This account is associated with %@. Please log in with the correct %@ ID." = "Tài khoản này được liên kết với %@.  Vui lòng đăng nhập bằng %@ ID chính xác.";

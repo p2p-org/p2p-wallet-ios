@@ -1390,3 +1390,7 @@
 "Update" = "Обновлять";
 "For security, change your authorization device to restore access if needed." = "В целях безопасности измените устройство авторизации, чтобы восстановить доступ, если это необходимо.";
 "The device was successfully changed" = "Устройство было успешно изменено";
+"Confirmation Code Limit Hit" = "Количество кодов подтверждения ограничено";
+"You've used all 5 codes. Try again in %@. For help, contact support." = "Вы использовали все 5 кодов.  Попробуйте еще раз в %@.  За помощью обращайтесь в службу поддержки.";
+"Incorrect %@ ID" = "Неверный идентификатор %@";
+"This account is associated with %@. Please log in with the correct %@ ID." = "Эта учетная запись связана с %@.  Пожалуйста, войдите в систему с правильным идентификатором %@.";

@@ -7,6 +7,8 @@
 
 import Foundation
 import Onboarding
+import Resolver
+import SwiftUI
 
 class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomShareState> {
     override func buildViewController(for state: ReAuthCustomShareState) -> UIViewController? {
@@ -50,11 +52,50 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
 
             return vc
 
+        case let .block(until, phoneNumber, solPrivateKey):
+            let title = L10n.confirmationCodeLimitHit
+            let contentSubtitle: (_ value: Any) -> String = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
+
+            let view = OnboardingBlockScreen(
+                primaryButtonAction: L10n.back,
+                contentTitle: title,
+                contentSubtitle: contentSubtitle,
+                untilTimestamp: until,
+                onHome: { [stateMachine] in Task { try await stateMachine <- .back } },
+                onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockValidate } },
+                onTermsOfService: { [weak self] in self?.openTermsOfService() },
+                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
+                onInfo: { [weak self] in self?.openHelp() }
+            )
+
+            return UIHostingController(rootView: view)
+
         case .finish:
             return nil
 
         case .cancel:
             return nil
         }
+    }
+
+    public func openTermsOfService() {
+        let vc = WLMarkdownVC(
+            title: L10n.termsOfService,
+            bundledMarkdownTxtFileName: "Terms_of_service"
+        )
+        rootViewController?.present(vc, animated: true)
+    }
+
+    private func openPrivacyPolicy() {
+        let viewController = WLMarkdownVC(
+            title: L10n.privacyPolicy,
+            bundledMarkdownTxtFileName: "Privacy_policy"
+        )
+        rootViewController?.present(viewController, animated: true)
+    }
+
+    private func openHelp() {
+        let helpLauncher: HelpCenterLauncher = Resolver.resolve()
+        helpLauncher.launch()
     }
 }

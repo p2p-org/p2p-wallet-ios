@@ -105,7 +105,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     func viewDidLoad() {
         coordinatorIO.onStart.sendProcess { [weak self] error in
             if let error {
-                self?.notificationService.showInAppNotification(.error(error))
+                self?.coordinatorIO.error.send(error)
             }
         }
 
@@ -177,13 +177,15 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.countdown -= 1
-            self?.setResendCountdown()
-
-            if self?.countdown == 0 {
-                self?.timer?.invalidate()
+            DispatchQueue.main.async { [weak self] in
+                self?.countdown -= 1
                 self?.setResendCountdown()
-                return
+
+                if self?.countdown == 0 {
+                    self?.timer?.invalidate()
+                    self?.setResendCountdown()
+                    return
+                }
             }
         }
         timer?.fire()

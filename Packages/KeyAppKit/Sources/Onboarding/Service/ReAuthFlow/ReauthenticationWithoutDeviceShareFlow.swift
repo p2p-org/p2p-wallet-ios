@@ -6,16 +6,20 @@ public struct ReAuthWithoutDeviceShareProvider {
     let socialAuthService: SocialAuthService
     let walletMetadata: WalletMetaData
 
+    let expectedEmail: String
+
     public init(
         apiGateway: APIGatewayClient,
         facade: TKeyFacade,
         socialAuthService: SocialAuthService,
-        walletMetadata: WalletMetaData
+        walletMetadata: WalletMetaData,
+        expectedEmail: String
     ) {
         self.apiGateway = apiGateway
         self.facade = facade
         self.socialAuthService = socialAuthService
         self.walletMetadata = walletMetadata
+        self.expectedEmail = expectedEmail
     }
 }
 
@@ -70,7 +74,11 @@ public enum ReAuthWithoutDeviceShareState: State, Equatable {
 
             let nextInnerState = try await innerState <- (
                 innerEvent,
-                .init(tkeyFacade: provider.facade, socialAuthService: provider.socialAuthService)
+                .init(
+                    tkeyFacade: provider.facade,
+                    socialAuthService: provider.socialAuthService,
+                    expectedEmail: provider.expectedEmail
+                )
             )
 
             switch nextInnerState {

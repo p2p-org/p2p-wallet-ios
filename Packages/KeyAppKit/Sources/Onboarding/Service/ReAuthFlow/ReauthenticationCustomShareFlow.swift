@@ -15,13 +15,14 @@ public enum ReAuthCustomShareEvent: Codable, Equatable {
     case start
     case resendOTP
     case enterOTP(String)
+    case blockValidate
     case back
 }
 
 public struct ReAuthenticationCustomShareResult: Equatable {
     let customShare: String
     let encryptedMnemonic: String
-    
+
     public init(customShare: String, encryptedMnemonic: String) {
         self.customShare = customShare
         self.encryptedMnemonic = encryptedMnemonic
@@ -43,6 +44,7 @@ public enum ReAuthCustomShareState: State, Equatable {
         solPrivateKey: Data,
         resendCounter: Wrapper<ResendCounter>
     )
+    case block(until: Date, phoneNumber: String, solPrivateKey: Data)
 
     case finish(result: ReAuthenticationCustomShareResult)
 
@@ -56,8 +58,16 @@ public enum ReAuthCustomShareState: State, Equatable {
                 event: event,
                 provider: provider
             )
+
         case .finish:
             return currentState
+
+        case .block:
+            return try await handleEventForBlockState(
+                state: currentState,
+                event: event,
+                provider: provider
+            )
 
         case .cancel:
             return currentState
@@ -69,7 +79,7 @@ public enum ReAuthCustomShareState: State, Equatable {
         event: Event,
         provider: Provider
     ) async throws -> Self {
-        guard case let .otpInput(phoneNumber, solPrivateKey, _) = state else {
+        guard case let .otpInput(phoneNumber, solPrivateKey, resendCounter) = state else {
             throw StateMachineError.invalidState
         }
 
@@ -107,10 +117,37 @@ public enum ReAuthCustomShareState: State, Equatable {
                 timestampDevice: Date()
             )
 
+            resendCounter.value = resendCounter.value.incremented()
+
             return self
 
         case .back:
             return .cancel
+
+        default:
+            return self
+        }
+    }
+
+    func handleEventForBlockState(
+        state: Self,
+        event: Event,
+        provider _: Provider
+    ) async throws -> Self {
+        guard case let .block(until, phoneNumber, solPrivateKey) = state else {
+            throw StateMachineError.invalidState
+        }
+
+        switch event {
+        case .blockValidate:
+            guard Date() > until else { throw StateMachineError.invalidEvent }
+            return .otpInput(
+                phoneNumber: phoneNumber,
+                solPrivateKey: solPrivateKey,
+                resendCounter: .init(.zero())
+            )
+        default:
+            return self
         }
     }
 }
@@ -120,6 +157,8 @@ extension ReAuthCustomShareState: Step {
         switch self {
         case .otpInput:
             return 1
+        case .block:
+            return 2
         default:
             return 0
         }

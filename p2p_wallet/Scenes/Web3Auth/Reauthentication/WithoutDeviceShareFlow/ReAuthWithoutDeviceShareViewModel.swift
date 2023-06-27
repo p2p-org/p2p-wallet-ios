@@ -30,7 +30,8 @@ final class ReAuthWithoutDeviceShareViewModel: BaseViewModel, ObservableObject {
                 apiGateway: Resolver.resolve(),
                 facade: facade,
                 socialAuthService: Resolver.resolve(),
-                walletMetadata: metadata
+                walletMetadata: metadata,
+                expectedEmail: metadata.email
             )
         )
     }

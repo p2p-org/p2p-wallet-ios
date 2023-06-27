@@ -1357,3 +1357,7 @@
 "Update" = "Update";
 "For security, change your authorization device to restore access if needed." = "For security, change your authorization device to restore access if needed.";
 "The device was successfully changed" = "The device was successfully changed";
+"Confirmation Code Limit Hit" = "Confirmation Code Limit Hit";
+"You've used all 5 codes. Try again in %@. For help, contact support." = "You've used all 5 codes. Try again in %@. For help, contact support.";
+"Incorrect %@ ID" = "Incorrect %@ ID";
+"This account is associated with %@. Please log in with the correct %@ ID." = "This account is associated with %@. Please log in with the correct %@ ID.";

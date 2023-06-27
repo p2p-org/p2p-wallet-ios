@@ -9,6 +9,7 @@ import SwiftUI
 struct OnboardingBlockScreen: View {
     @State var loading: Bool = false
 
+    let primaryButtonAction: String
     let contentTitle: String
     let contentSubtitle: (_ p1: Any) -> String
 
@@ -51,7 +52,7 @@ struct OnboardingBlockScreen: View {
 
             BottomActionContainer {
                 VStack {
-                    TextButtonView(title: L10n.startingScreen, style: .outlineWhite, size: .large) {
+                    TextButtonView(title: primaryButtonAction, style: .outlineWhite, size: .large) {
                         Task {
                             guard loading == false else { return }
                             loading = true

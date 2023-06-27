@@ -15,8 +15,8 @@ class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<ReAuthSocialSh
         case let .signIn(socialProvider):
             let viewModel = ReAuthSocialSignInViewModel(socialProvider: socialProvider)
             let view = ReAuthSocialSignInView(viewModel: viewModel)
-            
-            let vc = UICustomHostingController(rootView: view) { vc, animated in
+
+            let vc = UICustomHostingController(rootView: view) { vc, _ in
                 vc.navigationItem.setHidesBackButton(true, animated: false)
             }
 
@@ -33,6 +33,22 @@ class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<ReAuthSocialSh
             }.store(in: &subscriptions)
 
             return vc
+
+        case let .wrongAccount(socialProvider, expectedEmail):
+            let view = ReAuthWrongAccountView(
+                provider: socialProvider,
+                expectedEmail: expectedEmail
+            ) { [stateMachine] in
+                Task {
+                    try await stateMachine <- .back
+                }
+            } onClose: { [stateMachine] in
+                Task {
+                    try await stateMachine <- .cancel
+                }
+            }
+
+            return UIHostingController(rootView: view)
 
         case .finish:
             return nil

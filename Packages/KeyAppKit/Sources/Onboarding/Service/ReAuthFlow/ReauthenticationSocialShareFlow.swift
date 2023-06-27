@@ -14,11 +14,13 @@ public struct ReAuthSocialShareResult: Equatable {
 public struct ReAuthSocialShareProvider {
     let tkeyFacade: TKeyFacade
     let socialAuthService: SocialAuthService
+    let expectedEmail: String
 }
 
 public enum ReAuthSocialShareEvent {
     case signIn
     case cancel
+    case back
 }
 
 public enum ReAuthSocialShareState: State, Equatable {
@@ -28,6 +30,7 @@ public enum ReAuthSocialShareState: State, Equatable {
     public static var initialState: Self = .signIn(socialProvider: .google)
 
     case signIn(socialProvider: SocialProvider)
+    case wrongAccount(socialProvider: SocialProvider, expectedEmail: String)
     case finish(result: ReAuthSocialShareResult)
     case cancel
 
@@ -40,11 +43,39 @@ public enum ReAuthSocialShareState: State, Equatable {
                 provider: provider
             )
 
+        case .wrongAccount:
+            return try await handleEventForWrongAccount(
+                state: currentState,
+                event: event,
+                provider: provider
+            )
+
         case .finish:
             return currentState
 
         case .cancel:
             return currentState
+        }
+    }
+
+    func handleEventForWrongAccount(
+        state: Self,
+        event: Event,
+        provider _: Provider
+    ) async throws -> Self {
+        guard case let .wrongAccount(socialProvider, _) = state else {
+            throw StateMachineError.invalidState
+        }
+
+        switch event {
+        case .cancel:
+            return .cancel
+
+        case .signIn:
+            return self
+
+        case .back:
+            return .signIn(socialProvider: socialProvider)
         }
     }
 
@@ -59,7 +90,11 @@ public enum ReAuthSocialShareState: State, Equatable {
 
         switch event {
         case .signIn:
-            let (tokenId, _) = try await provider.socialAuthService.auth(type: socialProvider)
+            let (tokenId, email) = try await provider.socialAuthService.auth(type: socialProvider)
+
+            if email != provider.expectedEmail {
+                return .wrongAccount(socialProvider: socialProvider, expectedEmail: provider.expectedEmail)
+            }
 
             try await provider.tkeyFacade.initialize()
             let torusKey = try await provider.tkeyFacade
@@ -72,6 +107,9 @@ public enum ReAuthSocialShareState: State, Equatable {
 
             return .finish(result: ReAuthSocialShareResult(torusKey: torusKey))
 
+        case .back:
+            return .cancel
+
         case .cancel:
             return .cancel
         }
@@ -83,6 +121,8 @@ extension ReAuthSocialShareState: Step {
         switch self {
         case .signIn:
             return 1
+        case .wrongAccount:
+            return 2
         default:
             return 0
         }

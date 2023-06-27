@@ -9,29 +9,31 @@ import KeyAppUI
 import Onboarding
 import SwiftUI
 
-struct ReAuthSocialSignInView: View {
-    @ObservedObject var viewModel: ReAuthSocialSignInViewModel
+struct ReAuthWrongAccountView: View {
+    let provider: SocialProvider
+    let expectedEmail: String
+
+    let onBack: () -> Void
+    let onClose: () -> Void
 
     var body: some View {
         VStack {
             Spacer()
             OnboardingContentView(data: .init(
-                image: .easyToStart,
-                title: L10n.niceAlmostDone,
-                subtitle: L10n.confirmAccessToYourAccountThatWasUsedToCreateTheWallet
+                image: .womanNotFound,
+                title: L10n.incorrectID(provider.asString),
+                subtitle: L10n.ThisAccountIsAssociatedWith.pleaseLogInWithTheCorrectID(expectedEmail, provider.asString)
             ))
             Spacer()
             BottomActionContainer {
                 VStack(spacing: .zero) {
                     NewTextButton(
-                        title: viewModel.buttonTitle,
+                        title: L10n.goBack,
                         size: .large,
                         style: .inverted,
-                        expandable: true,
-                        isLoading: viewModel.loading,
-                        leading: viewModel.provider.image
+                        expandable: true
                     ) {
-                        viewModel.signIn()
+                        onBack()
                     }
                 }
             }
@@ -46,7 +48,7 @@ struct ReAuthSocialSignInView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    viewModel.close()
+                    onClose()
                 } label: {
                     Image(uiImage: UIImage.closeIcon)
                 }
@@ -55,21 +57,17 @@ struct ReAuthSocialSignInView: View {
     }
 }
 
-private extension SocialProvider {
-    var image: UIImage {
-        switch self {
-        case .apple:
-            return .appleLogo.withTintColor(.black)
-        case .google:
-            return .google
-        }
+struct ReAuthWrongAccount_Previews: PreviewProvider {
+    static var previews: some View {
+        ReAuthWrongAccountView(provider: .google, expectedEmail: "abc@gmail.com") {} onClose: {}
     }
 }
 
-struct ReAuthSocialSignInView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReAuthSocialSignInView(
-            viewModel: .init(socialProvider: .google)
-        )
+private extension SocialProvider {
+    var asString: String {
+        switch self {
+        case .apple: return "Apple"
+        case .google: return "Google"
+        }
     }
 }

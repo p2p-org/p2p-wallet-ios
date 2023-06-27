@@ -2,13 +2,13 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
-import AnalyticsManager
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -124,8 +124,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             var contentSubtitle: (_ value: Any) -> String = { _ in "" }
             switch reason {
             case .blockEnterOTP:
-                title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
+                title = L10n.confirmationCodeLimitHit
+                contentSubtitle = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
                 contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
@@ -135,6 +135,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             }
 
             let view = OnboardingBlockScreen(
+                primaryButtonAction: L10n.startingScreen,
                 contentTitle: title,
                 contentSubtitle: contentSubtitle,
                 untilTimestamp: until,
