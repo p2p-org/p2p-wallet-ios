@@ -1,10 +1,3 @@
-//
-//  Coordinator.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 21/07/2022.
-//
-
 import Combine
 import Foundation
 
