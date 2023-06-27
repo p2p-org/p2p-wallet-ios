@@ -26,7 +26,6 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         }
             .asViewController(withoutUIKitNavBar: false)
         vc.title = L10n.sentViaOneTimeLink
-        vc.view.backgroundColor = Asset.Colors.smoke.color
         
         return vc
     }

@@ -170,6 +170,13 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     }
 
     private static func log(error: Error) {
+        switch error {
+            case SocialServiceError.cancelled:
+                return
+            default:
+            break
+        }
+
         Task {
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             DefaultLogManager.shared.log(

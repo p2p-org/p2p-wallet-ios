@@ -321,7 +321,11 @@ public enum RestoreCustomState: Codable, State, Equatable {
                 encryptedMnemonic: encryptedMnemonic
             )
 
-            let metadata = try WalletMetaData.decrypt(seedPhrase: finalResult.privateSOL, data: encryptedMetadata)
+            let metadata = try WalletMetaData.decrypt(
+                ethAddress: finalResult.reconstructedETH,
+                seedPhrase: finalResult.privateSOL,
+                data: encryptedMetadata
+            )
 
             return .finish(
                 result: .successful(
@@ -339,7 +343,11 @@ public enum RestoreCustomState: Codable, State, Equatable {
                     encryptedMnemonic: encryptedMnemonic
                 )
 
-                let metadata = try? WalletMetaData.decrypt(seedPhrase: finalResult.privateSOL, data: encryptedMetadata)
+                let metadata = try? WalletMetaData.decrypt(
+                    ethAddress: finalResult.reconstructedETH,
+                    seedPhrase: finalResult.privateSOL,
+                    data: encryptedMetadata
+                )
 
                 return .finish(
                     result: .successful(

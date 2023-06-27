@@ -132,7 +132,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
         VStack(spacing: 4) {
             Text(L10n.poweredBy + " Moonpay")
                 .apply(style: .label1)
-                .foregroundColor(Color(UIColor._9799Af))
+                .foregroundColor(Color(UIColor.h9799af))
             Button {
                 viewModel.moonpayLicenseTap()
             } label: {

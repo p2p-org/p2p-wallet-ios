@@ -104,7 +104,12 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             }
             return L10n.to(target)
         case let .receive(data):
-            let source: String = data.account.name ?? RecipientFormatter.shortFormat(destination: data.account.address)
+            let source: String
+            if let name = data.account.name {
+                source = "@\(name)"
+            } else {
+                source = RecipientFormatter.shortFormat(destination: data.account.address)
+            }
             return "\(L10n.from) \(source)"
         case let .swap(data):
             return L10n.to(data.from.token.symbol, data.to.token.symbol)

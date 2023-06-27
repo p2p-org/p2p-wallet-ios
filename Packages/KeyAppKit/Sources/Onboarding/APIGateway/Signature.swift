@@ -34,6 +34,20 @@ struct GetMetadataSignature: Signature {
     }
 }
 
+struct UpdateMetadataSignature: Signature {
+    let ethereumAddress: String
+    let solanaPublicKey: String
+    let timestampDevice: Int64
+    let encryptedMetadata: String
+
+    func serialize(to writer: inout Data) throws {
+        try ethereumAddress.serialize(to: &writer)
+        try solanaPublicKey.serialize(to: &writer)
+        try timestampDevice.serialize(to: &writer)
+        try encryptedMetadata.serialize(to: &writer)
+    }
+}
+
 struct RegisterWalletSignature: Signature {
     let solanaPublicKey: String
     let ethereumAddress: String

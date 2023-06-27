@@ -149,6 +149,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                 )
 
                 let metaData = WalletMetaData(
+                    ethPublic: data.ethAddress,
                     deviceName: data.deviceName,
                     email: data.email,
                     authProvider: data.authProvider,

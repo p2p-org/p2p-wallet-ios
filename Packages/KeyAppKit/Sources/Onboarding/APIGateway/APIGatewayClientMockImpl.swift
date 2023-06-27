@@ -17,6 +17,8 @@ public class APIGatewayClientImplMock: APIGatewayClient {
         ""
     }
 
+    public func setMetadata(ethAddress _: String, solanaPrivateKey _: String, encryptedMetadata _: String) async throws {}
+
     public func registerWallet(
         solanaPrivateKey _: String,
         ethAddress _: String,

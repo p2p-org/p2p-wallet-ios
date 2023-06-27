@@ -39,6 +39,12 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
+
+DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
+
+DISCORD_MESSAGE_API_BEARER_TOKEN = ENV["DISCORD_MESSAGE_API_BEARER_TOKEN"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -107,7 +113,8 @@ def create_release_build(match_type, configuration)
     readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
-    api_key: api_key
+    api_key: api_key,
+    force_for_new_devices: true
   )
 
   gym(
@@ -116,7 +123,6 @@ def create_release_build(match_type, configuration)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
-    disable_package_automatic_updates: true,
     export_options: {
       provisioningProfiles: {
         appId => profileSpecifier
@@ -155,7 +161,18 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
 end 
 
 def notify(version, message)
-  # upload to slack
+  # to discord
+  sh(
+    "curl", 
+    "-v", 
+    "-X", "POST", 
+    "-H", "Content-Type: application/json",
+    "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
+    "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+    DISCORD_MESSAGE_API_ENDPOINT
+  )
+
+  # to slack
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "PWN-#{version}.ipa",
@@ -265,8 +282,8 @@ platform :ios do
       nil
     )
 
-    # notify tester
-    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    # notify testers
+    message = "A build **#{version}** was uploaded for testing this feature.\\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
     # output
@@ -325,6 +342,20 @@ platform :ios do
       tag = "#{tag_prefix}#{version}(#{build_number})"
     end
 
+    # get full version
+    full_version = "#{version} (#{build_number})"
+
+    # post to discord
+    build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json", 
+      "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
     # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
@@ -356,11 +387,24 @@ platform :ios do
       )
     end
 
+    # notify testers
+    message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
+
+    # post to discord
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json",
+      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
     # post to slack
-    full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
+      message: message,
       channel: "#p2p-wallet-builds-ios"
     )
 
@@ -401,7 +445,7 @@ platform :ios do
     )
 
     # notify tester
-    message = "A daily build #{version} was uploaded."
+    message = "A daily build **#{version}** was uploaded."
     notify(version, message)
   end
 
@@ -418,11 +462,21 @@ platform :ios do
       devices: devices
     )
 
+    # login to appstore connect
+    api_key = app_store_connect_api_key(
+      key_id: APPLE_KEY_ID,
+      issuer_id: APPLE_ISSUER_ID,
+      key_content: APPLE_KEY_CONTENT,
+      is_key_content_base64: true,
+      duration: 1200,
+      in_house: false
+    )
+
     # match
     match(
       type: "adhoc",
       git_url: PROVISIONING_REPO,
-      app_identifier: "#{appIdentifier}",
+      app_identifier: DEVELOPER_APP_IDENTIFIER,
       git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
       readonly: false,
       keychain_name: TEMP_KEYCHAIN_USER,

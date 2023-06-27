@@ -199,6 +199,7 @@ public final class SliderButton: BEView {
         case .began:
             vibrate(with: softFeedback)
             initialPoint = imageControl.frame.origin
+            progressTitleView?.text = title
 
         case .changed:
             if isOn && (controlX >= 0 || imageControl.frame.minX <= Constants.padding) {

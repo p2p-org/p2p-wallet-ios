@@ -73,7 +73,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         asLegacyTransaction: Bool?,
         computeUnitPriceMicroLamports: Int?,
         destinationWallet: String?
-    ) async throws -> String? {
+    ) async throws -> SwapTransaction {
         struct PostData: Codable {
             let route: Route
             let userPublicKey: String
@@ -105,7 +105,15 @@ public class JupiterRestClientAPI: JupiterAPI {
         print(request.cURL())
         let (data, _) = try await URLSession.shared.data(for: request)
         print(String(data: data, encoding: .utf8) ?? "")
-        return try JSONDecoder().decode(ResponseData.self, from: data).swapTransaction
+        if let swapTransaction = try JSONDecoder().decode(ResponseData.self, from: data).swapTransaction
+        {
+            return SwapTransaction(
+                stringValue: swapTransaction,
+                receivedAt: Date()
+            )
+        } else {
+            throw JupiterError.invalidResponse
+        }
     }
 
     public func routeMap() async throws -> RouteMap {

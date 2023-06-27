@@ -15,9 +15,8 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     var feeAmount: SolanaSwift.FeeAmount
     let route: Route
     let account: KeyPair
-    let swapTransaction: String?
+    let swapTransaction: Jupiter.SwapTransaction?
     let services: JupiterSwapServices
-    
     
     var mainDescription: String {
         [
@@ -27,10 +26,11 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     }
 
     func createRequest() async throws -> String {
+        
         do {
             return try await JupiterSwapBusinessLogic.sendToBlockchain(
                 account: account,
-                swapTransaction: swapTransaction,
+                swapTransaction: swapTransaction?.stringValue,
                 route: route,
                 services: services
             )
@@ -49,6 +49,12 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
+            let diffRoutesTime = abs(Date().timeIntervalSince1970 - (route._receiveAt ?? Date()).timeIntervalSince1970)
+                .toString(minimumFractionDigits: 9)
+            
+            let diffTxTime = abs(Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)
+                .toString(minimumFractionDigits: 9)
+            
             DefaultLogManager.shared.log(
                 event: title,
                 logLevel: .alert,
@@ -56,21 +62,25 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     tokenA: .init(
                         name: sourceWallet.token.name,
                         mint: sourceWallet.token.address,
-                        sendAmount: fromAmount.toString(maximumFractionDigits: 9)
+                        sendAmount: fromAmount.toString(maximumFractionDigits: 9),
+                        balance: sourceWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),
                     tokenB: .init(
                         name: destinationWallet.token.name,
                         mint: destinationWallet.token.address,
-                        expectedAmount: toAmount.toString(maximumFractionDigits: 9)
+                        expectedAmount: toAmount.toString(maximumFractionDigits: 9),
+                        balance: destinationWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),
                     route: route.jsonString ?? "",
                     userPubkey: data.userPubkey,
                     slippage: slippage.toString(),
-                    feeRelayerTransaction: swapTransaction ?? "",
+                    feeRelayerTransaction: swapTransaction?.stringValue ?? "",
                     platform: data.platform,
                     appVersion: data.appVersion,
                     timestamp: data.timestamp,
-                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? ""
+                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? "",
+                    diffRoutesTime: diffRoutesTime,
+                    diffTxTime: diffTxTime
                 )
             )
             throw error

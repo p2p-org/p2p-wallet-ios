@@ -137,7 +137,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName! : L10n.notReserved
         if storageName == nil {
-            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
+            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata.value != nil
         } else {
             isNameEnabled = true
         }
@@ -151,6 +151,18 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 self.updateNameIfNeeded()
             }
             .store(in: &subscriptions)
+    }
+    
+    public func openTwitter() {
+        if let url = URL(string: "https://twitter.com/KeyApp_") {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    public func openDiscord() {
+        if let url = URL(string: "https://discord.gg/SpW3GmEYgU") {
+            UIApplication.shared.open(url)
+        }
     }
 }
 

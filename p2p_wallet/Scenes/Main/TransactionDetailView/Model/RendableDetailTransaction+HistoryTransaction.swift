@@ -247,7 +247,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             if let name = data.account.name {
                 value = "@\(name)"
             } else {
-                value = RecipientFormatter.shortFormat(destination: data.account.address)
+                value = RecipientFormatter.format(destination: data.account.address)
             }
             result.append(
                 .init(
@@ -259,11 +259,17 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
                 )
             )
         case let .receive(data):
+            let value: String
+            if let name = data.account.name {
+                value = "@\(name)"
+            } else {
+                value = RecipientFormatter.shortFormat(destination: data.account.address)
+            }
             result.append(
                 .init(
                     title: L10n.receivedFrom,
                     values: [
-                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                        .init(text: value),
                     ],
                     copyableValue: data.account.name ?? data.account.address
                 )

@@ -20,10 +20,15 @@ struct RecoveryKitView: View {
                 VStack(spacing: 8) {
                     Image(uiImage: .lockOutline)
                         .padding(.top, 4)
-                    Text(L10n.yourRecoveryKit)
+                    Text(L10n.securityAndPrivacy)
                         .fontWeight(.bold)
                         .apply(style: .title2)
-                    Text(L10n.IfYouSwitchDevicesYouCanEasilyRestoreYourWallet.noPrivateKeysNeeded)
+                    Text(viewModel.model != nil ?
+                        // Web3Auth user
+                        L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow :
+                        // Seedphrase user
+                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice.keyAppDoesnTHaveAccessToThisInformation
+                    )
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -40,7 +45,7 @@ struct RecoveryKitView: View {
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
-                if let metadata = viewModel.walletMetadata {
+                if let metadata = viewModel.model {
                     VStack(alignment: .leading) {
                         Text(L10n.multiFactorAuthentication)
                             .apply(style: .caps)
@@ -72,9 +77,10 @@ struct RecoveryKitView: View {
                                 .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
                         )
 
-                        Text(L10n.YourPrivateKeyIsSplitIntoMultipleFactors
-                            .AtLeastYouShouldHaveThreeFactorsButYouCanCreateMore
-                            .toLogInToDifferentDevicesYouNeedAtLeastTwoFactors)
+                        Text(L10n
+                            .KeyAppRespectsYourPrivacyItCanTAccessYourFundsOrPersonalDetails
+                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain
+                        )
                             .apply(style: .label1)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .padding(.leading, 16)
@@ -154,6 +160,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
         
         let provider = MockedWalletMeradataProvider(
             .init(
+                ethPublic: "1234",
                 deviceName: "iPhone 11",
                 email: "abc@gmail.com",
                 authProvider: "google",
@@ -166,7 +173,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
             remoteProvider: provider
         )
         
-        Task { try await service.update() }
+        Task { await service.synchronize() }
         
         return NavigationView {
             RecoveryKitView(

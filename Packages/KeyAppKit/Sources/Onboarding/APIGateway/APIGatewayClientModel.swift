@@ -18,6 +18,22 @@ struct APIGatewayGetMetadataParams: Codable {
     }
 }
 
+struct APIGatewayUpdateMetadataParams: Codable {
+    let solanaPublicKey: String
+    let ethereumAddress: String
+    let signature: String
+    let metadata: String
+    let timestampDevice: String
+    
+    enum CodingKeys: String, CodingKey {
+        case solanaPublicKey = "solana_pubkey"
+        case ethereumAddress = "ethereum_id"
+        case signature
+        case metadata
+        case timestampDevice = "timestamp_device"
+    }
+}
+
 struct APIGatewayRegisterWalletParams: Codable {
     let solanaPublicKey: String
     let ethereumAddress: String

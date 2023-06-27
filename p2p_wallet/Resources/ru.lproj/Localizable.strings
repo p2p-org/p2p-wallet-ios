@@ -1368,3 +1368,9 @@
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
 "Transaction fees" = "Операционные издержки";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ — минимальная сумма для получения от сети Ethereum.";
+"Follow us on Twitter" = "Следуйте за нами на Twitter";
+"Join our Discord" = "Присоединяйтесь к нашему дискорду";
+"Security and privacy" = "Безопасность & конфиденциальность";
+"To access your account from another device, you need to use any 2 factors from the list below" = "Для доступа к аккаунту с другого устройства необходимо использовать любые 2 фактора из списка ниже";
+"Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App уважает вашу конфиденциальность — оно не может получить доступ к вашим средствам или личным данным. Ваша информация надежно хранится на вашем устройстве и в блокчейне";
+"Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Seed-фраза — единственный способ получить доступ к вашим средствам на другом устройстве.  Key App не имеет доступа к этой информации.";

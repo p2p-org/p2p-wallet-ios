@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import Resolver
@@ -24,18 +17,14 @@ struct HomeAccountsView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     header
-                        .topPadding()
+                        .padding(.top, 11)
                         .padding(.bottom, 32)
                         .id(0)
                     content
                 }
             }
             .customRefreshable {
-                do {
-                    await viewModel.refresh()
-                } catch {
-                    DefaultLogManager.shared.log(error: error)
-                }
+                await viewModel.refresh()
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -106,6 +95,8 @@ struct HomeAccountsView: View {
                 }
             }
         }
+        .padding(.top, 32)
+        .background(Color(Asset.Colors.snow.color))
     }
 
     private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {
@@ -138,19 +129,13 @@ struct HomeAccountsView: View {
         itemsCount: Int,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
-        if #available(iOS 15, *) {
-            List {
-                content()
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets())
-            }
+        List {
+            content()
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets())
+        }
             .listStyle(.plain)
             .frame(height: CGFloat(itemsCount) * 72)
-        } else {
-            LazyVStack(spacing: 0) {
-                content()
-            }
-        }
     }
 }
 
@@ -160,34 +145,11 @@ private extension View {
         currentUserInteractionCellID: Binding<String?>,
         action: @escaping () -> Void
     ) -> some View {
-        if #available(iOS 15, *) {
-            swipeActions(allowsFullSwipe: true) {
-                Button(action: action) {
-                    Image(uiImage: isVisible ? .eyeHide : .eyeShow)
-                }
-                .tint(.clear)
+        swipeActions(allowsFullSwipe: true) {
+            Button(action: action) {
+                Image(uiImage: isVisible ? .eyeHide : .eyeShow)
             }
-        } else {
-            swipeCell(
-                cellWidth: UIScreen.main.bounds.width - 16 * 2,
-                trailingSideGroup: [
-                    SwipeCellActionItem(
-                        buttonView: {
-                            hideView(isVisible: isVisible)
-                        },
-                        swipeOutButtonView: {
-                            hideView(isVisible: isVisible)
-                        },
-                        buttonWidth: 85,
-                        backgroundColor: .clear,
-                        swipeOutAction: true,
-                        swipeOutHapticFeedbackType: .success,
-                        swipeOutIsDestructive: false,
-                        actionCallback: action
-                    ),
-                ],
-                currentUserInteractionCellID: currentUserInteractionCellID
-            )
+            .tint(.clear)
         }
     }
 
@@ -195,14 +157,5 @@ private extension View {
         Image(uiImage: isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
-    }
-
-    @ViewBuilder
-    func topPadding() -> some View {
-        if #available(iOS 15, *) {
-            padding(.top, 11)
-        } else {
-            self
-        }
     }
 }
