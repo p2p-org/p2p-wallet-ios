@@ -143,6 +143,9 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
             .sink { [weak self] result in
                 switch result {
                 case .finish:
+                    self?.notificationService.showInAppNotification(
+                        .custom("✌️", L10n.theDeviceWasSuccessfullyChanged)
+                    )
                     guard let prevVC = self?.prevVC else { return }
                     self?.navigationController.popToViewController(prevVC, animated: true)
                     self?.result.send(completion: .finished)

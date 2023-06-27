@@ -1393,3 +1393,5 @@
 "Are you sure you want to update your authorization device?" = "Bạn có chắc chắn muốn cập nhật thiết bị ủy quyền của mình không?";
 "You will not be able to use the old device for recovery" = "Bạn sẽ không thể sử dụng thiết bị cũ để khôi phục";
 "Update" = "Cập nhật";
+"For security, change your authorization device to restore access if needed." = "Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập nếu cần.";
+"The device was successfully changed" = "Thiết bị đã được thay đổi thành công";

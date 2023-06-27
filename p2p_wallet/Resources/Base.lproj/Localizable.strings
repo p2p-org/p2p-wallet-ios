@@ -1356,3 +1356,5 @@
 "Are you sure you want to update your authorization device?" = "Are you sure you want to update your authorization device?";
 "You will not be able to use the old device for recovery" = "You will not be able to use the old device for recovery";
 "Update" = "Update";
+"For security, change your authorization device to restore access if needed." = "For security, change your authorization device to restore access if needed.";
+"The device was successfully changed" = "The device was successfully changed";

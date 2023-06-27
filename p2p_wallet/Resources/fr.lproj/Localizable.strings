@@ -1391,3 +1391,5 @@
 "Are you sure you want to update your authorization device?" = "Voulez-vous vraiment mettre à jour votre dispositif d'autorisation ?";
 "You will not be able to use the old device for recovery" = "Vous ne pourrez pas utiliser l'ancien appareil pour la récupération";
 "Update" = "Mise à jour";
+"For security, change your authorization device to restore access if needed." = "Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès si nécessaire.";
+"The device was successfully changed" = "L'appareil a été changé avec succès";

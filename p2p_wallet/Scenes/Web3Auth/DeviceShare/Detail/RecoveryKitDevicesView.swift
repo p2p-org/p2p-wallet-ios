@@ -18,7 +18,7 @@ struct RecoveryKitDevicesView: View {
                     Text(L10n.weVeNoticedThatYouReUsingANewDevice)
                         .apply(style: .text3)
                     Text(L10n
-                        .forSecurityChangeYourAuthorizationDeviceToRestoreAccessForSecurityChangeYourAuthorizationDeviceToRestoreAccessIfNeeded)
+                        .forSecurityChangeYourAuthorizationDeviceToRestoreAccessIfNeeded)
                         .apply(style: .text3)
                 }
                 .padding(.horizontal, 16)

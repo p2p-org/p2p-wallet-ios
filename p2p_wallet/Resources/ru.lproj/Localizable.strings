@@ -1388,3 +1388,5 @@
 "Are you sure you want to update your authorization device?" = "Вы уверены, что хотите обновить устройство авторизации?";
 "You will not be able to use the old device for recovery" = "Вы не сможете использовать старое устройство для восстановления";
 "Update" = "Обновлять";
+"For security, change your authorization device to restore access if needed." = "В целях безопасности измените устройство авторизации, чтобы восстановить доступ, если это необходимо.";
+"The device was successfully changed" = "Устройство было успешно изменено";
