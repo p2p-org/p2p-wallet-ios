@@ -36,7 +36,14 @@ enum AlertLoggerDataBuilder {
             )
                 .blockchainErrorDescription
         default:
-            otherError = String(reflecting: error)
+            // if error is encodable, log the json
+            if let encodableError = error as? Encodable {
+                otherError = encodableError.jsonString
+            }
+            // otherwise reflect to see error detail
+            else {
+                otherError = String(reflecting: error)
+            }
         }
         
         let appVersion = AppInfo.appVersionDetail

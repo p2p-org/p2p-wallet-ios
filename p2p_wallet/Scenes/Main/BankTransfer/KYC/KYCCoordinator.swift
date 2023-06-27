@@ -25,6 +25,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     private var presentingViewController: UIViewController
     private let subject = PassthroughSubject<KYCCoordinatorResult, Never>()
     private var sdk: SNSMobileSDK!
+    private var status: SNSMobileSDK.Status?
     
     // MARK: - Initializer
 
@@ -60,6 +61,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
                 // TODO: handle BankTransferError.kycRejectedCantRetry and BankTransferError.kycAttemptLimitExceeded when more info is provided
                 notificationService.showDefaultErrorNotification()
                 await cancel()
+                await logAlertMessage(error: error, source: "striga api")
             }
         }
         
@@ -132,18 +134,66 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     }
 
     private func didFailToReceiveToken(error: Error?) {
-        print(error)
+        if let error {
+            Task {
+                await logAlertMessage(error: error, source: "striga api")
+            }
+        }
         sdk.dismiss()
     }
 
     private func bindStatusChange() {
-        sdk.onStatusDidChange { (sdk, prevStatus) in
+        sdk.onStatusDidChange { [weak self] (sdk, prevStatus) in
+            // assign status
+            self?.status = sdk.status
+            
+            // handle status
             switch sdk.status {
-            case .initial, .incomplete, .temporarilyDeclined, .finallyRejected, .approved, .actionCompleted, .failed, .ready:
+            case .initial, .incomplete, .temporarilyDeclined, .approved, .actionCompleted, .ready:
                 break
+            case .failed:
+                let failReason = "\(sdk.failReason)"
+                Task { [weak self] in
+                    await self?.logAlertMessage(
+                        error: SumsubSDKCustomError(message: failReason),
+                        source: "KYC SDK"
+                    )
+                }
+            case .finallyRejected:
+                Task { [weak self] in
+                    await self?.logAlertMessage(
+                        error: SumsubSDKCustomError(message: "Applicant has been finally rejected"),
+                        source: "KYC SDK"
+                    )
+                }
             case .pending:
                 sdk.dismiss()
             }
         }
     }
+    
+    private func logAlertMessage(error: Error, source: String) async {
+        let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+        
+        DefaultLogManager.shared.log(
+            event: "Striga Registration iOS Alarm",
+            logLevel: .alert,
+            data: StrigaRegistrationAlertLoggerMessage(
+                userPubkey: loggerData.userPubkey,
+                platform: loggerData.platform,
+                appVersion: loggerData.appVersion,
+                timestamp: loggerData.timestamp,
+                error: .init(
+                    source: source,
+                    kycSDKState: String(reflecting: status ?? .initial)
+                        .replacingOccurrences(of: "SNSMobileSDK.Status.", with: ""),
+                    error: loggerData.otherError ?? ""
+                )
+            )
+        )
+    }
+}
+
+private struct SumsubSDKCustomError: Error, Encodable {
+    let message: String?
 }

@@ -65,10 +65,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 errorController.hidesBottomBarWhenPushed = true
                 self?.viewController.pushViewController(errorController, animated: true)
                 
-                logAlertMessage(error: BankTransferError.otpExceededVerification)
+                await self?.logAlertMessage(error: BankTransferError.otpExceededVerification)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
-                logAlertMessage(error: error)
+                await self?.logAlertMessage(error: error)
             }
         }.store(in: &subscriptions)
 
@@ -86,10 +86,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     try await self.bankTransfer.resendSMS()
                 } catch BankTransferError.otpExceededDailyLimit {
                     self.handleOTPExceededDailyLimitError()
-                    logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
+                    await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
                 } catch {
                     viewModel.coordinatorIO.error.send(error)
-                    logAlertMessage(error: error)
+                    await self.logAlertMessage(error: error)
                 }
             }
         }.store(in: &subscriptions)
@@ -179,8 +179,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         resultSubject.send(.canceled)
     }
 
-    private func logAlertMessage(error: Error) {
-        let loggerData = AlertLoggerDataBuilder.buildLoggerData(error: error)
+    private func logAlertMessage(error: Error) async {
+        let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
         
         DefaultLogManager.shared.log(
             event: "Striga Registration iOS Alarm",
