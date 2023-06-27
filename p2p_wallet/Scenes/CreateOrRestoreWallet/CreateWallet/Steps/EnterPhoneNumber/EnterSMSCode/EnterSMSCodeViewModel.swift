@@ -12,7 +12,10 @@ import SwiftyUserDefaults
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    var attemptCounter: Wrapper<ResendCounter>
+    var attemptCounter: Wrapper<ResendCounter> {
+        didSet { syncTimer() }
+    }
+
     private var countdown: Int
     private static let codeLength = 6
     private let strategy: Strategy
