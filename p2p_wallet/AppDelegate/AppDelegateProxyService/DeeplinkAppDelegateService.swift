@@ -1,10 +1,3 @@
-//
-//  DeeplinkAppDelegateService.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 31.01.2023.
-//
-
 import Foundation
 import Resolver
 import AppsFlyerLib

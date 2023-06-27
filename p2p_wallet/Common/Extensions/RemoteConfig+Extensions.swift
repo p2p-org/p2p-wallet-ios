@@ -1,10 +1,3 @@
-//
-//  RemoteConfig+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 10.06.2022.
-//
-
 import FirebaseRemoteConfig
 import SolanaSwift
 

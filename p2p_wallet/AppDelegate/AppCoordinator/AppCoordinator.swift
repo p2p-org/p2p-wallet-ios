@@ -1,10 +1,3 @@
-//
-//  AppCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 23/05/2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
