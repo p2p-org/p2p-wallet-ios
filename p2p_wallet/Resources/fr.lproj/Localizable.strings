@@ -1388,3 +1388,6 @@
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App respecte votre vie privée - il ne peut pas accéder à vos fonds ou à vos informations personnelles.  Vos informations restent stockées en toute sécurité sur votre appareil et dans la blockchain";
 "Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "La phrase de départ est le seul moyen d'accéder à vos fonds sur un autre appareil.  Key App n'a pas accès à ces informations.";
 "Confirm your number" = "Confirmez votre numéro";
+"Are you sure you want to update your authorization device?" = "Voulez-vous vraiment mettre à jour votre dispositif d'autorisation ?";
+"You will not be able to use the old device for recovery" = "Vous ne pourrez pas utiliser l'ancien appareil pour la récupération";
+"Update" = "Mise à jour";

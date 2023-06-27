@@ -1390,3 +1390,6 @@
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App tôn trọng quyền riêng tư của bạn - nó không thể truy cập vào tiền hoặc thông tin cá nhân của bạn. Thông tin của bạn được lưu trữ an toàn trên thiết bị của bạn và trong blockchain";
 "Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Cụm từ hạt giống là cách duy nhất để truy cập tiền của bạn trên một thiết bị khác.  Ứng dụng chính không có quyền truy cập vào thông tin này.";
 "Confirm your number" = "Xác nhận số của bạn";
+"Are you sure you want to update your authorization device?" = "Bạn có chắc chắn muốn cập nhật thiết bị ủy quyền của mình không?";
+"You will not be able to use the old device for recovery" = "Bạn sẽ không thể sử dụng thiết bị cũ để khôi phục";
+"Update" = "Cập nhật";

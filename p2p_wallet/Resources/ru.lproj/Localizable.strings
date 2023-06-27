@@ -1385,3 +1385,6 @@
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App уважает вашу конфиденциальность — оно не может получить доступ к вашим средствам или личным данным. Ваша информация надежно хранится на вашем устройстве и в блокчейне";
 "Seed phrase is the only way to access your funds on another device. Key App doesn't have access to this information." = "Seed-фраза — единственный способ получить доступ к вашим средствам на другом устройстве.  Key App не имеет доступа к этой информации.";
 "Confirm your number" = "Подтверди свой номер";
+"Are you sure you want to update your authorization device?" = "Вы уверены, что хотите обновить устройство авторизации?";
+"You will not be able to use the old device for recovery" = "Вы не сможете использовать старое устройство для восстановления";
+"Update" = "Обновлять";

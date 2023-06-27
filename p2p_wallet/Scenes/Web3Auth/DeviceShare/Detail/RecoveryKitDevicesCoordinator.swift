@@ -33,7 +33,7 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
         vm.action.sink { [weak self] action in
             switch action {
             case .setup:
-                self?.setup()
+                self?.promptAlertBeforeSetup()
             }
         }.store(in: &subscriptions)
 
@@ -43,6 +43,25 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
         return result
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    func promptAlertBeforeSetup() {
+        let alert = UIAlertController(
+            title: L10n.areYouSureYouWantToUpdateYourAuthorizationDevice,
+            message: L10n.youWillNotBeAbleToUseTheOldDeviceForRecovery,
+            preferredStyle: .alert
+        )
+
+        let updateAction = UIAlertAction(title: L10n.update, style: .destructive) { [weak self] _ in
+            self?.setup()
+        }
+        alert.addAction(updateAction)
+
+        let cancelAction = UIAlertAction(title: L10n.cancel, style: .default)
+        alert.addAction(cancelAction)
+        alert.preferredAction = updateAction
+
+        navigationController.present(alert, animated: true)
     }
 
     func setup() {
