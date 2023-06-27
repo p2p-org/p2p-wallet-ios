@@ -40,16 +40,18 @@ struct HomeVersion2View: View {
 
                 switch viewModel.category {
                 case .cash:
-                    HomeCashView(viewModel: .init())
+                    HomeCashView(viewModel: .init(actionSubject: viewModel.actionSubject))
                 case .crypto:
-                    HomeCryptoView(viewModel: .init())
+                    HomeCryptoView(viewModel: .init(actionSubject: viewModel.actionSubject))
                 }
             }
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Button {} label: {
-                    Text("@username.key")
+                Button {
+                    viewModel.copyToClipboard()
+                } label: {
+                    Text(viewModel.nameAccount)
                         .fontWeight(.bold)
                         .apply(style: .text3)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -80,7 +82,7 @@ struct HomeVersion2View: View {
 struct HomeViewVersion2_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            HomeVersion2View(viewModel: .init())
+            HomeVersion2View(viewModel: .init(actionSubject: .init()))
         }
     }
 }

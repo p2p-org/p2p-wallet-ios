@@ -12,7 +12,7 @@ import Wormhole
 enum HomeNavigation: Equatable {
     // HomeWithTokens
     case buy
-    case receive(publicKey: PublicKey)
+    case receive
     case send
     case swap
     case cashOut
@@ -63,8 +63,8 @@ final class HomeCoordinator: Coordinator<Void> {
         let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
 
         // home view
-        let viewModel = HomeViewModel()
-        let homeView = UIHostingController(rootView: HomeVersion2View(viewModel: .init()))
+        let viewModel = HomeVersion2ViewModel(actionSubject: navigation)
+        let homeView = UIHostingController(rootView: HomeVersion2View(viewModel: viewModel))
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
@@ -94,7 +94,7 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
                 .map { _ in () }
                 .eraseToAnyPublisher()
-        case let .receive(publicKey):
+        case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
                     presentation: SmartCoordinatorPushPresentation(navigationController)
@@ -138,7 +138,7 @@ final class HomeCoordinator: Coordinator<Void> {
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
-                    presentingViewController: self.navigationController
+                    presentingViewController: navigationController
                 ))
                 .map { _ in () }
                 .eraseToAnyPublisher()
@@ -207,7 +207,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         case let .solanaAccount(solanaAccount):
             analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
-            
+
             return coordinate(
                 to: AccountDetailsCoordinator(
                     args: .solanaAccount(solanaAccount),

@@ -1,8 +1,9 @@
 import KeyAppUI
 import SwiftUI
+import Kingfisher
 
 struct HomeAccountView: View {
-    let iconSize: CGFloat = 50
+    let iconSize: CGFloat = 48
     let rendable: any RenderableAccount
 
     let onTap: (() -> Void)?
@@ -12,11 +13,16 @@ struct HomeAccountView: View {
         HStack(alignment: .center, spacing: 12) {
             switch rendable.icon {
             case let .url(url):
-                CoinLogoImageViewRepresentable(
-                    size: iconSize,
-                    args: .manual(preferredImage: nil, url: url, key: "", wrapped: rendable.wrapped)
-                )
-                .frame(width: iconSize, height: iconSize)
+                KFImage
+                    .url(url)
+                    .setProcessor(
+                        DownsamplingImageProcessor(size: .init(width: iconSize*3, height: iconSize*3))
+                            |> RoundCornerImageProcessor(cornerRadius: iconSize)
+                    )
+                    .resizable()
+                    .diskCacheExpiration(.days(7))
+                    .fade(duration: 0.25)
+                    .frame(width: iconSize, height:  iconSize)
             case let .image(image):
                 CoinLogoImageViewRepresentable(
                     size: iconSize,

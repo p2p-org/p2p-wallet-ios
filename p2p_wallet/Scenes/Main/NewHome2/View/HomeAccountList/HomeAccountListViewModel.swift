@@ -11,6 +11,7 @@ import Combine
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
+import Wormhole
 
 @MainActor
 class HomeAccountListViewModel: BaseViewModel, ObservableObject {
@@ -31,13 +32,16 @@ class HomeAccountListViewModel: BaseViewModel, ObservableObject {
 
     /// Secondary list accounts. Will be normally hidded and need to be manually action from user to show in view.
     @Published var hiddenAccounts: [any RenderableAccount] = []
+    
+    let navigation: PassthroughSubject<HomeNavigation, Never>
 
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve()
+        favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
+        navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.favouriteAccountsStore = favouriteAccountsStore
-
+        self.navigation = navigation
         super.init()
 
         let solanaAggregator = HomeSolanaAccountsAggregator()
@@ -65,39 +69,39 @@ class HomeAccountListViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
-    func invoke(for _: any RenderableAccount, event _: Event) {
-//        switch account {
-//        case let renderableAccount as RenderableSolanaAccount:
-//            switch event {
-//            case .tap:
-//                navigation.send(.solanaAccount(renderableAccount.account))
-//            case .visibleToggle:
-//                guard let pubkey = renderableAccount.account.data.pubkey else { return }
-//                let tags = renderableAccount.tags
-//
-//                if tags.contains(.ignore) {
-//                    favouriteAccountsStore.markAsFavourite(key: pubkey)
-//                } else if tags.contains(.favourite) {
-//                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-//                } else {
-//                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-//                }
-//            default:
-//                break
-//            }
-//
-//        case let renderableAccount as RenderableEthereumAccount:
-//            switch event {
-//            case .extraButtonTap:
-//                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as?
-//                WormholeClaimUserAction))
-//            default:
-//                break
-//            }
-//
-//        default:
-//            break
-//        }
+    func invoke(for account: any RenderableAccount, event: Event) {
+        switch account {
+        case let renderableAccount as RenderableSolanaAccount:
+            switch event {
+            case .tap:
+                navigation.send(.solanaAccount(renderableAccount.account))
+            case .visibleToggle:
+                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let tags = renderableAccount.tags
+
+                if tags.contains(.ignore) {
+                    favouriteAccountsStore.markAsFavourite(key: pubkey)
+                } else if tags.contains(.favourite) {
+                    favouriteAccountsStore.markAsIgnore(key: pubkey)
+                } else {
+                    favouriteAccountsStore.markAsIgnore(key: pubkey)
+                }
+            default:
+                break
+            }
+
+        case let renderableAccount as RenderableEthereumAccount:
+            switch event {
+            case .extraButtonTap:
+                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as?
+                WormholeClaimUserAction))
+            default:
+                break
+            }
+
+        default:
+            break
+        }
     }
 }
 

@@ -44,9 +44,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     func receiveClicked() {
         let userWalletManager = Resolver.resolve(UserWalletManager.self)
-        guard let pubkey = userWalletManager.wallet?.account.publicKey
-        else { return }
-        navigation.send(.receive(publicKey: pubkey))
+        navigation.send(.receive)
     }
     
     func buyTapped(index: Int) {

@@ -129,6 +129,6 @@ private extension View {
 
 struct HomeAccountListView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeAccountListView(viewModel: .init())
+        HomeAccountListView(viewModel: .init(navigation: .init()))
     }
 }

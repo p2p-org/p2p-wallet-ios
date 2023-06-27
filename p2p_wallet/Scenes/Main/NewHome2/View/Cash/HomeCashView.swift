@@ -12,7 +12,7 @@ struct HomeCashView: View {
     @ObservedObject var viewModel: HomeCashViewModel
 
     var body: some View {
-        VStack {
+        VStack(spacing: 8) {
             // Header
             HomeHeaderCard(
                 title: "ALL ACCOUNTS",
@@ -26,20 +26,32 @@ struct HomeCashView: View {
                         style: .primaryWhite,
                         expandable: true,
                         trailing: Asset.MaterialIcon.add.image
-                    ) {}
+                    ) {
+                        viewModel.actionSubject.send(.buy)
+                    }
                     NewTextButton(
                         title: "Withdraw",
                         size: .small,
                         style: .second,
                         expandable: true,
                         trailing: Asset.MaterialIcon.arrowUpward.image
-                    ) {}
+                    ) {
+                        viewModel.actionSubject.send(.cashOut)
+                    }
                 }
             }
 
+            StrigaDocumentVerificationBannerView()
+                .padding(.top, 12)
             // Banner
-            HomeSendWithZeroFeeBanner()
+            HomeSendWithZeroFeeBanner {
+                viewModel.actionSubject.send(.send)
+            }
+            ReceiveFreeUSDCBannerView {
+                viewModel.actionSubject.send(.receive)
+            }
         }
+        .padding(.horizontal, 16)
     }
 }
 

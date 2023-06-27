@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 23/06/2023.
 //
 
+import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -14,13 +15,21 @@ class HomeCashViewModel: BaseViewModel, ObservableObject {
     @Published var totalAmountInFiat: String = ""
     @Published var iconsURL: [URL] = []
 
+    var actionSubject: PassthroughSubject<HomeNavigation, Never>
+
     init(totalAmountInFiat: String, iconsURL: [URL]) {
+        actionSubject = .init()
         super.init()
+
         self.iconsURL = iconsURL
         self.totalAmountInFiat = totalAmountInFiat
     }
 
-    init(solanaAccountService: SolanaAccountsService = Resolver.resolve()) {
+    init(
+        solanaAccountService: SolanaAccountsService = Resolver.resolve(),
+        actionSubject: PassthroughSubject<HomeNavigation, Never>
+    ) {
+        self.actionSubject = actionSubject
         super.init()
 
         solanaAccountService

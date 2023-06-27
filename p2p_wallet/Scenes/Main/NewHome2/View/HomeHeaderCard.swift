@@ -9,18 +9,16 @@ import KeyAppUI
 import SwiftUI
 
 struct HomeHeaderCard<Action: View>: View {
-    
     enum BalanceDetail {
         case urls(value: [URL])
         case icon(image: UIImage)
     }
-    
+
     let title: String
     let balance: String
     let balanceDetail: BalanceDetail
     @ViewBuilder var actionView: Action
-    
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 12) {
@@ -40,6 +38,9 @@ struct HomeHeaderCard<Action: View>: View {
                     switch balanceDetail {
                     case let .icon(image):
                         Image(uiImage: image)
+                            .resizable()
+                            .frame(width: 36, height: 36)
+                            .cornerRadius(radius: 18, corners: .allCorners)
                     case let .urls(value):
                         HorizontalTokenIconView(icons: value)
                     }
@@ -47,13 +48,12 @@ struct HomeHeaderCard<Action: View>: View {
             }
             .padding(.top, 24)
             .padding(.horizontal, 24)
-            
+
             actionView
                 .padding(.bottom, 24)
                 .padding(.horizontal, 24)
         }
         .background(Color(Asset.Colors.snow.color)).cornerRadius(radius: 20, corners: .allCorners)
-        .padding(.horizontal, 16)
     }
 }
 

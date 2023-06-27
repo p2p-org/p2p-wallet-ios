@@ -9,18 +9,26 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
+import Combine
 
 class HomeCryptoViewModel: BaseViewModel, ObservableObject {
     @Published var totalAmountInFiat: String = ""
     @Published var iconsURL: [URL] = []
 
+    var actionSubject: PassthroughSubject<HomeNavigation, Never>
+    
     init(totalAmountInFiat: String, iconsURL: [URL]) {
+        actionSubject = .init()
         super.init()
+        
         self.iconsURL = iconsURL
         self.totalAmountInFiat = totalAmountInFiat
     }
 
-    init(solanaAccountService: SolanaAccountsService = Resolver.resolve()) {
+    init(solanaAccountService: SolanaAccountsService = Resolver.resolve(),
+         actionSubject: PassthroughSubject<HomeNavigation, Never>
+    ) {
+        self.actionSubject = actionSubject
         super.init()
 
         solanaAccountService

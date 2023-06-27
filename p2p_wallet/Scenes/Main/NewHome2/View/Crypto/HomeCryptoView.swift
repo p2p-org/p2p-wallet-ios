@@ -24,18 +24,24 @@ struct HomeCryptoView: View {
                         title: "Swap",
                         size: .small,
                         style: .primaryWhite,
-                        expandable: true
-                    ) {}
+                        expandable: true,
+                        trailing: UIImage.swap
+                    ) {
+                        viewModel.actionSubject.send(.swap)
+                    }
                     NewTextButton(
                         title: "Receive",
                         size: .small,
                         style: .second,
-                        expandable: true
-                    ) {}
+                        expandable: true,
+                        trailing: Asset.MaterialIcon.arrowDownward.image
+                    ) {
+                        viewModel.actionSubject.send(.receive)
+                    }
                 }
             }
 
-            HomeAccountListView(viewModel: .init())
+            HomeAccountListView(viewModel: .init(navigation: viewModel.actionSubject))
         }
     }
 }

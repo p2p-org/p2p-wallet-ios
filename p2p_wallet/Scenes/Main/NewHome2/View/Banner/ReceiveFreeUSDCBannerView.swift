@@ -1,14 +1,14 @@
 //
-//  HomeSendWithZeroFeeBanner.swift
+//  ReceiveFreeUSDCBannerView.swift
 //  p2p_wallet
 //
-//  Created by Giang Long Tran on 26.06.2023.
+//  Created by Giang Long Tran on 26/06/2023.
 //
 
 import KeyAppUI
 import SwiftUI
 
-struct HomeSendWithZeroFeeBanner: View {
+struct ReceiveFreeUSDCBannerView: View {
     let onTap: () -> Void
 
     var body: some View {
@@ -16,14 +16,13 @@ struct HomeSendWithZeroFeeBanner: View {
             Color(UIColor(red: 0.804, green: 0.965, blue: 0.804, alpha: 1))
                 .cornerRadius(radius: 16, corners: .allCorners)
             VStack(alignment: .leading, spacing: 8) {
-                Text("Send money with zero fees")
+                Text("Receive free USDC ")
                     .fontWeight(.semibold)
                     .apply(style: .text2)
-                    .multilineTextAlignment(.leading)
-                Text("Save on commissions and make transfers easier!")
+                Text("Get rewarded when you send money to your friends")
                     .apply(style: .label1)
 
-                NewTextButton(title: "Get started", size: .small, style: .inverted) {
+                NewTextButton(title: "Invite friends", size: .small, style: .inverted) {
                     onTap()
                 }
                 .padding(.top, 6)
@@ -32,7 +31,7 @@ struct HomeSendWithZeroFeeBanner: View {
             .padding(.vertical, 16)
             .padding(.leading, 16)
         }
-        .frame(height: 160)
+        .frame(height: 138)
         .overlay(alignment: .topTrailing) {
             Button {} label: {
                 Image(uiImage: UIImage.closeIcon)
@@ -41,14 +40,13 @@ struct HomeSendWithZeroFeeBanner: View {
             .offset(x: -19.33, y: 19.33)
         }
         .overlay(alignment: .trailing) {
-            Image(uiImage: UIImage.coinDrop)
-                .padding(.top, 16)
+            Image(uiImage: UIImage.clap)
         }
     }
 }
 
-struct HomeSendWithZeroFeeBanner_Previews: PreviewProvider {
+struct ReceiveFreeUSDCBannerView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeSendWithZeroFeeBanner {}
+        ReceiveFreeUSDCBannerView {}
     }
 }
