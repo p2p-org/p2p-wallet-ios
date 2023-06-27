@@ -64,8 +64,11 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     }).asViewController(withoutUIKitNavBar: true)
                 errorController.hidesBottomBarWhenPushed = true
                 self?.viewController.pushViewController(errorController, animated: true)
+                
+                await self?.logAlertMessage(error: BankTransferError.otpExceededVerification)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
+                await self?.logAlertMessage(error: error)
             }
         }.store(in: &subscriptions)
 
@@ -83,8 +86,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     try await self.bankTransfer.resendSMS()
                 } catch BankTransferError.otpExceededDailyLimit {
                     self.handleOTPExceededDailyLimitError()
+                    await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
                 } catch {
                     viewModel.coordinatorIO.error.send(error)
+                    await self.logAlertMessage(error: error)
                 }
             }
         }.store(in: &subscriptions)
@@ -174,6 +179,25 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         resultSubject.send(.canceled)
     }
 
+    private func logAlertMessage(error: Error) async {
+        let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+        
+        DefaultLogManager.shared.log(
+            event: "Striga Registration iOS Alarm",
+            logLevel: .alert,
+            data: StrigaRegistrationAlertLoggerMessage(
+                userPubkey: loggerData.userPubkey,
+                platform: loggerData.platform,
+                appVersion: loggerData.appVersion,
+                timestamp: loggerData.timestamp,
+                error: .init(
+                    source: "striga api",
+                    kycSDKState: "initial",
+                    error: loggerData.otherError ?? ""
+                )
+            )
+        )
+    }
 }
 
 extension ResendCounter: DefaultsSerializable {}
