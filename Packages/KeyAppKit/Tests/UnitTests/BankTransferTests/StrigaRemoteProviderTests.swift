@@ -241,7 +241,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testGetAllWalletsByUser_SuccessfulResponse_ReturnsStrigaGetAllWalletsResponse() async throws {
         // Arrange
-        let mockData = #"{"wallets":[{"walletId":"3d57a943-8145-4183-8079-cd86b68d2993","accounts":{"EUR":{"accountId":"4dc6ecb29d74198e9e507f8025cad011","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"EUR","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.077Z","availableBalance":{"amount":"1888383","currency":"cents"},"linkedCardId":"UNLINKED","linkedBankAccountId":"EUR10112624134233","status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"USDC":{"accountId":"140ecf6f979975c8e868d14038004b37","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"USDC","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.078Z","availableBalance":{"amount":"5889","currency":"cents"},"linkedCardId":"UNLINKED","blockchainDepositAddress":"0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c","blockchainNetwork":{"name":"USD Coin Test (Goerli)","type":"ERC20","contractAddress":"0x07865c6E87B9F70255377e024ace6630C1Eaa37F"},"status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"syncedOwnerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.094Z","comment":"DEFAULT"}}],"count":1,"total":1}"#
+        let mockData = #"{"wallets":[{"walletId":"3d57a943-8145-4183-8079-cd86b68d2993","accounts":{"EUR":{"accountId":"4dc6ecb29d74198e9e507f8025cad011","parentWalletId":"719c6236-0420-43c1-a7cb-1e20ce540a8d","currency":"EUR","ownerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.673Z","availableBalance":{"amount":"0","currency":"cents"},"linkedCardId":"UNLINKED","linkedBankAccountId":"EUR13467658780233","status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"USDC":{"accountId":"140ecf6f979975c8e868d14038004b37","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"USDC","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.078Z","availableBalance":{"amount":"5889","currency":"cents"},"linkedCardId":"UNLINKED","blockchainDepositAddress":"0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c","blockchainNetwork":{"name":"USD Coin Test (Goerli)","type":"ERC20","contractAddress":"0x07865c6E87B9F70255377e024ace6630C1Eaa37F"},"status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true}},"syncedOwnerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.693Z","comment":"DEFAULT"}],"count":1,"total":1}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
         
         // Act
@@ -313,7 +313,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
         
         // Act
-        let enrichedAccount = try await provider.enrichAccount(userId: "123", accountId: "456")
+        let enrichedAccount: StrigaEnrichedUSDCAccountResponse = try await provider.enrichAccount(userId: "123", accountId: "456")
         
         // Assert
         XCTAssertEqual(enrichedAccount.blockchainDepositAddress, "0x59d42C04022E926DAF16d139aFCBCa0da33E2323")
