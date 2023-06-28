@@ -56,7 +56,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         
         strigaEndpoints = [
             .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!,
-            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!,
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV_NEW")!
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment

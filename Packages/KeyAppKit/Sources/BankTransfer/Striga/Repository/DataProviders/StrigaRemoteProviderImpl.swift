@@ -76,11 +76,8 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             }
             return
         } catch HTTPClientError.invalidResponse(let response, let data) {
-            if response?.statusCode == 409 {
-                let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
-                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
-            }
-            throw HTTPClientError.invalidResponse(response, data)
+            let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
+            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
         }
     }
 
