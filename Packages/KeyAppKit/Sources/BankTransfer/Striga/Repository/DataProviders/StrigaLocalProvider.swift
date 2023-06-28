@@ -3,15 +3,25 @@ import Foundation
 public protocol StrigaLocalProvider {
     func getCachedRegistrationData() async -> StrigaUserDetailsResponse?
     func save(registrationData: StrigaUserDetailsResponse) async throws
-    
-    func clearRegistrationData() async
+
+    func getCachedUserData() async -> UserData?
+    func save(userData: UserData) async throws
+
+    func clear() async
 }
 
 public actor StrigaLocalProviderImpl {
-    private let cacheFile: URL = {
+
+    private let registrationFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
         return cacheDirectoryPath.appendingPathComponent("/striga-registration.data")
+    }()
+
+    private let accountFile: URL = {
+        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        let cacheDirectoryPath = arrayPaths[0]
+        return cacheDirectoryPath.appendingPathComponent("/striga-account.data")
     }()
 
     // MARK: - Initializer
@@ -30,7 +40,7 @@ public actor StrigaLocalProviderImpl {
         // Migration
         let migrationKey = "StrigaLocalProviderImpl.migration10"
         if !UserDefaults.standard.bool(forKey: migrationKey) {
-            clearRegistrationData()
+            clear()
             UserDefaults.standard.set(true, forKey: migrationKey)
         }
     }
@@ -39,17 +49,36 @@ public actor StrigaLocalProviderImpl {
 extension StrigaLocalProviderImpl: StrigaLocalProvider {
 
     public func getCachedRegistrationData() -> StrigaUserDetailsResponse? {
-        guard let data = try? Data(contentsOf: cacheFile) else { return nil }
-        let cachedData = (try? JSONDecoder().decode(StrigaUserDetailsResponse.self, from: data))
+        return get(from: registrationFile)
+    }
+
+    public func save(registrationData: StrigaUserDetailsResponse) async throws {
+        try await save(model: registrationData, in: registrationFile)
+    }
+
+    public func getCachedUserData() async -> UserData? {
+        return get(from: accountFile)
+    }
+
+    public func save(userData: UserData) async throws {
+        try await save(model: userData, in: accountFile)
+    }
+
+    public func clear() {
+        try? FileManager.default.removeItem(at: registrationFile)
+        try? FileManager.default.removeItem(at: accountFile)
+    }
+
+    // MARK: - Helpers
+
+    private func get<T: Decodable>(from file: URL) -> T? {
+        guard let data = try? Data(contentsOf: file) else { return nil }
+        let cachedData = (try? JSONDecoder().decode(T.self, from: data))
         return cachedData
     }
-    
-    public func save(registrationData: StrigaUserDetailsResponse) throws {
-        let data = try JSONEncoder().encode(registrationData)
-        try data.write(to: cacheFile)
-    }
-    
-    public func clearRegistrationData() {
-        try? FileManager.default.removeItem(at: cacheFile)
+
+    private func save<T: Encodable>(model: T, in file: URL) async throws {
+        let data = try JSONEncoder().encode(model)
+        try data.write(to: file)
     }
 }

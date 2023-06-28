@@ -1,15 +1,18 @@
 import SwiftUI
 import Combine
+import BankTransfer
 
 final class IBANDetailsCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
+    private let eurAccount: EURUserAccount
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, eurAccount: EURUserAccount) {
         self.navigationController = navigationController
+        self.eurAccount = eurAccount
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let viewModel = IBANDetailsViewModel()
+        let viewModel = IBANDetailsViewModel(eurAccount: eurAccount)
         let view = IBANDetailsView(viewModel: viewModel)
 
         let vc = view.asViewController(withoutUIKitNavBar: false)

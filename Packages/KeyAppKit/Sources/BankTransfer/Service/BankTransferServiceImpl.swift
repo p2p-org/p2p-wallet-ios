@@ -57,7 +57,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func updateLocally(data: BankTransferRegistrationData) async throws {
-        try await repository.updateUserLocally(registrationData: data)
+        try await repository.updateLocally(registrationData: data)
     }
     
     public func createUser(data: BankTransferRegistrationData) async throws {
@@ -104,22 +104,17 @@ extension BankTransferServiceImpl: BankTransferService {
         await repository.clearCache()
     }
 
-    public func getAllWalletsByUser() async throws -> UserAccounts {
-        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
-        return try await repository.getAllWalletsByUser(userId: userId)
-    }
-
-    public func enrichAccount<T: Decodable>(accountId: String) async throws -> T {
-        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
-        return try await repository.enrichAccount(userId: userId, accountId: accountId)
-    }
-
     // MARK: - Helpers
 
     private func handleRegisteredUser(userId: String, mobileNumber: String) async throws {
         // get user details, check kyc status
         let kycStatus = try await repository.getKYCStatus()
-        
+
+        var wallets: [UserWallet]?
+        if kycStatus.status == .approved {
+            wallets = await handleUserWallets(userId: userId)
+        }
+
         // update
         subject.send(
             .init(
@@ -128,11 +123,14 @@ extension BankTransferServiceImpl: BankTransferService {
                     userId: userId,
                     mobileVerified: kycStatus.mobileVerified,
                     kycStatus: kycStatus.status,
-                    mobileNumber: mobileNumber
+                    mobileNumber: mobileNumber,
+                    wallets: wallets
                 ),
                 error: nil
             )
         )
+
+        try? await repository.updateLocally(userData: subject.value.value)
     }
     
     private func handleUnregisteredUser() async throws {
@@ -153,5 +151,21 @@ extension BankTransferServiceImpl: BankTransferService {
                 error: error
             )
         )
+    }
+
+    private func handleUserWallets(userId: String) async -> [UserWallet] {
+        var wallets = try? await repository.getAllWalletsByUser(userId: userId)
+
+        if let eur = wallets?.first?.accounts.eur, !eur.enriched {
+            let response: StrigaEnrichedEURAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: eur.accountID)
+            wallets?[0].accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response?.iban, bic: response?.bic, bankAccountHolderName: response?.bankAccountHolderName)
+        }
+
+        if let usdc = wallets?.first?.accounts.usdc, !usdc.enriched {
+            let response: StrigaEnrichedUSDCAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: usdc.accountID)
+            wallets?[0].accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response?.blockchainDepositAddress)
+        }
+
+        return wallets ?? []
     }
 }

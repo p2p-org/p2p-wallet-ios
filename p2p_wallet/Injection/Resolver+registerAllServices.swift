@@ -589,7 +589,8 @@ extension Resolver: ResolverRegistering {
                             useCase: .unregisteredUser,
                             mockUserId: "user-id"
                         ) :
-                        Resolver.resolve(StrigaMetadataProvider.self)
+                        Resolver.resolve(StrigaMetadataProvider.self),
+                    commonInfoProvider: CommonInfoLocalProviderImpl()
                 )
             )
         }
