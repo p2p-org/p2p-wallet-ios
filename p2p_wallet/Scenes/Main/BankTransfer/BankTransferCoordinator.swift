@@ -63,7 +63,8 @@ final class BankTransferCoordinator: Coordinator<Void> {
         // kyc
         switch userData.kycStatus {
         case .approved:
-            return .transfer
+            guard let data = userData.wallets.first?.accounts.eur else { return .kyc }
+            return .transfer(data)
         case .onHold, .pendingReview:
             return .kycPendingReview
         case .initiated, .notStarted, .rejected, .rejectedFinal:
@@ -117,9 +118,9 @@ final class BankTransferCoordinator: Coordinator<Void> {
             )
             .map { _ in return BankTransferFlowResult.none }
             .eraseToAnyPublisher()
-        case .transfer:
+        case let .transfer(eurAccount):
             return coordinate(
-                to: IBANDetailsCoordinator(navigationController: viewController)
+                to: IBANDetailsCoordinator(navigationController: viewController, eurAccount: eurAccount)
             )
             .map { BankTransferFlowResult.completed }
             .eraseToAnyPublisher()
@@ -132,5 +133,5 @@ enum BankTransferStep {
     case otp
     case kyc
     case kycPendingReview
-    case transfer
+    case transfer(UserEURAccount)
 }

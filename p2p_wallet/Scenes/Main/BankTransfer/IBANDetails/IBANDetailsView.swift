@@ -1,5 +1,6 @@
 import KeyAppUI
 import SwiftUI
+import BankTransfer
 
 struct IBANDetailsView: View {
     @ObservedObject var viewModel: IBANDetailsViewModel
@@ -55,9 +56,13 @@ struct IBANDetailsView: View {
 struct IBANDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            IBANDetailsView(viewModel: IBANDetailsViewModel())
-                .navigationTitle(L10n.euroAccount)
-                .navigationBarTitleDisplayMode(.inline)
+            IBANDetailsView(
+                viewModel: IBANDetailsViewModel(
+                    eurAccount: UserEURAccount(accountID: "", currency: "", createdAt: "", enriched: true, iban: "IBAN", bic: "BIC", bankAccountHolderName: "Name Surname")
+                )
+            )
+            .navigationTitle(L10n.euroAccount)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

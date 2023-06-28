@@ -71,9 +71,18 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     public func save(registrationData: StrigaUserDetailsResponse) async throws {
         self.cachedRegistrationData = registrationData
     }
-    
-    public func clearRegistrationData() async {
+
+    public func getCachedUserData() async -> UserData? {
+        fatalError()
+    }
+
+    public func save(userData: UserData) async throws {
+        fatalError()
+    }
+
+    public func clear() async {
         self.cachedRegistrationData = nil
         self.useCase = .unregisteredUser
     }
+
 }

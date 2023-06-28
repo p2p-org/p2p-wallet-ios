@@ -12,9 +12,10 @@ public protocol BankTransferUserDataRepository {
     
     func getKYCToken(userId: String) async throws -> String
 
-    func updateUserLocally(registrationData: BankTransferRegistrationData) async throws
+    func updateLocally(registrationData: BankTransferRegistrationData) async throws
+    func updateLocally(userData: UserData) async throws
     func clearCache() async
 
-    func getAllWalletsByUser(userId: String) async throws -> UserAccounts
+    func getAllWalletsByUser(userId: String) async throws -> [UserWallet]
     func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T
 }

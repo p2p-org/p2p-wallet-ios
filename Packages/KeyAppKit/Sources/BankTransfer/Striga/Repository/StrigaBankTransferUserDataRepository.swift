@@ -10,17 +10,20 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     private let localProvider: StrigaLocalProvider
     private let remoteProvider: StrigaRemoteProvider
     private let metadataProvider: StrigaMetadataProvider
+    private let commonInfoProvider: CommonInfoLocalProvider
 
     // MARK: - Initializer
 
     public init(
         localProvider: StrigaLocalProvider,
         remoteProvider: StrigaRemoteProvider,
-        metadataProvider: StrigaMetadataProvider
+        metadataProvider: StrigaMetadataProvider,
+        commonInfoProvider: CommonInfoLocalProvider
     ) {
         self.localProvider = localProvider
         self.remoteProvider = remoteProvider
         self.metadataProvider = metadataProvider
+        self.commonInfoProvider = commonInfoProvider
     }
     
     // MARK: - Methods
@@ -86,14 +89,29 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         return response
     }
 
-    public func updateUserLocally(registrationData data: BankTransferRegistrationData) async throws {
+    public func updateLocally(registrationData data: BankTransferRegistrationData) async throws {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
+
         try? await localProvider.save(registrationData: data)
+
+        // Update common info with latest striga information
+        let commonInfo = UserCommonInfo(
+            firstName: data.firstName,
+            lastName: data.lastName,
+            nationality: "",
+            placeOfBirth: data.placeOfBirth,
+            dateOfBirth: DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day)
+        )
+        try? await commonInfoProvider.save(commonInfo: commonInfo)
     }
-    
+
+    public func updateLocally(userData data: UserData) async throws {
+        try? await localProvider.save(userData: data)
+    }
+
     public func verifyMobileNumber(userId: String, verificationCode code: String) async throws {
         try await remoteProvider.verifyMobileNumber(userId: userId, verificationCode: code)
     }
@@ -147,27 +165,41 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
 
     public func clearCache() async {
-        await localProvider.clearRegistrationData()
+        await localProvider.clear()
+        await commonInfoProvider.clear()
     }
 
-    public func getAllWalletsByUser(userId: String) async throws -> UserAccounts {
-        let fixedStartDate = Date(timeIntervalSince1970: 1687564800)
-        let fixedEndDate = Date()
-        let allWallets = try await remoteProvider.getAllWalletsByUser(
-            userId: userId,
-            startDate: fixedStartDate,
-            endDate: fixedEndDate,
-            page: 1
-        ).wallets.first
-        var eur: WalletAccount?
-        if let eurAccount = allWallets?.accounts.eur {
-            eur = WalletAccount(accountID: eurAccount.accountID)
+    public func getAllWalletsByUser(userId: String) async throws -> [UserWallet] {
+        if let wallets = await localProvider.getCachedUserData()?.wallets, !wallets.isEmpty {
+            return wallets
+        } else {
+            let allWallets = try await remoteProvider.getAllWalletsByUser(
+                userId: userId,
+                startDate: Date(timeIntervalSince1970: 1687564800),
+                endDate: Date(),
+                page: 1
+            ).wallets.map { strigaWallet in
+                var eur: UserEURAccount?
+                if let eurAccount = strigaWallet.accounts.eur {
+                    eur = UserEURAccount(
+                        accountID: eurAccount.accountID,
+                        currency: eurAccount.currency,
+                        createdAt: eurAccount.createdAt,
+                        enriched: false
+                    )
+                }
+                var usdc: UserUSDCAccount?
+                if let usdcAccount = strigaWallet.accounts.usdc {
+                    usdc = UserUSDCAccount(
+                        accountID: usdcAccount.accountID,
+                        currency: usdcAccount.currency,
+                        createdAt: usdcAccount.createdAt,
+                            enriched: false)
+                }
+                return UserWallet(walletId: strigaWallet.walletID, accounts: UserAccounts(eur: eur, usdc: usdc))
+            }
+            return allWallets
         }
-        var usdc: WalletAccount?
-        if let usdcAccount = allWallets?.accounts.usdc {
-            usdc = WalletAccount(accountID: usdcAccount.accountID)
-        }
-        return UserAccounts(eur: eur, usdc: usdc)
     }
 
     public func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
