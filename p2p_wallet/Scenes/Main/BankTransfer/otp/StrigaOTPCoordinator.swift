@@ -59,6 +59,9 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 self?.lastConfirmErrorData = Date().addingTimeInterval(60 * 60 * 24)
                 self?.handleOTPConfirmLimitError()
                 await self?.logAlertMessage(error: BankTransferError.otpExceededVerification)
+            } catch BankTransferError.otpInvalidCode {
+                viewModel?.coordinatorIO.error.send(APIGatewayError.invalidOTP)
+                await self?.logAlertMessage(error: BankTransferError.otpInvalidCode)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
                 await self?.logAlertMessage(error: error)
