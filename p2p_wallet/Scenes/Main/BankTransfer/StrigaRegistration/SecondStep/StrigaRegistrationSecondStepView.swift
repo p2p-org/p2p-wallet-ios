@@ -7,6 +7,7 @@ fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationSecondStepView: View {
     @ObservedObject private var viewModel: StrigaRegistrationSecondStepViewModel
+    @State private var focus: StrigaRegistrationField?
 
     init(viewModel: StrigaRegistrationSecondStepViewModel) {
         self.viewModel = viewModel
@@ -85,28 +86,56 @@ struct StrigaRegistrationSecondStepView: View {
                     title: L10n.city,
                     status: viewModel.fieldsStatuses[.city]
                 ) {
-                    TextField(placeholder: L10n.fullCityName, text: $viewModel.city)
+                    TextField(
+                        field: .city,
+                        placeholder: L10n.fullCityName,
+                        text: $viewModel.city,
+                        focus: $focus,
+                        onSubmit: { focus = .addressLine },
+                        submitLabel: .next
+                    )
                 }
 
                 Cell(
                     title: L10n.addressLine,
                     status: viewModel.fieldsStatuses[.addressLine]
                 ) {
-                    TextField(placeholder: L10n.yourStreetAndFlatNumber, text: $viewModel.addressLine)
+                    TextField(
+                        field: .addressLine,
+                        placeholder: L10n.yourStreetAndFlatNumber,
+                        text: $viewModel.addressLine,
+                        focus: $focus,
+                        onSubmit: { focus = .postalCode },
+                        submitLabel: .next
+                    )
                 }
 
                 Cell(
                     title: L10n.postalCode,
                     status: viewModel.fieldsStatuses[.postalCode]
                 ) {
-                    TextField(placeholder: L10n.yourPostalCode, text: $viewModel.postalCode)
+                    TextField(
+                        field: .postalCode,
+                        placeholder: L10n.yourPostalCode,
+                        text: $viewModel.postalCode,
+                        focus: $focus,
+                        onSubmit: { focus = .stateRegion },
+                        submitLabel: .next
+                    )
                 }
 
                 Cell(
                     title: L10n.stateOrRegion,
                     status: viewModel.fieldsStatuses[.stateRegion]
                 ) {
-                    TextField(placeholder: L10n.recommended, text: $viewModel.stateRegion)
+                    TextField(
+                        field: .stateRegion,
+                        placeholder: L10n.recommended,
+                        text: $viewModel.stateRegion,
+                        focus: $focus,
+                        onSubmit: { focus = nil },
+                        submitLabel: .done
+                    )
                 }
             }
         }

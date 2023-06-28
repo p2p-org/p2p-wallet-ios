@@ -7,16 +7,6 @@ import SwiftyUserDefaults
 
 final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObject {
 
-    enum Field {
-        case occupationIndustry
-        case sourceOfFunds
-        case country
-        case city
-        case addressLine
-        case postalCode
-        case stateRegion
-    }
-
     // Dependencies
     @Injected private var service: BankTransferService
     @Injected private var notificationService: NotificationService
@@ -47,7 +37,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     let chooseCountry = PassthroughSubject<Country?, Never>()
     let openHardError = PassthroughSubject<Void, Never>()
 
-    var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
+    var fieldsStatuses = [StrigaRegistrationField: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountry: Country?
     @Published var selectedIndustry: Industry?
@@ -132,7 +122,7 @@ private extension StrigaRegistrationSecondStepViewModel {
         return !fieldsStatuses.contains(where: { $0.value != .valid })
     }
 
-    func validate(value: String, field: Field, minLimit: Int? = nil, maxLimit: Int? = nil) {
+    func validate(value: String, field: StrigaRegistrationField, minLimit: Int? = nil, maxLimit: Int? = nil) {
         if value.trimmed().isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
         } else if let minLimit, value.count < minLimit {

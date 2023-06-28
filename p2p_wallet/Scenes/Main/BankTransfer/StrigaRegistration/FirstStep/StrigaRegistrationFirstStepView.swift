@@ -7,7 +7,10 @@ fileprivate typealias Cell = StrigaRegistrationCell
 fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationFirstStepView: View {
+
     @ObservedObject private var viewModel: StrigaRegistrationFirstStepViewModel
+
+    @State private var focus: StrigaRegistrationField?
 
     init(viewModel: StrigaRegistrationFirstStepViewModel) {
         self.viewModel = viewModel
@@ -61,7 +64,15 @@ struct StrigaRegistrationFirstStepView: View {
                     title: L10n.email,
                     status: viewModel.fieldsStatuses[.email]
                 ) {
-                    TextField(placeholder: L10n.enter, text: $viewModel.email, isEnabled: false)
+                    TextField(
+                        field: .email,
+                        placeholder: L10n.enter,
+                        text: $viewModel.email,
+                        isEnabled: false,
+                        focus: $focus,
+                        onSubmit: { },
+                        submitLabel: .next
+                    )
                 }
 
                 Cell(
@@ -72,11 +83,12 @@ struct StrigaRegistrationFirstStepView: View {
                         text: $viewModel.phoneNumber,
                         phoneNumber: $viewModel.phoneNumberModel,
                         country: $viewModel.selectedPhoneCountryCode,
-                        action: { [weak viewModel] in
+                        countryTapped: { [weak viewModel] in
                             guard let viewModel else { return }
                             viewModel.choosePhoneCountryCode.send(viewModel.selectedPhoneCountryCode)
                             resignFirstResponder()
-                        }
+                        },
+                        focus: $focus
                     )
                 }
             }
@@ -92,14 +104,28 @@ struct StrigaRegistrationFirstStepView: View {
                     title: L10n.firstName,
                     status: viewModel.fieldsStatuses[.firstName]
                 ) {
-                    TextField(placeholder: L10n.enter, text: $viewModel.firstName)
+                    TextField(
+                        field: .firstName,
+                        placeholder: L10n.enter,
+                        text: $viewModel.firstName,
+                        focus: $focus,
+                        onSubmit: { focus = .surname },
+                        submitLabel: .next
+                    )
                 }
 
                 Cell(
                     title: L10n.surname,
                     status: viewModel.fieldsStatuses[.surname]
                 ) {
-                    TextField(placeholder: L10n.enter, text: $viewModel.surname)
+                    TextField(
+                        field: .surname,
+                        placeholder: L10n.enter,
+                        text: $viewModel.surname,
+                        focus: $focus,
+                        onSubmit: { focus = .dateOfBirth },
+                        submitLabel: .next
+                    )
                 }
             }
         }
@@ -114,7 +140,10 @@ struct StrigaRegistrationFirstStepView: View {
                     title: L10n.dateOfBirth,
                     status: viewModel.fieldsStatuses[.dateOfBirth]
                 ) {
-                    StrigaRegistrationDateTextField(text: $viewModel.dateOfBirth)
+                    StrigaRegistrationDateTextField(
+                        text: $viewModel.dateOfBirth,
+                        focus: $focus
+                    )
                 }
 
                 Cell(
@@ -151,19 +180,5 @@ struct StrigaRegistrationFirstStepView_Previews: PreviewProvider {
         StrigaRegistrationFirstStepView(
             viewModel: StrigaRegistrationFirstStepViewModel(country: Country(name: "France", code: "FR", dialCode: "", emoji: "🇫🇷", alpha3Code: "FRA"))
         )
-    }
-}
-
-struct StrigaRegistrationSectionView: View {
-    var title: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
-            Text(title.uppercased())
-                .apply(style: .caps)
-                .foregroundColor(Color(Asset.Colors.night.color))
-        }
-            .frame(minHeight: 33)
     }
 }

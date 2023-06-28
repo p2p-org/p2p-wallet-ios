@@ -6,15 +6,6 @@ import PhoneNumberKit
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 
-    enum Field {
-        case email
-        case phoneNumber
-        case firstName
-        case surname
-        case dateOfBirth
-        case countryOfBirth
-    }
-
     // Dependencies
     @Injected private var service: BankTransferService
     @Injected private var countriesService: CountriesAPI
@@ -47,7 +38,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     let choosePhoneCountryCode = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
-    var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
+    var fieldsStatuses = [StrigaRegistrationField: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountryOfBirth: Country
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
@@ -203,7 +194,7 @@ private extension StrigaRegistrationFirstStepViewModel {
         }
     }
 
-    func validate(credential: String, field: Field) {
+    func validate(credential: String, field: StrigaRegistrationField) {
         if credential.trimmed().isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
         } else if credential.count < Constants.minCredentialSymbols {

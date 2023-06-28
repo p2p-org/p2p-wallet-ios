@@ -5,22 +5,30 @@ import CountriesAPI
 
 struct StrigaRegistrationPhoneTextField: View {
 
+    private let field = StrigaRegistrationField.phoneNumber
+
     @Binding private var trackedText: String
     @Binding private var phoneNumber: PhoneNumber?
     @Binding private var country: Country?
 
     @State private var text: String = ""
     @State private var underlyingString: String = ""
+
     private let phoneNumberKit: PhoneNumberKit
-    private let action: () -> Void
+    private let countryTapped: () -> Void
     private let partialFormatter: PartialFormatter
+
+    @Binding private var focus: StrigaRegistrationField?
+    @FocusState private var isFocused: StrigaRegistrationField?
 
     init(
         text: Binding<String>,
         phoneNumber: Binding<PhoneNumber?>,
         country: Binding<Country?>,
-        action: @escaping () -> Void
+        countryTapped: @escaping () -> Void,
+        focus: Binding<StrigaRegistrationField?>
     ) {
+        self._focus = focus
         _trackedText = text
         underlyingString = text.wrappedValue
         _phoneNumber = phoneNumber
@@ -28,7 +36,7 @@ struct StrigaRegistrationPhoneTextField: View {
         let numberKit = PhoneNumberKit()
         self.phoneNumberKit = numberKit
         self.partialFormatter = PartialFormatter(phoneNumberKit: numberKit, withPrefix: true)
-        self.action = action
+        self.countryTapped = countryTapped
     }
 
     var body: some View {
@@ -42,7 +50,7 @@ struct StrigaRegistrationPhoneTextField: View {
                     .foregroundColor(Color(asset: Asset.Colors.night))
                     .frame(width: 8, height: 5)
             }.onTapGesture {
-                action()
+                countryTapped()
             }
 
             HStack(spacing: 4) {
@@ -50,17 +58,28 @@ struct StrigaRegistrationPhoneTextField: View {
                     .apply(style: .title2)
                     .foregroundColor(Color(asset: Asset.Colors.night))
 
-                TextField(L10n.enter, text: $text, onEditingChanged: { changed in
-                    guard !changed else { return }
-                    // updating value on unfocus
-                    updateUnderlyingValue()
-                }, onCommit: updateUnderlyingValue)
+                TextField(
+                    L10n.enter,
+                    text: $text,
+                    onEditingChanged: { changed in
+                        if changed {
+                            focus = field
+                        } else {
+                            updateUnderlyingValue() // updating value on unfocus
+                        }
+                    },
+                    onCommit: updateUnderlyingValue
+                )
                 .font(uiFont: .font(of: .title2))
                 .foregroundColor(Color(asset: Asset.Colors.night))
                 .keyboardType(.numberPad)
                 .onAppear(perform: { updateEnteredString(newUnderlyingString: underlyingString) })
                 .onChange(of: text, perform: updateUndelyingString)
                 .onChange(of: underlyingString, perform: updateEnteredString)
+                .onChange(of: focus, perform: { newValue in
+                    self.isFocused = newValue
+                })
+                .focused(self.$isFocused, equals: field)
 
                 if !text.isEmpty {
                     Button(action: { text = "" }) {
