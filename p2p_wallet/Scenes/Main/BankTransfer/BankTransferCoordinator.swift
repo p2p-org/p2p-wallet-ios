@@ -133,5 +133,5 @@ enum BankTransferStep {
     case otp
     case kyc
     case kycPendingReview
-    case transfer(UserEURAccount)
+    case transfer(EURUserAccount)
 }

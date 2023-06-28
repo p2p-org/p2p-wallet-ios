@@ -4,9 +4,9 @@ import BankTransfer
 
 final class IBANDetailsCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
-    private let eurAccount: UserEURAccount
+    private let eurAccount: EURUserAccount
 
-    init(navigationController: UINavigationController, eurAccount: UserEURAccount) {
+    init(navigationController: UINavigationController, eurAccount: EURUserAccount) {
         self.navigationController = navigationController
         self.eurAccount = eurAccount
     }

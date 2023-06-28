@@ -11,12 +11,12 @@ final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
     @Published var items: [any Renderable] = []
     let learnMore = PassthroughSubject<Void, Never>()
 
-    init(eurAccount: UserEURAccount) {
+    init(eurAccount: EURUserAccount) {
         super.init()
         self.items = self.makeItems(from: eurAccount)
     }
 
-    private func makeItems(from account: UserEURAccount) -> [any Renderable] {
+    private func makeItems(from account: EURUserAccount) -> [any Renderable] {
         return [
             IBANDetailsCellViewItem(title: L10n.iban, subtitle: account.iban ?? "") { [weak self] in
                 self?.copy(value: account.iban)

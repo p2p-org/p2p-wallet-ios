@@ -1,17 +1,8 @@
 public struct UserCommonInfo: Codable {
     public let firstName: String?
     public let lastName: String?
-    public let nationality: String?
-    public let placeOfBirth: String?
+    public let placeOfBirth: String? // alpha3Code
     public let dateOfBirth: DateOfBirth?
-
-    public init(firstName: String?, lastName: String?, nationality: String?, placeOfBirth: String?, dateOfBirth: DateOfBirth?) {
-        self.firstName = firstName
-        self.lastName = lastName
-        self.nationality = nationality
-        self.placeOfBirth = placeOfBirth
-        self.dateOfBirth = dateOfBirth
-    }
 }
 
 public struct DateOfBirth: Codable {

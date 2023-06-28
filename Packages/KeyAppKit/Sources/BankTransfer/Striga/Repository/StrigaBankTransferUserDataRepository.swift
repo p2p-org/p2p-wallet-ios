@@ -10,6 +10,8 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     private let localProvider: StrigaLocalProvider
     private let remoteProvider: StrigaRemoteProvider
     private let metadataProvider: StrigaMetadataProvider
+
+    // TODO: Consider removing commonInfoProvider from StrigaBankTransferUserDataRepository, because when more bank transfer providers will be added, we will need to have more general logic for this
     private let commonInfoProvider: CommonInfoLocalProvider
 
     // MARK: - Initializer
@@ -101,7 +103,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         let commonInfo = UserCommonInfo(
             firstName: data.firstName,
             lastName: data.lastName,
-            nationality: "",
             placeOfBirth: data.placeOfBirth,
             dateOfBirth: DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day)
         )
@@ -179,18 +180,18 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 endDate: Date(),
                 page: 1
             ).wallets.map { strigaWallet in
-                var eur: UserEURAccount?
+                var eur: EURUserAccount?
                 if let eurAccount = strigaWallet.accounts.eur {
-                    eur = UserEURAccount(
+                    eur = EURUserAccount(
                         accountID: eurAccount.accountID,
                         currency: eurAccount.currency,
                         createdAt: eurAccount.createdAt,
                         enriched: false
                     )
                 }
-                var usdc: UserUSDCAccount?
+                var usdc: USDCUserAccount?
                 if let usdcAccount = strigaWallet.accounts.usdc {
-                    usdc = UserUSDCAccount(
+                    usdc = USDCUserAccount(
                         accountID: usdcAccount.accountID,
                         currency: usdcAccount.currency,
                         createdAt: usdcAccount.createdAt,

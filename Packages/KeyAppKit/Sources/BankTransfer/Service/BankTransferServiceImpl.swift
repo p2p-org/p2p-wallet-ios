@@ -158,12 +158,12 @@ extension BankTransferServiceImpl: BankTransferService {
 
         if let eur = wallets?.first?.accounts.eur, !eur.enriched {
             let response: StrigaEnrichedEURAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: eur.accountID)
-            wallets?[0].accounts.eur = UserEURAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response?.iban, bic: response?.bic, bankAccountHolderName: response?.bankAccountHolderName)
+            wallets?[0].accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response?.iban, bic: response?.bic, bankAccountHolderName: response?.bankAccountHolderName)
         }
 
         if let usdc = wallets?.first?.accounts.usdc, !usdc.enriched {
             let response: StrigaEnrichedUSDCAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: usdc.accountID)
-            wallets?[0].accounts.usdc = UserUSDCAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response?.blockchainDepositAddress)
+            wallets?[0].accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response?.blockchainDepositAddress)
         }
 
         return wallets ?? []

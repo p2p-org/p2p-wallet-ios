@@ -4,11 +4,11 @@ public struct UserWallet: Codable {
 }
 
 public struct UserAccounts: Codable {
-    public var eur: UserEURAccount?
-    public var usdc: UserUSDCAccount?
+    public var eur: EURUserAccount?
+    public var usdc: USDCUserAccount?
 }
 
-public struct UserEURAccount: Codable {
+public struct EURUserAccount: Codable {
     public let accountID: String
     public let currency: String
     public let createdAt: String
@@ -28,7 +28,7 @@ public struct UserEURAccount: Codable {
     }
 }
 
-public struct UserUSDCAccount: Codable {
+public struct USDCUserAccount: Codable {
     public let accountID: String
     public let currency: String
     public let createdAt: String
