@@ -75,34 +75,6 @@ extension AppEventHandler: ChangeThemeResponder {
     }
 }
 
-// MARK: - DeviceOwnerAuthenticationHandler
-
-extension AppEventHandler: DeviceOwnerAuthenticationHandler {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
-        let myContext = LAContext()
-
-        var error: NSError?
-        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            DispatchQueue.main.async {
-                onFailure?(errorToString(error))
-            }
-            return
-        }
-
-        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { success, error in
-            guard success else {
-                DispatchQueue.main.async {
-                    onFailure?(errorToString(error))
-                }
-                return
-            }
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
-    }
-}
-
 // MARK: - Helpers
 
 private func errorToString(_ error: Error?) -> String? {
