@@ -33,7 +33,6 @@ extension Resolver {
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
-            .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
             .implements(ChangeThemeResponder.self)
