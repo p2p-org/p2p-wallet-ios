@@ -362,10 +362,10 @@ public actor TKeyJSFacade: TKeyFacade {
         )
     }
 
-    public func refreshDeviceShare(userData: String) async throws -> RefreshDeviceShareResult {
+    public func refreshDeviceShare() async throws -> RefreshDeviceShareResult {
         let result = try await facadeInstance?.invokeAsyncMethod(
             "refreshDeviceShare",
-            withArguments: [userData]
+            withArguments: []
         )
 
         guard let deviceShare = try await result?.toJSON() else {

@@ -57,13 +57,9 @@ public class DeviceShareMigrationService {
 
         // Update metadata
         currentMetadata.deviceName = Device.currentDevice()
-        let serializedMetadata = try currentMetadata.serialize()
-        guard let serializedMetadataStr = String(data: serializedMetadata, encoding: .utf8) else {
-            throw errorObserver.watchError(Error.metadataError)
-        }
 
         // Request a new device share for current device
-        let result = try await facade.refreshDeviceShare(userData: serializedMetadataStr)
+        let result = try await facade.refreshDeviceShare()
 
         // Save new device share to current device
         deviceShareStorage.save(deviceShare: result.share)
