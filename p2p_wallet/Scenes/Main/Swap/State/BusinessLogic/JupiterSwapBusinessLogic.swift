@@ -243,7 +243,7 @@ enum JupiterSwapBusinessLogic {
         }
 
         do {
-            guard var route = state.route else {
+            guard let route = state.route else {
                 return state.error(.routeIsNotFound)
             }
 
@@ -260,12 +260,14 @@ enum JupiterSwapBusinessLogic {
                     services: services
                 )
                 
-                if let swapTransaction {
+                if let swapTransaction, let route = fixedRoutes.first {
                     return state.modified {
-                        $0.route = fixedRoutes.first
+                        $0.route = route
                         $0.routes = fixedRoutes // Replace routes only with available ones
                         $0.status = .ready
                         $0.swapTransaction = swapTransaction
+                        $0.amountTo = UInt64(route.outAmount)?
+                            .convertToBalance(decimals: state.toToken.token.decimals)
                     }
                 } else {
                     // If there is no swapTransaction, then the state is "routeIsNotFound"
@@ -274,6 +276,7 @@ enum JupiterSwapBusinessLogic {
                         $0.routes = []
                         $0.status = .error(reason: .routeIsNotFound)
                         $0.swapTransaction = nil
+                        $0.amountTo = nil
                     }
                 }
                 
