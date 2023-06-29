@@ -52,14 +52,26 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
 
             return vc
 
-        case let .block(until, phoneNumber, solPrivateKey):
-            let title = L10n.confirmationCodeLimitHit
-            let contentSubtitle: (_ value: Any) -> String = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
+        case let .block(until, phoneNumber, solPrivateKey, reason):
+            let title: String
+            let subtitle: (_ value: Any) -> String
+            
+            switch reason {
+            case .blockEnterOTP:
+                title = L10n.confirmationCodeLimitHit
+                subtitle = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
+            case .blockEnterPhoneNumber:
+                title = L10n.itSOkayToBeWrong
+                subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
+            case .blockResend:
+                title = L10n.soLetSBreathe
+                subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
+            }
 
             let view = OnboardingBlockScreen(
                 primaryButtonAction: L10n.back,
                 contentTitle: title,
-                contentSubtitle: contentSubtitle,
+                contentSubtitle: subtitle,
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .back } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockValidate } },

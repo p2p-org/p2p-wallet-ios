@@ -34,21 +34,21 @@ struct OnboardingBlockScreen: View {
                     subtitle: contentSubtitle(formattedCountDown)
                 )
             )
-                .onAppear { formatCountdown() }
-                .onReceive(timer) { _ in
-                    if Date() > untilTimestamp {
-                        timer.upstream.connect().cancel()
+            .onAppear { formatCountdown() }
+            .onReceive(timer) { _ in
+                if Date() > untilTimestamp {
+                    timer.upstream.connect().cancel()
 
-                        Task {
-                            guard loading == false else { return }
-                            loading = true
-                            defer { loading = false }
-                            do { try await onCompletion?() }
-                        }
+                    Task {
+                        guard loading == false else { return }
+                        loading = true
+                        defer { loading = false }
+                        do { try await onCompletion?() }
                     }
-                    formatCountdown()
                 }
-                .padding(.bottom, 48)
+                formatCountdown()
+            }
+            .padding(.bottom, 48)
 
             BottomActionContainer {
                 VStack {
@@ -70,6 +70,7 @@ struct OnboardingBlockScreen: View {
                 }
             }
         }
+        .ignoresSafeArea()
         .onboardingNavigationBar(title: "", onInfo: onInfo)
     }
 
@@ -90,5 +91,16 @@ struct OnboardingBlockScreen: View {
         }
 
         formattedCountDown = "\(formatter.string(from: interval)!) \(interval > 60 ? "min" : "sec")"
+    }
+}
+
+struct OnboardingBlockScreen_Previews: PreviewProvider {
+    static var previews: some View {
+        OnboardingBlockScreen(
+            primaryButtonAction: "Recovery Kit",
+            contentTitle: L10n.soLetSBreathe,
+            contentSubtitle: L10n.YouDidnTUseAnyOf5Codes
+                .forYourSafetyWeHaveFrozenYourAccountFor
+        ) {} onCompletion: {} onTermsOfService: {} onPrivacyPolicy: {} onInfo: {}
     }
 }

@@ -44,7 +44,7 @@ public enum ReAuthCustomShareState: State, Equatable {
         solPrivateKey: Data,
         resendCounter: Wrapper<ResendCounter>
     )
-    case block(until: Date, phoneNumber: String, solPrivateKey: Data)
+    case block(until: Date, phoneNumber: String, solPrivateKey: Data, reason: PhoneFlowBlockReason)
 
     case finish(result: ReAuthenticationCustomShareResult)
 
@@ -85,41 +85,68 @@ public enum ReAuthCustomShareState: State, Equatable {
 
         switch event {
         case .start:
-            try await provider.apiGateway.restoreWallet(
-                solPrivateKey: solPrivateKey,
-                phone: phoneNumber,
-                channel: .sms,
-                timestampDevice: Date()
-            )
+            do {
+                try await provider.apiGateway.restoreWallet(
+                    solPrivateKey: solPrivateKey,
+                    phone: phoneNumber,
+                    channel: .sms,
+                    timestampDevice: Date()
+                )
 
-            return self
+                return self
+            } catch let error as APIGatewayCooldownError {
+                return .block(
+                    until: Date() + error.cooldown,
+                    phoneNumber: phoneNumber,
+                    solPrivateKey: solPrivateKey,
+                    reason: .blockResend
+                )
+            }
 
         case let .enterOTP(code):
-            let result = try await provider.apiGateway.confirmRestoreWallet(
-                solanaPrivateKey: solPrivateKey,
-                phone: phoneNumber,
-                otpCode: code,
-                timestampDevice: Date()
-            )
-
-            return .finish(
-                result: ReAuthenticationCustomShareResult(
-                    customShare: result.encryptedShare,
-                    encryptedMnemonic: result.encryptedPayload
+            do {
+                let result = try await provider.apiGateway.confirmRestoreWallet(
+                    solanaPrivateKey: solPrivateKey,
+                    phone: phoneNumber,
+                    otpCode: code,
+                    timestampDevice: Date()
                 )
-            )
+
+                return .finish(
+                    result: ReAuthenticationCustomShareResult(
+                        customShare: result.encryptedShare,
+                        encryptedMnemonic: result.encryptedPayload
+                    )
+                )
+            } catch let error as APIGatewayCooldownError {
+                return .block(
+                    until: Date() + error.cooldown,
+                    phoneNumber: phoneNumber,
+                    solPrivateKey: solPrivateKey,
+                    reason: .blockResend
+                )
+            }
 
         case .resendOTP:
-            try await provider.apiGateway.restoreWallet(
-                solPrivateKey: solPrivateKey,
-                phone: phoneNumber,
-                channel: .sms,
-                timestampDevice: Date()
-            )
+            do {
+                try await provider.apiGateway.restoreWallet(
+                    solPrivateKey: solPrivateKey,
+                    phone: phoneNumber,
+                    channel: .sms,
+                    timestampDevice: Date()
+                )
 
-            resendCounter.value = resendCounter.value.incremented()
+                resendCounter.value = resendCounter.value.incremented()
 
-            return self
+                return self
+            } catch let error as APIGatewayCooldownError {
+                return .block(
+                    until: Date() + error.cooldown,
+                    phoneNumber: phoneNumber,
+                    solPrivateKey: solPrivateKey,
+                    reason: .blockResend
+                )
+            }
 
         case .back:
             return .cancel
@@ -134,7 +161,7 @@ public enum ReAuthCustomShareState: State, Equatable {
         event: Event,
         provider _: Provider
     ) async throws -> Self {
-        guard case let .block(until, phoneNumber, solPrivateKey) = state else {
+        guard case let .block(until, phoneNumber, solPrivateKey, _) = state else {
             throw StateMachineError.invalidState
         }
 

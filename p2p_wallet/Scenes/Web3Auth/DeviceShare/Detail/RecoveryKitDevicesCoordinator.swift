@@ -86,7 +86,12 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
         let walletMetadata: WalletMetadataService = Resolver.resolve()
 
         guard let metadata = walletMetadata.metadata.value else {
+            // Notify
             notificationService.showInAppNotification(.message("Service isn't ready"))
+
+            // Finish
+            guard let prevVC = prevVC else { return }
+            navigationController.popToViewController(prevVC, animated: true)
             result.send(completion: .finished)
 
             return
@@ -130,7 +135,9 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                 case let .failure(error):
                     self?.notificationService.showInAppNotification(.error(error))
                 case .cancel:
-                    return
+                    guard let prevVC = self?.prevVC else { return }
+                    self?.navigationController.popToViewController(prevVC, animated: true)
+                    self?.result.send(completion: .finished)
                 }
             }
             .store(in: &subscriptions)
