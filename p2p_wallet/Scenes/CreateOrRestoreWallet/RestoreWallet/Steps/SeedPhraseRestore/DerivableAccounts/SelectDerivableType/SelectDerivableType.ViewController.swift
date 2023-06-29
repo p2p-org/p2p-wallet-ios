@@ -1,6 +1,7 @@
 import Foundation
 import KeyAppUI
 import SolanaSwift
+import UIKit
 
 extension SelectDerivableType {
     typealias Callback = (DerivablePath.DerivableType) -> Void

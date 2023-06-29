@@ -4,6 +4,8 @@ import Jupiter
 import SolanaSwift
 import AnalyticsManager
 import Task_retrying
+import Foundation
+import UIKit
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 

@@ -1,12 +1,6 @@
-//
-//  NewHistoryListItem+Mock.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 import SolanaSwift
+import UIKit
 
 struct MockedRendableListTransactionItem: RendableListTransactionItem {
     var id: String

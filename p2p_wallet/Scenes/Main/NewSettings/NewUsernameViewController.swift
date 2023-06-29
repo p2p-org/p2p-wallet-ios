@@ -1,14 +1,9 @@
-//
-//  Settings.UsernameViewController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 12/10/2021.
-//
-
 import Foundation
 import Resolver
 import KeyAppUI
 import SolanaSwift
+import UIKit
+import BEPureLayout
 
 class NewUsernameViewController: p2p_wallet.BaseViewController {
     @Injected private var imageSaver: ImageSaverType

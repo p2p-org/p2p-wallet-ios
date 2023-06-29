@@ -1,11 +1,6 @@
-//
-//  WLMarkdownVC.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 26/10/2021.
-//
-
 import Foundation
+import UIKit
+import BEPureLayout
 
 class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {

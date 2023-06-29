@@ -11,6 +11,7 @@ import KeyAppUI
 import Resolver
 import UIKit
 import Combine
+import BEPureLayout
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>

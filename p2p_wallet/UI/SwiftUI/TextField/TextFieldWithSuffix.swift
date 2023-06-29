@@ -1,12 +1,7 @@
-//
-//  TextFieldWithSuffix.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 01.03.2023.
-//
-
 import SwiftUI
 import KeyAppUI
+import UIKit
+import BEPureLayout
 
 struct TextFieldWithSuffix: UIViewRepresentable {
     @Binding var text: String

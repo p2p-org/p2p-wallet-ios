@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import UIKit
 
 protocol ChangeLanguageResponder {
     func languageDidChange(to: LocalizedLanguage)

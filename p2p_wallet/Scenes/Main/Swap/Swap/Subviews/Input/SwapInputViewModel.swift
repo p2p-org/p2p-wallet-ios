@@ -2,6 +2,7 @@ import Combine
 import Resolver
 import KeyAppUI
 import AnalyticsManager
+import Foundation
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
 

@@ -2,6 +2,7 @@ import Jupiter
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import Foundation
 
 extension JupiterSwapBusinessLogic {
     static func calculateRoute(
