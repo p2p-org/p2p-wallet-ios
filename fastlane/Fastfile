@@ -209,15 +209,13 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   update_xcconfig
 
   # Get the remote origin URL
-  remote_url = sh("git config --get remote.origin.url").strip
+  remote_url = sh("git config --get remote.origin.url", log: false).strip
 
   # Get the tags matching the pattern (build_prefix.*)
   tags = sh("git ls-remote --tags #{remote_url} '#{tag_prefix}/#{build_prefix.to_s}.*'").strip.split("\n")
 
   # Extract the tag names from the ls-remote output
   tag_names = tags.map { |tag| tag.split("\t")[1].split("/").last }
-
-  puts "Pushed tags suffix #{tag_names}"
 
   # Find last build number
   if tag_names.empty?
