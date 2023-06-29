@@ -5,8 +5,6 @@ import OrcaSwapSwift
 protocol RawTransactionType {
     func createRequest() async throws -> String
     var mainDescription: String { get }
-    var payingFeeWallet: Wallet? { get }
-    var feeAmount: FeeAmount { get }
 }
 
 struct SwapMetaInfo {
@@ -22,6 +20,8 @@ protocol SwapRawTransactionType: RawTransactionType {
     var toAmount: Double { get }
     var slippage: Double { get }
     var metaInfo: SwapMetaInfo { get }
+    var payingFeeWallet: Wallet? { get }
+    var feeAmount: FeeAmount { get }
 }
 
 struct OrcaSwapTransaction: SwapRawTransactionType {
