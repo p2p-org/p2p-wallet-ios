@@ -58,11 +58,16 @@ public class DeviceShareMigrationService {
         // Update metadata
         currentMetadata.deviceName = Device.currentDevice()
 
-        // Request a new device share for current device
-        let result = try await facade.refreshDeviceShare()
+        do {
+            // Request a new device share for current device
+            let result = try await facade.refreshDeviceShare()
 
-        // Save new device share to current device
-        deviceShareStorage.save(deviceShare: result.share)
+            // Save new device share to current device
+            deviceShareStorage.save(deviceShare: result.share)
+        } catch {
+            errorObserver.handleError(error)
+            throw error
+        }
 
         await metadataService.update(currentMetadata)
     }

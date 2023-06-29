@@ -24,7 +24,7 @@ struct ReAuthSocialSignInView: View {
             BottomActionContainer {
                 VStack(spacing: .zero) {
                     NewTextButton(
-                        title: viewModel.buttonTitle,
+                        title: viewModel.provider.title,
                         size: .large,
                         style: .inverted,
                         expandable: true,
@@ -56,6 +56,15 @@ struct ReAuthSocialSignInView: View {
 }
 
 private extension SocialProvider {
+    var title: String {
+        switch self {
+        case .apple:
+            return L10n.continueWithApple
+        case .google:
+            return L10n.continueWithGoogle
+        }
+    }
+
     var image: UIImage {
         switch self {
         case .apple:

@@ -16,12 +16,11 @@ class ReAuthSocialSignInViewModel: BaseViewModel, ObservableObject {
     @Published var loading: Bool = false
 
     @Published var provider: SocialProvider
-    @Published var buttonTitle: String = L10n.continueWithGoogle
 
     let onContinue: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
 
     let onClose: PassthroughSubject<Void, Never> = .init()
-    
+
     init(socialProvider: SocialProvider) {
         provider = socialProvider
     }
@@ -29,14 +28,14 @@ class ReAuthSocialSignInViewModel: BaseViewModel, ObservableObject {
     func signIn() {
         loading = true
         onContinue.sendProcess { [weak self] error in
-            self?.loading = false 
+            self?.loading = false
 
             if let error {
                 self?.notificationService.showInAppNotification(.error(error))
             }
         }
     }
-    
+
     func close() {
         onClose.send()
     }

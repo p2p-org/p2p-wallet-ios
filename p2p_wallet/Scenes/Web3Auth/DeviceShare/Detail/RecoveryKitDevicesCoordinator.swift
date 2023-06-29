@@ -157,8 +157,8 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                     self?.navigationController.popToViewController(prevVC, animated: true)
                     self?.result.send(completion: .finished)
 
-                case let .error(error):
-                    self?.notificationService.showInAppNotification(.error(error))
+                case .error:
+                    self?.notificationService.showInAppNotification(.message(L10n.somethingWentWrong))
                 }
             }
             .store(in: &subscriptions)
