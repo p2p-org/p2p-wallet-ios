@@ -24,7 +24,7 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
         let stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             UILabel(text: title, textSize: 21, weight: .medium)
                 .padding(.init(x: 20, y: 0))
-            UIView.defaultSeparator()
+            UIView.separator(height: 1, color: .separator)
             BEStackViewSpacing(0)
             markdownView
         }
