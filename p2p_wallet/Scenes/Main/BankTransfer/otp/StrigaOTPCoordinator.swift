@@ -14,8 +14,12 @@ enum StrigaOTPCoordinatorResult {
 
 final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
+    // MARK: - Dependencies
+
     @Injected var bankTransfer: BankTransferService
     @Injected private var helpLauncher: HelpCenterLauncher
+
+    // MARK: - Properties
 
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: ResendCounter
@@ -31,22 +35,29 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     private let viewController: UINavigationController
     private let phone: String
 
+    // MARK: - Initialization
+
     init(viewController: UINavigationController, phone: String) {
         self.viewController = viewController
         self.phone = phone
     }
 
+    // MARK: - Methods
+
     override func start() -> AnyPublisher<StrigaOTPCoordinatorResult, Never> {
+        // Create viewModel
         let viewModel = EnterSMSCodeViewModel(
             phone: phone,
             attemptCounter: Wrapper(resendCounter),
             strategy: .striga
         )
+        // Create viewController
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
         controller.title = L10n.stepOf(3, 3)
         controller.hidesBottomBarWhenPushed = true
         controller.navigationItem.largeTitleDisplayMode = .never
 
+        // Handle on confirm
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak self, weak viewModel] otp in
             viewModel?.isLoading = true
             defer {
@@ -69,12 +80,14 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             }
         }.store(in: &subscriptions)
 
+        // Handle show info
         viewModel.coordinatorIO.showInfo
             .sink(receiveValue: { [weak self] in
                 self?.helpLauncher.launch()
             })
             .store(in: &subscriptions)
 
+        // Handle on resend
         viewModel.coordinatorIO.onResend.sinkAsync { [weak self, weak viewModel] process in
             process.start {
                 guard let self, let viewModel else { return }
@@ -92,6 +105,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             }
         }.store(in: &subscriptions)
 
+        // Handle going back
         viewModel.coordinatorIO.goBack.sinkAsync { [weak self, weak viewModel, unowned controller] in
             viewModel?.isLoading = true
             self?.viewController.showAlert(
@@ -110,6 +124,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
+        // Handle initial event
         if let lastResendErrorDate, lastResendErrorDate.timeIntervalSinceNow > 0 {
             handleOTPExceededDailyLimitError()
         } else if let lastConfirmErrorData, lastConfirmErrorData.timeIntervalSinceNow > 0 {
@@ -133,6 +148,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             }
         }
 
+        // Listent to verified result
         numberVerifiedSubject.flatMap { [unowned self] _ in
             coordinate(
                 to: StrigaOTPSuccessCoordinator(
