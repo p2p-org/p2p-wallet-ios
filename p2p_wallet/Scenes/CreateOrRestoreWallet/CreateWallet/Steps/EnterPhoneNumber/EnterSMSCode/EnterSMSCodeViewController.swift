@@ -68,12 +68,15 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                     label.textAlignment = .center
                 }
 
-                BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
+                BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true)
+                    .bind(smsInputRef)
                     .setup { input in
                         input.textField?.keyboardType = .numberPad
                         input.constantPlaceholder = "••• •••"
                         input.textField?.textContentType = .oneTimeCode
-                    }.frame(width: 180).padding(.init(only: .top, inset: 28))
+                    }
+                    .frame(width: 180)
+                    .padding(.init(only: .top, inset: 28))
 
                 BEHStack {
                     UIButton().bind(resendButtonRef).setup { _ in }

@@ -99,7 +99,10 @@ open class BaseTextFieldView: BECompositionView {
             UILabel().withAttributedText(
                 .attributedString(with: "", of: .label1, weight: .regular)
                 .withForegroundColor(Asset.Colors.mountain.color)
-            ).bind(bottomTipLabel).padding(.init(top: 5, left: 8, bottom: 0, right: 0))
+            )
+                .bind(bottomTipLabel)
+                .centeredHorizontallyView
+                .padding(.init(top: 5, left: 0, bottom: 0, right: 0))
         }
     }
     
