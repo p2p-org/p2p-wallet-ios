@@ -142,9 +142,13 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
         }
     }
 
-    private func write(userWallet: UserWallet, metadata: WalletMetaData) async throws {
+    private func write(userWallet: UserWallet, metadata: WalletMetaData) async {
         for provider in remoteMetadataProvider {
-            try await provider.save(for: userWallet, metadata: metadata)
+            do {
+                try await provider.save(for: userWallet, metadata: metadata)
+            } catch {
+                errorObserver.handleError(error)
+            }
         }
     }
 
