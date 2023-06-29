@@ -191,11 +191,6 @@ def commit_changes
   push_git_tags(tag: tag_name)
 end 
 
-def update_xcconfig
-  config_url = "../p2p_wallet/Config.xcconfig"
-  sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
-end
-
 def upload_dsym_to_analytic_providers
   sentry_upload_dsym(
     auth_token: SENTRY_TOKEN,
@@ -205,9 +200,6 @@ def upload_dsym_to_analytic_providers
 end
 
 def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
-  # update xcconfig
-  update_xcconfig
-
   # Get the remote origin URL
   remote_url = sh("git config --get remote.origin.url", log: false).strip
 
@@ -315,9 +307,6 @@ platform :ios do
   end
 
   lane :release do
-    # update xcconfig
-    update_xcconfig
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
