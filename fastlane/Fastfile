@@ -208,8 +208,13 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   # update xcconfig
   update_xcconfig
 
-  # get number of builds released of this feature
-  number_of_released_builds = 0
+  # Get the last released number matching the pattern
+  last_tag = last_git_tag(
+    pattern: "#{build_prefix.to_s}.*"
+  )
+  number_of_released_builds = last_tag ? last_tag.split('.').last.to_i : 0
+
+  # Increase the number to create new tag
   build_number = number_of_released_builds + 1
   current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
   while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
