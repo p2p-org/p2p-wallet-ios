@@ -129,7 +129,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         accountId: account.accountID,
                         token: token,
                         amount: .init(amount: BigUInt(account.availableBalance.toCent()), token: token),
-                        status: action?.status == .pending ? .isClamming : .readyToClaim
+                        status: action?.status == .processing ? .isClamming : .readyToClaim
                     )
                 ]
             }

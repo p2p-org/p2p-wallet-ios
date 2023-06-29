@@ -44,9 +44,6 @@ public class BankTransferUserActionConsumer: UserActionConsumer {
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
-            
-            self?.handle(event: Event.track(action.id, .pending))
-            sleep(2)
             self?.handle(event: Event.track(action.id, .processing))
             sleep(2)
             self?.handle(event: Event.track(action.id, .ready))
