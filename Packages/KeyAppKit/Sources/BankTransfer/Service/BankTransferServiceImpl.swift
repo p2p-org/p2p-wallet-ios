@@ -113,7 +113,7 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.claimVerify(userId: userId, challengeId: challengeId, ip: ip, verificationCode: OTP)
     }
     
-    public func claimResendSMS(OTP: String, challengeId: String) async throws {
+    public func claimResendSMS(challengeId: String) async throws {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.claimResendSMS(userId: userId, challengeId: challengeId)
     }

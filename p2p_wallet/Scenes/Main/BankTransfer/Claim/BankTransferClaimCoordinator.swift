@@ -22,12 +22,17 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     // MARK: - Properties
 
     private let navigationController: UINavigationController
+    private let transaction: StrigaClaimTransactionType
     
 
     // MARK: - Initialization
 
-    init(navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController,
+        transaction: StrigaClaimTransactionType
+    ) {
         self.navigationController = navigationController
+        self.transaction = transaction
     }
 
     // MARK: - Methods
@@ -46,11 +51,16 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         viewController: navigationController,
                         phone: phone,
                         verifyHandler: { [unowned self] otp in
-                            // TODO: - Verify otp
-//                            try await bankTransferService.transactionVeri
+                            try await bankTransferService.claimVerify(
+                                OTP: otp,
+                                challengeId: transaction.challengeId,
+                                ip: getIPAddress()
+                            )
                         },
                         resendHandler: { [unowned self] in
-                            // TODO: - Resend sms
+                            try await bankTransferService.claimResendSMS(
+                                challengeId: transaction.challengeId
+                            )
                         }
                     )
                 )
@@ -67,4 +77,38 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
             }
             .eraseToAnyPublisher()
     }
+}
+
+// MARK: - Helpers
+
+private func getIPAddress() -> String {
+    var address: String?
+    var ifaddr: UnsafeMutablePointer<ifaddrs>? = nil
+    if getifaddrs(&ifaddr) == 0 {
+        var ptr = ifaddr
+        while ptr != nil {
+            defer { ptr = ptr?.pointee.ifa_next }
+            
+            guard let interface = ptr?.pointee else { return "" }
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
+                
+                // wifi = ["en0"]
+                // wired = ["en2", "en3", "en4"]
+                // cellular = ["pdp_ip0","pdp_ip1","pdp_ip2","pdp_ip3"]
+                
+                let name: String = String(cString: (interface.ifa_name))
+                if  name == "en0" || name == "en2" || name == "en3" || name == "en4" || name == "pdp_ip0" || name == "pdp_ip1" || name == "pdp_ip2" || name == "pdp_ip3",
+                    let socklen = try? socklen_t((interface.ifa_addr.pointee.sa_len))
+                {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    
+                    getnameinfo(interface.ifa_addr, socklen, &hostname, socklen_t(hostname.count), nil, socklen_t(0), NI_NUMERICHOST)
+                    address = String(cString: hostname)
+                }
+            }
+        }
+        freeifaddrs(ifaddr)
+    }
+    return address ?? ""
 }

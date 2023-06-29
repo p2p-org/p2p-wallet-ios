@@ -23,5 +23,5 @@ public protocol BankTransferService {
     
     // MARK: - Claim
     func claimVerify(OTP: String, challengeId: String, ip: String) async throws
-    func claimResendSMS(OTP: String, challengeId: String) async throws
+    func claimResendSMS(challengeId: String) async throws
 }
