@@ -93,14 +93,23 @@ final class BankTransferCoordinator: Coordinator<Void> {
                     viewController: viewController,
                     phone: userData.mobileNumber ?? ""
                 )
-            ).map { result in
-                switch result {
-                case .verified:
-                    return BankTransferFlowResult.next
-                case .canceled:
-                    return BankTransferFlowResult.none
+            )
+                .flatMap { [unowned self] result in
+                    switch result {
+                    case .verified:
+                        return coordinate(
+                            to: StrigaOTPSuccessCoordinator(
+                                navigationController: viewController
+                            )
+                        )
+                            .map { _ in BankTransferFlowResult.next }
+                            .eraseToAnyPublisher()
+                    case .canceled:
+                        return Just(BankTransferFlowResult.none)
+                            .eraseToAnyPublisher()
+                    }
                 }
-            }.eraseToAnyPublisher()
+                .eraseToAnyPublisher()
         case .kyc:
             return coordinate(
                 to: KYCCoordinator(presentingViewController: viewController)

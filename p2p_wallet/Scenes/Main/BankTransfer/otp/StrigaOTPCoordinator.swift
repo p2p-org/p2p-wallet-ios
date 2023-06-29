@@ -28,8 +28,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     @SwiftyUserDefault(keyPath: \.strigaOTPResendErrorDate, options: .cached)
     private var lastResendErrorDate: Date?
 
-    private var numberVerifiedSubject = PassthroughSubject<Void, Never>()
-
     private let resultSubject = PassthroughSubject<StrigaOTPCoordinatorResult, Never>()
 
     private let viewController: UINavigationController
@@ -66,8 +64,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 }
                 do {
                     try await self?.bankTransfer.verify(OTP: otp)
-                    self?.numberVerifiedSubject.send(())
                     self?.resendCounter = .zero()
+                    self?.resultSubject.send(.verified)
                 } catch BankTransferError.otpExceededVerification {
                     self?.lastConfirmErrorData = Date().addingTimeInterval(60 * 60 * 24)
                     self?.handleOTPConfirmLimitError()
@@ -153,20 +151,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 }
             }
         }
-
-        // Listent to verified result
-        numberVerifiedSubject
-            .flatMap { [unowned self] _ in
-                coordinate(
-                    to: StrigaOTPSuccessCoordinator(
-                        navigationController: self.viewController
-                    )
-                )
-            }
-            .sink { [unowned self] _ in
-                resultSubject.send(.verified)
-            }
-            .store(in: &subscriptions)
 
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
