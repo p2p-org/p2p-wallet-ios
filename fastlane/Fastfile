@@ -210,7 +210,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
 
   # Get the last released number matching the pattern
   last_tag = last_git_tag(
-    pattern: "#{build_prefix.to_s}.*"
+    pattern: "#{tag_prefix}/#{build_prefix.to_s}.*"
   )
   number_of_released_builds = last_tag ? last_tag.split('.').last.to_i : 0
 
