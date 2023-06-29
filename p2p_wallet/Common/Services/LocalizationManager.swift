@@ -1,9 +1,4 @@
-//
-//  LocalizeManager.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 28.10.2021.
-//
+import Foundation
 
 protocol LocalizationManagerType: AnyObject {
     func selectableLanguages() -> [(LocalizedLanguage, Bool)]

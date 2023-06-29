@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import UIKit
 
 enum JupiterSwapBusinessLogic {
     static func shouldPerformAction(

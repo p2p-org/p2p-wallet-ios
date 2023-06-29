@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct CreateWalletAlertLoggerErrorMessage: Codable {
     let error: String

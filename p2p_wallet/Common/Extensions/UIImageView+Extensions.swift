@@ -1,13 +1,7 @@
-//
-//  UIImageView+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 13/11/2020.
-//
-
 import CoreImage.CIFilterBuiltins
 import Foundation
 import Kingfisher
+import UIKit
 
 extension UIImageView {
     static let qrCodeCache = NSCache<NSString, UIImage>()

@@ -1,11 +1,5 @@
-//
-//  UIColor+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 11/5/20.
-//
-
 import Foundation
+import UIKit
 
 extension UIColor {
     func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {

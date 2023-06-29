@@ -1,11 +1,6 @@
-//
-//  WLBottomSheet.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 11/12/20.
-//
-
 import Foundation
+import UIKit
+import BEPureLayout
 
 class WLBottomSheet: FlexibleHeightVC {
     init() {

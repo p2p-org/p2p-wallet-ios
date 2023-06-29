@@ -1,6 +1,7 @@
 import Foundation
 import AppsFlyerLib
 import AppTrackingTransparency
+import UIKit
 
 final class AppflyerAppDelegateService: NSObject, AppDelegateService {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {

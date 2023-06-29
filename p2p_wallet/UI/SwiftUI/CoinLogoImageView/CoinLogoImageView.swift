@@ -1,14 +1,8 @@
-//
-//  CoinLogoImageView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 13/01/2021.
-//
-
 import Foundation
 import JazziconSwift
 import SolanaSwift
 import UIKit
+import BEPureLayout
 
 class CoinLogoImageView: BEView {
     static var cachedJazziconSeeds = [String: UInt32]()

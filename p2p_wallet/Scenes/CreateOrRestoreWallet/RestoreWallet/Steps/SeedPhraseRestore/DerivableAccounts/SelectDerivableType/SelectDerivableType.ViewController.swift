@@ -1,6 +1,7 @@
 import Foundation
 import KeyAppUI
 import SolanaSwift
+import UIKit
 
 extension SelectDerivableType {
     typealias Callback = (DerivablePath.DerivableType) -> Void
@@ -41,7 +42,7 @@ extension SelectDerivableType {
                         textColor: .textSecondary,
                         textAlignment: .center
                     ).padding(.init(x: 0, y: 15))
-                    UIView.defaultSeparator()
+                    UIView.separator(height: 1, color: .separator)
 
                     // Derivable paths
                     DerivablePath.DerivableType
@@ -57,7 +58,7 @@ extension SelectDerivableType {
                                     UIView.spacer
                                     selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
                                 }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
-                                UIView.defaultSeparator()
+                                UIView.separator(height: 1, color: .separator)
                             }.withTag(index)
                                 .frame(height: 55)
                                 .onTap(self, action: #selector(onPathSelect))

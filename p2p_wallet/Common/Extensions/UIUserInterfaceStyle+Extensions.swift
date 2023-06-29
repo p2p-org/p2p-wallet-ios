@@ -1,11 +1,5 @@
-//
-//  UIUserInterfaceStyle+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/06/2021.
-//
-
 import Foundation
+import UIKit
 
 extension UIUserInterfaceStyle {
     var name: String {

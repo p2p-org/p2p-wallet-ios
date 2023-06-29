@@ -1,12 +1,5 @@
-//
-//  CMActionSheetPresentionController.swift
-//  Commun
-//
-//  Created by Chung Tran on 4/23/20.
-//  Copyright © 2020 Commun Limited. All rights reserved.
-//
-
 import Foundation
+import UIKit
 
 class FlexibleHeightPresentationController: DimmingPresentationController, ResizablePresentationController {
     // MARK: - Nested type

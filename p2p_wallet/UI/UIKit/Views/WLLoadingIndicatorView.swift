@@ -1,12 +1,7 @@
-//
-//  WLLoadingIndicatorView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/03/2021.
-//
-
 import Foundation
 import KeyAppUI
+import UIKit
+import BEPureLayout
 
 extension UIView {
     @discardableResult

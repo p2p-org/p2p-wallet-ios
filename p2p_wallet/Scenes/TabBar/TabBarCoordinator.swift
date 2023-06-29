@@ -1,10 +1,3 @@
-//
-//  TabBarCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 16.11.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,7 @@ import KeyAppBusiness
 import Resolver
 import Sell
 import SolanaSwift
+import UIKit
 
 final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
