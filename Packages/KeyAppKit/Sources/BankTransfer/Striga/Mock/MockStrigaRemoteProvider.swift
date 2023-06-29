@@ -124,11 +124,11 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         fatalError("Implementing")
     }
 
-    public func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse {
+    public func transactionResendOTP(userId: String, challengeId: String) async throws -> StrigaTransactionResendOTPResponse {
         fatalError("Implementing")
     }
 
-    public func transactionConfirmOTP(userId: String, challangeId: String, code: String, ip: String) async throws -> StrigaTransactionConfirmOTPResponse {
+    public func transactionConfirmOTP(userId: String, challengeId: String, code: String, ip: String) async throws -> StrigaTransactionConfirmOTPResponse {
         fatalError("Implementing")
     }
 }

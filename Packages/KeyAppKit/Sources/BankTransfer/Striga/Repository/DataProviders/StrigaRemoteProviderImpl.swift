@@ -163,14 +163,14 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 
     public func transactionResendOTP(
         userId: String,
-        challangeId: String
+        challengeId: String
     ) async throws -> StrigaTransactionResendOTPResponse {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.transactionResendOTP(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
-            challengeId: challangeId
+            challengeId: challengeId
         )
         return try await httpClient.request(
             endpoint: endpoint,
@@ -180,7 +180,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 
     public func transactionConfirmOTP(
         userId: String,
-        challangeId: String,
+        challengeId: String,
         code: String,
         ip: String
     ) async throws -> StrigaTransactionConfirmOTPResponse {
@@ -189,7 +189,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
-            challengeId: challangeId,
+            challengeId: challengeId,
             verificationCode: code,
             ip: ip
         )
