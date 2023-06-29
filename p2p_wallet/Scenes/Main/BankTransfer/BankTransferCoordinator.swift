@@ -5,11 +5,6 @@ import Foundation
 import Resolver
 import UIKit
 
-enum BankTransferCoordinatorResult {
-    case completed
-    case canceled
-}
-
 final class BankTransferCoordinator: Coordinator<Void> {
 
     @Injected private var bankTransferService: BankTransferService
@@ -91,16 +86,31 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: userData.mobileNumber ?? ""
+                    phone: userData.mobileNumber ?? "",
+                    verifyHandler: { otp in
+                        try await Resolver.resolve(BankTransferService.self).verify(OTP: otp)
+                    },
+                    resendHandler: {
+                        try await Resolver.resolve(BankTransferService.self).resendSMS()
+                    }
                 )
-            ).map { result in
-                switch result {
-                case .verified:
-                    return BankTransferFlowResult.next
-                case .canceled:
-                    return BankTransferFlowResult.none
+            )
+                .flatMap { [unowned self] result in
+                    switch result {
+                    case .verified:
+                        return coordinate(
+                            to: StrigaOTPSuccessCoordinator(
+                                navigationController: viewController
+                            )
+                        )
+                            .map { _ in BankTransferFlowResult.next }
+                            .eraseToAnyPublisher()
+                    case .canceled:
+                        return Just(BankTransferFlowResult.none)
+                            .eraseToAnyPublisher()
+                    }
                 }
-            }.eraseToAnyPublisher()
+                .eraseToAnyPublisher()
         case .kyc:
             return coordinate(
                 to: KYCCoordinator(presentingViewController: viewController)
