@@ -279,13 +279,24 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 if Task.isCancelled { return }
 
                 let solanaAccount = SolanaAccount(
-                    data: AccountBalance.nativeSolana(
-                        pubkey: owner,
-                        lamport: balance
-                    )
+                    address: owner,
+                    lamports: balance,
+                    token: .nativeSolana
                 )
 
-                let accounts = [solanaAccount] + resolved.map { SolanaAccount(data: $0, price: nil) }
+                let accounts = [solanaAccount] + resolved
+                    .map { accountBalance in
+                        guard let pubKey = accountBalance.pubkey else {
+                            return nil
+                        }
+
+                        return SolanaAccount(
+                            address: pubKey,
+                            lamports: accountBalance.lamports ?? 0,
+                            token: accountBalance.token
+                        )
+                    }
+                    .compactMap { $0 }
 
                 for account in accounts {
                     accountsSubject.send(account)

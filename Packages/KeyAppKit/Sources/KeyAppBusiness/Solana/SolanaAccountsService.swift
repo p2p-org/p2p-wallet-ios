@@ -64,7 +64,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         errorObservable: any ErrorObserver
     ) {
         // Setup async value
-        originStream = .init(initialItem: []) {
+        originStream = .init(initialItem: []) { () -> ([SolanaAccount]?, Error)
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
                 return (nil, Error.authorityError)
             }
@@ -84,10 +84,9 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                 )
 
                 let solanaAccount = Account(
-                    data: AccountBalance.nativeSolana(
-                        pubkey: accountAddress,
-                        lamport: balance
-                    )
+                    address: accountAddress,
+                    lamports: balance,
+                    token: .nativeSolana
                 )
 
                 newAccounts = [solanaAccount] + resolved.map { Account(data: $0, price: nil) }
@@ -133,7 +132,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
                 let matchIdx = state.value
                     .firstIndex {
-                        $0.data.token.address == account.data.token.address
+                        $0.token.address == account.token.address
                     }
 
                 if let matchIdx {
@@ -153,7 +152,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .asyncMap { state in
                 do {
                     return try await priceService.getPrices(
-                        tokens: state.value.map(\.data.token),
+                        tokens: state.value.map(\.token),
                         fiat: fiat
                     )
                 } catch {
@@ -202,7 +201,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 public extension Array where Element == SolanaAccountsService.Account {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
-        first(where: { $0.data.isNativeSOL })
+        first(where: { $0.token.isNativeSOL })
     }
 
     var totalAmountInCurrentFiat: Double {

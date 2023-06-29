@@ -14,7 +14,7 @@ final class SolanaAccountsAggregator: DataAggregator {
 
         let output = accounts.map { account in
             var account = account
-            let token = account.data.token
+            let token = account.token
 
             if let price = prices[token] {
                 let value: Decimal?
@@ -27,7 +27,7 @@ final class SolanaAccountsAggregator: DataAggregator {
                 account.price = TokenPrice(currencyCode: fiat, value: value, token: token)
 
                 // Legacy code
-                account.data.price = price
+                account.token.price = price
             }
 
             return account
