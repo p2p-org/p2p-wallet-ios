@@ -5,11 +5,6 @@ import Foundation
 import Resolver
 import UIKit
 
-enum BankTransferCoordinatorResult {
-    case completed
-    case canceled
-}
-
 final class BankTransferCoordinator: Coordinator<Void> {
 
     @Injected private var bankTransferService: BankTransferService
