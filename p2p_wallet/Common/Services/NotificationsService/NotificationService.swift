@@ -1,10 +1,3 @@
-//
-//  NotificationService.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 22/12/2021.
-//
-
 import AnalyticsManager
 import Foundation
 import KeyAppUI

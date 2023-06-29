@@ -1,10 +1,3 @@
-//
-//  WLMarkdownView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 26/10/2021.
-//
-
 import BEPureLayout
 import Down
 import Foundation

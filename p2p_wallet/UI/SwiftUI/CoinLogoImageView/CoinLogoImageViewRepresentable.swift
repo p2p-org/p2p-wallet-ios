@@ -2,7 +2,6 @@ import Foundation
 import SolanaSwift
 import SwiftUI
 import UIKit
-import BEPureLayout
 
 struct CoinLogoImageViewRepresentable: UIViewRepresentable {
     let size: CGFloat

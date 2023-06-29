@@ -2,7 +2,6 @@
 // Created by Giang Long Tran on 13.12.21.
 //
 
-import BEPureLayout
 import UIKit
 
 class BaseViewController: BaseVC {

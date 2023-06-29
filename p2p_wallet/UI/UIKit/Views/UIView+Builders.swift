@@ -1,10 +1,3 @@
-//
-//  UIView+Builders.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 03/11/2021.
-//
-
 import BEPureLayout
 import KeyAppUI
 import SwiftUI
