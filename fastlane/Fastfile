@@ -208,10 +208,14 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   # update xcconfig
   update_xcconfig
 
-  # Get the last released number matching the pattern
-  last_tag = last_git_tag(
-    pattern: "#{tag_prefix}/#{build_prefix.to_s}.*"
-  )
+  # Get tags that matches the pattern
+  tags = sh("git tag --list '#{tag_prefix}/#{build_prefix.to_s}.*'").strip.split("\n")
+
+  # Sort the tags in descending order
+  sorted_tags = tags.sort { |a, b| Gem::Version.new(b.split('.').last) <=> Gem::Version.new(a.split('.').last) }
+
+  # Extract the number from the last tag
+  last_tag = sorted_tags.first
   number_of_released_builds = last_tag ? last_tag.split('.').last.to_i : 0
 
   # Increase the number to create new tag
