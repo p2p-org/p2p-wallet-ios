@@ -52,6 +52,8 @@ extension BankTransferServiceImpl: BankTransferService {
         }
     }
 
+    // MARK: - Registration
+
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         try await repository.getRegistrationData()
     }
@@ -102,6 +104,18 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func clearCache() async {
         await repository.clearCache()
+    }
+
+    // MARK: - Claim
+
+    public func claimVerify(OTP: String, challengeId: String, ip: String) async throws {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        try await repository.claimVerify(userId: userId, challengeId: challengeId, ip: ip, verificationCode: OTP)
+    }
+    
+    public func claimResendSMS(challengeId: String) async throws {
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        try await repository.claimResendSMS(userId: userId, challengeId: challengeId)
     }
 
     // MARK: - Helpers

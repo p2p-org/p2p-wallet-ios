@@ -401,7 +401,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Act
         let result = try await provider.transactionResendOTP(
             userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
-            challangeId: "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+            challengeId: "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
         )
 
         // Assert
@@ -435,7 +435,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Act
         let result = try await provider.transactionConfirmOTP(
             userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
-            challangeId: "123",
+            challengeId: "123",
             code: "123456",
             ip: "ipString"
         )

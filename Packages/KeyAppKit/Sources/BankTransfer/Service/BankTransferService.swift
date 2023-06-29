@@ -6,12 +6,12 @@ public protocol BankTransferService {
 
     func reload() async
     
-    // MARK: - Local actions
+    // MARK: - Registration: Local actions
 
     func updateLocally(data: BankTransferRegistrationData) async throws
     func clearCache() async
 
-    // MARK: - Remote actions
+    // MARK: - Registration: Remote actions
 
     func getRegistrationData() async throws -> BankTransferRegistrationData
     func createUser(data: BankTransferRegistrationData) async throws
@@ -20,4 +20,8 @@ public protocol BankTransferService {
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
+    
+    // MARK: - Claim
+    func claimVerify(OTP: String, challengeId: String, ip: String) async throws
+    func claimResendSMS(challengeId: String) async throws
 }

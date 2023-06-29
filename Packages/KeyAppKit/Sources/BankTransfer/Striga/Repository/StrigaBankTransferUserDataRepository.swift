@@ -206,6 +206,14 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
+    
+    public func claimVerify(userId: String, challengeId: String, ip: String, verificationCode code: String) async throws {
+        _ = try await remoteProvider.transactionConfirmOTP(userId: userId, challengeId: challengeId, code: code, ip: ip)
+    }
+    
+    public func claimResendSMS(userId: String, challengeId: String) async throws {
+        _ = try await remoteProvider.transactionResendOTP(userId: userId, challengeId: challengeId)
+    }
 }
 
 // MARK: - Helpers

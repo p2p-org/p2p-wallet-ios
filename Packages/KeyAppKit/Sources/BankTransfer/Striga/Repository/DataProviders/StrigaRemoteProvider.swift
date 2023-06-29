@@ -30,7 +30,7 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// - Parameter userId: The Id of the user who is sending this transaction
     /// - Parameter challangeId: The challengeId that you received when initiating the transaction
     /// - SeeAlso: [Resend OTP for transaction](https://docs.striga.com/reference/resend-otp-for-transaction)
-    func transactionResendOTP(userId: String, challangeId: String) async throws -> StrigaTransactionResendOTPResponse
+    func transactionResendOTP(userId: String, challengeId: String) async throws -> StrigaTransactionResendOTPResponse
 
     /// Your API calls will appear here. Make a request to get started!
     /// - Parameter userId: The Id of the user who is sending this transaction
@@ -40,7 +40,7 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// - SeeAlso: [Confirm transaction with OTP](https://docs.striga.com/reference/confirm-transaction-with-otp)
     func transactionConfirmOTP(
         userId: String,
-        challangeId: String,
+        challengeId: String,
         code: String,
         ip: String
     ) async throws -> StrigaTransactionConfirmOTPResponse
