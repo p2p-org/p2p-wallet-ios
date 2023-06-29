@@ -4,6 +4,7 @@ import Foundation
 import Onboarding
 import SolanaSwift
 import SwiftyUserDefaults
+import UIKit
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}
 

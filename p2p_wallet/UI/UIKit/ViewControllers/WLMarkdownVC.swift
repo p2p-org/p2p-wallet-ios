@@ -1,11 +1,6 @@
-//
-//  WLMarkdownVC.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 26/10/2021.
-//
-
 import Foundation
+import UIKit
+import BEPureLayout
 
 class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -29,7 +24,7 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
         let stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             UILabel(text: title, textSize: 21, weight: .medium)
                 .padding(.init(x: 20, y: 0))
-            UIView.defaultSeparator()
+            UIView.separator(height: 1, color: .separator)
             BEStackViewSpacing(0)
             markdownView
         }

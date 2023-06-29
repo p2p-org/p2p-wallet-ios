@@ -1,13 +1,7 @@
-//
-//  String+Extensions.swift
-//  p2p wallet
-//
-//  Created by Chung Tran on 10/23/20.
-//
-
 import Down
 import FirebaseRemoteConfig
 import Foundation
+import UIKit
 
 extension Optional where Wrapped == String {
     public var orEmpty: String {

@@ -6,6 +6,8 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
+import Foundation
+import UIKit
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultCountry = Country(

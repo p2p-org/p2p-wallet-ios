@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/google/GoogleUtilities.git",
         "state": {
           "branch": null,
-          "revision": "6039a55afc03aac62e898aea4acdbe20d383978c",
-          "version": "7.11.2"
+          "revision": "58d03d22beae762eaddbd30cb5a61af90d4b309f",
+          "version": "7.11.3"
         }
       },
       {

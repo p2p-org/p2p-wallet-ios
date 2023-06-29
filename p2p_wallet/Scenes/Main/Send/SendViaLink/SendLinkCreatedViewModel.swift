@@ -1,14 +1,8 @@
-//
-//  SendLinkCreatedViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 27.03.2023.
-//
-
 import AnalyticsManager
 import Foundation
 import Resolver
 import Combine
+import UIKit
 
 final class SendLinkCreatedViewModel {
     

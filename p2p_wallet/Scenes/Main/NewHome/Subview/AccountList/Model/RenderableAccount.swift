@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 protocol RenderableAccount: Identifiable where ID == String {
     var id: String { get }

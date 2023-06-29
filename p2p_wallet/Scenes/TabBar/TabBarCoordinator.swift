@@ -7,6 +7,7 @@ import KeyAppBusiness
 import Resolver
 import Sell
 import SolanaSwift
+import UIKit
 
 final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies

@@ -5,6 +5,7 @@ import Onboarding
 import Resolver
 import SwiftyUserDefaults
 import KeyAppKitCore
+import UIKit
 
 enum StrigaOTPCoordinatorResult {
     case canceled

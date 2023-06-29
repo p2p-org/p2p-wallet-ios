@@ -1,10 +1,7 @@
-//
-// Created by Giang Long Tran on 08.01.22.
-//
-
-import BEPureLayout
 import Foundation
 import SolanaSwift
+import UIKit
+import BEPureLayout
 
 protocol QrCodeImageRender {
     func render(username: String?, address: String?, token: Token?, showTokenIcon: Bool) async throws -> UIImage

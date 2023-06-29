@@ -1,5 +1,6 @@
 import Foundation
 import Send
+import UIKit
 
 class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
     let stateMachine: WormholeSendInputStateMachine

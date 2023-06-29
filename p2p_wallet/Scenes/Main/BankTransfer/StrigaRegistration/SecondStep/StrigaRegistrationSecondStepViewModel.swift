@@ -4,6 +4,7 @@ import BankTransfer
 import Resolver
 import CountriesAPI
 import SwiftyUserDefaults
+import Foundation
 
 final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObject {
 

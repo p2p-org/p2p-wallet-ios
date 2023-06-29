@@ -1,6 +1,7 @@
 import SolanaSwift
 import Jupiter
 import Resolver
+import Foundation
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?

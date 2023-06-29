@@ -5,6 +5,7 @@ import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 import BankTransfer
+import UIKit
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]

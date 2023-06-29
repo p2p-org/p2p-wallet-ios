@@ -2,6 +2,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import FeeRelayerSwift
+import UIKit
 
 enum AlertLoggerDataBuilder {
     struct AlertLoggerData {

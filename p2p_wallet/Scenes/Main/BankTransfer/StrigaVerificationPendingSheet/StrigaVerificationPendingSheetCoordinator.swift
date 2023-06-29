@@ -1,4 +1,5 @@
 import Combine
+import UIKit
 
 final class StrigaVerificationPendingSheetCoordinator: Coordinator<Void> {
     private let presentingViewController: UIViewController

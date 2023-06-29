@@ -3,6 +3,7 @@ import Combine
 import CountriesAPI
 import Foundation
 import Resolver
+import UIKit
 
 enum BankTransferCoordinatorResult {
     case completed

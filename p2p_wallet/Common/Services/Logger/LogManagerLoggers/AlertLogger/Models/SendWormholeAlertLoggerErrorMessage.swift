@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct SendWormholeAlertLoggerErrorMessage: Codable {
     let tokenToSend: Token

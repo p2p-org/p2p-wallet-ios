@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import Resolver
+import UIKit
 
 final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
 

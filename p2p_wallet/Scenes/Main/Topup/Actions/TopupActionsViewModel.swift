@@ -2,6 +2,7 @@ import BankTransfer
 import Combine
 import Foundation
 import Resolver
+import UIKit
 
 final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 

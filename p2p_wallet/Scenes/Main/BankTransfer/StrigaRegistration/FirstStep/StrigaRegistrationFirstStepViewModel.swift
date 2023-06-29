@@ -3,6 +3,7 @@ import BankTransfer
 import Resolver
 import CountriesAPI
 import PhoneNumberKit
+import Foundation
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 

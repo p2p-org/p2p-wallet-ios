@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UIKit
 
 enum ChooseItemCoordinatorResult {
     case item(item: any ChooseItemSearchableItem)
