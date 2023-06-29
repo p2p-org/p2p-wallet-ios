@@ -30,7 +30,7 @@ public enum ReAuthSocialShareState: State, Equatable {
     public static var initialState: Self = .signIn(socialProvider: .google)
 
     case signIn(socialProvider: SocialProvider)
-    case wrongAccount(socialProvider: SocialProvider, expectedEmail: String)
+    case wrongAccount(socialProvider: SocialProvider, wrongEmail: String)
     case finish(result: ReAuthSocialShareResult)
     case cancel
 
@@ -93,7 +93,7 @@ public enum ReAuthSocialShareState: State, Equatable {
             let (tokenId, email) = try await provider.socialAuthService.auth(type: socialProvider)
 
             if email != provider.expectedEmail {
-                return .wrongAccount(socialProvider: socialProvider, expectedEmail: provider.expectedEmail)
+                return .wrongAccount(socialProvider: socialProvider, wrongEmail: email)
             }
 
             try await provider.tkeyFacade.initialize()

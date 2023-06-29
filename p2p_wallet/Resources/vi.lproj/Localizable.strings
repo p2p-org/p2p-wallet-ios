@@ -1399,3 +1399,5 @@
 "You've used all 5 codes. Try again in %@. For help, contact support." = "Bạn đã sử dụng tất cả 5 mã.  Hãy thử lại trong %@.  Để được giúp đỡ, hãy liên hệ với bộ phận hỗ trợ.";
 "Incorrect %@ ID" = "ID %@ không chính xác";
 "This account is associated with %@. Please log in with the correct %@ ID." = "Tài khoản này được liên kết với %@.  Vui lòng đăng nhập bằng %@ ID chính xác.";
+"%@\nPlease log in with the correct %@ account." = "%@\nVui lòng đăng nhập bằng đúng tài khoản %@.";
+"Incorrect %@ account" = "Tài khoản %@ không chính xác";

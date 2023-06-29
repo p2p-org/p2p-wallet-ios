@@ -34,10 +34,10 @@ class ReAuthSocialShareDelegatedCoordinator: DelegatedCoordinator<ReAuthSocialSh
 
             return vc
 
-        case let .wrongAccount(socialProvider, expectedEmail):
+        case let .wrongAccount(socialProvider, wrongEmail):
             let view = ReAuthWrongAccountView(
                 provider: socialProvider,
-                expectedEmail: expectedEmail
+                selectedEmail: wrongEmail
             ) { [stateMachine] in
                 Task {
                     try await stateMachine <- .back

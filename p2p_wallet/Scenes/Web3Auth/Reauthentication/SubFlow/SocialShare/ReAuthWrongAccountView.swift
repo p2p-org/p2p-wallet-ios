@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ReAuthWrongAccountView: View {
     let provider: SocialProvider
-    let expectedEmail: String
+    let selectedEmail: String
 
     let onBack: () -> Void
     let onClose: () -> Void
@@ -21,8 +21,8 @@ struct ReAuthWrongAccountView: View {
             Spacer()
             OnboardingContentView(data: .init(
                 image: .womanNotFound,
-                title: L10n.incorrectID(provider.asString),
-                subtitle: L10n.ThisAccountIsAssociatedWith.pleaseLogInWithTheCorrectID(expectedEmail, provider.asString)
+                title: provider.title,
+                subtitle: L10n.pleaseLogInWithTheCorrectAccount(selectedEmail, provider.body)
             ))
             Spacer()
             BottomActionContainer {
@@ -59,12 +59,19 @@ struct ReAuthWrongAccountView: View {
 
 struct ReAuthWrongAccount_Previews: PreviewProvider {
     static var previews: some View {
-        ReAuthWrongAccountView(provider: .google, expectedEmail: "abc@gmail.com") {} onClose: {}
+        ReAuthWrongAccountView(provider: .google, selectedEmail: "abc@gmail.com") {} onClose: {}
     }
 }
 
 private extension SocialProvider {
-    var asString: String {
+    var title: String {
+        switch self {
+        case .apple: return "Incorrect Apple ID"
+        case .google: return "Incorrect Google account"
+        }
+    }
+
+    var body: String {
         switch self {
         case .apple: return "Apple"
         case .google: return "Google"

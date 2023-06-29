@@ -1397,3 +1397,5 @@
 "You've used all 5 codes. Try again in %@. For help, contact support." = "Vous avez utilisé les 5 codes.  Réessayez dans %@.  Pour obtenir de l'aide, contactez l'assistance.";
 "Incorrect %@ ID" = "Identifiant %@ incorrect";
 "This account is associated with %@. Please log in with the correct %@ ID." = "Ce compte est associé à %@.  Veuillez vous connecter avec le bon ID %@.";
+"%@\nPlease log in with the correct %@ account." = "%@\nVeuillez vous connecter avec le bon compte %@.";
+"Incorrect %@ account" = "Compte %@ incorrect";

@@ -173,6 +173,10 @@ public enum ReAuthCustomShareState: State, Equatable {
                 solPrivateKey: solPrivateKey,
                 resendCounter: .init(.zero())
             )
+
+        case .back:
+            return .cancel
+
         default:
             return self
         }

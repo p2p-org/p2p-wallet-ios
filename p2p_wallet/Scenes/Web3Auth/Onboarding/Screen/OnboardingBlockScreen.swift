@@ -70,6 +70,7 @@ struct OnboardingBlockScreen: View {
                 }
             }
         }
+        .background(Color(Asset.Colors.lime.color))
         .ignoresSafeArea()
         .onboardingNavigationBar(title: "", onInfo: onInfo)
     }

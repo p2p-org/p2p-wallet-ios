@@ -1394,3 +1394,5 @@
 "You've used all 5 codes. Try again in %@. For help, contact support." = "Вы использовали все 5 кодов.  Попробуйте еще раз в %@.  За помощью обращайтесь в службу поддержки.";
 "Incorrect %@ ID" = "Неверный идентификатор %@";
 "This account is associated with %@. Please log in with the correct %@ ID." = "Эта учетная запись связана с %@.  Пожалуйста, войдите в систему с правильным идентификатором %@.";
+"%@\nPlease log in with the correct %@ account." = "%@\nПожалуйста, войдите в систему с правильной учетной записью %@.";
+"Incorrect %@ account" = "Неверный аккаунт %@";
