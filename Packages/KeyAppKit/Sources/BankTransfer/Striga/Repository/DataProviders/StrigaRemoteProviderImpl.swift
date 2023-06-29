@@ -102,7 +102,8 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         userId: String,
         sourceAccountId: String,
         whitelistedAddressId: String,
-        amount: String
+        amount: String,
+        accountCreation: Bool
     ) async throws -> StrigaWalletSendResponse {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.initiateOnChainWalletSend(
@@ -111,7 +112,8 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             userId: userId,
             sourceAccountId: sourceAccountId,
             whitelistedAddressId: whitelistedAddressId,
-            amount: amount
+            amount: amount,
+            accountCreation: accountCreation
         )
         return try await httpClient.request(
             endpoint: endpoint,
@@ -150,6 +152,33 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.enrichAccount(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId)
         return try await httpClient.request(endpoint: endpoint, responseModel: T.self)
+    }
+
+    public func initiateOnchainFeeEstimate(
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) async throws -> FeeEstimateResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.initiateOnchainFeeEstimate(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            sourceAccountId: sourceAccountId,
+            whitelistedAddressId: whitelistedAddressId,
+            amount: amount
+        )
+//        return try await httpClient.request(endpoint: endpoint, responseModel: FeeEstimateResponse.self)
+        return FeeEstimateResponse(
+            totalFee: "100",
+            networkFee: "90",
+            ourFee: "0",
+            theirFee: "0",
+            feeCurrency: "cent",
+            gasLimit: "21000",
+            gasPrice: "10.009"
+        )
     }
 
     public func transactionResendOTP(

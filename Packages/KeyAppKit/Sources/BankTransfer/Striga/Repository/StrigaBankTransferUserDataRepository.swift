@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import SolanaSwift
 import TweetNacl
+import KeyAppKitCore
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
 

@@ -71,7 +71,29 @@ struct StrigaEndpoint: HTTPEndpoint {
             ]
         )
     }
-    
+
+    static func initiateOnchainFeeEstimate(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/send/initiate/onchain/fee-estimate",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "sourceAccountId": sourceAccountId,
+                "whitelistedAddressId": whitelistedAddressId,
+                "amount": amount
+            ]
+        )
+    }
+
     static func getUserDetails(
         baseURL: String,
         keyPair: KeyPair,
@@ -122,7 +144,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         userId: String,
         sourceAccountId: String,
         whitelistedAddressId: String,
-        amount: String
+        amount: String,
+        accountCreation: Bool = false
     ) throws -> Self {
         return try .init(
             baseURL: baseURL,
@@ -130,11 +153,12 @@ struct StrigaEndpoint: HTTPEndpoint {
             method: .post,
             keyPair: keyPair,
             body: [
-                "userId": userId,
-                "sourceAccountId": sourceAccountId,
-                "whitelistedAddressId": whitelistedAddressId,
-                "amount": amount
-            ]
+                "userId": .init(userId),
+                "sourceAccountId": .init(sourceAccountId),
+                "whitelistedAddressId": .init(whitelistedAddressId),
+                "amount": .init(amount),
+                "accountCreation": .init(accountCreation)
+            ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
 

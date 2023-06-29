@@ -19,6 +19,7 @@ enum HomeNavigation: Equatable {
     case earn
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
+    case bankTransferClaim(String)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -148,6 +149,7 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
+
         case let .claim(account, userAction):
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
@@ -180,6 +182,17 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             }
+        case .bankTransferClaim:
+            return coordinate(to: BankTransferClaimCoordinator(
+                navigationController: navigationController,
+                transaction: StrigaClaimTransaction(
+                    challengeId: "",
+                    mainDescription: ""
+                )
+            ))
+            .map { _ in Void() }
+            .eraseToAnyPublisher()
+
         case .swap:
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
             return coordinate(

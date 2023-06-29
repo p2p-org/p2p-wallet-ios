@@ -360,7 +360,8 @@ final class StrigaRemoteProviderTests: XCTestCase {
             userId: "123",
             sourceAccountId: "456",
             whitelistedAddressId: "789",
-            amount: "100"
+            amount: "100",
+            accountCreation: true
         )
 
         // Assert
@@ -450,6 +451,38 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(result.network.pubKeyHash, 111)
         XCTAssertEqual(result.network.scriptHash, 196)
         XCTAssertEqual(result.network.validWitnessVersions, [0, 1])
+    }
+
+    func testInitiateOnchainFeeEstimate_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {
+                "totalFee": "909237719334000",
+                "networkFee": "909237719334000",
+                "ourFee": "909237719334000",
+                "theirFee": "0",
+                "feeCurrency": "ETH",
+                "gasLimit": "21000",
+                "gasPrice": "18.313"
+            }
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        let result = try await provider.initiateOnchainFeeEstimate(
+            userId: "65367b0e-d569-44ad-bcb2-e004c9cd3646",
+            sourceAccountId: "73e3aa3714c4488b6205b0f93fbbbd6f",
+            whitelistedAddressId: "bed66a98-e36a-41e9-a478-3c6bf277d0d5",
+            amount: "1210189000000000"
+        )
+    
+        // Assert
+        XCTAssertEqual(result.totalFee, "909237719334000")
+        XCTAssertEqual(result.networkFee, "909237719334000")
+        XCTAssertEqual(result.ourFee, "909237719334000")
+        XCTAssertEqual(result.theirFee, "0")
+        XCTAssertEqual(result.feeCurrency, "ETH")
+        XCTAssertEqual(result.gasLimit, "21000")
+        XCTAssertEqual(result.gasPrice, "18.313")
     }
 
     // MARK: - Helper Methods

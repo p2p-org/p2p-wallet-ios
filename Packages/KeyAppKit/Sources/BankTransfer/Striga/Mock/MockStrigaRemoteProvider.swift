@@ -120,7 +120,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         fatalError("Implementing")
     }
 
-    public func initiateOnChainWalletSend(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> StrigaWalletSendResponse {
+    public func initiateOnChainWalletSend(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String, accountCreation: Bool) async throws -> StrigaWalletSendResponse {
         fatalError("Implementing")
     }
 
@@ -130,5 +130,17 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
 
     public func transactionConfirmOTP(userId: String, challengeId: String, code: String, ip: String) async throws -> StrigaTransactionConfirmOTPResponse {
         fatalError("Implementing")
+    }
+
+    public func initiateOnchainFeeEstimate(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> FeeEstimateResponse {
+        FeeEstimateResponse(
+            totalFee: "909237719334000",
+            networkFee: "909237719334000",
+            ourFee: "909237719334000",
+            theirFee: "0",
+            feeCurrency: "USDC",
+            gasLimit: "21000",
+            gasPrice: "18.313"
+        )
     }
 }
