@@ -91,7 +91,13 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: userData.mobileNumber ?? ""
+                    phone: userData.mobileNumber ?? "",
+                    verifyHandler: { otp in
+                        try await Resolver.resolve(BankTransferService.self).verify(OTP: otp)
+                    },
+                    resendHandler: {
+                        try await Resolver.resolve(BankTransferService.self).resendSMS()
+                    }
                 )
             )
                 .flatMap { [unowned self] result in

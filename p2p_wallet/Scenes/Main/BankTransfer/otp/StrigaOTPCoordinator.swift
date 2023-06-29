@@ -16,7 +16,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     // MARK: - Dependencies
 
-    @Injected var bankTransfer: BankTransferService
     @Injected private var helpLauncher: HelpCenterLauncher
 
     // MARK: - Properties
@@ -32,12 +31,25 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     private let viewController: UINavigationController
     private let phone: String
+    
+    /// Injectable verify opt request
+    private let verifyHandler: (String) async throws -> Void
+
+    /// Injectable resend opt request
+    private let resendHandler: () async throws -> Void
 
     // MARK: - Initialization
 
-    init(viewController: UINavigationController, phone: String) {
+    init(
+        viewController: UINavigationController,
+        phone: String,
+        verifyHandler: @escaping (String) async throws -> Void,
+        resendHandler: @escaping () async throws -> Void
+    ) {
         self.viewController = viewController
         self.phone = phone
+        self.verifyHandler = verifyHandler
+        self.resendHandler = resendHandler
     }
 
     // MARK: - Methods
@@ -63,7 +75,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     viewModel?.isLoading = false
                 }
                 do {
-                    try await self?.bankTransfer.verify(OTP: otp)
+                    try await self?.verifyHandler(otp)
                     self?.resendCounter = .zero()
                     self?.resultSubject.send(.verified)
                 } catch BankTransferError.otpExceededVerification {
@@ -94,7 +106,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     guard let self, let viewModel else { return }
                     self.increaseTimer(viewModel: viewModel)
                     do {
-                        try await self.bankTransfer.resendSMS()
+                        try await self.resendHandler()
                     } catch BankTransferError.otpExceededDailyLimit {
                         self.handleOTPExceededDailyLimitError()
                         self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
@@ -143,7 +155,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             // Sending the first OTP
             Task { [weak self] in
                 do {
-                    try await self?.bankTransfer.resendSMS()
+                    try await self?.resendHandler()
                 } catch BankTransferError.otpExceededDailyLimit {
                     self?.handleOTPExceededDailyLimitError()
                 } catch {
