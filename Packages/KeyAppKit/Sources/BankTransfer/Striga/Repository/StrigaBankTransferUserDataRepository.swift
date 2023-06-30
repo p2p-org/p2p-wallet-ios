@@ -30,12 +30,12 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     
     // MARK: - Methods
 
-    public func getMetadata() async -> StrigaMetadata? {
-        await metadataProvider.getStrigaMetadata()
+    public func getUserId() async -> String? {
+        await metadataProvider.getStrigaMetadata()?.userId
     }
     
     public func getKYCStatus() async throws -> StrigaKYC {
-        guard let userId = await getMetadata()?.userId else {
+        guard let userId = await getUserId() else {
             throw BankTransferError.missingUserId
         }
         return try await remoteProvider.getKYCStatus(userId: userId)
@@ -129,7 +129,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         // get cached data from local provider
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
-            if let userId = await getMetadata()?.userId,
+            if let userId = await getUserId(),
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 // save to local provider

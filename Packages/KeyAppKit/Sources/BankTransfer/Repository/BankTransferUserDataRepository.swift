@@ -1,5 +1,5 @@
 public protocol BankTransferUserDataRepository {
-    func getMetadata() async -> StrigaMetadata?
+    func getUserId() async -> String?
     
     func getKYCStatus() async throws -> StrigaKYC
     
