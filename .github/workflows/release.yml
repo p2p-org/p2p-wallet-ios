@@ -20,9 +20,21 @@ jobs:
 
       - name: Check out repository
         uses: actions/checkout@v3
-        # with:
+        with:
+          fetch-depth: '0'
         #   submodules: recursive
         #   token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Map fix version to jira tasks
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: |
+          chmod u+x Scripts/jiraMapVersionToTasks.sh
+          BRANCH_NAME=${{ github.ref }}
+          BRANCH_NAME=${BRANCH_NAME#refs/heads/}
+          Scripts/jiraMapVersionToTasks.sh $BRANCH_NAME
 
       - name: Select XCode Version
         run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
