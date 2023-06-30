@@ -215,11 +215,17 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 let walletPubKey = userWalletManager.wallet?.account.publicKey
             else { return }
             
+            let amount = try! renderableAccount.amount
+                .toFiatAmount(
+                    price: .init(currencyCode: "USD", value: 1, token: SomeToken(
+                        tokenPrimaryKey: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", symbol: "USDC", name: "USD Coin", decimals: 6, network: .ethereum))
+                )
+            
             let userAction = BankTransferClaimUserAction(
                 id: renderableAccount.id,
                 challengeId: "",
                 token: Token.usdc,
-                amount: renderableAccount.amount.value.formatted(),
+                amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
                 fromAddress: "",
                 receivingAddress: try! PublicKey.associatedTokenAddress(
                     walletAddress: walletPubKey,
