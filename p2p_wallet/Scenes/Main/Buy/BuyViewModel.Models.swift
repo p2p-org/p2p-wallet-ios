@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import UIKit
 
 extension BuyViewModel {
     struct TotalResult {

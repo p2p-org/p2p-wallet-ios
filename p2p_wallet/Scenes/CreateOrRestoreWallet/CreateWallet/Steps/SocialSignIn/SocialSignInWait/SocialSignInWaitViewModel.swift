@@ -1,6 +1,7 @@
 import Combine
 import Onboarding
 import Resolver
+import UIKit
 
 final class SocialSignInWaitViewModel: BaseViewModel, ObservableObject {
 

@@ -1,15 +1,9 @@
-//
-//  TabBarViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 20.11.2022.
-//
-
 import Combine
 import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import UIKit
 
 final class TabBarViewModel {
     // Dependencies
