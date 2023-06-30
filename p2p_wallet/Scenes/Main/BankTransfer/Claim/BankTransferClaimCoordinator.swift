@@ -51,16 +51,18 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         viewController: navigationController,
                         phone: phone,
                         verifyHandler: { [unowned self] otp in
-                            try await bankTransferService.claimVerify(
-                                OTP: otp,
-                                challengeId: transaction.challengeId,
-                                ip: getIPAddress()
-                            )
+                            try? await Task.sleep(seconds: 1)
+//                            try await bankTransferService.claimVerify(
+//                                OTP: otp,
+//                                challengeId: transaction.challengeId,
+//                                ip: getIPAddress()
+//                            )
                         },
                         resendHandler: { [unowned self] in
-                            try await bankTransferService.claimResendSMS(
-                                challengeId: transaction.challengeId
-                            )
+                            try? await Task.sleep(seconds: 1)
+//                            try await bankTransferService.claimResendSMS(
+//                                challengeId: transaction.challengeId
+//                            )
                         }
                     )
                 )

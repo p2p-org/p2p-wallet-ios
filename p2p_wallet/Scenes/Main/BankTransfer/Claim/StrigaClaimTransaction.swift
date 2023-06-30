@@ -44,6 +44,7 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
         // sign transaction
         
         // TODO: - send to blockchain
-        ""
+        try? await Task.sleep(seconds: 1)
+        return .fakeTransactionSignature(id: UUID().uuidString)
     }
 }
