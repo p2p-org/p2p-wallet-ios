@@ -240,6 +240,7 @@ targets:
                 - "\"CFNetwork\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
+                SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/$(PROJECT_NAME)/$(SWIFT_MODULE_NAME)-Bridging-Header.h"
             configs:
                 Debug:
                     PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber.test
