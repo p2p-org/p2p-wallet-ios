@@ -90,20 +90,11 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
                 responseModel: StrigaResendOTPResponse.self
             )
         } catch HTTPClientError.invalidResponse(let response, let data) {
-            if response?.statusCode == 409,
-               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data),
-               error.errorCode == "00002"
-            {
+            let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
+            if error.errorCode == "00002" {
                 throw BankTransferError.mobileAlreadyVerified
             }
-            // HACK until we havn't server fixed
-            let err = try? JSONDecoder().decode(String.self, from: data)
-            let err2 = err?.replacingOccurrences(of: "\\", with: "") ?? ""
-            if let json = try JSONSerialization.jsonObject(with: err2.data(using: .utf8)!) as? [String: Any],
-               let errorCode = json["errorCode"] as? String, let error = BankTransferError(rawValue: Int(errorCode) ?? -1) {
-                throw error
-            }
-            throw HTTPClientError.invalidResponse(response, data)
+            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
         }
     }
 
