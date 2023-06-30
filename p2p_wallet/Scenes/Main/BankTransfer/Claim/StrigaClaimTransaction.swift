@@ -2,23 +2,24 @@ import Foundation
 import Resolver
 import KeyAppBusiness
 import SolanaSwift
+import KeyAppKitCore
 
 /// Striga Claim trasaction type
 protocol StrigaClaimTransactionType: RawTransactionType {
     var challengeId: String { get }
-    var token: Token? { get }
-    var amount: Double? { get }
-    var feeAmount: FeeAmount { get }
+    var account: BankTransferRenderableAccount? { get }
     var fromAddress: String { get }
     var receivingAddress: String { get }
 }
 
 extension StrigaClaimTransactionType {
     var amountInFiat: Double? {
-        guard let token else { return nil}
-        guard let value = Resolver.resolve(SolanaPriceService.self)
-            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return nil }
-        return value * amount
+        // TODO: - Fix price
+        1
+//        guard let token else { return nil}
+//        guard let value = Resolver.resolve(SolanaPriceService.self)
+//            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return nil }
+//        return value * amount
     }
 }
 
@@ -28,13 +29,13 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
     // MARK: - Properties
 
     let challengeId: String
-    let token: Token?
-    let amount: Double?
-    let feeAmount: FeeAmount
+    let account: BankTransferRenderableAccount?
     let fromAddress: String
     let receivingAddress: String
     
-    let mainDescription: String
+    var mainDescription: String {
+        ""
+    }
 
     // MARK: - Methods
 
