@@ -7,7 +7,7 @@ import Combine
 /// Result for `BankTransferClaimCoordinator`
 enum BankTransferClaimCoordinatorResult {
     /// Transaction has been successfully created
-    case completed
+    case completed(pendingTransaction: PendingTransaction)
     /// Transaction has been cancelled
     case canceled
 }
@@ -66,11 +66,25 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         }
                     )
                 )
-                    .map { result in
+                    .map { [weak self] result in
+                        guard let self else { return BankTransferClaimCoordinatorResult.canceled }
+                        
                         switch result {
                         case .verified:
-                            // TODO: - Logics here
-                            return BankTransferClaimCoordinatorResult.completed
+                            // delegate work to transaction handler
+                            let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                                .sendTransaction(
+                                    transaction
+                                )
+                            
+                            // return pending transaction
+                            let pendingTransaction = PendingTransaction(
+                                trxIndex: transactionIndex,
+                                sentAt: Date(),
+                                rawTransaction: transaction,
+                                status: .sending
+                            )
+                            return BankTransferClaimCoordinatorResult.completed(pendingTransaction: pendingTransaction)
                         case .canceled:
                             return BankTransferClaimCoordinatorResult.canceled
                         }
