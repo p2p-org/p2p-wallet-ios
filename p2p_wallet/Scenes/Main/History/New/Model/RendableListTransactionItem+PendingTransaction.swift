@@ -118,7 +118,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
 
             case _ as ClaimSentViaLinkTransaction:
                 return "\(L10n.sendViaLink)"
-            case _ as ClaimSentViaLinkTransaction:
+            case _ as StrigaClaimTransactionType:
                 return "\(L10n.claim)"
             default:
                 return "\(L10n.transactionFailed)"

@@ -9,6 +9,7 @@ protocol StrigaClaimTransactionType: RawTransactionType {
     var token: Token? { get }
     var amount: Double? { get }
     var feeAmount: FeeAmount { get }
+    var fromAddress: String { get }
     var receivingAddress: String { get }
 }
 
@@ -30,6 +31,7 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
     let token: Token?
     let amount: Double?
     let feeAmount: FeeAmount
+    let fromAddress: String
     let receivingAddress: String
     
     let mainDescription: String

@@ -327,26 +327,18 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
             )
             result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
         
-//        case let transaction as StrigaClaimTransactionType:
-//            let title: String = from
-//            switch trx.status {
-//            case .error, .finalized:
-//                title = L10n.receivedFrom
-//            default:
-//                title = L10n.from
-//            }
-//            result.append(
-//                .init(
-//                    title: title,
-//                    values: [
-//                        .init(text: RecipientFormatter
-//                            .format(destination: transaction.claimableTokenInfo.keypair.publicKey
-//                                .base58EncodedString)),
-//                    ],
-//                    copyableValue: transaction.claimableTokenInfo.account
-//                )
-//            )
-//            result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
+        case let transaction as StrigaClaimTransactionType:
+            let title = L10n.receivedFrom
+            result.append(
+                .init(
+                    title: title,
+                    values: [
+                        .init(text: RecipientFormatter
+                            .format(destination: transaction.fromAddress)),
+                    ],
+                    copyableValue: transaction.fromAddress
+                )
+            )
             
         default:
             break
