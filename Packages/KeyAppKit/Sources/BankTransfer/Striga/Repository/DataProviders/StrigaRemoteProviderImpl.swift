@@ -171,7 +171,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         )
 //        return try await httpClient.request(endpoint: endpoint, responseModel: FeeEstimateResponse.self)
         return FeeEstimateResponse(
-            totalFee: "20",
+            totalFee: "0",
             networkFee: "90",
             ourFee: "0",
             theirFee: "0",

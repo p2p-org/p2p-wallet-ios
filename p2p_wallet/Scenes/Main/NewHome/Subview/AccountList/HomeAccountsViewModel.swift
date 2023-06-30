@@ -110,7 +110,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 userActions.compactMap { $0 as? BankTransferClaimUserAction }
             }
         )
-            .map { (account, actions) -> [BankTransferRenderableAccount] in
+            .compactMap { (account, actions) -> [BankTransferRenderableAccount]? in
+                guard account.availableBalance > 0 else { return nil }
                 let token: EthereumToken = .init(
                     name: SolanaToken.usdc.name,
                     symbol: SolanaToken.usdc.symbol,
@@ -226,7 +227,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 challengeId: "",
                 token: Token.usdc,
                 amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
-                fromAddress: "",
+                fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
                 receivingAddress: try! PublicKey.associatedTokenAddress(
                     walletAddress: walletPubKey,
                     tokenMintAddress: try! PublicKey(string: Token.usdc.address)
