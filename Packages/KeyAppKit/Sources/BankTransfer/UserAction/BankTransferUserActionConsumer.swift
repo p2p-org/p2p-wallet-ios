@@ -45,7 +45,8 @@ public class BankTransferUserActionConsumer: UserActionConsumer {
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
             self?.handle(event: Event.track(action.id, .processing))
-            sleep(2)
+            // FIXME: - Real logic
+            try? await Task.sleep(seconds: 2)
             self?.handle(event: Event.track(action.id, .ready))
         }
     }
