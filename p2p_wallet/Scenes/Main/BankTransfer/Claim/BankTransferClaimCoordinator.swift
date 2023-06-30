@@ -7,7 +7,7 @@ import Combine
 /// Result for `BankTransferClaimCoordinator`
 enum BankTransferClaimCoordinatorResult {
     /// Transaction has been successfully created
-    case completed(pendingTransaction: PendingTransaction)
+    case completed
     /// Transaction has been cancelled
     case canceled
 }
@@ -23,6 +23,8 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     private let navigationController: UINavigationController
     private let transaction: StrigaClaimTransactionType
+    
+    private let subject = PassthroughSubject<BankTransferClaimCoordinatorResult, Never>()
     
 
     // MARK: - Initialization
@@ -42,7 +44,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
         bankTransferService.state
             .flatMap { [unowned self] state in
                 guard let phone = state.value.mobileNumber else {
-                    return Just(BankTransferClaimCoordinatorResult.canceled)
+                    return Just(StrigaOTPCoordinatorResult.canceled)
                         .eraseToAnyPublisher()
                 }
                 
@@ -66,32 +68,66 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         }
                     )
                 )
-                    .map { [weak self] result in
-                        guard let self else { return BankTransferClaimCoordinatorResult.canceled }
-                        
-                        switch result {
-                        case .verified:
-                            // delegate work to transaction handler
-                            let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                                .sendTransaction(
-                                    transaction
-                                )
-                            
-                            // return pending transaction
-                            let pendingTransaction = PendingTransaction(
-                                trxIndex: transactionIndex,
-                                sentAt: Date(),
-                                rawTransaction: transaction,
-                                status: .sending
-                            )
-                            return BankTransferClaimCoordinatorResult.completed(pendingTransaction: pendingTransaction)
-                        case .canceled:
-                            return BankTransferClaimCoordinatorResult.canceled
-                        }
-                    }
-                    .eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher()
+            .sink { [weak self] result in
+                // assert self
+                guard let self else { return }
+                
+                // catch result
+                switch result {
+                case .verified:
+                    // delegate work to transaction handler
+                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                        .sendTransaction(
+                            transaction
+                        )
+
+                    // return pending transaction
+                    let pendingTransaction = PendingTransaction(
+                        trxIndex: transactionIndex,
+                        sentAt: Date(),
+                        rawTransaction: transaction,
+                        status: .sending
+                    )
+                    
+                    // open detail
+                    openDetails(pendingTransaction: pendingTransaction)
+                        .sink { [weak self] _ in
+                            // TODO: - Fix logic
+                            guard let self else { return }
+                            //            self.viewModel.logTransactionProgressDone()
+                            
+                            navigationController.popViewController(animated: true)
+                            self.subject.send(.completed)
+//                            self.result.send(())
+//                            if self.params.dismissAfterCompletion {
+//                                self.navigationController.popViewController(animated: true)
+//                                self.result.send(completion: .finished)
+//                            } else {
+//                                self.viewModel.reset()
+//                            }
+                        } receiveValue: { _ in
+                            // TODO: - Receive value
+                        }
+                        .store(in: &subscriptions)
+
+                case .canceled:
+                    self.subject.send(.canceled)
+                }
+            }
+            .store(in: &subscriptions)
+        
+        return subject.prefix(1).eraseToAnyPublisher()
+    }
+    
+    private func openDetails(pendingTransaction: PendingTransaction) -> AnyPublisher<TransactionDetailStatus, Never> {
+        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
+        
+//        self.viewModel.logTransactionProgressOpened()
+        return coordinate(to: TransactionDetailCoordinator(
+            viewModel: viewModel,
+            presentingViewController: navigationController
+        ))
     }
 }
 
