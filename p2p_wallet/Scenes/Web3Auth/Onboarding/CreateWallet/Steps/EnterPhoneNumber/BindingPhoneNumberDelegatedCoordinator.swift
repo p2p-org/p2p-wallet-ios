@@ -125,7 +125,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             switch reason {
             case .blockEnterOTP:
                 title = L10n.confirmationCodeLimitHit
-                contentSubtitle = L10n.YouVeUsedAll5Codes.TryAgainIn.forHelpContactSupport
+                contentSubtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
                 contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor

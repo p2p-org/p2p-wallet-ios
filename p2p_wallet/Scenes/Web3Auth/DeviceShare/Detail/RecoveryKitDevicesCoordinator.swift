@@ -135,9 +135,10 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                 case .failure:
                     self?.notificationService.showToast(title: "❌", text: L10n.SomethingWentWrong.pleaseTryAgain)
                 case .cancel:
-                    guard let prevVC = self?.prevVC else { return }
-                    self?.navigationController.popToViewController(prevVC, animated: true)
-                    self?.result.send(completion: .finished)
+                    return
+                    // guard let prevVC = self?.prevVC else { return }
+                    // self?.navigationController.popToViewController(prevVC, animated: true)
+                    // self?.result.send(completion: .finished)
                 }
             }
             .store(in: &subscriptions)

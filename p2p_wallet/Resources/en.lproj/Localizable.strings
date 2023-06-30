@@ -1363,3 +1363,4 @@
 "This account is associated with %@. Please log in with the correct %@ ID." = "This account is associated with %@. Please log in with the correct %@ ID.";
 "%@\nPlease log in with the correct %@ account." = "%@\nPlease log in with the correct %@ account.";
 "Incorrect %@ account" = "Incorrect %@ account";
+"You've used all 5 codes. Try again later. For help, contact support." = "You've used all 5 codes. Try again later. For help, contact support.";

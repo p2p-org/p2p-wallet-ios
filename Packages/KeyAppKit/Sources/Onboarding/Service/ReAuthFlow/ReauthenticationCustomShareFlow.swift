@@ -99,7 +99,7 @@ public enum ReAuthCustomShareState: State, Equatable {
                     until: Date() + error.cooldown,
                     phoneNumber: phoneNumber,
                     solPrivateKey: solPrivateKey,
-                    reason: .blockResend
+                    reason: .blockEnterOTP
                 )
             }
 
@@ -123,7 +123,7 @@ public enum ReAuthCustomShareState: State, Equatable {
                     until: Date() + error.cooldown,
                     phoneNumber: phoneNumber,
                     solPrivateKey: solPrivateKey,
-                    reason: .blockResend
+                    reason: .blockEnterOTP
                 )
             }
 
