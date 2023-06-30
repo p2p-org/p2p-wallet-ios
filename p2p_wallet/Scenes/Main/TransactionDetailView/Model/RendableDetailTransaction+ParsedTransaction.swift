@@ -65,6 +65,13 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
             return .icon(.closeToken)
         } else if trx.info is CreateAccountInfo {
             return .icon(.transactionCreateAccount)
+        } else if let info = trx.info as? StrigaClaimInfo {
+            if
+                let sourceImage = info.token?.logoURI,
+                let sourceURL = URL(string: sourceImage)
+            {
+                return .single(sourceURL)
+            }
         }
 
         return .icon(.planet)
@@ -82,6 +89,10 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
         } else if let info = trx.info as? TransferInfo {
             if let amount = info.amount {
                 return amount.tokenAmountFormattedString(symbol: info.source?.token.symbol ?? "")
+            }
+        } else if let info = trx.info as? StrigaClaimInfo {
+            if let amount = info.amount {
+                return amount.tokenAmountFormattedString(symbol: info.token?.symbol ?? "")
             }
         }
         return ""
@@ -109,6 +120,13 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
                 .init(
                     title: "Account created",
                     values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? ""))]
+                )
+            )
+        } else if let info = trx.info as? StrigaClaimInfo {
+            result.append(
+                .init(
+                    title: L10n.claim,
+                    values: [.init(text: RecipientFormatter.format(destination: info.recevingPubkey ?? ""))]
                 )
             )
         }

@@ -124,6 +124,10 @@ class TransactionHandler: TransactionHandlerType {
                     if transaction.destinationWallet.pubkey == account {
                         return true
                     }
+                case let transaction as StrigaClaimTransactionType:
+                    if transaction.receivingAddress == account {
+                        return true
+                    }
                 default:
                     break
                 }

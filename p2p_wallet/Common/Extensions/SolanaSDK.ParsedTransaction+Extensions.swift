@@ -28,6 +28,8 @@ extension ParsedTransaction {
 
         case is SwapInfo:
             return L10n.swap
+        case is StrigaClaimInfo:
+            return L10n.claim
         default:
             break
         }

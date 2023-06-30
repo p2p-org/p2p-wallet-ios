@@ -104,6 +104,16 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
             } else {
                 return .icon(.transactionReceive)
             }
+            
+        case let transaction as StrigaClaimTransactionType:
+            if
+                let urlStr = transaction.token?.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
 
 //        case let transaction as WormholeClaimTransaction:
 //            guard let url = transaction.token.logo else {
@@ -145,6 +155,11 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 return .unchanged("")
             }
         case let transaction as ClaimSentViaLinkTransaction:
+            if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
+                return .positive("+\(amountInFiat)")
+            }
+            return .unchanged("")
+        case let transaction as StrigaClaimTransactionType:
             if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
                 return .positive("+\(amountInFiat)")
             }
@@ -194,6 +209,10 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
         case let transaction as ClaimSentViaLinkTransaction:
             return "\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
 
+        case let transaction as StrigaClaimTransactionType:
+            guard let amount = transaction.amount else { return "" }
+            return "\(amount.tokenAmountFormattedString(symbol: transaction.token?.symbol ?? ""))"
+            
         default:
             return ""
         }
@@ -307,6 +326,28 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             )
             result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
+        
+//        case let transaction as StrigaClaimTransactionType:
+//            let title: String = from
+//            switch trx.status {
+//            case .error, .finalized:
+//                title = L10n.receivedFrom
+//            default:
+//                title = L10n.from
+//            }
+//            result.append(
+//                .init(
+//                    title: title,
+//                    values: [
+//                        .init(text: RecipientFormatter
+//                            .format(destination: transaction.claimableTokenInfo.keypair.publicKey
+//                                .base58EncodedString)),
+//                    ],
+//                    copyableValue: transaction.claimableTokenInfo.account
+//                )
+//            )
+//            result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
+            
         default:
             break
         }

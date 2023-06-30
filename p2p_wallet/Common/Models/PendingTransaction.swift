@@ -175,6 +175,14 @@ extension PendingTransaction {
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
+        case let transaction as StrigaClaimTransactionType:
+            value = StrigaClaimInfo(
+                amount: transaction.amount,
+                token: transaction.token,
+                recevingPubkey: transaction.receivingAddress
+            )
+            amountInFiat = transaction.amountInFiat
+            fee = transaction.feeAmount
         default:
             return nil
         }

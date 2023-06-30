@@ -53,6 +53,12 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
             return .icon(.closeToken)
         } else if trx.info is CreateAccountInfo {
             return .icon(.transactionCreateAccount)
+        } else if let info = trx.info as? StrigaClaimInfo {
+            if let sourceImage = info.token?.logoURI,
+                let sourceURL = URL(string: sourceImage)
+            {
+                return .single(sourceURL)
+            }
         }
 
         return .icon(.planet)
@@ -72,6 +78,8 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
             return "Close account"
         } else if trx.info is CreateAccountInfo {
             return "Create account"
+        } else if trx.info is StrigaClaimInfo {
+            return "Claim"
         }
 
         return "Unknown"
@@ -86,6 +94,8 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
             return RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? "")
         } else if let info = trx.info as? CreateAccountInfo {
             return RecipientFormatter.format(destination: info.newWallet?.pubkey ?? "")
+        } else if trx.info is StrigaClaimInfo {
+            return "Claim"
         }
 
         return "Signature: \(RecipientFormatter.shortSignature(signature: trx.signature ?? ""))"
@@ -123,6 +133,11 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
                 default:
                     return "+\(amountText)"
                 }
+            }
+        } else if let info = trx.info as? StrigaClaimInfo {
+            if let amount = info.amount {
+                let amountText = amount.tokenAmountFormattedString(symbol: info.symbol ?? "")
+                return "+\(amountText)"
             }
         }
         return ""

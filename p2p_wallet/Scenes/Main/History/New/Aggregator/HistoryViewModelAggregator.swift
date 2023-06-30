@@ -38,6 +38,8 @@ enum HistoryViewModelAggregator {
                                 transaction.destinationWallet.mintAddress == mint
                         case let transaction as ClaimSentViaLinkTransaction:
                             return transaction.claimableTokenInfo.mintAddress == mint
+                        case let transaction as StrigaClaimTransactionType:
+                            return transaction.token?.address == mint
                         default:
                             return false
                         }
