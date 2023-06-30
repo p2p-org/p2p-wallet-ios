@@ -81,7 +81,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
 
                 // Push updated data to remote storage
                 do {
-                    try await write(userWallet: userWallet, metadata: mergedMetadata)
+                    await write(userWallet: userWallet, metadata: mergedMetadata)
                 } catch {
                     errorObserver.handleError(error)
                     throw Error.remoteSynchronizationFailure
@@ -94,7 +94,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
 
                     // Push updated data to remote storages in case they are not synchronised.
                     if remoteSync == false {
-                        try await write(userWallet: userWallet, metadata: remoteMetadata)
+                        await write(userWallet: userWallet, metadata: remoteMetadata)
                     }
                 }
             }

@@ -9,35 +9,35 @@ public struct WalletMetaData: Codable, Equatable {
 
     public let ethPublic: String
 
-    public var deviceName: String { didSet { deviceNameTimestamp = Date() } }
+    public var deviceName: String { didSet { deviceNameTimestamp = Date.currentTimestamp() } }
 
-    public internal(set) var deviceNameTimestamp: Date
+    public internal(set) var deviceNameTimestamp: UInt64
 
-    public var email: String { didSet { emailTimestamp = Date() } }
+    public var email: String { didSet { emailTimestamp = Date.currentTimestamp() } }
 
-    public internal(set) var emailTimestamp: Date
+    public internal(set) var emailTimestamp: UInt64
 
-    public var authProvider: String { didSet { authProviderTimestamp = Date() } }
+    public var authProvider: String { didSet { authProviderTimestamp = Date.currentTimestamp() } }
 
-    public internal(set) var authProviderTimestamp: Date
+    public internal(set) var authProviderTimestamp: UInt64
 
-    public var phoneNumber: String { didSet { phoneNumberTimestamp = Date() } }
+    public var phoneNumber: String { didSet { phoneNumberTimestamp = Date.currentTimestamp() } }
 
-    public internal(set) var phoneNumberTimestamp: Date
+    public internal(set) var phoneNumberTimestamp: UInt64
 
     public struct Striga: Codable, Equatable {
-        public var userId: String? { didSet { userIdTimestamp = Date() } }
-        public internal(set) var userIdTimestamp: Date
+        public var userId: String? { didSet { userIdTimestamp = Date.currentTimestamp() } }
+        public internal(set) var userIdTimestamp: UInt64
 
         enum CodingKeys: String, CodingKey {
             case userId = "user_id"
             case userIdTimestamp = "user_id_timestamp"
         }
-        
+
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: WalletMetaData.Striga.CodingKeys.self)
-            try container.encodeIfPresent(self.userId, forKey: WalletMetaData.Striga.CodingKeys.userId)
-            try container.encode(self.userIdTimestamp.secondsSince1970, forKey: WalletMetaData.Striga.CodingKeys.userIdTimestamp)
+            try container.encodeIfPresent(userId, forKey: WalletMetaData.Striga.CodingKeys.userId)
+            try container.encode(userIdTimestamp, forKey: WalletMetaData.Striga.CodingKeys.userIdTimestamp)
         }
 
         static func merge(lhs: Striga, rhs: Striga) -> Striga {
@@ -57,7 +57,7 @@ public struct WalletMetaData: Codable, Equatable {
         authProvider: String,
         phoneNumber: String
     ) {
-        let currentDate = Date()
+        let currentDate = Date.currentTimestamp()
 
         self.ethPublic = ethPublic
 
@@ -79,13 +79,13 @@ public struct WalletMetaData: Codable, Equatable {
     public init(
         ethPublic: String,
         deviceName: String,
-        deviceNameTimestamp: Date,
+        deviceNameTimestamp: UInt64,
         email: String,
-        emailTimestamp: Date,
+        emailTimestamp: UInt64,
         authProvider: String,
-        authProviderTimestamp: Date,
+        authProviderTimestamp: UInt64,
         phoneNumber: String,
-        phoneNumberTimestamp: Date,
+        phoneNumberTimestamp: UInt64,
         striga: Striga
     ) {
         self.ethPublic = ethPublic
@@ -107,7 +107,7 @@ public struct WalletMetaData: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let initialDate = Date(timeIntervalSince1970: 0)
+        let initialDate: UInt64 = 0
 
         let decodedEthPublic = try container.decodeIfPresent(String.self, forKey: .ethPublic)
         if let decodedEthPublic {
@@ -125,30 +125,36 @@ public struct WalletMetaData: Codable, Equatable {
         }
 
         deviceName = try container.decode(String.self, forKey: .deviceName)
-        deviceNameTimestamp = try container.decodeIfPresent(Date.self, forKey: .deviceNameTimestamp) ?? initialDate
+        deviceNameTimestamp = try container.decodeIfPresent(UInt64.self, forKey: .deviceNameTimestamp) ?? initialDate
         email = try container.decode(String.self, forKey: .email)
-        emailTimestamp = try container.decodeIfPresent(Date.self, forKey: .emailTimestamp) ?? initialDate
+        emailTimestamp = try container.decodeIfPresent(UInt64.self, forKey: .emailTimestamp) ?? initialDate
         authProvider = try container.decode(String.self, forKey: .authProvider)
-        authProviderTimestamp = try container.decodeIfPresent(Date.self, forKey: .authProviderTimestamp) ?? initialDate
+        authProviderTimestamp = try container
+            .decodeIfPresent(UInt64.self, forKey: .authProviderTimestamp) ?? initialDate
         phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
-        phoneNumberTimestamp = try container.decodeIfPresent(Date.self, forKey: .phoneNumberTimestamp) ?? initialDate
+        phoneNumberTimestamp = try container.decodeIfPresent(UInt64.self, forKey: .phoneNumberTimestamp) ?? initialDate
 
         striga = try container.decodeIfPresent(Striga.self, forKey: .striga)
             ?? .init(userId: nil, userIdTimestamp: initialDate)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.ethPublic, forKey: .ethPublic)
-        try container.encode(self.deviceName, forKey: .deviceName)
-        try container.encode(self.deviceNameTimestamp.secondsSince1970, forKey: .deviceNameTimestamp)
-        try container.encode(self.email, forKey: .email)
-        try container.encode(self.emailTimestamp.secondsSince1970, forKey: .emailTimestamp)
-        try container.encode(self.authProvider, forKey: .authProvider)
-        try container.encode(self.authProviderTimestamp.secondsSince1970, forKey: .authProviderTimestamp)
-        try container.encode(self.phoneNumber, forKey: .phoneNumber)
-        try container.encode(self.phoneNumberTimestamp.secondsSince1970, forKey: .phoneNumberTimestamp)
-        try container.encode(self.striga, forKey: .striga)
+        try container.encode(ethPublic, forKey: .ethPublic)
+
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(deviceNameTimestamp, forKey: .deviceNameTimestamp)
+
+        try container.encode(email, forKey: .email)
+        try container.encode(emailTimestamp, forKey: .emailTimestamp)
+
+        try container.encode(authProvider, forKey: .authProvider)
+        try container.encode(authProviderTimestamp, forKey: .authProviderTimestamp)
+
+        try container.encode(phoneNumber, forKey: .phoneNumber)
+        try container.encode(phoneNumberTimestamp, forKey: .phoneNumberTimestamp)
+
+        try container.encode(striga, forKey: .striga)
     }
 
     enum CodingKeys: String, CodingKey {
@@ -215,8 +221,8 @@ public extension WalletMetaData {
         _ lhs: WalletMetaData,
         _ rhs: WalletMetaData,
         _ value: KeyPath<WalletMetaData, T>,
-        _ date: KeyPath<WalletMetaData, Date>
-    ) -> (T, Date) {
+        _ date: KeyPath<WalletMetaData, UInt64>
+    ) -> (T, UInt64) {
         if rhs[keyPath: date] > lhs[keyPath: date] {
             return (rhs[keyPath: value], rhs[keyPath: date])
         } else {
@@ -256,7 +262,11 @@ public extension WalletMetaData {
 }
 
 private extension Date {
-    var secondsSince1970: Int64 {
-        Int64(timeIntervalSince1970)
+    static func currentTimestamp() -> UInt64 {
+        Date().secondsSince1970
+    }
+
+    var secondsSince1970: UInt64 {
+        UInt64(timeIntervalSince1970)
     }
 }
