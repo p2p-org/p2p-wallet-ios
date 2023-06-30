@@ -1,13 +1,7 @@
-//
-//  ReauthenticationWithoutDeviceShare.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Combine
 import Foundation
 import Onboarding
+import UIKit
 
 enum ReAuthWithoutDeviceShareResult {
     case success(TKeyFacade)
