@@ -317,6 +317,7 @@ private extension RestoreCustomDelegatedCoordinator {
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
         let title: String
         let subtitle: (_ value: Any) -> String
+        
         switch reason {
         case .blockEnterOTP:
             title = L10n.confirmationCodeLimitHit
@@ -328,6 +329,7 @@ private extension RestoreCustomDelegatedCoordinator {
             title = L10n.soLetSBreathe
             subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
         }
+        
         let view = OnboardingBlockScreen(
             primaryButtonAction: L10n.startingScreen,
             contentTitle: title,

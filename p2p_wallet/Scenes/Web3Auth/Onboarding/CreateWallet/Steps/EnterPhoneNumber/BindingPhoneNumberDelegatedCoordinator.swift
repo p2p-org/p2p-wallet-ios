@@ -120,24 +120,25 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             return UIHostingController(rootView: view)
 
         case let .block(until, reason, _, _):
-            var title = ""
-            var contentSubtitle: (_ value: Any) -> String = { _ in "" }
+            let title: String
+            let subtitle: (_ value: Any) -> String
+            
             switch reason {
             case .blockEnterOTP:
                 title = L10n.confirmationCodeLimitHit
-                contentSubtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
+                subtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
+                subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockResend:
                 title = L10n.soLetSBreathe
-                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
+                subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
             }
 
             let view = OnboardingBlockScreen(
                 primaryButtonAction: L10n.startingScreen,
                 contentTitle: title,
-                contentSubtitle: contentSubtitle,
+                contentSubtitle: subtitle,
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
