@@ -1,10 +1,3 @@
-//
-//  CoinLogoImageViewRepresentable.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 12/08/2022.
-//
-
 import Foundation
 import SolanaSwift
 import SwiftUI

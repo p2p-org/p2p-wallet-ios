@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct ClaimAlertLoggerErrorMessage: Codable {
     var tokenToClaim: Token

@@ -1,16 +1,10 @@
-//
-//  WormholeClaimFeeCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 12.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import KeychainSwift
 import Wormhole
+import UIKit
 
 class WormholeClaimFeeCoordinator: SmartCoordinator<Void> {
     let account: EthereumAccount

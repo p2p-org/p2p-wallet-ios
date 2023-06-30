@@ -199,7 +199,7 @@ public struct WalletMetaData: Codable, Equatable {
 
     public static func deserialize(data: Data, ethAddress: String) throws -> Self {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .millisecondsSince1970
+        decoder.dateDecodingStrategy = .secondsSince1970
         decoder.userInfo[WalletMetaData.ethPublicInfoKey] = ethAddress
 
         return try decoder.decode(WalletMetaData.self, from: data)
@@ -257,6 +257,6 @@ public extension WalletMetaData {
 
 private extension Date {
     var secondsSince1970: Int64 {
-        Int64(self.timeIntervalSince1970)
+        Int64(timeIntervalSince1970)
     }
 }

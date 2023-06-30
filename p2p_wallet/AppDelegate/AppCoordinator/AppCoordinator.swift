@@ -10,6 +10,7 @@ import Sell
 import Sentry
 import SolanaSwift
 import UIKit
+import BEPureLayout
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies

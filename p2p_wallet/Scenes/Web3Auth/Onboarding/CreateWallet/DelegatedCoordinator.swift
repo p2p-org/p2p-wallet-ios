@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import Onboarding
+import UIKit
 
 @MainActor
 class DelegatedCoordinator<S: State> {

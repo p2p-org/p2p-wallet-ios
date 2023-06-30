@@ -1,6 +1,7 @@
 import Foundation
 import Resolver
 import AppsFlyerLib
+import UIKit
 
 final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {

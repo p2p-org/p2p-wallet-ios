@@ -1,16 +1,10 @@
-//
-//  WormholeSendInputAdapter.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppUI
 import Send
 import Wormhole
+import UIKit
 
 struct WormholeSendInputStateAdapter: Equatable {
     let cryptoFormatter: CryptoFormatter = .init()

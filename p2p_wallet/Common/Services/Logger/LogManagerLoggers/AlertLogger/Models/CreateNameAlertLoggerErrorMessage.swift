@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct CreateNameAlertLoggerErrorMessage: Codable {
     let name: String

@@ -1,11 +1,6 @@
-//
-//  UIScrollView+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 13/07/2021.
-//
-
 import Foundation
+import UIKit
+
 extension UIScrollView {
     func scrollToBottom(animated: Bool) {
         scrollTo(y: contentSize.height - bounds.size.height + contentInset.bottom, animated: animated)

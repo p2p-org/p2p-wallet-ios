@@ -1,10 +1,3 @@
-//
-//  SettingsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,7 @@ import LocalAuthentication
 import Onboarding
 import Resolver
 import SolanaSwift
+import UIKit
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType

@@ -1,15 +1,9 @@
-//
-//  RendableListTransactionItem+ParsedTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 import TransactionParser
+import UIKit
 
 struct RendableListParsedTransactionItem: RendableListTransactionItem {
     let trx: ParsedTransaction

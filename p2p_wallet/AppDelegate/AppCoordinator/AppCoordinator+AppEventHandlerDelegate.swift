@@ -2,6 +2,7 @@ import AnalyticsManager
 import Foundation
 import Resolver
 import SolanaSwift
+import UIKit
 
 extension AppCoordinator: AppEventHandlerDelegate {
     func didStartLoading() {
