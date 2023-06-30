@@ -57,7 +57,6 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountFrom = amountFrom
-                $0.amountTo = nil
             }
         case let .changeFromToken(fromToken):
             return state.modified {
@@ -67,7 +66,6 @@ enum JupiterSwapBusinessLogic {
                 $0.routes = []
                 $0.fromToken = fromToken
                 $0.amountFrom = nil
-                $0.amountTo = nil
             }
         case let .changeToToken(toToken):
             return state.modified {
@@ -76,7 +74,6 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.toToken = toToken
-                $0.amountTo = nil
             }
         case .switchFromAndToTokens:
             return state.modified {
@@ -87,7 +84,6 @@ enum JupiterSwapBusinessLogic {
                 $0.fromToken = state.toToken
                 $0.amountFrom = nil
                 $0.toToken = state.fromToken
-                $0.amountTo = nil
             }
         case .update:
             return state.modified {
@@ -95,7 +91,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
             }
         case .updateUserWallets:
             return nil
@@ -106,8 +101,6 @@ enum JupiterSwapBusinessLogic {
                 $0.status = .loadingAmountTo
                 $0.route = route
                 $0.swapTransaction = nil
-                $0.amountTo = UInt64(route.outAmount)?
-                    .convertToBalance(decimals: state.toToken.token.decimals)
             }
         case let .changeSlippageBps(slippageBps):
             return state.modified {
@@ -115,7 +108,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
                 $0.slippageBps = slippageBps
             }
         case .retry(.gettingRoute):
@@ -124,7 +116,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
             }
         case let .retry(.createTransaction(isSimulationOn)):
             return state.modified {
@@ -266,8 +257,6 @@ enum JupiterSwapBusinessLogic {
                         $0.routes = fixedRoutes // Replace routes only with available ones
                         $0.status = .ready
                         $0.swapTransaction = swapTransaction
-                        $0.amountTo = UInt64(route.outAmount)?
-                            .convertToBalance(decimals: state.toToken.token.decimals)
                     }
                 } else {
                     // If there is no swapTransaction, then the state is "routeIsNotFound"
@@ -276,7 +265,6 @@ enum JupiterSwapBusinessLogic {
                         $0.routes = []
                         $0.status = .error(reason: .routeIsNotFound)
                         $0.swapTransaction = nil
-                        $0.amountTo = nil
                     }
                 }
                 
