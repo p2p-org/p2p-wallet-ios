@@ -11,8 +11,6 @@ import Onboarding
 import Resolver
 
 class DeviceShareMigrationViewModel: BaseViewModel, ObservableObject {
-    @Injected var notificationService: NotificationService
-
     @Injected var deviceShareManager: DeviceShareManager
     @Injected var walletMetadataService: WalletMetadataService
     @Injected var userWalletManager: UserWalletManager

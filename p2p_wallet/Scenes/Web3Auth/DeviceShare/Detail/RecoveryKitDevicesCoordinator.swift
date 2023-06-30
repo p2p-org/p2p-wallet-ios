@@ -132,8 +132,8 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                 switch result {
                 case let .success(facade):
                     self?.startMigration(facade: facade)
-                case let .failure(error):
-                    self?.notificationService.showInAppNotification(.error(error))
+                case .failure:
+                    self?.notificationService.showToast(title: "❌", text: L10n.SomethingWentWrong.pleaseTryAgain)
                 case .cancel:
                     guard let prevVC = self?.prevVC else { return }
                     self?.navigationController.popToViewController(prevVC, animated: true)
@@ -158,7 +158,7 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                     self?.result.send(completion: .finished)
 
                 case .error:
-                    self?.notificationService.showInAppNotification(.message(L10n.somethingWentWrong))
+                    self?.notificationService.showToast(title: "❌", text: L10n.SomethingWentWrong.pleaseTryAgain)
                 }
             }
             .store(in: &subscriptions)
