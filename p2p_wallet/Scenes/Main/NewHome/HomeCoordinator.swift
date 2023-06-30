@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -19,7 +20,7 @@ enum HomeNavigation: Equatable {
     case earn
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
-    case bankTransferClaim(String)
+    case bankTransferClaim(BankTransferClaimUserAction)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -182,12 +183,16 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             }
-        case .bankTransferClaim:
+        case .bankTransferClaim(let userAction):
             return coordinate(to: BankTransferClaimCoordinator(
                 navigationController: navigationController,
                 transaction: StrigaClaimTransaction(
-                    challengeId: "",
-                    mainDescription: ""
+                    challengeId: userAction.challengeId,
+                    token: userAction.token,
+                    amount: Double(userAction.amount ?? "") ?? 0,
+                    feeAmount: .zero,
+                    fromAddress: userAction.fromAddress,
+                    receivingAddress: userAction.receivingAddress
                 )
             ))
             .map { _ in Void() }

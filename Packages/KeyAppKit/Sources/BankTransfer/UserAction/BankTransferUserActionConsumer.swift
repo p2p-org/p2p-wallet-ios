@@ -6,7 +6,7 @@ import KeyAppKitCore
 import SolanaSwift
 
 public enum BankTransferClaimUserActionEvent: UserActionEvent {
-    case track(String, UserActionStatus)
+    case track(BankTransferClaimUserAction, UserActionStatus)
     case sendFailure(String)
 }
 
@@ -44,10 +44,10 @@ public class BankTransferUserActionConsumer: UserActionConsumer {
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
-            self?.handle(event: Event.track(action.id, .processing))
+            self?.handle(event: Event.track(action, .processing))
             // FIXME: - Real logic
             try? await Task.sleep(seconds: 2)
-            self?.handle(event: Event.track(action.id, .ready))
+            self?.handle(event: Event.track(action, .ready))
         }
     }
 
@@ -58,19 +58,20 @@ public class BankTransferUserActionConsumer: UserActionConsumer {
 
     func handleInternalEvent(event: Event) {
         switch event {
-        case let .track(id, status):
+        case let .track(action, status):
             Task { [weak self] in
                 guard let self = self else { return }
-
-                let userAction = try? await Action(
-                    id: id,
-                    status: status,
-                    updatedDate: Date()
+                let userAction = Action(
+                    id: action.id,
+                    challengeId: action.challengeId,
+                    token: action.token,
+                    amount: action.amount,
+                    fromAddress: action.fromAddress,
+                    receivingAddress: action.receivingAddress,
+                    status: status
                 )
 
-                if let userAction {
-                    await self.database.set(for: userAction.id, userAction)
-                }
+                await self.database.set(for: userAction.id, userAction)
             }
         case .sendFailure(let id):
             Task { [weak self] in
@@ -86,14 +87,33 @@ public class BankTransferClaimUserAction: UserAction {
     /// Unique internal id to track.
     public var id: String
 
+    public let challengeId: String
+    public let token: Token?
+    public let amount: String?
+//    public let feeAmount: FeeAmount
+    public let fromAddress: String
+    public let receivingAddress: String
+
     /// Abstract status.
     public var status: UserActionStatus
 
     public var createdDate: Date
     public var updatedDate: Date
 
-    public init(id: String, status: UserActionStatus, createdDate: Date = Date(), updatedDate: Date = Date()) {
+//    public init(id: String, status: UserActionStatus, createdDate: Date = Date(), updatedDate: Date = Date()) {
+//        self.id = id
+//        self.status = status
+//        self.createdDate = createdDate
+//        self.updatedDate = updatedDate
+//    }
+
+    public init(id: String, challengeId: String, token: Token?, amount: String?, fromAddress: String, receivingAddress: String, status: UserActionStatus, createdDate: Date = Date(), updatedDate: Date = Date()) {
         self.id = id
+        self.challengeId = challengeId
+        self.token = token
+        self.amount = amount
+        self.fromAddress = fromAddress
+        self.receivingAddress = receivingAddress
         self.status = status
         self.createdDate = createdDate
         self.updatedDate = updatedDate
@@ -103,3 +123,4 @@ public class BankTransferClaimUserAction: UserAction {
         lhs.id == rhs.id
     }
 }
+

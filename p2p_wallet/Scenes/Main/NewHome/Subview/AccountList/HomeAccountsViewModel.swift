@@ -168,7 +168,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .filter { $0.status == .ready }
             .receive(on: RunLoop.main)
             .sink { [weak self] action in
-                self?.navigation.send(.bankTransferClaim(action.id))
+                self?.navigation.send(.bankTransferClaim(action))
             }.store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
@@ -209,10 +209,22 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         case let renderableAccount as BankTransferRenderableAccount:
             let userActionService: UserActionService = Resolver.resolve()
-            guard renderableAccount.status != .isClamming else { return }
-
+            let userWalletManager: UserWalletManager = Resolver.resolve()
+            guard
+                renderableAccount.status != .isClamming,
+                let walletPubKey = userWalletManager.wallet?.account.publicKey
+            else { return }
+            
             let userAction = BankTransferClaimUserAction(
                 id: renderableAccount.id,
+                challengeId: "",
+                token: Token.usdc,
+                amount: renderableAccount.amount.value.formatted(),
+                fromAddress: "",
+                receivingAddress: try! PublicKey.associatedTokenAddress(
+                    walletAddress: walletPubKey,
+                    tokenMintAddress: try! PublicKey(string: Token.usdc.address)
+                ).base58EncodedString,
                 status: .processing
             )
             // Execute and emit action.
