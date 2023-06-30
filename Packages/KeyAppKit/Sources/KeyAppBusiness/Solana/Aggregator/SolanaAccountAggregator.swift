@@ -27,7 +27,7 @@ final class SolanaAccountsAggregator: DataAggregator {
                 account.price = TokenPrice(currencyCode: fiat, value: value, token: token)
 
                 // Legacy code
-                account.token.price = price
+                // account.token.price = price
             }
 
             return account

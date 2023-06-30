@@ -404,7 +404,13 @@ extension WormholeSendInputViewModel {
             }
 
         if availableBridgeAccounts.isEmpty {
-            availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
+            availableBridgeAccounts.append(
+                SolanaAccount(
+                    address: "",
+                    lamports: 0,
+                    token: .usdcet
+                )
+            )
         }
 
         return availableBridgeAccounts

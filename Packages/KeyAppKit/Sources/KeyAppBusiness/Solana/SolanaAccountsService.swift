@@ -64,7 +64,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         errorObservable: any ErrorObserver
     ) {
         // Setup async value
-        originStream = .init(initialItem: []) { () -> ([SolanaAccount]?, Error)
+        originStream = .init(initialItem: []) { () async -> ([Account]?, Swift.Error?) in
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
                 return (nil, Error.authorityError)
             }
@@ -74,7 +74,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             do {
                 // Updating native account balance and get spl tokens
                 let (balance, (resolved, _)) = try await(
-                    // TODO: Check commitment value! Previously was ``recent``
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,
@@ -89,7 +88,19 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                     token: .nativeSolana
                 )
 
-                newAccounts = [solanaAccount] + resolved.map { Account(data: $0, price: nil) }
+                newAccounts = [solanaAccount] + resolved
+                    .map { accountBalance in
+                        guard let pubkey = accountBalance.pubkey else {
+                            return nil
+                        }
+
+                        return Account(
+                            address: pubkey,
+                            lamports: accountBalance.lamports ?? 0,
+                            token: accountBalance.token
+                        )
+                    }
+                    .compactMap { $0 }
 
                 return (newAccounts, nil)
             } catch {

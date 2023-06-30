@@ -325,21 +325,18 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                     // Parse
                     var reader = BinaryReader(bytes: data.bytes)
-                    let tokenAccountData = try AccountInfo(from: &reader)
+                    let tokenAccountData = try SPLTokenAccountState(from: &reader)
 
                     // Get token
                     let token = try await tokensService.get(address: tokenAccountData.mint)
 
                     // TODO: Add case when token info is invalid
                     if let token {
-                        let wallet = SolanaSwift.Wallet(
-                            pubkey: pubKey,
+                        let splAccount = SolanaAccount(
+                            address: pubKey,
                             lamports: tokenAccountData.lamports,
-                            supply: nil,
                             token: token
                         )
-
-                        let splAccount = SolanaAccount(data: wallet)
                         accountsSubject.send(splAccount)
                     }
 
@@ -351,14 +348,11 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     }
 
     func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) {
-        let wallet = SolanaSwift.Wallet(
-            pubkey: owner,
+        let nativeSolanaAccount = SolanaAccount(
+            address: owner,
             lamports: notification.result.value.lamports,
-            supply: nil,
             token: .nativeSolana
         )
-
-        let nativeSolanaAccount = SolanaAccount(data: wallet)
         accountsSubject.send(nativeSolanaAccount)
     }
 }

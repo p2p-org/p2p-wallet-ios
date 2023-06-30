@@ -20,6 +20,9 @@ public struct SolanaAccount: Identifiable, Equatable {
     /// Data field
     public var token: SolanaToken
 
+    @available(*, deprecated, message: "Legacy code")
+    public var data: AccountBalance
+
     /// The fetched price at current moment of time.
     public var price: TokenPrice?
 
@@ -28,6 +31,8 @@ public struct SolanaAccount: Identifiable, Equatable {
         self.lamports = lamports
         self.token = token
         self.price = price
+        
+        data = AccountBalance(pubkey: address, lamports: lamports, supply: nil, token: token)
     }
 
     public var cryptoAmount: CryptoAmount {
