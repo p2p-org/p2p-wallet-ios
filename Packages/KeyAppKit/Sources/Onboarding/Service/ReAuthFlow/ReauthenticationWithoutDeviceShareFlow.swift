@@ -1,10 +1,12 @@
 import Foundation
+import KeyAppKitCore
 
 public struct ReAuthWithoutDeviceShareProvider {
     let apiGateway: APIGatewayClient
     let facade: TKeyFacade
     let socialAuthService: SocialAuthService
     let walletMetadata: WalletMetaData
+    let errorObserver: ErrorObserver
 
     let expectedEmail: String
 
@@ -13,12 +15,14 @@ public struct ReAuthWithoutDeviceShareProvider {
         facade: TKeyFacade,
         socialAuthService: SocialAuthService,
         walletMetadata: WalletMetaData,
+        errorObserver: ErrorObserver,
         expectedEmail: String
     ) {
         self.apiGateway = apiGateway
         self.facade = facade
         self.socialAuthService = socialAuthService
         self.walletMetadata = walletMetadata
+        self.errorObserver = errorObserver
         self.expectedEmail = expectedEmail
     }
 }
@@ -33,6 +37,7 @@ public enum ReAuthWithoutDeviceShareState: State, Equatable {
     public typealias Provider = ReAuthWithoutDeviceShareProvider
 
     public static var initialState: Self = .customShare(.initialState)
+    static let realtimeErrorConfig: ErrorObserverConfig = .init(domain: "Web3Auth ReAuth", flags: .realtimeAlert)
 
     case customShare(ReAuthCustomShareState)
     case socialShare(ReAuthSocialShareState, ReAuthenticationCustomShareResult)
@@ -51,7 +56,13 @@ public enum ReAuthWithoutDeviceShareState: State, Equatable {
                 throw StateMachineError.invalidEvent
             }
 
-            let nextInnerState = try await innerState <- (innerEvent, .init(apiGateway: provider.apiGateway))
+            let nextInnerState = try await innerState <- (
+                innerEvent,
+                .init(
+                    apiGateway: provider.apiGateway,
+                    errorObserver: provider.errorObserver
+                )
+            )
 
             switch nextInnerState {
             case let .finish(result):
@@ -77,17 +88,22 @@ public enum ReAuthWithoutDeviceShareState: State, Equatable {
                 .init(
                     tkeyFacade: provider.facade,
                     socialAuthService: provider.socialAuthService,
+                    errorObserver: provider.errorObserver,
                     expectedEmail: provider.expectedEmail
                 )
             )
 
             switch nextInnerState {
             case let .finish(result):
-                _ = try await provider.facade.signIn(
-                    torusKey: result.torusKey,
-                    customShare: customShareResult.customShare,
-                    encryptedMnemonic: customShareResult.encryptedMnemonic
-                )
+                do {
+                    _ = try await provider.facade.signIn(
+                        torusKey: result.torusKey,
+                        customShare: customShareResult.customShare,
+                        encryptedMnemonic: customShareResult.encryptedMnemonic
+                    )
+                } catch {
+                    throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)
+                }
 
                 return .finish
 

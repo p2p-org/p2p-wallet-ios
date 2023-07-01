@@ -4,6 +4,8 @@ import KeyAppKitCore
 
 public class DeviceShareMigrationService {
     let errorObserver: ErrorObserver
+    let defaultErrorConfig = ErrorObserverConfig(domain: "Device share changes", flags: .realtimeAlert)
+
     let isMigrationAvailableSubject: CurrentValueSubject<Bool, Never> = .init(false)
     var subscriptions: [AnyCancellable] = []
 
@@ -38,21 +40,21 @@ public class DeviceShareMigrationService {
         metadataService: WalletMetadataService
     ) async throws {
         guard isMigrationAvailable else {
-            throw errorObserver.watchError(Error.migrationIsNotAllowed)
+            throw errorObserver.intercept(Error.migrationIsNotAllowed, config: defaultErrorConfig)
         }
 
         // Ensure that user recently has logged.
         guard let ethAddress = await facade.ethAddress else {
-            throw errorObserver.watchError(Error.unauthorized)
+            throw errorObserver.intercept(Error.unauthorized, config: defaultErrorConfig)
         }
 
         // Ensure that eth address of recent logged user is the same with wallet torus eth address.
         guard ethAddress == userEthAddress else {
-            throw errorObserver.watchError(Error.ethAddressesAreDifference)
+            throw errorObserver.intercept(Error.ethAddressesAreDifference, config: defaultErrorConfig)
         }
 
         guard var currentMetadata = metadataService.metadata.value else {
-            throw errorObserver.watchError(Error.metadataError)
+            throw errorObserver.intercept(Error.metadataError, config: defaultErrorConfig)
         }
 
         // Update metadata
@@ -65,8 +67,7 @@ public class DeviceShareMigrationService {
             // Save new device share to current device
             deviceShareStorage.save(deviceShare: result.share)
         } catch {
-            errorObserver.handleError(error)
-            throw error
+            throw errorObserver.intercept(error, config: defaultErrorConfig)
         }
 
         await metadataService.update(currentMetadata)

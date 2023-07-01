@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import KeyAppKitCore
 
 public struct ReAuthCustomShareProvider {
     let apiGateway: APIGatewayClient
+    let errorObserver: ErrorObserver
 }
 
 public enum ReAuthCustomShareEvent: Codable, Equatable {
@@ -38,6 +40,7 @@ public enum ReAuthCustomShareState: State, Equatable {
         solPrivateKey: Data(),
         resendCounter: .init(.zero())
     )
+    static let realtimeErrorConfig: ErrorObserverConfig = .init(domain: "Web3Auth ReAuth", flags: .realtimeAlert)
 
     case otpInput(
         phoneNumber: String,
@@ -101,6 +104,8 @@ public enum ReAuthCustomShareState: State, Equatable {
                     solPrivateKey: solPrivateKey,
                     reason: .blockEnterOTP
                 )
+            } catch {
+                throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)
             }
 
         case let .enterOTP(code):
@@ -125,6 +130,8 @@ public enum ReAuthCustomShareState: State, Equatable {
                     solPrivateKey: solPrivateKey,
                     reason: .blockEnterOTP
                 )
+            } catch {
+                throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)
             }
 
         case .resendOTP:
@@ -146,6 +153,8 @@ public enum ReAuthCustomShareState: State, Equatable {
                     solPrivateKey: solPrivateKey,
                     reason: .blockResend
                 )
+            } catch {
+                throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)
             }
 
         case .back:

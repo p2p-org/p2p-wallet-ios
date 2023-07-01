@@ -7,8 +7,10 @@ import Foundation
 import KeyAppKitCore
 
 public actor WalletMetadataServiceImpl: WalletMetadataService {
-    let currentUserWallet: CurrentUserWallet
     let errorObserver: ErrorObserver
+    let realtimeErrorConfig: ErrorObserverConfig = .init(domain: "Metadata service", flags: .realtimeAlert)
+
+    let currentUserWallet: CurrentUserWallet
     let localMetadataProvider: WalletMetadataProvider
     let remoteMetadataProvider: [WalletMetadataProvider]
 
@@ -36,8 +38,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
     /// Synchornize data between local storage and remote storage.
     public func synchronize() async {
         guard let userWallet = currentUserWallet.value else {
-            let error = Error.unauthorized
-            errorObserver.handleError(error)
+            errorObserver.handleError(Error.unauthorized)
             return
         }
 
@@ -80,12 +81,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
                 metadataSubject.value.value = mergedMetadata
 
                 // Push updated data to remote storage
-                do {
-                    await write(userWallet: userWallet, metadata: mergedMetadata)
-                } catch {
-                    errorObserver.handleError(error)
-                    throw Error.remoteSynchronizationFailure
-                }
+                await write(userWallet: userWallet, metadata: mergedMetadata)
             } else {
                 if let remoteMetadata {
                     // Push updated data to local storage
@@ -103,19 +99,19 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
         } catch {
             await releaseWrite()
             metadataSubject.value.error = error
-            errorObserver.handleError(error)
+            errorObserver.handleError(error, config: realtimeErrorConfig)
         }
     }
 
     /// Update metadata
     public func update(_ newMetadata: WalletMetaData) async {
         guard let userWallet = currentUserWallet.value else {
-            errorObserver.handleError(Error.unauthorized)
+            errorObserver.handleError(Error.unauthorized, config: realtimeErrorConfig)
             return
         }
 
         guard userWallet.ethAddress != nil else {
-            errorObserver.handleError(Error.notWeb3AuthUser)
+            errorObserver.handleError(Error.notWeb3AuthUser, config: realtimeErrorConfig)
             return
         }
 
@@ -123,11 +119,11 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
             // Push updated data to local storage
             try await localMetadataProvider.save(for: userWallet, metadata: newMetadata)
             metadataSubject.value.value = newMetadata
-
-            await synchronize()
         } catch {
-            errorObserver.handleError(error)
+            errorObserver.handleError(error, config: realtimeErrorConfig)
         }
+
+        await synchronize()
     }
 
     private func acquireWrite() async {
@@ -147,7 +143,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
             do {
                 try await provider.save(for: userWallet, metadata: metadata)
             } catch {
-                errorObserver.handleError(error)
+                errorObserver.handleError(error, config: realtimeErrorConfig)
             }
         }
     }

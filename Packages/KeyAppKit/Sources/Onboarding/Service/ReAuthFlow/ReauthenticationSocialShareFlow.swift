@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppKitCore
 
 public struct ReAuthSocialShareResult: Equatable {
     public let torusKey: TorusKey
@@ -14,6 +15,7 @@ public struct ReAuthSocialShareResult: Equatable {
 public struct ReAuthSocialShareProvider {
     let tkeyFacade: TKeyFacade
     let socialAuthService: SocialAuthService
+    let errorObserver: ErrorObserver
     let expectedEmail: String
 }
 
@@ -28,6 +30,8 @@ public enum ReAuthSocialShareState: State, Equatable {
     public typealias Provider = ReAuthSocialShareProvider
 
     public static var initialState: Self = .signIn(socialProvider: .google)
+    static let realtimeErrorConfig: ErrorObserverConfig = .init(domain: "Web3Auth ReAuth", flags: .realtimeAlert)
+
 
     case signIn(socialProvider: SocialProvider)
     case wrongAccount(socialProvider: SocialProvider, wrongEmail: String)
@@ -90,22 +94,26 @@ public enum ReAuthSocialShareState: State, Equatable {
 
         switch event {
         case .signIn:
-            let (tokenId, email) = try await provider.socialAuthService.auth(type: socialProvider)
-
-            if email != provider.expectedEmail {
-                return .wrongAccount(socialProvider: socialProvider, wrongEmail: email)
-            }
-
-            try await provider.tkeyFacade.initialize()
-            let torusKey = try await provider.tkeyFacade
-                .obtainTorusKey(
-                    tokenID: TokenID(
-                        value: tokenId,
-                        provider: socialProvider.rawValue
+            do {
+                let (tokenId, email) = try await provider.socialAuthService.auth(type: socialProvider)
+                
+                if email != provider.expectedEmail {
+                    return .wrongAccount(socialProvider: socialProvider, wrongEmail: email)
+                }
+                
+                try await provider.tkeyFacade.initialize()
+                let torusKey = try await provider.tkeyFacade
+                    .obtainTorusKey(
+                        tokenID: TokenID(
+                            value: tokenId,
+                            provider: socialProvider.rawValue
+                        )
                     )
-                )
-
-            return .finish(result: ReAuthSocialShareResult(torusKey: torusKey))
+                
+                return .finish(result: ReAuthSocialShareResult(torusKey: torusKey))
+            } catch {
+                throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)
+            }
 
         case .back:
             return .cancel
