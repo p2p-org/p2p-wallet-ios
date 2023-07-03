@@ -177,7 +177,7 @@
         "repositoryURL": "https://github.com/intercom/intercom-ios.git",
         "state": {
           "branch": null,
-          "revision": "7d1072dc39ebaf8af117b697730b6aaa834e5f48",
+          "revision": "37d609080265b499944261f88f9b19cc9a0b1323",
           "version": "12.4.3"
         }
       },
@@ -354,7 +354,7 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
           "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
@@ -384,8 +384,8 @@
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "9b1258905c21fc1b97bf03d1b4ca12c4ec4e5fda",
-          "version": "1.2.0"
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
         }
       },
       {
