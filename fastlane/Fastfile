@@ -162,15 +162,19 @@ end
 
 def notify(version, message)
   # to discord
-  sh(
-    "curl", 
-    "-v", 
-    "-X", "POST", 
-    "-H", "Content-Type: application/json",
-    "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
-    "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-    DISCORD_MESSAGE_API_ENDPOINT
-  )
+  begin
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json",
+      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+  rescue => ex
+    UI.important('Failed to send message, but continuing anyway!')
+  end
 
   # to slack
   slack_upload(
@@ -357,14 +361,20 @@ platform :ios do
 
     # post to discord
     build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
-    sh(
-      "curl", 
-      "-v", 
-      "-X", "POST", 
-      "-H", "Content-Type: application/json", 
-      "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-      DISCORD_MESSAGE_API_ENDPOINT
-    )
+
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json", 
+        "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
+    
 
     # set build number
     increment_build_number(
@@ -401,15 +411,19 @@ platform :ios do
     message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
 
     # post to discord
-    sh(
-      "curl", 
-      "-v", 
-      "-X", "POST", 
-      "-H", "Content-Type: application/json",
-      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
-      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-      DISCORD_MESSAGE_API_ENDPOINT
-    )
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json",
+        "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
+        "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
 
     # post to slack
     post_to_slack(
