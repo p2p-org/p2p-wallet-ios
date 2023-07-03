@@ -16,7 +16,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
     // Request otp timer properties
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
-    private var resendCounter: ResendCounter
+    private var resendCounter: ResendCounter?
 
     // Fields
     @Published var occupationIndustry: String = ""
@@ -222,7 +222,11 @@ private extension StrigaRegistrationSecondStepViewModel {
 
     // Start OTP request timer
     func increaseTimer() {
-        self.resendCounter = self.resendCounter.incremented()
+        if let resendCounter {
+            self.resendCounter = resendCounter.incremented()
+        } else {
+            resendCounter = .zero()
+        }
     }
 }
 

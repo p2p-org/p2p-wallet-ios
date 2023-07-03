@@ -152,8 +152,8 @@ extension DefaultsKeys {
         .init(#function, defaultValue: false)
     }
 
-    var strigaOTPResendCounter: DefaultsKey<ResendCounter> {
-        .init(#function, defaultValue: .zero())
+    var strigaOTPResendCounter: DefaultsKey<ResendCounter?> {
+        .init(#function, defaultValue: nil)
     }
 
     var strigaOTPConfirmErrorDate: DefaultsKey<Date?> {
