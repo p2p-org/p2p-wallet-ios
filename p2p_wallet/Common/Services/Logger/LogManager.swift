@@ -6,6 +6,7 @@ import KeyAppKitLogger
 import Resolver
 import Send
 import SolanaSwift
+import UIKit
 import Wormhole
 
 enum LogLevel: String {
@@ -157,7 +158,7 @@ KeyAppKitCore.ErrorObserver {
         if config.flags.contains(.realtimeAlert) {
             // Setup
             let system: [String: Any] = [
-                "platform": "iOS \(await UIDevice.current.systemVersion)",
+                "platform": "iOS \(UIDevice.current.systemVersion)",
                 "userPubkey": Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
                     .base58EncodedString ?? "",
                 "appVersion": AppInfo.appVersionDetail,
