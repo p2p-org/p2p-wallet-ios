@@ -104,9 +104,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             .sinkAsync { [weak self, weak viewModel] process in
                 process.start {
                     guard let self, let viewModel else { return }
-                    self.increaseTimer(viewModel: viewModel)
                     do {
                         try await self.resendHandler()
+                        // Increase timer if url request is succeeded
+                        self.increaseTimer(viewModel: viewModel)
                     } catch BankTransferError.otpExceededDailyLimit {
                         self.handleOTPExceededDailyLimitError()
                         self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
@@ -150,12 +151,12 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         }
 
         if resendCounter.until.timeIntervalSinceNow < 0 {
-            // Get initial OTP if timer is off (it cand be also launched on previous screen)
-            increaseTimer(viewModel: viewModel)
-            // Sending the first OTP
+            // Get OTP if timer is off (it cand be also launched on previous screen)
             Task { [weak self] in
                 do {
                     try await self?.resendHandler()
+                    // Increase timer if url request is succeeded
+                    self?.increaseTimer(viewModel: viewModel)
                 } catch BankTransferError.otpExceededDailyLimit {
                     self?.handleOTPExceededDailyLimitError()
                 } catch {
