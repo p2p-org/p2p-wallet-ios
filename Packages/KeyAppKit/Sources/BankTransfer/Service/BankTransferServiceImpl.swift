@@ -39,8 +39,8 @@ extension BankTransferServiceImpl: BankTransferService {
         do {
             
             // registered user
-            if let metadata = await repository.getMetadata(), let userId = metadata.userId {
-                return try await handleRegisteredUser(userId: userId, mobileNumber: metadata.phoneNumber)
+            if let userId = await repository.getUserId() {
+                return try await handleRegisteredUser(userId: userId)
             }
             
             // unregistered user
@@ -120,9 +120,11 @@ extension BankTransferServiceImpl: BankTransferService {
 
     // MARK: - Helpers
 
-    private func handleRegisteredUser(userId: String, mobileNumber: String) async throws {
-        // get user details, check kyc status
+    private func handleRegisteredUser(userId: String) async throws {
+        // check kyc status
         let kycStatus = try await repository.getKYCStatus()
+        // get user details
+        let registrationData = try await repository.getRegistrationData()
 
         var wallets: [UserWallet]?
         if kycStatus.status == .approved {
@@ -137,7 +139,7 @@ extension BankTransferServiceImpl: BankTransferService {
                     userId: userId,
                     mobileVerified: kycStatus.mobileVerified,
                     kycStatus: kycStatus.status,
-                    mobileNumber: mobileNumber,
+                    mobileNumber: registrationData.mobileNumber,
                     wallets: wallets
                 ),
                 error: nil
