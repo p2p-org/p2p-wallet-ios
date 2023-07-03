@@ -21,7 +21,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     // MARK: - Properties
 
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
-    private var resendCounter: ResendCounter
+    private var resendCounter: ResendCounter?
     @SwiftyUserDefault(keyPath: \.strigaOTPConfirmErrorDate, options: .cached)
     private var lastConfirmErrorData: Date?
     @SwiftyUserDefault(keyPath: \.strigaOTPResendErrorDate, options: .cached)
@@ -55,10 +55,17 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<StrigaOTPCoordinatorResult, Never> {
+        // Initialize timer
+        var timerHasJustInitialized = false
+        if self.resendCounter == nil {
+            self.resendCounter = .zero()
+            timerHasJustInitialized = true
+        }
+
         // Create viewModel
         let viewModel = EnterSMSCodeViewModel(
             phone: phone,
-            attemptCounter: Wrapper(resendCounter),
+            attemptCounter: Wrapper(resendCounter ?? .zero()),
             strategy: .striga
         )
         // Create viewController
@@ -76,7 +83,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 }
                 do {
                     try await self?.verifyHandler(otp)
-                    self?.resendCounter = .zero()
+                    self?.resendCounter = nil
                     self?.resultSubject.send(.verified)
                 } catch BankTransferError.otpExceededVerification {
                     self?.lastConfirmErrorData = Date().addingTimeInterval(60 * 60 * 24)
@@ -150,13 +157,15 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             present(controller: controller)
         }
 
-        if resendCounter.until.timeIntervalSinceNow < 0 {
+        if timerHasJustInitialized || resendCounter?.until.timeIntervalSinceNow < 0 {
             // Get OTP if timer is off (it cand be also launched on previous screen)
             Task { [weak self] in
                 do {
                     try await self?.resendHandler()
                     // Increase timer if url request is succeeded
-                    self?.increaseTimer(viewModel: viewModel)
+                    if !timerHasJustInitialized {
+                        self?.increaseTimer(viewModel: viewModel)
+                    }
                 } catch BankTransferError.otpExceededDailyLimit {
                     self?.handleOTPExceededDailyLimitError()
                 } catch {
@@ -169,8 +178,9 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     }
 
     private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
-        self.resendCounter = self.resendCounter.incremented()
-        viewModel.attemptCounter = Wrapper(self.resendCounter)
+        guard let resendCounter else { return }
+        self.resendCounter = resendCounter.incremented()
+        viewModel.attemptCounter = Wrapper(resendCounter)
     }
 
     private func handleOTPExceededDailyLimitError() {
