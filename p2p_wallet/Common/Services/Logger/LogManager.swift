@@ -150,14 +150,16 @@ KeyAppKitCore.ErrorObserver {
         log(event: event, data: data, logLevel: newLogLevel)
     }
 
-    func handleError(_ error: Error, config: ErrorObserverConfig) {
+    func handleError(_ error: Error, config: ErrorObserverConfig?) {
+        let config = config ?? .init(flags: [])
+
         // Default log
         log(event: config.domain ?? "Error", logLevel: .error, data: String(reflecting: error))
 
         // Realtime log
         if config.flags.contains(.realtimeAlert) {
             // Setup
-            let system: [String: Any] = [
+            let log: [String: Any] = [
                 "platform": "iOS \(UIDevice.current.systemVersion)",
                 "userPubkey": Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
                     .base58EncodedString ?? "",
@@ -166,7 +168,17 @@ KeyAppKitCore.ErrorObserver {
                 "error": error.localizedDescription,
             ]
 
-            log(event: "\(config.domain ?? "General") iOS Alarm", logLevel: .alert, data: String(reflecting: error))
+            let logStr: String
+            if
+                let logData = try? JSONSerialization.data(withJSONObject: log),
+                let log = String(data: logData, encoding: .utf8)
+            {
+                logStr = log
+            } else {
+                logStr = String(reflecting: log)
+            }
+
+            self.log(event: "\(config.domain ?? "General") iOS Alarm", logLevel: .alert, data: logStr)
         }
     }
 

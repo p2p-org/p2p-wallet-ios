@@ -38,8 +38,8 @@ public struct ErrorObserverConfig {
 }
 
 public extension ErrorObserver {
-    func handleError(_ error: Error, config: ErrorObserverConfig? = nil) {
-        handleError(error, config: config)
+    func handleError(_ error: Error) {
+        handleError(error, config: nil)
     }
 
     /// Report error and throw error
