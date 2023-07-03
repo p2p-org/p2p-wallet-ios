@@ -52,7 +52,7 @@ jobs:
 
       - name: Generate secret files and check it
         run: |
-          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
           chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
@@ -90,7 +90,6 @@ jobs:
           IS_CI: '${{ secrets.IS_CI }}'
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
-          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
           GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'

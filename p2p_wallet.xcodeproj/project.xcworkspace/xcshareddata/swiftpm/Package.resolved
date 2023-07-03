@@ -354,7 +354,7 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift",
         "state": {
           "branch": "main",
           "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
@@ -456,8 +456,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
           "branch": null,
-          "revision": "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
-          "version": "1.11.0"
+          "revision": "dc46eeb3928a75390651fac6c1ef7f93ad59a73b",
+          "version": "1.11.1"
         }
       },
       {
