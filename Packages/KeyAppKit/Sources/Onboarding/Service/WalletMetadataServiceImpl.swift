@@ -150,26 +150,29 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
 
     private func fetchRemote(userWallet: UserWallet) async throws
     -> (metadata: WalletMetaData?, sync: Bool) {
-        let multipleRemoteMetadata: [WalletMetaData?] = try await withThrowingTaskGroup(
-            of: WalletMetaData?.self
-        ) { group in
-            for remoteProvider in remoteMetadataProvider {
+        let multipleRemoteMetadata: [WalletMetaData?] = await withTaskGroup(of: WalletMetaData?.self) { [self] group in
+            for remoteProvider in self.remoteMetadataProvider {
                 // Check provider is ready
                 guard await remoteProvider.ready else { continue }
 
                 group.addTask {
-                    let metadata = try await remoteProvider.load(for: userWallet)
+                    do {
+                        let metadata = try await remoteProvider.load(for: userWallet)
 
-                    if let metadata {
-                        return metadata
-                    } else {
+                        if let metadata {
+                            return metadata
+                        } else {
+                            return nil
+                        }
+                    } catch {
+                        self.errorObserver.handleError(error, config: self.realtimeErrorConfig)
                         return nil
                     }
                 }
             }
 
             var metadatas: [WalletMetaData?] = []
-            for try await result in group {
+            for await result in group {
                 metadatas.append(result)
             }
 
