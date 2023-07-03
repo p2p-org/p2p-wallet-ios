@@ -17,16 +17,6 @@ class BaseOTPViewModel: BaseViewModel, ObservableObject {
                 errorText = L10n.notValidSignature
             case .parseError:
                 errorText = L10n.parseError
-            case .invalidRequest:
-                errorText = L10n.invalidRequest
-            case .methodNotFound:
-                errorText = L10n.methodNotFound
-            case .invalidParams:
-                errorText = L10n.invalidParams
-            case .internalError:
-                errorText = L10n.internalError
-            case .everythingIsBroken:
-                errorText = L10n.everythingIsBroken
             case .retry:
                 errorText = L10n.pleaseRetryOperation
             case .alreadyConfirmed:
