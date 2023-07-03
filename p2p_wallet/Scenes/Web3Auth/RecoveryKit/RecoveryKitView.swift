@@ -44,7 +44,7 @@ struct RecoveryKitView: View {
                 // TKey info
                 if let metadata = viewModel.model {
                     VStack(alignment: .leading) {
-                        Text(L10n.multiFactorAuthentication)
+                        Text(L10n.multiFactorAuthentication.uppercased())
                             .apply(style: .caps)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .padding(.leading, 16)
@@ -80,7 +80,7 @@ struct RecoveryKitView: View {
 
                         Text(L10n
                             .KeyAppRespectsYourPrivacyItCanTAccessYourFundsOrPersonalDetails
-                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain
+                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain 
                         )
                             .apply(style: .label1)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
