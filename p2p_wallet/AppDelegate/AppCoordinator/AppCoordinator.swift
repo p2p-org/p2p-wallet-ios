@@ -1,6 +1,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppKitCore
 import KeyAppUI
 import Onboarding
 import OrcaSwapSwift
