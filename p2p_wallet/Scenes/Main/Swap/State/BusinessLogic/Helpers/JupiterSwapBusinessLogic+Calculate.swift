@@ -66,8 +66,6 @@ extension JupiterSwapBusinessLogic {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes ?? []
-                    $0.amountTo = UInt64(route.outAmount)?
-                        .convertToBalance(decimals: state.toToken.token.decimals)
                 },
                 services: services
             )
