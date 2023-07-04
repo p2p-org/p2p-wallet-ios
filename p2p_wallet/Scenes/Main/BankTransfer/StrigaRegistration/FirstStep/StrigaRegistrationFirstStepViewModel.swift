@@ -4,6 +4,7 @@ import Resolver
 import CountriesAPI
 import PhoneNumberKit
 import Foundation
+import Onboarding
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 

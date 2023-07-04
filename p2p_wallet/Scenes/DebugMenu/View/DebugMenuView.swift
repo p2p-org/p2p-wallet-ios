@@ -16,7 +16,6 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                metadata
                 
                 Group {
                     solanaEndpoint
@@ -24,8 +23,6 @@ struct DebugMenuView: View {
                     strigaEndpoint
                     nameServiceEndpoint
                 }
-                
-                socket
 
                 featureTogglers
 
@@ -34,26 +31,8 @@ struct DebugMenuView: View {
                 modules
 
                 feeRelayer
-
-                onboarding
-
-                deviceShare
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
-        }
-    }
-    
-    var metadata: some View {
-        Section(header: Text("Metadata")) {
-            Button("Copy metdata") {
-                viewModel.copyMetadata()
-            }
-        }
-    }
-    
-    var socket: some View {
-        Section(header: Text("Modules")) {
-            NavigationLink("Socket", destination: SocketDebugView())
         }
     }
     
@@ -70,9 +49,9 @@ struct DebugMenuView: View {
     
     var application: some View {
         Section(header: Text("Application")) {
-            TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
-            TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
-            TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
+            DebugTextField(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+            DebugTextField(title: "Push:", content: $globalAppState.pushServiceEndpoint)
+            DebugTextField(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
             Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
             Button {
                 Task {
@@ -88,6 +67,8 @@ struct DebugMenuView: View {
     
     var modules: some View {
         Section(header: Text("Modules")) {
+            NavigationLink("Socket", destination: SocketDebugView())
+            NavigationLink("Web3Auth", destination: OnboardingDebugView())
             NavigationLink("History") { HistoryDebugView() }
         }
     }
@@ -108,16 +89,7 @@ struct DebugMenuView: View {
             }
         }
     }
-    
-    var onboarding: some View {
-        Section(header: Text("Onboarding configurations")) {
-            TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
-            TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
-            TextFieldRow(title: "Google verifier", content: $onboardingConfig.torusGoogleVerifier)
-            TextFieldRow(title: "Google subverifier", content: $onboardingConfig.torusGoogleSubVerifier)
-        }
-    }
-    
+
     var solanaEndpoint: some View {
         Section(header: Text("Solana endpoint")) {
             Text("Selected: \(viewModel.selectedEndpoint?.address ?? "Unknown")")
@@ -170,48 +142,6 @@ struct DebugMenuView: View {
             } label: {
                 Text("Remove userId from metadata")
             }
-        }
-    }
-    
-    var deviceShare: some View {
-        Section(header: Text("Mocked device share")) {
-            Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
-                .onChange(of: onboardingConfig.isDeviceShareMocked) { newValue in
-                    onboardingConfig.isDeviceShareMocked = newValue
-                }
-            TextFieldRow(title: "Share:", content: $onboardingConfig.mockDeviceShare)
-                .disabled(!onboardingConfig.isDeviceShareMocked)
-                .foregroundColor(!onboardingConfig.isDeviceShareMocked ? Color.gray : Color.black)
-            
-            HStack {
-                Text("Delete current share")
-                Spacer()
-                Button {
-                    do {
-                        try Resolver.resolve(KeychainStorage.self).save(deviceShare: "")
-                    } catch { print(error) }
-                } label: { Text("Delete") }
-            }
-            
-            HStack {
-                Text("Delete last progress")
-                Spacer()
-                Button {
-                    Resolver.resolve(OnboardingService.self).lastState = nil
-                } label: { Text("Delete") }
-            }
-        }
-    }
-}
-
-private struct TextFieldRow: View {
-    let title: String
-    let content: Binding<String>
-
-    var body: some View {
-        HStack {
-            Text(title)
-            TextEditor(text: content)
         }
     }
 }

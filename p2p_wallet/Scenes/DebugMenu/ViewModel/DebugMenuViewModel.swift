@@ -1,4 +1,5 @@
 import Combine
+import Onboarding
 import FirebaseRemoteConfig
 import KeyAppBusiness
 import Resolver
@@ -98,7 +99,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         
         if var currentMetadata = service.metadata.value {
             currentMetadata.striga.userId = nil
-            try await service.update(currentMetadata)
+            await service.update(currentMetadata)
         }
         
         Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")

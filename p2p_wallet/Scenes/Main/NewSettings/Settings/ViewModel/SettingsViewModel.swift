@@ -2,6 +2,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import LocalAuthentication
+import Onboarding
 import Resolver
 import SolanaSwift
 import UIKit
@@ -15,6 +16,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
     @Injected private var logoutService: LogoutService
+    @Injected private var deviceShareMigrationService: DeviceShareMigrationService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -28,6 +30,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             toggleBiometryEnabling()
         }
     }
+
     private var isBiometryCheckGoing: Bool = false
 
     @Published var biometryType: BiometryType = .none
@@ -45,6 +48,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     private var storageName: String? { nameStorage.getName() }
     @Published var name: String = ""
     @Published var isNameEnabled: Bool = true
+
+    @Published var deviceShareMigrationAlert: Bool = false
 
     var appInfo: String {
         AppInfo.appVersionDetail
@@ -139,6 +144,13 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func bind() {
+        deviceShareMigrationService
+            .isMigrationAvailablePublisher
+            .sink { [weak self] migrationIsAvailable in
+                self?.deviceShareMigrationAlert = migrationIsAvailable
+            }
+            .store(in: &subscriptions)
+
         createNameService.createNameResult
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
