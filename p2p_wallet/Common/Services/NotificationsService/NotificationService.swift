@@ -127,7 +127,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: title ?? "😓",
                 text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow()
+                .showInKeyWindow(autoHide: withAutoHidden)
         }
     }
 
@@ -197,9 +197,9 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
 // MARK: - Helpers
 
 private extension SnackBar {
-    func showInKeyWindow() {
+    func showInKeyWindow(autoHide: Bool = true) {
         guard let window = UIApplication.shared.keyWindow else { return }
-        show(in: window)
+        show(in: window, autoHide: autoHide)
     }
 }
 
