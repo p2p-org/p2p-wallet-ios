@@ -22,7 +22,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: any BankTransferService
 
     // MARK: - Properties
 

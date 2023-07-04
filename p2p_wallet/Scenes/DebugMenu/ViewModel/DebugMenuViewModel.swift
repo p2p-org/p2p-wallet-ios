@@ -93,7 +93,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     }
     
     func clearStrigaUserIdFromMetadata() async throws {
-        await Resolver.resolve(BankTransferService.self).clearCache()
+        await Resolver.resolve((any BankTransferService).self).clearCache()
         
         let service = Resolver.resolve(WalletMetadataService.self)
         

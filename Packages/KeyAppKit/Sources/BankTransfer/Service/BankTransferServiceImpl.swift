@@ -3,10 +3,11 @@ import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
-public final class BankTransferServiceImpl {
+public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: BankTransferService {
+    public typealias Provider = T
     
     /// Repository that handle CRUD action for UserData
-    public let repository: BankTransferUserDataRepository
+    public let repository: Provider
     
     /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
@@ -15,17 +16,17 @@ public final class BankTransferServiceImpl {
     
     // MARK: - Initializers
     
-    public init(repository: BankTransferUserDataRepository) {
+    public init(repository: Provider) {
         self.repository = repository
     }
 }
 
-extension BankTransferServiceImpl: BankTransferService {
-    
+extension BankTransferServiceImpl {
+
     public var state: AnyPublisher<AsyncValueState<UserData>, Never> {
         subject.eraseToAnyPublisher()
     }
-    
+        
     public func reload() async {
         // mark as loading
         subject.send(
@@ -37,7 +38,6 @@ extension BankTransferServiceImpl: BankTransferService {
         )
         
         do {
-            
             // registered user
             if let userId = await repository.getUserId() {
                 return try await handleRegisteredUser(userId: userId)
@@ -104,18 +104,6 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func clearCache() async {
         await repository.clearCache()
-    }
-
-    // MARK: - Claim
-
-    public func claimVerify(OTP: String, challengeId: String, ip: String) async throws {
-        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
-        try await repository.claimVerify(userId: userId, challengeId: challengeId, ip: ip, verificationCode: OTP)
-    }
-    
-    public func claimResendSMS(challengeId: String) async throws {
-        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
-        try await repository.claimResendSMS(userId: userId, challengeId: challengeId)
     }
 
     // MARK: - Helpers

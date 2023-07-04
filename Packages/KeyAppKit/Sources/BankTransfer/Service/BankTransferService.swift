@@ -1,9 +1,11 @@
 import Combine
 import KeyAppKitCore
 
-public protocol BankTransferService {
-    var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
+public protocol BankTransferService<Provider> where Provider: BankTransferUserDataRepository {
+    associatedtype Provider
 
+    var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
+    
     func reload() async
     
     // MARK: - Registration: Local actions
@@ -20,8 +22,12 @@ public protocol BankTransferService {
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
-    
-    // MARK: - Claim
-    func claimVerify(OTP: String, challengeId: String, ip: String) async throws
-    func claimResendSMS(challengeId: String) async throws
+}
+
+public class AnyBankTransferService<Provider: BankTransferUserDataRepository> {
+    public var value: BankTransferServiceImpl<Provider>
+
+    public init(value: BankTransferServiceImpl<Provider>) {
+        self.value = value
+    }
 }

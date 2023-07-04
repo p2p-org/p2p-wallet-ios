@@ -14,7 +14,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: any BankTransferService
     
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>

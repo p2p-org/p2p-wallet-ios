@@ -9,7 +9,7 @@ import Foundation
 final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObject {
 
     // Dependencies
-    @Injected private var service: BankTransferService
+    @Injected private var service: any BankTransferService
     @Injected private var notificationService: NotificationService
     @Injected private var countriesService: CountriesAPI
     private let industryProvider: ChooseIndustryDataLocalProvider

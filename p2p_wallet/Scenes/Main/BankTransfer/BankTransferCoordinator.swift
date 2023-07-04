@@ -7,7 +7,7 @@ import UIKit
 
 final class BankTransferCoordinator: Coordinator<Void> {
 
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: any BankTransferService
 
     private let viewController: UINavigationController
 
@@ -88,10 +88,10 @@ final class BankTransferCoordinator: Coordinator<Void> {
                     viewController: viewController,
                     phone: userData.mobileNumber ?? "",
                     verifyHandler: { otp in
-                        try await Resolver.resolve(BankTransferService.self).verify(OTP: otp)
+                        try await Resolver.resolve((any BankTransferService).self).verify(OTP: otp)
                     },
                     resendHandler: {
-                        try await Resolver.resolve(BankTransferService.self).resendSMS()
+                        try await Resolver.resolve((any BankTransferService).self).resendSMS()
                     }
                 )
             )
