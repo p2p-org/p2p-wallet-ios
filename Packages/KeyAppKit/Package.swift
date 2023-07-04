@@ -7,7 +7,7 @@ let package = Package(
     name: "KeyAppKit",
     platforms: [
         .macOS(.v12),
-        .iOS(.v14),
+        .iOS(.v15),
         .tvOS(.v13),
         .watchOS(.v6),
 
@@ -27,6 +27,11 @@ let package = Package(
         .library(
             name: "NameService",
             targets: ["NameService"]
+        ),
+
+        .library(
+            name: "KeyAppNetworking",
+            targets: ["KeyAppNetworking"]
         ),
 
         // Analytics manager for wallet
@@ -115,6 +120,7 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
         .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
+        .package(url: "https://github.com/vapor/websocket-kit", from: "2.8.0"),
     ],
     targets: [
         .binaryTarget(
@@ -164,6 +170,15 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
             ],
             path: "Tests/IntegrationTests/NameServiceIntegrationTests"
+        ),
+
+        .target(name: "KeyAppNetworking"),
+        .testTarget(
+            name: "KeyAppNetworkingTests",
+            dependencies: [
+                "KeyAppNetworking"
+            ],
+            path: "Tests/UnitTests/KeyAppNetworkingTests"
         ),
 
         // AnalyticsManager

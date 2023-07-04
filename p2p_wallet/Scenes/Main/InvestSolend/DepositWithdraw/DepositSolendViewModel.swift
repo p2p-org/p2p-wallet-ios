@@ -5,7 +5,6 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Solend
-import Sentry
 
 enum DepositSolendViewModelError {
     case invalidFeePayer
@@ -407,7 +406,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             debugPrint(error)
-            SentrySDK.capture(error: error)
+            DefaultLogManager.shared.log(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
@@ -434,7 +433,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             print(error)
-            SentrySDK.capture(error: error)
+            DefaultLogManager.shared.log(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }

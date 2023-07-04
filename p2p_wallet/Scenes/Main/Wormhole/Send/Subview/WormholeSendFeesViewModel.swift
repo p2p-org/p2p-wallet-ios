@@ -58,19 +58,18 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
                     .init(
                         title: L10n.recipientGets,
-                        subtitle: adapter.receive.crypto,
-                        detail: adapter.receive.fiat
-                    ),
-                    .init(
-                        title: L10n.networkFee,
-                        subtitle: L10n.paidByKeyApp,
-                        detail: "$0.00",
-                        isFree: true
+                        subtitle: adapter.receive?.crypto,
+                        detail: adapter.receive?.fiat
                     ),
                     .init(
                         title: L10n.usingWormholeBridge,
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
+                    ),
+                    .init(
+                        title: L10n.total,
+                        subtitle: adapter.total?.crypto,
+                        detail: adapter.total?.fiat
                     ),
                 ].compactMap { $0 }
             }

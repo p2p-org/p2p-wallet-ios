@@ -1,5 +1,6 @@
 import Foundation
 import Send
+import UIKit
 
 class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
     let stateMachine: WormholeSendInputStateMachine
@@ -16,6 +17,7 @@ class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
         vc.view.layer.cornerRadius = 20
 
         vm.objectWillChange
+            .delay(for: 0.01, scheduler: RunLoop.main)
             .sink { [weak vc] _ in
                 DispatchQueue.main.async {
                     vc?.updatePresentationLayout(animated: true)

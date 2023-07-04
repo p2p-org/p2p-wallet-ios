@@ -2,6 +2,7 @@ import Jupiter
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import Foundation
 
 extension JupiterSwapBusinessLogic {
     static func calculateRoute(
@@ -65,8 +66,6 @@ extension JupiterSwapBusinessLogic {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes ?? []
-                    $0.amountTo = UInt64(route.outAmount)?
-                        .convertToBalance(decimals: state.toToken.token.decimals)
                 },
                 services: services
             )
@@ -77,7 +76,7 @@ extension JupiterSwapBusinessLogic {
 
     private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
         if (error as NSError).isNetworkConnectionError {
-            return state.error(.networkConnectionError)
+            return state.error(.networkConnectionError(.gettingRoute))
         } else if (error as NSError).domain.contains("The value \"NaN\" cannot be converted to a number") {
             return state.error(.minimumAmount)
         }
@@ -121,7 +120,7 @@ extension JupiterSwapBusinessLogic {
                 return .ready
             }
         } catch {
-            return .error(reason: .networkConnectionError)
+            return .error(reason: .networkConnectionError(.gettingRoute))
         }
     }
 }

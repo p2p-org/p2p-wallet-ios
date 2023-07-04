@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "af20c8511fef0df65a405590d7bdd254df0cb95f",
+          "revision": "fdbc1a8c0ab13037e01e5493a2beccb84281acb5",
           "version": null
         }
       },
@@ -258,7 +258,7 @@
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
           "branch": "main",
-          "revision": "b90a6ca2c61168d36a36d4249d70ef6915b25a6b",
+          "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
           "version": null
         }
       },
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "fc8b12831c166e7851c341c2ac5a120c8716304a",
-          "version": "3.3.4"
+          "revision": "1bc568dc14e098880f8698e0d3d60b24e7351bbb",
+          "version": "3.6.3"
         }
       },
       {
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "bf3cee884bbca90defc9792a5267a8c6b0b1e0f6",
+          "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
           "version": null
         }
       },

@@ -28,6 +28,7 @@ struct SettingsView: View {
                 profileSection
                 securitySection
                 appearanceSection
+                communitySection
                 appVersionSection
                 #if !RELEASE
                     debugSection
@@ -76,16 +77,16 @@ struct SettingsView: View {
                     .foregroundColor(Color(Asset.Colors.rose.color))
                 }
             )
-                .alert(isPresented: $logOutPresented) {
-                    Alert(
-                        title: Text(L10n.doYouWantToLogOut),
-                        message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
-                        primaryButton: .destructive(Text(L10n.logOut)) {
-                            viewModel.signOut()
-                        },
-                        secondaryButton: .cancel(Text(L10n.stay))
-                    )
-                }
+            .alert(isPresented: $logOutPresented) {
+                Alert(
+                    title: Text(L10n.doYouWantToLogOut),
+                    message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
+                    primaryButton: .destructive(Text(L10n.logOut)) {
+                        viewModel.signOut()
+                    },
+                    secondaryButton: .cancel(Text(L10n.stay))
+                )
+            }
         }
     }
 
@@ -93,7 +94,17 @@ struct SettingsView: View {
         Section(header: headerText(L10n.security)) {
             Button(
                 action: { viewModel.showView(.recoveryKit) },
-                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
+                label: {
+                    SettingsRowView(title: L10n.securityAndPrivacy, withArrow: true) {
+                        Image(uiImage: UIImage.recoveryKit)
+                            .overlay(
+                                AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color))
+                                    .opacity(viewModel.deviceShareMigrationAlert ? 1 : 0)
+                                    .offset(x: 2.5, y: -2.5),
+                                alignment: .topTrailing
+                            )
+                    }
+                }
             )
             Button(
                 action: { viewModel.showView(.yourPin) },
@@ -129,6 +140,24 @@ struct SettingsView: View {
                     .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
                     .labelsHidden()
             }
+        }
+    }
+
+    private var communitySection: some View {
+        Section(header: headerText("community")) {
+            Button(
+                action: {
+                    viewModel.openTwitter()
+                },
+                label: { cellView(image: .twitter, title: L10n.followUsOnTwitter, withArrow: false) }
+            )
+
+            Button(
+                action: {
+                    viewModel.openDiscord()
+                },
+                label: { cellView(image: .discord, title: L10n.joinOurDiscord, withArrow: false) }
+            )
         }
     }
 

@@ -4,6 +4,8 @@ import KeyAppUI
 import Resolver
 import SolanaSwift
 import TransactionParser
+import Foundation
+import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
@@ -19,7 +21,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var transactionFiatAmount: String
     @Published var transactionCryptoAmount: String
     @Published var info = [(title: String, detail: String)]()
-    @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+    @Published var state: State = .loading(message: L10n.itUsuallyTakesFewSecondsForATransactionToComplete)
     @Published var closeButtonTitle: String = L10n.done
 
     private var currentTransaction: ParsedTransaction?
@@ -89,7 +91,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                if let error = error as? FeeRelayerError, error == .topUpSuccessButTransactionThrows {
+                if let error = error as? FeeRelayerError, error.message == "Topping up is successfull, but the transaction failed" {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
                 } else if let error = error as? SolanaError {
                     switch error {

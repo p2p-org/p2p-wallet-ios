@@ -53,13 +53,8 @@ struct SolendTutorialView: View {
 
     private func markAsReadAndDismiss() {
         Defaults.isSolendTutorialShown = true
-        if #available(iOS 15.0, *) {
-            presentationMode.wrappedValue.dismiss()
-            doneHandler?()
-        } else {
-            doneHandler?()
-            UIApplication.topmostViewController()?.dismiss(animated: true)
-        }
+        presentationMode.wrappedValue.dismiss()
+        doneHandler?()
     }
 
     // MARK: - ViewBuilders

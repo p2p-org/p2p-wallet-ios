@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import UIKit
+import SwiftUI
 
 public extension TextButton {
     enum Style: CaseIterable {
@@ -60,10 +61,24 @@ public extension TextButton {
             }
         }
 
+        public func borderWidth(size: Size) -> CGFloat? {
+            switch size {
+            case .large, .medium: return 2
+            case .small: return 1
+            }
+        }
+
         public func font(size: Size) -> UIFont {
             switch size {
             case .large, .medium: return UIFont.font(of: .text2, weight: .bold)
             case .small: return UIFont.font(of: .text4, weight: .semibold)
+            }
+        }
+
+        public func font(size: Size) -> Font {
+            switch size {
+            case .large, .medium: return Font.system(size: UIFont.fontSize(of: .text2), weight: .bold)
+            case .small: return Font.system(size: UIFont.fontSize(of: .text4), weight: .semibold)
             }
         }
 

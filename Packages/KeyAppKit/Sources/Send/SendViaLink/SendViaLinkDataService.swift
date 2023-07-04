@@ -337,7 +337,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         // 1. Get balance
         let solBalance = try await solanaAPIClient.getBalance(
             account: keypair.publicKey.base58EncodedString,
-            commitment: "recent"
+            commitment: "confirmed"
         )
         
         if solBalance > 0 {
@@ -357,7 +357,10 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
                 mint: nil,
                 programId: TokenProgram.id.base58EncodedString
             ),
-            configs: .init(encoding: "base64")
+            configs: .init(
+                commitment: "confirmed",
+                encoding: "base64"
+            )
         )
         guard let tokenAccount = tokenAccounts.first(where: { $0.account.lamports > 0 })
         else {

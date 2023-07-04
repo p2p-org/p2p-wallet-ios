@@ -1,14 +1,9 @@
-//
-//  Settings.UsernameViewController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 12/10/2021.
-//
-
 import Foundation
 import Resolver
 import KeyAppUI
 import SolanaSwift
+import UIKit
+import BEPureLayout
 
 class NewUsernameViewController: p2p_wallet.BaseViewController {
     @Injected private var imageSaver: ImageSaverType
@@ -32,8 +27,8 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                 )
                     .onCopy { [weak self] _ in
                         guard let self = self else { return }
-                        guard let username = self.storage.getName() else { return }
-                        self.clipboardManager.copyToClipboard(username)
+                        guard let publicKey = self.storage.account?.publicKey.base58EncodedString else { return }
+                        self.clipboardManager.copyToClipboard(publicKey)
                         self.notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
                     }.onShare { [weak self] image in
                         let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
@@ -145,7 +140,7 @@ private class QrCodeCard: BECompositionView {
             }
             
             // Divider
-            UIView.defaultSeparator()
+            UIView.separator(height: 1, color: .separator)
             
             // Action buttons
             UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
@@ -351,5 +346,20 @@ private final class PhotoLibraryAlertPresenter {
             
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
+    }
+}
+
+private extension UIView {
+    /// Grey banner
+    static func greyBannerView(
+        contentInset: UIEdgeInsets = .init(all: 18),
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 8,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill,
+        @BEStackViewBuilder builder: () -> [BEStackViewElement]
+    ) -> UIView {
+        UIStackView(axis: axis, spacing: spacing, alignment: alignment, distribution: distribution, builder: builder)
+            .padding(contentInset, backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
     }
 }

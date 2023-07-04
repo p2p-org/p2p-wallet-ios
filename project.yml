@@ -59,7 +59,7 @@ packages:
         from: 7.6.2
     PhoneNumberKit:
         url: https://github.com/marmelroy/PhoneNumberKit.git
-        exactVersion: 3.3.4
+        from: 3.5.9
     SkeletonUI:
         url: https://github.com/p2p-org/SkeletonUI.git
         branch: master
@@ -91,7 +91,7 @@ packages:
 
 options:
     deploymentTarget:
-        iOS: 14.0
+        iOS: 15.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
     preGenCommand: sh Scripts/preGenCommand.sh
@@ -109,7 +109,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.6
+        MARKETING_VERSION: 2.8.0
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -157,7 +157,7 @@ targets:
     p2p_wallet:
         type: application
         platform: iOS
-        deploymentTarget: 14.0
+        deploymentTarget: 15.0
         sources:
         - path: p2p_wallet
           name: p2p_wallet

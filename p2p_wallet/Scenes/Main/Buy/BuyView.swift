@@ -132,7 +132,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
         VStack(spacing: 4) {
             Text(L10n.poweredBy + " Moonpay")
                 .apply(style: .label1)
-                .foregroundColor(Color(UIColor._9799Af))
+                .foregroundColor(Color(UIColor.h9799af))
             Button {
                 viewModel.moonpayLicenseTap()
             } label: {
@@ -270,14 +270,14 @@ struct BuyView: View, KeyboardVisibilityReadable {
                 }
                 Spacer()
                 if viewModel?.selectedPayment == item.type {
-                    Image("checkmark-filled")
+                    Image(uiImage: .checkmarkFilled)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)
                         .padding(.trailing, 13)
                         .padding(.top, -3)
                 } else {
-                    Image("checkmark-empty")
+                    Image(uiImage: .checkmarkEmpty)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)

@@ -4,7 +4,7 @@ import Foundation
 /// Factory class for automatically creating formatter.
 public enum CryptoFormatterFactory {
     public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
-        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+        if token.network == .ethereum, token.tokenPrimaryKey == "native" && token.decimals == 18 {
             return ETHCryptoFormatter(style: style)
         } else {
             return CryptoFormatter()
@@ -16,13 +16,13 @@ public enum CryptoFormatterFactory {
 public class CryptoFormatter: Formatter {
     /// Default string in case when parsing in not possible.
     public let defaultValue: String
-    
+
     /// Appended prefix of output
     public let prefix: String
-    
+
     /// Hide symbol in output
     public let hideSymbol: Bool
-    
+
     /// Max number of digit.
     public let maxDigits: Int?
 

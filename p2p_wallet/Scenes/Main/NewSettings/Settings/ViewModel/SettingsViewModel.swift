@@ -1,16 +1,11 @@
-//
-//  SettingsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
 import LocalAuthentication
+import Onboarding
 import Resolver
 import SolanaSwift
+import UIKit
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
@@ -20,6 +15,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
+    @Injected private var deviceShareMigrationService: DeviceShareMigrationService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -33,6 +29,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             toggleBiometryEnabling()
         }
     }
+
     private var isBiometryCheckGoing: Bool = false
 
     @Published var biometryType: BiometryType = .none
@@ -51,9 +48,10 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Published var name: String = ""
     @Published var isNameEnabled: Bool = true
 
-    private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
+    @Published var deviceShareMigrationAlert: Bool = false
+
     var appInfo: String {
-        "\(appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+        AppInfo.appVersionDetail
     }
 
     override init() {
@@ -138,13 +136,20 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName! : L10n.notReserved
         if storageName == nil {
-            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
+            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata.value != nil
         } else {
             isNameEnabled = true
         }
     }
 
     private func bind() {
+        deviceShareMigrationService
+            .isMigrationAvailablePublisher
+            .sink { [weak self] migrationIsAvailable in
+                self?.deviceShareMigrationAlert = migrationIsAvailable
+            }
+            .store(in: &subscriptions)
+
         createNameService.createNameResult
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
@@ -152,6 +157,18 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 self.updateNameIfNeeded()
             }
             .store(in: &subscriptions)
+    }
+    
+    public func openTwitter() {
+        if let url = URL(string: "https://twitter.com/KeyApp_") {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    public func openDiscord() {
+        if let url = URL(string: "https://discord.gg/SpW3GmEYgU") {
+            UIApplication.shared.open(url)
+        }
     }
 }
 
@@ -165,20 +182,5 @@ extension SettingsViewModel {
         case recoveryKit
         case yourPin
         case network
-    }
-}
-
-// MARK: - Environment Description
-
-private extension Environment {
-    var description: String {
-        switch self {
-        case .debug:
-            return "Debug"
-        case .test:
-            return "Test"
-        case .release:
-            return "Release"
-        }
     }
 }

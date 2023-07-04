@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import SolanaSwift
 
-struct MockedRendableDetailTransaction: RendableTransactionDetail {
+struct MockedRendableDetailTransaction: RenderableTransactionDetail {
     var status: TransactionDetailStatus
     var title: String
     var subtitle: String
@@ -20,6 +20,7 @@ struct MockedRendableDetailTransaction: RendableTransactionDetail {
     var extra: [TransactionDetailExtraInfo]
     var actions: [TransactionDetailAction]
     var buttonTitle: String
+    var url: String?
 
     init(
         status: TransactionDetailStatus,

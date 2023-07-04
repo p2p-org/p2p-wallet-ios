@@ -1,5 +1,4 @@
 import Combine
-import Send // FIXME: - Remove later
 
 actor JupiterSwapStateMachine {
     // MARK: - Nested type
@@ -119,7 +118,7 @@ actor JupiterSwapStateMachine {
             return currentState
         }
         // Do not trigger stateSubject sending createTransactionState if it is not necessary
-        guard currentState.status == .creatingSwapTransaction else {
+        guard case .creatingSwapTransaction = currentState.status else {
             return currentState
         }
         let createTransactionState = await JupiterSwapBusinessLogic.createTransaction(

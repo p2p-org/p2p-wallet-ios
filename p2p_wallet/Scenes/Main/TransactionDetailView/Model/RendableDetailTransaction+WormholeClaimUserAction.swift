@@ -1,10 +1,3 @@
-//
-//  RendableDetailTransaction+PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -12,7 +5,7 @@ import KeyAppKitCore
 import Send
 import Wormhole
 
-struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
+struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeClaimUserAction
 
     var signature: String? { userAction.id }
@@ -69,6 +62,14 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
 
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
+        
+        result.append(
+            .init(
+                title: L10n.receive, values: [
+                    .init(text: "Wormhole Bridge")
+            ])
+        )
+        
 
         if userAction.compensationDeclineReason == nil {
             result.append(
@@ -82,7 +83,7 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
             let allFees: [Wormhole.TokenAmount] = [
                 userAction.fees.createAccount,
                 userAction.fees.arbiter,
-                userAction.fees.gas,
+                userAction.fees.gasInToken,
             ].compactMap { $0 }
 
             // Split into group token.
@@ -131,10 +132,30 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
     }
 
     var actions: [TransactionDetailAction] {
-        []
+        switch status {
+        case .succeed:
+            if userAction.solanaTransaction != nil {
+                return [
+                    .share,
+                    .explorer,
+                ]
+            } else {
+                return []
+            }
+        default:
+            return []
+        }
     }
 
     var buttonTitle: String {
         L10n.done
+    }
+
+    var url: String? {
+        if let solanaTransaction = userAction.solanaTransaction {
+            return "https://explorer.solana.com/tx/\(solanaTransaction)"
+        } else {
+            return nil
+        }
     }
 }

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import FeeRelayerSwift
 import Foundation
@@ -9,6 +5,8 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
+import Wormhole
+import UIKit
 
 enum SendResult {
     case sent(SendTransaction)
@@ -63,26 +61,19 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if walletsRepository.state == .loaded {
-            let hasToken = walletsRepository.getWallets().contains { wallet in
-                (wallet.lamports ?? 0) > 0
-            }
+        let hasToken = walletsRepository.getWallets().contains { wallet in
+            (wallet.lamports ?? 0) > 0
+        }
 
-            if hasToken {
-                // normal flow with no preChosenRecipient
-                if let recipient = preChosenRecipient {
-                    startFlowWithPreChosenRecipient(recipient)
-                } else {
-                    startFlowWithNoPreChosenRecipient()
-                }
+        if hasToken {
+            // normal flow with no preChosenRecipient
+            if let recipient = preChosenRecipient {
+                startFlowWithPreChosenRecipient(recipient)
             } else {
-                showEmptyState()
+                startFlowWithNoPreChosenRecipient()
             }
-
         } else {
-            // Show not ready
-            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
-            result.send(completion: .finished)
+            showEmptyState()
         }
 
         // Back
@@ -192,7 +183,16 @@ final class SendCoordinator: Coordinator<SendResult> {
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana network")
+
+        let bridgeTokens = SupportedToken.bridges.map(\.solAddress)
+        if preChosenWallet == nil {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else if bridgeTokens.contains(preChosenWallet?.token.address) {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana networks")
+        }
+
         vc.hidesBottomBarWhenPushed = hideTabBar
 
         // Push strategy
@@ -238,7 +238,8 @@ final class SendCoordinator: Coordinator<SendResult> {
             case let .sentViaLink(link, transaction):
                 self?.startSendViaLinkCompletionFlow(
                     link: link,
-                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    formatedAmount: transaction.amount
+                        .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
                     transaction: transaction,
                     intermediatePubKey: keypair.publicKey.base58EncodedString
                 )

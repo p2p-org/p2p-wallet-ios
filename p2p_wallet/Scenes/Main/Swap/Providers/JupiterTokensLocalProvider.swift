@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import Foundation
 
 protocol JupiterTokensProvider {
     func getCachedData() -> JupiterTokensCache?

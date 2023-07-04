@@ -1,5 +1,6 @@
 import KeyAppUI
 import SwiftUI
+import UIKit
 
 struct SolendTutorialSlideView: View {
     let data: SolendTutorialContentData
