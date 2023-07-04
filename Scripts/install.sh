@@ -27,10 +27,12 @@ then
 fi
 
 # install periphery if needed
-if ! command -v periphery &> /dev/null
-then
-	echo "Installing periphery..."
-    brew install peripheryapp/periphery/periphery
+if ! [ "$IS_CI" = true ]; then
+	if ! command -v periphery &> /dev/null
+	then
+		echo "Installing periphery..."
+	    brew install peripheryapp/periphery/periphery
+	fi
 fi
 
 # Resolve homebrew installation folder for non-m1 mac (ci)
