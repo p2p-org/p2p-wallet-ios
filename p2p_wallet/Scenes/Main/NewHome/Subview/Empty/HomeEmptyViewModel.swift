@@ -15,7 +15,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
     @Injected private var bankTransferService: BankTransferService
-    
+    @Injected private var notificationService: NotificationService
+
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
 
@@ -23,6 +24,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Published var popularCoins = [PopularCoin]()
     @Published var banner: HomeBannerParameters
     let bannerTapped = PassthroughSubject<Void, Never>()
+    private let tappedBannerSubject = PassthroughSubject<HomeNavigation, Never>()
+    private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     // MARK: - Initializer
 
@@ -34,7 +37,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
             imageSize: CGSize(width: 198, height: 142),
             title: L10n.topUpYourAccountToGetStarted,
             subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-            button: HomeBannerParameters.Button(title: L10n.addMoney, handler: { navigation.send(.topUp) })
+            button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: { navigation.send(.topUp) })
         )
         super.init()
         updateData()
@@ -74,9 +77,14 @@ private extension HomeEmptyViewModel {
         bankTransferService.state
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
             .map { [weak self] value in
-                HomeBannerParameters(status: value.value.kycStatus, action: {
-                    self?.navigation.send(.bankTransfer)
-                }, isSmallBanner: false)
+                HomeBannerParameters(
+                    status: value.value.kycStatus,
+                    action: {
+                        self?.navigation.send(.bankTransfer)
+                    },
+                    isLoading: false,
+                    isSmallBanner: false
+                )
             }
             .assignWeak(to: \.banner, on: self)
             .store(in: &subscriptions)

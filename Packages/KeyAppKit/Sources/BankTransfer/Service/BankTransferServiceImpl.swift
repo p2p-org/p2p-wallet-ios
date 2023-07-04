@@ -128,7 +128,11 @@ extension BankTransferServiceImpl: BankTransferService {
 
         var wallets: [UserWallet]?
         if kycStatus.status == .approved {
-            wallets = await handleUserWallets(userId: userId)
+            do {
+                wallets = try await handleUserWallets(userId: userId)
+            } catch {
+                handleError(error: error)
+            }
         }
 
         // update
@@ -169,19 +173,19 @@ extension BankTransferServiceImpl: BankTransferService {
         )
     }
 
-    private func handleUserWallets(userId: String) async -> [UserWallet] {
-        var wallets = try? await repository.getAllWalletsByUser(userId: userId)
+    private func handleUserWallets(userId: String) async throws -> [UserWallet] {
+        var wallets = try await repository.getAllWalletsByUser(userId: userId)
 
-        if let eur = wallets?.first?.accounts.eur, !eur.enriched {
-            let response: StrigaEnrichedEURAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: eur.accountID)
-            wallets?[0].accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response?.iban, bic: response?.bic, bankAccountHolderName: response?.bankAccountHolderName)
+        if let eur = wallets.first?.accounts.eur, !eur.enriched {
+            let response: StrigaEnrichedEURAccountResponse = try await repository.enrichAccount(userId: userId, accountId: eur.accountID)
+            wallets[0].accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response.iban, bic: response.bic, bankAccountHolderName: response.bankAccountHolderName)
         }
 
-        if let usdc = wallets?.first?.accounts.usdc, !usdc.enriched {
-            let response: StrigaEnrichedUSDCAccountResponse? = try? await repository.enrichAccount(userId: userId, accountId: usdc.accountID)
-            wallets?[0].accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response?.blockchainDepositAddress)
+        if let usdc = wallets.first?.accounts.usdc, !usdc.enriched {
+            let response: StrigaEnrichedUSDCAccountResponse = try await repository.enrichAccount(userId: userId, accountId: usdc.accountID)
+            wallets[0].accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response.blockchainDepositAddress)
         }
 
-        return wallets ?? []
+        return wallets
     }
 }

@@ -23,11 +23,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var bankTransferService: BankTransferService
+    @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
 
     let navigation: PassthroughSubject<HomeNavigation, Never>
     let bannerTapped = PassthroughSubject<Void, Never>()
+    private let tappedBannerSubject = PassthroughSubject<HomeNavigation, Never>()
+    private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     @Published private(set) var balance: String = ""
     @Published private(set) var actions: [WalletActionType] = []
@@ -211,13 +214,39 @@ private extension HomeAccountsViewModel {
     func bindTransferData() {
         bankTransferService.state
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
-            .map { value in
-                HomeBannerParameters(status: value.value.kycStatus, action: { [weak self] in
-                    self?.navigation.send(.bankTransfer)
-                    self?.shouldCloseBanner = true
-                }, isSmallBanner: true)
+            .map { [weak self] value in
+                guard let self else { return nil  }
+                return HomeBannerParameters(
+                    status: value.value.kycStatus,
+                    action: { [weak self] in
+                        self?.tappedBannerSubject.send(.bankTransfer)
+                        self?.shouldCloseBanner = true
+                    },
+                    isLoading: false,
+                    isSmallBanner: true
+                )
             }
             .assignWeak(to: \.smallBanner, on: self)
+            .store(in: &subscriptions)
+
+        tappedBannerSubject
+            .withLatestFrom(bankTransferService.state)
+            .filter { $0.hasError }
+            .sinkAsync { [weak self] state in
+                await MainActor.run {
+                    self?.smallBanner?.button?.isLoading = true
+                    self?.shouldShowErrorSubject.send(false)
+                }
+                await self?.bankTransferService.reload()
+            }
+            .store(in: &subscriptions)
+
+        shouldShowErrorSubject
+            .filter { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
+            }
             .store(in: &subscriptions)
 
         bannerTapped
