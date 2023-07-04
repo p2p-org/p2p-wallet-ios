@@ -2,7 +2,7 @@ import Foundation
 
 public protocol StrigaMetadataProvider {
     func getStrigaMetadata() async -> StrigaMetadata?
-    func updateMetadata(withUserId userId: String) async throws
+    func updateMetadata(withUserId userId: String) async
 }
 
 public struct StrigaMetadata {

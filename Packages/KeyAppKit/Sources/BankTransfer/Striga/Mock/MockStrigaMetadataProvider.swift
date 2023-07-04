@@ -22,7 +22,7 @@ public class MockStrigaMetadataProvider: StrigaMetadataProvider {
         metadata
     }
     
-    public func updateMetadata(withUserId userId: String) async throws {
+    public func updateMetadata(withUserId userId: String) async {
         metadata = .init(userId: userId, email: metadata.email, phoneNumber: metadata.phoneNumber)
     }
 }

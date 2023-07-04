@@ -85,7 +85,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try await localProvider.save(registrationData: data)
         
         // save userId
-        try await metadataProvider.updateMetadata(withUserId: response.userId)
+        await metadataProvider.updateMetadata(withUserId: response.userId)
         
         // return
         return response
