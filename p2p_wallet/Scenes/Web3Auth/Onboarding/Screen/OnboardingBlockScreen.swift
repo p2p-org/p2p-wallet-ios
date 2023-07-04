@@ -100,8 +100,7 @@ struct OnboardingBlockScreen_Previews: PreviewProvider {
         OnboardingBlockScreen(
             primaryButtonAction: "Recovery Kit",
             contentTitle: L10n.soLetSBreathe,
-            contentSubtitle: L10n.YouDidnTUseAnyOf5Codes
-                .forYourSafetyWeHaveFrozenYourAccountFor
+            contentSubtitle: { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
         ) {} onCompletion: {} onTermsOfService: {} onPrivacyPolicy: {} onInfo: {}
     }
 }
