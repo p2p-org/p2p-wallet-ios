@@ -65,7 +65,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
                 subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockResend:
                 title = L10n.soLetSBreathe
-                subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
+                subtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
             }
 
             let view = OnboardingBlockScreen(
