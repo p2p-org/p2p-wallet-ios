@@ -131,7 +131,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 title = L10n.itSOkayToBeWrong
                 subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockResend:
-                title = L10n.soLetSBreathe
+                title = L10n.confirmationCodeLimitHit
                 subtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
             }
 
