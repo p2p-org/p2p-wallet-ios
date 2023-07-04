@@ -186,7 +186,7 @@
         "repositoryURL": "https://github.com/intercom/intercom-ios.git",
         "state": {
           "branch": null,
-          "revision": "7d1072dc39ebaf8af117b697730b6aaa834e5f48",
+          "revision": "37d609080265b499944261f88f9b19cc9a0b1323",
           "version": "12.4.3"
         }
       },
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
-          "version": "1.3.0"
+          "revision": "9b1258905c21fc1b97bf03d1b4ca12c4ec4e5fda",
+          "version": "1.2.0"
         }
       },
       {

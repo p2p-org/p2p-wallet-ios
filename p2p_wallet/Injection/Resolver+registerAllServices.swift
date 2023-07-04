@@ -605,7 +605,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
         
         register {
-            BankTransferServiceImpl(
+            BankTransferServiceImpl<StrigaBankTransferUserDataRepository>(
                 repository: StrigaBankTransferUserDataRepository(
                     localProvider: GlobalAppState.shared.strigaMockingEnabled ?
                         MockStrigaLocalProvider(
@@ -633,7 +633,7 @@ extension Resolver: ResolverRegistering {
                 )
             )
         }
-        .implements(BankTransferService.self)
+        .implements((any BankTransferService).self)
         .scope(.session)
     }
 

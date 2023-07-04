@@ -3,10 +3,12 @@ import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
-public final class BankTransferServiceImpl {
+public final class BankTransferServiceImpl<Provider: BankTransferUserDataRepository> {
+    
+//    public typealias Provider = BankTransferUserDataRepository
     
     /// Repository that handle CRUD action for UserData
-    public let repository: BankTransferUserDataRepository
+    public let repository: Provider
     
     /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
@@ -15,17 +17,17 @@ public final class BankTransferServiceImpl {
     
     // MARK: - Initializers
     
-    public init(repository: BankTransferUserDataRepository) {
+    public init(repository: Provider) {
         self.repository = repository
     }
 }
 
 extension BankTransferServiceImpl: BankTransferService {
-    
+
     public var state: AnyPublisher<AsyncValueState<UserData>, Never> {
         subject.eraseToAnyPublisher()
     }
-    
+        
     public func reload() async {
         // mark as loading
         subject.send(
