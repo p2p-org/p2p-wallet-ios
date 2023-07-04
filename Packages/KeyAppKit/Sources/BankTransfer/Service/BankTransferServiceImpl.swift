@@ -3,7 +3,8 @@ import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
-public final class BankTransferServiceImpl<Provider: BankTransferUserDataRepository>: BankTransferService {
+public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: BankTransferService {
+    public typealias Provider = T
     
     /// Repository that handle CRUD action for UserData
     public let repository: Provider
@@ -37,7 +38,6 @@ extension BankTransferServiceImpl {
         )
         
         do {
-            
             // registered user
             if let userId = await repository.getUserId() {
                 return try await handleRegisteredUser(userId: userId)

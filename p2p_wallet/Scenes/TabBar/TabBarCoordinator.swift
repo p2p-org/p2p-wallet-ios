@@ -17,6 +17,8 @@ final class TabBarCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
+    @Injected var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+
     // MARK: - Properties
 
     private unowned var window: UIWindow!

@@ -1,8 +1,8 @@
 import Combine
 import KeyAppKitCore
 
-public protocol BankTransferService<Provider> {
-    associatedtype Provider: BankTransferUserDataRepository
+public protocol BankTransferService<Provider> where Provider: BankTransferUserDataRepository {
+    associatedtype Provider//: BankTransferUserDataRepository
 
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
     
@@ -28,3 +28,10 @@ public protocol BankTransferService<Provider> {
     func claimResendSMS(challengeId: String) async throws
 }
 
+public class AnyBankTransferService<Provider: BankTransferUserDataRepository> {
+    public var value: BankTransferServiceImpl<Provider>
+
+    public init(value: BankTransferServiceImpl<Provider>) {
+        self.value = value
+    }
+}

@@ -635,6 +635,19 @@ extension Resolver: ResolverRegistering {
         }
         .implements((any BankTransferService).self)
         .scope(.session)
+        
+        register {
+            AnyBankTransferService<StrigaBankTransferUserDataRepository>(
+                value:
+                    Resolver.resolve((any BankTransferService).self) as! BankTransferServiceImpl<StrigaBankTransferUserDataRepository>
+            )
+        }
+        .implements(AnyBankTransferService<StrigaBankTransferUserDataRepository>.self)
+        .scope(.session)
+        
+        
+        
+        
     }
 
     /// Shared scope: share between screens
