@@ -73,8 +73,10 @@ jobs:
           key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
       - name: Install project
+        env:
+          IS_CI: 'true'
         run: |
-          IS_CI=true chmod u+x Scripts/install.sh && Scripts/install.sh
+          chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: Upload to test

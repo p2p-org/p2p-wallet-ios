@@ -27,7 +27,7 @@ then
 fi
 
 # install periphery if needed
-if ! [ "$IS_CI" = true ]; then
+if ! [ "$IS_CI" = "true" ]; then
 	if ! command -v periphery &> /dev/null
 	then
 		echo "Installing periphery..."
@@ -63,6 +63,6 @@ xcodegen
 xcodegen
 
 # Open project when IS_CI == false
-if ! [ "$IS_CI" = true ]; then
+if ! [ "$IS_CI" = "true" ]; then
 	xed .
 fi
