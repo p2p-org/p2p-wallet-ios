@@ -242,6 +242,11 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
+
+    public func getWhitelistedUserDestinations() async throws -> [] {
+        try await remoteProvider.getWhitelistedUserDestinations()
+    }
+
 }
 
 // MARK: - Helpers

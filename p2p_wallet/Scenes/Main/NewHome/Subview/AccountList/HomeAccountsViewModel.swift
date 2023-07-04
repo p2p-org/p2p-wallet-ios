@@ -22,8 +22,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
+    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
 
     // MARK: - Properties
 

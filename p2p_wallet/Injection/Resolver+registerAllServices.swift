@@ -414,7 +414,7 @@ extension Resolver: ResolverRegistering {
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),
-                    BankTransferUserActionConsumer(
+                    StrigaBankTransferUserActionConsumer(
                         persistence: resolve()
                     )
                 ]

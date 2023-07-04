@@ -1,3 +1,4 @@
+import BankTransfer
 import Combine
 import Resolver
 import KeyAppBusiness
@@ -10,12 +11,14 @@ public enum BankTransferClaimUserActionEvent: UserActionEvent {
     case sendFailure(String)
 }
 
-public class BankTransferUserActionConsumer: UserActionConsumer {
+public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
     public typealias Action = BankTransferClaimUserAction
     public typealias Event = BankTransferClaimUserActionEvent
 
     public let persistence: UserActionPersistentStorage
     let database: SynchronizedDatabase<String, Action> = .init()
+
+    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
 
     public init(persistence: UserActionPersistentStorage) {
         self.persistence = persistence
@@ -44,6 +47,9 @@ public class BankTransferUserActionConsumer: UserActionConsumer {
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
+            
+            bankTransferService.value.repository.getAllWalletsByUser(userId: <#T##String#>)
+            
             self?.handle(event: Event.track(action, .processing))
             // FIXME: - Real logic
             try? await Task.sleep(seconds: 2)
