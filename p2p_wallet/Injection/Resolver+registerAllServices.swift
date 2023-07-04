@@ -642,7 +642,6 @@ extension Resolver: ResolverRegistering {
                     Resolver.resolve((any BankTransferService).self) as! BankTransferServiceImpl<StrigaBankTransferUserDataRepository>
             )
         }
-        .implements(AnyBankTransferService<StrigaBankTransferUserDataRepository>.self)
         .scope(.session)
         
         
