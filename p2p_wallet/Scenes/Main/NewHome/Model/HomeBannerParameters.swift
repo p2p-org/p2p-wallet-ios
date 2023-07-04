@@ -5,6 +5,7 @@ import SwiftUI
 struct HomeBannerParameters {
     struct Button {
         let title: String
+        var isLoading: Bool
         let handler: () -> Void
     }
 
@@ -13,7 +14,7 @@ struct HomeBannerParameters {
     let imageSize: CGSize
     let title: String
     let subtitle: String?
-    let button: Button?
+    var button: Button?
 
     init(
         backgroundColor: UIColor,
@@ -34,6 +35,7 @@ struct HomeBannerParameters {
     init(
         status: StrigaKYCStatus,
         action: @escaping () -> Void,
+        isLoading: Bool,
         isSmallBanner: Bool
     ) {
         switch status {
@@ -51,7 +53,7 @@ struct HomeBannerParameters {
                 title = L10n.finishIdentityVerificationToSendMoneyWorldwide
             }
             subtitle = nil
-            self.button = Button(title: L10n.continue, handler: action)
+            self.button = Button(title: L10n.continue, isLoading: isLoading, handler: action)
 
         case .pendingReview, .onHold:
             backgroundColor = Asset.Colors.lightSea.color
@@ -75,7 +77,7 @@ struct HomeBannerParameters {
             }
             title = L10n.verificationIsDone
             subtitle = L10n.continueYourTopUpViaABankTransfer
-            self.button = Button(title: L10n.topUp, handler: action)
+            self.button = Button(title: L10n.topUp, isLoading: isLoading, handler: action)
 
         case .rejected:
             backgroundColor = Asset.Colors.lightSun.color
@@ -87,7 +89,7 @@ struct HomeBannerParameters {
             }
             title = L10n.actionRequired
             subtitle = L10n.pleaseCheckTheDetailsAndUpdateYourData
-            self.button = Button(title: L10n.checkDetails, handler: action)
+            self.button = Button(title: L10n.checkDetails, isLoading: isLoading, handler: action)
 
         case .rejectedFinal:
             backgroundColor = Asset.Colors.lightRose.color
@@ -99,7 +101,7 @@ struct HomeBannerParameters {
             }
             title = L10n.verificationIsRejected
             subtitle = L10n.addMoneyViaBankTransferIsUnavailable
-            self.button = Button(title: L10n.seeDetails, handler: action)
+            self.button = Button(title: L10n.seeDetails, isLoading: isLoading, handler: action)
 
         }
     }
