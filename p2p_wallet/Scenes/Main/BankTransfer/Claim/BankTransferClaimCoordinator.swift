@@ -17,7 +17,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     // MARK: - Dependencies
 
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
 
     // MARK: - Properties
 
@@ -41,7 +41,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     override func start() -> AnyPublisher<BankTransferClaimCoordinatorResult, Never> {
         // Start OTP Coordinator
-        bankTransferService.state
+        bankTransferService.value.state
             .flatMap { [unowned self] state in
                 guard let phone = state.value.mobileNumber else {
                     return Just(StrigaOTPCoordinatorResult.canceled)

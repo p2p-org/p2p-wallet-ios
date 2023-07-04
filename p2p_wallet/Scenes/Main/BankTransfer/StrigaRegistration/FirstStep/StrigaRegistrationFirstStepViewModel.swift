@@ -9,7 +9,7 @@ import Onboarding
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 
     // Dependencies
-    @Injected private var service: BankTransferService
+    @Injected private var service: any BankTransferService
     @Injected private var countriesService: CountriesAPI
     @Injected private var strigaMetadata: StrigaMetadataProvider
     private let phoneNumberKit = PhoneNumberKit()
