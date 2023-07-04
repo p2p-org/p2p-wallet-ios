@@ -1,8 +1,8 @@
 import Combine
 import KeyAppKitCore
 
-public protocol BankTransferService {
-    associatedtype Provider
+public protocol BankTransferService<Provider> {
+    associatedtype Provider: BankTransferUserDataRepository
 
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
     
@@ -24,7 +24,7 @@ public protocol BankTransferService {
     func getKYCToken() async throws -> String
     
     // MARK: - Claim
-    func claimVerify(OTP: String, challengeId: String, ip: String) async throws
+//    func claimVerify(OTP: String, challengeId: String, ip: String) async throws
     func claimResendSMS(challengeId: String) async throws
 }
 

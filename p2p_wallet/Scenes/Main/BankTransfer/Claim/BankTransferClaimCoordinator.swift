@@ -17,7 +17,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     // MARK: - Dependencies
 
-    @Injected private var bankTransferService: BankTransferService
+    @Injected var bankTransferService: any BankTransferService<StrigaBankTransferUserDataRepository>
 
     // MARK: - Properties
 
@@ -54,6 +54,9 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         phone: phone,
                         verifyHandler: { [unowned self] otp in
                             try? await Task.sleep(seconds: 1)
+                            
+//                            bankTransferService.pro
+                            
 //                            try await bankTransferService.claimVerify(
 //                                OTP: otp,
 //                                challengeId: transaction.challengeId,

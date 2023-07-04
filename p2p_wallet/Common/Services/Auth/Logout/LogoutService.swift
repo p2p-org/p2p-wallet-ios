@@ -7,7 +7,7 @@ protocol LogoutService {
 
 final class LogoutServiceImpl: LogoutService {
     func logout() async {
-        await Resolver.resolve(BankTransferService.self).clearCache()
+        await Resolver.resolve((any BankTransferService).self).clearCache()
         try? await Resolver.resolve(UserWalletManager.self).remove()
     }
 }

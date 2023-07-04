@@ -3,9 +3,7 @@ import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
-public final class BankTransferServiceImpl<Provider: BankTransferUserDataRepository> {
-    
-//    public typealias Provider = BankTransferUserDataRepository
+public final class BankTransferServiceImpl<Provider: BankTransferUserDataRepository>: BankTransferService {
     
     /// Repository that handle CRUD action for UserData
     public let repository: Provider
@@ -22,7 +20,7 @@ public final class BankTransferServiceImpl<Provider: BankTransferUserDataReposit
     }
 }
 
-extension BankTransferServiceImpl: BankTransferService {
+extension BankTransferServiceImpl {
 
     public var state: AnyPublisher<AsyncValueState<UserData>, Never> {
         subject.eraseToAnyPublisher()
@@ -110,10 +108,10 @@ extension BankTransferServiceImpl: BankTransferService {
 
     // MARK: - Claim
 
-    public func claimVerify(OTP: String, challengeId: String, ip: String) async throws {
-        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
-        try await repository.claimVerify(userId: userId, challengeId: challengeId, ip: ip, verificationCode: OTP)
-    }
+//    public func claimVerify(OTP: String, challengeId: String, ip: String) async throws {
+//        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+//        try await repository.claimVerify(userId: userId, challengeId: challengeId, ip: ip, verificationCode: OTP)
+//    }
     
     public func claimResendSMS(challengeId: String) async throws {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
