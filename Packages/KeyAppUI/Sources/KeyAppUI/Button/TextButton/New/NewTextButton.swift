@@ -55,6 +55,9 @@ public struct NewTextButton: View {
                             .padding(.leading, 8)
                     } else {
                         Image(uiImage: leading)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size.iconSize, height: size.iconSize)
                             .padding(.leading, 8)
                     }
                 } else {
@@ -71,8 +74,14 @@ public struct NewTextButton: View {
                             .padding(.trailing, 8)
                     } else {
                         Image(uiImage: trailing)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size.iconSize, height: size.iconSize)
                             .padding(.trailing, 8)
                     }
+                } else if isLoading {
+                    progressView
+                        .padding(.trailing, 8)
                 } else {
                     Spacer().frame(width: 4)
                 }
@@ -98,9 +107,8 @@ public struct NewTextButton: View {
         NewCircularProgressIndicator(
             backgroundColor: appearance.loadingBackgroundColor,
             foregroundColor: appearance.loadingForegroundColor,
-            size: CGSize(width: 20, height: 20)
+            size: CGSize(width: size.iconSize, height: size.iconSize)
         )
-        .padding(2)
     }
 }
 
@@ -129,7 +137,8 @@ struct NewTextButton_Previews: PreviewProvider {
                 title: "Title",
                 size: .medium,
                 style: .invertedRed,
-                expandable: true
+                expandable: true,
+                isLoading: true
             ) { }
 
             NewTextButton(

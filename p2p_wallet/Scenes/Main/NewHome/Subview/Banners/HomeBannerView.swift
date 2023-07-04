@@ -34,6 +34,7 @@ struct HomeBannerView: View {
                             title: button.title,
                             size: .medium,
                             style: .inverted,
+                            expandable: true,
                             isLoading: button.isLoading,
                             action: button.handler
                         )

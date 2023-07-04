@@ -216,11 +216,16 @@ private extension HomeAccountsViewModel {
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { [weak self] value in
                 guard let self else { return nil  }
+
+                if value.value.isIBANNotReady && !shouldShowErrorSubject.value {
+                    self.shouldShowErrorSubject.send(true)
+                }
+
                 return HomeBannerParameters(
                     status: value.value.kycStatus,
                     action: { [weak self] in
                         self?.tappedBannerSubject.send(.bankTransfer)
-                        self?.shouldCloseBanner = true
+                        self?.shouldCloseBanner = value.value.isIBANNotReady == false
                     },
                     isLoading: false,
                     isSmallBanner: true
@@ -231,22 +236,26 @@ private extension HomeAccountsViewModel {
 
         tappedBannerSubject
             .withLatestFrom(bankTransferService.state)
-            .filter { $0.hasError }
             .sinkAsync { [weak self] state in
-                await MainActor.run {
-                    self?.smallBanner?.button?.isLoading = true
-                    self?.shouldShowErrorSubject.send(false)
+                guard let self else { return }
+                if state.value.isIBANNotReady {
+                    await MainActor.run {
+                        self.smallBanner?.button?.isLoading = true
+                        self.shouldShowErrorSubject.send(false)
+                    }
+                    await self.bankTransferService.reload()
+                } else {
+                    await MainActor.run {
+                        self.navigation.send(.bankTransfer)
+                    }
                 }
-                await self?.bankTransferService.reload()
             }
             .store(in: &subscriptions)
 
         shouldShowErrorSubject
             .filter { $0 }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
-            }
+            .sink { [weak self] _ in self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong) }
             .store(in: &subscriptions)
 
         bannerTapped

@@ -59,7 +59,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         // kyc
         switch userData.kycStatus {
         case .approved:
-            guard let data = userData.wallets.first?.accounts.eur else { return .kyc }
+            guard let data = userData.wallet?.accounts.eur else { return .kyc }
             return .transfer(data)
         case .onHold, .pendingReview:
             return .kycPendingReview

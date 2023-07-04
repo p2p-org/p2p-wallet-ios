@@ -114,13 +114,9 @@ extension BankTransferServiceImpl {
         // get user details
         let registrationData = try await repository.getRegistrationData()
 
-        var wallets: [UserWallet]?
+        var wallet: UserWallet?
         if kycStatus.status == .approved {
-            do {
-                wallets = try await handleUserWallets(userId: userId)
-            } catch {
-                handleError(error: error)
-            }
+            wallet = try? await repository.getWallet(userId: userId)
         }
 
         // update
@@ -132,7 +128,7 @@ extension BankTransferServiceImpl {
                     mobileVerified: kycStatus.mobileVerified,
                     kycStatus: kycStatus.status,
                     mobileNumber: registrationData.mobileNumber,
-                    wallets: wallets
+                    wallet: wallet
                 ),
                 error: nil
             )
@@ -159,21 +155,5 @@ extension BankTransferServiceImpl {
                 error: error
             )
         )
-    }
-
-    private func handleUserWallets(userId: String) async throws -> [UserWallet] {
-        var wallets = try await repository.getAllWalletsByUser(userId: userId)
-
-        if let eur = wallets.first?.accounts.eur, !eur.enriched {
-            let response: StrigaEnrichedEURAccountResponse = try await repository.enrichAccount(userId: userId, accountId: eur.accountID)
-            wallets[0].accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response.iban, bic: response.bic, bankAccountHolderName: response.bankAccountHolderName)
-        }
-
-        if let usdc = wallets.first?.accounts.usdc, !usdc.enriched {
-            let response: StrigaEnrichedUSDCAccountResponse = try await repository.enrichAccount(userId: userId, accountId: usdc.accountID)
-            wallets[0].accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response.blockchainDepositAddress)
-        }
-
-        return wallets
     }
 }

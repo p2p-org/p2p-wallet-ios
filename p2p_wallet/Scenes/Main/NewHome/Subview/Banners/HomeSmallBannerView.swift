@@ -27,7 +27,7 @@ struct HomeSmallBannerView: View {
                             size: .small,
                             style: .primaryWhite,
                             isLoading: button.isLoading,
-                            leading: .arrowForward.withRenderingMode(.alwaysTemplate),
+                            trailing: .arrowForward.withRenderingMode(.alwaysTemplate),
                             action: { button.handler() }
                         )
                         .padding(.top, 16)

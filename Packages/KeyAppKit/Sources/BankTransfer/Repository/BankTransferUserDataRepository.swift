@@ -16,8 +16,7 @@ public protocol BankTransferUserDataRepository {
     func updateLocally(userData: UserData) async throws
     func clearCache() async
 
-    func getAllWalletsByUser(userId: String) async throws -> [UserWallet]
-    func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T
+    func getWallet(userId: String) async throws -> UserWallet?
     
     func claimVerify(userId: String, challengeId: String, ip: String, verificationCode code: String) async throws
     func claimResendSMS(userId: String, challengeId: String) async throws

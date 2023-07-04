@@ -7,7 +7,7 @@ public struct UserData: Codable {
     
     public var mobileNumber: String?
 
-    public var wallets: [UserWallet]
+    public var wallet: UserWallet?
 
     // MARK: - Initializer
     
@@ -17,7 +17,7 @@ public struct UserData: Codable {
         mobileVerified: Bool,
         kycStatus: StrigaKYCStatus,
         mobileNumber: String?,
-        wallets: [UserWallet]
+        wallet: UserWallet?
     ) {
         // Method mark as private to prevent data erasing for countryCode, userId when calling init from outside.
         // Use `empty` and `updating()` instead of `init` when you want to modify something
@@ -25,7 +25,7 @@ public struct UserData: Codable {
         self.mobileVerified = mobileVerified
         self.kycStatus = kycStatus
         self.mobileNumber = mobileNumber
-        self.wallets = wallets
+        self.wallet = wallet
     }
     
     public static var empty: Self {
@@ -34,7 +34,7 @@ public struct UserData: Codable {
             mobileVerified: false,
             kycStatus: .notStarted,
             mobileNumber: nil,
-            wallets: []
+            wallet: nil
         )
     }
     
@@ -43,14 +43,14 @@ public struct UserData: Codable {
         mobileVerified: Bool? = nil,
         kycStatus: StrigaKYCStatus? = nil,
         mobileNumber: String? = nil,
-        wallets: [UserWallet]? = nil
+        wallet: UserWallet? = nil
     ) -> Self {
         .init(
             userId: userId ?? self.userId,
             mobileVerified: mobileVerified ?? self.mobileVerified,
             kycStatus: kycStatus ?? self.kycStatus,
             mobileNumber: mobileNumber ?? self.mobileNumber,
-            wallets: wallets ?? self.wallets
+            wallet: wallet ?? self.wallet
         )
     }
 }

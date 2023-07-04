@@ -76,17 +76,47 @@ private extension HomeEmptyViewModel {
     func bindBankTransfer() {
         bankTransferService.state
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
-            .map { [weak self] value in
-                HomeBannerParameters(
+            .compactMap { [weak self] value -> HomeBannerParameters? in
+                guard let self else { return nil }
+
+                if value.value.isIBANNotReady && !shouldShowErrorSubject.value {
+                    self.shouldShowErrorSubject.send(true)
+                }
+
+                return HomeBannerParameters(
                     status: value.value.kycStatus,
-                    action: {
-                        self?.navigation.send(.bankTransfer)
+                    action: { [weak self] in
+                        self?.tappedBannerSubject.send(.bankTransfer)
                     },
                     isLoading: false,
                     isSmallBanner: false
                 )
             }
             .assignWeak(to: \.banner, on: self)
+            .store(in: &subscriptions)
+
+        tappedBannerSubject
+            .withLatestFrom(bankTransferService.state)
+            .sinkAsync { [weak self] state in
+                guard let self else { return }
+                if state.value.isIBANNotReady {
+                    await MainActor.run {
+                        self.banner.button?.isLoading = true
+                        self.shouldShowErrorSubject.send(false)
+                    }
+                    await self.bankTransferService.reload()
+                } else {
+                    await MainActor.run {
+                        self.navigation.send(.bankTransfer)
+                    }
+                }
+            }
+            .store(in: &subscriptions)
+
+        shouldShowErrorSubject
+            .filter { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong) }
             .store(in: &subscriptions)
 
         bannerTapped

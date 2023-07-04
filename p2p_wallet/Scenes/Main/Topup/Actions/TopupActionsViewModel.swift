@@ -39,7 +39,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             // If it's transfer we need to check if the service is ready
             case .transfer:
                 return self.bankTransferService.state.filter { state in
-                    return !state.hasError && !state.isFetching
+                    return !state.hasError && !state.isFetching && !state.value.isIBANNotReady
                 }.map { _ in Action.transfer }.eraseToAnyPublisher()
             default:
                 // Otherwise just pass action
@@ -88,16 +88,16 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             action == .transfer
         }.sinkAsync { [weak self] state, action in
             await MainActor.run {
-                self?.setTransferLoadingState(isLoading: state.status != .ready && !state.hasError)
+                self?.setTransferLoadingState(isLoading: (state.status != .ready && !state.hasError) || !state.value.isIBANNotReady)
                 // Toggling error
                 if self?.shouldShowErrorSubject.value == false {
-                    self?.shouldShowErrorSubject.send(state.hasError)
+                    self?.shouldShowErrorSubject.send(state.hasError || state.value.isIBANNotReady)
                 }
             }
         }.store(in: &subscriptions)
 
         tappedItemSubject.withLatestFrom(bankTransferService.state).filter({ state in
-            state.hasError
+            state.hasError || state.value.isIBANNotReady
         }).sinkAsync { [weak self] state in
             await MainActor.run {
                 self?.setTransferLoadingState(isLoading: true)
