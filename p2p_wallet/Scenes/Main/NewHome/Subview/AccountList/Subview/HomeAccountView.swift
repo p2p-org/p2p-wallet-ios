@@ -51,6 +51,7 @@ struct HomeAccountView: View {
                     title: text,
                     size: .small,
                     style: .primaryWhite,
+                    isEnabled: enabled,
                     isLoading: rendable.isLoading,
                     action: { onButtonTap?() }
                 )
