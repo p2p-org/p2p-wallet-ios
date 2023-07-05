@@ -82,7 +82,7 @@ public struct NewTextButton: View {
                             .frame(width: size.iconSize, height: size.iconSize)
                             .padding(.trailing, 8)
                     }
-                } else if isLoading {
+                } else if isLoading, leading == nil {
                     progressView
                         .padding(.trailing, 8)
                 } else {
@@ -126,7 +126,8 @@ struct NewTextButton_Previews: PreviewProvider {
                 title: "Title",
                 size: .medium,
                 style: .primary,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                isLoading: true,
+                leading: Asset.MaterialIcon.arrowForward.image
             ) { }
 
             NewTextButton(
