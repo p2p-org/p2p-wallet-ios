@@ -60,12 +60,4 @@ public struct USDCUserAccount: Codable {
     public let enriched: Bool
     public let blockchainDepositAddress: String?
     public var availableBalance: Int // Available balance in cents
-
-//    init(accountID: String, currency: String, createdAt: String, enriched: Bool, blockchainDepositAddress: String? = nil) {
-//        self.accountID = accountID
-//        self.currency = currency
-//        self.createdAt = createdAt
-//        self.enriched = enriched
-//        self.blockchainDepositAddress = blockchainDepositAddress
-//    }
 }
