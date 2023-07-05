@@ -126,6 +126,13 @@ public extension TextButton {
             case .large: return 12
             }
         }
+
+        public var iconSize: CGFloat {
+            switch self {
+            case .small, .medium: return 16
+            case .large: return 20
+            }
+        }
     }
 
     /// Create button with defined style

@@ -174,11 +174,12 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         await commonInfoProvider.clear()
     }
 
-    public func getAllWalletsByUser(userId: String) async throws -> [UserWallet] {
-        if let wallets = await localProvider.getCachedUserData()?.wallets, !wallets.isEmpty {
-            return wallets
+    public func getWallet(userId: String) async throws -> UserWallet? {
+        var wallet: UserWallet?
+        if let cachedWallet = await localProvider.getCachedUserData()?.wallet {
+            wallet = cachedWallet
         } else {
-            let allWallets = try await remoteProvider.getAllWalletsByUser(
+            wallet = try await remoteProvider.getAllWalletsByUser(
                 userId: userId,
                 startDate: Date(timeIntervalSince1970: 1687564800),
                 endDate: Date(),
@@ -202,21 +203,43 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                             enriched: false)
                 }
                 return UserWallet(walletId: strigaWallet.walletID, accounts: UserAccounts(eur: eur, usdc: usdc))
-            }
-            return allWallets
+            }.first
         }
+
+        if let eur = wallet?.accounts.eur, !eur.enriched {
+            do {
+                let response: StrigaEnrichedEURAccountResponse = try await enrichAccount(userId: userId, accountId: eur.accountID)
+                wallet?.accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response.iban, bic: response.bic, bankAccountHolderName: response.bankAccountHolderName)
+            } catch {
+                // Skip error, do not block the flow
+                debugPrint(error)
+            }
+        }
+
+        if let usdc = wallet?.accounts.usdc, !usdc.enriched {
+            do {
+                let response: StrigaEnrichedUSDCAccountResponse = try await enrichAccount(userId: userId, accountId: usdc.accountID)
+                wallet?.accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response.blockchainDepositAddress)
+            } catch {
+                // Skip error, do not block the flow
+                debugPrint(error)
+            }
+        }
+
+        return wallet
     }
 
-    public func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
-        try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
-    }
-    
     public func claimVerify(userId: String, challengeId: String, ip: String, verificationCode code: String) async throws {
         _ = try await remoteProvider.transactionConfirmOTP(userId: userId, challengeId: challengeId, code: code, ip: ip)
     }
     
     public func claimResendSMS(userId: String, challengeId: String) async throws {
         _ = try await remoteProvider.transactionResendOTP(userId: userId, challengeId: challengeId)
+    }
+
+    // MARK: - Private
+    private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
+        try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
 }
 

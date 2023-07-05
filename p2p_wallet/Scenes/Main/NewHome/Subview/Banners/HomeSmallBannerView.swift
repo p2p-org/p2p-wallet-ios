@@ -22,24 +22,14 @@ struct HomeSmallBannerView: View {
                     }
 
                     if let button = params.button {
-                        Button(action: button.handler) {
-                            HStack(spacing: 8) {
-                                Text(button.title)
-                                    .fontWeight(.medium)
-                                    .apply(style: .text4)
-                                    .padding(.vertical, 8)
-                                    .foregroundColor(Color(asset: Asset.Colors.snow))
-                                Image(uiImage: .arrowForward)
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                                    .foregroundColor(Color(asset: Asset.Colors.snow))
-                            }
-                            .padding(.leading, 16)
-                            .padding(.trailing, 12)
-                        }
-                        .background(Color(asset: Asset.Colors.night))
-                        .cornerRadius(radius: 8, corners: .allCorners)
+                        NewTextButton(
+                            title: button.title,
+                            size: .small,
+                            style: .primaryWhite,
+                            isLoading: button.isLoading,
+                            trailing: .arrowForward.withRenderingMode(.alwaysTemplate),
+                            action: { button.handler() }
+                        )
                         .padding(.top, 16)
                     }
                 }
@@ -63,11 +53,14 @@ struct HomeSmallBannerView: View {
 struct HomeSmallBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
-            ForEach([StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
+            ForEach(
+                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue
+            ) { element in
                 HomeSmallBannerView(
                     params: HomeBannerParameters(
                         status: element,
                         action: { },
+                        isLoading: true,
                         isSmallBanner: true
                     )
                 )

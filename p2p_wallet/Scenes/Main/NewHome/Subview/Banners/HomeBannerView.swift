@@ -28,19 +28,15 @@ struct HomeBannerView: View {
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
                     }
+
                     if let button = params.button {
-                        Button(
-                            action: button.handler,
-                            label: {
-                                Text(button.title)
-                                    .foregroundColor(Color(Asset.Colors.night.color))
-                                    .fontWeight(.semibold)
-                                    .apply(style: .text4)
-                                    .frame(height: 48)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color(Asset.Colors.snow.color))
-                                    .cornerRadius(8)
-                            }
+                        NewTextButton(
+                            title: button.title,
+                            size: .medium,
+                            style: .inverted,
+                            expandable: true,
+                            isLoading: button.isLoading,
+                            action: button.handler
                         )
                     }
                 }
@@ -69,12 +65,14 @@ struct HomeBannerView_Previews: PreviewProvider {
                     imageSize: CGSize(width: 198, height: 142),
                     title: L10n.topUpYourAccountToGetStarted,
                     subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                    button: HomeBannerParameters.Button(title: L10n.addMoney, handler: { })
+                    button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: { })
                 )
             )
 
-            ForEach([StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
-                HomeBannerView(params: HomeBannerParameters(status: element, action: { }, isSmallBanner: false))
+            ForEach(
+                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue
+            ) { element in
+                HomeBannerView(params: HomeBannerParameters(status: element, action: { }, isLoading: false, isSmallBanner: false))
             }
         }
         .listStyle(.plain)

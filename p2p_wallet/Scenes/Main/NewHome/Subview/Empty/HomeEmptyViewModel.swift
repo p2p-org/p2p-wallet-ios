@@ -15,7 +15,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
     @Injected private var bankTransferService: any BankTransferService
-    
+    @Injected private var notificationService: NotificationService
+
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
 
@@ -23,6 +24,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Published var popularCoins = [PopularCoin]()
     @Published var banner: HomeBannerParameters
     let bannerTapped = PassthroughSubject<Void, Never>()
+    private let tappedBannerSubject = PassthroughSubject<HomeNavigation, Never>()
+    private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     // MARK: - Initializer
 
@@ -34,7 +37,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
             imageSize: CGSize(width: 198, height: 142),
             title: L10n.topUpYourAccountToGetStarted,
             subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-            button: HomeBannerParameters.Button(title: L10n.addMoney, handler: { navigation.send(.topUp) })
+            button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: { navigation.send(.topUp) })
         )
         super.init()
         updateData()
@@ -73,12 +76,44 @@ private extension HomeEmptyViewModel {
     func bindBankTransfer() {
         bankTransferService.state
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
-            .map { [weak self] value in
-                HomeBannerParameters(status: value.value.kycStatus, action: {
-                    self?.navigation.send(.bankTransfer)
-                }, isSmallBanner: false)
+            .compactMap { [weak self] value -> HomeBannerParameters? in
+                guard let self else { return nil }
+
+                if value.value.isIBANNotReady && !shouldShowErrorSubject.value {
+                    self.shouldShowErrorSubject.send(true)
+                }
+
+                return HomeBannerParameters(
+                    status: value.value.kycStatus,
+                    action: { [weak self] in
+                        self?.tappedBannerSubject.send(.bankTransfer)
+                    },
+                    isLoading: false,
+                    isSmallBanner: false
+                )
             }
             .assignWeak(to: \.banner, on: self)
+            .store(in: &subscriptions)
+
+        tappedBannerSubject
+            .withLatestFrom(bankTransferService.state)
+            .receive(on: RunLoop.main)
+            .sink{ [weak self] state in
+                guard let self else { return }
+                if state.value.isIBANNotReady {
+                    self.banner.button?.isLoading = true
+                    self.shouldShowErrorSubject.send(false)
+                    Task { await self.bankTransferService.reload() }
+                } else {
+                    self.navigation.send(.bankTransfer)
+                }
+            }
+            .store(in: &subscriptions)
+
+        shouldShowErrorSubject
+            .filter { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong) }
             .store(in: &subscriptions)
 
         bannerTapped

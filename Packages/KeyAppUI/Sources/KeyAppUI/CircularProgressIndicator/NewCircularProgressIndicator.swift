@@ -33,7 +33,7 @@ public struct NewCircularProgressIndicator: View {
             Circle()
                 .trim(from: animateStart ? 1/3 : 1/9, to: animateEnd ? 2/5 : 1)
                 .stroke(lineWidth: lineWidth)
-                .rotationEffect(.degrees(isCircleRotating ? 360 : 0))
+                .rotationEffect(.degrees(isCircleRotating ? 0 : 360))
                 .frame(width: size.width, height: size.height)
                 .foregroundColor(foregroundColor)
                 .onAppear() {
