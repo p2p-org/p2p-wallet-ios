@@ -52,7 +52,7 @@ struct WormholeSendInputView: View {
                     isFirstResponder: $viewModel.isFirstResponder,
                     amountTextColor: viewModel.adapter.inputColor,
                     countAfterDecimalPoint: viewModel.countAfterDecimalPoint,
-                    mainTokenText: viewModel.inputMode == .crypto ? account.data.token.symbol : viewModel.adapter
+                    mainTokenText: viewModel.inputMode == .crypto ? account.token.symbol : viewModel.adapter
                         .fiatString,
                     secondaryAmountText: viewModel.secondaryAmountString,
                     secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.data

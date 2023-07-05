@@ -144,7 +144,6 @@ extension RecipientSearchServiceImpl {
 
             let balance = wallet.lamports
             guard
-
                 let mint = try? PublicKey(string: wallet.token.address)
             else { continue }
 

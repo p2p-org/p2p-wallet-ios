@@ -85,7 +85,7 @@ public enum WormholeSendInputState: Equatable {
                     fees = try await service.wormhole.getTransferFees(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
+                        mint: input.solanaAccount.token.address,
                         amount: String(input.amount.value)
                     )
                 } catch {
@@ -111,7 +111,7 @@ public enum WormholeSendInputState: Equatable {
                 let transactions: SendTransaction
                 do {
                     let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
-                    let mint: String? = input.solanaAccount.data.token.isNative ? nil : input.solanaAccount.data.token
+                    let mint: String? = input.solanaAccount.token.isNative ? nil : input.solanaAccount.data.token
                         .address
 
                     transactions = try await service.wormhole.transferFromSolana(

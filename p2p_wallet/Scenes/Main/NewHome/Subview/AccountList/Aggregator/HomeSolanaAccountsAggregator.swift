@@ -56,8 +56,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
     static var defaultSorter: (SolanaAccount, SolanaAccount) -> Bool {
         { lhs, rhs in
             // prefers non-liquidity token than liquidity tokens
-            if lhs.data.token.isLiquidity != rhs.data.token.isLiquidity {
-                return !lhs.data.token.isLiquidity
+            if lhs.token.isLiquidity != rhs.token.isLiquidity {
+                return !lhs.token.isLiquidity
             }
 
             // prefers prioritized tokens than others
@@ -66,8 +66,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
                 PublicKey.usdtMint.base58EncodedString,
             ]
             for mint in prioritizedTokenMints {
-                if mint == lhs.data.token.address || mint == rhs.data.token.address {
-                    return mint == lhs.data.token.address
+                if mint == lhs.token.address || mint == rhs.token.address {
+                    return mint == lhs.token.address
                 }
             }
 
@@ -77,8 +77,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             }
 
             // prefers known token than unknown ones
-            if lhs.data.token.symbol.isEmpty != rhs.data.token.symbol.isEmpty {
-                return !lhs.data.token.symbol.isEmpty
+            if lhs.token.symbol.isEmpty != rhs.token.symbol.isEmpty {
+                return !lhs.token.symbol.isEmpty
             }
 
             // prefers token which more balance than the others
@@ -87,8 +87,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             }
 
             // sort by symbol
-            if lhs.data.token.symbol != rhs.data.token.symbol {
-                return lhs.data.token.symbol < rhs.data.token.symbol
+            if lhs.token.symbol != rhs.token.symbol {
+                return lhs.token.symbol < rhs.token.symbol
             }
 
             // then name

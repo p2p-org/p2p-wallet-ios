@@ -114,7 +114,7 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
 //
 //        case let transaction as WormholeSendTransaction:
 //            if
-//                let urlStr = transaction.account.data.token.logoURI,
+//                let urlStr = transaction.account.token.logoURI,
 //                let url = URL(string: urlStr)
 //            {
 //                return .single(url)

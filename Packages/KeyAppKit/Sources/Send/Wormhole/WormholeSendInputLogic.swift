@@ -36,7 +36,7 @@ enum WormholeSendInputLogic {
         var feePayerCandidates: [SolanaAccount] = [
             // Same account
             availableAccounts.first(where: { account in
-                account.data.token.address == selectedAccount.data.token.address
+                account.token.address == selectedAccount.token.address
             }),
 
             // Native account
@@ -47,7 +47,7 @@ enum WormholeSendInputLogic {
         let nextAvailableAccounts = availableAccounts
             .filter { account in
                 // Exclude first two cases
-                account.data.token.address != selectedAccount.data.token.address || !account.data.isNativeSOL
+                account.token.address != selectedAccount.token.address || !account.data.isNativeSOL
             }
             .sorted(by: { lhs, rhs in
                 guard
@@ -77,7 +77,7 @@ enum WormholeSendInputLogic {
                         transaction: try UInt64(fee.value),
                         accountBalances: try UInt64(accountCreationFee.value)
                     ),
-                    payingTokenMint: try PublicKey(string: feePayerCandidate.data.token.address)
+                    payingTokenMint: try PublicKey(string: feePayerCandidate.token.address)
                 )
 
                 let fee = CryptoAmount(uint64: neededTopUpAmount.total, token: SolanaToken.nativeSolana)
@@ -116,7 +116,7 @@ enum WormholeSendInputLogic {
                         transaction: try UInt64(fee.value),
                         accountBalances: try UInt64(accountCreationFee.value)
                     ),
-                    payingTokenMint: try PublicKey(string: feePayerCandidate.data.token.address)
+                    payingTokenMint: try PublicKey(string: feePayerCandidate.token.address)
                 )
 
                 let fee = CryptoAmount(uint64: neededTopUpAmount.total, token: SolanaToken.nativeSolana)
@@ -125,7 +125,7 @@ enum WormholeSendInputLogic {
                     let feeInToken = try await feeCalculator.calculateFeeInPayingToken(
                         orcaSwap: orcaSwap,
                         feeInSOL: .init(transaction: UInt64(fee.value), accountBalances: 0),
-                        payingFeeTokenMint: PublicKey(string: feePayerCandidate.data.token.address)
+                        payingFeeTokenMint: PublicKey(string: feePayerCandidate.token.address)
                     )
 
                     if (feeInToken?.total ?? 0) < (feePayerCandidate.data.lamports ?? 0) {

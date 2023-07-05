@@ -296,7 +296,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 guard let self, let account = self.adapter.inputAccount else { return }
                 switch newMode {
                 case .crypto:
-                    self.countAfterDecimalPoint = Int(account.data.token.decimals)
+                    self.countAfterDecimalPoint = Int(account.token.decimals)
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
@@ -366,7 +366,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         action.send(.send(userAction))
         analyticsManager.log(event: .sendBridgesConfirmButtonClick(
-            tokenName: input.solanaAccount.data.token.symbol,
+            tokenName: input.solanaAccount.token.symbol,
             tokenValue: Double(input.amount.amount.description) ?? 0,
             valueFiat: input.solanaAccount
                 .price != nil ?
@@ -387,7 +387,7 @@ extension WormholeSendInputViewModel {
             if account.data.isNativeSOL {
                 return false
             } else {
-                return supportedToken.contains(account.data.token.address)
+                return supportedToken.contains(account.token.address)
             }
         }
 
@@ -397,7 +397,7 @@ extension WormholeSendInputViewModel {
         availableBridgeAccounts
             .sort { lhs, rhs in
                 // First pick USDCET
-                if lhs.data.token.symbol == Token.usdcet.symbol {
+                if lhs.token.symbol == Token.usdcet.symbol {
                     return true
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
