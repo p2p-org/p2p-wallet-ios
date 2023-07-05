@@ -41,7 +41,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
         case .readyToClaim:
             return .button(label: L10n.claim, enabled: true)
         case .isClaimming:
-            return .button(label: L10n.claim, enabled: false)
+            return .button(label: L10n.claim, enabled: true)
         case .balanceToLow:
             return .text("")
         }
