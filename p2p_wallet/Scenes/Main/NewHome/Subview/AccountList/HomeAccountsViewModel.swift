@@ -133,7 +133,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         accountId: account.accountID,
                         token: token,
                         amount: .init(amount: BigUInt(account.availableBalance.toCent()), token: token),
-                        status: action?.status == .processing ? .isClamming : .readyToClaim
+                        status: action?.status == .processing ? .isClaimming : .readyToClaim
                     )
                 ]
             }
@@ -223,7 +223,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let userActionService: UserActionService = Resolver.resolve()
         let userWalletManager: UserWalletManager = Resolver.resolve()
         guard
-            account.status != .isClamming,
+            account.status != .isClaimming,
             let walletPubKey = userWalletManager.wallet?.account.publicKey,
             let amount = try? account.amount
         else { return }

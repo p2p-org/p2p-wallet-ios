@@ -86,12 +86,7 @@ public struct NewTextButton: View {
                     progressView
                         .padding(.trailing, 8)
                 } else {
-                    if isLoading {
-                        progressView
-                            .padding(.trailing, 8)
-                    } else {
-                        Spacer().frame(width: 4)
-                    }
+                    Spacer().frame(width: 4)
                 }
             }
             .frame(height: size.height)

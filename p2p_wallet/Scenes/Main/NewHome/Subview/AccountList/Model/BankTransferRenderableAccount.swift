@@ -40,7 +40,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
         switch status {
         case .readyToClaim:
             return .button(label: L10n.claim, enabled: true)
-        case .isClamming:
+        case .isClaimming:
             return .button(label: L10n.claim, enabled: false)
         case .balanceToLow:
             return .text("")
@@ -66,7 +66,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
 
     var isLoading: Bool {
         switch status {
-        case .isClamming:
+        case .isClaimming:
             return true
         default:
             return false
