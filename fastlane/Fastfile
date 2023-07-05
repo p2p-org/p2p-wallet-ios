@@ -162,15 +162,19 @@ end
 
 def notify(version, message)
   # to discord
-  sh(
-    "curl", 
-    "-v", 
-    "-X", "POST", 
-    "-H", "Content-Type: application/json",
-    "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
-    "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-    DISCORD_MESSAGE_API_ENDPOINT
-  )
+  begin
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json",
+      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+  rescue => ex
+    UI.important('Failed to send message, but continuing anyway!')
+  end
 
   # to slack
   slack_upload(
@@ -191,11 +195,6 @@ def commit_changes
   push_git_tags(tag: tag_name)
 end 
 
-def update_xcconfig
-  config_url = "../p2p_wallet/Config.xcconfig"
-  sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
-end
-
 def upload_dsym_to_analytic_providers
   sentry_upload_dsym(
     auth_token: SENTRY_TOKEN,
@@ -205,11 +204,29 @@ def upload_dsym_to_analytic_providers
 end
 
 def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
-  # update xcconfig
-  update_xcconfig
+  # Get the remote origin URL
+  remote_url = sh("git config --get remote.origin.url", log: false).strip
 
-  # get number of builds released of this feature
-  number_of_released_builds = 0
+  # Get the tags matching the pattern (build_prefix.*)
+  tags = sh("git ls-remote --tags #{remote_url} '#{tag_prefix}/#{build_prefix.to_s}.*'").strip.split("\n")
+
+  # Extract the tag names from the ls-remote output
+  tag_names = tags.map { |tag| tag.split("\t")[1].split("/").last }
+
+  # Find last build number
+  if tag_names.empty?
+    number_of_released_builds = 0
+  else
+    # Sort the tag names in descending order
+    sorted_build_numbers = tag_names
+      .map { |tag| tag.split(".").last.to_i }
+      .sort { |a, b| b <=> a }
+
+    # Extract the number following the dot in the tag
+    number_of_released_builds = sorted_build_numbers.first
+  end
+
+  # Increase the number to create new tag
   build_number = number_of_released_builds + 1
   current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
   while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
@@ -294,9 +311,6 @@ platform :ios do
   end
 
   lane :release do
-    # update xcconfig
-    update_xcconfig
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -347,14 +361,20 @@ platform :ios do
 
     # post to discord
     build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
-    sh(
-      "curl", 
-      "-v", 
-      "-X", "POST", 
-      "-H", "Content-Type: application/json", 
-      "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-      DISCORD_MESSAGE_API_ENDPOINT
-    )
+
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json", 
+        "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
+    
 
     # set build number
     increment_build_number(
@@ -391,15 +411,19 @@ platform :ios do
     message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
 
     # post to discord
-    sh(
-      "curl", 
-      "-v", 
-      "-X", "POST", 
-      "-H", "Content-Type: application/json",
-      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
-      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
-      DISCORD_MESSAGE_API_ENDPOINT
-    )
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json",
+        "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
+        "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
 
     # post to slack
     post_to_slack(

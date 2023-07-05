@@ -1,9 +1,6 @@
-//
-// Created by Giang Long Tran on 03.01.22.
-//
-
 import KeyAppUI
 import UIKit
+import BEPureLayout
 
 class LockView: BECompositionView {
     override func build() -> UIView {

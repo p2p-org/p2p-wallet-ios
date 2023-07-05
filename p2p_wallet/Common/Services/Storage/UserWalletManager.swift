@@ -1,13 +1,10 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import KeyAppBusiness
 import KeyAppKitCore
 import Onboarding
 import Resolver
 import SolanaSwift
+import Foundation
 
 /// Centralized class for managing user accounts
 class UserWalletManager: ObservableObject {
@@ -15,17 +12,13 @@ class UserWalletManager: ObservableObject {
     @Injected private var walletSettings: WalletSettings
     @Injected private var notificationsService: NotificationService
     @Injected private var solanaTracker: SolanaTracker
+    @Injected private var deviceShareManager: DeviceShareManager
 
     /// Current selected wallet
     @Published private(set) var wallet: UserWallet? {
         didSet {
             notificationsService.registerForRemoteNotifications()
         }
-    }
-
-    /// Check if user logged in using web3 auth
-    var isUserLoggedInUsingWeb3: Bool {
-        wallet?.ethAddress != nil
     }
 
     init() {}
@@ -48,7 +41,6 @@ class UserWalletManager: ObservableObject {
             seedPhrase: account.phrase,
             derivablePath: storage.derivablePath,
             name: storage.getName(),
-            deviceShare: nil,
             ethAddress: storage.ethAddress,
             account: account,
             moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString,
@@ -73,10 +65,8 @@ class UserWalletManager: ObservableObject {
         // Services
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
 
-        // Save device share
-        print(deviceShare)
         if let deviceShare = deviceShare, ethAddress != nil {
-            try storage.save(deviceShare: deviceShare)
+            deviceShareManager.save(deviceShare: deviceShare)
         }
 
         try await refresh()
@@ -121,5 +111,15 @@ class UserWalletManager: ObservableObject {
         // Reset wallet
         wallet = nil
         solanaTracker.stopTracking()
+    }
+}
+
+extension UserWalletManager: CurrentUserWallet {
+    var value: UserWallet? {
+        wallet
+    }
+
+    var valuePublisher: AnyPublisher<UserWallet?, Never> {
+        $wallet.eraseToAnyPublisher()
     }
 }

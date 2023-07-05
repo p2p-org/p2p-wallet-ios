@@ -1,3 +1,5 @@
+import UIKit
+
 struct OnboardingContentData: Identifiable, Equatable {
     struct Subtitle: Identifiable, Equatable {
         var id: String { text }

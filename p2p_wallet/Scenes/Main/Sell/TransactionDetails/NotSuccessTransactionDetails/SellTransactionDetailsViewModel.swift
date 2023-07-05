@@ -1,16 +1,10 @@
-//
-//  SellTransactionDetailsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 16.12.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
 import Sell
 import KeyAppUI
+import UIKit
 
 final class SellTransactionDetailsViewModel: ObservableObject {
 

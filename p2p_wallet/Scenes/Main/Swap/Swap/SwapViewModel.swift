@@ -6,6 +6,8 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import Task_retrying
+import Foundation
+import UIKit
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
     enum ViewState {

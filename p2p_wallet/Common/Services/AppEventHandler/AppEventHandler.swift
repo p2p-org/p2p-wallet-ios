@@ -1,14 +1,8 @@
-//
-//  AppEventHandler.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 09/01/2022.
-//
-
 import Foundation
 import LocalAuthentication
 import Resolver
 import SolanaSwift
+import UIKit
 
 protocol AppEventHandlerType {
     var delegate: AppEventHandlerDelegate? { get set }

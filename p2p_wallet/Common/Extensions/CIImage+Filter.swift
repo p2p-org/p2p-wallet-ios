@@ -1,5 +1,6 @@
 import Foundation
 import CoreImage
+import UIKit
 
 extension CIImage {
     /// Inverts the colors and creates a transparent image by converting the mask to alpha.

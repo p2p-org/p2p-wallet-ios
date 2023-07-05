@@ -72,6 +72,28 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
 
+        register { DeviceShareManagerImpl() }
+            .implements(DeviceShareManager.self)
+            .scope(.application)
+
+        register {
+            DeviceShareMigrationService(
+                isWeb3AuthUser: resolve(UserWalletManager.self)
+                    .$wallet
+                    .map { wallet in
+                        guard let wallet else { return nil }
+                        return wallet.ethAddress != nil
+                    }
+                    .eraseToAnyPublisher(),
+                hasDeviceShare: resolve(DeviceShareManager.self)
+                    .deviceSharePublisher
+                    .map { deviceShare in deviceShare != nil }
+                    .eraseToAnyPublisher(),
+                errorObserver: resolve()
+            )
+        }
+        .scope(.application)
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)
@@ -91,6 +113,7 @@ extension Resolver: ResolverRegistering {
 
         // WalletManager
         register { UserWalletManager() }
+            .implements(CurrentUserWallet.self)
             .scope(.application)
 
         // WalletMetadata
@@ -100,12 +123,21 @@ extension Resolver: ResolverRegistering {
         register { RemoteWalletMetadataProvider() }
             .scope(.application)
 
+        register { TKeyWalletMetadataProvider() }
+            .scope(.application)
+
         register {
-            WalletMetadataService(
-                localProvider: resolve(LocalWalletMetadataProvider.self),
-                remoteProvider: resolve(RemoteWalletMetadataProvider.self)
+            WalletMetadataServiceImpl(
+                currentUserWallet: resolve(),
+                errorObserver: resolve(),
+                localMetadataProvider: resolve(LocalWalletMetadataProvider.self),
+                remoteMetadataProvider: [
+                    resolve(RemoteWalletMetadataProvider.self),
+                    resolve(TKeyWalletMetadataProvider.self),
+                ]
             )
         }
+        .implements(WalletMetadataService.self)
         .scope(.session)
 
         // Prices
@@ -245,9 +277,13 @@ extension Resolver: ResolverRegistering {
         register { QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
 
-        // Navigation provider
+        // Onboarding
         register { StartOnboardingNavigationProviderImpl() }
             .implements(StartOnboardingNavigationProvider.self)
+
+        register { TKeyFacadeManagerImpl(analyticsManager: resolve()) }
+            .implements(TKeyFacadeManager.self)
+            .scope(.application)
 
         register { OnboardingServiceImpl() }
             .implements(OnboardingService.self)
@@ -257,6 +293,10 @@ extension Resolver: ResolverRegistering {
 
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
+
+        register { AuthServiceBridge() }
+            .implements(SocialAuthService.self)
+            .scope(.application)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
     }

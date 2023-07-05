@@ -10,10 +10,6 @@ extension KeychainStorage: AccountStorageType {
         _account
     }
 
-    var deviceShare: String? {
-        localKeychain.get(deviceShareKey)
-    }
-
     var derivablePath: DerivablePath {
         let derivableTypeRaw = localKeychain.get(derivableTypeKey) ?? ""
         let walletIndexRaw = localKeychain.get(walletIndexKey) ?? ""
@@ -73,14 +69,6 @@ extension KeychainStorage: AccountStorageType {
 
     func clearAccount() {
         removeCurrentAccount()
-    }
-
-    func save(deviceShare: String) throws {
-        if deviceShare.isEmpty {
-            localKeychain.delete(deviceShareKey)
-        } else {
-            localKeychain.set(deviceShare, forKey: deviceShareKey)
-        }
     }
 
     var ethAddress: String? {

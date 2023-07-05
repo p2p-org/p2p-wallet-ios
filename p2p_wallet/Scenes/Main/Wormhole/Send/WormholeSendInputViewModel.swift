@@ -134,7 +134,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Update state machine
         let cryptoInputFormatter = CryptoFormatter(hideSymbol: true)
-        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true, lessText: "")
+        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true)
 
         Publishers
             .CombineLatest($input, $inputMode)

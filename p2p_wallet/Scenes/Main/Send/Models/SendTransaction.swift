@@ -3,6 +3,9 @@ import KeyAppKitCore
 import Resolver
 import Send
 import SolanaSwift
+import Resolver
+import FeeRelayerSwift
+import Foundation
 
 struct SendTransaction: RawTransactionType {
     // MARK: - Properties

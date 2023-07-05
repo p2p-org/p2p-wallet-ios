@@ -2,7 +2,7 @@ import Combine
 import Jupiter
 import KeyAppBusiness
 import Resolver
-import SolanaSwift
+import Foundation
 
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
