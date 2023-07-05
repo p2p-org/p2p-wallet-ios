@@ -36,13 +36,13 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
-    let chooseCountry = PassthroughSubject<Country, Never>()
+    let chooseCountry = PassthroughSubject<Country?, Never>()
     let choosePhoneCountryCode = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
     var fieldsStatuses = [StrigaRegistrationField: StrigaRegistrationTextFieldStatus]()
 
-    @Published var selectedCountryOfBirth: Country
+    @Published var selectedCountryOfBirth: Country?
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
 
     private lazy var birthMaxYear: Int = {
@@ -53,8 +53,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
         Date().year - Constants.minYearGap
     }()
 
+    private let preselectedCountry: Country
+
     init(country: Country) {
-        selectedCountryOfBirth = country
+        preselectedCountry = country
         super.init()
         fetchSavedData()
 
@@ -85,7 +87,13 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .store(in: &subscriptions)
 
         $selectedCountryOfBirth
-            .map { [$0.emoji, $0.name].compactMap { $0 } .joined(separator: " ") }
+            .map { model in
+                if let model {
+                    return [model.emoji, model.name].compactMap { $0 } .joined(separator: " ")
+                } else {
+                    return ""
+                }
+            }
             .assignWeak(to: \.countryOfBirth, on: self)
             .store(in: &subscriptions)
 
@@ -179,11 +187,20 @@ private extension StrigaRegistrationFirstStepViewModel {
         validatePhone()
         validate(credential: firstName, field: .firstName)
         validate(credential: surname, field: .surname)
+        validatePlaceOfBirth()
         validateDate()
         if countryOfBirth.isEmpty {
             fieldsStatuses[.countryOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
         }
         return !fieldsStatuses.contains(where: { $0.value != .valid })
+    }
+
+    func validatePlaceOfBirth() {
+        if selectedCountryOfBirth == nil {
+            fieldsStatuses[.countryOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
+        } else {
+            fieldsStatuses[.countryOfBirth] = .valid
+        }
     }
 
     func validatePhone() {
@@ -248,7 +265,15 @@ private extension StrigaRegistrationFirstStepViewModel {
                     lastName: credentials.1.trimmed(),
                     mobile: mobile,
                     dateOfBirth: dateOfBirth.0,
-                    placeOfBirth: dateOfBirth.1.alpha3Code
+                    address: StrigaUserDetailsResponse.Address(
+                        addressLine1: currentData.address?.addressLine1,
+                        addressLine2: currentData.address?.addressLine2,
+                        city: currentData.address?.city,
+                        postalCode: currentData.address?.postalCode,
+                        state: currentData.address?.state,
+                        country: preselectedCountry.code
+                    ),
+                    placeOfBirth: dateOfBirth.1?.alpha3Code
                 )
                 self.data = newData
                 try? await self.service.updateLocally(data: newData)
