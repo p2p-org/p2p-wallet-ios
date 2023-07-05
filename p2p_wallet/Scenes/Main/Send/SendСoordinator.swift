@@ -5,6 +5,8 @@
 import Combine
 import FeeRelayerSwift
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Send
 import SolanaSwift
@@ -25,7 +27,7 @@ enum SendSource: String {
 final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var walletsRepository: SolanaAccountsService
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
 
     // MARK: - Properties
@@ -35,7 +37,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     let result = PassthroughSubject<SendResult, Never>()
 
     private let source: SendSource
-    let preChosenWallet: Wallet?
+    let preChosenWallet: SolanaAccount?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?
     let allowSwitchingMainAmountType: Bool
@@ -44,7 +46,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
     init(
         rootViewController: UINavigationController,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,

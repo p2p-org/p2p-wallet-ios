@@ -25,7 +25,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
         let (accounts, favourites, ignores, hideZeroBalance) = input
 
         return accounts
-            .filter { !$0.data.isNFTToken }
+            .filter { !$0.isNFTToken }
             .sorted(by: Self.defaultSorter)
             .map { account in
                 var tags: AccountTags = []
@@ -92,7 +92,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             }
 
             // then name
-            return lhs.data.name < rhs.data.name
+            return lhs.address < rhs.address
         }
     }
 }

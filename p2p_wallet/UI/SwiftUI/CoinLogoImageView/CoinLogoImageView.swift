@@ -81,7 +81,7 @@ class CoinLogoImageView: BEView {
         wrappingView.alpha = 0 // UNKNOWN: isHidden not working
     }
 
-    func setUp(wallet: Wallet? = nil) {
+    func setUp(wallet: SolanaAccount? = nil) {
         setUp(token: wallet?.token)
     }
 

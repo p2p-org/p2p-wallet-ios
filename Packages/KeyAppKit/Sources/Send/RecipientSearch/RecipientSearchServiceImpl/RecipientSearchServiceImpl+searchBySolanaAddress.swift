@@ -1,4 +1,5 @@
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension RecipientSearchServiceImpl {
@@ -16,13 +17,13 @@ extension RecipientSearchServiceImpl {
             var attributes: Recipient.Attribute = []
 
             // Check self-sending
-            if let wallet: Wallet = config.wallets
-                .first(where: { (wallet: Wallet) in wallet.pubkey == addressBase58 })
+            if let wallet: SolanaAccount = config.wallets
+                .first(where: { (wallet: SolanaAccount) in wallet.pubkey == addressBase58 })
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,
-                    category: wallet.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
-                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.isNativeSOL)?
+                    category: wallet.token.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
+                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.token.isNativeSOL)?
                                 .pubkey)) ?? address,
                         token: wallet.token
                     ),
@@ -141,8 +142,9 @@ extension RecipientSearchServiceImpl {
         for wallet in wallets {
             try Task.checkCancellation()
 
+            let balance = wallet.lamports
             guard
-                let balance = wallet.lamports,
+
                 let mint = try? PublicKey(string: wallet.token.address)
             else { continue }
 
@@ -166,8 +168,8 @@ extension RecipientSearchServiceImpl {
         for wallet in wallets {
             try Task.checkCancellation()
 
+            let balance = wallet.lamports
             guard
-                let balance = wallet.lamports,
                 let mint = try? PublicKey(string: wallet.token.address)
             else { continue }
 

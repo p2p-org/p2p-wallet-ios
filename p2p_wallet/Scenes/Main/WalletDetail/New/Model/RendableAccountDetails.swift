@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
+import SolanaSwift
 
 protocol RendableAccountDetails {
     var title: String { get }
@@ -23,13 +24,13 @@ enum RendableAccountDetailsAction: Identifiable {
     case buy
     case receive(ReceiveParam)
     case send
-    case swap(Wallet?)
+    case swap(SolanaAccount?)
 }
 
 extension RendableAccountDetailsAction {
     enum ReceiveParam {
-        case wallet(Wallet)
-        case solanaAccount(SolanaAccountsService.Account)
+        case wallet(SolanaAccount)
+        case solanaAccount(SolanaAccount)
         case none
     }
 

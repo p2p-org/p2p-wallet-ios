@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 /// A strategy for parsing close transactions.
@@ -48,9 +49,9 @@ public class CloseAccountParseStrategy: TransactionParseStrategy {
 
         return CloseAccountInfo(
             reimbursedAmount: reimbursedAmount,
-            closedWallet: AccountBalance(
+            closedWallet: SolanaAccount(
                 pubkey: closedTokenPubkey,
-                lamports: nil,
+                lamports: 0,
                 token: token
             )
         )

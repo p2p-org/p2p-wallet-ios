@@ -6,6 +6,8 @@
 //
 
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Send
@@ -14,12 +16,12 @@ import SwiftUI
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
-    let feePrompt = PassthroughSubject<[Wallet], Never>()
+    let feePrompt = PassthroughSubject<[SolanaAccount], Never>()
     let longTapped = PassthroughSubject<CellModel, Never>()
 
     private let stateMachine: SendInputStateMachine
     @Injected private var pricesService: PricesServiceType
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 
@@ -127,7 +129,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private func extractAccountCreationFeeCellModel(
         state: SendInputState, isLoading: Bool,
-        feeTokens: [Wallet]?
+        feeTokens: [SolanaAccount]?
     ) -> CellModel? {
         guard state.fee.accountBalances > 0
         else {

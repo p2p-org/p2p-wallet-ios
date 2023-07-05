@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 /// A strategy for orca swap transactions.
@@ -95,13 +96,13 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
             tokensRepository.safeGet(address: destinationAccount?.data.mint)
         )
 
-        let sourceWallet = Wallet(
+        let sourceWallet = SolanaAccount(
             pubkey: try? PublicKey(string: sourceInfo.source).base58EncodedString,
             lamports: sourceAccount?.lamports,
             token: sourceToken
         )
 
-        let destinationWallet = Wallet(
+        let destinationWallet = SolanaAccount(
             pubkey: try? PublicKey(string: destinationInfo.destination).base58EncodedString,
             lamports: destinationAccount?.lamports,
             token: destinationToken
@@ -140,13 +141,13 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
         let sourceToken = try await tokensRepository.safeGet(address: sourceMint)
         let destinationToken = try await tokensRepository.safeGet(address: destinationMint)
 
-        let sourceWallet = Wallet(
+        let sourceWallet = SolanaAccount(
             pubkey: approveInstruction.parsed?.info.source,
             lamports: Lamports(postTokenBalances.first?.uiTokenAmount.amount ?? "0"),
             token: sourceToken
         )
 
-        let destinationWallet = Wallet(
+        let destinationWallet = SolanaAccount(
             pubkey: destinationToken.symbol == "SOL" ? approveInstruction.parsed?.info.owner : nil,
             lamports: Lamports(postTokenBalances.last?.uiTokenAmount.amount ?? "0"),
             token: destinationToken

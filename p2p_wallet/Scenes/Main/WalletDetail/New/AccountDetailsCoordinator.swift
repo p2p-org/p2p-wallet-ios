@@ -7,6 +7,7 @@
 
 import Combine
 import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Sell
@@ -182,7 +183,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 openReceive(item:
                     .init(
                         icon: icon,
-                        name: account.data.name,
+                        name: account.address,
                         symbol: account.data.token.symbol,
                         availableNetwork: [.solana, .ethereum]
                     ))
@@ -200,7 +201,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             openReceive(item:
                 .init(
                     icon: icon,
-                    name: account.data.name,
+                    name: account.address,
                     symbol: account.data.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))
@@ -256,7 +257,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
     }
 
-    func openSwap(destination: Wallet? = nil) {
+    func openSwap(destination: SolanaAccount? = nil) {
         guard case let .solanaAccount(account) = args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
@@ -267,7 +268,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     dismissAfterCompletion: true,
                     openKeyboardOnStart: true,
                     source: .tapToken,
-                    preChosenWallet: account.data,
+                    preChosenWallet: account,
                     destinationWallet: destination,
                     hideTabBar: true
                 )
@@ -288,7 +289,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
-            preChosenWallet: account.data,
+            preChosenWallet: account,
             hideTabBar: true,
             allowSwitchingMainAmountType: true
         )

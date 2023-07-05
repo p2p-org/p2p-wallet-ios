@@ -10,6 +10,7 @@ import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Send
 import SolanaSwift
@@ -19,7 +20,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     @Injected private var tokensRepository: SolanaTokensService
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: SolanaAccountsService
 
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
@@ -101,7 +102,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         let transaction = ClaimSentViaLinkTransaction(
             claimableTokenInfo: claimableToken,
             token: token,
-            destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
+            destinationWallet: SolanaAccount(pubkey: claimableToken.account, token: token),
             tokenAmount: cryptoAmount,
             isFakeTransaction: isFakeSendingTransaction,
             fakeTransactionErrorType: fakeTransactionErrorType

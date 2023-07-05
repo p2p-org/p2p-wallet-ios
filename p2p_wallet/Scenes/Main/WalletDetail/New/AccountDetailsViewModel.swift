@@ -10,8 +10,8 @@ enum AccountDetailsAction {
     case openBuy
     case openReceive
     case openSend
-    case openSwap(Wallet?)
-    case openSwapWithDestination(Wallet?, Wallet?)
+    case openSwap(SolanaAccount?)
+    case openSwapWithDestination(SolanaAccount?, SolanaAccount?)
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
@@ -41,7 +41,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             case .buy:
                 actionSubject?.send(.openBuy)
             case .swap:
-                actionSubject?.send(.openSwap(solanaAccount.data))
+                actionSubject?.send(.openSwap(solanaAccount))
             case .send:
                 actionSubject?.send(.openSend)
             case .receive:
@@ -70,7 +70,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             .map { account, status in
                 RendableNewSolanaAccountDetails(
                     account: account,
-                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account.data, for: status),
+                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account, for: status),
                     onAction: onAction
                 )
             }
@@ -97,8 +97,8 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                         actionSubject?
                             .send(
                                 .openSwapWithDestination(
-                                    solanaAccount.data,
-                                    Wallet(token: supportedWormholeToken)
+                                    solanaAccount,
+                                    SolanaAccount(token: supportedWormholeToken)
                                 )
                             )
                     }, close: { [weak self] in
@@ -113,7 +113,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
-    static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
+    static func isSwapAvailableFor(wallet: SolanaAccount, for status: JupiterDataStatus) -> Bool {
         switch status {
         case let .ready(swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
             return true

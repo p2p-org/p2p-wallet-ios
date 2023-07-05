@@ -228,4 +228,15 @@ public extension SolanaAccountsService {
     enum Error: Swift.Error {
         case authorityError
     }
+
+    @available(*, deprecated, message: "Legacy code")
+    var nativeWallet: SolanaAccount? {
+        state.value.nativeWallet
+    }
+    
+    
+    @available(*, deprecated, message: "Legacy code")
+    func getWallets() -> [SolanaAccount] {
+        state.value
+    }
 }

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 /// The strategy for parsing creation account transactions.
@@ -41,7 +42,10 @@ public class CreationAccountParseStrategy: TransactionParseStrategy {
             let token = try await tokensRepository.safeGet(
                 address: program.parsed?.info.mint
             )
-            return CreateAccountInfo(fee: nil, newWallet: Wallet(pubkey: program.parsed?.info.account, token: token))
+            return CreateAccountInfo(
+                fee: nil,
+                newWallet: SolanaAccount(pubkey: program.parsed?.info.account, lamports: 0, token: token)
+            )
         } else {
             let info = instructions[0].parsed?.info
             let initializeAccountInfo = instructions.last?.parsed?.info
@@ -52,9 +56,9 @@ public class CreationAccountParseStrategy: TransactionParseStrategy {
             )
             return CreateAccountInfo(
                 fee: fee,
-                newWallet: Wallet(
+                newWallet: SolanaAccount(
                     pubkey: info?.newAccount,
-                    lamports: nil,
+                    lamports: 0,
                     token: token
                 )
             )

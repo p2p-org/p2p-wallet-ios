@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 import TransactionParser
 
@@ -26,7 +27,7 @@ struct PendingTransaction {
                 return nil
             }
         }
-        
+
         var isSent: Bool {
             switch self {
             case .sending:
@@ -35,7 +36,7 @@ struct PendingTransaction {
                 return true
             }
         }
-        
+
         var isFinalized: Bool {
             switch self {
             case .finalized:
@@ -100,7 +101,7 @@ struct PendingTransaction {
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
     var slot: UInt64 = 0
-    
+
     var isConfirmedOrError: Bool {
         status.error != nil || status.isFinalized || (status.numberOfConfirmations ?? 0) > 0
     }
@@ -132,7 +133,11 @@ extension PendingTransaction {
         case let transaction as SendTransaction:
             value = TransferInfo(
                 source: transaction.walletToken,
-                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
+                destination: SolanaAccount(
+                    pubkey: transaction.recipient.address,
+                    lamports: 0,
+                    token: transaction.walletToken.token
+                ),
                 authority: authority,
                 destinationAuthority: nil,
                 rawAmount: transaction.amount,
@@ -158,15 +163,16 @@ extension PendingTransaction {
                 destinationAmount: transaction.toAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
+            amountInFiat = transaction.fromAmount * pricesService
+                .currentPrice(mint: transaction.sourceWallet.token.address)?
                 .value
             fee = transaction.feeAmount
         case let transaction as ClaimSentViaLinkTransaction:
             value = TransferInfo(
-                source: Wallet(
+                source: SolanaAccount(
                     pubkey: transaction.claimableTokenInfo.account,
                     token: transaction.token
-                ) ,
+                ),
                 destination: transaction.destinationWallet,
                 authority: nil,
                 destinationAuthority: nil,

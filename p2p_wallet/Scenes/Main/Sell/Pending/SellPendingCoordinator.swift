@@ -1,10 +1,11 @@
 import Combine
 import Foundation
-import SwiftUI
-import UIKit
-import Send
+import KeyAppBusiness
 import Resolver
 import Sell
+import Send
+import SwiftUI
+import UIKit
 
 enum SellPendingCoordinatorResult {
     case transactionRemoved
@@ -14,13 +15,12 @@ enum SellPendingCoordinatorResult {
 }
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
-    
     // MARK: - Dependencies
 
-    @Injected private var walletsRepository: WalletsRepository
-    
+    @Injected private var walletsRepository: SolanaAccountsService
+
     // MARK: - Properties
-    
+
     private let navigationController: UINavigationController
     private let transaction: SellDataServiceTransaction
     private let fiat: any ProviderFiat
@@ -29,7 +29,12 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
     // MARK: - Initializer
 
-    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, navigatedFromMoonpay: Bool = false) {
+    init(
+        transaction: SellDataServiceTransaction,
+        fiat: any ProviderFiat,
+        navigationController: UINavigationController,
+        navigatedFromMoonpay: Bool = false
+    ) {
         self.navigationController = navigationController
         self.transaction = transaction
         self.fiat = fiat
@@ -37,7 +42,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     }
 
     // MARK: - Methods
-    
+
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
         // create viewModel, viewController and push to navigation stack
         let tokenSymbol = "SOL"
@@ -53,16 +58,16 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 navigatedFromMoonpay: navigatedFromMoonpay
             )
         )
-        
+
         let view = SellPendingView(viewModel: viewModel)
         let viewController = SellPendingHostingController(rootView: view, shouldShowAlert: navigatedFromMoonpay)
         viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         viewController.backButtonHandler = { [weak self] in
             self?.resultSubject.send(.cashOutInterupted)
         }
-        
+
         navigationController.pushViewController(viewController, animated: false)
-        
+
         // observe viewModel's event
         viewModel.transactionRemoved
             .sink { [weak self] in
@@ -85,24 +90,23 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                         hideTabBar: true,
                         source: .sell,
                         allowSwitchingMainAmountType: false
-                    )
-                )
+                    ))
             }
             .sink { [weak self] res in
                 switch res {
-                case .sent(let transaction):
+                case let .sent(transaction):
                     self?.resultSubject.send(.transactionSent(transaction))
                 default:
                     break
                 }
             }
             .store(in: &subscriptions)
-        
+
         // return either vc was dellocated or result subject return a value
         return Publishers.Merge(
             viewController.deallocatedPublisher().map { SellPendingCoordinatorResult.cancelled },
             resultSubject.eraseToAnyPublisher()
         )
-            .prefix(1).eraseToAnyPublisher()
+        .prefix(1).eraseToAnyPublisher()
     }
 }

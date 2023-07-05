@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 /// A strategy for parsing serum transactions.
 public class SerumSwapParseStrategy: TransactionParseStrategy {
@@ -106,13 +107,13 @@ public class SerumSwapParseStrategy: TransactionParseStrategy {
         let sourceToken = try await tokensRepository.safeGet(address: mints[0])
         let destinationToken = try await tokensRepository.safeGet(address: mints[1])
 
-        let sourceWallet = Wallet(
+        let sourceWallet = SolanaAccount(
             pubkey: fromAddress,
             lamports: 0, // post token balance?
             token: sourceToken
         )
 
-        let destinationWallet = Wallet(
+        let destinationWallet = SolanaAccount(
             pubkey: toAddress,
             lamports: 0, // post token balances
             token: destinationToken

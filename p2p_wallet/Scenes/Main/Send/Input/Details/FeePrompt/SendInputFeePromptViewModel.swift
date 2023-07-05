@@ -1,9 +1,9 @@
 import Combine
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
 final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
-
     let close = PassthroughSubject<Void, Never>()
     let chooseToken = PassthroughSubject<Void, Never>()
 
@@ -11,11 +11,11 @@ final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
     @Published var description: String
     @Published var isChooseTokenAvailable: Bool
     @Published var continueTitle: String
-    @Published var feeToken: Wallet
+    @Published var feeToken: SolanaAccount
 
     let feeInFiat: Double
 
-    init(feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
+    init(feeToken: SolanaAccount, feeInToken: FeeAmount, availableFeeTokens: [SolanaAccount]) {
         title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
         let priceService = Resolver.resolve(PricesServiceType.self)
         let price = priceService.currentPrice(mint: feeToken.token.address)

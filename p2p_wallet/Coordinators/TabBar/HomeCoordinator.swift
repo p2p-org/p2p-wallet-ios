@@ -150,7 +150,7 @@ final class HomeCoordinator: Coordinator<Void> {
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
-                    presentingViewController: self.navigationController
+                    presentingViewController: navigationController
                 ))
                 .map { _ in () }
                 .eraseToAnyPublisher()
@@ -219,7 +219,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         case let .solanaAccount(solanaAccount):
             analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
-            
+
             return coordinate(
                 to: AccountDetailsCoordinator(
                     args: .solanaAccount(solanaAccount),
@@ -272,7 +272,9 @@ final class HomeCoordinator: Coordinator<Void> {
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    Task {
+                        try? await Resolver.resolve(SolanaAccountsService.self).fetch()
+                    }
                 })
             }
             return Just(())

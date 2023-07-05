@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import KeyAppBusiness
 
 protocol BuyProcessingServiceType {
     func getUrl() -> String
@@ -10,14 +11,14 @@ protocol BuyProcessingServiceType {
 
 protocol BuyProcessingFactory {
     func create(
-        walletRepository: WalletsRepository,
+        walletRepository: SolanaAccountsService,
         crypto: Buy.CryptoCurrency,
         initialAmount: Double,
         currency: Buy.FiatCurrency
     ) throws -> BuyProcessingServiceType
 
     func create(
-        walletRepository: WalletsRepository,
+        walletRepository: SolanaAccountsService,
         fromCurrency: BuyCurrencyType,
         amount: Double,
         toCurrency: BuyCurrencyType,
@@ -28,7 +29,7 @@ protocol BuyProcessingFactory {
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
         func create(
-            walletRepository: WalletsRepository,
+            walletRepository: SolanaAccountsService,
             crypto: CryptoCurrency,
             initialAmount: Double,
             currency: FiatCurrency
@@ -48,7 +49,7 @@ extension Buy {
         }
 
         func create(
-            walletRepository: WalletsRepository,
+            walletRepository: SolanaAccountsService,
             fromCurrency: BuyCurrencyType,
             amount: Double,
             toCurrency: BuyCurrencyType,

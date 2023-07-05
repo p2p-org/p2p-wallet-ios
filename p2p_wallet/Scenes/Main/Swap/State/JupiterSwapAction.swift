@@ -1,4 +1,5 @@
 import Jupiter
+import KeyAppKitCore
 import SolanaSwift
 
 enum JupiterSwapAction: Equatable {
@@ -17,10 +18,10 @@ enum JupiterSwapAction: Equatable {
     case changeFromToken(SwapToken)
     case changeToToken(SwapToken)
     case switchFromAndToTokens
-    
-    case updateUserWallets(userWallets: [Wallet])
+
+    case updateUserWallets(userWallets: [SolanaAccount])
     case updateTokensPriceMap([String: Double])
-    
+
     case chooseRoute(Route)
     case changeSlippageBps(Int)
 
@@ -34,11 +35,11 @@ enum JupiterSwapAction: Equatable {
             return "initialize"
         case .update:
             return "update"
-        case .changeAmountFrom(let double):
+        case let .changeAmountFrom(double):
             return "changeAmountFrom(\(double))"
-        case .changeFromToken(let swapToken):
+        case let .changeFromToken(swapToken):
             return "changeFromToken(\(swapToken.token.symbol))"
-        case .changeToToken(let swapToken):
+        case let .changeToToken(swapToken):
             return "changeToToken(\(swapToken.token.symbol))"
         case .switchFromAndToTokens:
             return "switchFromAndToTokens"
@@ -46,11 +47,11 @@ enum JupiterSwapAction: Equatable {
             return "updateUserWallets"
         case .updateTokensPriceMap:
             return "updateTokensPriceMap"
-        case .chooseRoute(let route):
+        case let .chooseRoute(route):
             return "chooseRoute(\(route.id))"
-        case .changeSlippageBps(let int):
+        case let .changeSlippageBps(int):
             return "changeSlippageBps(\(int))"
-        case .retry(let action):
+        case let .retry(action):
             return "action\(action)"
         }
     }

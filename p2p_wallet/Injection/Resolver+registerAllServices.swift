@@ -53,7 +53,6 @@ extension Resolver: ResolverRegistering {
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
-            .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
             .implements(ChangeThemeResponder.self)
@@ -416,11 +415,6 @@ extension Resolver: ResolverRegistering {
         register { PricesService() }
             .implements(PricesServiceType.self)
             .implements(SellPriceProvider.self)
-            .scope(.session)
-
-        // WalletsViewModel
-        register { WalletsRepositoryImpl() }
-            .implements(WalletsRepository.self)
             .scope(.session)
 
         register {

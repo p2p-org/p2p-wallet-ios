@@ -10,10 +10,10 @@ import SolanaSwift
 
 /// Solana account data structure.
 /// This class is combination of raw account data and additional application data.
-public struct SolanaAccount: Identifiable, Equatable {
+public struct SolanaAccount: Identifiable, Equatable, Hashable {
     public var id: String { address }
 
-    public let address: String
+    public var address: String
 
     public let lamports: Lamports
 
@@ -31,8 +31,18 @@ public struct SolanaAccount: Identifiable, Equatable {
         self.lamports = lamports
         self.token = token
         self.price = price
-        
+
         data = AccountBalance(pubkey: address, lamports: lamports, supply: nil, token: token)
+    }
+
+    @available(*, deprecated)
+    public init(pubkey: String? = nil, lamports: Lamports? = nil, token: Token) {
+        address = pubkey ?? ""
+        self.lamports = lamports ?? 0
+        self.token = token
+        price = nil
+
+        data = AccountBalance(pubkey: pubkey, lamports: lamports, supply: nil, token: token)
     }
 
     public var cryptoAmount: CryptoAmount {
@@ -44,10 +54,47 @@ public struct SolanaAccount: Identifiable, Equatable {
         guard let price else { return nil }
         return cryptoAmount.unsafeToFiatAmount(price: price)
     }
+}
+
+public extension SolanaAccount {
+    var mintAddress: String {
+        token.address
+    }
+
+    @available(*, deprecated, renamed: "address")
+    var pubkey: String? {
+        get {
+            address
+        }
+        set {
+            address = newValue ?? ""
+        }
+    }
 
     @available(*, deprecated, message: "Migrate to amountInFiat")
-    public var amountInFiatDouble: Double {
+    var amountInFiatDouble: Double {
         guard let amountInFiat else { return 0.0 }
         return Double(amountInFiat.value.description) ?? 0.0
+    }
+
+    @available(*, deprecated, message: "Legacy code")
+    var amountInCurrentFiat: Double {
+        amountInFiatDouble
+    }
+
+    @available(*, deprecated, message: "Legacy code")
+    var priceInCurrentFiat: Double? {
+        guard let price = price?.value.description else { return 0.0 }
+        return Double(price) ?? 0.0
+    }
+
+    @available(*, deprecated, message: "Legacy code")
+    var amount: Double? {
+        lamports.convertToBalance(decimals: token.decimals)
+    }
+
+    @available(*, deprecated, message: "Legacy code")
+    static func nativeSolana(pubkey: String?, lamport: Lamports?) -> Self {
+        .init(pubkey: pubkey, lamports: lamport, token: .nativeSolana)
     }
 }

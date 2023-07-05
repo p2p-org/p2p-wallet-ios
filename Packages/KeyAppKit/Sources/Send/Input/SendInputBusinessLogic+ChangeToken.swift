@@ -4,6 +4,7 @@
 
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension SendInputBusinessLogic {
@@ -33,7 +34,7 @@ extension SendInputBusinessLogic {
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
             }
-            
+
             var state = state.copy(
                 token: token,
                 fee: fee
@@ -49,13 +50,13 @@ extension SendInputBusinessLogic {
                     token: state.token,
                     services: services
                 )
-                
+
                 state = state.copy(
                     tokenFee: feeInfo.token,
                     feeInToken: fee == .zero ? .zero : feeInfo.fee
                 )
             }
-            
+
             state = await sendInputChangeAmountInToken(state: state, amount: state.amountInToken, services: services)
             state = await validateFee(state: state)
 
@@ -68,8 +69,8 @@ extension SendInputBusinessLogic {
 
     static func validateFee(state: SendInputState) async -> SendInputState {
         guard state.fee != .zero else { return state }
-        guard let wallet: Wallet = state.userWalletEnvironments.wallets
-            .first(where: { (wallet: Wallet) in wallet.token.address == state.tokenFee.address })
+        guard let wallet: SolanaAccount = state.userWalletEnvironments.wallets
+            .first(where: { (wallet: SolanaAccount) in wallet.token.address == state.tokenFee.address })
         else {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }
@@ -82,7 +83,7 @@ extension SendInputBusinessLogic {
     }
 
     static func autoSelectTokenFee(
-        userWallets: [Wallet],
+        userWallets: [SolanaAccount],
         feeInSol: FeeAmount,
         token: Token,
         services: SendInputServices
@@ -92,7 +93,7 @@ extension SendInputBusinessLogic {
             preferOrder[token.symbol] = 1
         }
 
-        let sortedWallets = userWallets.sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+        let sortedWallets = userWallets.sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
             let lhsValue = (preferOrder[lhs.token.symbol] ?? 3)
             let rhsValue = (preferOrder[rhs.token.symbol] ?? 3)
 
