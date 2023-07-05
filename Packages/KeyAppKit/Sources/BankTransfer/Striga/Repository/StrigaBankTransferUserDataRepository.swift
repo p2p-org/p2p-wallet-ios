@@ -3,6 +3,7 @@ import Combine
 import SolanaSwift
 import TweetNacl
 import KeyAppKitCore
+import KeyAppKitLogger
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
 
@@ -177,53 +178,62 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func getWallet(userId: String) async throws -> UserWallet? {
         var wallet: UserWallet?
-        if let cachedWallet = await localProvider.getCachedUserData()?.wallet {
-            wallet = cachedWallet
-        } else {
+        do {
             wallet = try await remoteProvider.getAllWalletsByUser(
                 userId: userId,
                 startDate: Date(timeIntervalSince1970: 1687564800),
                 endDate: Date(),
                 page: 1
-            ).wallets.map { strigaWallet in
-                var eur: EURUserAccount?
-                if let eurAccount = strigaWallet.accounts.eur {
-                    eur = EURUserAccount(
-                        accountID: eurAccount.accountID,
-                        currency: eurAccount.currency,
-                        createdAt: eurAccount.createdAt,
-                        enriched: false
-                    )
-                }
-                var usdc: USDCUserAccount?
-                if let usdcAccount = strigaWallet.accounts.usdc {
-                    usdc = USDCUserAccount(
-                        accountID: usdcAccount.accountID,
-                        currency: usdcAccount.currency,
-                        createdAt: usdcAccount.createdAt,
-                            enriched: false)
-                }
-                return UserWallet(walletId: strigaWallet.walletID, accounts: UserAccounts(eur: eur, usdc: usdc))
-            }.first
+            ).wallets.map(UserWallet.init).first
+        } catch {
+            wallet = await localProvider.getCachedUserData()?.wallet
+            Logger.log(
+                event: "Striga get all wallets",
+                message: error.localizedDescription,
+                logLevel: KeyAppKitLoggerLogLevel.warning
+            )
         }
 
         if let eur = wallet?.accounts.eur, !eur.enriched {
             do {
                 let response: StrigaEnrichedEURAccountResponse = try await enrichAccount(userId: userId, accountId: eur.accountID)
-                wallet?.accounts.eur = EURUserAccount(accountID: eur.accountID, currency: eur.currency, createdAt: eur.createdAt, enriched: true, iban: response.iban, bic: response.bic, bankAccountHolderName: response.bankAccountHolderName)
+                wallet?.accounts.eur = EURUserAccount(
+                    accountID: eur.accountID,
+                    currency: eur.currency,
+                    createdAt: eur.createdAt,
+                    enriched: true,
+                    iban: response.iban,
+                    bic: response.bic,
+                    bankAccountHolderName: response.bankAccountHolderName
+                )
             } catch {
                 // Skip error, do not block the flow
-                debugPrint(error)
+                Logger.log(
+                    event: "Striga EUR Enrichment",
+                    message: error.localizedDescription,
+                    logLevel: KeyAppKitLoggerLogLevel.warning
+                )
             }
         }
 
         if let usdc = wallet?.accounts.usdc, !usdc.enriched {
             do {
                 let response: StrigaEnrichedUSDCAccountResponse = try await enrichAccount(userId: userId, accountId: usdc.accountID)
-                wallet?.accounts.usdc = USDCUserAccount(accountID: usdc.accountID, currency: usdc.currency, createdAt: usdc.createdAt, enriched: true, blockchainDepositAddress: response.blockchainDepositAddress)
+                wallet?.accounts.usdc = USDCUserAccount(
+                    accountID: usdc.accountID,
+                    currency: usdc.currency,
+                    createdAt: usdc.createdAt,
+                    enriched: true,
+                    blockchainDepositAddress: response.blockchainDepositAddress,
+                    availableBalance: 0
+                )
             } catch {
                 // Skip error, do not block the flow
-                debugPrint(error)
+                Logger.log(
+                    event: "Striga USDC Enrichment",
+                    message: error.localizedDescription,
+                    logLevel: KeyAppKitLoggerLogLevel.warning
+                )
             }
         }
 
@@ -271,4 +281,31 @@ private extension String {
     static let expectedIncomingTxVolumeYearly = "MORE_THAN_15000_EUR"
     static let expectedOutgoingTxVolumeYearly = "MORE_THAN_15000_EUR"
     static let purposeOfAccount = "CRYPTO_PAYMENTS"
+}
+
+private extension UserWallet {
+    init(_ wallet: StrigaWallet) {
+        var eur: EURUserAccount?
+        if let eurAccount = wallet.accounts.eur {
+            eur = EURUserAccount(
+                accountID: eurAccount.accountID,
+                currency: eurAccount.currency,
+                createdAt: eurAccount.createdAt,
+                enriched: false
+            )
+        }
+        var usdc: USDCUserAccount?
+        if let usdcAccount = wallet.accounts.usdc {
+            usdc = USDCUserAccount(
+                accountID: usdcAccount.accountID,
+                currency: usdcAccount.currency,
+                createdAt: usdcAccount.createdAt,
+                enriched: false,
+                blockchainDepositAddress: nil,
+                availableBalance: 0
+            )
+        }
+        self.walletId = wallet.walletID
+        self.accounts = UserAccounts(eur: eur, usdc: usdc)
+    }
 }

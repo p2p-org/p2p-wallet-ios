@@ -154,8 +154,7 @@ private extension HomeViewModel {
             .map { $0.status != .initializing }
 
         let bankTransferServicePublisher = bankTransferService.state
-            .map { $0.value.wallets.compactMap { $0 } }
-            .compactMap { $0.compactMap { $0.accounts.usdc }.first }
+            .compactMap { $0.value.wallet?.accounts.usdc }
 
         // Merge two services.
         Publishers

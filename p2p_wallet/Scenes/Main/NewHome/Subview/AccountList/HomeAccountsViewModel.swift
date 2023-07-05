@@ -104,8 +104,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // bankTransferPublisher
         let bankTransferServicePublisher = Publishers.CombineLatest(
             bankTransferService.value.state
-                .map { $0.value.wallets.compactMap { $0 } }
-                .compactMap { $0.compactMap { $0.accounts.usdc }.first },
+                .compactMap { $0.value.wallet?.accounts.usdc },
             userActionService.$actions.map { userActions in
                 userActions.compactMap { $0 as? BankTransferClaimUserAction }
             }
@@ -316,14 +315,14 @@ private extension HomeAccountsViewModel {
             .store(in: &subscriptions)
 
         tappedBannerSubject
-            .withLatestFrom(bankTransferService.state)
+            .withLatestFrom(bankTransferService.value.state)
             .receive(on: RunLoop.main)
             .sink{ [weak self] state in
                 guard let self else { return }
                 if state.value.isIBANNotReady {
                     self.smallBanner?.button?.isLoading = true
                     self.shouldShowErrorSubject.send(false)
-                    Task { await self.bankTransferService.reload() }
+                    Task { await self.bankTransferService.value.reload() }
                 } else {
                     self.navigation.send(.bankTransfer)
                 }

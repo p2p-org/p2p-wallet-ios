@@ -47,7 +47,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             guard
                 let service = self?.bankTransferService.value,
                 let userId = await service.repository.getUserId(),
-                let accountId = try await service.repository.getAllWalletsByUser(userId: userId).first?.accounts.usdc?.accountID,
+                let accountId = try await service.repository.getWallet(userId: userId)?.accounts.usdc?.accountID,
                 let amount = action.amount,
                 let destinations = try await service.repository.getWhitelistedUserDestinations().first(where: { response in
                 // Add filter logic
