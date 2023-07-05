@@ -55,8 +55,7 @@ struct WormholeSendInputView: View {
                     mainTokenText: viewModel.inputMode == .crypto ? account.token.symbol : viewModel.adapter
                         .fiatString,
                     secondaryAmountText: viewModel.secondaryAmountString,
-                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.data
-                        .token.symbol,
+                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.token.symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
                     isMaxButtonVisible: viewModel.isMaxButtonVisible,

@@ -18,7 +18,7 @@ struct RendableNewSolanaAccountDetails: RendableAccountDetails {
     }
 
     var amountInToken: String {
-        account.data.amount?.tokenAmountFormattedString(symbol: account.token.symbol) ?? ""
+        account.amount?.tokenAmountFormattedString(symbol: account.token.symbol) ?? ""
     }
 
     var amountInFiat: String {
@@ -26,9 +26,7 @@ struct RendableNewSolanaAccountDetails: RendableAccountDetails {
     }
 
     var actions: [RendableAccountDetailsAction] {
-        var walletActions: [RendableAccountDetailsAction]
-        if account.data.isNativeSOL || account.token.symbol == "USDC" {
-            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap(account)]
+        if account.token.isNativeSOL || account.token.symbol == "USDC" {
             return [.buy, .receive(.solanaAccount(account)), .send, .swap(account)]
         } else {
             return [.receive(.solanaAccount(account)), .send, .swap(account)]

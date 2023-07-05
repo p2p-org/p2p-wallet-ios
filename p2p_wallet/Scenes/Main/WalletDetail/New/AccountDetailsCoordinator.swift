@@ -212,7 +212,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         let coordinator = ReceiveCoordinator(
             network: .solana(
                 tokenSymbol: account.token.symbol,
-                tokenImage: .init(token: account.data.token)
+                tokenImage: .init(token: account.token)
             ),
             presentation: SmartCoordinatorPushPresentation(navigationController)
         )

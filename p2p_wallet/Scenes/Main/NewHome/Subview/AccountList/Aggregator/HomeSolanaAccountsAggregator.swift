@@ -34,7 +34,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
                     tags.insert(.favourite)
                 } else if ignores.contains(account.address) {
                     tags.insert(.ignore)
-                } else if hideZeroBalance, account.data.lamports == 0 {
+                } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
                 }
 
@@ -82,8 +82,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             }
 
             // prefers token which more balance than the others
-            if lhs.data.amount != rhs.data.amount {
-                return lhs.data.amount.orZero > rhs.data.amount.orZero
+            if lhs.amount != rhs.amount {
+                return lhs.amount.orZero > rhs.amount.orZero
             }
 
             // sort by symbol

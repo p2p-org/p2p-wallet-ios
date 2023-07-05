@@ -49,7 +49,7 @@ struct WormholeSendInputStateAdapter: Equatable {
     }
 
     var selectedToken: SolanaToken {
-        inputAccount?.data.token ?? .nativeSolana
+        inputAccount?.token ?? .nativeSolana
     }
 
     var inputAccountSkeleton: Bool {

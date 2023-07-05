@@ -7,7 +7,7 @@ extension RecipientSearchServiceImpl {
     func searchBySolanaAddress(
         _ address: PublicKey,
         config: RecipientSearchConfig,
-        preChosenToken: Token?
+        preChosenToken: SolanaToken?
     ) async -> RecipientSearchResult {
         do {
             // get address
@@ -18,7 +18,7 @@ extension RecipientSearchServiceImpl {
 
             // Check self-sending
             if let wallet: SolanaAccount = config.wallets
-                .first(where: { (wallet: SolanaAccount) in wallet.pubkey == addressBase58 })
+                .first(where: { (wallet: SolanaAccount) in wallet.address == addressBase58 })
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,

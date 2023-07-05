@@ -170,7 +170,7 @@ private extension HomeViewModel {
                 }
 
                 let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
+                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
 
                 // TODO: Bad place

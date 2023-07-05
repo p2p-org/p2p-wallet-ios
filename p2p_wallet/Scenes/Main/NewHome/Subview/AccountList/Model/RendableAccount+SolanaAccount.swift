@@ -28,7 +28,7 @@ struct RenderableSolanaAccount: RenderableAccount {
     }
 
     var subtitle: String {
-        if let amount = account.data.amount {
+        if let amount = account.amount {
             return amount.tokenAmountFormattedString(symbol: account.token.symbol)
         }
         return ""

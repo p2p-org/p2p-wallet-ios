@@ -115,7 +115,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 keyPair: wallet.account,
                 solanaAccount: initialSolanaAccount,
                 availableAccounts: solanaAccountsService.state.value,
-                amount: .init(token: initialSolanaAccount.data.token),
+                amount: .init(token: initialSolanaAccount.token),
                 recipient: recipient.address
             )
         )
@@ -187,7 +187,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
                     case .crypto:
                         if
-                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.data.token),
+                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.token),
                             let price = account.price,
                             let fiatAmount = try? cryptoAmount.toFiatAmount(price: price)
                         {
@@ -353,7 +353,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Initialise user action
         let userAction = WormholeSendUserAction(
-            sourceToken: input.solanaAccount.data.token,
+            sourceToken: input.solanaAccount.token,
             recipient: input.recipient,
             amount: input.amount,
             currencyAmount: try? input.amount.toFiatAmountIfPresent(price: input.solanaAccount.price),
@@ -384,7 +384,7 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            if account.data.isNativeSOL {
+            if account.token.isNativeSOL {
                 return false
             } else {
                 return supportedToken.contains(account.token.address)

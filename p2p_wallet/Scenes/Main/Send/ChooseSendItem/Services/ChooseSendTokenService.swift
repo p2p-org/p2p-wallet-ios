@@ -44,7 +44,7 @@ private extension ChooseSendTokenService {
                 state.apply { accounts in
                     [
                         ChooseItemListSection(
-                            items: accounts.filter { ($0.data.lamports ?? 0) > 0 && !$0.isNFTToken }
+                            items: accounts.filter { $0.lamports > 0 && !$0.isNFTToken }
                         ),
                     ]
                 }
