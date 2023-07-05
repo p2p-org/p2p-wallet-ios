@@ -167,8 +167,17 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         userActionService.$actions
             .compactMap {
-                $0.compactMap { $0 as? BankTransferClaimUserAction }.first
+                $0.compactMap { $0 as? BankTransferClaimUserAction }
             }
+            .flatMap { $0.publisher }
+            .handleEvents(receiveOutput: { val in
+                switch val.status {
+                case .error(let error):
+                    self.notificationService.showDefaultErrorNotification()
+                default:
+                    break
+                }
+            })
             .filter { $0.status == .ready }
             .receive(on: RunLoop.main)
             .sink { [weak self] action in
@@ -233,7 +242,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             accountId: account.accountId,
             token: account.token,
             amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
-            fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
+//            fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
             receivingAddress: try! PublicKey.associatedTokenAddress(
                 walletAddress: walletPubKey,
                 tokenMintAddress: try! PublicKey(string: Token.usdc.address)

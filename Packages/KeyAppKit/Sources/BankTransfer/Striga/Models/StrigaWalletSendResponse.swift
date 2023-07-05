@@ -31,7 +31,7 @@ public struct StrigaWalletSendResponse: Codable {
         }
     }
 
-    struct FeeEstimate: Codable {
+    public struct FeeEstimate: Codable, Equatable {
         let totalFee: String
         let networkFee: String
         let ourFee: String
