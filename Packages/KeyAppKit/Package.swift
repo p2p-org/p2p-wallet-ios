@@ -321,7 +321,8 @@ let package = Package(
             name: "BankTransfer",
             dependencies: [
                 "KeyAppNetworking",
-                "KeyAppKitCore"
+                "KeyAppKitCore",
+                "KeyAppBusiness"
             ]
         ),
 
