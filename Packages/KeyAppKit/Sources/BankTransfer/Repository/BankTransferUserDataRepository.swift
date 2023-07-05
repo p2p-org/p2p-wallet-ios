@@ -20,12 +20,4 @@ public protocol BankTransferUserDataRepository {
     
     func claimVerify(userId: String, challengeId: String, ip: String, verificationCode code: String) async throws
     func claimResendSMS(userId: String, challengeId: String) async throws
-
-    func initiateOnchainWithdrawal(
-        userId: String,
-        sourceAccountId: String,
-        whitelistedAddressId: String,
-        amount: String,
-        accountCreation: Bool
-    ) async throws -> StrigaWalletSendResponse
 }

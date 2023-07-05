@@ -69,11 +69,6 @@ public struct StrigaWalletAccount: Codable {
 
 public struct StrigaWalletAccountAvailableBalance: Codable {
     public let amount, currency: String
-
-//    public init(amount: String, currency: String) {
-//        self.amount = amount
-//        self.currency = currency
-//    }
 }
 
 // MARK: - StrigaWalletAccountBlockchainNetwork
