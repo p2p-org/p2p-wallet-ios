@@ -1,8 +1,9 @@
 import Combine
+import Foundation
 import Jupiter
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
-import Foundation
 
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
@@ -13,7 +14,7 @@ protocol JupiterTokensRepository {
 enum JupiterDataStatus {
     case initial
     case loading
-    case ready(jupiterTokens: [Token], routeMap: RouteMap)
+    case ready(jupiterTokens: [SolanaToken], routeMap: RouteMap)
     case failed
 }
 
@@ -57,7 +58,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private func fetch() async {
         statusSubject.send(.loading)
         do {
-            var jupiterTokens: [Token]
+            var jupiterTokens: [SolanaToken]
             let routeMap: RouteMap
 
             try Task.checkCancellation()

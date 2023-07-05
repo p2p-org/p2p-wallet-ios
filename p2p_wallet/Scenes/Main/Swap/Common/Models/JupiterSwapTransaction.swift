@@ -2,6 +2,7 @@ import Jupiter
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
+import UIKit
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
@@ -54,7 +55,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             let title = "Swap iOS Alarm (#\(titleTag))"
 
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-            
+
             let diffRoutesTime = abs(Date().timeIntervalSince1970 - route._receiveAt.timeIntervalSince1970)
                 .toString(minimumFractionDigits: 9)
 

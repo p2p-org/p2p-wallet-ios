@@ -7,6 +7,7 @@ import KeyAppKitCore
 import Resolver
 import Send
 import SolanaSwift
+import UIKit
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     // Dependencies

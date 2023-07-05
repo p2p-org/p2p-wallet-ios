@@ -4,6 +4,7 @@ import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import SolanaSwift
+import UIKit
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     // MARK: - Nested type

@@ -2,6 +2,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
+import UIKit
 
 protocol RendableAccountDetails {
     var title: String { get }
