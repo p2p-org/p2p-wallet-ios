@@ -47,7 +47,10 @@ public struct NewTextButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            guard !isLoading else { return }
+            action()
+        }) {
             HStack(spacing: 8) {
                 if let leading {
                     if isLoading {
@@ -83,7 +86,12 @@ public struct NewTextButton: View {
                     progressView
                         .padding(.trailing, 8)
                 } else {
-                    Spacer().frame(width: 4)
+                    if isLoading {
+                        progressView
+                            .padding(.trailing, 8)
+                    } else {
+                        Spacer().frame(width: 4)
+                    }
                 }
             }
             .frame(height: size.height)
@@ -93,7 +101,7 @@ public struct NewTextButton: View {
         .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
         .background(isEnabled ? appearance.backgroundColor : Color(Asset.Colors.rain.color))
         .cornerRadius(appearance.borderRadius)
-        .disabled(!isEnabled || isLoading)
+        .disabled(!isEnabled)
         .overlay(
             RoundedRectangle(cornerRadius: appearance.borderRadius)
                 .stroke(

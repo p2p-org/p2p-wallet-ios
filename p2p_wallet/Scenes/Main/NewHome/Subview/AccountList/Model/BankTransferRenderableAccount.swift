@@ -7,7 +7,6 @@ struct BankTransferRenderableAccount: RenderableAccount {
     let token: EthereumToken
     let amount: CryptoAmount
     var status: RenderableEthereumAccount.Status
-//    let userAction: WormholeClaimUserAction?
 
     var id: String {
         accountId
@@ -42,7 +41,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
         case .readyToClaim:
             return .button(label: L10n.claim, enabled: true)
         case .isClamming:
-            return .button(label: L10n.claiming, enabled: false)
+            return .button(label: L10n.claim, enabled: false)
         case .balanceToLow:
             return .text("")
         }
@@ -62,7 +61,15 @@ struct BankTransferRenderableAccount: RenderableAccount {
                 tags.insert(.ignore)
             }
         }
-
         return tags
+    }
+
+    var isLoading: Bool {
+        switch status {
+        case .isClamming:
+            return true
+        default:
+            return false
+        }
     }
 }

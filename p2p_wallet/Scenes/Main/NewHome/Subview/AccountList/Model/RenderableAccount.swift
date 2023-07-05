@@ -17,6 +17,8 @@ protocol RenderableAccount: Identifiable where ID == String {
     var extraAction: AccountExtraAction? { get }
 
     var tags: AccountTags { get }
+
+    var isLoading: Bool { get }
 }
 
 extension RenderableAccount {

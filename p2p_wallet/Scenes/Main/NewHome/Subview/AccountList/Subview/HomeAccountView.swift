@@ -47,23 +47,12 @@ struct HomeAccountView: View {
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             case let .button(text, enabled):
-                Button(
-                    action: { onButtonTap?() },
-                    label: {
-                        Text(text)
-                            .padding(.horizontal, 12)
-                            .font(uiFont: TextButton.Style.second.font(size: .small))
-                            .foregroundColor(Color(
-                                enabled ? TextButton.Style.primaryWhite.foreground
-                                    : TextButton.Style.primaryWhite.disabledForegroundColor!
-                            ))
-                            .frame(height: TextButton.Size.small.height)
-                            .background(Color(
-                                enabled ? TextButton.Style.primaryWhite.backgroundColor
-                                    : TextButton.Style.primaryWhite.disabledBackgroundColor!
-                            ))
-                            .cornerRadius(12)
-                    }
+                NewTextButton(
+                    title: text,
+                    size: .small,
+                    style: .primaryWhite,
+                    isLoading: rendable.isLoading,
+                    action: { onButtonTap?() }
                 )
             }
         }
@@ -87,7 +76,8 @@ struct HomeAccountView_Previews: PreviewProvider {
                 subtitle: "0.1747 SOL",
                 detail: .text("$ 3.67"),
                 extraAction: .visiable,
-                tags: []
+                tags: [],
+                isLoading: false
             )
         ) {} onButtonTap: {}
     }

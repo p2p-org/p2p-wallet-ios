@@ -59,4 +59,7 @@ public protocol StrigaRemoteProvider: AnyObject {
         whitelistedAddressId: String,
         amount: String
     ) async throws -> FeeEstimateResponse
+
+    // Method placeholder
+    func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse]
 }

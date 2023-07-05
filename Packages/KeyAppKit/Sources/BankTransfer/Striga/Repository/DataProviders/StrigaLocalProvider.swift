@@ -6,6 +6,7 @@ public protocol StrigaLocalProvider {
 
     func getCachedUserData() async -> UserData?
     func save(userData: UserData) async throws
+    func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse]
 
     func clear() async
 }
@@ -22,6 +23,12 @@ public actor StrigaLocalProviderImpl {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
         return cacheDirectoryPath.appendingPathComponent("/striga-account.data")
+    }()
+
+    private let whitelistedFile: URL = {
+        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        let cacheDirectoryPath = arrayPaths[0]
+        return cacheDirectoryPath.appendingPathComponent("/striga-whitelisted.data")
     }()
 
     // MARK: - Initializer
@@ -64,9 +71,18 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
         try await save(model: userData, in: accountFile)
     }
 
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
+        get(from: whitelistedFile) ?? []
+    }
+
+    public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
+        try await save(model: whitelisted, in: accountFile)
+    }
+
     public func clear() {
         try? FileManager.default.removeItem(at: registrationFile)
         try? FileManager.default.removeItem(at: accountFile)
+        try? FileManager.default.removeItem(at: whitelistedFile)
     }
 
     // MARK: - Helpers

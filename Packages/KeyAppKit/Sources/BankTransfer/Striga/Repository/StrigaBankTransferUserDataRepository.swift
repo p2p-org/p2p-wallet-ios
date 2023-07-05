@@ -243,8 +243,24 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
 
-    public func getWhitelistedUserDestinations() async throws -> [] {
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
         try await remoteProvider.getWhitelistedUserDestinations()
+    }
+
+    public func initiateOnchainWithdrawal(
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String,
+        accountCreation: Bool
+    ) async throws -> StrigaWalletSendResponse {
+        try await remoteProvider.initiateOnChainWalletSend(
+            userId: userId,
+            sourceAccountId: sourceAccountId,
+            whitelistedAddressId: whitelistedAddressId,
+            amount: amount,
+            accountCreation: accountCreation
+        )
     }
 
 }

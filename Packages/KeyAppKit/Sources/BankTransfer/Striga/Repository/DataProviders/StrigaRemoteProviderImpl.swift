@@ -171,7 +171,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         )
 //        return try await httpClient.request(endpoint: endpoint, responseModel: FeeEstimateResponse.self)
         return FeeEstimateResponse(
-            totalFee: "0",
+            totalFee: "323",
             networkFee: "90",
             ourFee: "0",
             theirFee: "0",
@@ -179,6 +179,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             gasLimit: "21000",
             gasPrice: "10.009"
         )
+    }
+
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
+        [StrigaWhitelistAddressResponse(id: "d5d2bad2-f974-4e88-89be-910907b4b5c5")]
     }
 
     public func transactionResendOTP(

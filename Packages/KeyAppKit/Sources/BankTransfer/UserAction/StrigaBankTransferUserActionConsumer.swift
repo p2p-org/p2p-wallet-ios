@@ -42,17 +42,38 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
 
         Task { [weak self] in
             await self?.database.set(for: action.id, action)
+            self?.handle(event: Event.track(action, .processing))
+            /// Checking if destination is in whitelist
+            guard
+                let service = self?.bankTransferService.value,
+                let userId = await service.repository.getUserId(),
+                let accountId = try await service.repository.getAllWalletsByUser(userId: userId).first?.accounts.usdc?.accountID,
+                let amount = action.amount,
+                let destinations = try await service.repository.getWhitelistedUserDestinations().first(where: { response in
+                // Add filter logic
+                true
+            }) else {
+                self?.handle(event: Event.sendFailure("Needs to whitelist account"))
+                return
+            }
 
             let solanaAccountService: SolanaAccountsService = Resolver.resolve()
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
+
+            do {
+                let result = try await service.repository.initiateOnchainWithdrawal(
+                    userId: userId,
+                    sourceAccountId: accountId,
+                    whitelistedAddressId: destinations.id,
+                    amount: amount,
+                    accountCreation: shouldMakeAccount
+                )
+            } catch {
+                self?.handle(event: Event.sendFailure(error.localizedDescription))
+            }
             
-            bankTransferService.value.repository.getAllWalletsByUser(userId: <#T##String#>)
-            
-            self?.handle(event: Event.track(action, .processing))
-            // FIXME: - Real logic
-            try? await Task.sleep(seconds: 2)
             self?.handle(event: Event.track(action, .ready))
         }
     }
@@ -69,7 +90,8 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 guard let self = self else { return }
                 let userAction = Action(
                     id: action.id,
-                    challengeId: action.challengeId,
+                    accountId: action.accountId,
+//                    challengeId: action.challengeId,
                     token: action.token,
                     amount: action.amount,
                     fromAddress: action.fromAddress,
@@ -92,30 +114,32 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
 public class BankTransferClaimUserAction: UserAction {
     /// Unique internal id to track.
     public var id: String
-
-    public let challengeId: String
-    public let token: Token?
+    public let challengeId: String? = nil
+    public var accountId: String
+    public let token: EthereumToken?
     public let amount: String?
 //    public let feeAmount: FeeAmount
     public let fromAddress: String
     public let receivingAddress: String
-
     /// Abstract status.
     public var status: UserActionStatus
-
     public var createdDate: Date
     public var updatedDate: Date
 
-//    public init(id: String, status: UserActionStatus, createdDate: Date = Date(), updatedDate: Date = Date()) {
-//        self.id = id
-//        self.status = status
-//        self.createdDate = createdDate
-//        self.updatedDate = updatedDate
-//    }
-
-    public init(id: String, challengeId: String, token: Token?, amount: String?, fromAddress: String, receivingAddress: String, status: UserActionStatus, createdDate: Date = Date(), updatedDate: Date = Date()) {
+    public init(
+        id: String,
+        accountId: String,
+        token: EthereumToken?,
+        amount: String?,
+        fromAddress: String,
+        receivingAddress: String,
+        status: UserActionStatus,
+        createdDate: Date = Date(),
+        updatedDate: Date = Date()
+    ) {
         self.id = id
-        self.challengeId = challengeId
+//        self.challengeId = challengeId
+        self.accountId = accountId
         self.token = token
         self.amount = amount
         self.fromAddress = fromAddress
@@ -129,4 +153,3 @@ public class BankTransferClaimUserAction: UserAction {
         lhs.id == rhs.id
     }
 }
-

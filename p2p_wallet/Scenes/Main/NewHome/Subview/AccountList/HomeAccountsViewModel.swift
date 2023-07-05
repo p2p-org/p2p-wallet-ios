@@ -103,7 +103,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         // bankTransferPublisher
         let bankTransferServicePublisher = Publishers.CombineLatest(
-            bankTransferService.state
+            bankTransferService.value.state
                 .map { $0.value.wallets.compactMap { $0 } }
                 .compactMap { $0.compactMap { $0.accounts.usdc }.first },
             userActionService.$actions.map { userActions in
@@ -111,17 +111,21 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
         )
             .compactMap { (account, actions) -> [BankTransferRenderableAccount]? in
-                guard account.availableBalance > 0 else { return nil }
-                let token: EthereumToken = .init(
+                guard
+                    account.availableBalance > 0,
+                    let address = try? EthereumAddress(
+                        hex: EthereumAddresses.ERC20.usdc.rawValue,
+                        eip55: false
+                    ) else { return nil }
+
+                let token = EthereumToken(
                     name: SolanaToken.usdc.name,
                     symbol: SolanaToken.usdc.symbol,
-                    decimals: SolanaToken.usdc.decimals,
+                    decimals: 6,
                     logo: URL(string: SolanaToken.usdc.logoURI ?? ""),
-                    contractType: .erc20(contract: try! .init(
-                        hex: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-                        eip55: false
-                    ))
+                    contractType: .erc20(contract: address)
                 )
+
                 let action = actions.first(where: { action in
                     action.id == account.accountID
                 })
@@ -209,37 +213,37 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
 
         case let renderableAccount as BankTransferRenderableAccount:
-            let userActionService: UserActionService = Resolver.resolve()
-            let userWalletManager: UserWalletManager = Resolver.resolve()
-            guard
-                renderableAccount.status != .isClamming,
-                let walletPubKey = userWalletManager.wallet?.account.publicKey
-            else { return }
-            
-            let amount = try! renderableAccount.amount
-                .toFiatAmount(
-                    price: .init(currencyCode: "USD", value: 1, token: SomeToken(
-                        tokenPrimaryKey: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", symbol: "USDC", name: "USD Coin", decimals: 6, network: .ethereum))
-                )
-            
-            let userAction = BankTransferClaimUserAction(
-                id: renderableAccount.id,
-                challengeId: "",
-                token: Token.usdc,
-                amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
-                fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
-                receivingAddress: try! PublicKey.associatedTokenAddress(
-                    walletAddress: walletPubKey,
-                    tokenMintAddress: try! PublicKey(string: Token.usdc.address)
-                ).base58EncodedString,
-                status: .processing
-            )
-            // Execute and emit action.
-            userActionService.execute(action: userAction)
+            handleBankTransfer(account: renderableAccount)
 
         default:
             break
         }
+    }
+
+    private func handleBankTransfer(account: BankTransferRenderableAccount) {
+        let userActionService: UserActionService = Resolver.resolve()
+        let userWalletManager: UserWalletManager = Resolver.resolve()
+        guard
+            account.status != .isClamming,
+            let walletPubKey = userWalletManager.wallet?.account.publicKey,
+            let amount = try? account.amount
+        else { return }
+
+        let userAction = BankTransferClaimUserAction(
+            id: account.id,
+            accountId: account.accountId,
+            token: account.token,
+            amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
+            fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
+            receivingAddress: try! PublicKey.associatedTokenAddress(
+                walletAddress: walletPubKey,
+                tokenMintAddress: try! PublicKey(string: Token.usdc.address)
+            ).base58EncodedString,
+            status: .processing
+        )
+
+        // Execute and emit action.
+        userActionService.execute(action: userAction)
     }
 
     func actionClicked(_ action: WalletActionType) {
@@ -289,7 +293,7 @@ extension HomeAccountsViewModel {
 
 private extension HomeAccountsViewModel {
     func bindTransferData() {
-        bankTransferService.state
+        bankTransferService.value.state
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { [weak self] value in
                 guard let self else { return nil  }
@@ -333,7 +337,7 @@ private extension HomeAccountsViewModel {
             .store(in: &subscriptions)
 
         bannerTapped
-            .withLatestFrom(bankTransferService.state)
+            .withLatestFrom(bankTransferService.value.state)
             .filter { $0.value.kycStatus == .onHold || $0.value.kycStatus == .pendingReview }
             .sink { [weak self] _ in
                 self?.navigation.send(.bankTransfer)

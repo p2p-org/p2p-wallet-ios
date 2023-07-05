@@ -23,4 +23,6 @@ struct RendableMockAccount: RenderableAccount {
     var extraAction: AccountExtraAction?
     
     var tags: AccountTags
+
+    var isLoading: Bool
 }

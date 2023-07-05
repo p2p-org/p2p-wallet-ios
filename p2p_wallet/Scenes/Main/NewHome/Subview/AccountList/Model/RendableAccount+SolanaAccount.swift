@@ -2,6 +2,7 @@ import Foundation
 import KeyAppBusiness
 
 struct RenderableSolanaAccount: RenderableAccount {
+    
     let account: SolanaAccountsService.Account
     
     var id: String {
@@ -45,4 +46,6 @@ struct RenderableSolanaAccount: RenderableAccount {
     let extraAction: AccountExtraAction?
     
     let tags: AccountTags
+
+    var isLoading: Bool { false }
 }

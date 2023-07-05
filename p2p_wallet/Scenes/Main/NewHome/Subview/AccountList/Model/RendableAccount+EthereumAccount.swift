@@ -77,6 +77,8 @@ struct RenderableEthereumAccount: RenderableAccount {
 
         return tags
     }
+
+    var isLoading: Bool { false }
 }
 
 extension RenderableEthereumAccount {

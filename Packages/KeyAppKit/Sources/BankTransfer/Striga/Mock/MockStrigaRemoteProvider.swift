@@ -132,6 +132,10 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         fatalError("Implementing")
     }
 
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
+        fatalError("Implementing")
+    }
+
     public func initiateOnchainFeeEstimate(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> FeeEstimateResponse {
         FeeEstimateResponse(
             totalFee: "909237719334000",
