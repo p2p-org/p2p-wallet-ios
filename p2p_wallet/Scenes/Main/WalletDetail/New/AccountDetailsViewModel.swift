@@ -62,7 +62,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
         let solanaAccountPublisher = solanaAccountsManager
             .statePublisher
             .receive(on: RunLoop.main)
-            .compactMap { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
+            .compactMap { $0.value.first(where: { $0.address == solanaAccount.address }) }
 
         let jupiterDataStatusPublisher = jupiterTokensRepository.status
 

@@ -30,9 +30,9 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             .map { account in
                 var tags: AccountTags = []
 
-                if favourites.contains(account.data.pubkey ?? "") {
+                if favourites.contains(account.address) {
                     tags.insert(.favourite)
-                } else if ignores.contains(account.data.pubkey ?? "") {
+                } else if ignores.contains(account.address) {
                     tags.insert(.ignore)
                 } else if hideZeroBalance, account.data.lamports == 0 {
                     tags.insert(.ignore)

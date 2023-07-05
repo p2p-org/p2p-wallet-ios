@@ -117,7 +117,7 @@ public enum WormholeSendInputState: Equatable {
                     transactions = try await service.wormhole.transferFromSolana(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         feePayer: feePayerAddress,
-                        from: input.solanaAccount.data.pubkey ?? "",
+                        from: input.solanaAccount.address ?? "",
                         recipient: input.recipient,
                         mint: mint,
                         amount: String(input.amount.value)
