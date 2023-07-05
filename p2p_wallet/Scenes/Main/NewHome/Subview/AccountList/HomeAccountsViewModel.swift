@@ -236,18 +236,15 @@ private extension HomeAccountsViewModel {
 
         tappedBannerSubject
             .withLatestFrom(bankTransferService.state)
-            .sinkAsync { [weak self] state in
+            .receive(on: RunLoop.main)
+            .sink{ [weak self] state in
                 guard let self else { return }
                 if state.value.isIBANNotReady {
-                    await MainActor.run {
-                        self.smallBanner?.button?.isLoading = true
-                        self.shouldShowErrorSubject.send(false)
-                    }
-                    await self.bankTransferService.reload()
+                    self.smallBanner?.button?.isLoading = true
+                    self.shouldShowErrorSubject.send(false)
+                    Task { await self.bankTransferService.reload() }
                 } else {
-                    await MainActor.run {
-                        self.navigation.send(.bankTransfer)
-                    }
+                    self.navigation.send(.bankTransfer)
                 }
             }
             .store(in: &subscriptions)
