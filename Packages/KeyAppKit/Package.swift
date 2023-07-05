@@ -292,7 +292,7 @@ let package = Package(
         // Sell
         .target(
             name: "Sell",
-            dependencies: ["Moonpay"]
+            dependencies: ["Moonpay", "KeyAppBusiness"]
         ),
 
         // Moonpay

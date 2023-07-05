@@ -85,13 +85,15 @@ extension JupiterSwapBusinessLogic {
     }
 
     private static func getTokensPriceMap() async -> [String: Double] {
-        await Resolver.resolve(PricesStorage.self).retrievePrices()
-            .reduce([String: Double]()) { combined, element in
-                guard let value = element.value.value else { return combined }
-                var combined = combined
-                combined[element.key] = value
-                return combined
-            }
+        do {
+            let accounts = Resolver.resolve(SolanaAccountsService.self).state.value
+            let prices = try await Resolver.resolve(SolanaPriceService.self)
+                .getPrices(tokens: accounts.map(\.token), fiat: Defaults.fiat.rawValue)
+
+            return Dictionary(prices.map { ($0.key.address, $0.value?.value ?? 0.0) }) { lhs, _ in lhs }
+        } catch {
+            return [:]
+        }
     }
 
     private static func getFromToken(

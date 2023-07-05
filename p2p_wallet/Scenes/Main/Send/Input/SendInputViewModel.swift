@@ -96,7 +96,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let walletsRepository: SolanaAccountsService
-    private let pricesService: PricesServiceType
+    private let pricesService: SolanaPriceService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -115,7 +115,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         walletsRepository = repository
         let wallets = repository.getWallets()
 
-        let pricesService = Resolver.resolve(PricesService.self)
+        let pricesService = Resolver.resolve(SolanaPriceService.self)
         self.pricesService = pricesService
 
         // Setup source token
@@ -406,24 +406,21 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
-            pricesService.isPricesAvailablePublisher,
-            $sourceWallet.eraseToAnyPublisher()
-        )
-        .sink { [weak self] isPriceAvailable, currentWallet in
-            guard let self else { return }
-            if !isPriceAvailable || currentWallet.price == nil {
-                self.turnOffInputSwitch()
-            } else if
-                let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
-            {
-                self.turnOffInputSwitch()
-            } else {
-                self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+        $sourceWallet.eraseToAnyPublisher()
+            .sink { [weak self] currentWallet in
+                guard let self else { return }
+                if currentWallet.price == nil {
+                    self.turnOffInputSwitch()
+                } else if
+                    let amount = currentWallet.amount,
+                    currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                {
+                    self.turnOffInputSwitch()
+                } else {
+                    self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+                }
             }
-        }
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
     }
 }
 

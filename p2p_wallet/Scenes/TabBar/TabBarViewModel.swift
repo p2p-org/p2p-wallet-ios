@@ -13,7 +13,6 @@ import SolanaSwift
 
 final class TabBarViewModel {
     // Dependencies
-    @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
@@ -23,13 +22,11 @@ final class TabBarViewModel {
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
-    
+
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        pricesService.startObserving()
-
         // Name service
         Task {
             guard let account = accountStorage.account else { return }
@@ -39,24 +36,23 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
-        
+
         listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
-        pricesService.stopObserving()
         debugPrint("\(String(describing: self)) deinited")
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
     }
-    
+
     private func listenDidBecomeActiveForDeeplinks() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.becomeActiveSubject.send()
         }
-        
+
         NotificationCenter.default
             .publisher(for: UIApplication.didBecomeActiveNotification)
             .sink(receiveValue: { [weak self] _ in
@@ -115,7 +111,7 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
-    
+
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,

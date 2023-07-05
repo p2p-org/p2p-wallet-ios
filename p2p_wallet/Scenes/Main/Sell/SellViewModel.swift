@@ -36,7 +36,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
-    @Injected private var priceService: PricesService
+    @Injected private var priceService: SolanaPriceService
 
     // MARK: - Properties
 
@@ -385,14 +385,21 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     baseCurrencyAmount: baseAmount.rounded(decimals: decimals),
                     extraFeePercentage: 0
                 )
+
+                guard let token = TokenMetadata
+                    .moonpaySellSupportedTokens
+                    .first(where: { $0.symbol == baseCurrencyCode })
+                else {
+                    return
+                }
+
+                let price = try await self.priceService.getPrice(token: token, fiat: Defaults.fiat.rawValue)
+
                 // update data
                 await MainActor.run { [weak self] in
-                    guard let self,
-                          let mint = Token.moonpaySellSupportedTokens
-                              .first(where: { $0.symbol == baseCurrencyCode })?
-                              .address
-                    else { return }
-                    let baseCurrencyPrice = max(0.00001, self.priceService.currentPrice(mint: mint)?.value ?? 0)
+                    guard let self else { return }
+
+                    let baseCurrencyPrice = max(0.00001, price.value ?? 0)
                     let totalFeeAmount = sellQuote.feeAmount + sellQuote.extraFeeAmount
                     self.fee = .loaded(
                         Fee(

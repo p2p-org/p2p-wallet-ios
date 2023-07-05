@@ -244,10 +244,6 @@ final class HomeCoordinator: Coordinator<Void> {
             }
 
             // Other
-            var token = token
-            if token == .renBTC {
-                token = Token(.renBTC, customSymbol: "BTC")
-            }
             return coordinate(
                 to: HomeBuyNotificationCoordinator(
                     tokenFrom: .usdc, tokenTo: token, controller: navigationController

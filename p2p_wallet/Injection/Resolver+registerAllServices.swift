@@ -182,11 +182,6 @@ extension Resolver: ResolverRegistering {
             .implements(NotificationRepository.self)
             .scope(.application)
 
-        // PricesService
-        register { InMemoryPricesStorage() }
-            .implements(PricesStorage.self)
-            .scope(.application)
-
         register { CoinGeckoPricesAPI() }
             .implements(SolanaPricesAPI.self)
             .scope(.application)
@@ -410,12 +405,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(SwapFeeRelayerCalculator.self)
         .scope(.session)
-
-        // PricesService
-        register { PricesService() }
-            .implements(PricesServiceType.self)
-            .implements(SellPriceProvider.self)
-            .scope(.session)
 
         register {
             SolanaAccountsService(

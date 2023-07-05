@@ -58,7 +58,7 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: SolanaPriceService
 
     // Defaults
 //    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -190,12 +190,15 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] =
-                    try await pricesService.getCurrentPrices(
+                self.tokenPrices[fiat] = Dictionary(
+                    try await pricesService.getPrices(
                         tokens: BuyViewModel.tokens,
-                        toFiat: fiat
+                        fiat: fiat.rawValue
                     )
-                    .mapValues { $0.value }
+                    .map { token, price in
+                        (token.address, price?.value)
+                    }
+                ) { lhs, _ in lhs }
             }
 
             let banks = try await exchangeService.isBankTransferEnabled()

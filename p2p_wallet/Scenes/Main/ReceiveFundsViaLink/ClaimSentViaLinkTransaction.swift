@@ -32,8 +32,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     }
 
     var amountInFiat: Double? {
-        guard let value = Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value
-        else { return nil }
+        guard let value = destinationWallet.price?.doubleValue else { return nil }
         return value * tokenAmount
     }
 

@@ -58,11 +58,10 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     init(pendingTransaction: PendingTransaction, statusContext: String? = nil) {
         let pendingService: TransactionHandlerType = Resolver.resolve()
-        let priceService: PricesService = Resolver.resolve()
 
         style = .active
         self.statusContext = statusContext
-        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction)
 
         super.init()
 
@@ -70,7 +69,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
-                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
+                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx)
             }
             .store(in: &subscriptions)
     }

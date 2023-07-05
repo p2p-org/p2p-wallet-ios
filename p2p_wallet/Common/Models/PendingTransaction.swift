@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 import TransactionParser
@@ -108,7 +109,7 @@ struct PendingTransaction {
 }
 
 extension PendingTransaction {
-    func parse(pricesService: PricesServiceType, authority: String? = nil) -> ParsedTransaction? {
+    func parse(pricesService _: SolanaPriceService, authority: String? = nil) -> ParsedTransaction? {
         // status
         let status: ParsedTransaction.Status
 
@@ -163,9 +164,7 @@ extension PendingTransaction {
                 destinationAmount: transaction.toAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.fromAmount * pricesService
-                .currentPrice(mint: transaction.sourceWallet.token.address)?
-                .value
+            amountInFiat = transaction.fromAmount * transaction.sourceWallet.price?.doubleValue
             fee = transaction.feeAmount
         case let transaction as ClaimSentViaLinkTransaction:
             value = TransferInfo(

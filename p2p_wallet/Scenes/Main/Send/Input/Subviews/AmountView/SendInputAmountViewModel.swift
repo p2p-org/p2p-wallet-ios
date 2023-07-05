@@ -1,4 +1,5 @@
 import Combine
+import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppUI
 import Resolver
@@ -60,14 +61,11 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let pricesService: PricesServiceType
-
     init(initialToken: SolanaAccount) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
         mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
-        pricesService = Resolver.resolve(PricesServiceType.self)
 
         super.init()
 

@@ -1,5 +1,6 @@
 import Combine
 import FeeRelayerSwift
+import KeyAppBusiness
 import KeyAppUI
 import Resolver
 import SolanaSwift
@@ -7,7 +8,7 @@ import TransactionParser
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Injected private var priceService: PricesServiceType
+    @Injected private var priceService: SolanaPriceService
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()
@@ -89,7 +90,9 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                if let error = error as? FeeRelayerError, error.message == "Topping up is successfull, but the transaction failed" {
+                if let error = error as? FeeRelayerError,
+                   error.message == "Topping up is successfull, but the transaction failed"
+                {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
                 } else if let error = error as? SolanaError {
                     switch error {
