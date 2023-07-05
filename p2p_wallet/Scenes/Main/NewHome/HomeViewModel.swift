@@ -154,7 +154,7 @@ private extension HomeViewModel {
             .map { $0.status != .initializing }
 
         let bankTransferServicePublisher = bankTransferService.state
-            .compactMap { $0.value.wallet?.accounts.usdc }
+            .map { $0.value.wallet?.accounts.usdc }
 
         // Merge two services.
         Publishers
@@ -164,10 +164,12 @@ private extension HomeViewModel {
             .store(in: &subscriptions)
 
         // state, address, error, log
-
         Publishers
             .CombineLatest3(
-                solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher, bankTransferServicePublisher)
+                solanaAccountsService.statePublisher,
+                ethereumAccountsService.statePublisher,
+                bankTransferServicePublisher.prepend(nil)
+            )
             .receive(on: RunLoop.main)
             .sink { [weak self] solanaState, ethereumState, bankTransferState in
                 guard let self else { return }
@@ -179,7 +181,7 @@ private extension HomeViewModel {
                 let hasAnyTokenWithPositiveBalance =
                     solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 }) ||
-                    bankTransferState.availableBalance > 0
+                    (bankTransferState?.availableBalance ?? 0) > 0
 
                 // TODO: Bad place
                 self.updateAddressIfNeeded()
