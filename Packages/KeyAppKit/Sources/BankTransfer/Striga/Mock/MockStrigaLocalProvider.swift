@@ -72,6 +72,10 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         self.cachedRegistrationData = registrationData
     }
 
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
+        fatalError()
+    }
+
     public func getCachedUserData() async -> UserData? {
         fatalError()
     }

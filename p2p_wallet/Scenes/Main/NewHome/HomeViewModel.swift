@@ -1,10 +1,3 @@
-//
-//  HomeViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 08.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -160,6 +153,9 @@ private extension HomeViewModel {
             .statePublisher
             .map { $0.status != .initializing }
 
+        let bankTransferServicePublisher = bankTransferService.state
+            .compactMap { $0.value.wallet?.accounts.usdc }
+
         // Merge two services.
         Publishers
             .CombineLatest(solanaInitialization, ethereumInitialization)
@@ -170,9 +166,10 @@ private extension HomeViewModel {
         // state, address, error, log
 
         Publishers
-            .CombineLatest(solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher)
+            .CombineLatest3(
+                solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher, bankTransferServicePublisher)
             .receive(on: RunLoop.main)
-            .sink { [weak self] solanaState, ethereumState in
+            .sink { [weak self] solanaState, ethereumState, bankTransferState in
                 guard let self else { return }
 
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
@@ -181,7 +178,8 @@ private extension HomeViewModel {
 
                 let hasAnyTokenWithPositiveBalance =
                     solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
-                    ethereumState.value.contains(where: { account in account.balance > 0 })
+                    ethereumState.value.contains(where: { account in account.balance > 0 }) ||
+                    bankTransferState.availableBalance > 0
 
                 // TODO: Bad place
                 self.updateAddressIfNeeded()

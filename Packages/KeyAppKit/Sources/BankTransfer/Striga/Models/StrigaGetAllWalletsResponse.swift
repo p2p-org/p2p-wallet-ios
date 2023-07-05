@@ -10,12 +10,6 @@ import Foundation
 public struct StrigaGetAllWalletsResponse: Codable {
     public let wallets: [StrigaWallet]
     public let count, total: Int
-    
-    public init(wallets: [StrigaWallet], count: Int, total: Int) {
-        self.wallets = wallets
-        self.count = count
-        self.total = total
-    }
 }
 
 // MARK: - StrigaWallet
@@ -31,15 +25,6 @@ public struct StrigaWallet: Codable {
         case syncedOwnerID = "syncedOwnerId"
         case ownerType, createdAt, comment
     }
-
-    public init(walletID: String, accounts: StrigaWalletAccounts, syncedOwnerID: String, ownerType: String, createdAt: String, comment: String) {
-        self.walletID = walletID
-        self.accounts = accounts
-        self.syncedOwnerID = syncedOwnerID
-        self.ownerType = ownerType
-        self.createdAt = createdAt
-        self.comment = comment
-    }
 }
 
 // MARK: - StrigaWalletAccounts
@@ -51,11 +36,6 @@ public struct StrigaWalletAccounts: Codable {
     enum CodingKeys: String, CodingKey {
         case eur = "EUR"
         case usdc = "USDC"
-    }
-
-    public init(eur: StrigaWalletAccount, usdc: StrigaWalletAccount) {
-        self.eur = eur
-        self.usdc = usdc
     }
 }
 
@@ -83,44 +63,16 @@ public struct StrigaWalletAccount: Codable {
         case linkedBankAccountID = "linkedBankAccountId"
         case status, permissions, enriched, blockchainDepositAddress, blockchainNetwork
     }
-    
-    public init(accountID: String, parentWalletID: String, currency: String, ownerID: String, ownerType: String, createdAt: String, availableBalance: StrigaWalletAccountAvailableBalance, linkedCardID: String, linkedBankAccountID: String?, status: String, permissions: [String], enriched: Bool, blockchainDepositAddress: String?, blockchainNetwork: StrigaWalletAccountBlockchainNetwork?) {
-        self.accountID = accountID
-        self.parentWalletID = parentWalletID
-        self.currency = currency
-        self.ownerID = ownerID
-        self.ownerType = ownerType
-        self.createdAt = createdAt
-        self.availableBalance = availableBalance
-        self.linkedCardID = linkedCardID
-        self.linkedBankAccountID = linkedBankAccountID
-        self.status = status
-        self.permissions = permissions
-        self.enriched = enriched
-        self.blockchainDepositAddress = blockchainDepositAddress
-        self.blockchainNetwork = blockchainNetwork
-    }
 }
 
 // MARK: - StrigaWalletAccountAvailableBalance
 
 public struct StrigaWalletAccountAvailableBalance: Codable {
     public let amount, currency: String
-    
-    public init(amount: String, currency: String) {
-        self.amount = amount
-        self.currency = currency
-    }
 }
 
 // MARK: - StrigaWalletAccountBlockchainNetwork
 
 public struct StrigaWalletAccountBlockchainNetwork: Codable {
     public let name, type, contractAddress: String
-    
-    public init(name: String, type: String, contractAddress: String) {
-        self.name = name
-        self.type = type
-        self.contractAddress = contractAddress
-    }
 }

@@ -16,12 +16,14 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// - Parameter sourceAccountId: The Id of the account to debit
     /// - Parameter whitelistedAddressId: The Id of the whitelisted destination
     /// - Parameter amount: The amount denominated in the smallest divisible unit of the sending currency. For example: cents or satoshis
+    /// - Parameter accountCreation: True if you need to create account, By default False
     /// - SeeAlso: [Initiate Onchain Withdrawal](https://docs.striga.com/reference/initiate-onchain-withdrawal)
     func initiateOnChainWalletSend(
         userId: String,
         sourceAccountId: String,
         whitelistedAddressId: String,
-        amount: String
+        amount: String,
+        accountCreation: Bool
     ) async throws -> StrigaWalletSendResponse
 
     func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T
@@ -44,4 +46,20 @@ public protocol StrigaRemoteProvider: AnyObject {
         code: String,
         ip: String
     ) async throws -> StrigaTransactionConfirmOTPResponse
+
+    /// Get a fee estimate for an onchain withdrawal without triggering a withdrawal
+    /// - Parameter userId: The Id of the user who is sending this transaction
+    /// - Parameter sourceAccountId: The Id of the account to debit
+    /// - Parameter whitelistedAddressId: The Id of the whitelisted destination
+    /// - Parameter amount: The amount denominated in the smallest divisible unit of the sending currency. For example: cents or satoshis
+    /// - SeeAlso: [Get Onchain Withdrawal Fee Estimate](https://docs.striga.com/reference/get-onchain-withdrawal-fee-estimates)
+    func initiateOnchainFeeEstimate(
+        userId: String,
+        sourceAccountId: String,
+        whitelistedAddressId: String,
+        amount: String
+    ) async throws -> FeeEstimateResponse
+
+    // Method placeholder
+    func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse]
 }

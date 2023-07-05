@@ -26,15 +26,14 @@ final class BankTransferCoordinator: Coordinator<Void> {
             .prefix(1)
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] state in
-                return self.coordinator(
-                    for: self.step(userData: state.value),
+                coordinator(
+                    for: step(userData: state.value),
                     userData: state.value
-                )
-                .flatMap { [unowned self] result in
+                ).flatMap { [unowned self] result in
                     switch result {
                     case .next:
-                        return self.coordinate(
-                            to: BankTransferCoordinator(viewController: self.viewController)
+                        return coordinate(
+                            to: BankTransferCoordinator(viewController: viewController)
                         ).eraseToAnyPublisher()
                     case .none, .completed:
                         return Just(()).eraseToAnyPublisher()

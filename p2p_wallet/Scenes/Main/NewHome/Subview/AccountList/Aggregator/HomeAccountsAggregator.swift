@@ -7,13 +7,14 @@ struct HomeAccountsAggregator: DataAggregator {
     func transform(
         input: (
             solanaAccounts: [RenderableSolanaAccount],
-            ethereumAccounts: [RenderableEthereumAccount]
+            ethereumAccounts: [RenderableEthereumAccount],
+            bankTransferAccounts: [BankTransferRenderableAccount]
         )
     )
     -> (primary: [any RenderableAccount], secondary: [any RenderableAccount]) {
-        let (solanaAccounts, ethereumAccounts) = input
+        let (solanaAccounts, ethereumAccounts, bankTransferAccounts) = input
 
-        var mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
+        var mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts + bankTransferAccounts
 
         // Filter hidden accounts
         mergedAccounts = mergedAccounts.filter { account in

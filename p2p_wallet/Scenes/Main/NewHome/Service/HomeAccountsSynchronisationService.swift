@@ -1,19 +1,14 @@
-//
-//  HomeAccountsSynchornisationService.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.04.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import Resolver
 import Wormhole
+import BankTransfer
 
 class HomeAccountsSynchronisationService {
     @Injected var solanaAccountsService: SolanaAccountsService
     @Injected var ethereumAccountsService: EthereumAccountsService
     @Injected var userActionService: UserActionService
+    @Injected var bankTransfer: any BankTransferService
 
     func refresh() async {
         // Update wormhole
@@ -32,6 +27,13 @@ class HomeAccountsSynchronisationService {
                     group.addTask { [weak self] in
                         guard let self else { return }
                         try await self.ethereumAccountsService.fetch()
+                    }
+                }
+
+                if available(.bankTransfer) {
+                    group.addTask { [weak self] in
+                        guard let self else { return }
+                        await self.bankTransfer.reload()
                     }
                 }
 

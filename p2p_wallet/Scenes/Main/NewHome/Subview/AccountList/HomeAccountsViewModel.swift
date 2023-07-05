@@ -22,8 +22,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
+    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
 
     // MARK: - Properties
 
@@ -101,11 +101,52 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 solanaAggregator.transform(input: (state.value, favourites, ignores, hideZeroBalance))
             }
 
+        // bankTransferPublisher
+        let bankTransferServicePublisher = Publishers.CombineLatest(
+            bankTransferService.value.state
+                .compactMap { $0.value.wallet?.accounts.usdc },
+            userActionService.$actions.map { userActions in
+                userActions.compactMap { $0 as? BankTransferClaimUserAction }
+            }
+        )
+            .compactMap { (account, actions) -> [BankTransferRenderableAccount]? in
+                guard
+                    account.availableBalance > 0,
+                    let address = try? EthereumAddress(
+                        hex: EthereumAddresses.ERC20.usdc.rawValue,
+                        eip55: false
+                    ) else { return nil }
+
+                let token = EthereumToken(
+                    name: SolanaToken.usdc.name,
+                    symbol: SolanaToken.usdc.symbol,
+                    decimals: 6,
+                    logo: URL(string: SolanaToken.usdc.logoURI ?? ""),
+                    contractType: .erc20(contract: address)
+                )
+
+                let action = actions.first(where: { action in
+                    action.id == account.accountID
+                })
+                return [
+                    BankTransferRenderableAccount(
+                        accountId: account.accountID,
+                        token: token,
+                        amount: .init(amount: BigUInt(account.availableBalance.toCent()), token: token),
+                        status: action?.status == .processing ? .isClaimming : .readyToClaim
+                    )
+                ]
+            }
+
         let homeAccountsAggregator = HomeAccountsAggregator()
         Publishers
-            .CombineLatest(solanaAccountsPublisher, ethereumAccountsPublisher)
-            .map { solanaAccounts, ethereumAccounts in
-                homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
+            .CombineLatest3(
+                solanaAccountsPublisher,
+                ethereumAccountsPublisher,
+                bankTransferServicePublisher.prepend([])
+            )
+            .map { solanaAccounts, ethereumAccounts, bankTransferAccounts in
+                homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts, bankTransferAccounts))
             }
             .receive(on: RunLoop.main)
             .sink { primary, secondary in
@@ -123,6 +164,16 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
+
+        userActionService.$actions
+            .compactMap {
+                $0.compactMap { $0 as? BankTransferClaimUserAction }.first
+            }
+            .filter { $0.status == .ready }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] action in
+                self?.navigation.send(.bankTransferClaim(action))
+            }.store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
     }
@@ -155,14 +206,43 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
+                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }
 
+        case let renderableAccount as BankTransferRenderableAccount:
+            handleBankTransfer(account: renderableAccount)
+
         default:
             break
         }
+    }
+
+    private func handleBankTransfer(account: BankTransferRenderableAccount) {
+        let userActionService: UserActionService = Resolver.resolve()
+        let userWalletManager: UserWalletManager = Resolver.resolve()
+        guard
+            account.status != .isClaimming,
+            let walletPubKey = userWalletManager.wallet?.account.publicKey,
+            let amount = try? account.amount
+        else { return }
+
+        let userAction = BankTransferClaimUserAction(
+            id: account.id,
+            accountId: account.accountId,
+            token: account.token,
+            amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
+            fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
+            receivingAddress: try! PublicKey.associatedTokenAddress(
+                walletAddress: walletPubKey,
+                tokenMintAddress: try! PublicKey(string: Token.usdc.address)
+            ).base58EncodedString,
+            status: .processing
+        )
+
+        // Execute and emit action.
+        userActionService.execute(action: userAction)
     }
 
     func actionClicked(_ action: WalletActionType) {
@@ -212,7 +292,7 @@ extension HomeAccountsViewModel {
 
 private extension HomeAccountsViewModel {
     func bindTransferData() {
-        bankTransferService.state
+        bankTransferService.value.state
             .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { [weak self] value in
                 guard let self else { return nil  }
@@ -235,14 +315,14 @@ private extension HomeAccountsViewModel {
             .store(in: &subscriptions)
 
         tappedBannerSubject
-            .withLatestFrom(bankTransferService.state)
+            .withLatestFrom(bankTransferService.value.state)
             .receive(on: RunLoop.main)
             .sink{ [weak self] state in
                 guard let self else { return }
                 if state.value.isIBANNotReady {
                     self.smallBanner?.button?.isLoading = true
                     self.shouldShowErrorSubject.send(false)
-                    Task { await self.bankTransferService.reload() }
+                    Task { await self.bankTransferService.value.reload() }
                 } else {
                     self.navigation.send(.bankTransfer)
                 }
@@ -256,11 +336,17 @@ private extension HomeAccountsViewModel {
             .store(in: &subscriptions)
 
         bannerTapped
-            .withLatestFrom(bankTransferService.state)
+            .withLatestFrom(bankTransferService.value.state)
             .filter { $0.value.kycStatus == .onHold || $0.value.kycStatus == .pendingReview }
             .sink { [weak self] _ in
                 self?.navigation.send(.bankTransfer)
             }
             .store(in: &subscriptions)
+    }
+}
+
+private extension Int {
+    func toCent() -> Double {
+        Double(self * 10_000)
     }
 }

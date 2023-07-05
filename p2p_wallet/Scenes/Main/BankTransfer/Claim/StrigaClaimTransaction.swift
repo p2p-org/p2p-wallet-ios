@@ -34,7 +34,9 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
     let fromAddress: String
     let receivingAddress: String
     
-    let mainDescription: String
+    var mainDescription: String {
+        ""
+    }
 
     // MARK: - Methods
 
