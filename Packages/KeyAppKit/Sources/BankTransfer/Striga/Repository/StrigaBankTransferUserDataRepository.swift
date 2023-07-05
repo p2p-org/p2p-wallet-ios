@@ -177,16 +177,17 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
 
     public func getWallet(userId: String) async throws -> UserWallet? {
-        var wallet: UserWallet?
+        var wallet: UserWallet? = await localProvider.getCachedUserData()?.wallet
         do {
             wallet = try await remoteProvider.getAllWalletsByUser(
                 userId: userId,
                 startDate: Date(timeIntervalSince1970: 1687564800),
                 endDate: Date(),
                 page: 1
-            ).wallets.map(UserWallet.init).first
+            ).wallets.map {
+                UserWallet($0, cached: wallet)
+            }.first
         } catch {
-            wallet = await localProvider.getCachedUserData()?.wallet
             Logger.log(
                 event: "Striga get all wallets",
                 message: error.localizedDescription,
@@ -284,14 +285,17 @@ private extension String {
 }
 
 private extension UserWallet {
-    init(_ wallet: StrigaWallet) {
+    init(_ wallet: StrigaWallet, cached: UserWallet?) {
         var eur: EURUserAccount?
         if let eurAccount = wallet.accounts.eur {
             eur = EURUserAccount(
                 accountID: eurAccount.accountID,
                 currency: eurAccount.currency,
                 createdAt: eurAccount.createdAt,
-                enriched: false
+                enriched: cached?.accounts.eur?.enriched ?? false,
+                iban: cached?.accounts.eur?.iban,
+                bic: cached?.accounts.eur?.bic,
+                bankAccountHolderName: cached?.accounts.eur?.bankAccountHolderName
             )
         }
         var usdc: USDCUserAccount?
@@ -300,9 +304,9 @@ private extension UserWallet {
                 accountID: usdcAccount.accountID,
                 currency: usdcAccount.currency,
                 createdAt: usdcAccount.createdAt,
-                enriched: false,
-                blockchainDepositAddress: nil,
-                availableBalance: 0
+                enriched: cached?.accounts.usdc?.enriched ?? false,
+                blockchainDepositAddress: cached?.accounts.usdc?.blockchainDepositAddress,
+                availableBalance: Int(usdcAccount.availableBalance.amount) ?? 0
             )
         }
         self.walletId = wallet.walletID
