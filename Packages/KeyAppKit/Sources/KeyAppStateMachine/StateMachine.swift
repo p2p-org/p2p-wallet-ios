@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 /// A machine that consists of a set of states, actions, and a dispatcher that controls transition rules and define how the system transitions from one state to another based on the inputs it receives.
-open class StateMachine<
+public actor StateMachine<
     State: KeyAppStateMachine.State,
     Action: KeyAppStateMachine.Action,
     Dispatcher: KeyAppStateMachine.Dispatcher<State, Action>
@@ -14,9 +14,6 @@ open class StateMachine<
     private let dispatcher: Dispatcher
 
     // MARK: - Private properties
-    
-    /// Locker to prevent data race
-    private let locker = NSLock()
 
     /// Subject that holds a stream of current state, start with an initial state
     private let stateSubject = CurrentValueSubject<State, Never>(.initial)
@@ -30,12 +27,12 @@ open class StateMachine<
     // MARK: - Public properties
     
     /// Publisher that emit a stream of current state to listener
-    public var statePublisher: AnyPublisher<State, Never> {
+    public nonisolated var statePublisher: AnyPublisher<State, Never> {
         stateSubject.eraseToAnyPublisher()
     }
     
     /// The current state of the machine
-    public var currentState: State {
+    public nonisolated var currentState: State {
         stateSubject.value
     }
 
@@ -51,12 +48,10 @@ open class StateMachine<
     
     /// Accept a new action
     /// - Parameter action: new action
-    open func accept(action: Action) {
-        // Lock
-        locker.lock(); defer { locker.unlock() }
+    public nonisolated func accept(action: Action) async {
         
         // Check if action should be dispatched
-        guard !dispatcher.shouldBeginDispatching(
+        guard await !dispatcher.shouldBeginDispatching(
             currentAction: currentAction,
             newAction: action,
             currentState: currentState
@@ -65,57 +60,74 @@ open class StateMachine<
         }
         
         // Check if new action should cancel current action
-        if dispatcher.shouldCancelCurrentAction(
+        if await dispatcher.shouldCancelCurrentAction(
             currentAction: currentAction,
             newAction: action,
             currentState: currentState
         ) {
             // Cancel current action
-            currentTask?.cancel()
+            await currentTask?.cancel()
         }
         
         // If current task is not cancelled
-        else if let currentTask, currentTask.isCancelled == false {
+        else if let currentTask = await currentTask, currentTask.isCancelled == false {
             // Wait for current action to be completed
-            Task { [unowned self] in
-                await currentTask.value
-                return accept(action: action)
-            }
-            return
+            await currentTask.value
         }
         
         // Dispatch action
+        await saveCurrentAction(action)
+        await saveCurrentTask(.init { [unowned self] in
+            await performAction(action: action)
+        })
+    }
+
+    // MARK: - Private methods
+    
+    /// Perform an action by delegating works to dispatcher
+    private func performAction(action: Action) async {
+        // loading state whene action is about to be dispatched
+        stateSubject.send(
+            await dispatcher.actionWillBeginDispatching(
+                action: action,
+                currentState: currentState
+            )
+        )
+        
+        // check cancellation
+        guard !Task.isCancelled else { return }
+        
+        // dispatch action
+        stateSubject.send(
+            await dispatcher.dispatch(
+                action: action,
+                currentState: currentState
+            )
+        )
+        
+        // check cancellation
+        guard !Task.isCancelled else { return }
+        
+        // additional state when action is dispatched
+        stateSubject.send(
+            await dispatcher.actionDidEndDispatching(
+                action: action,
+                currentState: currentState
+            )
+        )
+        
+        // remove current task / action
+        saveCurrentAction(nil)
+        saveCurrentTask(nil)
+    }
+    
+    /// Save current action
+    private func saveCurrentAction(_ action: Action?) {
         currentAction = action
-        currentTask = Task { [unowned self] in
-            // loading state whene action is about to be dispatched
-            stateSubject.send(
-                await dispatcher.actionWillBeginDispatching(
-                    action: action,
-                    currentState: currentState
-                )
-            )
-            
-            // check cancellation
-            try? Task.checkCancellation()
-            
-            // dispatch action
-            stateSubject.send(
-                await dispatcher.dispatch(
-                    action: action,
-                    currentState: currentState
-                )
-            )
-            
-            // check cancellation
-            try? Task.checkCancellation()
-            
-            // additional state when action is dispatched
-            stateSubject.send(
-                await dispatcher.actionDidEndDispatching(
-                    action: action,
-                    currentState: currentState
-                )
-            )
-        }
+    }
+
+    /// Save current task
+    private func saveCurrentTask(_ task: Task<Void, Never>?) {
+        currentTask = task
     }
 }
