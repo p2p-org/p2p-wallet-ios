@@ -6,7 +6,7 @@ public protocol Dispatcher<State, Action>: Actor {
     associatedtype Action: KeyAppStateMachine.Action
 
     /// Asks the dispatcher whether to begin dispatching an action.
-    nonisolated func shouldBeginDispatching(action: Action, currentState: State) -> Bool
+    nonisolated func shouldBeginDispatching(currentAction: Action?, newAction: Action, currentState: State) -> Bool
 
     /// Asks the dispatcher whether to cancel dispatching current action
     /// or wait for it to finish then perform new action.
