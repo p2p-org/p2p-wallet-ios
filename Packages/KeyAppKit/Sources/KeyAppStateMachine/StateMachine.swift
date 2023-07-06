@@ -9,6 +9,9 @@ open class StateMachine<
 > {
     // MARK: - Private properties
     
+    /// Locker to handle data write
+    private let locker = NSLock()
+    
     /// Dispatcher that controls dispatching actions
     private let dispatcher: Dispatcher
 
@@ -43,6 +46,9 @@ open class StateMachine<
     /// Accept a new action
     /// - Parameter action: new action
     open func accept(action: Action) {
+        // Lock
+        locker.lock(); defer { locker.unlock() }
+        
         // Check if action should be dispatched
         guard dispatcher.shouldBeginDispatching(action: action, currentState: currentState)
         else {
