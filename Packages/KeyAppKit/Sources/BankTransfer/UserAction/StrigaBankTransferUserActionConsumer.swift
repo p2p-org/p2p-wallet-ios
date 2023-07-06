@@ -1,4 +1,3 @@
-import BankTransfer
 import Combine
 import Resolver
 import KeyAppBusiness
@@ -6,9 +5,16 @@ import Foundation
 import KeyAppKitCore
 import SolanaSwift
 
+public struct BankTransferClaimUserActionResult: Codable, Equatable {
+    public let fromAddress: String
+    public let challengeId: String
+    public let token: Token
+}
+
 public enum BankTransferClaimUserActionEvent: UserActionEvent {
     case track(BankTransferClaimUserAction, UserActionStatus)
-    case sendFailure(String)
+    case complete(BankTransferClaimUserAction, BankTransferClaimUserActionResult)
+    case sendFailure(BankTransferClaimUserAction, String)
 }
 
 public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
@@ -33,9 +39,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             .eraseToAnyPublisher()
     }
 
-    public func start() {
-        
-    }
+    public func start() {}
 
     public func process(action: any UserAction) {
         guard let action = action as? Action else { return }
@@ -47,13 +51,19 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             guard
                 let service = self?.bankTransferService.value,
                 let userId = await service.repository.getUserId(),
-                let accountId = try await service.repository.getWallet(userId: userId)?.accounts.usdc?.accountID,
+                let account = try await service.repository.getWallet(userId: userId)?.accounts.usdc,
                 let amount = action.amount,
+                let fromAddress = account.blockchainDepositAddress,
                 let destinations = try await service.repository.getWhitelistedUserDestinations().first(where: { response in
                 // Add filter logic
                 true
             }) else {
-                self?.handle(event: Event.sendFailure("Needs to whitelist account"))
+                Logger.log(
+                    event: "Striga Claim Action",
+                    message: "Needs to whitelist account",
+                    logLevel: .error
+                )
+                self?.handle(event: Event.sendFailure(action, "Needs to whitelist account"))
                 return
             }
 
@@ -65,16 +75,19 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             do {
                 let result = try await service.repository.initiateOnchainWithdrawal(
                     userId: userId,
-                    sourceAccountId: accountId,
+                    sourceAccountId: account.accountID,
                     whitelistedAddressId: destinations.id,
                     amount: amount,
                     accountCreation: shouldMakeAccount
                 )
+                self?.handle(event: Event.complete(action, .init(
+                    fromAddress: fromAddress,
+                    challengeId: result.challengeId,
+                    token: Token.usdc
+                )))
             } catch {
-                self?.handle(event: Event.sendFailure(error.localizedDescription))
+                self?.handle(event: Event.sendFailure(action, error.localizedDescription))
             }
-            
-            self?.handle(event: Event.track(action, .ready))
         }
     }
 
@@ -85,27 +98,38 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
 
     func handleInternalEvent(event: Event) {
         switch event {
+        case let .complete(action, result):
+            Task { [weak self] in
+                guard let self = self else { return }
+                var userAction = Action(
+                    id: action.id,
+                    accountId: action.accountId,
+                    token: action.token,
+                    amount: action.amount,
+                    receivingAddress: action.receivingAddress,
+                    status: .ready
+                )
+                userAction.result = result
+                await self.database.set(for: userAction.id, userAction)
+            }
         case let .track(action, status):
             Task { [weak self] in
                 guard let self = self else { return }
                 let userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
-//                    challengeId: action.challengeId,
                     token: action.token,
                     amount: action.amount,
-                    fromAddress: action.fromAddress,
                     receivingAddress: action.receivingAddress,
                     status: status
                 )
-
                 await self.database.set(for: userAction.id, userAction)
             }
-        case .sendFailure(let id):
+        case .sendFailure(let action, _):
             Task { [weak self] in
-                guard var userAction = await self?.database.get(for: id) else { return }
+                guard let userAction = await self?.database.get(for: action.id) else { return }
                 userAction.status = .error(UserActionError.networkFailure)
-                await self?.database.set(for: id, userAction)
+                await self?.database.set(for: action.id, userAction)
             }
         }
     }
@@ -114,35 +138,30 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
 public class BankTransferClaimUserAction: UserAction {
     /// Unique internal id to track.
     public var id: String
-    public let challengeId: String? = nil
     public var accountId: String
     public let token: EthereumToken?
     public let amount: String?
-//    public let feeAmount: FeeAmount
-    public let fromAddress: String
     public let receivingAddress: String
     /// Abstract status.
     public var status: UserActionStatus
     public var createdDate: Date
     public var updatedDate: Date
+    public var result: BankTransferClaimUserActionResult?
 
     public init(
         id: String,
         accountId: String,
         token: EthereumToken?,
         amount: String?,
-        fromAddress: String,
         receivingAddress: String,
         status: UserActionStatus,
         createdDate: Date = Date(),
         updatedDate: Date = Date()
     ) {
         self.id = id
-//        self.challengeId = challengeId
         self.accountId = accountId
         self.token = token
         self.amount = amount
-        self.fromAddress = fromAddress
         self.receivingAddress = receivingAddress
         self.status = status
         self.createdDate = createdDate

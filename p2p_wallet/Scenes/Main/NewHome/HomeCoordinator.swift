@@ -187,11 +187,11 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BankTransferClaimCoordinator(
                 navigationController: navigationController,
                 transaction: StrigaClaimTransaction(
-                    challengeId: userAction.challengeId ?? "",
-                    token: Token.usdc,// userAction.token,
+                    challengeId: userAction.result?.challengeId ?? "",
+                    token: userAction.result?.token ?? .usdc,
                     amount: Double(userAction.amount ?? "") ?? 0,
                     feeAmount: .zero,
-                    fromAddress: userAction.fromAddress,
+                    fromAddress: userAction.result?.fromAddress ?? "",
                     receivingAddress: userAction.receivingAddress
                 )
             ))
