@@ -44,15 +44,10 @@ extension JupiterSwapBusinessLogic {
                         computeUnitPriceMicroLamports: nil
                     )
                     
-                    // assert swapTransaction
-                    guard let swapTransaction else {
-                        throw JupiterError.invalidResponse
-                    }
-                    
                     // retry
                     return try await _sendToBlockchain(
                         account: account,
-                        swapTransaction: swapTransaction,
+                        swapTransaction: swapTransaction.stringValue,
                         route: route,
                         services: services
                     )

@@ -3,6 +3,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 import Wormhole
+import UIKit
 
 struct RenderableEthereumAccount: RenderableAccount {
     let account: EthereumAccount

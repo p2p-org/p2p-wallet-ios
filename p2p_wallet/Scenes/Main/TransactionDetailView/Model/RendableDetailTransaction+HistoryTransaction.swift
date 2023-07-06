@@ -1,14 +1,8 @@
-//
-//  RendableDetailTransaction+HistoryTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
 import History
 import SolanaSwift
+import UIKit
 
 struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     let trx: HistoryTransaction
@@ -247,7 +241,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             if let name = data.account.name {
                 value = "@\(name)"
             } else {
-                value = RecipientFormatter.shortFormat(destination: data.account.address)
+                value = RecipientFormatter.format(destination: data.account.address)
             }
             result.append(
                 .init(

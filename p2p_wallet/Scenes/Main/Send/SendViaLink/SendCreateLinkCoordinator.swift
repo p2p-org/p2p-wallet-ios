@@ -2,6 +2,7 @@ import Foundation
 import SolanaSwift
 import Combine
 import Resolver
+import UIKit
 
 final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Result> {
     // MARK: - Properties

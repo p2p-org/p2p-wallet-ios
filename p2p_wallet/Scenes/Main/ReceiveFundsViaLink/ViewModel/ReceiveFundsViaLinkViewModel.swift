@@ -1,10 +1,3 @@
-//
-//  ReceiveFundsViaLinkViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 23.03.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,7 @@ import SolanaSwift
 import Send
 import Resolver
 import FeeRelayerSwift
+import UIKit
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     

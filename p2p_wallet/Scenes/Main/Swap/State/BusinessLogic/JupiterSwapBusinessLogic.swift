@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import UIKit
 
 enum JupiterSwapBusinessLogic {
     static func shouldPerformAction(
@@ -56,7 +57,6 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountFrom = amountFrom
-                $0.amountTo = nil
             }
         case let .changeFromToken(fromToken):
             return state.modified {
@@ -66,7 +66,6 @@ enum JupiterSwapBusinessLogic {
                 $0.routes = []
                 $0.fromToken = fromToken
                 $0.amountFrom = nil
-                $0.amountTo = nil
             }
         case let .changeToToken(toToken):
             return state.modified {
@@ -75,7 +74,6 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.toToken = toToken
-                $0.amountTo = nil
             }
         case .switchFromAndToTokens:
             return state.modified {
@@ -86,7 +84,6 @@ enum JupiterSwapBusinessLogic {
                 $0.fromToken = state.toToken
                 $0.amountFrom = nil
                 $0.toToken = state.fromToken
-                $0.amountTo = nil
             }
         case .update:
             return state.modified {
@@ -94,7 +91,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
             }
         case .updateUserWallets:
             return nil
@@ -105,8 +101,6 @@ enum JupiterSwapBusinessLogic {
                 $0.status = .loadingAmountTo
                 $0.route = route
                 $0.swapTransaction = nil
-                $0.amountTo = UInt64(route.outAmount)?
-                    .convertToBalance(decimals: state.toToken.token.decimals)
             }
         case let .changeSlippageBps(slippageBps):
             return state.modified {
@@ -114,7 +108,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
                 $0.slippageBps = slippageBps
             }
         case .retry(.gettingRoute):
@@ -123,7 +116,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.swapTransaction = nil
                 $0.routes = []
-                $0.amountTo = nil
             }
         case let .retry(.createTransaction(isSimulationOn)):
             return state.modified {
@@ -242,7 +234,7 @@ enum JupiterSwapBusinessLogic {
         }
 
         do {
-            guard var route = state.route else {
+            guard let route = state.route else {
                 return state.error(.routeIsNotFound)
             }
 
@@ -251,34 +243,18 @@ enum JupiterSwapBusinessLogic {
             }
 
             if isSimulationOn {
-
-                var availableRoutes = state.routes
-                var swapTransaction: String?
-
-                var bestRouteIndex = 0
-                for i in 0..<availableRoutes.count {
-                    // Try create and simulate transaction to see if it works correctly
-                    swapTransaction = try await createAndSimulateTransaction(
-                        for: availableRoutes[i],
-                        account: account,
-                        services: services
-                    )
-                    
-                    if swapTransaction != nil {
-                        route = availableRoutes[i]
-                        bestRouteIndex = i
-                        // We found the best route and do not need to create and simulate transaction anymore
-                        break
-                    }
-                }
-
-                // Remove failed routes from the state
-                availableRoutes.removeFirst(bestRouteIndex)
-
-                if let swapTransaction {
+                
+                // simulate from routes and remove all failing routes
+                let (fixedRoutes, swapTransaction) = try await simulateAndRemoveFailingSwapTransaction(
+                    availableRoutes: state.routes,
+                    account: account,
+                    services: services
+                )
+                
+                if let swapTransaction, let route = fixedRoutes.first {
                     return state.modified {
                         $0.route = route
-                        $0.routes = availableRoutes // Replace routes only with available ones
+                        $0.routes = fixedRoutes // Replace routes only with available ones
                         $0.status = .ready
                         $0.swapTransaction = swapTransaction
                     }
@@ -291,9 +267,16 @@ enum JupiterSwapBusinessLogic {
                         $0.swapTransaction = nil
                     }
                 }
+                
             } else {
                 // If route is chosen by user and is not the best one, just try create transaction without simulation
-                let swapTransaction = try await createTransaction(for: route, account: account, services: services)
+                let swapTransaction = try await services.jupiterClient.swap(
+                    route: route,
+                    userPublicKey: account.publicKey.base58EncodedString,
+                    wrapUnwrapSol: true,
+                    feeAccount: nil,
+                    computeUnitPriceMicroLamports: nil
+                )
                 return state.modified {
                     $0.status = .ready
                     $0.swapTransaction = swapTransaction
@@ -310,31 +293,41 @@ enum JupiterSwapBusinessLogic {
 
     // MARK: - Private
 
-    private static func createTransaction(
-        for route: Route,
+    private static func simulateAndRemoveFailingSwapTransaction(
+        availableRoutes: [Route],
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> String {
-        let swapTransaction = try await services.jupiterClient.swap(
-            route: route,
-            userPublicKey: account.publicKey.base58EncodedString,
-            wrapUnwrapSol: true,
-            feeAccount: nil,
-            computeUnitPriceMicroLamports: nil
-        )
-
-        guard let swapTransaction else {
-            throw JupiterError.invalidResponse
+    ) async throws -> (routes: [Route], swapTransaction: SwapTransaction?) {
+        var availableRoutes = availableRoutes
+        var swapTransaction: SwapTransaction?
+        
+        var bestRouteIndex = 0
+        for i in 0..<availableRoutes.count {
+            // Try create and simulate transaction to see if it works correctly
+            swapTransaction = try await createAndSimulateTransaction(
+                for: availableRoutes[i],
+                account: account,
+                services: services
+            )
+            
+            if swapTransaction != nil {
+                bestRouteIndex = i
+                // We found the best route and do not need to create and simulate transaction anymore
+                break
+            }
         }
-
-        return swapTransaction
+        
+        // Remove failing routes from the state
+        availableRoutes.removeFirst(bestRouteIndex)
+        
+        return (routes: availableRoutes, swapTransaction: swapTransaction)
     }
 
     private static func createAndSimulateTransaction(
         for route: Route,
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> String? {
+    ) async throws -> SwapTransaction? {
         do {
             let swapTransaction = try await services.jupiterClient.swap(
                 route: route,
@@ -344,11 +337,13 @@ enum JupiterSwapBusinessLogic {
                 computeUnitPriceMicroLamports: nil
             )
 
-            guard let swapTransaction else { return nil }
-
             let simulation = try await services.solanaAPIClient.simulateTransaction(
-                transaction: swapTransaction,
-                configs: RequestConfiguration(encoding: "base64")!
+                transaction: swapTransaction.stringValue,
+                configs: RequestConfiguration(
+                    commitment: "confirmed",
+                    encoding: "base64",
+                    replaceRecentBlockhash: true
+                )!
             )
 
             if simulation.err == nil {

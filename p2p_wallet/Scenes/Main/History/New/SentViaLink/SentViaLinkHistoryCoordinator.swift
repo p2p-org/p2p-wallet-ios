@@ -3,6 +3,7 @@ import KeyAppUI
 import Combine
 import Resolver
 import Send
+import UIKit
 
 final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Properties
@@ -26,7 +27,6 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         }
             .asViewController(withoutUIKitNavBar: false)
         vc.title = L10n.sentViaOneTimeLink
-        vc.view.backgroundColor = Asset.Colors.smoke.color
         
         return vc
     }

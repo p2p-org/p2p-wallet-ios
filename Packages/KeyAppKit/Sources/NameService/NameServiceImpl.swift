@@ -61,7 +61,7 @@ public class NameServiceImpl: NameService {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = try JSONEncoder().encode(params)
         try Task.checkCancellation()
-        let (data, _) = try await URLSession.shared.data(from: urlRequest)
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
         try Task.checkCancellation()
         let stringResponse = String(data: data, encoding: .utf8)
         if let stringResponse = stringResponse, stringResponse.contains("insufficient funds for instruction") {
@@ -162,7 +162,7 @@ public class NameServiceImpl: NameService {
 
     private func request<T: Decodable>(request: URLRequest) async throws -> T {
         try Task.checkCancellation()
-        let (data, response) = try await URLSession.shared.data(from: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         guard let response = response as? HTTPURLResponse else {
             logError(event: "Invalid response code")
             throw UndefinedNameServiceError.unknown

@@ -1,14 +1,8 @@
-//
-//  SwapSettingsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.02.2023.
-//
-
 import Combine
 import Resolver
 import AnalyticsManager
 import Jupiter
+import Foundation
 
 protocol SwapSettingsViewModelIO: AnyObject {
     var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> { get }

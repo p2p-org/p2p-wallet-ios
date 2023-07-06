@@ -1,10 +1,3 @@
-//
-//  HomeEmptyViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,13 +5,13 @@ import Resolver
 import SolanaSwift
 import KeyAppKitCore
 import KeyAppBusiness
+import UIKit
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
-    @Injected private var solanaAccountsService: SolanaAccountsService
     
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
@@ -38,13 +31,15 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     func reloadData() async {
         // refetch
-        try? await solanaAccountsService.fetch()
+        await HomeAccountsSynchronisationService().refresh()
         
         updateData()
     }
 
     func receiveClicked() {
-        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        let userWalletManager = Resolver.resolve(UserWalletManager.self)
+        guard let pubkey = userWalletManager.wallet?.account.publicKey
+        else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
     
