@@ -65,14 +65,13 @@ actor TKeyWalletMetadataProvider: WalletMetadataProvider {
 
         guard
             let userData = try await tkeyFacade.getUserData(),
-            !userData.isEmpty,
-            let data = userData.data(using: .utf8)
+            !userData.isEmpty
         else {
             return nil
         }
 
         return try WalletMetaData.deserialize(
-            data: data,
+            data: Data(userData.utf8),
             ethAddress: userWalletEthAddress
         )
     }
