@@ -7,13 +7,28 @@ open class StateMachine<
     Action: KeyAppStateMachine.Action,
     Dispatcher: KeyAppStateMachine.Dispatcher<State, Action>
 > {
-    // MARK: - Properties
+    // MARK: - Private properties
     
     /// Dispatcher that controls dispatching actions
     private let dispatcher: Dispatcher
 
     /// Subject that holds a stream of current state, start with an initial state
     private let stateSubject = CurrentValueSubject<State, Never>(.initial)
+
+    /// Current active action
+    private var currentAction: Action?
+
+    // MARK: - Public properties
+    
+    /// Publisher that emit a stream of current state to listener
+    public var statePublisher: AnyPublisher<State, Never> {
+        stateSubject.eraseToAnyPublisher()
+    }
+    
+    /// The current state of the machine
+    public var currentState: State {
+        stateSubject.value
+    }
 
     // MARK: - Initialization
     
@@ -23,5 +38,18 @@ open class StateMachine<
         self.dispatcher = dispatcher
     }
 
+    // MARK: - Public methods
     
+    /// Accept a new action
+    /// - Parameter action: new action
+    open func accept(action: Action) {
+        // Check if action should be dispatched
+        guard dispatcher.shouldBeginDispatching(action: action, currentState: currentState)
+        else {
+            return
+        }
+        
+        // Check if new action should cancel current action
+        dispatcher.shouldCancelCurrentAction(currentAction: currentAction, newAction: action, currentState: currentState)
+    }
 }

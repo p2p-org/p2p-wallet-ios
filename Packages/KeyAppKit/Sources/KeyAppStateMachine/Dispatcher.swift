@@ -1,16 +1,16 @@
 import Foundation
 
 /// Dispatcher that handles action dispatching.
-public protocol Dispatcher<Action, State>: Actor {
-    associatedtype Action: KeyAppStateMachine.Action
+public protocol Dispatcher<State, Action>: Actor {
     associatedtype State: KeyAppStateMachine.State
+    associatedtype Action: KeyAppStateMachine.Action
 
     /// Asks the dispatcher whether to begin dispatching an action.
     nonisolated func shouldBeginDispatching(action: Action, currentState: State) -> Bool
 
     /// Asks the dispatcher whether to cancel dispatching current action
     /// or wait for it to finish then perform new action.
-    nonisolated func shouldCancelCurrentAction(currentAction: Action, newAction: Action, currentState: State) -> Bool
+    nonisolated func shouldCancelCurrentAction(currentAction: Action?, newAction: Action, currentState: State) -> Bool
 
     /// Tells the `StateMachine` that an action is about to be dispatched.
     /// Any loading state can be return from this function if needed.
