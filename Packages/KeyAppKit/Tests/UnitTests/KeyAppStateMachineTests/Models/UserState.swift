@@ -1,5 +1,5 @@
 import Foundation
-import StateMachine
+import KeyAppStateMachine
 
 struct UserState: State {
     // MARK: - Properties

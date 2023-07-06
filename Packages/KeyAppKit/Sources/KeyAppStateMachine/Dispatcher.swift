@@ -1,9 +1,9 @@
 import Foundation
 
 /// Dispatcher that handles action dispatching.
-public protocol Dispatcher: Actor {
-    associatedtype Action: StateMachine.Action
-    associatedtype State: StateMachine.State
+public protocol Dispatcher<Action, State>: Actor {
+    associatedtype Action: KeyAppStateMachine.Action
+    associatedtype State: KeyAppStateMachine.State
 
     /// Asks the dispatcher whether to begin dispatching an action.
     nonisolated func shouldBeginDispatching(action: Action, currentState: State) -> Bool

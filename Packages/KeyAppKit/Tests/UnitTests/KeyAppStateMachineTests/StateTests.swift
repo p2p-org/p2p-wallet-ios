@@ -1,5 +1,5 @@
 import XCTest
-import StateMachine
+import KeyAppStateMachine
 
 class StateTests: XCTestCase {
     
