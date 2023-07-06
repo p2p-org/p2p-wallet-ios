@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/intercom/intercom-ios.git",
         "state": {
           "branch": null,
-          "revision": "37d609080265b499944261f88f9b19cc9a0b1323",
-          "version": "12.4.3"
+          "revision": "5e5f0c032749be4539b6677c95319c3627c78cba",
+          "version": "15.0.1"
         }
       },
       {
