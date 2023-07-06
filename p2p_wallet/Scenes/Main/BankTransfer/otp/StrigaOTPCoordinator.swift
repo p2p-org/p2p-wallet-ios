@@ -111,18 +111,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             .sinkAsync { [weak self, weak viewModel] process in
                 process.start {
                     guard let self, let viewModel else { return }
-                    do {
-                        try await self.resendHandler()
-                        // Increase timer if url request is succeeded
-                        self.increaseTimer(viewModel: viewModel)
-                    } catch BankTransferError.otpExceededDailyLimit {
-                        self.handleOTPExceededDailyLimitError()
-                        self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
-                        await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
-                    } catch {
-                        viewModel.coordinatorIO.error.send(error)
-                        await self.logAlertMessage(error: error)
-                    }
+                    await self.resendSMS(viewModel: viewModel, increaseTimer: !timerHasJustInitialized)
+                    timerHasJustInitialized = false
                 }
             }
             .store(in: &subscriptions)
@@ -155,32 +145,39 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             handleOTPConfirmLimitError()
         } else {
             present(controller: controller)
-        }
 
-        if timerHasJustInitialized || resendCounter?.until.timeIntervalSinceNow < 0 {
-            // Get OTP if timer is off (it cand be also launched on previous screen)
-            Task { [weak self] in
-                do {
-                    try await self?.resendHandler()
-                    // Increase timer if url request is succeeded
-                    if !timerHasJustInitialized {
-                        self?.increaseTimer(viewModel: viewModel)
-                    }
-                } catch BankTransferError.otpExceededDailyLimit {
-                    self?.handleOTPExceededDailyLimitError()
-                } catch {
-                    viewModel.coordinatorIO.error.send(error)
-                }
+            if timerHasJustInitialized || resendCounter?.until.timeIntervalSinceNow < 0 {
+                // Send request only if lastResendErrorDate and lastConfirmErrorData are nil
+                // Resend OTP explicitly if timer is off (it cand be also launched on previous screen)
+                viewModel.resendButtonTapped()
             }
         }
 
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 
+    private func resendSMS(viewModel: EnterSMSCodeViewModel, increaseTimer: Bool) async {
+        if increaseTimer {
+            self.increaseTimer(viewModel: viewModel)
+        }
+
+        do {
+            try await self.resendHandler()
+        } catch BankTransferError.otpExceededDailyLimit {
+            self.handleOTPExceededDailyLimitError()
+            self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
+            await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
+        } catch {
+            viewModel.coordinatorIO.error.send(error)
+            await self.logAlertMessage(error: error)
+        }
+    }
+
     private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
-        guard let resendCounter else { return }
-        self.resendCounter = resendCounter.incremented()
-        viewModel.attemptCounter = Wrapper(resendCounter)
+        self.resendCounter = resendCounter?.incremented()
+        if let resendCounter {
+            viewModel.attemptCounter = Wrapper(resendCounter)
+        }
     }
 
     private func handleOTPExceededDailyLimitError() {
