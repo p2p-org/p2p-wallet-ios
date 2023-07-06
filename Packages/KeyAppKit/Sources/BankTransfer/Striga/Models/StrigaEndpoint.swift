@@ -258,6 +258,52 @@ struct StrigaEndpoint: HTTPEndpoint {
         )
     }
 
+    static func whitelistDestinationAddress(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        address: String,
+        currency: String,
+        network: String,
+        label: String?
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/whitelist-address",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "address": address,
+                "currency": currency,
+                "network": network,
+                "label": label
+            ]
+        )
+    }
+
+    static func getWhitelistedUserDestinations(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        currency: String?,
+        label: String?,
+        page: String?
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/wallets/whitelist-address",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "currency": currency,
+                "label": label,
+                "page": page
+            ]
+        )
+    }
+
 }
 
 extension KeyPair {

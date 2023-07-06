@@ -54,10 +54,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 let account = try await service.repository.getWallet(userId: userId)?.accounts.usdc,
                 let amount = action.amount,
                 let fromAddress = account.blockchainDepositAddress,
-                let destinations = try await service.repository.getWhitelistedUserDestinations().first(where: { response in
-                // Add filter logic
-                true
-            }) else {
+                let whitelistedAddressId = try await service.repository.whitelistIdFor(account: account) else {
                 Logger.log(
                     event: "Striga Claim Action",
                     message: "Needs to whitelist account",
@@ -76,7 +73,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 let result = try await service.repository.initiateOnchainWithdrawal(
                     userId: userId,
                     sourceAccountId: account.accountID,
-                    whitelistedAddressId: destinations.id,
+                    whitelistedAddressId: whitelistedAddressId,
                     amount: amount,
                     accountCreation: shouldMakeAccount
                 )

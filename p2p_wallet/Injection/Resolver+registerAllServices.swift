@@ -632,7 +632,8 @@ extension Resolver: ResolverRegistering {
                             mockUserId: "user-id"
                         ) :
                         Resolver.resolve(StrigaMetadataProvider.self),
-                    commonInfoProvider: CommonInfoLocalProviderImpl()
+                    commonInfoProvider: CommonInfoLocalProviderImpl(),
+                    solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
                 )
             )
         }
