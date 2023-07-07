@@ -31,7 +31,9 @@ public actor StateMachine<
     
     /// Publisher that emit a stream of current state to listener
     public nonisolated var statePublisher: AnyPublisher<State, Never> {
-        stateSubject.eraseToAnyPublisher()
+        stateSubject
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
     
     /// The current state of the machine

@@ -2,7 +2,7 @@ import XCTest
 import KeyAppStateMachine
 import Combine
 
-private let fakeNetworkDelayInMilliseconds: Int = 1_000
+private let fakeNetworkDelayInMilliseconds: Int = 300
 
 final class StateMachineTests: XCTestCase {
     
@@ -26,7 +26,7 @@ final class StateMachineTests: XCTestCase {
         // listen
         let stream = stateMachine.statePublisher
             .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(fakeNetworkDelayInMilliseconds + 50)
+                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
             )
         
         // get last state
@@ -54,7 +54,7 @@ final class StateMachineTests: XCTestCase {
         // listen
         let stream = stateMachine.statePublisher
             .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(fakeNetworkDelayInMilliseconds + 50)
+                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
             )
         
         // get last state
@@ -82,13 +82,14 @@ final class StateMachineTests: XCTestCase {
         // listen
         let stream = stateMachine.statePublisher
             .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(fakeNetworkDelayInMilliseconds + 50)
+                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
             )
         
         // get last state
         var lastState: RecruitmentState!
         for try await state in stream {
             lastState = state
+            print("[SideEffect] Peforming size effect with state \(state)")
         }
         
         XCTAssertEqual(lastState, .init(
