@@ -43,9 +43,54 @@ final class StateMachineTests: XCTestCase {
         ))
     }
     
-    func testAcceptNewAction_CancelingPreviousActionImmediately_ShouldReturnSecondState() async throws {
-        // modify dispatcher
-        dispatcher.newActionShouldCancelPreviousAction = true
+    func testAcceptAnAction_WaitForItToFinish_AcceptSecondAction_ShouldReturnFirstStateThenSecondState() async throws {
+        // accept an action
+        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+        
+        // listen
+        let stream = stateMachine.statePublisher
+            .completeIfNoEventEmitedWithinSchedulerTime(
+                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
+            )
+        
+        // get last state
+        var lastState: RecruitmentState!
+        for try await state in stream {
+            lastState = state
+        }
+        
+        XCTAssertEqual(lastState, .init(
+            applicantName: "Napoleon The First",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+        
+        try await Task.sleep(nanoseconds: 300_000_000)
+        
+        // accept an action
+        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
+        
+        // listen
+        let stream2 = stateMachine.statePublisher
+            .completeIfNoEventEmitedWithinSchedulerTime(
+                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
+            )
+        
+        // get last state
+        for try await state in stream2 {
+            lastState = state
+        }
+        
+        XCTAssertEqual(lastState, .init(
+            applicantName: "Napoleon The Second",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+    }
+    
+    func testAcceptNewAction_WaitForPreviousActionToComplete_ShouldReturnBothStates() async throws {
         
         // accept an action
         await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
@@ -71,9 +116,9 @@ final class StateMachineTests: XCTestCase {
         ))
     }
     
-    func testAcceptNewAction_WaitForPreviousActionToComplete_ShouldReturnBothStates() async throws {
+    func testAcceptNewAction_CancelingPreviousActionImmediately_ShouldReturnSecondState() async throws {
         // modify dispatcher
-        dispatcher.newActionShouldCancelPreviousAction = false
+        dispatcher.newActionShouldCancelPreviousAction = true
         
         // accept an action
         await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
@@ -89,7 +134,6 @@ final class StateMachineTests: XCTestCase {
         var lastState: RecruitmentState!
         for try await state in stream {
             lastState = state
-            print("[SideEffect] Peforming size effect with state \(state)")
         }
         
         XCTAssertEqual(lastState, .init(

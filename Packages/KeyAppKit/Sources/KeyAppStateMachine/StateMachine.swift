@@ -57,12 +57,12 @@ public actor StateMachine<
     /// - Parameter action: new action
     public func accept(action: Action) async {
         // Log
-        logIfVerbose(message: "Action accepted: \(action)")
+        logIfVerbose(message: "📲 Action accepted: \(action)")
         
         // If there is any performing action, task
         if let currentTask, let currentAction, currentTask.isCancelled == false {
             // Log
-            logIfVerbose(message: "[AnotherInProgress] Another action in progress: \(currentAction)")
+            logIfVerbose(message: "🚧 [AnotherInProgress] Another action in progress: \(currentAction)")
             
             // Check if action should be dispatched
             guard dispatcher.shouldBeginDispatching(
@@ -70,7 +70,7 @@ public actor StateMachine<
                 newAction: action,
                 currentState: currentState
             ) else {
-                logIfVerbose(message: "[AnotherInProgress] Action refused: \(action)")
+                logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action refused: \(action)")
                 return
             }
             
@@ -84,13 +84,13 @@ public actor StateMachine<
                 currentTask.cancel()
 
                 // Log
-                logIfVerbose(message: "[AnotherInProgress] Action is marked as cancelled: \(currentAction)")
+                logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action is marked as cancelled: \(currentAction)")
             }
             
             // Wait for current action to be completed
             else {
                 // Log
-                logIfVerbose(message: "[AnotherInProgress] Wait for current action to be completed...")
+                logIfVerbose(message: "🚧 🕑 [AnotherInProgress] Wait for current action to be completed...")
 
                 // Wait
                 await currentTask.value
@@ -120,7 +120,7 @@ public actor StateMachine<
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
         // Log
-        await logIfVerbose(message: "Action will begin dispatching: \(action)")
+        await logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
         
         // loading state whene action is about to be dispatched
         stateSubject.send(
@@ -132,12 +132,12 @@ public actor StateMachine<
         
         // check cancellation
         guard !Task.isCancelled else {
-            await logIfVerbose(message: "Action cancelled: \(action)")
+            await logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
         
         // Log
-        await logIfVerbose(message: "Action is being dispatched: \(action)")
+        await logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
         
         // dispatch action
         stateSubject.send(
@@ -149,12 +149,12 @@ public actor StateMachine<
         
         // check cancellation
         guard !Task.isCancelled else {
-            await logIfVerbose(message: "Action cancelled: \(action)")
+            await logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
         
         // Log
-        await logIfVerbose(message: "Action did end dispatching: \(action)")
+        await logIfVerbose(message: "✅ Action did end dispatching: \(action)")
         
         // additional state when action is dispatched
         stateSubject.send(
