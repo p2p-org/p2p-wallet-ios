@@ -13,6 +13,9 @@ public actor StateMachine<
     /// Dispatcher that controls dispatching actions
     private let dispatcher: Dispatcher
 
+    /// Define if if logging available
+    private let verbose: Bool
+
     // MARK: - Private properties
 
     /// Subject that holds a stream of current state, start with an initial state
@@ -40,8 +43,10 @@ public actor StateMachine<
     
     /// `StateMachine`'s initialization
     /// - Parameter dispatcher: Dispatcher that controls dispatching actions
-    init(dispatcher: Dispatcher) {
+    /// - Parameter verbose: Define if if logging available
+    init(dispatcher: Dispatcher, verbose: Bool = false) {
         self.dispatcher = dispatcher
+        self.verbose = verbose
     }
 
     // MARK: - Public methods
@@ -49,6 +54,8 @@ public actor StateMachine<
     /// Accept a new action
     /// - Parameter action: new action
     public func accept(action: Action) async {
+        // Log
+        logIfVerbose(message: "Action accepted: \(action)")
         
         // Check if action should be dispatched
         guard !dispatcher.shouldBeginDispatching(
@@ -56,11 +63,15 @@ public actor StateMachine<
             newAction: action,
             currentState: currentState
         ) else {
+            logIfVerbose(message: "Action refused: \(action)")
             return
         }
         
         // If there is any performing task
-        if let currentTask, currentTask.isCancelled == false {
+        if let currentTask, let currentAction, currentTask.isCancelled == false {
+            // Log
+            logIfVerbose(message: "Another action in progress: \(currentAction)")
+            
             // Check if new action should cancel current action
             if dispatcher.shouldCancelCurrentAction(
                 currentAction: currentAction,
@@ -69,10 +80,17 @@ public actor StateMachine<
             ) {
                 // Cancel current action
                 currentTask.cancel()
+
+                // Log
+                logIfVerbose(message: "Action cancelled: \(currentAction)")
             }
             
             // Wait for current action to be completed
             else {
+                // Log
+                logIfVerbose(message: "Wait for current action to be completed...")
+
+                // Wait
                 await currentTask.value
             }
         }
@@ -90,9 +108,18 @@ public actor StateMachine<
     }
 
     // MARK: - Private methods
+
+    /// Log an event
+    private func logIfVerbose(message: String) {
+        guard verbose else { return }
+        print("[StateMachine] \(message)")
+    }
     
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
+        // Log
+        await logIfVerbose(message: "Action will begin dispatching: \(action)")
+        
         // loading state whene action is about to be dispatched
         stateSubject.send(
             await dispatcher.actionWillBeginDispatching(
@@ -104,6 +131,9 @@ public actor StateMachine<
         // check cancellation
         guard !Task.isCancelled else { return }
         
+        // Log
+        await logIfVerbose(message: "Action is being dispatched: \(action)")
+        
         // dispatch action
         stateSubject.send(
             await dispatcher.dispatch(
@@ -114,6 +144,9 @@ public actor StateMachine<
         
         // check cancellation
         guard !Task.isCancelled else { return }
+        
+        // Log
+        await logIfVerbose(message: "Action did end dispatching: \(action)")
         
         // additional state when action is dispatched
         stateSubject.send(

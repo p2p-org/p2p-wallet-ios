@@ -10,7 +10,7 @@ public protocol Dispatcher<State, Action> {
 
     /// Asks the dispatcher whether to cancel dispatching current action
     /// or wait for it to finish then perform new action.
-    func shouldCancelCurrentAction(currentAction: Action?, newAction: Action, currentState: State) -> Bool
+    func shouldCancelCurrentAction(currentAction: Action, newAction: Action, currentState: State) -> Bool
 
     /// Tells the `StateMachine` that an action is about to be dispatched.
     /// Any loading state can be return from this function if needed.
