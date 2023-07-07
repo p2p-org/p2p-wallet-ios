@@ -153,6 +153,7 @@ private extension HomeViewModel {
             .map { $0.status != .initializing }
 
         let bankTransferServicePublisher = bankTransferService.state
+            .filter { $0.status == .ready }
             .map { $0.value.wallet?.accounts.usdc }
 
         // Merge two services.
@@ -212,7 +213,7 @@ private extension HomeViewModel {
 
         bankTransferService.state
             .receive(on: DispatchQueue.main)
-            .map { $0.value.userId != nil && $0.value.mobileVerified && $0.value.kycStatus != .approved }
+            .map { $0.value.userId != nil && $0.value.mobileVerified }
             .assignWeak(to: \.shouldUpdateBankTransfer, on: self)
             .store(in: &subscriptions)
     }
