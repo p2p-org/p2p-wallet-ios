@@ -48,7 +48,7 @@ final class StateMachineTests: XCTestCase {
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        let states = try await collectResult(delayFactor: 3)
+        let states = try await collectResult()
         
         XCTAssertEqual(states.count, 3)
         XCTAssertEqual(states[0], .initial)
@@ -148,7 +148,7 @@ final class StateMachineTests: XCTestCase {
     
     // MARK: - Helpers
 
-    private func collectResult(delayFactor: Int = 2) async throws -> [RecruitmentState] {
+    private func collectResult(delayFactor: Int = 3) async throws -> [RecruitmentState] {
         // prepare stream
         let stream = stateMachine.statePublisher
             .completeIfNoEventEmitedWithinSchedulerTime(
