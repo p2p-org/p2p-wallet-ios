@@ -9,6 +9,7 @@ struct HomeBannerParameters {
         let handler: () -> Void
     }
 
+    let id: String
     let backgroundColor: UIColor
     let image: UIImage
     let imageSize: CGSize
@@ -17,6 +18,7 @@ struct HomeBannerParameters {
     var button: Button?
 
     init(
+        id: String,
         backgroundColor: UIColor,
         image: UIImage,
         imageSize: CGSize,
@@ -24,6 +26,7 @@ struct HomeBannerParameters {
         subtitle: String?,
         button: Button?
     ) {
+        self.id = id
         self.title = title
         self.subtitle = subtitle
         self.button = button
@@ -38,6 +41,7 @@ struct HomeBannerParameters {
         isLoading: Bool,
         isSmallBanner: Bool
     ) {
+        id = status.rawValue
         switch status {
         case .notStarted, .initiated:
             backgroundColor = Asset.Colors.lightSea.color

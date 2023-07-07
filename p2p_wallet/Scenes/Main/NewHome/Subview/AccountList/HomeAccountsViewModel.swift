@@ -39,6 +39,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var smallBanner: HomeBannerParameters?
     @Published private(set) var shouldCloseBanner = false
 
+    @SwiftyUserDefault(keyPath: \.homeBannerVisibility, options: .cached)
+    private var smallBannerVisibility: HomeBannerVisibility?
+
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
 
@@ -285,7 +288,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         navigation.send(.cashOut)
     }
 
-    func closeBanner() {
+    func closeBanner(id: String) {
+        smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
         smallBanner = nil
         shouldCloseBanner = false
     }
@@ -299,11 +303,17 @@ extension HomeAccountsViewModel {
     }
 }
 
+// MARK: - Private
 private extension HomeAccountsViewModel {
     func bindTransferData() {
         bankTransferService.value.state
-            .filter({ $0.value.userId != nil && $0.value.mobileVerified })
-            .map { [weak self] value in
+            .filter { $0.value.userId != nil && $0.value.mobileVerified }
+            .filter { [weak self] in
+                // If banner with the same KYC status was already tapped, then we do not show it again
+                guard let bannerVisibility = self?.smallBannerVisibility else { return true }
+                return bannerVisibility.id != $0.value.kycStatus.rawValue || !bannerVisibility.closed
+            }
+            .map { [weak self] value -> HomeBannerParameters? in
                 guard let self else { return nil  }
 
                 if value.value.isIBANNotReady && !shouldShowErrorSubject.value {
@@ -312,10 +322,7 @@ private extension HomeAccountsViewModel {
 
                 return HomeBannerParameters(
                     status: value.value.kycStatus,
-                    action: { [weak self] in
-                        self?.tappedBannerSubject.send(.bankTransfer)
-                        self?.shouldCloseBanner = value.value.isIBANNotReady == false
-                    },
+                    action: { [weak self] in self?.requestCloseBanner(for: value.value) },
                     isLoading: false,
                     isSmallBanner: true
                 )
@@ -325,6 +332,7 @@ private extension HomeAccountsViewModel {
 
         tappedBannerSubject
             .withLatestFrom(bankTransferService.value.state)
+            .filter { !$0.isFetching }
             .receive(on: RunLoop.main)
             .sink{ [weak self] state in
                 guard let self else { return }
@@ -346,11 +354,13 @@ private extension HomeAccountsViewModel {
 
         bannerTapped
             .withLatestFrom(bankTransferService.value.state)
-            .filter { $0.value.kycStatus == .onHold || $0.value.kycStatus == .pendingReview }
-            .sink { [weak self] _ in
-                self?.navigation.send(.bankTransfer)
-            }
+            .sink { [weak self] state in self?.requestCloseBanner(for: state.value) }
             .store(in: &subscriptions)
+    }
+
+    func requestCloseBanner(for data: UserData) {
+        tappedBannerSubject.send(.bankTransfer)
+        shouldCloseBanner = data.isIBANNotReady == false
     }
 }
 
