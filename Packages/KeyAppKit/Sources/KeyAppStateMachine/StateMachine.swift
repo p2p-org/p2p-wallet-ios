@@ -82,7 +82,7 @@ public actor StateMachine<
                 currentTask.cancel()
 
                 // Log
-                logIfVerbose(message: "[AnotherInProgress] Action is being cancelled: \(currentAction)")
+                logIfVerbose(message: "[AnotherInProgress] Action is marked as cancelled: \(currentAction)")
             }
             
             // Wait for current action to be completed
