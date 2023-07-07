@@ -30,10 +30,7 @@ final class StateMachineTests: XCTestCase {
         XCTAssertEqual(states.count, 2)
         XCTAssertEqual(states.first, .initial)
         XCTAssertEqual(states.last, .init(
-            applicantName: "Napoleon The First",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The First"
         ))
     }
     
@@ -53,16 +50,10 @@ final class StateMachineTests: XCTestCase {
         XCTAssertEqual(states.count, 3)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The First"
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The Second"
         ))
     }
     
@@ -78,16 +69,10 @@ final class StateMachineTests: XCTestCase {
         XCTAssertEqual(states.count, 3)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The First"
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The Second"
         ))
     }
     
@@ -104,22 +89,13 @@ final class StateMachineTests: XCTestCase {
         XCTAssertEqual(states.count, 4)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The First"
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The Second"
         ))
         XCTAssertEqual(states[3], .init(
-            applicantName: "Napoleon The Third",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The Third"
         ))
     }
     
@@ -139,10 +115,7 @@ final class StateMachineTests: XCTestCase {
         XCTAssertEqual(states.count, 2)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The Second",
-            isApplicationSubmitted: true,
-            isApplicationReviewed: false,
-            isInterviewScheduled: false
+            applicantName: "Napoleon The Second"
         ))
     }
     

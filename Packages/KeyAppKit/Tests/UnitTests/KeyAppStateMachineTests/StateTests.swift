@@ -10,22 +10,13 @@ class StateTests: XCTestCase {
         // Modify the state using the `modified` method
         let modifiedState = initialState.modified { state in
             state.applicantName = "John Doe"
-            state.isApplicationSubmitted = true
-            state.isApplicationReviewed = true
-            state.isInterviewScheduled = true
         }
         
         // Verify the modified state
         XCTAssertEqual(modifiedState.applicantName, "John Doe")
-        XCTAssertTrue(modifiedState.isApplicationSubmitted)
-        XCTAssertTrue(modifiedState.isApplicationReviewed)
-        XCTAssertTrue(modifiedState.isInterviewScheduled)
         
         // Verify the initial state remains unchanged
         XCTAssertEqual(initialState.applicantName, "")
-        XCTAssertFalse(initialState.isApplicationSubmitted)
-        XCTAssertFalse(initialState.isApplicationReviewed)
-        XCTAssertFalse(initialState.isInterviewScheduled)
     }
     
     func testModifiedStateMultipleTimes() {
@@ -34,25 +25,18 @@ class StateTests: XCTestCase {
         
         // Modify the state multiple times using the `modified` method
         let modifiedState = initialState.modified { state in
-            state.isApplicationSubmitted = true
-            state.isApplicationReviewed = true
+            state.applicantName = "Long"
         }.modified { state in
-            state.isInterviewScheduled = true
+            state.applicantName = "Sth"
         }.modified { state in
             state.applicantName = "Alice Johnson"
         }
         
         // Verify the modified state
         XCTAssertEqual(modifiedState.applicantName, "Alice Johnson")
-        XCTAssertTrue(modifiedState.isApplicationSubmitted)
-        XCTAssertTrue(modifiedState.isApplicationReviewed)
-        XCTAssertTrue(modifiedState.isInterviewScheduled)
         
         // Verify the initial state remains unchanged
         XCTAssertEqual(initialState.applicantName, "")
-        XCTAssertFalse(initialState.isApplicationSubmitted)
-        XCTAssertFalse(initialState.isApplicationReviewed)
-        XCTAssertFalse(initialState.isInterviewScheduled)
     }
     
     func testModifiedStateNoChanges() {

@@ -57,15 +57,6 @@ class RecruitmentDispatcher: Dispatcher {
         case let .submitApplication(applicantName):
             return currentState.modified {
                 $0.applicantName = applicantName
-                $0.isApplicationSubmitted = true
-            }
-        case .reviewApplication:
-            return currentState.modified {
-                $0.isApplicationReviewed = true
-            }
-        case .scheduleInterview:
-            return currentState.modified {
-                $0.isInterviewScheduled = true
             }
         }
     }

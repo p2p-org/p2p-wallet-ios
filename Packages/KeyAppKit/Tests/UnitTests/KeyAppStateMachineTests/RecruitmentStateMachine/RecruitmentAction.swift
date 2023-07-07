@@ -5,6 +5,6 @@ import KeyAppStateMachine
 /// Assume that there is only 1 application accepted, and we ONLY get last application, cancel all previous
 enum RecruitmentAction: Action {
     case submitApplication(applicantName: String)
-    case reviewApplication
-    case scheduleInterview
+//    case reviewApplication
+//    case scheduleInterview
 }
