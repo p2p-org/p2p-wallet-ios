@@ -1,7 +1,7 @@
 import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
-    
+
     // MARK: - Properties
 
     private var useCase: MockStrigaUseCase
@@ -146,5 +146,24 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             gasLimit: "21000",
             gasPrice: "18.313"
         )
+    }
+
+    public func getWhitelistedUserDestinations(
+        userId: String,
+        currency: String?,
+        label: String?,
+        page: String?
+    ) async throws -> [StrigaWhitelistAddressResponse] {
+        fatalError()
+    }
+
+    public func whitelistDestinationAddress(
+        userId: String,
+        address: String,
+        currency: String,
+        network: String,
+        label: String?
+    ) async throws -> StrigaWhitelistAddressResponse {
+        fatalError()
     }
 }

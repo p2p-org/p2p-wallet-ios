@@ -47,7 +47,6 @@ class HomeViewModel: ObservableObject {
         // reload
         Task {
             await reload()
-            await bankTransferService.reload()
         }
     }
 

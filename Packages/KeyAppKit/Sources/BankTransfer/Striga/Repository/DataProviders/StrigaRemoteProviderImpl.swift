@@ -181,10 +181,6 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         )
     }
 
-    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
-        [StrigaWhitelistAddressResponse(id: "d5d2bad2-f974-4e88-89be-910907b4b5c5")]
-    }
-
     public func transactionResendOTP(
         userId: String,
         challengeId: String
@@ -220,6 +216,50 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(
             endpoint: endpoint,
             responseModel: StrigaTransactionConfirmOTPResponse.self
+        )
+    }
+
+    public func whitelistDestinationAddress(
+        userId: String,
+        address: String,
+        currency: String,
+        network: String,
+        label: String?
+    ) async throws -> StrigaWhitelistAddressResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.whitelistDestinationAddress(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            address: address,
+            currency: currency,
+            network: network,
+            label: label
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: StrigaWhitelistAddressResponse.self
+        )
+    }
+
+    public func getWhitelistedUserDestinations(
+        userId: String,
+        currency: String?,
+        label: String?,
+        page: String?
+    ) async throws -> [StrigaWhitelistAddressResponse] {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getWhitelistedUserDestinations(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            currency: currency,
+            label: label,
+            page: page
+        )
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: [StrigaWhitelistAddressResponse].self
         )
     }
 

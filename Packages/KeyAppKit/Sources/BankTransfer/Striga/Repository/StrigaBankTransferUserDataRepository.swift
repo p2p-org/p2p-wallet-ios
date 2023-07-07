@@ -12,6 +12,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     private let localProvider: StrigaLocalProvider
     private let remoteProvider: StrigaRemoteProvider
     private let metadataProvider: StrigaMetadataProvider
+    private let solanaKeyPair: KeyPair?
 
     // TODO: Consider removing commonInfoProvider from StrigaBankTransferUserDataRepository, because when more bank transfer providers will be added, we will need to have more general logic for this
     private let commonInfoProvider: CommonInfoLocalProvider
@@ -22,12 +23,14 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         localProvider: StrigaLocalProvider,
         remoteProvider: StrigaRemoteProvider,
         metadataProvider: StrigaMetadataProvider,
-        commonInfoProvider: CommonInfoLocalProvider
+        commonInfoProvider: CommonInfoLocalProvider,
+        solanaKeyPair: KeyPair?
     ) {
         self.localProvider = localProvider
         self.remoteProvider = remoteProvider
         self.metadataProvider = metadataProvider
         self.commonInfoProvider = commonInfoProvider
+        self.solanaKeyPair = solanaKeyPair
     }
     
     // MARK: - Methods
@@ -237,7 +240,15 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 )
             }
         }
-
+        // TODO: whitelisting after Striga implementation
+//        do {
+//            try await addWhitelistIfNeeded(
+//                for: userId,
+//                account: wallet?.accounts.usdc
+//            )
+//        } catch {
+//            debugPrint(error)
+//        }
         return wallet
     }
 
@@ -249,13 +260,33 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         _ = try await remoteProvider.transactionResendOTP(userId: userId, challengeId: challengeId)
     }
 
-    // MARK: - Private
-    private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
-        try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
+    public func whitelistIdFor(account: USDCUserAccount) async throws -> String? {
+        return try await localProvider.getWhitelistedUserDestinations()
+            .filter({ response in
+                response.address == solanaKeyPair?.publicKey.base58EncodedString
+                && response.currency == account.currency
+            })
+            .first?.id
     }
 
-    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
-        try await remoteProvider.getWhitelistedUserDestinations()
+    public func addWhitelistIfNeeded(for userId: String, account: USDCUserAccount?) async throws {
+        guard
+            let address = solanaKeyPair?.publicKey.base58EncodedString,
+            let currency = account?.currency,
+            let account,
+            try await whitelistIdFor(account: account) == nil
+        else { return }
+
+        _ = try await remoteProvider.whitelistDestinationAddress(
+            userId: userId, address: address, currency: currency, network: "SOL", label: nil
+        )
+        let whitelisted = try await remoteProvider.getWhitelistedUserDestinations(
+            userId: userId,
+            currency: currency,
+            label: nil,
+            page: nil
+        )
+        try? await localProvider.save(whitelisted: whitelisted)
     }
 
     public func initiateOnchainWithdrawal(
@@ -272,6 +303,11 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             amount: amount,
             accountCreation: accountCreation
         )
+    }
+
+    // MARK: - Private
+    private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
+        try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
 
 }

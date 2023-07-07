@@ -84,6 +84,10 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         fatalError()
     }
 
+    public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
+        fatalError()
+    }
+
     public func clear() async {
         self.cachedRegistrationData = nil
         self.useCase = .unregisteredUser

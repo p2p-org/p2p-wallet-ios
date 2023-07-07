@@ -41,4 +41,3 @@ public struct StrigaWalletSendResponse: Codable {
         let gasPrice: String
     }
 }
-

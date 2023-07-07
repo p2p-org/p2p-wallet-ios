@@ -1,4 +1,5 @@
 import Foundation
+import SolanaSwift
 
 public protocol StrigaLocalProvider {
     func getCachedRegistrationData() async -> StrigaUserDetailsResponse?
@@ -7,6 +8,7 @@ public protocol StrigaLocalProvider {
     func getCachedUserData() async -> UserData?
     func save(userData: UserData) async throws
     func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse]
+    func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws
 
     func clear() async
 }
@@ -72,7 +74,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     }
 
     public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
-        get(from: whitelistedFile) ?? []
+        (get(from: whitelistedFile) ?? [])
     }
 
     public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
