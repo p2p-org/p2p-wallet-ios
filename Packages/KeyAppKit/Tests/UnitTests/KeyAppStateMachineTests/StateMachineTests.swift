@@ -29,7 +29,6 @@ final class StateMachineTests: XCTestCase {
         var states = [RecruitmentState]()
         for try await state in stream {
             states.append(state)
-            print(state)
         }
         
         XCTAssertEqual(states.count, 4)
