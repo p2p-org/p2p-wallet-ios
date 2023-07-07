@@ -112,8 +112,8 @@ let package = Package(
         ),
 
         .library(
-            name: "StateMachine",
-            targets: ["StateMachine"]
+            name: "KeyAppStateMachine",
+            targets: ["KeyAppStateMachine"]
         )
     ],
     dependencies: [
@@ -380,13 +380,13 @@ let package = Package(
         
         // StateMachine
         .target(
-            name: "StateMachine"
+            name: "KeyAppStateMachine"
         ),
         
         .testTarget(
-            name: "StateMachineTests",
-            dependencies: ["StateMachine"],
-            path: "Tests/UnitTests/StateMachineTests"
+            name: "KeyAppStateMachineTests",
+            dependencies: ["KeyAppStateMachine"],
+            path: "Tests/UnitTests/KeyAppStateMachineTests"
         )
     ]
 )

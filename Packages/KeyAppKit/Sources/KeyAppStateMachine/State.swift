@@ -5,7 +5,8 @@ import Foundation
 /// State needs to be **lightweight**. It contains mutable properties and computed properties. Every time you want to add a property to a state, you need to clearly define weather it is mutable property or computed property.
 /// State should be Equatable (to support reverse, comparison, ignoring duplication, etc.).
 public protocol State: Equatable {
-    
+    /// Initial `State`
+    static var initial: Self { get }
 }
 
 /// Common extension for `State`
