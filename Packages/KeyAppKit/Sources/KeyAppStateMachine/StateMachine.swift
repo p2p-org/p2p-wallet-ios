@@ -112,7 +112,7 @@ public actor StateMachine<
     // MARK: - Private methods
 
     /// Log an event
-    private func logIfVerbose(message: String) {
+    private nonisolated func logIfVerbose(message: String) {
         guard verbose else { return }
         print("[StateMachine] \(message)")
     }
@@ -120,7 +120,7 @@ public actor StateMachine<
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
         // Log
-        await logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
+        logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
         
         // loading state whene action is about to be dispatched
         stateSubject.send(
@@ -132,12 +132,12 @@ public actor StateMachine<
         
         // check cancellation
         guard !Task.isCancelled else {
-            await logIfVerbose(message: "❌ Action cancelled: \(action)")
+            logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
         
         // Log
-        await logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
+        logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
         
         // dispatch action
         stateSubject.send(
@@ -149,12 +149,12 @@ public actor StateMachine<
         
         // check cancellation
         guard !Task.isCancelled else {
-            await logIfVerbose(message: "❌ Action cancelled: \(action)")
+            logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
         
         // Log
-        await logIfVerbose(message: "✅ Action did end dispatching: \(action)")
+        logIfVerbose(message: "✅ Action did end dispatching: \(action)")
         
         // additional state when action is dispatched
         stateSubject.send(
