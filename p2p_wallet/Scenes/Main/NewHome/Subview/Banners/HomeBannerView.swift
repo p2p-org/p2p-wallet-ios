@@ -60,6 +60,7 @@ struct HomeBannerView_Previews: PreviewProvider {
         List {
             HomeBannerView(
                 params: HomeBannerParameters(
+                    id: UUID().uuidString,
                     backgroundColor: .fern,
                     image: .homeBannerPerson,
                     imageSize: CGSize(width: 198, height: 142),

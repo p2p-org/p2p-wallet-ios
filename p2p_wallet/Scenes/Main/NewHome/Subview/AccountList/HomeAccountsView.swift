@@ -60,7 +60,7 @@ struct HomeAccountsView: View {
                     .padding(.top, 16)
                     .onChange(of: viewModel.shouldCloseBanner) { [weak viewModel] output in
                         guard output else { return }
-                        withAnimation { viewModel?.closeBanner() }
+                        withAnimation { viewModel?.closeBanner(id: smallBanner.id) }
                     }
                     .onTapGesture {
                         viewModel.bannerTapped.send()

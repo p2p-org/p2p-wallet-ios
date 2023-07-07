@@ -32,6 +32,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
         self.banner = HomeBannerParameters(
+            id: UUID().uuidString,
             backgroundColor: Asset.Colors.lightGrass.color,
             image: .homeBannerPerson,
             imageSize: CGSize(width: 198, height: 142),
@@ -97,6 +98,7 @@ private extension HomeEmptyViewModel {
 
         tappedBannerSubject
             .withLatestFrom(bankTransferService.state)
+            .filter { !$0.isFetching }
             .receive(on: RunLoop.main)
             .sink{ [weak self] state in
                 guard let self else { return }
@@ -117,11 +119,7 @@ private extension HomeEmptyViewModel {
             .store(in: &subscriptions)
 
         bannerTapped
-            .withLatestFrom(bankTransferService.state)
-            .filter { $0.value.kycStatus == .onHold || $0.value.kycStatus == .pendingReview }
-            .sink { [weak self] _ in
-                self?.navigation.send(.bankTransfer)
-            }
+            .sink { [weak self] _ in self?.tappedBannerSubject.send(.bankTransfer) }
             .store(in: &subscriptions)
     }
 }

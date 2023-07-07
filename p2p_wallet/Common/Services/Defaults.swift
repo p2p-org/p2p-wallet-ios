@@ -167,6 +167,10 @@ extension DefaultsKeys {
     var bankTransferLastCountry: DefaultsKey<Country?> {
         .init(#function, defaultValue: nil)
     }
+
+    var homeBannerVisibility: DefaultsKey<HomeBannerVisibility?> {
+        .init(#function, defaultValue: nil)
+    }
 }
 
 // MARK: - Moonpay Environment
