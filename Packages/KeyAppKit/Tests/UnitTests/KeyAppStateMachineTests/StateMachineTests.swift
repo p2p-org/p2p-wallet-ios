@@ -6,9 +6,9 @@ private let fakeNetworkDelayInMilliseconds: Int = 300
 
 final class StateMachineTests: XCTestCase {
     
-    var stateMachine: StateMachine<RecruitmentState, RecruitmentAction, RecruitmentDispatcher>!
-    var dispatcher: RecruitmentDispatcher!
     var apiClient: APIClient = MockAPIClient(delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds))
+    var dispatcher: RecruitmentDispatcher!
+    var stateMachine: StateMachine<RecruitmentState, RecruitmentAction, RecruitmentDispatcher>!
 
     override func setUpWithError() throws {
         dispatcher = .init(apiClient: apiClient)
