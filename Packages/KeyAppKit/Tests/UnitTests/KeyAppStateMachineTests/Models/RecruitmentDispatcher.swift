@@ -8,7 +8,6 @@ struct RecruitmentDispatcher: Dispatcher {
         newAction: RecruitmentAction,
         currentState: RecruitmentState
     ) -> Bool {
-        
         // In this example, we allow all actions to be dispatched
         return true
     }
@@ -19,7 +18,7 @@ struct RecruitmentDispatcher: Dispatcher {
         currentState: RecruitmentState
     ) -> Bool {
         // In this example, we don't cancel any ongoing actions
-        return false
+        return true
     }
     
     func actionWillBeginDispatching(

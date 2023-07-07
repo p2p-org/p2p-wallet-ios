@@ -60,15 +60,15 @@ public actor StateMachine<
         // If there is any performing action, task
         if let currentTask, let currentAction, currentTask.isCancelled == false {
             // Log
-            logIfVerbose(message: "Another action in progress: \(currentAction)")
+            logIfVerbose(message: "[AnotherInProgress] Another action in progress: \(currentAction)")
             
             // Check if action should be dispatched
-            guard !dispatcher.shouldBeginDispatching(
+            guard dispatcher.shouldBeginDispatching(
                 currentAction: currentAction,
                 newAction: action,
                 currentState: currentState
             ) else {
-                logIfVerbose(message: "Action refused: \(action)")
+                logIfVerbose(message: "[AnotherInProgress] Action refused: \(action)")
                 return
             }
             
@@ -82,13 +82,13 @@ public actor StateMachine<
                 currentTask.cancel()
 
                 // Log
-                logIfVerbose(message: "Action cancelled: \(currentAction)")
+                logIfVerbose(message: "[AnotherInProgress] Action cancelled: \(currentAction)")
             }
             
             // Wait for current action to be completed
             else {
                 // Log
-                logIfVerbose(message: "Wait for current action to be completed...")
+                logIfVerbose(message: "[AnotherInProgress] Wait for current action to be completed...")
 
                 // Wait
                 await currentTask.value

@@ -18,8 +18,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptAnAction() async throws {
         // accept an action
         await stateMachine.accept(action: .submitApplication(applicantName: "Ivan"))
-    
-        
+        await stateMachine.accept(action: .submitApplication(applicantName: "Ivan2"))
     }
 
     func testPerformanceExample() throws {
