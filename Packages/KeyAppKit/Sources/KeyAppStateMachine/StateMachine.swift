@@ -48,10 +48,10 @@ public actor StateMachine<
     
     /// Accept a new action
     /// - Parameter action: new action
-    public nonisolated func accept(action: Action) async {
+    public func accept(action: Action) async {
         
         // Check if action should be dispatched
-        guard await !dispatcher.shouldBeginDispatching(
+        guard !dispatcher.shouldBeginDispatching(
             currentAction: currentAction,
             newAction: action,
             currentState: currentState
@@ -59,33 +59,40 @@ public actor StateMachine<
             return
         }
         
-        // Check if new action should cancel current action
-        if await dispatcher.shouldCancelCurrentAction(
-            currentAction: currentAction,
-            newAction: action,
-            currentState: currentState
-        ) {
-            // Cancel current action
-            await currentTask?.cancel()
-        }
-        
-        // If current task is not cancelled
-        else if let currentTask = await currentTask, currentTask.isCancelled == false {
+        // If there is any performing task
+        if let currentTask, currentTask.isCancelled == false {
+            // Check if new action should cancel current action
+            if dispatcher.shouldCancelCurrentAction(
+                currentAction: currentAction,
+                newAction: action,
+                currentState: currentState
+            ) {
+                // Cancel current action
+                currentTask.cancel()
+            }
+            
             // Wait for current action to be completed
-            await currentTask.value
+            else {
+                await currentTask.value
+            }
         }
         
         // Dispatch action
-        await saveCurrentAction(action)
-        await saveCurrentTask(.init { [unowned self] in
+        saveCurrentAction(action)
+        saveCurrentTask(.init { [unowned self] in
+            // perform task
             await performAction(action: action)
+            
+            // remove current task / action
+            saveCurrentAction(nil)
+            saveCurrentTask(nil)
         })
     }
 
     // MARK: - Private methods
     
     /// Perform an action by delegating works to dispatcher
-    private func performAction(action: Action) async {
+    private nonisolated func performAction(action: Action) async {
         // loading state whene action is about to be dispatched
         stateSubject.send(
             await dispatcher.actionWillBeginDispatching(
@@ -115,10 +122,6 @@ public actor StateMachine<
                 currentState: currentState
             )
         )
-        
-        // remove current task / action
-        saveCurrentAction(nil)
-        saveCurrentTask(nil)
     }
     
     /// Save current action
