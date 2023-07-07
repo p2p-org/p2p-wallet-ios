@@ -44,7 +44,7 @@ public actor StateMachine<
     /// `StateMachine`'s initialization
     /// - Parameter dispatcher: Dispatcher that controls dispatching actions
     /// - Parameter verbose: Define if if logging available
-    init(dispatcher: Dispatcher, verbose: Bool = false) {
+    public init(dispatcher: Dispatcher, verbose: Bool = false) {
         self.dispatcher = dispatcher
         self.verbose = verbose
     }
@@ -57,20 +57,20 @@ public actor StateMachine<
         // Log
         logIfVerbose(message: "Action accepted: \(action)")
         
-        // Check if action should be dispatched
-        guard !dispatcher.shouldBeginDispatching(
-            currentAction: currentAction,
-            newAction: action,
-            currentState: currentState
-        ) else {
-            logIfVerbose(message: "Action refused: \(action)")
-            return
-        }
-        
-        // If there is any performing task
+        // If there is any performing action, task
         if let currentTask, let currentAction, currentTask.isCancelled == false {
             // Log
             logIfVerbose(message: "Another action in progress: \(currentAction)")
+            
+            // Check if action should be dispatched
+            guard !dispatcher.shouldBeginDispatching(
+                currentAction: currentAction,
+                newAction: action,
+                currentState: currentState
+            ) else {
+                logIfVerbose(message: "Action refused: \(action)")
+                return
+            }
             
             // Check if new action should cancel current action
             if dispatcher.shouldCancelCurrentAction(

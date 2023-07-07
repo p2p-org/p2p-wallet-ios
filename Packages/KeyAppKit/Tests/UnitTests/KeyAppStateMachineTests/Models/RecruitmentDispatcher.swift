@@ -4,15 +4,20 @@ import KeyAppStateMachine
 struct RecruitmentDispatcher: Dispatcher {
     
     func shouldBeginDispatching(
-        currentAction: RecruitmentAction?,
+        currentAction: RecruitmentAction,
         newAction: RecruitmentAction,
         currentState: RecruitmentState
     ) -> Bool {
+        
         // In this example, we allow all actions to be dispatched
         return true
     }
     
-    func shouldCancelCurrentAction(currentAction: RecruitmentAction, newAction: RecruitmentAction, currentState: RecruitmentState) -> Bool {
+    func shouldCancelCurrentAction(
+        currentAction: RecruitmentAction,
+        newAction: RecruitmentAction,
+        currentState: RecruitmentState
+    ) -> Bool {
         // In this example, we don't cancel any ongoing actions
         return false
     }
