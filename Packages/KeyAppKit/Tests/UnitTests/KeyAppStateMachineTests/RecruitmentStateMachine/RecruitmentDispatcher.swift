@@ -6,18 +6,18 @@ class RecruitmentDispatcher: Dispatcher {
     
     var shouldBeginDispatchingAnyAction: Bool = true
     var newActionShouldCancelPreviousAction: Bool = false
-    var delayInMilliseconds: UInt64
+    let apiClient: APIClient
 
     // MARK: - Initializer
 
     init(
         shouldBeginDispatchingAnyAction: Bool = true,
         newActionShouldCancelPreviousAction: Bool = false,
-        delayInMilliseconds: UInt64
+        apiClient: APIClient
     ) {
         self.shouldBeginDispatchingAnyAction = shouldBeginDispatchingAnyAction
         self.newActionShouldCancelPreviousAction = newActionShouldCancelPreviousAction
-        self.delayInMilliseconds = delayInMilliseconds
+        self.apiClient = apiClient
     }
 
     // MARK: - Methods
@@ -42,21 +42,34 @@ class RecruitmentDispatcher: Dispatcher {
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState {
-        try? await sendFakeAPIRequest()
-        return currentState
+        switch action {
+        case .submitApplication(let applicantName):
+            return currentState.modified {
+                $0.sendingStatus = .sending
+                $0.applicantName = applicantName
+            }
+        }
     }
     
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState {
-        // Network request
-        try? await sendFakeAPIRequest()
-        
         switch action {
         case let .submitApplication(applicantName):
-            return currentState.modified {
-                $0.applicantName = applicantName
+            do {
+                try await RecruitmentBusinessLogic.sendApplicant(
+                    applicantName: applicantName,
+                    apiClient: apiClient
+                )
+                
+                return currentState.modified {
+                    $0.sendingStatus = .completed
+                }
+            } catch {
+                return currentState.modified {
+                    $0.sendingStatus = .error("\(error)")
+                }
             }
         }
     }
@@ -66,13 +79,7 @@ class RecruitmentDispatcher: Dispatcher {
         currentState: RecruitmentState
     ) async -> RecruitmentState {
         // No additional state modifications in this example
-        return currentState
-    }
-    
-    // MARK: - Helper
-
-    private func sendFakeAPIRequest() async throws {
-        try await Task.sleep(nanoseconds: delayInMilliseconds * 1_000_000)
+        currentState
     }
 }
 

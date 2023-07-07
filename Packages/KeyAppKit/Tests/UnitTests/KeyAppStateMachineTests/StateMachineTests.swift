@@ -7,16 +7,17 @@ private let fakeNetworkDelayInMilliseconds: Int = 300
 final class StateMachineTests: XCTestCase {
     
     var stateMachine: StateMachine<RecruitmentState, RecruitmentAction, RecruitmentDispatcher>!
-    var dispatcher: RecruitmentDispatcher = .init(
-        delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds)
-    )
+    var dispatcher: RecruitmentDispatcher!
+    var apiClient: APIClient = MockAPIClient(delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds))
 
     override func setUpWithError() throws {
+        dispatcher = .init(apiClient: apiClient)
         stateMachine = .init(dispatcher: dispatcher, verbose: true)
     }
 
     override func tearDownWithError() throws {
         stateMachine = nil
+        dispatcher = nil
     }
 
     func testAcceptAnAction_ShouldReturnExpectedState() async throws {
@@ -25,12 +26,20 @@ final class StateMachineTests: XCTestCase {
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
         }
         
-        let states = try await collectResult()
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The First",
+            sendingStatus: .completed
+        ))
         
-        XCTAssertEqual(states.count, 2)
-        XCTAssertEqual(states.first, .initial)
-        XCTAssertEqual(states.last, .init(
-            applicantName: "Napoleon The First"
+        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[2], .init(
+            applicantName: "Napoleon The First",
+            sendingStatus: .completed
         ))
     }
     
@@ -45,15 +54,28 @@ final class StateMachineTests: XCTestCase {
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        let states = try await collectResult()
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
+        ))
         
-        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states.count, 5)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First"
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second"
+            applicantName: "Napoleon The First",
+            sendingStatus: .completed
+        ))
+        XCTAssertEqual(states[3], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[4], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
         ))
     }
     
@@ -64,15 +86,28 @@ final class StateMachineTests: XCTestCase {
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        let states = try await collectResult()
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
+        ))
         
-        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states.count, 5)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First"
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second"
+            applicantName: "Napoleon The First",
+            sendingStatus: .completed
+        ))
+        XCTAssertEqual(states[3], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[4], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
         ))
     }
     
@@ -84,18 +119,36 @@ final class StateMachineTests: XCTestCase {
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Third"))
         }
         
-        let states = try await collectResult()
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The Third",
+            sendingStatus: .completed
+        ))
         
-        XCTAssertEqual(states.count, 4)
+        XCTAssertEqual(states.count, 7)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The First"
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
         ))
         XCTAssertEqual(states[2], .init(
-            applicantName: "Napoleon The Second"
+            applicantName: "Napoleon The First",
+            sendingStatus: .completed
         ))
         XCTAssertEqual(states[3], .init(
-            applicantName: "Napoleon The Third"
+            applicantName: "Napoleon The Second",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[4], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
+        ))
+        XCTAssertEqual(states[5], .init(
+            applicantName: "Napoleon The Third",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[6], .init(
+            applicantName: "Napoleon The Third",
+            sendingStatus: .completed
         ))
     }
     
@@ -110,23 +163,37 @@ final class StateMachineTests: XCTestCase {
         }
         
         
-        let states = try await collectResult()
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
+        ))
         
-        XCTAssertEqual(states.count, 2)
+        XCTAssertEqual(states.count, 4)
         XCTAssertEqual(states[0], .initial)
         XCTAssertEqual(states[1], .init(
-            applicantName: "Napoleon The Second"
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[2], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[3], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
         ))
     }
     
     // MARK: - Helpers
 
-    private func collectResult(delayFactor: Int = 3) async throws -> [RecruitmentState] {
+    private func collectResult(finishWhenReceiving state: RecruitmentState) async throws -> [RecruitmentState] {
         // prepare stream
         let stream = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(delayFactor * fakeNetworkDelayInMilliseconds + 50)
-            )
+            .prefix(while: { $0 != state })
+            .append(state)
+            .timeout(.seconds(5), scheduler: DispatchQueue.main, options: nil, customError: nil)
+            .asyncStream()
+
         
         // listen
         var states = [RecruitmentState]()
@@ -135,16 +202,5 @@ final class StateMachineTests: XCTestCase {
         }
         
         return states
-    }
-}
-
-// MARK: - Private extensions
-
-private extension Publisher {
-    func completeIfNoEventEmitedWithinSchedulerTime(
-        _ time: DispatchQueue.SchedulerTimeType.Stride
-    ) -> CombineAsyncStream<Publishers.Timeout<Self, DispatchQueue>> {
-        let timeOutPublisher = timeout(time, scheduler: DispatchQueue.main, options: nil, customError: nil)
-        return CombineAsyncStream(timeOutPublisher)
     }
 }

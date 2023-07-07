@@ -2,17 +2,20 @@ import Foundation
 import KeyAppStateMachine
 
 struct RecruitmentState: State {
+    enum Status: Equatable {
+        case initializing
+        case sending
+        case error(String)
+        case completed
+    }
+    
     var applicantName: String
-//    var isApplicationSubmitted: Bool
-//    var isApplicationReviewed: Bool
-//    var isInterviewScheduled: Bool
+    var sendingStatus: Status
     
     static var initial: RecruitmentState {
         return RecruitmentState(
-            applicantName: ""
-//            isApplicationSubmitted: false,
-//            isApplicationReviewed: false,
-//            isInterviewScheduled: false
+            applicantName: "",
+            sendingStatus: .initializing
         )
     }
 }
