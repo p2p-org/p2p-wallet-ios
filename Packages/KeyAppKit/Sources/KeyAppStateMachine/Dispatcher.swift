@@ -1,6 +1,9 @@
 import Foundation
 
-/// Dispatcher that handles action dispatching.
+/// Dispatcher is an object that receive actions, currentState, define rules for converting them to a newState.
+/// Dispatcher delegates work to handlers function inside BusinessLogic, await output and map them into a new state.
+/// It will not handle any complex logics.
+/// All complicated logics need to be handled in `BusinessLogic`.
 public protocol Dispatcher<State, Action> {
     associatedtype State: KeyAppStateMachine.State
     associatedtype Action: KeyAppStateMachine.Action

@@ -2,13 +2,7 @@ import Foundation
 import KeyAppStateMachine
 
 struct RecruitmentState: State {
-    enum Status: Equatable {
-        case initializing
-        case sending
-        case error(String)
-        case completed
-    }
-    
+    // MARK: - Properties
     var applicantName: String
     var sendingStatus: Status
     
@@ -20,3 +14,13 @@ struct RecruitmentState: State {
     }
 }
 
+// MARK: - Nested type
+
+extension RecruitmentState {
+    enum Status: Equatable {
+        case initializing
+        case sending
+        case error(String)
+        case completed
+    }
+}
