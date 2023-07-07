@@ -3,56 +3,68 @@ import KeyAppStateMachine
 
 class StateTests: XCTestCase {
     
-    func testModified_WhenUpdatingNameAndAge_ShouldReturnNewStateWithUpdatedProperties() {
-        // Arrange
-        let initialState = UserState(name: "John", age: 30)
+    func testModifiedState() {
+        // Create an initial state
+        let initialState = RecruitmentState.initial
         
-        // Act
-        let newState = initialState.modified { state in
-            state.name = "Jane"
-            state.age = 35
+        // Modify the state using the `modified` method
+        let modifiedState = initialState.modified { state in
+            state.applicantName = "John Doe"
+            state.isApplicationSubmitted = true
+            state.isApplicationReviewed = true
+            state.isInterviewScheduled = true
         }
         
-        // Assert
-        XCTAssertEqual(newState.name, "Jane")
-        XCTAssertEqual(newState.age, 35)
-        XCTAssertTrue(newState.isAdult)
-        XCTAssertEqual(newState.greeting, "Hello, my name is Jane and I'm 35 years old.")
-        XCTAssertNotEqual(initialState, newState)
+        // Verify the modified state
+        XCTAssertEqual(modifiedState.applicantName, "John Doe")
+        XCTAssertTrue(modifiedState.isApplicationSubmitted)
+        XCTAssertTrue(modifiedState.isApplicationReviewed)
+        XCTAssertTrue(modifiedState.isInterviewScheduled)
+        
+        // Verify the initial state remains unchanged
+        XCTAssertEqual(initialState.applicantName, "")
+        XCTAssertFalse(initialState.isApplicationSubmitted)
+        XCTAssertFalse(initialState.isApplicationReviewed)
+        XCTAssertFalse(initialState.isInterviewScheduled)
     }
     
-    func testModified_WhenIncrementingAge_ShouldReturnNewStateWithUpdatedProperties() {
-        // Arrange
-        let initialState = UserState(name: "John", age: 17)
+    func testModifiedStateMultipleTimes() {
+        // Create an initial state
+        let initialState = RecruitmentState.initial
         
-        // Act
-        let newState = initialState.modified { state in
-            state.age += 1
+        // Modify the state multiple times using the `modified` method
+        let modifiedState = initialState.modified { state in
+            state.isApplicationSubmitted = true
+            state.isApplicationReviewed = true
+        }.modified { state in
+            state.isInterviewScheduled = true
+        }.modified { state in
+            state.applicantName = "Alice Johnson"
         }
         
-        // Assert
-        XCTAssertEqual(newState.name, "John")
-        XCTAssertEqual(newState.age, 18)
-        XCTAssertTrue(newState.isAdult)
-        XCTAssertEqual(newState.greeting, "Hello, my name is John and I'm 18 years old.")
-        XCTAssertNotEqual(initialState, newState)
+        // Verify the modified state
+        XCTAssertEqual(modifiedState.applicantName, "Alice Johnson")
+        XCTAssertTrue(modifiedState.isApplicationSubmitted)
+        XCTAssertTrue(modifiedState.isApplicationReviewed)
+        XCTAssertTrue(modifiedState.isInterviewScheduled)
+        
+        // Verify the initial state remains unchanged
+        XCTAssertEqual(initialState.applicantName, "")
+        XCTAssertFalse(initialState.isApplicationSubmitted)
+        XCTAssertFalse(initialState.isApplicationReviewed)
+        XCTAssertFalse(initialState.isInterviewScheduled)
     }
     
-    func testModified_WhenUpdatingName_ShouldReturnNewStateWithUpdatedProperties() {
-        // Arrange
-        let initialState = UserState(name: "John", age: 30)
+    func testModifiedStateNoChanges() {
+        // Create an initial state
+        let initialState = RecruitmentState.initial
         
-        // Act
-        let newState = initialState.modified { state in
-            state.name = "Jane"
+        // Modify the state using the `modified` method without making any changes
+        let modifiedState = initialState.modified { _ in
+            // No changes made
         }
         
-        // Assert
-        XCTAssertEqual(newState.name, "Jane")
-        XCTAssertEqual(newState.age, 30)
-        XCTAssertTrue(newState.isAdult)
-        XCTAssertEqual(newState.greeting, "Hello, my name is Jane and I'm 30 years old.")
-        XCTAssertNotEqual(initialState, newState)
+        // Verify the modified state is the same as the initial state
+        XCTAssertEqual(modifiedState, initialState)
     }
-    
 }
