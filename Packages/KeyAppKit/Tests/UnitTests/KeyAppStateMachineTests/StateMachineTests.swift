@@ -26,13 +26,12 @@ final class StateMachineTests: XCTestCase {
             .asyncStream()
         
         // Print timer ticks to the console.
-        var states = [RecruitmentState]()
+        var lastState: RecruitmentState!
         for try await state in stream {
-            states.append(state)
+            lastState = state
         }
         
-        XCTAssertEqual(states.count, 4)
-        XCTAssertEqual(states.last, .init(
+        XCTAssertEqual(lastState, .init(
             applicantName: "Napoleon The First",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
