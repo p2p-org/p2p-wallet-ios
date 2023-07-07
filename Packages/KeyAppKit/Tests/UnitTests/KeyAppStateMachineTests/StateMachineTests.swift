@@ -21,21 +21,15 @@ final class StateMachineTests: XCTestCase {
 
     func testAcceptAnAction_ShouldReturnExpectedState() async throws {
         // accept an action
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
-        
-        // listen
-        let stream = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
-            )
-        
-        // get last state
-        var lastState: RecruitmentState!
-        for try await state in stream {
-            lastState = state
+        Task.detached {
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
         }
         
-        XCTAssertEqual(lastState, .init(
+        let states = try await collectResult()
+        
+        XCTAssertEqual(states.count, 2)
+        XCTAssertEqual(states.first, .initial)
+        XCTAssertEqual(states.last, .init(
             applicantName: "Napoleon The First",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
@@ -45,44 +39,26 @@ final class StateMachineTests: XCTestCase {
     
     func testAcceptAnAction_WaitForItToFinish_AcceptSecondAction_ShouldReturnFirstStateThenSecondState() async throws {
         // accept an action
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
-        
-        // listen
-        let stream = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
-            )
-        
-        // get last state
-        var lastState: RecruitmentState!
-        for try await state in stream {
-            lastState = state
+        Task.detached {
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+            // wait for first action to complete
+            try await Task.sleep(nanoseconds: UInt64(3 * fakeNetworkDelayInMilliseconds * 1_000_000))
+            
+            // accept an action
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        XCTAssertEqual(lastState, .init(
+        let states = try await collectResult(delayFactor: 3)
+        
+        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
             applicantName: "Napoleon The First",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
             isInterviewScheduled: false
         ))
-        
-        try await Task.sleep(nanoseconds: 300_000_000)
-        
-        // accept an action
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
-        
-        // listen
-        let stream2 = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
-            )
-        
-        // get last state
-        for try await state in stream2 {
-            lastState = state
-        }
-        
-        XCTAssertEqual(lastState, .init(
+        XCTAssertEqual(states[2], .init(
             applicantName: "Napoleon The Second",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
@@ -91,25 +67,56 @@ final class StateMachineTests: XCTestCase {
     }
     
     func testAcceptNewAction_WaitForPreviousActionToComplete_ShouldReturnBothStates() async throws {
-        
         // accept an action
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
-        
-        // listen
-        let stream = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
-            )
-        
-        // get last state
-        var lastState: RecruitmentState!
-        for try await state in stream {
-            lastState = state
+        Task.detached {
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        XCTAssertEqual(lastState, .init(
+        let states = try await collectResult()
+        
+        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
+            applicantName: "Napoleon The First",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+        XCTAssertEqual(states[2], .init(
             applicantName: "Napoleon The Second",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+    }
+    
+    func testAccept3Actions_WaitForEachPreviousActionToComplete_ShouldReturnAllStates() async throws {
+        // accept actions
+        Task.detached {
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Third"))
+        }
+        
+        let states = try await collectResult()
+        
+        XCTAssertEqual(states.count, 4)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
+            applicantName: "Napoleon The First",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+        XCTAssertEqual(states[2], .init(
+            applicantName: "Napoleon The Second",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
+        XCTAssertEqual(states[3], .init(
+            applicantName: "Napoleon The Third",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
             isInterviewScheduled: false
@@ -121,31 +128,44 @@ final class StateMachineTests: XCTestCase {
         dispatcher.newActionShouldCancelPreviousAction = true
         
         // accept an action
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
-        await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
-        
-        // listen
-        let stream = stateMachine.statePublisher
-            .completeIfNoEventEmitedWithinSchedulerTime(
-                .milliseconds(2 * fakeNetworkDelayInMilliseconds + 50)
-            )
-        
-        // get last state
-        var lastState: RecruitmentState!
-        for try await state in stream {
-            lastState = state
+        Task.detached {
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
         
-        XCTAssertEqual(lastState, .init(
+        
+        let states = try await collectResult()
+        
+        XCTAssertEqual(states.count, 2)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
             applicantName: "Napoleon The Second",
             isApplicationSubmitted: true,
             isApplicationReviewed: false,
             isInterviewScheduled: false
         ))
     }
+    
+    // MARK: - Helpers
+
+    private func collectResult(delayFactor: Int = 2) async throws -> [RecruitmentState] {
+        // prepare stream
+        let stream = stateMachine.statePublisher
+            .completeIfNoEventEmitedWithinSchedulerTime(
+                .milliseconds(delayFactor * fakeNetworkDelayInMilliseconds + 50)
+            )
+        
+        // listen
+        var states = [RecruitmentState]()
+        for try await state in stream {
+            states.append(state)
+        }
+        
+        return states
+    }
 }
 
-// MARK: - Helpers
+// MARK: - Private extensions
 
 private extension Publisher {
     func completeIfNoEventEmitedWithinSchedulerTime(
