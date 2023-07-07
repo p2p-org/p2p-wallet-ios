@@ -1,19 +1,22 @@
 import XCTest
 import KeyAppStateMachine
+import Combine
+
+private let fakeNetworkDelayInMilliseconds: Int = 1_000
 
 final class StateMachineTests: XCTestCase {
     
     var stateMachine: StateMachine<RecruitmentState, RecruitmentAction, RecruitmentDispatcher>!
-    var dispatcher: RecruitmentDispatcher!
+    var dispatcher: RecruitmentDispatcher = .init(
+        delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds)
+    )
 
     override func setUpWithError() throws {
-        dispatcher = .init()
         stateMachine = .init(dispatcher: dispatcher, verbose: true)
     }
 
     override func tearDownWithError() throws {
         stateMachine = nil
-        dispatcher = nil
     }
 
     func testAcceptAnAction_ShouldReturnExpectedState() async throws {
@@ -22,8 +25,9 @@ final class StateMachineTests: XCTestCase {
         
         // listen
         let stream = stateMachine.statePublisher
-            .prefix(4) // initialState + actionWillBeginDispatchingState + dispatchState + actionDidEndDispatchingState
-            .asyncStream()
+            .completeIfNoEventEmitedWithinSchedulerTime(
+                .milliseconds(fakeNetworkDelayInMilliseconds + 50)
+            )
         
         // get last state
         var lastState: RecruitmentState!
@@ -49,14 +53,14 @@ final class StateMachineTests: XCTestCase {
         
         // listen
         let stream = stateMachine.statePublisher
-            .prefix(4) // initialState + actionWillBeginDispatchingState + dispatchState + actionDidEndDispatchingState
-            .asyncStream()
+            .completeIfNoEventEmitedWithinSchedulerTime(
+                .milliseconds(fakeNetworkDelayInMilliseconds + 50)
+            )
         
         // get last state
         var lastState: RecruitmentState!
         for try await state in stream {
             lastState = state
-            print("1")
         }
         
         XCTAssertEqual(lastState, .init(
@@ -66,12 +70,15 @@ final class StateMachineTests: XCTestCase {
             isInterviewScheduled: false
         ))
     }
+}
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+// MARK: - Helpers
+
+private extension Publisher {
+    func completeIfNoEventEmitedWithinSchedulerTime(
+        _ time: DispatchQueue.SchedulerTimeType.Stride
+    ) -> CombineAsyncStream<Publishers.Timeout<Self, DispatchQueue>> {
+        let timeOutPublisher = timeout(time, scheduler: DispatchQueue.main, options: nil, customError: nil)
+        return CombineAsyncStream(timeOutPublisher)
     }
-
 }

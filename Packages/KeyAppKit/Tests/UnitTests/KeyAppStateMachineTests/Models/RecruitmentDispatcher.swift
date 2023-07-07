@@ -2,9 +2,26 @@ import Foundation
 import KeyAppStateMachine
 
 class RecruitmentDispatcher: Dispatcher {
+    // MARK: - Properties
+    
     var shouldBeginDispatchingAnyAction: Bool = true
     var newActionShouldCancelPreviousAction: Bool = false
-    
+    var delayInMilliseconds: UInt64
+
+    // MARK: - Initializer
+
+    init(
+        shouldBeginDispatchingAnyAction: Bool = true,
+        newActionShouldCancelPreviousAction: Bool = false,
+        delayInMilliseconds: UInt64
+    ) {
+        self.shouldBeginDispatchingAnyAction = shouldBeginDispatchingAnyAction
+        self.newActionShouldCancelPreviousAction = newActionShouldCancelPreviousAction
+        self.delayInMilliseconds = delayInMilliseconds
+    }
+
+    // MARK: - Methods
+
     func shouldBeginDispatching(
         currentAction: RecruitmentAction,
         newAction: RecruitmentAction,
@@ -25,7 +42,7 @@ class RecruitmentDispatcher: Dispatcher {
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState {
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        try? await sendFakeAPIRequest()
         return currentState
     }
     
@@ -34,7 +51,7 @@ class RecruitmentDispatcher: Dispatcher {
         currentState: RecruitmentState
     ) async -> RecruitmentState {
         // Network request
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        try? await sendFakeAPIRequest()
         
         switch action {
         case let .submitApplication(applicantName):
@@ -59,6 +76,12 @@ class RecruitmentDispatcher: Dispatcher {
     ) async -> RecruitmentState {
         // No additional state modifications in this example
         return currentState
+    }
+    
+    // MARK: - Helper
+
+    private func sendFakeAPIRequest() async throws {
+        try await Task.sleep(nanoseconds: delayInMilliseconds * 1_000_000)
     }
 }
 
