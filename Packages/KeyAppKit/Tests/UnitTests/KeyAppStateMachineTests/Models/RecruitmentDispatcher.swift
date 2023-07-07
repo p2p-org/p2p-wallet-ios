@@ -2,14 +2,15 @@ import Foundation
 import KeyAppStateMachine
 
 struct RecruitmentDispatcher: Dispatcher {
+    var shouldBeginDispatchingAnyAction: Bool = true
+    var newActionShouldCancelPreviousAction: Bool = false
     
     func shouldBeginDispatching(
         currentAction: RecruitmentAction,
         newAction: RecruitmentAction,
         currentState: RecruitmentState
     ) -> Bool {
-        // In this example, we allow all actions to be dispatched
-        return true
+        shouldBeginDispatchingAnyAction
     }
     
     func shouldCancelCurrentAction(
@@ -17,39 +18,39 @@ struct RecruitmentDispatcher: Dispatcher {
         newAction: RecruitmentAction,
         currentState: RecruitmentState
     ) -> Bool {
-        // In this example, we don't cancel any ongoing actions
-        return true
+        newActionShouldCancelPreviousAction
     }
     
     func actionWillBeginDispatching(
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState {
-        switch action {
-        case let .submitApplication(applicantName):
-            return currentState.modified {
-                $0.applicantName = applicantName
-                $0.isApplicationSubmitted = true
-            }
-        default:
-            fatalError()
-        }
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        return currentState
     }
     
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState {
-        var newState = currentState
+        // Network request
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        
         switch action {
+        case let .submitApplication(applicantName):
+            return currentState.modified {
+                $0.applicantName = applicantName
+                $0.isApplicationSubmitted = true
+            }
         case .reviewApplication:
-            newState.isApplicationReviewed = true
+            return currentState.modified {
+                $0.isApplicationReviewed = true
+            }
         case .scheduleInterview:
-            newState.isInterviewScheduled = true
-        default:
-            break
+            return currentState.modified {
+                $0.isInterviewScheduled = true
+            }
         }
-        return newState
     }
     
     func actionDidEndDispatching(
