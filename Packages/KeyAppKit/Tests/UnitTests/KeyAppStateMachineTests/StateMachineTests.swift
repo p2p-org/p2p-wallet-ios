@@ -25,7 +25,7 @@ final class StateMachineTests: XCTestCase {
             .prefix(4) // initialState + actionWillBeginDispatchingState + dispatchState + actionDidEndDispatchingState
             .asyncStream()
         
-        // Print timer ticks to the console.
+        // get last state
         var lastState: RecruitmentState!
         for try await state in stream {
             lastState = state
@@ -37,15 +37,34 @@ final class StateMachineTests: XCTestCase {
             isApplicationReviewed: false,
             isInterviewScheduled: false
         ))
-        
-        // Print when the for loop completes
-        print("Completed.")
     }
     
-    func testAcceptAnAction() async throws {
+    func testAcceptNewAction_CancelingPreviousActionAutomatically_ShouldReturnSecondState() async throws {
+        // modify dispatcher
+        dispatcher.newActionShouldCancelPreviousAction = true
+        
         // accept an action
         await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
         await stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
+        
+        // listen
+        let stream = stateMachine.statePublisher
+            .prefix(4) // initialState + actionWillBeginDispatchingState + dispatchState + actionDidEndDispatchingState
+            .asyncStream()
+        
+        // get last state
+        var lastState: RecruitmentState!
+        for try await state in stream {
+            lastState = state
+            print("1")
+        }
+        
+        XCTAssertEqual(lastState, .init(
+            applicantName: "Napoleon The Second",
+            isApplicationSubmitted: true,
+            isApplicationReviewed: false,
+            isInterviewScheduled: false
+        ))
     }
 
     func testPerformanceExample() throws {

@@ -1,7 +1,7 @@
 import Foundation
 import KeyAppStateMachine
 
-struct RecruitmentDispatcher: Dispatcher {
+class RecruitmentDispatcher: Dispatcher {
     var shouldBeginDispatchingAnyAction: Bool = true
     var newActionShouldCancelPreviousAction: Bool = false
     

@@ -82,7 +82,7 @@ public actor StateMachine<
                 currentTask.cancel()
 
                 // Log
-                logIfVerbose(message: "[AnotherInProgress] Action cancelled: \(currentAction)")
+                logIfVerbose(message: "[AnotherInProgress] Action is being cancelled: \(currentAction)")
             }
             
             // Wait for current action to be completed
@@ -129,7 +129,10 @@ public actor StateMachine<
         )
         
         // check cancellation
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            await logIfVerbose(message: "Action cancelled: \(action)")
+            return
+        }
         
         // Log
         await logIfVerbose(message: "Action is being dispatched: \(action)")
@@ -143,7 +146,10 @@ public actor StateMachine<
         )
         
         // check cancellation
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            await logIfVerbose(message: "Action cancelled: \(action)")
+            return
+        }
         
         // Log
         await logIfVerbose(message: "Action did end dispatching: \(action)")
