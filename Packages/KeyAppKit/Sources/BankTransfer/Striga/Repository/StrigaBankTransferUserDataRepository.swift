@@ -229,7 +229,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                     createdAt: usdc.createdAt,
                     enriched: true,
                     blockchainDepositAddress: response.blockchainDepositAddress,
-                    availableBalance: 0
+                    availableBalance: usdc.availableBalance
                 )
             } catch {
                 // Skip error, do not block the flow
