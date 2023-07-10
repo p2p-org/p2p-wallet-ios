@@ -139,6 +139,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                     default:
                         self.showError(error: error)
                     }
+                } else if (error as? NSError)?.isNetworkConnectionError == true {
+                    self?.notificationService.showConnectionErrorNotification()
                 } else if error is UndefinedAPIGatewayError {
                     self?.notificationService.showDefaultErrorNotification()
                 } else {

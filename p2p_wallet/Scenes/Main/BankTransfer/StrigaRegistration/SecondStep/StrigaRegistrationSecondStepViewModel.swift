@@ -190,6 +190,11 @@ private extension StrigaRegistrationSecondStepViewModel {
                     self.openHardError.send(())
                 }
                 await logAlertMessage(error: BankTransferError.mobileAlreadyExists)
+            } catch let error as NSError where error.isNetworkConnectionError {
+                notificationService.showConnectionErrorNotification()
+                await MainActor.run {
+                    self.isLoading = false
+                }
             } catch {
                 self.notificationService.showDefaultErrorNotification()
                 await MainActor.run {
