@@ -122,7 +122,11 @@ private extension StrigaRegistrationFirstStepViewModel {
                     throw StrigaProviderError.invalidResponse
                 }
 
-                await fetchPhoneNumber(data: data)
+                if let countries = try? await self.countriesService.fetchCountries() {
+                    await fetchSaved(placeOfBirth: data.placeOfBirth, countries: countries)
+                    await fetchPhoneNumber(data: data, countries: countries)
+                }
+
                 await MainActor.run {
                     // save data
                     self.data = data
@@ -143,7 +147,6 @@ private extension StrigaRegistrationFirstStepViewModel {
                         .joined(separator: ".")
                 }
             } catch {
-                // TODO: - Handle error
                 self.data = StrigaUserDetailsResponse.empty
                 await MainActor.run {
                     isLoading = false
@@ -152,8 +155,17 @@ private extension StrigaRegistrationFirstStepViewModel {
         }
     }
 
-    func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
-        let countries = try? await countriesService.fetchCountries()
+    func fetchSaved(placeOfBirth: String?, countries: Countries) async {
+        if let country = countries.first(where: {
+            $0.alpha3Code.lowercased() == placeOfBirth?.lowercased()
+        }) {
+            await MainActor.run {
+                self.selectedCountryOfBirth = country
+            }
+        }
+    }
+
+    func fetchPhoneNumber(data: StrigaUserDetailsResponse, countries: Countries) async {
         let metadataService: WalletMetadataService = Resolver.resolve()
         // Web3 phone by default
         var metaPhoneNumber: String = metadataService.metadata.value?.phoneNumber ?? ""
@@ -167,7 +179,7 @@ private extension StrigaRegistrationFirstStepViewModel {
             phoneNumber = metaPhoneNumber
             if let number = try? phoneNumberKit.parse(phoneNumber) {
                 phoneNumberModel = number
-                selectedPhoneCountryCode = countries?.first(where: {
+                selectedPhoneCountryCode = countries.first(where: {
                     if let regionId = number.regionID {
                         return $0.code.lowercased() == regionId.lowercased()
                     } else {
@@ -177,7 +189,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false)
                     .replacingOccurrences(of: "-", with: "")
             } else {
-                selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
+                selectedPhoneCountryCode = countries.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
                 phoneNumber = data.mobile.number
             }
         }
