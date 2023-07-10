@@ -123,7 +123,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
 
                 if let countries = try? await self.countriesService.fetchCountries() {
-                    await fetchSaved(placeOfBirth: data.placeOfBirth, countries: countries)
+                    fetchSaved(placeOfBirth: data.placeOfBirth, countries: countries)
                     await fetchPhoneNumber(data: data, countries: countries)
                 }
 
@@ -155,13 +155,11 @@ private extension StrigaRegistrationFirstStepViewModel {
         }
     }
 
-    func fetchSaved(placeOfBirth: String?, countries: Countries) async {
+    func fetchSaved(placeOfBirth: String?, countries: Countries) {
         if let country = countries.first(where: {
             $0.alpha3Code.lowercased() == placeOfBirth?.lowercased()
         }) {
-            await MainActor.run {
-                self.selectedCountryOfBirth = country
-            }
+            self.selectedCountryOfBirth = country
         }
     }
 
