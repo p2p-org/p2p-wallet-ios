@@ -9,16 +9,14 @@ enum StrigaRegistrationFirstStepCoordinatorResult {
 }
 
 final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrationFirstStepCoordinatorResult> {
-    private let country: Country
     private let navigationController: UINavigationController
 
-    init(country: Country, navigationController: UINavigationController) {
-        self.country = country
+    init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<StrigaRegistrationFirstStepCoordinatorResult, Never> {
-        let viewModel = StrigaRegistrationFirstStepViewModel(country: country)
+        let viewModel = StrigaRegistrationFirstStepViewModel()
         let view = StrigaRegistrationFirstStepView(viewModel: viewModel)
 
         let vc = view.asViewController(withoutUIKitNavBar: false)

@@ -14,7 +14,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         showCountriesSubject.eraseToAnyPublisher()
     }
 
-    var openRegistration: AnyPublisher<Country, Never> {
+    var openRegistration: AnyPublisher<Void, Never> {
         openRegistrationSubject.eraseToAnyPublisher()
     }
 
@@ -35,7 +35,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     private let showCountriesSubject = PassthroughSubject<Country?, Never>()
     private let openProviderInfoSubject = PassthroughSubject<URL, Never>()
-    private let openRegistrationSubject = PassthroughSubject<Country, Never>()
+    private let openRegistrationSubject = PassthroughSubject<Void, Never>()
 
     @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
     private var lastChosenCountry: Country?
@@ -146,10 +146,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     private func submitCountry() {
-        guard let country = self.currentCountry else {
-            return
-        }
-        openRegistrationSubject.send(country)
+        openRegistrationSubject.send()
     }
 
     private func isAvailable() -> Bool {

@@ -53,10 +53,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
         Date().year - Constants.minYearGap
     }()
 
-    private let preselectedCountry: Country
-
-    init(country: Country) {
-        preselectedCountry = country
+    override init() {
         super.init()
         fetchSavedData()
 
@@ -277,14 +274,6 @@ private extension StrigaRegistrationFirstStepViewModel {
                     lastName: credentials.1.trimmed(),
                     mobile: mobile,
                     dateOfBirth: dateOfBirth.0,
-                    address: StrigaUserDetailsResponse.Address(
-                        addressLine1: currentData.address?.addressLine1,
-                        addressLine2: currentData.address?.addressLine2,
-                        city: currentData.address?.city,
-                        postalCode: currentData.address?.postalCode,
-                        state: currentData.address?.state,
-                        country: preselectedCountry.code
-                    ),
                     placeOfBirth: dateOfBirth.1?.alpha3Code
                 )
                 self.data = newData
