@@ -81,10 +81,9 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                 .handleEvents(receiveOutput: { [weak controller] _ in
                     controller?.dismiss(animated: true)
                 })
-                .flatMap({ [unowned self] country in
+                .flatMap({ [unowned self] in
                     self.coordinate(
                         to: StrigaRegistrationFirstStepCoordinator(
-                            country: country,
                             navigationController: self.viewController
                         )
                     )

@@ -177,8 +177,6 @@ struct StrigaRegistrationFirstStepView: View {
 
 struct StrigaRegistrationFirstStepView_Previews: PreviewProvider {
     static var previews: some View {
-        StrigaRegistrationFirstStepView(
-            viewModel: StrigaRegistrationFirstStepViewModel(country: Country(name: "France", code: "FR", dialCode: "", emoji: "🇫🇷", alpha3Code: "FRA"))
-        )
+        StrigaRegistrationFirstStepView(viewModel: StrigaRegistrationFirstStepViewModel())
     }
 }
