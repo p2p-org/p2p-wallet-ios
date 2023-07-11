@@ -6,6 +6,7 @@ import Resolver
 import SwiftyUserDefaults
 import KeyAppKitCore
 import UIKit
+import Reachability
 
 enum StrigaOTPCoordinatorResult {
     case canceled
@@ -17,6 +18,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     // MARK: - Dependencies
 
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var reachability: Reachability
 
     // MARK: - Properties
 
@@ -144,6 +146,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         } else if let lastConfirmErrorData, lastConfirmErrorData.timeIntervalSinceNow > 0 {
             handleOTPConfirmLimitError()
         } else {
+            _ = reachability.check()
             present(controller: controller)
 
             if timerHasJustInitialized || resendCounter?.until.timeIntervalSinceNow < 0 {
