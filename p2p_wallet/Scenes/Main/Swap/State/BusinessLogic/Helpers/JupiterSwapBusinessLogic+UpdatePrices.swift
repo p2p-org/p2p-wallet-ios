@@ -1,7 +1,6 @@
 import Foundation
-import SolanaSwift
 import Resolver
-import SolanaPricesAPIs
+import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func updatePrices(
@@ -12,33 +11,34 @@ extension JupiterSwapBusinessLogic {
         var tokens = [Token]()
         tokens.append(state.fromToken.token)
         tokens.append(state.toToken.token)
-        
+
         // get prices of transitive tokens
         let mints = state.route?.getMints() ?? []
         if mints.count > 2 {
             for mint in mints {
-                if let token = state.swapTokens.map(\.token).first(where: {$0.address == mint}) {
+                if let token = state.swapTokens.map(\.token).first(where: { $0.address == mint }) {
                     tokens.append(token)
                 }
             }
         }
-        
+
         guard !tokens.isEmpty else {
             return state
         }
-        
+
         // Warning: This method should be refactored as we should not take prices directly from API but from PriceService
-        let tokensPriceMap = ((try? await services.pricesAPI.getCurrentPrices(coins: tokens, toFiat: Defaults.fiat.code)) ?? [:])
+        let tokensPriceMap =
+            ((try? await services.pricesAPI.getPrices(tokens: tokens, fiat: Defaults.fiat.code)) ?? [:])
             .reduce([String: Double]()) { combined, element in
-                guard let value = element.value?.value else { return combined }
+                let value = element.value.doubleValue
                 var combined = combined
                 combined[element.key.address] = value
                 return combined
             }
-        
+
         return state.modified {
             $0.tokensPriceMap = $0.tokensPriceMap
-                .merging(tokensPriceMap, uniquingKeysWith: { (_, new) in new })
+                .merging(tokensPriceMap, uniquingKeysWith: { _, new in new })
         }
     }
 }

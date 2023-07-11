@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import Foundation
-import SolanaPricesAPIs
 import SolanaSwift
 import KeyAppKitCore
 
@@ -11,7 +10,7 @@ public struct UserWalletEnvironments: Equatable {
     let wallets: [SolanaAccount]
     let ethereumAccount: String?
 
-    let exchangeRate: [String: CurrentPrice]
+    let exchangeRate: [String: TokenPrice]
     let tokens: Set<Token>
 
     let rentExemptionAmountForWalletAccount: Lamports
@@ -20,7 +19,7 @@ public struct UserWalletEnvironments: Equatable {
     public init(
         wallets: [SolanaAccount],
         ethereumAccount: String?,
-        exchangeRate: [String: CurrentPrice],
+        exchangeRate: [String: TokenPrice],
         tokens: Set<Token>,
         rentExemptionAmountForWalletAccount: Lamports = 890_880,
         rentExemptionAmountForSPLAccount: Lamports = 2_039_280

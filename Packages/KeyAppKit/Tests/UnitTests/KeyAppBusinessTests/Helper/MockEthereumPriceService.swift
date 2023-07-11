@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SolanaPricesAPIs
 
 class MockPricesNetworkManager: PricesNetworkManager {
     var handler: (_ urlString: String) -> Encodable

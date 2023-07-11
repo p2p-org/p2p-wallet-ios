@@ -14,7 +14,6 @@ import Reachability
 import Resolver
 import Sell
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
 import SwiftyUserDefaults
 import TransactionParser
@@ -150,9 +149,6 @@ extension Resolver: ResolverRegistering {
         .implements(PriceService.self)
         .scope(.application)
 
-        register { EthereumPriceService(api: resolve()) }
-            .scope(.application)
-
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
             .scope(.session)
@@ -218,10 +214,6 @@ extension Resolver: ResolverRegistering {
 
         register { NotificationRepositoryImpl() }
             .implements(NotificationRepository.self)
-            .scope(.application)
-
-        register { CoinGeckoPricesAPI() }
-            .implements(SolanaPricesAPI.self)
             .scope(.application)
 
         register {

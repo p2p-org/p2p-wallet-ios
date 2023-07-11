@@ -8,7 +8,6 @@
 import Combine
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import Web3
 
 public final class EthereumAccountsService: NSObject, AccountsService {
@@ -28,7 +27,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         address: String,
         web3: Web3,
         ethereumTokenRepository: EthereumTokensRepository,
-        priceService: EthereumPriceService,
+        priceService: PriceService,
         fiat: String,
         errorObservable: any ErrorObserver,
         enable: Bool
@@ -99,11 +98,11 @@ public final class EthereumAccountsService: NSObject, AccountsService {
                 prices
             )
             .map { state, prices in
-                return state.apply { accounts in
+                state.apply { accounts in
                     var newAccounts = accounts
 
                     for index in newAccounts.indices {
-                        let token = newAccounts[index].token
+                        let token = newAccounts[index].token.asSomeToken
                         if let price = prices[token] {
                             newAccounts[index]
                                 .price = .init(currencyCode: fiat.uppercased(), value: price.value, token: token)

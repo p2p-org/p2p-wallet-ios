@@ -252,8 +252,6 @@ targets:
             - package: KeyAppKit
               product: AnalyticsManager
             - package: KeyAppKit
-              product: SolanaPricesAPIs
-            - package: KeyAppKit
               product: JSBridge
             - package: KeyAppKit
               product: CountriesAPI

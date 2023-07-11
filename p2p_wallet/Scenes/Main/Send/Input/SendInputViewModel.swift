@@ -7,7 +7,6 @@ import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
 import UIKit
 
@@ -143,10 +142,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
 
-        var exchangeRate = [String: CurrentPrice]()
+        var exchangeRate = [String: TokenPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = CurrentPrice(value: $0.price?.doubleValue)
+            exchangeRate[$0.token.symbol] = $0.price
             tokens.insert($0.token)
         }
 

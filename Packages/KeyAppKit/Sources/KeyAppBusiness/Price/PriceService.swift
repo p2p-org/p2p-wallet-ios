@@ -9,7 +9,6 @@ import BigDecimal
 import Cache
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 public protocol PriceService {

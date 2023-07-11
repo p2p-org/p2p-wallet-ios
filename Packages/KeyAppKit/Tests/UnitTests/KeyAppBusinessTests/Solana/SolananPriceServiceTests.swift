@@ -1,13 +1,11 @@
 @testable import KeyAppBusiness
 import XCTest
-
-import SolanaPricesAPIs
 import SolanaSwift
 
 final class PriceServiceTests: XCTestCase {
     func testKey() {
         let api = MockSolanaPricesAPI()
-        let priceService = PriceService(api: api, lifetime: 10)
+        let priceService = PriceServiceImpl(api: api, lifetime: 10)
         
         let key = priceService.primaryKey("123", "usd")
         XCTAssertEqual(key, "123-usd")
@@ -17,10 +15,10 @@ final class PriceServiceTests: XCTestCase {
     func testLifetimeForSingleToken() async throws {
         // Set 10 seconds lifetime
         let api = MockSolanaPricesAPI()
-        let priceService = PriceService(api: api, lifetime: 10)
+        let priceService = PriceServiceImpl(api: api, lifetime: 10)
 
         api.currentPriceResponse = [
-            .nativeSolana: CurrentPrice(value: 12.0, change24h: nil)
+            .nativeSolana: TokenPrice(value: 12.0, change24h: nil)
         ]
 
         // First fetch
@@ -28,7 +26,7 @@ final class PriceServiceTests: XCTestCase {
         XCTAssertEqual(immediatlyResult.value, 12.0, "The fetched value should correct.")
 
         api.currentPriceResponse = [
-            .nativeSolana: CurrentPrice(value: 15.0, change24h: nil)
+            .nativeSolana: PriceServiceImpl(value: 15.0, change24h: nil)
         ]
 
         // Test after 5 seconds
@@ -56,8 +54,8 @@ final class PriceServiceTests: XCTestCase {
         let priceService = PriceService(api: api, lifetime: 10)
 
         api.currentPriceResponse = [
-            .nativeSolana: CurrentPrice(value: 12.0, change24h: nil),
-            .eth: CurrentPrice(value: 55.0, change24h: nil)
+            .nativeSolana: TokenPrice(value: 12.0, change24h: nil),
+            .eth: TokenPrice(value: 55.0, change24h: nil)
         ]
 
         // First fetch
@@ -66,8 +64,8 @@ final class PriceServiceTests: XCTestCase {
         XCTAssertEqual(immediatlyResult[.eth]??.value, 55.0)
 
         api.currentPriceResponse = [
-            .nativeSolana: CurrentPrice(value: 15.0, change24h: nil),
-            .eth: CurrentPrice(value: 85.0, change24h: nil)
+            .nativeSolana: TokenPrice(value: 15.0, change24h: nil),
+            .eth: TokenPrice(value: 85.0, change24h: nil)
         ]
 
         // Test after 5 seconds
@@ -95,9 +93,9 @@ final class PriceServiceTests: XCTestCase {
 final class MockSolanaPricesAPI: SolanaPricesAPI {
     var pricesNetworkManager: SolanaPricesAPIs.PricesNetworkManager = DefaultPricesNetworkManager()
 
-    var currentPriceResponse: [SolanaSwift.Token: SolanaPricesAPIs.CurrentPrice?] = [:]
+    var currentPriceResponse: [SolanaSwift.Token: SolanaPricesAPIs.TokenPrice?] = [:]
 
-    func getCurrentPrices(coins: [SolanaSwift.Token], toFiat fiat: String) async throws -> [SolanaSwift.Token: SolanaPricesAPIs.CurrentPrice?] {
+    func getCurrentPrices(coins: [SolanaSwift.Token], toFiat fiat: String) async throws -> [SolanaSwift.Token: SolanaPricesAPIs.TokenPrice?] {
         currentPriceResponse
     }
 

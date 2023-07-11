@@ -1,14 +1,6 @@
-//
-//  SolanaAccountsManager.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating

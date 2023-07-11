@@ -1,6 +1,5 @@
 import Foundation
 import Resolver
-import SolanaPricesAPIs
 import SolanaSwift
 import TransactionParser
 import UIKit

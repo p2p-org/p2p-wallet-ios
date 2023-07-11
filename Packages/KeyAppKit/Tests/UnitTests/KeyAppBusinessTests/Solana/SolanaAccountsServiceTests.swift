@@ -3,7 +3,6 @@ import XCTest
 
 import Combine
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 final class SolanaAccountsServiceTests: XCTestCase {

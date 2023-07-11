@@ -1,11 +1,11 @@
-import Combine
-import Resolver
 import AnalyticsManager
+import Combine
+import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
 import SolanaSwift
-import SolanaPricesAPIs
 
 final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
-
     private enum FetcherState {
         case initializing
         case loading
@@ -19,7 +19,7 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationsService: NotificationService
     @Injected private var appEventHandler: AppEventHandlerType
     @Injected private var iCloudStorage: ICloudStorageType
-    @Injected private var pricesFetcher: SolanaPricesAPI
+    @Injected private var pricesFetcher: PriceService
     @Injected private var solanaAPIClient: SolanaAPIClient
 
     // MARK: - Subjects
@@ -46,7 +46,7 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
 
     init(phrases: [String]) {
         self.phrases = phrases
-        self.data = []
+        data = []
         super.init()
 
         select(derivableType: selectedDerivablePath.type)
@@ -145,8 +145,10 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
 
         try Task.checkCancellation()
 
-        let solPrice = try await pricesFetcher.getCurrentPrices(coins: [.nativeSolana], toFiat: Defaults.fiat.code)
-            .first?.value?.value ?? 0
+        let solPrice = try await pricesFetcher
+            .getPrice(token: SolanaToken.nativeSolana, fiat: Defaults.fiat.code)?
+            .doubleValue
+            ?? 0.0
         await cache.save(solPrice: solPrice)
 
         try Task.checkCancellation()
@@ -198,9 +200,12 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
             )
         }
     }
-    
+
     @discardableResult
-    private func updateItem(where predicate: (DerivableAccount) -> Bool, transform: (DerivableAccount) -> DerivableAccount?) -> Bool {
+    private func updateItem(
+        where predicate: (DerivableAccount) -> Bool,
+        transform: (DerivableAccount) -> DerivableAccount?
+    ) -> Bool {
         // modify items
         var itemsChanged = false
         if let index = data.firstIndex(where: predicate),
@@ -212,15 +217,18 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
             data[index] = item
             overrideData(by: data)
         }
-        
+
         return itemsChanged
     }
 }
 
 // MARK: - Analytics
+
 extension DerivableAccountsViewModel {
     func logSelection(derivableType: DerivablePath.DerivableType) {
-        analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: DerivablePath(type: derivableType, walletIndex: 0).rawValue))
+        analyticsManager
+            .log(event: .recoveryDerivableAccountsPathSelected(path: DerivablePath(type: derivableType, walletIndex: 0)
+                    .rawValue))
     }
 
     private func logRestoreClick() {
@@ -233,6 +241,7 @@ extension DerivableAccountsViewModel {
 }
 
 // MARK: - List Helpers from old BEViewModel and BECollectionViewModel
+
 private extension DerivableAccountsViewModel {
     func overrideData(by newData: [DerivableAccount]) {
         guard newData != data else { return }

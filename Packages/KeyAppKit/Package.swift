@@ -40,12 +40,6 @@ let package = Package(
             targets: ["AnalyticsManager"]
         ),
 
-        // Price service for wallet
-        .library(
-            name: "SolanaPricesAPIs",
-            targets: ["SolanaPricesAPIs"]
-        ),
-
         // JSBridge
         .library(
             name: "JSBridge",
@@ -197,18 +191,6 @@ let package = Package(
             path: "Tests/UnitTests/AnalyticsManagerUnitTests"
         ),
 
-        // PricesService
-        .target(
-            name: "SolanaPricesAPIs",
-            dependencies: ["Cache", .product(name: "SolanaSwift", package: "solana-swift")]
-        ),
-        .testTarget(
-            name: "SolanaPricesAPIsUnitTests",
-            dependencies: ["SolanaPricesAPIs"],
-            path: "Tests/UnitTests/SolanaPricesAPIsUnitTests"
-            //      resources: [.process("./Resource")]
-        ),
-
         // JSBridge
         .target(
             name: "JSBridge"
@@ -267,7 +249,6 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 "FeeRelayerSwift",
                 "NameService",
-                "SolanaPricesAPIs",
                 "TransactionParser",
                 "History",
                 "Wormhole",
@@ -330,7 +311,6 @@ let package = Package(
             dependencies: [
                 "KeyAppKitCore",
                 "Cache",
-                "SolanaPricesAPIs",
                 "WalletCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),

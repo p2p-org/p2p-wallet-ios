@@ -4,7 +4,6 @@
 
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 final class SolanaAccountsAggregator: DataAggregator {

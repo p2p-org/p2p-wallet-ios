@@ -11,7 +11,6 @@ import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
 import SwiftUI
 
