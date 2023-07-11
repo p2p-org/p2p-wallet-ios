@@ -76,6 +76,10 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .assignWeak(to: \.country, on: self)
             .store(in: &subscriptions)
 
+        $selectedCountry
+            .assignWeak(to: \.lastChosenCountry, on: self)
+            .store(in: &subscriptions)
+
         $selectedIndustry
             .map { $0?.wholeName ?? "" }
             .assignWeak(to: \.occupationIndustry, on: self)

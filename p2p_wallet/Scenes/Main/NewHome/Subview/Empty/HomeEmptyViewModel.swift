@@ -77,6 +77,7 @@ private extension HomeEmptyViewModel {
     func bindBankTransfer() {
         bankTransferService.state
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
+            .receive(on: RunLoop.main)
             .compactMap { [weak self] value -> HomeBannerParameters? in
                 guard let self else { return nil }
 
