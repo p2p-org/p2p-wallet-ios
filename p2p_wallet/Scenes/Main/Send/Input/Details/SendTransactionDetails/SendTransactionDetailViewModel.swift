@@ -21,7 +21,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let longTapped = PassthroughSubject<CellModel, Never>()
 
     private let stateMachine: SendInputStateMachine
-    @Injected private var pricesService: SolanaPriceService
+    @Injected private var pricesService: PriceService
     @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType

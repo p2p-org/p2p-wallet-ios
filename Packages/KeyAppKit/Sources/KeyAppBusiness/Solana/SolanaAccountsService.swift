@@ -33,7 +33,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     let realtimeStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     /// Requested token price base on final stream.
-    let priceStream: CurrentValueSubject<[SolanaToken: CurrentPrice?], Never> = .init([:])
+    let priceStream: CurrentValueSubject<[SomeToken: TokenPrice?], Never> = .init([:])
 
     // MARK: - Output
 
@@ -58,7 +58,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
         tokensService: SolanaTokensService,
-        priceService: SolanaPriceService,
+        priceService: PriceService,
         fiat: String,
         proxyConfiguration: ProxyConfiguration?,
         errorObservable: any ErrorObserver
@@ -160,7 +160,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         realtimeStream
             .filter { $0.status == .initializing || $0.status == .ready }
             .debounce(for: .seconds(0.05), scheduler: RunLoop.main)
-            .asyncMap { state in
+            .asyncMap { state -> [SomeToken: TokenPrice?] in
                 do {
                     return try await priceService.getPrices(
                         tokens: state.value.map(\.token),
@@ -187,7 +187,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .CombineLatest(realtimeStream, priceStream)
             .map { state, prices in
                 var state = state
-                state.value = accountsAggregator.transform(input: (state.value, fiat, prices))
+                state.value = accountsAggregator.transform(input: (state.value, prices))
                 return state
             }
             .sink { [weak outputSubject] state in
@@ -233,8 +233,7 @@ public extension SolanaAccountsService {
     var nativeWallet: SolanaAccount? {
         state.value.nativeWallet
     }
-    
-    
+
     @available(*, deprecated, message: "Legacy code")
     func getWallets() -> [SolanaAccount] {
         state.value

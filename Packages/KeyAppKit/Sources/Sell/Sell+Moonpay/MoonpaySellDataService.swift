@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 
 public final class MoonpaySellDataService: SellDataService {
     // MARK: - Associated type
@@ -10,7 +11,7 @@ public final class MoonpaySellDataService: SellDataService {
     // MARK: - Dependencies
 
     private let provider: Provider
-    private let priceProvider: SolanaPriceService
+    private let priceProvider: PriceService
     private let sellTransactionsRepository: SellTransactionsRepository
 
     // MARK: - Properties
@@ -38,7 +39,7 @@ public final class MoonpaySellDataService: SellDataService {
     public init(
         userId: String,
         provider: Provider,
-        priceProvider: SolanaPriceService,
+        priceProvider: PriceService,
         sellTransactionsRepository: SellTransactionsRepository
     ) {
         self.userId = userId
@@ -93,9 +94,9 @@ public final class MoonpaySellDataService: SellDataService {
                     do {
                         let detailed = try await self.provider.detailSellTransaction(id: id)
 
-                        let price = try? await priceProvider.getPrice(token: .nativeSolana, fiat: "usd")
+                        let price = try? await priceProvider.getPrice(token: SolanaToken.nativeSolana, fiat: "usd")
 
-                        let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (price?.value ?? 0.0) * detailed
+                        let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (price?.doubleValue ?? 0.0) * detailed
                             .baseCurrencyAmount
                         guard
                             let usdRate = detailed.usdRate,

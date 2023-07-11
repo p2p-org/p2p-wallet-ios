@@ -87,10 +87,10 @@ extension JupiterSwapBusinessLogic {
     private static func getTokensPriceMap() async -> [String: Double] {
         do {
             let accounts = Resolver.resolve(SolanaAccountsService.self).state.value
-            let prices = try await Resolver.resolve(SolanaPriceService.self)
+            let prices = try await Resolver.resolve(PriceService.self)
                 .getPrices(tokens: accounts.map(\.token), fiat: Defaults.fiat.rawValue)
 
-            return Dictionary(prices.map { ($0.key.address, $0.value?.value ?? 0.0) }) { lhs, _ in lhs }
+            return Dictionary(prices.map { ($0.key.address, $0.value.doubleValue ?? 0.0) }) { lhs, _ in lhs }
         } catch {
             return [:]
         }

@@ -36,7 +36,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
-    @Injected private var priceService: SolanaPriceService
+    @Injected private var priceService: PriceService
 
     // MARK: - Properties
 
@@ -399,7 +399,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 await MainActor.run { [weak self] in
                     guard let self else { return }
 
-                    let baseCurrencyPrice = max(0.00001, price.value ?? 0)
+                    let baseCurrencyPrice = max(0.00001, price?.doubleValue ?? 0)
                     let totalFeeAmount = sellQuote.feeAmount + sellQuote.extraFeeAmount
                     self.fee = .loaded(
                         Fee(

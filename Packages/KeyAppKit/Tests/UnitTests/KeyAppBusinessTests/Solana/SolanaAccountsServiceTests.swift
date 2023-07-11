@@ -15,7 +15,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
             accountStorage: MockAccountStorage(),
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),
-            priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
+            priceService: PriceService(api: MockSolanaPricesAPI()),
             accountObservableService: MockSolanaAccountsObservableService(),
             fiat: "usd",
             errorObservable: MockErrorObservable()
@@ -44,7 +44,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
             accountStorage: accountStorage,
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),
-            priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
+            priceService: PriceService(api: MockSolanaPricesAPI()),
             accountObservableService: observableService,
             fiat: "usd",
             errorObservable: MockErrorObservable()

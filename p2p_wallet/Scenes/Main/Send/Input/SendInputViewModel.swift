@@ -93,7 +93,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let walletsRepository: SolanaAccountsService
-    private let pricesService: SolanaPriceService
+    private let pricesService: PriceService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -112,7 +112,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         walletsRepository = repository
         let wallets = repository.getWallets()
 
-        let pricesService = Resolver.resolve(SolanaPriceService.self)
+        let pricesService = Resolver.resolve(PriceService.self)
         self.pricesService = pricesService
 
         // Setup source token

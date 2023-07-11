@@ -109,7 +109,7 @@ struct PendingTransaction {
 }
 
 extension PendingTransaction {
-    func parse(pricesService _: SolanaPriceService, authority: String? = nil) -> ParsedTransaction? {
+    func parse(pricesService _: PriceService, authority: String? = nil) -> ParsedTransaction? {
         // status
         let status: ParsedTransaction.Status
 

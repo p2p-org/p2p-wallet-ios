@@ -159,23 +159,24 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         let token: ClaimAlertLoggerErrorMessage.Token = .init(
             name: account.token.name,
             solanaMint: SupportedToken.ERC20(rawValue: account.token.erc20Address ?? "")?.solanaMintAddress ?? "",
-            ethMint: account.token.tokenPrimaryKey,
-            claimAmount: ethModel == nil ? "0" : CryptoAmount(amount: ethModel!.account.balance, token: account.token).amount.description
+            ethMint: account.token.id,
+            claimAmount: ethModel == nil ? "0" : CryptoAmount(amount: ethModel!.account.balance, token: account.token)
+                .amount.description
         )
 
         DefaultLogManager.shared.log(
             event: "Wormhole Claim iOS Alarm",
             logLevel: .alert,
             data:
-                ClaimAlertLoggerErrorMessage(
-                    tokenToClaim: token,
-                    userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
-                    userEthPubkey: ethModel?.account.address ?? "",
-                    simulationError: nil,
-                    bridgeSeviceError: error.readableDescription,
-                    feeRelayerError: nil,
-                    blockchainError: nil
-                )
+            ClaimAlertLoggerErrorMessage(
+                tokenToClaim: token,
+                userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
+                userEthPubkey: ethModel?.account.address ?? "",
+                simulationError: nil,
+                bridgeSeviceError: error.readableDescription,
+                feeRelayerError: nil,
+                blockchainError: nil
+            )
         )
     }
 

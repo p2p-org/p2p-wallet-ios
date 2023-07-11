@@ -10,7 +10,7 @@ import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Injected private var priceService: SolanaPriceService
+    @Injected private var priceService: PriceService
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()

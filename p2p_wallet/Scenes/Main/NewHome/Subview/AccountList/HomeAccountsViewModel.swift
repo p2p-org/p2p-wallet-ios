@@ -38,7 +38,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RenderableAccount] = []
 
     // MARK: - Initializer
-
+    
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),

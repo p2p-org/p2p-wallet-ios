@@ -141,8 +141,14 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         // Prices
-        register { SolanaPriceService(api: resolve()) }
-            .scope(.application)
+        register {
+            PriceServiceImpl(
+                api: KeyAppTokenHttpProvider(client: .init(endpoint: "https://token-service.keyapp.org")),
+                errorObserver: resolve()
+            )
+        }
+        .implements(PriceService.self)
+        .scope(.application)
 
         register { EthereumPriceService(api: resolve()) }
             .scope(.application)
@@ -219,11 +225,8 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register {
-            SolanaTokenListRepository(
-                tokenListSource: SolanaTokenListSourceImpl.p2p(
-                    networkManager: URLSession.shared
-                ),
-                storage: InMemorySolanaTokenListStorage()
+            KeyAppSolanaTokenRepository(
+                provider: KeyAppTokenHttpProvider(client: .init(endpoint: "https://token-service.keyapp.org"))
             )
         }
         .implements(SolanaTokensService.self)

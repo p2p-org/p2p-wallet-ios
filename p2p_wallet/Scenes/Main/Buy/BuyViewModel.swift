@@ -58,7 +58,7 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: SolanaPriceService
+    @Injected private var pricesService: PriceService
 
     // Defaults
 //    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -196,7 +196,7 @@ final class BuyViewModel: ObservableObject {
                         fiat: fiat.rawValue
                     )
                     .map { token, price in
-                        (token.address, price?.value)
+                        (token.address, price.doubleValue)
                     }
                 ) { lhs, _ in lhs }
             }

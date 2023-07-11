@@ -3,8 +3,8 @@ import SolanaSwift
 
 public typealias SolanaToken = TokenMetadata
 
-extension SolanaToken {
-    public var wrapped: Bool {
+public extension SolanaToken {
+    var wrapped: Bool {
         if tags.contains(where: { $0.name == "wrapped-sollet" }) {
             return true
         }
@@ -18,14 +18,18 @@ extension SolanaToken {
         return false
     }
 
-    public var isLiquidity: Bool {
+    var isLiquidity: Bool {
         tags.contains(where: { $0.name == "lp-token" })
     }
 }
 
 extension SolanaToken: AnyToken {
-    public var tokenPrimaryKey: String {
-        isNative ? "native" : address
+    public var primaryKey: TokenPrimaryKey {
+        if isNative {
+            return .native
+        } else {
+            return .contract(address)
+        }
     }
 
     public var network: TokenNetwork {
