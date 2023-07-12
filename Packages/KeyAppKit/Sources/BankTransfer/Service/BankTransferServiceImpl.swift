@@ -32,8 +32,8 @@ extension BankTransferServiceImpl {
         subject.send(
             .init(
                 status: .fetching,
-                value: .empty,
-                error: nil
+                value: subject.value.value,
+                error: subject.value.error
             )
         )
         
