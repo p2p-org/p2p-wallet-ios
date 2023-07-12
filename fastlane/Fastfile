@@ -196,11 +196,11 @@ def commit_changes
 end 
 
 def upload_dsym_to_analytic_providers
-  # sentry_upload_dsym(
-  #   auth_token: SENTRY_TOKEN,
-  #   org_slug: 'p2p-wallet',
-  #   project_slug: 'ios',
-  # )
+  sentry_upload_dsym(
+    auth_token: SENTRY_TOKEN,
+    org_slug: 'p2p-wallet',
+    project_slug: 'ios',
+  )
 end
 
 def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
