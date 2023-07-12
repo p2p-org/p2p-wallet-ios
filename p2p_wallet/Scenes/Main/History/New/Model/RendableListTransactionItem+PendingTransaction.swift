@@ -100,7 +100,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as ClaimSentViaLinkTransaction:
             return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         case let transaction as StrigaClaimTransactionType:
-            return L10n.from("Striga")
+            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.fromAddress))
         default:
             return L10n.unknown
         }
@@ -148,11 +148,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 }
                 
             case _ as StrigaClaimTransactionType:
-                if trx.transactionId == nil {
-                    return "\(L10n.processing)"
-                } else {
-                    return "\(L10n.processing)"
-                }
+                return "\(L10n.pending.capitalized)..."
 
             default:
                 if trx.transactionId == nil {
@@ -184,7 +180,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             guard let amountInFiat = transaction.amountInFiat else {
                 return (.unchanged, "")
             }
-            return (.positive, "+\(amountInFiat.fiatAmountFormattedString())")
+            return (.unchanged, "+\(amountInFiat.fiatAmountFormattedString())")
         default:
             return (.unchanged, "")
         }
