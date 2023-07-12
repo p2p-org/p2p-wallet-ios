@@ -360,7 +360,14 @@ private extension HomeAccountsViewModel {
 
     func requestCloseBanner(for data: UserData) {
         tappedBannerSubject.send(.bankTransfer)
-        shouldCloseBanner = data.isIBANNotReady == false
+        switch data.kycStatus {
+        case .onHold, .pendingReview:
+            shouldCloseBanner = false
+        case .approved:
+            shouldCloseBanner = data.isIBANNotReady == false
+        default:
+             shouldCloseBanner = true
+        }
     }
 }
 
