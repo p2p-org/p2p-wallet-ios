@@ -8,7 +8,7 @@ extension JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         // get all tokens that involved in the swap and get the price
-        var tokens = [Token]()
+        var tokens = [TokenMetadata]()
         tokens.append(state.fromToken.token)
         tokens.append(state.toToken.token)
 

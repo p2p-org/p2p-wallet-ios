@@ -9,7 +9,7 @@ import XCTest
 class SerumParseStrategyTests: XCTestCase {
   let endpoint = APIEndPoint.defaultEndpoints.first!
 
-  lazy var tokensRepository = TokensRepository(endpoint: endpoint)
+  lazy var tokensRepository = MockTokensRepository()
   lazy var strategy = SerumSwapParseStrategy(tokensRepository: tokensRepository)
 
   func skipTestParsingSerum1() async throws {

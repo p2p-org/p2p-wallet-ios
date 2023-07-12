@@ -30,6 +30,11 @@ public enum KeyAppToken {
         public struct TokenData: Codable, Hashable {
             public let address: String
             public let price: [String: String?]
+            
+            public init(address: String, price: [String: String?]) {
+                self.address = address
+                self.price = price
+            }
 
             public init(from decoder: Decoder) throws {
                 let container: KeyedDecodingContainer<KeyAppToken.GetPriceInfoResult.TokenData.CodingKeys> = try decoder

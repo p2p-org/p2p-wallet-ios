@@ -227,22 +227,6 @@ let package = Package(
         ),
         .testTarget(name: "OnboardingTests", dependencies: ["Onboarding"]),
 
-        // MARK: - P2P SDK
-
-        .target(name: "P2PSwift"),
-
-        .testTarget(
-            name: "P2PTestsIntegrationTests",
-            dependencies: ["P2PSwift"],
-            path: "Tests/IntegrationTests/P2PTestsIntegrationTests"
-        ),
-
-        // TODO: Future migration
-        // .binaryTarget(
-        //     name: "p2p",
-        //     path: "Frameworks/p2p.xcframework"
-        // ),
-
         .target(
             name: "Send",
             dependencies: [
