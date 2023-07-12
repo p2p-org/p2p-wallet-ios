@@ -1,16 +1,10 @@
-//
-//  NotificationService.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 22/12/2021.
-//
-
 import AnalyticsManager
 import Foundation
 import KeyAppUI
 import Resolver
 import UIKit
 import Combine
+import BEPureLayout
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>

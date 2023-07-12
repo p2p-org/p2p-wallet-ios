@@ -1,15 +1,9 @@
-//
-//  Defaults.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 10/30/20.
-//
-
 import FirebaseRemoteConfig
 import Foundation
 import Onboarding
 import SolanaSwift
 import SwiftyUserDefaults
+import UIKit
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}
 

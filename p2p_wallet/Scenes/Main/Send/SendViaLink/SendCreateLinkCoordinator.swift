@@ -3,6 +3,7 @@ import SolanaSwift
 import Combine
 import Resolver
 import AnalyticsManager
+import UIKit
 
 final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Result> {
     // MARK: - Dependencies

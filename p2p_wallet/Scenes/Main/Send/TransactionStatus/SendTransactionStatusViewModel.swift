@@ -5,6 +5,8 @@ import Resolver
 import SolanaSwift
 import TransactionParser
 import AnalyticsManager
+import Foundation
+import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler

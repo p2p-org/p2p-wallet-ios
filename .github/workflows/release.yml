@@ -20,22 +20,33 @@ jobs:
 
       - name: Check out repository
         uses: actions/checkout@v3
-        # with:
+        with:
+          fetch-depth: '0'
         #   submodules: recursive
         #   token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Map fix version to jira tasks
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: |
+          chmod u+x Scripts/jiraMapVersionToTasks.sh
+          BRANCH_NAME=${{ github.ref }}
+          BRANCH_NAME=${BRANCH_NAME#refs/heads/}
+          Scripts/jiraMapVersionToTasks.sh $BRANCH_NAME
 
       - name: Select XCode Version
         run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Generate secret files and check it
         run: |
-          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
           chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
       - name: Install project
         run: |
-          rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
@@ -76,7 +87,6 @@ jobs:
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           GOOGLE_SERVICE_INFO_PLIST_URL: '${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}'
-          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'

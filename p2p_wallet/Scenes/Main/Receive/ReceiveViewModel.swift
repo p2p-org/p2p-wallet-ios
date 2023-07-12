@@ -4,6 +4,7 @@ import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
 import Wormhole
+import UIKit
 
 enum ReceiveNetwork {
     enum Image {

@@ -3,6 +3,7 @@ import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import UIKit
 
 final class TabBarViewModel {
     // Dependencies

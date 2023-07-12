@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amplitude/Amplitude-iOS.git",
         "state": {
           "branch": null,
-          "revision": "94b4dcfda9ed9edd6463d9a657bf30c9cf075f09",
-          "version": "8.16.4"
+          "revision": "94160a550835e6f0a1df9fa76ab3902ac4648a9c",
+          "version": "8.17.1"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/google/GoogleUtilities.git",
         "state": {
           "branch": null,
-          "revision": "6039a55afc03aac62e898aea4acdbe20d383978c",
-          "version": "7.11.2"
+          "revision": "58d03d22beae762eaddbd30cb5a61af90d4b309f",
+          "version": "7.11.3"
         }
       },
       {
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/intercom/intercom-ios.git",
         "state": {
           "branch": null,
-          "revision": "7d1072dc39ebaf8af117b697730b6aaa834e5f48",
-          "version": "12.4.3"
+          "revision": "5e5f0c032749be4539b6677c95319c3627c78cba",
+          "version": "15.0.1"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "1bc568dc14e098880f8698e0d3d60b24e7351bbb",
-          "version": "3.6.3"
+          "revision": "9bc965a326df8d5115f0b7bb77f09c542b8ec417",
+          "version": "3.6.6"
         }
       },
       {
@@ -384,8 +384,8 @@
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "9b1258905c21fc1b97bf03d1b4ca12c4ec4e5fda",
-          "version": "1.2.0"
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
         }
       },
       {
@@ -456,8 +456,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
           "branch": null,
-          "revision": "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
-          "version": "1.11.0"
+          "revision": "dc46eeb3928a75390651fac6c1ef7f93ad59a73b",
+          "version": "1.11.1"
         }
       },
       {

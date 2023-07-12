@@ -1,14 +1,8 @@
-//
-//  AppEventHandler.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 09/01/2022.
-//
-
 import Foundation
 import LocalAuthentication
 import Resolver
 import SolanaSwift
+import UIKit
 
 protocol AppEventHandlerType {
     var delegate: AppEventHandlerDelegate? { get set }
@@ -72,34 +66,6 @@ extension AppEventHandler: ChangeThemeResponder {
     func changeThemeTo(_ style: UIUserInterfaceStyle) {
         Defaults.appearance = style
         delegate?.userDidChangeTheme(to: style)
-    }
-}
-
-// MARK: - DeviceOwnerAuthenticationHandler
-
-extension AppEventHandler: DeviceOwnerAuthenticationHandler {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
-        let myContext = LAContext()
-
-        var error: NSError?
-        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            DispatchQueue.main.async {
-                onFailure?(errorToString(error))
-            }
-            return
-        }
-
-        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { success, error in
-            guard success else {
-                DispatchQueue.main.async {
-                    onFailure?(errorToString(error))
-                }
-                return
-            }
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
     }
 }
 

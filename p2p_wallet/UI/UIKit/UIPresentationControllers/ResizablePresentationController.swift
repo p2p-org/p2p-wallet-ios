@@ -1,11 +1,5 @@
-//
-//  ResizablePresentationController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 13/01/2021.
-//
-
 import Foundation
+import UIKit
 
 protocol ResizablePresentationController: UIPresentationController {
     func presentedViewDidSwipe(gestureRecognizer: UIPanGestureRecognizer)

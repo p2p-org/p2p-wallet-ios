@@ -1,4 +1,6 @@
 import KeyAppUI
+import UIKit
+import Foundation
 
 struct SellTransactionDetailsInfoModel {
     enum InfoText {

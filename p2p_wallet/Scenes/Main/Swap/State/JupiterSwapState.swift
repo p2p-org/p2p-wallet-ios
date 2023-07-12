@@ -85,13 +85,19 @@ struct JupiterSwapState: Equatable {
     /// Token that user's swapping to
     var toToken: SwapToken
     
-    /// Amount to
-    var amountTo: Double?
-    
     /// SlippageBps is slippage multiplied by 100 (be careful)
     var slippageBps: Int
     
     // MARK: - Computed properties
+    
+    /// Amount to
+    var amountTo: Double? {
+        guard let route else {
+            return nil
+        }
+        return UInt64(route.outAmount)?
+            .convertToBalance(decimals: toToken.token.decimals)
+    }
     
     /// All the wallets that user owns
     var userWallets: [Wallet] {
