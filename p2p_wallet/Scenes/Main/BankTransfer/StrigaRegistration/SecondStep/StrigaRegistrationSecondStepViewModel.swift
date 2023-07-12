@@ -77,6 +77,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .store(in: &subscriptions)
 
         $selectedCountry
+            .compactMap { $0 }
             .assignWeak(to: \.lastChosenCountry, on: self)
             .store(in: &subscriptions)
 
