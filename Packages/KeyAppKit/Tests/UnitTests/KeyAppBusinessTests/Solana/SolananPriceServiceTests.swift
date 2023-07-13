@@ -102,17 +102,17 @@ final class PriceServiceTests: XCTestCase {
 }
 
 final class MockKeyAppTokenProvider: KeyAppTokenProvider {
-    var getTokensPriceResponse: [KeyAppBusiness.KeyAppToken.GetPriceInfoResult] = []
+    var getTokensPriceResponse: [KeyAppBusiness.KeyAppTokenProviderData.GetPriceInfoResult] = []
 
     func getTokensInfo(
-        _: KeyAppBusiness.KeyAppToken.Params<KeyAppBusiness.KeyAppToken.GetToken>
-    ) async throws -> [KeyAppBusiness.KeyAppToken.GetTokenInfoResult] {
+        _: KeyAppBusiness.KeyAppTokenProviderData.Params<KeyAppBusiness.KeyAppTokenProviderData.TokenQuery>
+    ) async throws -> [KeyAppBusiness.KeyAppTokenProviderData.GetTokenInfoResult] {
         []
     }
 
     func getTokensPrice(
-        _: KeyAppBusiness.KeyAppToken.Params<KeyAppBusiness.KeyAppToken.GetToken>
-    ) async throws -> [KeyAppBusiness.KeyAppToken.GetPriceInfoResult] {
+        _: KeyAppBusiness.KeyAppTokenProviderData.Params<KeyAppBusiness.KeyAppTokenProviderData.TokenQuery>
+    ) async throws -> [KeyAppBusiness.KeyAppTokenProviderData.GetPriceInfoResult] {
         getTokensPriceResponse
     }
 

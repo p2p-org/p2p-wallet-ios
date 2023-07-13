@@ -141,25 +141,22 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository
     ) async throws -> [Account] {
-        try await withThrowingTaskGroup(of: (EthereumTokenBalances.Balance, EthereumToken).self) { group in
-            for balance in balances {
-                group.addTask {
-                    (
-                        balance,
-                        try await repository.resolve(address: balance.contractAddress.hex(eip55: false))
-                    )
-                }
-            }
-
-            var result: [(EthereumTokenBalances.Balance, EthereumToken)] = []
-            for try await item in group {
-                result.append(item)
-            }
-
-            return result.map { item in
-                Account(address: address, token: item.1, balance: item.0.tokenBalance ?? 0)
-            }
+        if balances.isEmpty {
+            return []
         }
+
+        var result: [Account] = []
+        let tokens = try await repository.resolve(addresses: balances.map(\.contractAddress))
+
+        for balance in balances {
+            guard let token = tokens[balance.contractAddress] else {
+                continue
+            }
+
+            result.append(Account(address: address, token: token, balance: balance.tokenBalance ?? 0))
+        }
+
+        return result
     }
 
     /// Fetch new data from blockchain.

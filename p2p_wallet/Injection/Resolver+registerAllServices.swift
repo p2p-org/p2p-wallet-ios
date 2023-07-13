@@ -75,6 +75,9 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceShareManager.self)
             .scope(.application)
 
+        register { KeyAppTokenHttpProvider(client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)) }
+            .implements(KeyAppTokenProvider.self)
+
         register {
             DeviceShareMigrationService(
                 isWeb3AuthUser: resolve(UserWalletManager.self)
@@ -141,10 +144,7 @@ extension Resolver: ResolverRegistering {
 
         // Prices
         register {
-            PriceServiceImpl(
-                api: KeyAppTokenHttpProvider(client: .init(endpoint: "https://token-service.keyapp.org")),
-                errorObserver: resolve()
-            )
+            PriceServiceImpl(api: resolve(), errorObserver: resolve())
         }
         .implements(PriceService.self)
         .scope(.application)
@@ -218,7 +218,7 @@ extension Resolver: ResolverRegistering {
 
         register {
             KeyAppSolanaTokenRepository(
-                provider: KeyAppTokenHttpProvider(client: .init(endpoint: "https://token-service.keyapp.org"))
+                provider: resolve()
             )
         }
         .implements(SolanaTokensService.self)
@@ -228,7 +228,7 @@ extension Resolver: ResolverRegistering {
             .implements(CreateNameService.self)
             .scope(.application)
 
-        register { EthereumTokensRepository(web3: resolve()) }
+        register { EthereumTokensRepository(provider: resolve()) }
             .scope(.application)
     }
 

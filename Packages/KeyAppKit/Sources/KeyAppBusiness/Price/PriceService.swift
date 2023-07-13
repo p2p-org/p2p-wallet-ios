@@ -11,6 +11,7 @@ import Foundation
 import KeyAppKitCore
 import SolanaSwift
 
+/// Abstract class for getting exchange rate between token and fiat for any token.
 public protocol PriceService {
     func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
     func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
@@ -61,38 +62,23 @@ public class PriceServiceImpl: PriceService {
         }
 
         // Request missing token price
-        let query: [KeyAppToken.GetToken] = Dictionary(
+        let query: [KeyAppTokenProviderData.TokenQuery] = Dictionary(
             grouping: missingPriceTokenMints,
             by: \.network
         ).map { (network: TokenNetwork, tokens: [AnyToken]) in
-            let addresses = tokens.map { token in
-                switch token.primaryKey {
-                // TODO: temporary price mapping for native token.
-                case .native:
-                    switch token.network {
-                    case .solana:
-                        return SolanaToken.nativeSolana.address
-                    case .ethereum:
-                        return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
-                    }
+            let addresses = tokens.map(\.addressPriceMapping)
 
-                case let .contract(address):
-                    return address
-                }
-            }
-
-            return KeyAppToken.GetToken(chainId: network.rawValue, addresses: addresses)
+            return KeyAppTokenProviderData.TokenQuery(chainId: network.rawValue, addresses: addresses)
         }
 
         let newPrices = try await api.getTokensPrice(
-            KeyAppToken.Params(query: query)
+            KeyAppTokenProviderData.Params(query: query)
         )
 
         // Process new token prices
         for tokenData in newPrices.first?.data ?? [] {
-            print(tokenData)
-
-            guard let token = tokens.first(where: { token in token.address == tokenData.address })?.asSomeToken
+            guard let token = tokens.first(where: { token in token.addressPriceMapping == tokenData.address })?
+                .asSomeToken
             else {
                 // Token should be from requested list
                 continue
@@ -157,5 +143,27 @@ public class PriceServiceImpl: PriceService {
             value: parsedValue,
             token: token
         )
+    }
+}
+
+internal extension AnyToken {
+    var addressPriceMapping: String {
+        switch network {
+        case .solana:
+            switch primaryKey {
+            case .native:
+                return  SolanaToken.nativeSolana.address
+            case let .contract(address):
+                return address
+            }
+
+        case .ethereum:
+            switch primaryKey {
+            case .native:
+                return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+            case let .contract(address):
+                return address
+            }
+        }
     }
 }
