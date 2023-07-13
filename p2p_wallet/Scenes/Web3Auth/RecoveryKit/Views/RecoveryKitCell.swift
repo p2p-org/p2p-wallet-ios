@@ -1,19 +1,15 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import KeyAppUI
 import SwiftUI
 
 struct RecoveryKitCell: View {
-    let icon: UIImage
+    let icon: ImageResource
     let title: String
     let onTap: (() -> Void)?
 
     var body: some View {
         Button { onTap?() } label: {
             HStack {
-                Image(uiImage: icon)
+                Image(icon)
                     .padding(.trailing, 12)
                 Text(title)
                     .fontWeight(.semibold)

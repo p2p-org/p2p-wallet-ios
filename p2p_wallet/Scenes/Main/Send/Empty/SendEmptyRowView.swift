@@ -2,11 +2,11 @@ import KeyAppUI
 import SwiftUI
 
 struct SendEmptyRowView: View {
-    private let image: UIImage
+    private let image: ImageResource
     private let text: String
     private let textAccessibilityIdentifier: String
 
-    init(image: UIImage, text: String, textAccessibilityIdentifier: String) {
+    init(image: ImageResource, text: String, textAccessibilityIdentifier: String) {
         self.image = image
         self.text = text
         self.textAccessibilityIdentifier = textAccessibilityIdentifier
@@ -18,7 +18,7 @@ struct SendEmptyRowView: View {
                 Circle()
                     .frame(width: 48, height: 48)
                     .foregroundColor(Color(Asset.Colors.rain.color))
-                Image(uiImage: image)
+                Image(image)
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

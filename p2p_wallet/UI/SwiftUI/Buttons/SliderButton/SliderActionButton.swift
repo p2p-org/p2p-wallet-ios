@@ -41,7 +41,7 @@ struct SliderActionButton: View {
                 if data.isEnabled {
                     SliderButtonView(
                         title: data.title,
-                        image: .arrowRight,
+                        image: .init(resource: .arrowRight),
                         style: .solidBlack,
                         isOn: Binding(get: {
                             self.isSliderOn

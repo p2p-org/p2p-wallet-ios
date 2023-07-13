@@ -69,8 +69,8 @@ final class TabBarController: UITabBarController {
             } else {
                 viewControllers?[index].tabBarItem = UITabBarItem(
                     title: item.displayTitle,
-                    image: item.image,
-                    selectedImage: item.image
+                    image: item.image != nil ? .init(resource: item.image!): nil,
+                    selectedImage: item.image != nil ? .init(resource: item.image!): nil
                 )
             }
         }
@@ -80,12 +80,12 @@ final class TabBarController: UITabBarController {
             .sink { [weak self] migrationIsAvailable in
                 DispatchQueue.main.async {
                     if migrationIsAvailable {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .init(resource: .tabBarSettingsWithAlert)
                         self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                            .selectedImage = .selectedTabBarSettingsWithAlert
+                            .selectedImage = .init(resource: .selectedTabBarSettingsWithAlert)
                     } else {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .init(resource: .tabBarSettings)
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .init(resource: .tabBarSettings)
                     }
                 }
             }
@@ -329,14 +329,14 @@ extension TabBarController: UITabBarControllerDelegate {
 // MARK: - TabItem
 
 private extension TabItem {
-    var image: UIImage {
+    var image: ImageResource? {
         switch self {
         case .wallet:
             return .tabBarSelectedWallet
         case .invest:
             return available(.investSolendFeature) ? .tabBarEarn : .tabBarSwap
         case .actions:
-            return UIImage()
+            return nil
         case .history:
             return .tabBarHistory
         case .settings:

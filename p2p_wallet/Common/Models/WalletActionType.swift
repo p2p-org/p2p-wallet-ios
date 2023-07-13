@@ -1,11 +1,4 @@
-//
-//  WalletActionType.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 19.01.2022.
-//
-
-import UIKit
+import Foundation
 
 enum WalletActionType {
     case receive
@@ -29,7 +22,7 @@ enum WalletActionType {
         }
     }
 
-    var icon: UIImage {
+    var icon: ImageResource {
         switch self {
         case .receive:
             return .homeReceive

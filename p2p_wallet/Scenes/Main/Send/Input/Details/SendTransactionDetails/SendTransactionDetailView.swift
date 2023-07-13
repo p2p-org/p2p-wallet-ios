@@ -1,10 +1,3 @@
-//
-//  SendTransactionDetails.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.11.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
@@ -54,7 +47,7 @@ struct SendTransactionDetailView: View {
 
     private func cellView(model: SendTransactionDetailViewModel.CellModel) -> some View {
         HStack(spacing: Constants.imageRightSpacing) {
-            Image(uiImage: model.image)
+            Image(model.image)
                 .frame(width: Constants.imageSize, height: Constants.imageSize)
             VStack(alignment: .leading, spacing: Constants.textSpacing) {
                 Button(
@@ -68,7 +61,7 @@ struct SendTransactionDetailView: View {
                                 .foregroundColor(Color(Asset.Colors.night.color))
                                 .font(uiFont: .font(of: .text1, weight: .semibold))
                             if model.info != nil {
-                                Image(uiImage: .feeInfo.withRenderingMode(.alwaysOriginal))
+                                Image(uiImage: .init(resource: .feeInfo).withRenderingMode(.alwaysOriginal))
                                     .resizable()
                                     .frame(
                                         width: Constants.infoHeight,

@@ -7,7 +7,7 @@ struct SolendTutorialSlideView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            Image(uiImage: data.image)
+            Image(data.image)
                 .resizable()
                 .scaledToFit()
                 .frame(

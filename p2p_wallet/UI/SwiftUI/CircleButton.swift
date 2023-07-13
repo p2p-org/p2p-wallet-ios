@@ -1,16 +1,9 @@
-//
-//  NewHistoryButtonAction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 10.02.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
 struct CircleButton: View {
     let title: String
-    let image: UIImage
+    let image: ImageResource
     let onPressed: () -> Void
 
     var body: some View {
@@ -22,7 +15,7 @@ struct CircleButton: View {
                     .fill(Color(Asset.Colors.night.color))
                     .frame(width: 52, height: 52)
                     .overlay(
-                        Image(uiImage: image)
+                        Image(image)
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(.white)
@@ -39,6 +32,6 @@ struct CircleButton: View {
 
 struct NewHistoryButtonAction_Previews: PreviewProvider {
     static var previews: some View {
-        CircleButton(title: "Share", image: UIImage(resource: .share2)) {}
+        CircleButton(title: "Share", image: .share2) {}
     }
 }

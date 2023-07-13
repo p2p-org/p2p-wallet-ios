@@ -1,15 +1,8 @@
-//
-//  TransactionDetailStatusView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.02.2023.
-//
-
 import SwiftUI
 import KeyAppUI
 
 struct TransactionDetailStatusAppearance {
-    let image: UIImage
+    let image: ImageResource
     let imageSize: CGSize
     let backgroundColor: Color
     let circleColor: Color
@@ -89,7 +82,7 @@ struct TransactionDetailStatusView: View {
                             .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
                     }
 
-                    Image(uiImage: currentAppearance.image)
+                    Image(currentAppearance.image)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()

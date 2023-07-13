@@ -112,7 +112,7 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                 }.padding(.init(top: 18, left: 48, bottom: 32, right: 48))
             
             // Logo
-            UIImageView(image: .keyappLogo, tintColor: theme.logoColor)
+            UIImageView(image: .init(resource: .keyappLogo), tintColor: theme.logoColor)
                 .centered(.horizontal)
                 .padding(.init(only: .bottom, inset: 19))
             

@@ -1,10 +1,3 @@
-//
-//  SwapSettingsInfoView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.03.2023.
-//
-
 import SwiftUI
 import KeyAppUI
 import SkeletonUI
@@ -14,7 +7,7 @@ struct SwapSettingsInfoView: View {
     
     var body: some View {
         VStack {
-            Image(uiImage: viewModel.image)
+            Image(viewModel.image)
             HStack(spacing: 16) {
                 Image(.transactionFee)
                     .frame(width: 48, height: 48)

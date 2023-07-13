@@ -206,8 +206,8 @@ private class QrCodeCard: BECompositionView {
         pubKeyView?.attributedText = address
     }
     
-    private func tinted(image: UIImage) -> UIImage {
-        image.withTintColor(Asset.Colors.night.color)
+    private func tinted(image: ImageResource) -> UIImage {
+        .init(resource: image).withTintColor(Asset.Colors.night.color)
     }
     
     func onCopy(callback: @escaping BECallback<String?>) -> Self {

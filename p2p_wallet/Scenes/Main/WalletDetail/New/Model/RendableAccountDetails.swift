@@ -53,7 +53,7 @@ extension RendableAccountDetailsAction {
         }
     }
 
-    var icon: UIImage {
+    var icon: ImageResource {
         switch self {
         case .receive:
             return .buttonReceive

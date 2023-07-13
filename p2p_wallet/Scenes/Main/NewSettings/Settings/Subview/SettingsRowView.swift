@@ -25,7 +25,7 @@ struct SettingsRowView<Leading: View>: View {
                 .lineLimit(1)
             if withArrow {
                 Spacer()
-                Image(uiImage: .cellArrow)
+                Image(.cellArrow)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
         }
@@ -35,7 +35,7 @@ struct SettingsRowView<Leading: View>: View {
 struct SettingsRow_Preview: PreviewProvider {
     static var previews: some View {
         SettingsRowView(title: "Example", withArrow: true) {
-            Image(uiImage: UIImage.recoveryKit)
+            Image(.recoveryKit)
                 .overlay(
                     AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color)).offset(x: 2.5, y: -2.5),
                     alignment: .topTrailing

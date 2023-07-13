@@ -9,7 +9,7 @@ struct SellTransactionDetailsInfoModel {
     }
 
     let text: InfoText
-    let icon: UIImage
+    let icon: ImageResource
     let iconColor: UIColor
     let textColor: UIColor
     let backgroundColor: UIColor

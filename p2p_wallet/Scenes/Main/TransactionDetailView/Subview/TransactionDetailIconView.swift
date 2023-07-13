@@ -16,7 +16,7 @@ struct TransactionDetailIconView: View {
                 RoundedRectangle(cornerRadius: size/2)
                     .fill(Color(Asset.Colors.rain.color))
                     .overlay(
-                        Image(uiImage: image)
+                        Image(image)
                             .renderingMode(.template)
                             .foregroundColor(Color(Asset.Colors.night.color))
                     )

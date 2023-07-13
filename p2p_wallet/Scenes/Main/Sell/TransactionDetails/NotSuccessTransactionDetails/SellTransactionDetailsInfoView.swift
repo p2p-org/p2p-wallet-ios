@@ -6,7 +6,7 @@ struct SellTransactionDetailsInfoView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(uiImage: viewModel.icon)
+            Image(viewModel.icon)
                 .renderingMode(.template)
                 .foregroundColor(Color(viewModel.iconColor))
             switch viewModel.text {

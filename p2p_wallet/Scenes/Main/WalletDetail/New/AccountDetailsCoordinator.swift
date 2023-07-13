@@ -1,10 +1,3 @@
-//
-//  AccountDetailsCoordiantor.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Combine
 import KeyAppBusiness
 import KeyAppUI
@@ -174,7 +167,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         if account.data.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
-                var icon: SupportedTokenItemIcon = .image(UIImage(resource: .imageOutlineIcon))
+                var icon: SupportedTokenItemIcon = .image(.imageOutlineIcon)
                 if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
@@ -192,7 +185,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
 
         if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.data.token.address) {
-            var icon: SupportedTokenItemIcon = .image(UIImage(resource: .imageOutlineIcon))
+            var icon: SupportedTokenItemIcon = .image(.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
@@ -360,9 +353,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
 extension ReceiveNetwork.Image {
     init?(token: Token) {
-        if let image = token.image {
-            self = .image(image)
-        } else if let urlStr = token.logoURI, let url = URL(string: urlStr) {
+        if let urlStr = token.logoURI, let url = URL(string: urlStr) {
             self = .url(url)
         } else {
             return nil

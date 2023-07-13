@@ -154,7 +154,7 @@ struct SendTransactionStatusStatusView: View {
                             .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
                     }
 
-                    Image(uiImage: currentAppearance.image)
+                    Image(currentAppearance.image)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()

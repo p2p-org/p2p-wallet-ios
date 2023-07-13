@@ -23,7 +23,7 @@ struct HistoryIconView: View {
                 RoundedRectangle(cornerRadius: 21)
                     .fill(Color(Asset.Colors.smoke.color))
                     .overlay(
-                        Image(uiImage: image)
+                        Image(image)
                             .renderingMode(.template)
                             .foregroundColor(Color(Asset.Colors.night.color))
                     )

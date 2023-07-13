@@ -58,12 +58,12 @@ struct SupportedTokenNetworksView: View {
         }
     }
 
-    func network(icon: UIImage, title: String, onTap: @escaping () -> Void) -> some View {
+    func network(icon: ImageResource, title: String, onTap: @escaping () -> Void) -> some View {
         Button {
             onTap()
         } label: {
             HStack {
-                Image(uiImage: icon)
+                Image(icon)
                     .clipShape(Circle())
                     .frame(width: 48, height: 48)
                 Text(title)

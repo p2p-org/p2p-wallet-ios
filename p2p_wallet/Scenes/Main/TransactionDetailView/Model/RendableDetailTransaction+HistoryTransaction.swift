@@ -350,7 +350,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         return nil
     }
 
-    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> TransactionDetailIcon {
+    private func icon(mint: String?, url: URL?, defaultIcon: ImageResource) -> TransactionDetailIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {
