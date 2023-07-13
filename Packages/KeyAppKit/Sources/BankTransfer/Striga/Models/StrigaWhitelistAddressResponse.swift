@@ -10,5 +10,15 @@ public struct StrigaWhitelistAddressResponse: Codable {
 
     public struct Network: Codable {
         var name: String
+        var type: String
+        var contractAddress: String
     }
+}
+
+public struct StrigaWhitelistAddressesResponse: Codable {
+    var addresses: [StrigaWhitelistAddressResponse]
+}
+
+public enum StrigaWhitelistAddressError: String {
+    case alreadyWhitelisted = "00013"
 }

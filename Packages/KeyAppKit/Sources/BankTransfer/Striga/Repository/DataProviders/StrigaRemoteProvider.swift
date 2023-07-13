@@ -71,7 +71,7 @@ public protocol StrigaRemoteProvider: AnyObject {
         currency: String?,
         label: String?,
         page: String?
-    ) async throws -> [StrigaWhitelistAddressResponse]
+    ) async throws -> StrigaWhitelistAddressesResponse
 
     /// Whitelist Destination Address
     /// - Parameter userId: The Id of the user who is sending this transaction

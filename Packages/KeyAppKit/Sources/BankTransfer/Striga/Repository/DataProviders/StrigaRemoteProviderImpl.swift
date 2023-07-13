@@ -169,15 +169,9 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             whitelistedAddressId: whitelistedAddressId,
             amount: amount
         )
-//        return try await httpClient.request(endpoint: endpoint, responseModel: FeeEstimateResponse.self)
-        return FeeEstimateResponse(
-            totalFee: "323",
-            networkFee: "90",
-            ourFee: "0",
-            theirFee: "0",
-            feeCurrency: "cent",
-            gasLimit: "21000",
-            gasPrice: "10.009"
+        return try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: FeeEstimateResponse.self
         )
     }
 
@@ -247,7 +241,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         currency: String?,
         label: String?,
         page: String?
-    ) async throws -> [StrigaWhitelistAddressResponse] {
+    ) async throws -> StrigaWhitelistAddressesResponse {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getWhitelistedUserDestinations(
             baseURL: baseURL,
@@ -259,7 +253,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         )
         return try await httpClient.request(
             endpoint: endpoint,
-            responseModel: [StrigaWhitelistAddressResponse].self
+            responseModel: StrigaWhitelistAddressesResponse.self
         )
     }
 

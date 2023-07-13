@@ -246,7 +246,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/transaction/resend-otp",
+            path: "/wallets/transaction/confirm",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -292,14 +292,14 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/whitelist-address",
+            path: "/wallets/get/whitelisted-addresses",
             method: .post,
             keyPair: keyPair,
             body: [
                 "userId": userId,
                 "currency": currency,
-                "label": label,
-                "page": page
+//                "label": label,
+//                "page": page
             ]
         )
     }

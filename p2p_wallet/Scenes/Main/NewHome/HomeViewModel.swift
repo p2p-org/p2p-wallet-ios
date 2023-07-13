@@ -153,7 +153,7 @@ private extension HomeViewModel {
             .map { $0.status != .initializing }
 
         let bankTransferServicePublisher = bankTransferService.state
-            .filter { $0.status == .ready }
+            .filter { $0.value.wallet?.accounts.usdc != nil }
             .map { $0.value.wallet?.accounts.usdc }
 
         // Merge two services.

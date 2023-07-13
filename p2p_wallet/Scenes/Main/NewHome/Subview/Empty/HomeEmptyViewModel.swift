@@ -46,11 +46,10 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Actions
-
+    let homeAccountsSynchronisationService = HomeAccountsSynchronisationService()
     func reloadData() async {
         // refetch
-        await HomeAccountsSynchronisationService().refresh()
-        
+        await homeAccountsSynchronisationService.refresh()
         updateData()
     }
 

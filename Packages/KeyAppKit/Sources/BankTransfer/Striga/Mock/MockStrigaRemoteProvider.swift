@@ -153,7 +153,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         currency: String?,
         label: String?,
         page: String?
-    ) async throws -> [StrigaWhitelistAddressResponse] {
+    ) async throws -> StrigaWhitelistAddressesResponse {
         fatalError()
     }
 
