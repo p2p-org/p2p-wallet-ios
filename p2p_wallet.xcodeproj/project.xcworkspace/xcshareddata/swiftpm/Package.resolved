@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/amplitude/analytics-connector-ios.git",
         "state": {
           "branch": null,
-          "revision": "d3d682a26ca6f4947ece2c2e627971bb41b940fa",
-          "version": "1.0.1"
+          "revision": "d2f3ec4b022211a67d5d4509135d84359f7f8b8d",
+          "version": "1.0.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/AppsFlyerSDK/AppsFlyerFramework",
         "state": {
           "branch": null,
-          "revision": "aabfaf81d95e21f711850e87c60b9ef70b2bc6c4",
-          "version": "6.9.2"
+          "revision": "a8e607ae6fc19b1e26f440cadf0dac28fd4c81ac",
+          "version": "6.12.0"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk.git",
         "state": {
           "branch": null,
-          "revision": "e700a8f40c87c31cab7984875fcc1225d96b25bf",
-          "version": "10.11.0"
+          "revision": "a580250a9ff49ec38da5430cef20f88ddc831db2",
+          "version": "10.12.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
         "state": {
           "branch": null,
-          "revision": "62e3a0c09a75e2637f5300d46f05a59313f1c286",
-          "version": "10.11.0"
+          "revision": "0a226a8c50494c4cb877fbde27ab6374520a3354",
+          "version": "10.12.0"
         }
       },
       {
@@ -174,11 +174,11 @@
       },
       {
         "package": "Intercom",
-        "repositoryURL": "https://github.com/intercom/intercom-ios.git",
+        "repositoryURL": "https://github.com/intercom/intercom-ios-sp",
         "state": {
           "branch": null,
-          "revision": "5e5f0c032749be4539b6677c95319c3627c78cba",
-          "version": "15.0.1"
+          "revision": "1031655ceb49a8c8975b0cb138fe3bed897d159e",
+          "version": "15.0.3"
         }
       },
       {
