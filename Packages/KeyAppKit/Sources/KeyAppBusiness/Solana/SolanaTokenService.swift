@@ -54,7 +54,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
         }
 
         do {
-            let result = try await provider.getSolanaTokens(modifiedSince: Date())
+            let result = try await provider.getSolanaTokens(modifiedSince: database.timestamps)
             switch result {
             case .noChanges:
                 status = .ready

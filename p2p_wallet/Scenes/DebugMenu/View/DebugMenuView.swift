@@ -1,3 +1,4 @@
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -26,11 +27,25 @@ struct DebugMenuView: View {
 
                 application
 
+                tokenService
+
                 modules
 
                 feeRelayer
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
+        }
+    }
+
+    var tokenService: some View {
+        Section(header: Text("Token")) {
+            DebugTextField(title: "Token:", content: $globalAppState.tokenEndpoint)
+            Button("Clear cache") {
+                let tokenService = Resolver.resolve(SolanaTokensService.self)
+                Task {
+                    try await tokenService.reset()
+                }
+            }
         }
     }
 
