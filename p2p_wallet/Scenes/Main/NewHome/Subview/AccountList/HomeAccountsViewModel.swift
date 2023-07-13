@@ -29,7 +29,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     let navigation: PassthroughSubject<HomeNavigation, Never>
     let bannerTapped = PassthroughSubject<Void, Never>()
-    private let tappedBannerSubject = PassthroughSubject<HomeNavigation, Never>()
+    private let shouldOpenBankTransfer = PassthroughSubject<Void, Never>()
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     @Published private(set) var balance: String = ""
@@ -314,16 +314,10 @@ private extension HomeAccountsViewModel {
                 guard let bannerVisibility = self?.smallBannerVisibility else { return true }
                 return bannerVisibility.id != $0.value.kycStatus.rawValue || !bannerVisibility.closed
             }
-            .map { [weak self] value -> HomeBannerParameters? in
-                guard let self else { return nil  }
-
-                if value.value.isIBANNotReady && !shouldShowErrorSubject.value {
-                    self.shouldShowErrorSubject.send(true)
-                }
-
-                return HomeBannerParameters(
+            .map { value in
+                HomeBannerParameters(
                     status: value.value.kycStatus,
-                    action: { [weak self] in self?.requestCloseBanner(for: value.value) },
+                    action: { [weak self] in self?.bannerTapped.send() },
                     isLoading: false,
                     isSmallBanner: true
                 )
@@ -331,39 +325,49 @@ private extension HomeAccountsViewModel {
             .assignWeak(to: \.smallBanner, on: self)
             .store(in: &subscriptions)
 
-        tappedBannerSubject
+        shouldOpenBankTransfer
             .withLatestFrom(bankTransferService.value.state)
-            .filter { !$0.isFetching }
             .receive(on: RunLoop.main)
             .sink{ [weak self] state in
-                guard let self else { return }
                 if state.value.isIBANNotReady {
-                    self.smallBanner?.button?.isLoading = true
-                    self.shouldShowErrorSubject.send(false)
-                    Task {
-                        await self.bankTransferService.value.reload()
-                        self.tappedBannerSubject.send(.bankTransfer)
-                    }
+                    self?.shouldShowErrorSubject.send(true)
                 } else {
-                    self.navigation.send(.bankTransfer)
+                    self?.navigation.send(.bankTransfer)
                 }
             }
             .store(in: &subscriptions)
 
         shouldShowErrorSubject
             .filter { $0 }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong) }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
+                self?.shouldShowErrorSubject.send(false)
+            }
             .store(in: &subscriptions)
 
         bannerTapped
             .withLatestFrom(bankTransferService.value.state)
-            .sink { [weak self] state in self?.requestCloseBanner(for: state.value) }
+            .filter { !$0.isFetching }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                self.requestCloseBanner(for: state.value)
+
+                if state.value.isIBANNotReady {
+                    self.smallBanner?.button?.isLoading = true
+                    Task {
+                        await self.bankTransferService.value.reload()
+                        self.shouldOpenBankTransfer.send()
+                    }
+                } else {
+                    self.shouldOpenBankTransfer.send()
+                }
+            }
             .store(in: &subscriptions)
     }
 
     func requestCloseBanner(for data: UserData) {
-        tappedBannerSubject.send(.bankTransfer)
         switch data.kycStatus {
         case .onHold, .pendingReview:
             shouldCloseBanner = false
