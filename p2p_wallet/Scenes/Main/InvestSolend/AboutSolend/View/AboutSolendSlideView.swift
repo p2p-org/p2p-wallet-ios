@@ -1,21 +1,14 @@
-//
-//  AboutSolendSlideView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.10.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
 struct AboutSolendSlideView: View {
-    let image: UIImage
+    let image: ImageResource
     let title: String
     let subtitle: String
 
     var body: some View {
         VStack(spacing: 16) {
-            Image(uiImage: image)
+            Image(image)
             Text(title)
                 .fontWeight(.bold)
                 .apply(style: .title3)

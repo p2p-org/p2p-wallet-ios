@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 protocol RenderableAccount: Identifiable where ID == String {
     var id: String { get }
@@ -57,7 +56,7 @@ enum AccountDetail {
 }
 
 enum AccountIcon {
-    case image(UIImage)
+    case image(ImageResource)
     case url(URL)
     case random(seed: String)
 }

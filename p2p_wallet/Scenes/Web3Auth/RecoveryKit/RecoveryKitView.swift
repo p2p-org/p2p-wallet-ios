@@ -150,7 +150,7 @@ struct RecoveryKitView: View {
         }
     }
 
-    func authProviderIcon(provider: String) -> UIImage? {
+    func authProviderIcon(provider: String) -> ImageResource? {
         switch provider {
         case "apple": return .appleIcon
         case "google": return .google

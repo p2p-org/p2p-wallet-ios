@@ -114,7 +114,7 @@ extension HomeEmptyViewModel {
         return token.name
     }
 
-    func image(for token: Token) -> UIImage {
+    func image(for token: Token) -> ImageResource {
         if token == .nativeSolana {
             return .solanaIcon
         }

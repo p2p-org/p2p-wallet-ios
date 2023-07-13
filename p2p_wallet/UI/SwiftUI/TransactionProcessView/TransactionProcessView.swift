@@ -1,10 +1,3 @@
-//
-//  TransactionProcessView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.03.2023.
-//
-
 import Foundation
 import SwiftUI
 import KeyAppUI
@@ -56,7 +49,7 @@ struct TransactionProcessView: View {
                             .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
                     }
 
-                    Image(uiImage: currentAppearance.image)
+                    Image(currentAppearance.image)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
@@ -106,7 +99,7 @@ extension TransactionProcessView {
 
 extension TransactionProcessView {
     struct Appearance {
-        let image: UIImage
+        let image: ImageResource
         let imageSize: CGSize
         let backgroundColor: Color
         let circleColor: Color

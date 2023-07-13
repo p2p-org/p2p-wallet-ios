@@ -8,8 +8,8 @@ struct TextButtonView: UIViewRepresentable {
     private let title: String
     private let style: TextButton.Style
     private let size: TextButton.Size
-    private let leading: UIImage?
-    private let trailing: UIImage?
+    private let leading: ImageResource?
+    private let trailing: ImageResource?
     private let onPressed: (() -> Void)?
     private let isLoading: Bool
 
@@ -17,8 +17,8 @@ struct TextButtonView: UIViewRepresentable {
         title: String,
         style: TextButton.Style,
         size: TextButton.Size,
-        leading: UIImage? = nil,
-        trailing: UIImage? = nil,
+        leading: ImageResource? = nil,
+        trailing: ImageResource? = nil,
         isLoading: Bool = false,
         onPressed: (() -> Void)? = nil
     ) {
@@ -32,7 +32,13 @@ struct TextButtonView: UIViewRepresentable {
     }
 
     func makeUIView(context _: Context) -> TextButton {
-        let button = TextButton(title: title, style: style, size: size, leading: leading, trailing: trailing)
+        let button = TextButton(
+            title: title,
+            style: style,
+            size: size,
+            leading: leading == nil ? nil: .init(resource: leading!),
+            trailing: trailing == nil ? nil: .init(resource: trailing!)
+        )
         button.onPressed { _ in onPressed?() }
         return button
     }
@@ -40,8 +46,16 @@ struct TextButtonView: UIViewRepresentable {
     func updateUIView(_ textButton: TextButton, context _: Context) {
         textButton.title = title
         textButton.isLoading = isLoading
-        textButton.leadingImage = leading
-        textButton.trailingImage = trailing
+        if let leading {
+            textButton.leadingImage = .init(resource: leading)
+        } else {
+            textButton.leadingImage = nil
+        }
+        if let trailing {
+            textButton.trailingImage = .init(resource: trailing)
+        } else {
+            textButton.trailingImage = nil
+        }
         textButton.onPressed { _ in onPressed?() }
     }
 }

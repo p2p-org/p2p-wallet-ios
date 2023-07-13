@@ -36,7 +36,7 @@ enum RendableListTransactionItemChange {
 }
 
 enum RendableListTransactionItemIcon {
-    case icon(UIImage)
+    case icon(ImageResource)
     case single(URL)
     case double(URL, URL)
 }

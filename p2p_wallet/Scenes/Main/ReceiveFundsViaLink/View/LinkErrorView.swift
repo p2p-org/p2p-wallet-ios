@@ -17,7 +17,7 @@ struct LinkErrorView: View {
         VStack {
             Spacer()
             VStack(spacing: 8) {
-                Image(uiImage: model.image)
+                Image(model.image)
                 Text(model.title)
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(Asset.Colors.night.color))
@@ -53,6 +53,6 @@ extension LinkErrorView {
     struct Model {
         let title: String
         let subtitle: String
-        let image: UIImage
+        let image: ImageResource
     }
 }

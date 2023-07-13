@@ -32,7 +32,7 @@ struct RecoveryKitDevicesView: View {
                                 .padding(.leading, 16)
 
                             HStack {
-                                Image(uiImage: .deviceIcon)
+                                Image(.deviceIcon)
                                     .padding(.top, 18)
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
@@ -66,7 +66,7 @@ struct RecoveryKitDevicesView: View {
                                 .padding(.leading, 16)
 
                             HStack {
-                                Image(uiImage: .deviceIcon)
+                                Image(.deviceIcon)
                                     .padding(.top, 18)
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
@@ -76,7 +76,7 @@ struct RecoveryKitDevicesView: View {
                                         .apply(style: .text3)
                                         .padding(.top, 16)
                                     HStack(spacing: 4) {
-                                        Image(uiImage: .warningIcon)
+                                        Image(.warningIcon)
                                             .foregroundColor(Color(Asset.Colors.rose.color))
                                         Text(L10n.makeSureThisIsStillYourDevice)
                                             .fontWeight(.regular)

@@ -1,10 +1,3 @@
-//
-//  PopularCoinView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -12,13 +5,13 @@ struct PopularCoinView: View {
     let title: String
     let subtitle: String?
     let actionTitle: String
-    let image: UIImage
+    let image: ImageResource
 
     init(
         title: String,
         subtitle: String?,
         actionTitle: String,
-        image: UIImage
+        image: ImageResource
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -33,7 +26,7 @@ struct PopularCoinView: View {
                 .cornerRadius(16)
             HStack {
                 HStack(spacing: 12) {
-                    Image(uiImage: image)
+                    Image(image)
                         .frame(width: 48, height: 48)
                         .cornerRadius(16)
                     VStack(alignment: .leading, spacing: 4) {

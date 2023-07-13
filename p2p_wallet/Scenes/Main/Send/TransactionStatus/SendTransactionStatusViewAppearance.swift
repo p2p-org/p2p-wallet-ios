@@ -2,7 +2,7 @@ import KeyAppUI
 import SwiftUI
 
 struct SendTransactionStatusViewAppearance {
-    let image: UIImage
+    let image: ImageResource
     let imageSize: CGSize
     let backgroundColor: Color
     let circleColor: Color

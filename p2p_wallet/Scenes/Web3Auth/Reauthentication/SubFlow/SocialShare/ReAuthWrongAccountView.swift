@@ -50,7 +50,7 @@ struct ReAuthWrongAccountView: View {
                 Button {
                     onClose()
                 } label: {
-                    Image(uiImage: UIImage.closeIcon)
+                    Image(.closeIcon)
                 }
             }
         }

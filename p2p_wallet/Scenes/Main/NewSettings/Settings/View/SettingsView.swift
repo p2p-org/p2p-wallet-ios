@@ -1,10 +1,3 @@
-//
-//  SettingsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 30.08.2022.
-//
-
 import KeyAppUI
 import SolanaSwift
 import SwiftUI
@@ -96,7 +89,7 @@ struct SettingsView: View {
                 action: { viewModel.showView(.recoveryKit) },
                 label: {
                     SettingsRowView(title: L10n.securityAndPrivacy, withArrow: true) {
-                        Image(uiImage: UIImage.recoveryKit)
+                        Image(.recoveryKit)
                             .overlay(
                                 AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color))
                                     .opacity(viewModel.deviceShareMigrationAlert ? 1 : 0)
@@ -176,7 +169,7 @@ struct SettingsView: View {
             Section {
                 Button(
                     action: { debugPresented.toggle() },
-                    label: { cellView(image: UIImage(), title: "Debug Menu") }
+                    label: { cellView(image: nil, title: "Debug Menu") }
                 )
             }
             .sheet(isPresented: $debugPresented) {
@@ -185,7 +178,7 @@ struct SettingsView: View {
         }
     #endif
 
-    private func cellView<Content: View>(image: UIImage, title: String, rightContent: () -> Content) -> some View {
+    private func cellView<Content: View>(image: ImageResource?, title: String, rightContent: () -> Content) -> some View {
         HStack(spacing: 8) {
             cellView(image: image, title: title, withArrow: false)
             Spacer()
@@ -193,10 +186,12 @@ struct SettingsView: View {
         }
     }
 
-    private func cellView(image: UIImage, title: String, withArrow: Bool = true) -> some View {
+    private func cellView(image: ImageResource?, title: String, withArrow: Bool = true) -> some View {
         HStack(spacing: 12) {
-            Image(uiImage: image)
-                .frame(width: 24, height: 24)
+            if let image {
+                Image(image)
+                    .frame(width: 24, height: 24)
+            }
             Text(title)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text2))

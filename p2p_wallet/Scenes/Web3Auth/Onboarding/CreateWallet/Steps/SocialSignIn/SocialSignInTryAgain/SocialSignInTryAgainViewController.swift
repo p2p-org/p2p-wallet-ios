@@ -18,7 +18,7 @@ class SocialSignInTryAgainViewController: BaseViewController {
             BEVStack {
                 BESafeArea {
                     BEVStack {
-                        UIImageView(image: .womanNotFound, contentMode: .scaleAspectFill)
+                        UIImageView(image: .init(resource: .womanNotFound), contentMode: .scaleAspectFill)
                             .frame(width: 220, height: 280)
                             .centered(.horizontal)
 

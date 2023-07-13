@@ -74,7 +74,7 @@ struct HomeAccountsView: View {
                     },
                     label: {
                         HStack(spacing: 8) {
-                            Image(uiImage: isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
+                            Image(isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
                             Text(L10n.hiddenTokens)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .font(.system(size: 16))
@@ -147,14 +147,14 @@ private extension View {
     ) -> some View {
         swipeActions(allowsFullSwipe: true) {
             Button(action: action) {
-                Image(uiImage: isVisible ? .eyeHide : .eyeShow)
+                Image(isVisible ? .eyeHide : .eyeShow)
             }
             .tint(.clear)
         }
     }
 
     func hideView(isVisible: Bool) -> AnyView {
-        Image(uiImage: isVisible ? .eyeHide : .eyeShow)
+        Image(isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
     }

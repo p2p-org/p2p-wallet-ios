@@ -313,7 +313,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         return nil
     }
 
-    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> RendableListTransactionItemIcon {
+    private func icon(mint: String?, url: URL?, defaultIcon: ImageResource) -> RendableListTransactionItemIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {

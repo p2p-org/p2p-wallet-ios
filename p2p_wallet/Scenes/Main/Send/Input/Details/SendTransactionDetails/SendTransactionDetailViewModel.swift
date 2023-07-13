@@ -247,7 +247,7 @@ extension SendTransactionDetailViewModel {
         let type: CellType
         let title: String
         let subtitle: [(String, String?)]
-        let image: UIImage
+        let image: ImageResource
         var isFree: Bool = false
         var info: (() -> Void)?
         var isLoading: Bool = false

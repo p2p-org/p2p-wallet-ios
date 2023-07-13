@@ -1,10 +1,3 @@
-//
-//  SellTransactionDetailsTopView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
 import SwiftUI
 import KeyAppUI
 
@@ -26,7 +19,7 @@ struct SellTransactionDetailsTopView: View {
 
     private var tokenView: some View {
         VStack(spacing: 16) {
-            Image(uiImage: model.tokenImage)
+            Image(model.tokenImage)
                 .resizable()
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
@@ -47,7 +40,7 @@ struct SellTransactionDetailsTopView: View {
 extension SellTransactionDetailsTopView {
     struct Model {
         let date: Date
-        let tokenImage: UIImage
+        let tokenImage: ImageResource
         let tokenSymbol: String
         let tokenAmount: Double
         let fiatAmount: Double

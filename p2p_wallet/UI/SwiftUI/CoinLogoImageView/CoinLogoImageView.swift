@@ -121,7 +121,7 @@ class CoinLogoImageView: BEView {
         }
     }
 
-    func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {
+    func setup(preferredImage: ImageResource?, url: URL?, key: String, wrapped: Bool) {
         // default
         wrappingView.alpha = 0
         backgroundColor = .clear
@@ -129,7 +129,7 @@ class CoinLogoImageView: BEView {
 
         // with token
         if let image = preferredImage {
-            tokenIcon.image = image
+            tokenIcon.image = .init(resource: image)
         } else {
             var seed = Self.cachedJazziconSeeds[key]
             if seed == nil {

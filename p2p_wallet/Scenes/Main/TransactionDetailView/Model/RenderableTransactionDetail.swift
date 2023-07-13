@@ -3,7 +3,6 @@ import Foundation
 import History
 import SolanaSwift
 import TransactionParser
-import UIKit
 
 protocol RenderableTransactionDetail {
     var status: TransactionDetailStatus { get }
@@ -76,7 +75,7 @@ enum TransactionDetailAction: Int, Identifiable {
 }
 
 enum TransactionDetailIcon {
-    case icon(UIImage)
+    case icon(ImageResource)
     case single(URL)
     case double(URL, URL)
 }

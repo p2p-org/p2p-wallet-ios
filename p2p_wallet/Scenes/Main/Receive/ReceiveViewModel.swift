@@ -9,7 +9,7 @@ import UIKit
 enum ReceiveNetwork {
     enum Image {
         case url(URL)
-        case image(UIImage)
+        case image(ImageResource)
     }
 
     case solana(tokenSymbol: String, tokenImage: Image?)
@@ -60,7 +60,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             // Set token icon
             switch icon {
             case let .image(image):
-                qrCenterImage = image
+                qrCenterImage = .init(resource: image)
             case let .url(url):
                 qrCenterImageURL = url
             case .none:
@@ -105,7 +105,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             // Set token icon
             switch icon {
             case let .image(image):
-                qrCenterImage = image
+                qrCenterImage = .init(resource: image)
             case let .url(url):
                 qrCenterImageURL = url
             case .none:
