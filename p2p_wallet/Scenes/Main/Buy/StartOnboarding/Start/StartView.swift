@@ -9,12 +9,12 @@ struct StartView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.lime.color)
+            Color(.lime)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
-                        fillColor: Color(Asset.Colors.night.color),
+                        fillColor: Color(.night),
                         content: viewModel.data.map { data in
                             PageContent {
                                 VStack {

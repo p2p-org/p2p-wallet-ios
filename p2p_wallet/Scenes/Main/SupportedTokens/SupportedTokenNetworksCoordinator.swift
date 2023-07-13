@@ -17,7 +17,7 @@ class SupportedTokenNetworksCoordinator: SmartCoordinator<SupportedTokenItemNetw
         }
 
         let vc = BottomSheetController(rootView: view)
-        vc.view.backgroundColor = Asset.Colors.smoke.color
+        vc.view.backgroundColor = .init(resource: .smoke)
 
         return vc
     }

@@ -12,7 +12,7 @@ struct SwapSwitchButton: View {
         .accessibilityIdentifier("SwapView.switchButton")
         .background(
             Circle()
-                .foregroundColor(Color(Asset.Colors.rain.color))
+                .foregroundColor(Color(.rain))
                 .frame(width: 36, height: 36)
         )
     }

@@ -26,7 +26,7 @@ struct ReceiveView: View {
                     style: .primaryWhite,
                     size: .large,
                     trailing: UIImage(resource: .transactionsCopy)
-                        .withTintColor(Asset.Colors.snow.color),
+                        .withTintColor(.init(resource: .snow)),
                     onPressed: {
                         viewModel.buttonTapped()
                     }
@@ -50,7 +50,7 @@ struct ReceiveView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             } else if let centerImageURL = viewModel.qrCenterImageURL {
                 KFImage
@@ -66,7 +66,7 @@ struct ReceiveView: View {
                     .diskCacheExpiration(.days(7))
                     .fade(duration: 0.25)
                     .frame(width: iconSize, height: iconSize)
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             }
         }
@@ -86,11 +86,11 @@ struct ReceiveView: View {
 
     var placeholderIcon: some View {
         Circle()
-            .fill(Color(Asset.Colors.smoke.color))
+            .fill(Color(.smoke))
             .overlay(
                 Image(.imageOutlineIcon)
                     .renderingMode(.template)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             )
             .clipped()
             .frame(width: iconSize, height: iconSize)

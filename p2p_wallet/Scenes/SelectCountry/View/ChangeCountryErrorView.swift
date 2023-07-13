@@ -20,11 +20,11 @@ struct ChangeCountryErrorView: View {
             Image(uiImage: model.image)
             VStack(spacing: 8) {
                 Text(model.title)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title1, weight: .bold))
                 Text(model.subtitle)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1))
             }
             Spacer()
@@ -42,11 +42,11 @@ struct ChangeCountryErrorView: View {
                 },
                 label: {
                     Text(model.buttonTitle)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                 }
             )
@@ -56,7 +56,7 @@ struct ChangeCountryErrorView: View {
                 },
                 label: {
                     Text(model.subButtonTitle)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)

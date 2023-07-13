@@ -23,7 +23,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.navigationIsHidden = false
         vc.title = L10n.history
-        vc.view.backgroundColor = Asset.Colors.smoke.color
+        vc.view.backgroundColor = .init(resource: .smoke)
 
         vc.viewDidAppear.sink {
             vc.navigationItem.largeTitleDisplayMode = .never

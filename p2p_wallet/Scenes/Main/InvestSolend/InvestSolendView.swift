@@ -91,13 +91,13 @@ struct InvestSolendView: View {
             Image(.solendSubtract)
             Text(L10n.ThereSAProblemShowingTheRates.tryAgainLater)
                 .font(uiFont: .font(of: .text3))
-                .foregroundColor(Color(Asset.Colors.rose.color))
+                .foregroundColor(Color(.rose))
             Spacer()
         }
         .padding(.horizontal, 12)
         .frame(height: 64)
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.rose.color.withAlphaComponent(0.1)))
+        .background(Color(.rose).opacity(0.1))
         .cornerRadius(8)
     }
 }

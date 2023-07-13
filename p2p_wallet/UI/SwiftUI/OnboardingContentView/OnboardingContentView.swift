@@ -19,7 +19,7 @@ struct OnboardingContentView: View {
                 )
             Text(data.title)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 24)
@@ -48,7 +48,7 @@ struct OnboardingContentView: View {
 private extension Text {
     func subtitleStyle() -> some View {
         font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
-            .foregroundColor(Color(Asset.Colors.night.color))
+            .foregroundColor(Color(.night))
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
     }

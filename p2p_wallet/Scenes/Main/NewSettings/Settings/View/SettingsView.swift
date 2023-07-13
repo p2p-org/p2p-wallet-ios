@@ -41,10 +41,10 @@ struct SettingsView: View {
                         cellView(image: .profileIcon, title: L10n.username) {
                             HStack(spacing: 14) {
                                 Text(viewModel.name)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .foregroundColor(Color(.mountain))
                                     .font(uiFont: .font(of: .label1))
                                 Image(.cellArrow)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .foregroundColor(Color(.mountain))
                             }
                         }
                     }
@@ -67,7 +67,7 @@ struct SettingsView: View {
                         Image(.settingsSignOut)
                         Spacer()
                     }
-                    .foregroundColor(Color(Asset.Colors.rose.color))
+                    .foregroundColor(Color(.rose))
                 }
             )
             .alert(isPresented: $logOutPresented) {
@@ -91,7 +91,7 @@ struct SettingsView: View {
                     SettingsRowView(title: L10n.securityAndPrivacy, withArrow: true) {
                         Image(.recoveryKit)
                             .overlay(
-                                AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color))
+                                AlertIndicatorView(fillColor: Color(.rose))
                                     .opacity(viewModel.deviceShareMigrationAlert ? 1 : 0)
                                     .offset(x: 2.5, y: -2.5),
                                 alignment: .topTrailing
@@ -113,7 +113,7 @@ struct SettingsView: View {
                     title: viewModel.biometryType == .face ? L10n.faceID : L10n.touchID
                 ) {
                     Toggle("", isOn: $viewModel.biometryIsEnabled)
-                        .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
+                        .toggleStyle(SwitchToggleStyle(tint: Color(.night)))
                         .labelsHidden()
                 }
                 .alert(isPresented: $viewModel.errorAlertPresented) {
@@ -130,7 +130,7 @@ struct SettingsView: View {
         Section(header: headerText(L10n.appearance)) {
             cellView(image: .hideZeroBalance, title: L10n.hideZeroBalances) {
                 Toggle("", isOn: $viewModel.zeroBalancesIsHidden)
-                    .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
+                    .toggleStyle(SwitchToggleStyle(tint: Color(.night)))
                     .labelsHidden()
             }
         }
@@ -158,7 +158,7 @@ struct SettingsView: View {
         Section {
             cellView(image: .settingsAppVersion, title: L10n.appVersion) {
                 Text(viewModel.appInfo)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
         }
@@ -193,20 +193,20 @@ struct SettingsView: View {
                     .frame(width: 24, height: 24)
             }
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2))
                 .lineLimit(1)
             if withArrow {
                 Spacer()
                 Image(.cellArrow)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
     }
 
     private func headerText(_ text: String) -> some View {
         Text(text)
-            .foregroundColor(Color(Asset.Colors.mountain.color))
+            .foregroundColor(Color(.mountain))
             .font(uiFont: .font(of: .text4))
     }
 }

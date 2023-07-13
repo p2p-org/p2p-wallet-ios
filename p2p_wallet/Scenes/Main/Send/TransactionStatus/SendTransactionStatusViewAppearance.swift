@@ -13,9 +13,9 @@ struct SendTransactionStatusViewAppearance {
         case .loading:
             image = .lightningFilled
             imageSize = CGSize(width: 24, height: 24)
-            backgroundColor = Color(Asset.Colors.cloud.color)
-            circleColor = Color(Asset.Colors.smoke.color)
-            imageColor = Color(Asset.Colors.mountain.color)
+            backgroundColor = Color(.cloud)
+            circleColor = Color(.smoke)
+            imageColor = Color(.mountain)
         case .succeed:
             image = .lightningFilled
             imageSize = CGSize(width: 24, height: 24)
@@ -27,7 +27,7 @@ struct SendTransactionStatusViewAppearance {
             imageSize = CGSize(width: 20, height: 18)
             backgroundColor = Color(.ffdce9).opacity(0.3)
             circleColor = Color(.ffdce9)
-            imageColor = Color(Asset.Colors.rose.color)
+            imageColor = Color(.rose)
         }
     }
 }

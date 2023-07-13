@@ -12,23 +12,16 @@ struct HistoryItemView: View {
     let item: any RendableListTransactionItem
     let onTap: () -> Void
 
-    var titleColor: Color {
-        switch item.status {
-        case .success, .pending: return Color(Asset.Colors.night.color)
-        case .failed: return Color(Asset.Colors.rose.color)
-        }
-    }
-
-    var detailColor: Color {
+    var detailColor: ColorResource {
         switch item.status {
         case .pending:
-            return Color(Asset.Colors.night.color)
+            return .night
         case .success:
             switch item.detail.0 {
-            case .positive: return Color(Asset.Colors.mint.color)
-            case .negative, .unchanged: return Color(Asset.Colors.night.color)
+            case .positive: return .mint
+            case .negative, .unchanged: return .night
             }
-        case .failed: return Color(Asset.Colors.rose.color)
+        case .failed: return .rose
         }
     }
 
@@ -40,7 +33,7 @@ struct HistoryItemView: View {
                 HistoryIconView(icon: item.icon)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .fontWeight(.semibold)
                         .apply(style: .text2)
                         .lineLimit(2)
@@ -52,19 +45,19 @@ struct HistoryItemView: View {
                             Image(.crossIcon)
                                 .resizable()
                                 .renderingMode(.template)
-                                .foregroundColor(Color(Asset.Colors.rose.color))
+                                .foregroundColor(Color(.rose))
                                 .frame(width: 14, height: 14)
                         case .pending:
                             Image(.transactionIndicatorSellPending)
                                 .resizable()
                                 .renderingMode(.template)
-                                .foregroundColor(Color(Asset.Colors.sun.color))
+                                .foregroundColor(Color(.sun))
                                 .frame(width: 18, height: 18)
                         case .success:
                             SwiftUI.EmptyView()
                         }
                         Text(item.subtitle)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .apply(style: .label1)
                     }
                 }
@@ -76,13 +69,13 @@ struct HistoryItemView: View {
                         Text(item.detail.1)
                             .fontWeight(.semibold)
                             .apply(style: .text2)
-                            .foregroundColor(detailColor)
+                            .foregroundColor(Color(detailColor))
                             .lineLimit(2)
                             .multilineTextAlignment(.trailing)
                     }
 
                     Text(item.subdetail)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .apply(style: .label1)
                 }
             }

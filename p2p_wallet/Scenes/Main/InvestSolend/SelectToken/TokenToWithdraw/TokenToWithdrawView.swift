@@ -29,11 +29,11 @@ struct TokenToWithdrawView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }
@@ -68,17 +68,17 @@ struct TokenToWithdrawView: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(model.amount != nil ? model.amount?.tokenAmountFormattedString(symbol: model.symbol) ?? "" : model.symbol)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2))
                 if let apy = model.apy {
                     Text("\(L10n.yielding) \(apy.percentFormat()) \(L10n.apy)")
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .font(uiFont: .font(of: .label1))
                 }
             }
             Spacer()
             Text(model.fiatAmount?.fiatAmountFormattedString() ?? "")
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2, weight: .semibold))
         }
         .padding(.horizontal, 16)

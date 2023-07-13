@@ -14,7 +14,7 @@ struct SendViaLinkClaimErrorView: View {
         VStack(spacing: 39) {
             if let subtitle {
                 Text(subtitle)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .text3))
             }
             Spacer()

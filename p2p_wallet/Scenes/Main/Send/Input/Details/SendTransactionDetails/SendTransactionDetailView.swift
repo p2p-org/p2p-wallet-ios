@@ -30,11 +30,11 @@ struct SendTransactionDetailView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text1, weight: .bold))
                         .frame(height: 60)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                 }
             )
@@ -58,7 +58,7 @@ struct SendTransactionDetailView: View {
                         HStack(spacing: Constants.textHStackSpacing) {
                             Text(model.title)
                                 .lineLimit(1)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text1, weight: .semibold))
                             if model.info != nil {
                                 Image(uiImage: .init(resource: .feeInfo).withRenderingMode(.alwaysOriginal))
@@ -76,10 +76,10 @@ struct SendTransactionDetailView: View {
                     if model.isLoading {
                         Text(L10n.loading)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.sky.color))
+                            .foregroundColor(Color(.sky))
                         CircularProgressIndicatorView(
-                            backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                            foregroundColor: Asset.Colors.sky.color
+                            backgroundColor: .init(resource: .sky).withAlphaComponent(0.6),
+                            foregroundColor: .init(resource: .sky)
                         )
                         .frame(width: 16, height: 16)
                     } else {
@@ -87,12 +87,12 @@ struct SendTransactionDetailView: View {
                             ForEach(model.subtitle, id: \.0) { subtitle in
                                 HStack {
                                     Text(subtitle.0)
-                                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
+                                        .foregroundColor(Color(model.isFree ? .mint : .night))
                                         .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
                                         .fixedSize(horizontal: false, vertical: true)
                                     if let additionalText = subtitle.1 {
                                         Text("(\(additionalText))")
-                                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                                            .foregroundColor(Color(.mountain))
                                             .font(uiFont: .font(of: .label1))
                                     }
                                 }

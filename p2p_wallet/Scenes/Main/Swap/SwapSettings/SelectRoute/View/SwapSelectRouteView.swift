@@ -25,7 +25,7 @@ struct SwapSelectRouteView: View {
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 2)
-                .fill(Color(Asset.Colors.rain.color))
+                .fill(Color(.rain))
                 .frame(width: 31, height: 4)
                 .padding(.vertical, 6)
             
@@ -67,7 +67,7 @@ struct SwapSelectRouteView: View {
                 .padding(.vertical, 18)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(Asset.Colors.rain.color))
+                        .fill(Color(.rain))
                 )
                 .onTapGesture {
                     onTapDone()
@@ -108,7 +108,7 @@ struct SwapSelectRouteView: View {
                     .skeleton(with: isLoading, size: .init(width: 52, height: 16))
                 Text(route.description)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .skeleton(with: isLoading, size: .init(width: 100, height: 12))
             }
             

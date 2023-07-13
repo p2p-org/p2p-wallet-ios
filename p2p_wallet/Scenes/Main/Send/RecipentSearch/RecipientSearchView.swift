@@ -28,7 +28,7 @@ struct RecipientSearchView: View {
 
     var loadedView: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .onTapGesture { viewModel.isFirstResponder = false }
                 .ignoresSafeArea()
 
@@ -200,14 +200,14 @@ struct RecipientSearchView: View {
         }
         .frame(height: 88)
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(16)
     }
 
     private func tryLater(title: String) -> some View {
         VStack(alignment: .center, spacing: 28) {
             Image(uiImage: Asset.Icons.warning.image)
-                .foregroundColor(Color(Asset.Colors.rose.color))
+                .foregroundColor(Color(.rose))
             Text(title)
                 .apply(style: .text3)
                 .accessibilityIdentifier("RecipientSearchView.tryLater.title")
@@ -216,7 +216,7 @@ struct RecipientSearchView: View {
                 .multilineTextAlignment(.center)
                 .accessibilityIdentifier("RecipientSearchView.tryLater.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue")
         }
-        .foregroundColor(Color(Asset.Colors.night.color))
+        .foregroundColor(Color(.night))
     }
 
     private func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
@@ -224,7 +224,7 @@ struct RecipientSearchView: View {
             HStack {
                 Text(L10n.hereSWhatWeFound)
                     .apply(style: .text4)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 Spacer()
             }
 
@@ -234,7 +234,7 @@ struct RecipientSearchView: View {
 
             Text(reason)
                 .apply(style: .text4)
-                .foregroundColor(Color(Asset.Colors.rose.color))
+                .foregroundColor(Color(.rose))
                 .accessibilityIdentifier("RecipientSearchView.disabledAndReason.reason")
         }
     }
@@ -249,7 +249,7 @@ struct RecipientSearchView: View {
                         HStack {
                             Text(L10n.recentlyUsed)
                                 .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                             Spacer()
                         }
 
@@ -339,7 +339,7 @@ struct RecipientSearchView: View {
             HStack {
                 Text(L10n.hereSWhatWeFound)
                     .apply(style: .text4)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 Spacer()
             }
 
@@ -359,14 +359,14 @@ struct RecipientSearchView: View {
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
                                 Image(uiImage: Asset.Icons.warning.image)
-                                    .foregroundColor(Color(Asset.Colors.sun.color))
+                                    .foregroundColor(Color(.sun))
                                 Text(L10n.cautionThisAddressHasNoFunds)
                                     .apply(style: .label1)
                                 Spacer()
                             }
                             .padding(.all, 14)
                             .background(
-                                Color(Asset.Colors.lightSun.color)
+                                Color(.lightSun)
                                     .cornerRadius(radius: 8, corners: .allCorners)
                             )
                         }

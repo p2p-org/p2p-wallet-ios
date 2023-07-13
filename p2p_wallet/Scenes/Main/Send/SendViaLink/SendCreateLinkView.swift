@@ -5,13 +5,13 @@ import Resolver
 
 struct SendCreateLinkView: View {
 
-    private let mainColor = Color(Asset.Colors.night.color)
-    private let subColor = Color(Asset.Colors.silver.color)
+    private let mainColor = Color(.night)
+    private let subColor = Color(.silver)
     private let animationSize = CGSize(width: 272, height: 204)
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
                 LottieView(lottieFile: "sendViaLinkAnimation", loopMode: .loop)

@@ -48,13 +48,13 @@ struct SolendBalanceBannerView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 48)
                     .frame(maxWidth: .infinity)
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(12)
                     .padding(.top, 8)
                 }
             )
         }
-        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(.rain)))
         .onReceive(timer) { _ in
             withAnimation(Animation.linear(duration: 0.5)) {
                 delta = Date().timeIntervalSince(lastUpdateDate)

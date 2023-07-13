@@ -8,11 +8,11 @@ struct SellTransactionDetailsInfoView: View {
         HStack(alignment: .top, spacing: 10) {
             Image(viewModel.icon)
                 .renderingMode(.template)
-                .foregroundColor(Color(viewModel.iconColor))
+                .foregroundColor(viewModel.iconColor)
             switch viewModel.text {
             case let .raw(text):
                 Text(text)
-                    .foregroundColor(Color(viewModel.textColor))
+                    .foregroundColor(viewModel.textColor)
                     .apply(style: .text3)
                     .fixedSize(horizontal: false, vertical: true)
             case let .help(text):
@@ -22,7 +22,7 @@ struct SellTransactionDetailsInfoView: View {
             }
         }
         .padding(12)
-        .background(Color(viewModel.backgroundColor))
+        .background(viewModel.backgroundColor)
         .cornerRadius(12)
     }
 }

@@ -71,7 +71,7 @@ struct RecipientCell: View {
         if let date = recipient.createdData {
             trailingView = Text(date.timeAgoDisplay())
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .accessibilityIdentifier("RecipientCell.createdDate")
                 .castToAnyView()
         } else {
@@ -89,13 +89,12 @@ struct RecipientCell: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text2)
-                    .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) :
-                        Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .foregroundColor(isEnabled ? Color(.night) : Color(.night).opacity(0.3))
                     .lineLimit(1)
                     .accessibilityIdentifier("RecipientCell.title")
                 if let subtitle {
                     Text(subtitle)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .apply(style: .label1)
                         .if(multilinesForSubtitle) {
                             $0

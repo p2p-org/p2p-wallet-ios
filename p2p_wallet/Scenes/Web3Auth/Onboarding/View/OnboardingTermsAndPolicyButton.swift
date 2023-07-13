@@ -22,13 +22,13 @@ struct OnboardingTermsAndPolicyButton: View {
                 .styled(color: Asset.Colors.mountain)
             HStack(spacing: 2) {
                 Text(L10n.termsOfService)
-                    .underline(color: Color(Asset.Colors.snow.color))
+                    .underline(color: Color(.snow))
                     .styled(color: Asset.Colors.snow)
                     .onTapGesture(perform: termsPressed)
                 Text(L10n.and)
                     .styled(color: Asset.Colors.snow)
                 Text(L10n.privacyPolicy)
-                    .underline(color: Color(Asset.Colors.snow.color))
+                    .underline(color: Color(.snow))
                     .styled(color: Asset.Colors.snow)
                     .onTapGesture(perform: privacyPolicyPressed)
             }

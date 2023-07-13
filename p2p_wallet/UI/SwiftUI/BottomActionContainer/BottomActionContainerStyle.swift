@@ -5,7 +5,7 @@ extension View {
     func bottomActionsStyle() -> some View {
         padding(.horizontal, 20)
             .padding(.bottom, 34)
-            .background(Color(Asset.Colors.night.color))
+            .background(Color(.night))
             .cornerRadius(radius: 24, corners: [.topLeft, .topRight])
     }
 }

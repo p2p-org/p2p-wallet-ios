@@ -1,5 +1,5 @@
 import KeyAppUI
-import UIKit
+import SwiftUI
 import Foundation
 
 struct SellTransactionDetailsInfoModel {
@@ -10,41 +10,41 @@ struct SellTransactionDetailsInfoModel {
 
     let text: InfoText
     let icon: ImageResource
-    let iconColor: UIColor
-    let textColor: UIColor
-    let backgroundColor: UIColor
+    let iconColor: Color
+    let textColor: Color
+    let backgroundColor: Color
 
     init(strategy: SellTransactionDetailsViewModel.Strategy) {
         switch strategy {
         case .processing:
-            self.iconColor = UIColor(resource: .h9799Af)
-            self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor(resource: .e0E0E7)
+            self.iconColor = Color(.h9799Af)
+            self.textColor = Color(.night)
+            self.backgroundColor = Color(.e0E0E7)
             self.icon = .sellInfo
             let attributedText = NSMutableAttributedString(string: L10n.SOLWasSentToMoonpayAndIsBeingProcessed.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
             attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
             self.text = .help(text: attributedText)
 
         case .fundsWereSent:
-            self.iconColor = UIColor(resource: .h9799Af)
-            self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor(resource: .e0E0E7)
+            self.iconColor = Color(.h9799Af)
+            self.textColor = Color(.night)
+            self.backgroundColor = Color(.e0E0E7)
             self.icon = .sellInfo
             let attributedText = NSMutableAttributedString(string: L10n.ItUsuallyTakesUpTo3BusinessDays.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
             attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
             self.text = .help(text: attributedText)
 
         case .youNeedToSend:
-            self.iconColor = Asset.Colors.sun.color
-            self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor(resource: .e0E0E7)
+            self.iconColor = Color(.sun)
+            self.textColor = Color(.night)
+            self.backgroundColor = Color(.e0E0E7)
             self.icon = .sellPendingWarning
             self.text = .raw(text: L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
 
         case .youVeNotSent:
-            self.iconColor = Asset.Colors.rose.color
-            self.textColor = Asset.Colors.rose.color
-            self.backgroundColor = Asset.Colors.rose.color.withAlphaComponent(0.1)
+            self.iconColor = Color(.rose)
+            self.textColor = Color(.rose)
+            self.backgroundColor = Color(.rose).opacity(0.1)
             self.icon = .sellPendingWarning
             self.text = .raw(text: L10n
                 .YouDidnTFinishYourCashOutTransaction
@@ -57,8 +57,17 @@ struct SellTransactionDetailsInfoModel {
 }
 
 private enum Constants {
-    static let textAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.font(of: .text3),
-                                                                    .foregroundColor: Asset.Colors.night.color]
-    static let helpAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.font(of: .text3),
-                                                                         .foregroundColor: Asset.Colors.sky.color]
+    static var textAttributes: [NSAttributedString.Key: Any] {
+        [
+            .font: UIFont.font(of: .text3),
+            .foregroundColor: UIColor(resource: .night)
+        ]
+    }
+    
+    static var helpAttributes: [NSAttributedString.Key: Any] {
+        [
+            .font: UIFont.font(of: .text3),
+            .foregroundColor: UIColor(resource: .sky)
+        ]
+    }
 }

@@ -27,8 +27,8 @@ class WLLoadingIndicatorView: BEView {
     // MARK: - Subviews
 
     private lazy var spinner = CircularProgressIndicator(
-        backgroundCircularColor: Asset.Colors.night.color.withAlphaComponent(0.6),
-        foregroundCircularColor: Asset.Colors.night.color
+        backgroundCircularColor: .init(resource: .night).withAlphaComponent(0.6),
+        foregroundCircularColor: .init(resource: .night)
     )
 
     // MARK: - Initializer

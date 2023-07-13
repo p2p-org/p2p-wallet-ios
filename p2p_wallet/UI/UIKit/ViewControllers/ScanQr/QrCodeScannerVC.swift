@@ -136,13 +136,13 @@ class QrCodeScannerVC: BaseVC {
     private var isTorchOn = false {
         didSet {
             if isTorchOn {
-                torchButton.backgroundColor(color: Asset.Colors.snow.color)
+                torchButton.backgroundColor(color: .init(resource: .snow))
                 torchButton.setTitle(L10n.turnOffTheLight, for: .normal)
-                torchButton.setTitleColor(Asset.Colors.night.color, for: .normal)
+                torchButton.setTitleColor(.init(resource: .night), for: .normal)
             } else {
                 torchButton.backgroundColor(color: .clear)
                 torchButton.setTitle(L10n.turnOnTheLight, for: .normal)
-                torchButton.setTitleColor(Asset.Colors.snow.color, for: .normal)
+                torchButton.setTitleColor(.init(resource: .snow), for: .normal)
             }
         }
     }

@@ -2,7 +2,7 @@ import SwiftUI
 import KeyAppUI
 
 struct ListBackgroundModifier: ViewModifier {
-    let separatorColor: UIColor
+    let separatorColor: ColorResource
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -10,13 +10,13 @@ struct ListBackgroundModifier: ViewModifier {
         if #available(iOS 16.0, *) {
             content
                 .scrollContentBackground(.hidden)
-                .listRowSeparatorTint(Color(separatorColor))
+                .listRowSeparatorTint(.init(separatorColor))
         } else {
             content
                 .onAppear {
                     UITableView.appearance().backgroundColor = .clear
                     UITableViewCell.appearance().backgroundColor = .clear
-                    UITableView.appearance().separatorColor = separatorColor
+                    UITableView.appearance().separatorColor = UIColor(resource: separatorColor)
                 }
         }
     }

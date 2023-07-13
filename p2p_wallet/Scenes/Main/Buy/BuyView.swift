@@ -42,7 +42,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                                 Text(viewModel.flag)
                                     .font(uiFont: .font(of: .title1, weight: .bold))
                                 Image(.chevronDown)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .foregroundColor(Color(.mountain))
                             }
                         }
                     )
@@ -94,7 +94,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                             }
                         Divider()
                             .frame(height: 1)
-                            .overlay(Color(Asset.Colors.snow.color))
+                            .overlay(Color(.snow))
                         if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
                             methods
                                 .padding(.top, 22)
@@ -103,7 +103,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                         total
                             .padding(.top, 26)
                     }
-                    .background(Color(Asset.Colors.rain.color))
+                    .background(Color(.rain))
                     .cornerRadius(20)
                     .padding([.leading, .trailing], 16)
                     if !viewModel.isLeftFocus, !viewModel.isRightFocus {
@@ -138,7 +138,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
             } label: {
                 Text(L10n.license)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
         }
     }
@@ -217,11 +217,11 @@ struct BuyView: View, KeyboardVisibilityReadable {
                                 } label: {
                                     methodCard(item: item)
                                         .accessibilityIdentifier("BuyView.methods" + (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
-                                        .foregroundColor(Color(Asset.Colors.night.color))
+                                        .foregroundColor(Color(.night))
                                         .frame(width: 158)
                                 }.addBorder(
                                     item.type == viewModel.selectedPayment ?
-                                        Color(Asset.Colors.night.color) :
+                                        Color(.night) :
                                         Color.clear, width: 1, cornerRadius: 16
                                 ).id(item.type)
                             }
@@ -247,9 +247,9 @@ struct BuyView: View, KeyboardVisibilityReadable {
                     Text("\(viewModel.total)")
                         .apply(style: .text3)
                         .accessibilityIdentifier("BuyView.total")
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
             }
         }.padding(EdgeInsets(top: 0, leading: 24, bottom: 18, trailing: 29))
@@ -293,14 +293,14 @@ struct BuyView: View, KeyboardVisibilityReadable {
 
             Text(item.duration)
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .padding(.top, -9)
                 .padding(.leading, cardLeadingPadding)
 
             HStack(alignment: .top) {
                 Text(item.name)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 Image(uiImage: item.icon)
                     .padding(.leading, -4)
                     .padding(.top, -1)
@@ -312,7 +312,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                 trailing: 0
             ))
         }
-        .background(Color(Asset.Colors.cloud.color))
+        .background(Color(.cloud))
         .cornerRadius(16)
     }
 
@@ -361,7 +361,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
             Spacer()
         }
 //        .frame(width: 151, height: 100)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(16)
     }
 
@@ -370,7 +370,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
             title: viewModel.buttonItem.title,
             style: .primaryWhite,
             size: .large,
-            trailing: viewModel.buttonItem.icon?.withTintColor(Asset.Colors.rain.color)
+            trailing: viewModel.buttonItem.icon?.withTintColor(.init(resource: .rain))
         ) { [weak viewModel] in
             viewModel?.buyButtonTapped()
         }

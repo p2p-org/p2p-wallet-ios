@@ -8,7 +8,7 @@ struct SwapView: View {
 
     var body : some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .onTapGesture { UIApplication.shared.endEditing() }
                 .ignoresSafeArea()
 
@@ -56,7 +56,7 @@ private extension SwapView {
             Text(viewModel.currentState.exchangeRateInfo)
                 .apply(style: .label1)
                 .padding(.top, 4)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .accessibilityIdentifier("SwapView.priceInfoLabel")
                 .if(viewModel.arePricesLoading) { view in
                     view.skeleton(with: true, size: CGSize(width: 160, height: 16))
@@ -88,7 +88,7 @@ private extension SwapView {
             // Disclaimer
             Text(L10n.keyAppDoesnTMakeAnyProfitFromThisSwap💚)
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 

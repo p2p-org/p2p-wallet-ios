@@ -7,10 +7,10 @@ struct SellTransactionDetailsTopView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text(model.date.string(withFormat: "MMMM dd, yyyy @ HH:mm"))
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .font(uiFont: .font(of: .text3))
             ZStack {
-                Color(Asset.Colors.smoke.color)
+                Color(.smoke)
                     .frame(height: 208)
                 tokenView
             }
@@ -25,10 +25,10 @@ struct SellTransactionDetailsTopView: View {
                 .cornerRadius(32)
             VStack(spacing: 4) {
                 Text(model.tokenAmount.tokenAmountFormattedString(symbol: model.tokenSymbol))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                 Text("≈ \(model.fiatAmount.fiatAmountFormattedString(currency: model.currency))")
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .text2))
             }
         }

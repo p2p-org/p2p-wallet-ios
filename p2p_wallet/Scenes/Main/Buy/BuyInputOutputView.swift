@@ -95,7 +95,7 @@ struct BuyInputOutputView: View {
                 width: reader.size.width
             ) }
         }.frame(height: 62)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(12)
         // .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
     }
@@ -105,12 +105,12 @@ struct BuyInputOutputView: View {
             HStack(spacing: 0) {
                 Text(value)
                     .font(uiFont: fontSynchorinze.font)
-                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .foregroundColor(Color(.night).opacity(0.3))
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 8)
                 Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
                     .frame(width: 7, height: 4)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
         }
     }
@@ -295,7 +295,7 @@ private struct TextfieldView: UIViewRepresentable {
 struct BuyInputOutputView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color(Asset.Colors.lime.color)
+            Color(.lime)
             BuyInputOutputView(
                 leftTitle: .constant("12"),
                 leftSubtitle: "SOL",

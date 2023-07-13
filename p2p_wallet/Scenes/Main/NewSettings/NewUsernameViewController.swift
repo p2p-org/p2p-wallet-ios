@@ -144,9 +144,9 @@ private class QrCodeCard: BECompositionView {
             
             // Action buttons
             UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
-                UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: .init(resource: .night))
                     .onTap { [unowned self] in self.onCopy?(pubKey) }
-                UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: .init(resource: .night))
                     .onTap {
                         Task { [weak self] in
                             guard let self else { return }
@@ -159,7 +159,7 @@ private class QrCodeCard: BECompositionView {
                             self.onShare?(image)
                         }
                     }
-                UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: .init(resource: .night))
                     .onTap {
                         Task { [weak self] in
                             guard let self else { return }
@@ -207,7 +207,7 @@ private class QrCodeCard: BECompositionView {
     }
     
     private func tinted(image: ImageResource) -> UIImage {
-        .init(resource: image).withTintColor(Asset.Colors.night.color)
+        .init(resource: image).withTintColor(.init(resource: .night))
     }
     
     func onCopy(callback: @escaping BECallback<String?>) -> Self {

@@ -26,7 +26,7 @@ struct InstructionsReceiveView: View {
 
                     Text(tip)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .multilineTextAlignment(.leading)
                         .padding(.bottom, 16)
                 }
@@ -36,7 +36,7 @@ struct InstructionsReceiveView: View {
         }
         .padding(.vertical, 24)
         .padding(.horizontal, 15)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(radius: 16, corners: .allCorners)
         .fixedSize(horizontal: false, vertical: true)
     }
@@ -47,17 +47,17 @@ struct InstructionsReceiveView: View {
                 Text(instruction.0)
                     .fontWeight(.semibold)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.silver.color))
+                    .foregroundColor(Color(.silver))
                     .frame(
                         width: InstructionsReceiveView.numberSize,
                         height: InstructionsReceiveView.numberSize
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10.5)
-                            .stroke(Color(Asset.Colors.silver.color), lineWidth: 1.5)
+                            .stroke(Color(.silver), lineWidth: 1.5)
                     )
 
-                Color(Asset.Colors.silver.color)
+                Color(.silver)
                     .frame(width: 1)
                     .padding(.bottom, 2)
                     .if(instruction.0 == item.instructions.last?.0) { view in
@@ -67,11 +67,11 @@ struct InstructionsReceiveView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(instruction.1.0)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .apply(style: .text3)
                     .multilineTextAlignment(.leading)
                 Text(instruction.1.1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .apply(style: .text4)
                     .multilineTextAlignment(.leading)
             }

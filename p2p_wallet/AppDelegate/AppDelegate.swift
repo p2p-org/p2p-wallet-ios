@@ -191,8 +191,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = Asset.Colors.night.color
-        barButtonAppearance.tintColor = Asset.Colors.night.color
+        navBarAppearence.tintColor = .init(resource: .night)
+        barButtonAppearance.tintColor = .init(resource: .night)
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true

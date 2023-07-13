@@ -32,7 +32,7 @@ struct SendInputAmountWrapperView: View {
 struct SendInputAmountWrapperView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
             SendInputAmountWrapperView(
                 viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana))
             )

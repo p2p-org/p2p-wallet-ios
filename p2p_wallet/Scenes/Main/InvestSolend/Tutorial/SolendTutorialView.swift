@@ -16,7 +16,7 @@ struct SolendTutorialView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 PagingView(
-                    fillColor: Color(Asset.Colors.night.color),
+                    fillColor: Color(.night),
                     content: viewModel.data.map { data in
                         PageContent {
                             VStack {
@@ -40,7 +40,7 @@ struct SolendTutorialView: View {
                     Button(L10n.skip.uppercaseFirst) {
                         markAsReadAndDismiss()
                     }
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(.system(size: UIFont.fontSize(of: .text1), weight: .medium))
                     .padding(.trailing, 20)
                     Spacer()

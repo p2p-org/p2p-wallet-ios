@@ -21,13 +21,13 @@ struct ChoosePhoneCodeItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(countryName)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .lineLimit(2)
 
                 if !phoneCode.isEmpty {
                     Text(phoneCode)
                         .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .lineLimit(1)
                 }
             }
@@ -39,6 +39,6 @@ struct ChoosePhoneCodeItemView: View {
             
         }
         .padding(14)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
     }
 }

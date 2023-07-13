@@ -18,52 +18,52 @@ struct BuyTips: View {
                 Text("1")
                     .fontWeight(.semibold)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.snow.color))
+                    .foregroundColor(Color(.snow))
                     .frame(width: 24, height: 24)
                     .background(
                         Circle()
-                            .fill(Color(Asset.Colors.mint.color))
+                            .fill(Color(.mint))
                     )
 
                 Rectangle()
-                    .fill(Color(Asset.Colors.mountain.color))
+                    .fill(Color(.mountain))
                     .frame(width: 1, height: 34)
 
                 Text("2")
                     .fontWeight(.semibold)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .frame(width: 24, height: 20)
                     .background(
                         Circle()
-                            .stroke(Color(Asset.Colors.mountain.color), lineWidth: 1.5)
+                            .stroke(Color(.mountain), lineWidth: 1.5)
                     )
             }
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.buyingAsTheBaseCurrency(sourceSymbol))
                         .apply(style: .text1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     Text(L10n.purchasingOnTheMoonpaySWebsite)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.exchanging(sourceSymbol, destinationSymbol))
                         .apply(style: .text1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Text(L10n.thereWouldBeNoAdditionalCosts)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
             }
 
             Spacer()
         }
         .padding(.all, 20)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .cornerRadius(20)
     }
 }

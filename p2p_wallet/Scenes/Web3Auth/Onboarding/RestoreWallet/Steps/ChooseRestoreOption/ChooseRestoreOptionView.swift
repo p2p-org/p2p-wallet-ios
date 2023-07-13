@@ -8,7 +8,7 @@ struct ChooseRestoreOptionView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.lime.color)
+            Color(.lime)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 Spacer()

@@ -39,10 +39,10 @@ struct ReAuthWrongAccountView: View {
             }
             .ignoresSafeArea()
             .background(
-                Color(Asset.Colors.lime.color)
+                Color(.lime)
             )
         }
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {

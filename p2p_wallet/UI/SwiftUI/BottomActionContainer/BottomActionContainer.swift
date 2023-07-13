@@ -16,7 +16,7 @@ struct BottomActionContainer<Content: View>: View {
             .padding(.horizontal, 20)
             .padding(.top, topPadding)
             .padding(.bottom, max(safeAreaInsets.bottom, 20))
-            .background(Color(Asset.Colors.night.color))
+            .background(Color(.night))
             .cornerRadius(radius: 24, corners: [.topLeft, .topRight])
     }
 }

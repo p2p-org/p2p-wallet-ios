@@ -26,7 +26,7 @@ struct ChoosePhoneCodeView: View {
                             // Separator added manually to support iOS 14 version
                             if viewModel.data.count > 1 && item.id != viewModel.data.last?.id {
                                 Rectangle()
-                                    .fill(Color(Asset.Colors.rain.color))
+                                    .fill(Color(.rain))
                                     .frame(height: 1)
                                     .padding(.leading, 20)
                             }
@@ -37,7 +37,7 @@ struct ChoosePhoneCodeView: View {
                         }
                     }
                 }
-                .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.snow.color))
+                .modifier(ListBackgroundModifier(separatorColor: .snow))
                 .environment(\.defaultMinListRowHeight, 12)
                 .scrollDismissesKeyboard()
 
@@ -53,7 +53,7 @@ struct ChoosePhoneCodeView: View {
         .navigationBarItems(
             trailing:
                 Button(L10n.done, action: viewModel.didClose.send)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
         )
         .onAppear {
             viewModel.isSearchFieldFocused = true

@@ -5,7 +5,7 @@ import SolanaSwift
 
 struct TransactionDetailIconView: View {
     private let size: CGFloat = 64
-    private let defaultBackground: some View = Circle().fill(Color(Asset.Colors.snow.color))
+    private let defaultBackground: some View = Circle().fill(Color(.snow))
 
     let icon: TransactionDetailIcon
 
@@ -14,11 +14,11 @@ struct TransactionDetailIconView: View {
             switch icon {
             case let .icon(image):
                 RoundedRectangle(cornerRadius: size/2)
-                    .fill(Color(Asset.Colors.rain.color))
+                    .fill(Color(.rain))
                     .overlay(
                         Image(image)
                             .renderingMode(.template)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                     )
             case let .single(url):
                 KFImage

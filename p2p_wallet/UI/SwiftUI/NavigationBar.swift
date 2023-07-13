@@ -14,7 +14,7 @@ extension View {
                         action: { onBack?() },
                         label: {
                             Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         }
                     ) : nil
                 )

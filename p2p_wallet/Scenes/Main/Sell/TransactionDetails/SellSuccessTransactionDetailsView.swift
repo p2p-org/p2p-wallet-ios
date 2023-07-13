@@ -31,11 +31,11 @@ struct SellSuccessTransactionDetailsView: View {
                 },
                 label: {
                     Text(L10n.done)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }
@@ -58,11 +58,11 @@ struct SellSuccessTransactionDetailsView: View {
     private func textView(title: String, description: String) -> some View {
         HStack {
             Text(title)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .font(uiFont: .font(of: .text4))
             Spacer()
             Text(description)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text4, weight: .semibold))
         }
     }
@@ -75,7 +75,7 @@ struct SellSuccessTransactionDetailsView: View {
             HStack(spacing: 12) {
                 Image(.successSellTransaction)
                 Text(L10n.theTransactionHasBeenSuccessfullyCompleted)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text4))
             }
         }

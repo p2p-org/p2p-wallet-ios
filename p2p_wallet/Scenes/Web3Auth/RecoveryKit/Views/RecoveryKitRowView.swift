@@ -41,19 +41,19 @@ struct RecoveryKitRowView: View {
                     Text(title)
                         .fontWeight(.semibold)
                         .apply(style: .text2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     HStack {
                         if alert {
                             Image(.warningIcon)
-                                .foregroundColor(Color(Asset.Colors.rose.color))
+                                .foregroundColor(Color(.rose))
                         }
                         Text(subtitle)
                             .apply(style: .label1)
                             .foregroundColor(
                                 alert ?
-                                    Color(Asset.Colors.rose.color) :
-                                    Color(Asset.Colors.mountain.color)
+                                    Color(.rose) :
+                                    Color(.mountain)
                             )
                     }
                 }.padding(.leading, 12)
@@ -69,7 +69,7 @@ struct RecoveryKitRowView: View {
 
             // Divider
             Rectangle()
-                .fill(Color(Asset.Colors.rain.color))
+                .fill(Color(.rain))
                 .frame(height: 1)
                 .edgesIgnoringSafeArea(.horizontal)
                 .padding(.leading, 20)

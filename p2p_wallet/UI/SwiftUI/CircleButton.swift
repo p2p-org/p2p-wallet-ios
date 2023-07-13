@@ -12,7 +12,7 @@ struct CircleButton: View {
         } label: {
             VStack(spacing: 4) {
                 Circle()
-                    .fill(Color(Asset.Colors.night.color))
+                    .fill(Color(.night))
                     .frame(width: 52, height: 52)
                     .overlay(
                         Image(image)
@@ -24,7 +24,7 @@ struct CircleButton: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .label2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
         }
     }

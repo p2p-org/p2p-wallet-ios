@@ -37,7 +37,7 @@ struct SolendDepositView: View {
             buttons
         }
         .padding(16)
-        .background(Color(Asset.Colors.cloud.color))
+        .background(Color(.cloud))
         .cornerRadius(20)
     }
 
@@ -51,21 +51,21 @@ struct SolendDepositView: View {
                 ).frame(width: 48, height: 48)
             } else {
                 Circle()
-                    .fill(Color(Asset.Colors.mountain.color))
+                    .fill(Color(.mountain))
                     .frame(width: 48, height: 48)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .apply(style: .text2)
                 Text(item.subtitle)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .apply(style: .label1)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 8) {
                 Text(item.rightTitle)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2, weight: .semibold))
             }
         }
@@ -80,11 +80,11 @@ struct SolendDepositView: View {
                 },
                 label: {
                     Text(L10n.addMore)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 48)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                 }
             )
@@ -94,11 +94,11 @@ struct SolendDepositView: View {
                 },
                 label: {
                     Text(L10n.withdraw)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 48)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                 }
             )

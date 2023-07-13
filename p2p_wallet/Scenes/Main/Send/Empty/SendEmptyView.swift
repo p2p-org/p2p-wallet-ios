@@ -13,14 +13,14 @@ struct SendEmptyView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .ignoresSafeArea()
             VStack(alignment: .leading, spacing: 24) {
                 Spacer()
                 Image(.emptySend)
                     .frame(maxWidth: .infinity)
                 Text(L10n.sendingTokensHasNeverBeenEASIER)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title2, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 4)

@@ -37,20 +37,20 @@ struct SolendTopUpForContinueView: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.symbol)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2))
                 Text(viewModel.name)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
             if let apy = viewModel.apy {
                 VStack(alignment: .trailing, spacing: 8) {
                     Text(apy)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                     Text(L10n.apy)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .font(uiFont: .font(of: .label1))
                 }
             }
@@ -65,10 +65,10 @@ struct SolendTopUpForContinueView: View {
                 },
                 label: {
                     Text(viewModel.withoutAnyTokens ? L10n.buy : L10n.buyWithCreditCard)
-                        .foregroundColor(Color(Asset.Colors.lime.color))
+                        .foregroundColor(Color(.lime))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                 }
             )
@@ -78,10 +78,10 @@ struct SolendTopUpForContinueView: View {
                 },
                 label: {
                     Text(viewModel.withoutAnyTokens ? L10n.receive : L10n.swapWithCrypto)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                 }
             )

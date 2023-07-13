@@ -3,7 +3,7 @@ import SolanaSwift
 import SwiftUI
 
 struct SendInputTokenView: View {
-    let mainColor = Color(Asset.Colors.night.color)
+    let mainColor = Color(.night)
     let wallet: Wallet
     let amountInFiat: Double // It is separated from the wallet due to new SolanaAccount structures
     let changeAction: () -> Void
@@ -39,11 +39,11 @@ struct SendInputTokenView: View {
                             .renderingMode(.template)
                             .resizable()
                             .scaledToFit()
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .frame(width: 16, height: 16)
 
                         Text(wallet.amount?.toString(maximumFractionDigits: Int(wallet.token.decimals), roundingMode: .down) ?? "")
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .apply(style: .text4)
                             .lineLimit(1)
 
@@ -51,7 +51,7 @@ struct SendInputTokenView: View {
                             .frame(width: 2)
 
                         Text(wallet.token.symbol)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .apply(style: .text4)
                             .lineLimit(1)
                             .layoutPriority(1)
@@ -78,7 +78,7 @@ struct SendInputTokenView: View {
             }
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 12))
             .background(RoundedRectangle(cornerRadius: 12))
-            .foregroundColor(Color(Asset.Colors.snow.color))
+            .foregroundColor(Color(.snow))
         }.allowsHitTesting(isChangeEnabled)
     }
 }
@@ -86,7 +86,7 @@ struct SendInputTokenView: View {
 struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
             SendInputTokenView(wallet: Wallet(token: .nativeSolana), amountInFiat: 1.0, isChangeEnabled: true, changeAction: {})
                 .padding(.horizontal, 16)
         }

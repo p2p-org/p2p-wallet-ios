@@ -17,18 +17,18 @@ struct SendEmptyRowView: View {
             ZStack {
                 Circle()
                     .frame(width: 48, height: 48)
-                    .foregroundColor(Color(Asset.Colors.rain.color))
+                    .foregroundColor(Color(.rain))
                 Image(image)
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .frame(width: 20, height: 20)
             }
             Text(text)
                 .apply(style: .text3)
                 .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .accessibilityIdentifier(textAccessibilityIdentifier)
         }
     }

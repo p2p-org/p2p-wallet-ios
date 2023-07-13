@@ -27,7 +27,7 @@ struct SupportedTokensBannerView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 18)
-        .background(Color(Asset.Colors.lightSea.color))
+        .background(Color(.lightSea))
         .cornerRadius(16)
     }
 }

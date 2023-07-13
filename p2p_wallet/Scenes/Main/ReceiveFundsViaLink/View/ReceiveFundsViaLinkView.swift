@@ -67,7 +67,7 @@ struct ReceiveFundsViaLinkView: View {
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
             Text(cryptoAmount)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .largeTitle, weight: .bold))
         }
     }
@@ -136,7 +136,7 @@ struct ReceiveFundsViaLinkView: View {
             Spacer()
             VStack(spacing: 16) {
                 Circle()
-                    .fill(Color(Asset.Colors.rain.color))
+                    .fill(Color(.rain))
                     .skeleton(with: true)
                     .frame(width: 64, height: 64)
                 Text("")
@@ -164,7 +164,7 @@ struct ReceiveFundsViaLinkView: View {
                 VStack(spacing: 8) {
                     Text("\(L10n.youVeGot) \(cryptoAmount)!")
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .largeTitle, weight: .bold))
                 }
                 Spacer()
@@ -174,11 +174,11 @@ struct ReceiveFundsViaLinkView: View {
                     },
                     label: {
                         Text("\(L10n.gotIt) 👍")
-                            .foregroundColor(Color(Asset.Colors.lime.color))
+                            .foregroundColor(Color(.lime))
                             .font(uiFont: .font(of: .text2, weight: .semibold))
                             .frame(height: 56)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.night.color))
+                            .background(Color(.night))
                             .cornerRadius(12)
                     }
                 )

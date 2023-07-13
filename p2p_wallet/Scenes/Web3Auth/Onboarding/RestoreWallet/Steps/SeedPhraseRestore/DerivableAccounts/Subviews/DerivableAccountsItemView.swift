@@ -26,11 +26,11 @@ struct DerivableAccountsItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(nativeToken.symbol)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 
                 Text(address)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
 
             Spacer()
@@ -38,13 +38,13 @@ struct DerivableAccountsItemView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(balanceInFiat)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
 
                 Text(balance)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
     }
 }

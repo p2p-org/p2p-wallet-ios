@@ -125,7 +125,7 @@ struct SendInputAmountView: View {
                 }
                 .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
                 .background(RoundedRectangle(cornerRadius: 12))
-                .foregroundColor(Color(Asset.Colors.snow.color))
+                .foregroundColor(Color(.snow))
             }
             if isSwitchMainAmountTypeAvailable {
                 tapToSwitchHiddenButton
@@ -177,12 +177,12 @@ struct SendInputAmountView_Previews: PreviewProvider {
 
 private enum Constants {
     static let inputFount = UIFont.font(of: .title2, weight: .bold)
-    static let mainColor = Asset.Colors.night.color
+    static let mainColor = ColorResource.night
 }
 
 private extension Text {
     func secondaryStyle() -> some View {
-        foregroundColor(Color(Asset.Colors.mountain.color))
+        foregroundColor(Color(.mountain))
             .apply(style: .text4)
             .lineLimit(1)
     }

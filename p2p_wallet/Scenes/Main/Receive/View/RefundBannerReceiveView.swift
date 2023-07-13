@@ -8,7 +8,7 @@ struct RefundBannerReceiveView: View {
     var body: some View {
         HStack {
             Text(item.text)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .apply(style: .text3)
                 .multilineTextAlignment(.leading)
             Spacer()

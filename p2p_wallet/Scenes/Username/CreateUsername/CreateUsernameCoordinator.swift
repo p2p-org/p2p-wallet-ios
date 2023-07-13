@@ -57,9 +57,9 @@ private extension CreateUsernameCoordinator {
     func parameters() -> CreateUsernameParameters {
         switch navigationOption {
         case .onboarding:
-            return .init(backgroundColor: Asset.Colors.lime.color, buttonStyle: .primary)
+            return .init(backgroundColor: .lime, buttonStyle: .primary)
         case .settings:
-            return .init(backgroundColor: Asset.Colors.rain.color, buttonStyle: .primaryWhite)
+            return .init(backgroundColor: .rain, buttonStyle: .primaryWhite)
         }
     }
 
@@ -67,7 +67,7 @@ private extension CreateUsernameCoordinator {
         guard available(.onboardingUsernameButtonSkipEnabled) else { return }
         // We have to add button here because of KeyboardAvoidingViewController. SwiftUI view doesn't see navigationItem with custom UIViewController wrapper
         let button = UIBarButtonItem(title: L10n.skip.uppercaseFirst, style: .plain, target: self, action: #selector(skip))
-        button.tintColor = Asset.Colors.night.color
+        button.tintColor = .init(resource: .night)
         vc.navigationItem.rightBarButtonItem = button
     }
 

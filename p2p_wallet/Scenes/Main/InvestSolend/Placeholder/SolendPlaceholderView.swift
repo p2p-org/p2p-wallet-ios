@@ -40,7 +40,7 @@ struct SolendPlaceholderView: View {
                     }
                         .padding(.horizontal, 24)
                 }
-                .background(Color(Asset.Colors.smoke.color))
+                .background(Color(.smoke))
                 .cornerRadius(20)
                 .padding(20)
 

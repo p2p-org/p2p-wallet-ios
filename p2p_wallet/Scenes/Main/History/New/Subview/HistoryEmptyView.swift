@@ -20,7 +20,7 @@ struct HistoryEmptyView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(radius: 16, corners: .allCorners)
     }
 }

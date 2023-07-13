@@ -31,10 +31,10 @@ struct SolendProcessingBannerView: View {
                 Spacer()
             }.frame(height: 48)
                 .frame(maxWidth: .infinity)
-                .background(Color(Asset.Colors.snow.color))
+                .background(Color(.snow))
                 .cornerRadius(12)
         }
-        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(.rain)))
         .onAppear {
             withAnimation(repeatingAnimation) {
                 xOffset = UIScreen.main.bounds.size.width / 2 + 50

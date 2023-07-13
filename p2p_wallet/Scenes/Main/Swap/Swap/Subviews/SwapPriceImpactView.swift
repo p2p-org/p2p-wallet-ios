@@ -25,27 +25,27 @@ struct SwapPriceImpactView: View {
     private var mainColor: Color {
         switch model.impact {
         case .medium:
-            return Color(Asset.Colors.sun.color)
+            return Color(.sun)
         case .high:
-            return Color(Asset.Colors.rose.color)
+            return Color(.rose)
         }
     }
 
     private var backgroundColor: Color {
         switch model.impact {
         case .medium:
-            return Color(Asset.Colors.lightSun.color)
+            return Color(.lightSun)
         case .high:
-            return Color(Asset.Colors.lightRose.color)
+            return Color(.lightRose)
         }
     }
 
     private var textColor: Color {
         switch model.impact {
         case .medium:
-            return Color(Asset.Colors.night.color)
+            return Color(.night)
         case .high:
-            return Color(Asset.Colors.rose.color)
+            return Color(.rose)
         }
     }
 }

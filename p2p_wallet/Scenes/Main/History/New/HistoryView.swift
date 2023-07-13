@@ -40,7 +40,7 @@ struct NewHistoryView<Header: View>: View {
                     ErrorView {
                         Task { try await viewModel.reload() }
                     }
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: 16, corners: .allCorners)
                     .padding(.horizontal, 16)
                     .padding(.top, 38)
@@ -52,7 +52,7 @@ struct NewHistoryView<Header: View>: View {
                 ForEach(viewModel.output.data) { (section: HistorySection) in
                     Text(section.title)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .padding(.top, viewModel.output.data.first == section ? 0 : 24)
                         .padding(.bottom, 12)
 
@@ -60,7 +60,7 @@ struct NewHistoryView<Header: View>: View {
                         listItem(item: item)
                             .padding(.top, section.items.first == item ? 4 : 0)
                             .padding(.bottom, section.items.last == item ? 4 : 0)
-                            .background(Color(Asset.Colors.snow.color))
+                            .background(Color(.snow))
                             .roundedList(
                                 radius: 16,
                                 isFirst: section.items.first == item,
@@ -72,7 +72,7 @@ struct NewHistoryView<Header: View>: View {
             .padding(.vertical, 8)
         }
         .customRefreshable { try? await viewModel.reload() }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .onAppear {
             viewModel.onAppear()
         }
@@ -120,7 +120,7 @@ struct NewHistoryView<Header: View>: View {
                 Image(.sendViaLinkPlain)
                     .resizable()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.sentViaOneTimeLink)
@@ -129,7 +129,7 @@ struct NewHistoryView<Header: View>: View {
 
                     Text(viewModel.linkTransactionsTitle)
                         .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
 
                 Spacer()
@@ -139,14 +139,14 @@ struct NewHistoryView<Header: View>: View {
                     .frame(width: 7.41, height: 12)
                     .padding(.vertical, (24 - 12) / 2)
                     .padding(.horizontal, (24 - 7.41) / 2)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
             .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
 
             // Divider
             Divider()
                 .frame(height: 1)
-                .foregroundColor(Color(Asset.Colors.rain.color))
+                .foregroundColor(Color(.rain))
                 .padding(.leading, 20)
         }
         .contentShape(Rectangle())

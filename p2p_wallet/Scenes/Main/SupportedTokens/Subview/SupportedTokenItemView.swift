@@ -15,7 +15,7 @@ struct SupportedTokenItemView: View {
                 placeholderIcon
             case let .image(image):
                 Circle()
-                    .fill(Color(Asset.Colors.smoke.color))
+                    .fill(Color(.smoke))
                     .overlay(Image(image))
                     .clipped()
                     .frame(width: iconSize, height: iconSize)
@@ -39,10 +39,10 @@ struct SupportedTokenItemView: View {
                 Text(item.name)
                     .apply(style: .text3)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Text(item.symbol)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
 
             Spacer()
@@ -86,11 +86,11 @@ struct SupportedTokenItemView: View {
 
     var placeholderIcon: some View {
         Circle()
-            .fill(Color(Asset.Colors.smoke.color))
+            .fill(Color(.smoke))
             .overlay(
                 Image(.imageOutlineIcon)
                     .renderingMode(.template)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             )
             .clipped()
             .frame(width: iconSize, height: iconSize)

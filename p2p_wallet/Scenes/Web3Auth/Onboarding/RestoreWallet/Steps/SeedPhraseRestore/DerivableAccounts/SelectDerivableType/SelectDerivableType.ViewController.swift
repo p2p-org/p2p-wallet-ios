@@ -69,7 +69,7 @@ extension SelectDerivableType {
                 WLButton.stepButton(
                     type: .white,
                     label: L10n.cancel,
-                    labelColor: Asset.Colors.night.color
+                    labelColor: .init(resource: .night)
                 ).onTap(self, action: #selector(back))
             }
         }

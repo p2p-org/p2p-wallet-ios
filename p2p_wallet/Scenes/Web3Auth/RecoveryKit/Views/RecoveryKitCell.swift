@@ -19,12 +19,12 @@ struct RecoveryKitCell: View {
             }.padding(.horizontal, 16)
         }
         .frame(height: 55)
-        .foregroundColor(Color(Asset.Colors.night.color))
-        .background(Color(Asset.Colors.snow.color))
+        .foregroundColor(Color(.night))
+        .background(Color(.snow))
         .cornerRadius(20)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                .stroke(Color(.rain), lineWidth: 1)
         )
     }
 }
