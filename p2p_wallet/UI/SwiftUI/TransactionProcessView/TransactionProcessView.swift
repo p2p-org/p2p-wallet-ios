@@ -116,8 +116,8 @@ extension TransactionProcessView {
             case .succeed:
                 image = .lightningFilled
                 imageSize = CGSize(width: 24, height: 24)
-                backgroundColor = Color(.cdf6cd).opacity(0.3)
-                circleColor = Color(.cdf6cd)
+                backgroundColor = Color(.cdf6Cd).opacity(0.3)
+                circleColor = Color(.cdf6Cd)
                 imageColor = Color(.h04D004)
             case .error:
                 image = .solendSubtract

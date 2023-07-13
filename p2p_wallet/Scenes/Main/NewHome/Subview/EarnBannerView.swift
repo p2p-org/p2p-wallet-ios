@@ -14,7 +14,7 @@ struct EarnBannerView: View {
     var body: some View {
         ZStack {
             VStack {
-                Color(._644aff)
+                Color(._644Aff)
                     .cornerRadius(12)
                     .padding(.top, 23)
             }

@@ -12,7 +12,7 @@ struct SolendTutorialView: View {
 
     var body: some View {
         ZStack {
-            Color(.e0dbff)
+            Color(.e0Dbff)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 PagingView(
