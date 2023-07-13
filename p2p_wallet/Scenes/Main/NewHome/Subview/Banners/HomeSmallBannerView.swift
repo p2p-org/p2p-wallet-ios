@@ -33,13 +33,14 @@ struct HomeSmallBannerView: View {
                         .padding(.top, 16)
                     }
                 }
+                .layoutPriority(1)
 
                 Spacer()
 
                 Image(uiImage: params.image)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: params.imageSize.width, height: params.imageSize.height)
+                    .frame(idealWidth: params.imageSize.width, idealHeight: params.imageSize.height)
                     .padding(.trailing, 16)
             }
             .padding(16)
