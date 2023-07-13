@@ -92,7 +92,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             }
 
             // get solana cached token list
-            let solanaTokens = try await tokensService.all() ?? []
+            let solanaTokens = (try await tokensService.all()).values
 
             // map solanaTokens to jupiter token
             jupiterTokens = jupiterTokens.map { jupiterToken in

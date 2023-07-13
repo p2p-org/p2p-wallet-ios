@@ -53,7 +53,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
 
                 let nativeAccount = Account(
                     address: address.hex(eip55: false),
-                    token: .init(),
+                    token: try await ethereumTokenRepository.nativeToken,
                     balance: balance.quantity,
                     price: nil
                 )

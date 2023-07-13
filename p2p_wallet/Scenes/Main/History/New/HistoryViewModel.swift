@@ -148,7 +148,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         Task {
-            tokens = try await tokensRepository.all()
+            tokens = try await Set(tokensRepository.all().values)
         }
 
         bind()
@@ -211,7 +211,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         Task {
-            tokens = try await tokensRepository.all()
+            tokens = try await Set(tokensRepository.all().values)
         }
 
         bind()

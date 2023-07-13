@@ -77,7 +77,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                 let solanaAccount = Account(
                     address: accountAddress,
                     lamports: balance,
-                    token: .nativeSolana
+                    token: try await tokensService.nativeToken
                 )
 
                 newAccounts = [solanaAccount] + resolved

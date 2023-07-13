@@ -158,7 +158,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                         let requestType = JSONRPCRequest<SolanaNotification<SolanaAccountChange>>.self
                         if let data = dataStr.data(using: .utf8) {
                             let request = try decoder.decode(requestType, from: data)
-                            self?.receiveNotification(notification: request.params)
+                            try await self?.receiveNotification(notification: request.params)
                         }
                     }
                 } catch {
@@ -281,7 +281,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 let solanaAccount = SolanaAccount(
                     address: owner,
                     lamports: balance,
-                    token: .nativeSolana
+                    token: try await tokensService.nativeToken
                 )
 
                 let accounts = [solanaAccount] + resolved
@@ -347,11 +347,11 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         }
     }
 
-    func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) {
+    func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) async throws {
         let nativeSolanaAccount = SolanaAccount(
             address: owner,
             lamports: notification.result.value.lamports,
-            token: .nativeSolana
+            token: try await tokensService.nativeToken
         )
         accountsSubject.send(nativeSolanaAccount)
     }

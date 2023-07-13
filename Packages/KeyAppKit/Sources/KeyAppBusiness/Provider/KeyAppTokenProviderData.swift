@@ -63,24 +63,33 @@ public enum KeyAppTokenProviderData {
             self.price = price
         }
     }
-    
+
     public enum AllSolanaTokensResult: Hashable {
         case result(Result)
         case noChanges
-        
-        public struct Result: Codable, Hashable {
-            public struct Token: Codable, Hashable {
-                public let chainId: Int
-                public let address: String
-                public let symbol: String
-                public let name: String
-                public let logoUrl: String?
-                public let decimals: UInt8
-                public let price: [String: String?]
-            }
 
-            public let timestamp: Data
-            public let tokens: [Token]
+        public struct Result: Codable, Hashable {
+            public let timestamp: Date
+            public let tokens: [SolanaToken]
+
+            public init(from decoder: Decoder) throws {
+                let container: KeyedDecodingContainer<KeyAppTokenProviderData.AllSolanaTokensResult.Result.CodingKeys> =
+                    try decoder.container(keyedBy: KeyAppTokenProviderData.AllSolanaTokensResult.Result.CodingKeys.self)
+
+                let timestampStr = try container.decode(
+                    String.self,
+                    forKey: KeyAppTokenProviderData.AllSolanaTokensResult.Result.CodingKeys.timestamp
+                )
+
+                let formatter = ISO8601DateFormatter()
+                formatter.formatOptions.insert(.withFractionalSeconds)
+                timestamp = (formatter.date(from: timestampStr) ?? Date()) + 1
+
+                tokens = try container.decode(
+                    [SolanaToken].self,
+                    forKey: KeyAppTokenProviderData.AllSolanaTokensResult.Result.CodingKeys.tokens
+                )
+            }
         }
     }
 }

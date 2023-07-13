@@ -40,7 +40,7 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
         // Get solana token list
         Task {
             // List all tokens
-            let tokens = try await solanaTokenRepository.all()
+            let tokens = try await solanaTokenRepository.all().values
 
             // Filter tokens
             let filteredToken = tokens

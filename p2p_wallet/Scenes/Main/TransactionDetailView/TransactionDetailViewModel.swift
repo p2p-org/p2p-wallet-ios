@@ -51,7 +51,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             let tokenRepository: SolanaTokensService = Resolver.resolve()
             self.rendableTransaction = try await RendableDetailHistoryTransaction(
                 trx: historyTransaction,
-                allTokens: tokenRepository.all()
+                allTokens: Set(tokenRepository.all().values)
             )
         }
     }

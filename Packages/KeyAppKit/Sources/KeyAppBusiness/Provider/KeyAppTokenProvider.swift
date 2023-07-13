@@ -37,20 +37,22 @@ public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
         }
 
         var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringCacheData
+        request.httpMethod = "GET"
         request.setValue("gzip", forHTTPHeaderField: "accept-encoding")
-        
+
         if let modifiedSince {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss z"
+            dateFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss zzz"
             dateFormatter.locale = Locale(identifier: "en_US_POSIX")
             dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
             let formattedDate = dateFormatter.string(from: modifiedSince)
-            
+
             request.setValue(formattedDate, forHTTPHeaderField: "if-modified-since")
         }
 
         let (data, response) = try await client.urlSession.data(for: request)
-
+        
         if
             let response = response as? HTTPURLResponse,
             response.statusCode == 304

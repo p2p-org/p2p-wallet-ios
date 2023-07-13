@@ -42,6 +42,7 @@ extension Resolver: ResolverRegistering {
         register {
             WarmupManager(processes: [
                 RemoteConfigWarmupProcess(),
+                TokenServiceWarmupProcess(),
             ])
         }.scope(.application)
 
@@ -218,7 +219,8 @@ extension Resolver: ResolverRegistering {
 
         register {
             KeyAppSolanaTokenRepository(
-                provider: resolve()
+                provider: resolve(),
+                errorObserver: resolve()
             )
         }
         .implements(SolanaTokensService.self)

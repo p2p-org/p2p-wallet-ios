@@ -53,7 +53,7 @@ public class PriceServiceImpl: PriceService {
 
         // Get value from local storage
         for token in tokens {
-            result[token.asSomeToken] = try await database.read(for: token.id)
+            result[token.asSomeToken] = try? await database.read(for: token.id)
         }
 
         // Filter missing token price
@@ -79,12 +79,12 @@ public class PriceServiceImpl: PriceService {
                 let record = TokenPriceRecord.requested(price)
 
                 result[token] = record
-                try await database.write(for: token.id, value: record)
+                try? await database.write(for: token.id, value: record)
             } else {
                 let record = TokenPriceRecord.requested(nil)
 
                 result[token] = record
-                try await database.write(for: token.id, value: record)
+                try? await database.write(for: token.id, value: record)
             }
         }
 
