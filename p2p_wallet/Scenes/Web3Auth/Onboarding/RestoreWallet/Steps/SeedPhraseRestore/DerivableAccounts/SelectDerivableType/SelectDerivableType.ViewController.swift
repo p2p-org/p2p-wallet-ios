@@ -56,7 +56,7 @@ extension SelectDerivableType {
                                 UIStackView(axis: .horizontal, alignment: .center) {
                                     UILabel(text: path.title, textSize: 17, weight: selected ? .semibold : .regular)
                                     UIView.spacer
-                                    selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
+                                    selected ? UIImageView(width: 22, height: 22, image: .init(resource: .checkBoxIOS)) : UIView()
                                 }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
                                 UIView.separator(height: 1, color: .separator)
                             }.withTag(index)

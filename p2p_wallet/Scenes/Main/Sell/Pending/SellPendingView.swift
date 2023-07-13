@@ -83,7 +83,7 @@ struct SellPendingView: View {
 
     private var tokenView: some View {
         VStack(spacing: 16) {
-            Image(uiImage: viewModel.model.tokenImage)
+            Image(viewModel.model.tokenImage)
                 .resizable()
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)

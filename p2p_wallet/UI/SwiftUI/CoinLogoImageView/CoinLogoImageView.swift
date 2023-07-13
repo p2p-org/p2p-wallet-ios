@@ -87,27 +87,23 @@ class CoinLogoImageView: BEView {
 
         // with token
         if let token = token {
-            if let image = token.image {
-                tokenIcon.image = image
-            } else {
-                let key = token.symbol.isEmpty ? token.address : token.symbol
-                var seed = Self.cachedJazziconSeeds[key]
-                if seed == nil {
-                    seed = UInt32.random(in: 0 ..< 10_000_000)
-                    Self.cachedJazziconSeeds[key] = seed
-                }
-
-                tokenIcon.isHidden = true
-                self.seed = seed
-
-                tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
-                    switch result {
-                    case .success:
-                        self?.tokenIcon.isHidden = false
-                        self?.seed = nil
-                    case .failure:
-                        self?.tokenIcon.isHidden = true
-                    }
+            let key = token.symbol.isEmpty ? token.address : token.symbol
+            var seed = Self.cachedJazziconSeeds[key]
+            if seed == nil {
+                seed = UInt32.random(in: 0 ..< 10_000_000)
+                Self.cachedJazziconSeeds[key] = seed
+            }
+            
+            tokenIcon.isHidden = true
+            self.seed = seed
+            
+            tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.tokenIcon.isHidden = false
+                    self?.seed = nil
+                case .failure:
+                    self?.tokenIcon.isHidden = true
                 }
             }
         } else {

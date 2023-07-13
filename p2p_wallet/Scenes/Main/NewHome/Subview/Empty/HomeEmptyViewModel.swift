@@ -5,7 +5,6 @@ import Resolver
 import SolanaSwift
 import KeyAppKitCore
 import KeyAppBusiness
-import UIKit
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
@@ -72,14 +71,14 @@ extension HomeEmptyViewModel {
         let title: String
         let amount: String?
         @Published var actionTitle: String
-        let image: UIImage
+        let image: ImageResource
 
         init(
             id: String,
             title: String,
             amount: String?,
             actionTitle: String,
-            image: UIImage
+            image: ImageResource
         ) {
             self.id = id
             self.title = title
@@ -130,7 +129,7 @@ extension HomeEmptyViewModel {
         if token == .renBTC {
             return .bitcoinIcon
         }
-        return token.image ?? .squircleSolanaIcon
+        return .squircleSolanaIcon
     }
 }
 

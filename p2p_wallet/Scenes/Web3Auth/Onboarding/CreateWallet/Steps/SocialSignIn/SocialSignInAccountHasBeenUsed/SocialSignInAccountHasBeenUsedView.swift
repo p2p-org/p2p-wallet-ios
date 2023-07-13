@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 import KeyAppUI
@@ -31,7 +27,7 @@ struct SocialSignInAccountHasBeenUsedView: View {
                         title: L10n.useAnotherAccount,
                         style: .inverted,
                         size: .large,
-                        leading: .google,
+                        leading: .init(resource: .google),
                         isLoading: viewModel.loading
                     ) { [weak viewModel] in viewModel?.userAnotherAccount() }
                         .frame(height: TextButton.Size.large.height)

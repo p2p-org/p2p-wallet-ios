@@ -1,10 +1,3 @@
-//
-//  TokenDetailActionView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 10.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
@@ -105,7 +98,7 @@ struct ActionsView: View {
     }
 
     func actionView(
-        image: UIImage,
+        image: ImageResource,
         title: String,
         subtitle: String,
         action: @escaping () -> Void
@@ -129,7 +122,7 @@ struct ActionsView: View {
                             y: 22
                         )
                     VStack(alignment: .leading, spacing: 12) {
-                        Image(uiImage: image)
+                        Image(image)
                         VStack(alignment: .leading, spacing: 8) {
                             Text(title)
                                 .foregroundColor(Color(Asset.Colors.night.color))
@@ -147,7 +140,7 @@ struct ActionsView: View {
     }
 
     func horizontalActionView(
-        image: UIImage,
+        image: ImageResource,
         title: String,
         subtitle: String,
         action: @escaping () -> Void
@@ -169,7 +162,7 @@ struct ActionsView: View {
                             y: 22
                         )
                     HStack(alignment: .center, spacing: 16) {
-                        Image(uiImage: image)
+                        Image(image)
                             .padding(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 0))
                         VStack(alignment: .leading, spacing: 4) {
                             Text(title)

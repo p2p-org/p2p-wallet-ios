@@ -13,7 +13,7 @@ struct OnboardingContentData: Identifiable, Equatable {
     }
 
     var id: String { title }
-    let image: ImageResource?
+    let image: ImageResource
     let title: String
     let subtitles: [Subtitle]
 

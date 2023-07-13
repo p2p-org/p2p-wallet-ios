@@ -1,10 +1,3 @@
-//
-//  SeedPhraseView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 01.09.2022.
-//
-
 import CarPlay
 import KeyAppUI
 import SwiftUI
@@ -28,7 +21,7 @@ struct SeedPhraseView: View {
                         title: !hidden ? L10n.hide : L10n.show,
                         style: .second,
                         size: .small,
-                        trailing: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens
+                        trailing: .init(resource: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens)
                     ) { hidden = !hidden }
                         .frame(maxWidth: 100, maxHeight: TextButton.Size.small.height)
                 }

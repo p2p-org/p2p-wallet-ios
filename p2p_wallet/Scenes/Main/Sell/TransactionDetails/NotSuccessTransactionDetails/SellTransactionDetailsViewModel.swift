@@ -4,7 +4,6 @@ import Foundation
 import Resolver
 import Sell
 import KeyAppUI
-import UIKit
 
 final class SellTransactionDetailsViewModel: ObservableObject {
 
@@ -35,7 +34,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
         fiat: Fiat,
         strategy: Strategy,
         date: Date,
-        tokenImage: UIImage,
+        tokenImage: ImageResource,
         tokenSymbol: String
     ) {
         self.strategy = strategy

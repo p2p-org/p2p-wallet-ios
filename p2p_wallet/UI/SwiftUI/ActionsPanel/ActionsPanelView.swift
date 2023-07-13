@@ -88,12 +88,12 @@ struct ActionsPanelView: View {
         .background(Color(Asset.Colors.smoke.color))
     }
 
-    private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
+    private func tokenOperation(title: String, image: ImageResource, action: @escaping () -> Void) -> some View {
         Button(
             action: action,
             label: {
                 VStack(spacing: 4) {
-                    Image(uiImage: image)
+                    Image(image)
                         .resizable()
                         .frame(width: 53, height: 53)
                         .scaledToFit()

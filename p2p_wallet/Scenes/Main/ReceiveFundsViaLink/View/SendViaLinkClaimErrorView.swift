@@ -1,10 +1,3 @@
-//
-//  SendViaLinkClaimErrorView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.03.2023.
-//
-
 import SwiftUI
 import KeyAppUI
 
@@ -12,7 +5,7 @@ struct SendViaLinkClaimErrorView: View {
     
     let title: String
     let subtitle: String?
-    let image: UIImage
+    let image: ImageResource
     @Binding var isLoading: Bool
     let reloadClicked: () -> Void
     let cancelClicked: () -> Void
@@ -25,7 +18,7 @@ struct SendViaLinkClaimErrorView: View {
                     .font(uiFont: .font(of: .text3))
             }
             Spacer()
-            Image(uiImage: image)
+            Image(image)
             VStack(spacing: 12) {
                 TextButtonView(
                     title: L10n.tryAgain,
