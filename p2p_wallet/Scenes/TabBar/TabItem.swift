@@ -9,7 +9,7 @@ import UIKit
 
 enum TabItem: Int, CaseIterable {
     case wallet = 0
-    case invest
+    case crypto
     case actions
     case history
     case settings

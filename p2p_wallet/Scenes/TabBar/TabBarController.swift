@@ -308,14 +308,7 @@ extension TabBarController: UITabBarControllerDelegate {
 
         customTabBar.updateSelectedViewPositionIfNeeded()
 
-        if TabItem(rawValue: selectedIndex) == .invest {
-            if !available(.investSolendFeature) {
-                jupiterSwapClickedSubject.send()
-            } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
-                solendTutorialSubject.send()
-                return false
-            }
-        } else if TabItem(rawValue: selectedIndex) == .wallet,
+        if TabItem(rawValue: selectedIndex) == .wallet,
                   (viewController as! UINavigationController).viewControllers.count == 1,
                   self.selectedIndex == selectedIndex
         {
@@ -333,8 +326,8 @@ private extension TabItem {
         switch self {
         case .wallet:
             return .tabBarSelectedWallet
-        case .invest:
-            return available(.investSolendFeature) ? .tabBarEarn : .tabBarSwap
+        case .crypto:
+            return .tabBarCrypto
         case .actions:
             return UIImage()
         case .history:
@@ -348,8 +341,8 @@ private extension TabItem {
         switch self {
         case .wallet:
             return L10n.wallet
-        case .invest:
-            return available(.investSolendFeature) ? L10n.earn : L10n.swap
+        case .crypto:
+            return L10n.crypto
         case .actions:
             return ""
         case .history:

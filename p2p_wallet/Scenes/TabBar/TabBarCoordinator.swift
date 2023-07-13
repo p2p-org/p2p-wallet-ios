@@ -117,7 +117,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         homeCoordinator.navigation
             .filter { $0 == .earn }
             .sink(receiveValue: { [unowned self] _ in
-                tabBarController.changeItem(to: .invest)
+                tabBarController.changeItem(to: .crypto)
             })
             .store(in: &subscriptions)
 
@@ -129,17 +129,17 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         // solen tutorial clicked
-        tabBarController.solendTutorialClicked
-            .sink(receiveValue: { [weak self] in
-                self?.navigateToSolendTutorial()
-            })
-            .store(in: &subscriptions)
+//        tabBarController.solendTutorialClicked
+//            .sink(receiveValue: { [weak self] in
+//                self?.navigateToSolendTutorial()
+//            })
+//            .store(in: &subscriptions)
 
-        tabBarController.jupiterSwapClicked
-            .sink { [weak self] in
-                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
-            }
-            .store(in: &subscriptions)
+//        tabBarController.jupiterSwapClicked
+//            .sink { [weak self] in
+//                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
+//            }
+//            .store(in: &subscriptions)
         return homeNavigation
     }
 
@@ -153,7 +153,8 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
+//            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
+            routeToCrypto(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false)
         }
 
         let historyNavigation = UINavigationController()
@@ -217,15 +218,15 @@ final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Helpers
 
     /// Navigate to SolendTutorial scene
-    private func navigateToSolendTutorial() {
-        var view = SolendTutorialView(viewModel: .init())
-        view.doneHandler = { [weak self] in
-            self?.tabBarController.changeItem(to: .invest)
-        }
-        let vc = UIHostingControllerWithoutNavigation(rootView: view)
-        vc.modalPresentationStyle = .fullScreen
-        tabBarController.present(vc, animated: true)
-    }
+//    private func navigateToSolendTutorial() {
+//        var view = SolendTutorialView(viewModel: .init())
+//        view.doneHandler = { [weak self] in
+//            self?.tabBarController.changeItem(to: .invest)
+//        }
+//        let vc = UIHostingControllerWithoutNavigation(rootView: view)
+//        vc.modalPresentationStyle = .fullScreen
+//        tabBarController.present(vc, animated: true)
+//    }
 
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
@@ -323,6 +324,19 @@ final class TabBarCoordinator: Coordinator<Void> {
         ))
         .sink(receiveValue: { _ in })
         .store(in: &subscriptions)
+    }
+    
+    private func routeToCrypto(
+        nc: UINavigationController,
+        hidesBottomBarWhenPushed: Bool = true
+    ) {
+        let cryptoCoordinator = CryptoCoordinator(navigationController: nc)
+        coordinate(to: cryptoCoordinator)
+            .sink(receiveValue: { [weak self] _ in
+                guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
+                self?.tabBarController.changeItem(to: .wallet)
+            })
+            .store(in: &subscriptions)
     }
 
     private func routeToSwap(

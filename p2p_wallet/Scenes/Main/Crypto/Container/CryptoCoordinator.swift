@@ -5,15 +5,33 @@
 //  Created by Zafar Ivaev on 12/07/23.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
+import SolanaSwift
 import SwiftUI
 import UIKit
+import Wormhole
 
 /// The scenes that the `Crypto` scene can navigate to
 enum CryptoNavigation: Equatable {
-//    case detail
+    // With tokens
+    case buy
+    case receive(publicKey: PublicKey)
+    case send
+    case swap
+    case cashOut
+    case earn
+    case solanaAccount(SolanaAccount)
+    case claim(EthereumAccount, WormholeClaimUserAction?)
+    case actions([WalletActionType])
+    // Empty
+    case topUpCoin(Token)
+    // Error
+    case error(show: Bool)
 }
 
 /// Result type of the `Crypto` scene
@@ -43,7 +61,13 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     override func start() -> AnyPublisher<CryptoResult, Never> {
         // create viewmodel, view, uihostingcontroller
         let viewModel = CryptoViewModel(navigation: navigation)
-        let view = CryptoView(viewModel: viewModel)
+        let actionsPanelViewModel = CryptoActionsPanelViewModel(navigation: navigation)
+        let accountsViewModel = CryptoAccountsViewModel(navigation: navigation)
+        let view = CryptoView(
+            viewModel: viewModel,
+            actionsPanelViewModel: actionsPanelViewModel,
+            accountsViewModel: accountsViewModel
+        )
         let vc = UIHostingController(rootView: view)
         
         // push hostingcontroller
@@ -70,9 +94,9 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 //            return coordinate(to: coordinator)
 //                .map {_ in ()}
 //                .eraseToAnyPublisher()
-//        default:
-//            return Just(())
-//                .eraseToAnyPublisher()
+        default:
+            return Just(())
+                .eraseToAnyPublisher()
         }
     }
 }
