@@ -25,7 +25,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
-    @Published var qrCenterImage: UIImage?
+    @Published var qrCenterImage: ImageResource?
     @Published var qrCenterImageURL: URL?
 
     // MARK: -
@@ -60,7 +60,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             // Set token icon
             switch icon {
             case let .image(image):
-                qrCenterImage = .init(resource: image)
+                qrCenterImage = image
             case let .url(url):
                 qrCenterImageURL = url
             case .none:
@@ -105,7 +105,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             // Set token icon
             switch icon {
             case let .image(image):
-                qrCenterImage = .init(resource: image)
+                qrCenterImage = image
             case let .url(url):
                 qrCenterImageURL = url
             case .none:

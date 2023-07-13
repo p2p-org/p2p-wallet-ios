@@ -46,7 +46,7 @@ struct ReceiveView: View {
                 .scaledToFit()
                 .frame(width: 200, height: 200)
             if let centerImage = viewModel.qrCenterImage {
-                Image(uiImage: centerImage)
+                Image(centerImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
