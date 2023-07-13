@@ -180,10 +180,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func setupNavigationAppearance() {
         let barButtonAppearance = UIBarButtonItem.appearance()
         let navBarAppearence = UINavigationBar.appearance()
-        navBarAppearence.backIndicatorImage = .navigationBack
+        navBarAppearence.backIndicatorImage = UIImage(resource: .navigationBack)
             .withRenderingMode(.alwaysTemplate)
             .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
-        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+        navBarAppearence.backIndicatorTransitionMaskImage = UIImage(resource: .navigationBack)
             .withRenderingMode(.alwaysTemplate)
             .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         barButtonAppearance.setBackButtonTitlePositionAdjustment(
