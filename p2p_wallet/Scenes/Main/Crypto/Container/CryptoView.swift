@@ -45,7 +45,9 @@ struct CryptoView: View {
             case .empty:
                 Text("Empty")
             case .accounts:
-                navigation {
+                ZStack {
+                    Color(Asset.Colors.smoke.color)
+                        .edgesIgnoringSafeArea(.all)
                     CryptoAccountsView(
                         viewModel: accountsViewModel,
                         actionsPanelView: actionsPanelView
@@ -58,45 +60,6 @@ struct CryptoView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             viewModel.viewAppeared()
-        }
-    }
-    
-    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
-        NavigationView {
-            ZStack {
-                Color(Asset.Colors.smoke.color)
-                    .edgesIgnoringSafeArea(.all)
-                content()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Button(
-                                action: {
-                                    viewModel.copyToClipboard()
-                                },
-                                label: {
-                                    ZStack {
-                                        Color(Asset.Colors.snow.color)
-                                            .cornerRadius(80)
-                                        HStack(spacing: 5) {
-                                            Image(uiImage: .walletNavigation)
-                                            Text(viewModel.address)
-                                                .fontWeight(.semibold)
-                                                .apply(style: .text3)
-                                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                        }
-                                        .padding(.horizontal, 18)
-                                        .padding(.vertical, 12)
-                                    }
-                                }
-                            )
-                        }
-                    }
-            }
-        }
-        .onAppear {
-            viewModel.updateAddressIfNeeded()
         }
     }
 }

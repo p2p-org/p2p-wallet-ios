@@ -63,15 +63,14 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         let viewModel = CryptoViewModel(navigation: navigation)
         let actionsPanelViewModel = CryptoActionsPanelViewModel(navigation: navigation)
         let accountsViewModel = CryptoAccountsViewModel(navigation: navigation)
-        let view = CryptoView(
+        let cryptoView = CryptoView(
             viewModel: viewModel,
             actionsPanelViewModel: actionsPanelViewModel,
             accountsViewModel: accountsViewModel
         )
-        let vc = UIHostingController(rootView: view)
-        
-        // push hostingcontroller
-        navigationController.pushViewController(vc, animated: true)
+        let cryptoVC = cryptoView.asViewController(withoutUIKitNavBar: false)
+        cryptoVC.title = L10n.crypto
+        navigationController.setViewControllers([cryptoVC], animated: false)
         
         // handle navigation
         navigation
@@ -82,7 +81,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             .store(in: &subscriptions)
         
         // return publisher
-        return vc.deallocatedPublisher()
+        return cryptoVC.deallocatedPublisher()
     }
     
     // MARK: - Navigation

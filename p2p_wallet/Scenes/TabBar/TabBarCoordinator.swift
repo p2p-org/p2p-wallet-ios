@@ -47,7 +47,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
         let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setUpSolendSwapOrHistory()
+        let (secondTab, thirdTab) = setupCryptoAndHistory() // setUpSolendSwapOrHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -114,12 +114,12 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         // navigate to Earn from homeCoordinator
-        homeCoordinator.navigation
-            .filter { $0 == .earn }
-            .sink(receiveValue: { [unowned self] _ in
-                tabBarController.changeItem(to: .crypto)
-            })
-            .store(in: &subscriptions)
+//        homeCoordinator.navigation
+//            .filter { $0 == .earn }
+//            .sink(receiveValue: { [unowned self] _ in
+//                tabBarController.changeItem(to: .invest)
+//            })
+//            .store(in: &subscriptions)
 
         // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
@@ -134,7 +134,7 @@ final class TabBarCoordinator: Coordinator<Void> {
 //                self?.navigateToSolendTutorial()
 //            })
 //            .store(in: &subscriptions)
-
+//
 //        tabBarController.jupiterSwapClicked
 //            .sink { [weak self] in
 //                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
@@ -142,7 +142,26 @@ final class TabBarCoordinator: Coordinator<Void> {
 //            .store(in: &subscriptions)
         return homeNavigation
     }
+    
+    /// Set up Crypto and History scenes
+    private func setupCryptoAndHistory() -> (UIViewController, UIViewController) {
+        let cryptoNavigation = UINavigationController()
+        
+        routeToCrypto(nc: cryptoNavigation)
+        
+        let historyNavigation = UINavigationController()
+        historyNavigation.navigationBar.prefersLargeTitles = true
+        
+        let historyCoordinator = NewHistoryCoordinator(
+            presentation: SmartCoordinatorPushPresentation(historyNavigation)
+        )
+        coordinate(to: historyCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
 
+        return (cryptoNavigation, historyNavigation)
+    }
+    
     /// Set up Solend, history or feedback scene
     private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
         let solendOrSwapNavigation = UINavigationController()
@@ -153,8 +172,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-//            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
-            routeToCrypto(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false)
+            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
         }
 
         let historyNavigation = UINavigationController()
@@ -327,8 +345,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
     
     private func routeToCrypto(
-        nc: UINavigationController,
-        hidesBottomBarWhenPushed: Bool = true
+        nc: UINavigationController
     ) {
         let cryptoCoordinator = CryptoCoordinator(navigationController: nc)
         coordinate(to: cryptoCoordinator)

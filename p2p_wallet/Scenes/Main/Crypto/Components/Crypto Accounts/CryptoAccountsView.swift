@@ -70,11 +70,6 @@ struct CryptoAccountsView: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(L10n.tokens)
-                .font(uiFont: .font(of: .title3, weight: .semibold))
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
                     tokenCell(rendableAccount: $0, isVisiable: true)

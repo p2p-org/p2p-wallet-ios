@@ -30,14 +30,12 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationsService: NotificationService
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
-    @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
     
     @Published private(set) var balance: String = "0"
     @Published private(set) var actions: [WalletActionType] = [.receive, .swap]
     
     @Published var state = State.pending
-    @Published var address = ""
     
     private var isInitialized = false
     
@@ -61,26 +59,6 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     func reload() async {
         await CryptoAccountsSynchronizationService().refresh()
-    }
-    
-    func copyToClipboard() {
-        clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
-        let text: String
-        if nameStorage.getName() != nil {
-            text = L10n.usernameWasCopiedToClipboard
-        } else {
-            text = L10n.addressWasCopiedToClipboard
-        }
-        notificationsService.showToast(title: "🖤", text: text, haptic: true)
-        analyticsManager.log(event: .mainCopyAddress)
-    }
-
-    func updateAddressIfNeeded() {
-        if let name = nameStorage.getName(), !name.isEmpty {
-            address = name
-        } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
-            self.address = address
-        }
     }
 
     func viewAppeared() {
@@ -162,7 +140,7 @@ private extension CryptoViewModel {
             .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
-        // state, address, error, log
+        // state, error, log
 
         Publishers
             .CombineLatest(solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher)
@@ -178,9 +156,6 @@ private extension CryptoViewModel {
                     solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
 
-                // TODO: Bad place
-                self.updateAddressIfNeeded()
-
                 // Merge two status
                 let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)
 
@@ -194,15 +169,6 @@ private extension CryptoViewModel {
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(solanaTotalBalance > 0))
                     self.analyticsManager.log(parameter: .userAggregateBalance(solanaTotalBalance))
                 }
-            }
-            .store(in: &subscriptions)
-
-        // update name when needed
-        createNameService.createNameResult
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isSuccess in
-                guard isSuccess else { return }
-                self?.updateAddressIfNeeded()
             }
             .store(in: &subscriptions)
     }
