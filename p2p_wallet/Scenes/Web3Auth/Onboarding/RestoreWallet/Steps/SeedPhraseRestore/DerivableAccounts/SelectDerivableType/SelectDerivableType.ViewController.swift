@@ -39,7 +39,7 @@ extension SelectDerivableType {
                         text: L10n.derivationPath,
                         textSize: 13,
                         weight: .semibold,
-                        textColor: .textSecondary,
+                        textColor: .init(resource: .textSecondary),
                         textAlignment: .center
                     ).padding(.init(x: 0, y: 15))
                     UIView.separator(height: 1, color: .separator)
@@ -63,7 +63,7 @@ extension SelectDerivableType {
                                 .frame(height: 55)
                                 .onTap(self, action: #selector(onPathSelect))
                         }
-                }.padding(.zero, backgroundColor: .background, cornerRadius: 14)
+                }.padding(.zero, backgroundColor: .init(resource: .background), cornerRadius: 14)
 
                 // Cancel
                 WLButton.stepButton(

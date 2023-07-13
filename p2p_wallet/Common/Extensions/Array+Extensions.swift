@@ -9,18 +9,6 @@ extension Array where Element: Equatable {
     }
 }
 
-extension Array where Element: UIColor {
-    static var defaultLoaderGradientColors: [UIColor] {
-        [
-            .f2f2f7.withAlphaComponent(0.24),
-            .f2f2f7.withAlphaComponent(0.48),
-            .f2f2f7,
-            .f2f2f7.withAlphaComponent(0.48),
-            .f2f2f7.withAlphaComponent(0.24),
-        ]
-    }
-}
-
 extension Array {
     func chunked(into size: Int) -> [[Element]] {
         stride(from: 0, to: count, by: size).map {

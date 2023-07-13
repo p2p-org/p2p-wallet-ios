@@ -17,18 +17,18 @@ struct SellTransactionDetailsInfoModel {
     init(strategy: SellTransactionDetailsViewModel.Strategy) {
         switch strategy {
         case .processing:
-            self.iconColor = UIColor.h9799af
+            self.iconColor = UIColor(resource: .h9799Af)
             self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor.e0e0e7
+            self.backgroundColor = UIColor(resource: .e0E0E7)
             self.icon = .sellInfo
             let attributedText = NSMutableAttributedString(string: L10n.SOLWasSentToMoonpayAndIsBeingProcessed.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
             attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
             self.text = .help(text: attributedText)
 
         case .fundsWereSent:
-            self.iconColor = UIColor.h9799af
+            self.iconColor = UIColor(resource: .h9799Af)
             self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor.e0e0e7
+            self.backgroundColor = UIColor(resource: .e0E0E7)
             self.icon = .sellInfo
             let attributedText = NSMutableAttributedString(string: L10n.ItUsuallyTakesUpTo3BusinessDays.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
             attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
@@ -37,7 +37,7 @@ struct SellTransactionDetailsInfoModel {
         case .youNeedToSend:
             self.iconColor = Asset.Colors.sun.color
             self.textColor = Asset.Colors.night.color
-            self.backgroundColor = UIColor.e0e0e7
+            self.backgroundColor = UIColor(resource: .e0E0E7)
             self.icon = .sellPendingWarning
             self.text = .raw(text: L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
 

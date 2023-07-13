@@ -69,7 +69,8 @@ struct SellSuccessTransactionDetailsView: View {
 
     private var infoBlockView: some View {
         ZStack {
-            Color(.cdf6cd.withAlphaComponent(0.3))
+            Color(.cdf6Cd)
+                .opacity(0.3)
                 .cornerRadius(12)
             HStack(spacing: 12) {
                 Image(.successSellTransaction)

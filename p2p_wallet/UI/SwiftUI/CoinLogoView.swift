@@ -59,12 +59,12 @@ class CoinLogoViewWrapper: BEView {
 
     // MARK: - Subviews
 
-    lazy var tokenIcon = UIImageView(tintColor: .textBlack)
+    lazy var tokenIcon = UIImageView(tintColor: .init(resource: .textBlack))
     lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16, cornerRadius: 4)
-        .border(width: 1, color: .h464646)
+        .border(width: 1, color: .init(resource: .h464646))
     lazy var wrappingView: BERoundedCornerShadowView = {
         let view = BERoundedCornerShadowView(
-            shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
+            shadowColor: UIColor(resource: .textWhite).withAlphaComponent(0.25),
             radius: 2,
             offset: CGSize(width: 0, height: 2),
             opacity: 1,
