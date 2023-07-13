@@ -307,6 +307,7 @@ extension HomeAccountsViewModel {
 private extension HomeAccountsViewModel {
     func bindTransferData() {
         bankTransferService.value.state
+            .filter { !$0.isFetching }
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
             .filter { [weak self] in
                 // If banner with the same KYC status was already tapped, then we do not show it again
@@ -339,7 +340,10 @@ private extension HomeAccountsViewModel {
                 if state.value.isIBANNotReady {
                     self.smallBanner?.button?.isLoading = true
                     self.shouldShowErrorSubject.send(false)
-                    Task { await self.bankTransferService.value.reload() }
+                    Task {
+                        await self.bankTransferService.value.reload()
+                        self.tappedBannerSubject.send(.bankTransfer)
+                    }
                 } else {
                     self.navigation.send(.bankTransfer)
                 }

@@ -76,6 +76,7 @@ private extension HomeEmptyViewModel {
 
     func bindBankTransfer() {
         bankTransferService.state
+            .filter { !$0.isFetching }
             .filter { $0.value.userId != nil && $0.value.mobileVerified }
             .receive(on: RunLoop.main)
             .compactMap { [weak self] value -> HomeBannerParameters? in
@@ -106,7 +107,10 @@ private extension HomeEmptyViewModel {
                 if state.value.isIBANNotReady {
                     self.banner.button?.isLoading = true
                     self.shouldShowErrorSubject.send(false)
-                    Task { await self.bankTransferService.reload() }
+                    Task {
+                        await self.bankTransferService.reload()
+                        self.tappedBannerSubject.send(.bankTransfer)
+                    }
                 } else {
                     self.navigation.send(.bankTransfer)
                 }
