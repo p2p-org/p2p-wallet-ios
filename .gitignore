@@ -29,11 +29,6 @@ xcuserdata/
 *.xccheckout
 *.xcscmblueprint
 
-## Swiftgen
-p2p_wallet/Resources/Strings+Generated.swift
-p2p_wallet/Resources/Asset+Generated.swift
-p2p_wallet/Resources/Fonts+Generated.swift
-
 ## Obj-C/Swift specific
 *.hmap
 *.ipa
