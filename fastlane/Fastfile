@@ -196,11 +196,11 @@ def commit_changes
 end 
 
 def upload_dsym_to_analytic_providers
-  # sentry_upload_dsym(
-  #   auth_token: SENTRY_TOKEN,
-  #   org_slug: 'p2p-wallet',
-  #   project_slug: 'ios',
-  # )
+  sentry_upload_dsym(
+    auth_token: SENTRY_TOKEN,
+    org_slug: 'p2p-wallet',
+    project_slug: 'ios',
+  )
 end
 
 def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
@@ -229,10 +229,6 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   # Increase the number to create new tag
   build_number = number_of_released_builds + 1
   current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
-  while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
-    build_number += 1
-    current_build = build_prefix.to_s + "." + build_number.to_s
-  end
 
   # set build number
   increment_build_number(
