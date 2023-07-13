@@ -585,7 +585,7 @@ private extension SendInputViewModel {
         let amountInFiat = currentState.amountInFiat
 
         if isSendingViaLink {
-            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: address)
         }
 
         await MainActor.run {
