@@ -26,17 +26,22 @@ public class PriceServiceImpl: PriceService {
     let errorObserver: ErrorObserver
 
     /// Data structure for caching
-    enum TokenPriceRecord {
+    enum TokenPriceRecord: Codable, Hashable {
         case requested(TokenPrice?)
     }
 
     /// Cache manager.
-    let cache: LongTermCache<String, TokenPriceRecord>
+    let database: LifetimeDatabase<String, TokenPriceRecord>
 
-    public init(api: KeyAppTokenProvider, errorObserver: ErrorObserver, lifetime: TimeInterval = 60 * 15) {
+    public init(api: KeyAppTokenProvider, errorObserver: ErrorObserver, lifetime: TimeInterval = 60 * 5) {
         self.api = api
         self.errorObserver = errorObserver
-        cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
+        database = .init(
+            filePath: "token-price",
+            storage: ApplicationFileStorage(),
+            autoFlush: false,
+            defaultLifetime: lifetime
+        )
     }
 
     public func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
@@ -48,10 +53,10 @@ public class PriceServiceImpl: PriceService {
 
         // Get value from local storage
         for token in tokens {
-            result[token.asSomeToken] = cache.value(forKey: token.id)
+            result[token.asSomeToken] = try await database.read(for: token.id)
         }
 
-        // Build requested token, that misses token price.
+        // Filter missing token price
         var missingPriceTokenMints: [AnyToken] = []
         for token in tokens {
             let token = token.asSomeToken
@@ -61,53 +66,29 @@ public class PriceServiceImpl: PriceService {
             }
         }
 
-        // Request missing token price
-        let query: [KeyAppTokenProviderData.TokenQuery] = Dictionary(
-            grouping: missingPriceTokenMints,
-            by: \.network
-        ).map { (network: TokenNetwork, tokens: [AnyToken]) in
-            let addresses = tokens.map(\.addressPriceMapping)
+        // Request missing prices
+        let newPrices = try await fetchTokenPrice(tokens: missingPriceTokenMints, fiat: fiat)
 
-            return KeyAppTokenProviderData.TokenQuery(chainId: network.rawValue, addresses: addresses)
-        }
+        // Process missing token prices
+        for token in missingPriceTokenMints {
+            let token = token.asSomeToken
 
-        let newPrices = try await api.getTokensPrice(
-            KeyAppTokenProviderData.Params(query: query)
-        )
+            let price = newPrices[token]
 
-        // Process new token prices
-        for tokenData in newPrices.first?.data ?? [] {
-            guard let token = tokens.first(where: { token in token.addressPriceMapping == tokenData.address })?
-                .asSomeToken
-            else {
-                // Token should be from requested list
-                continue
-            }
+            if let price {
+                let record = TokenPriceRecord.requested(price)
 
-            if
-                let priceValueContainer = tokenData.price[fiat],
-                let priceValue = priceValueContainer
-            {
-                do {
-                    // Parse
-                    let price = try parseTokenPrice(token: token, value: priceValue, fiat: fiat)
-
-                    // Ok case
-                    cache.insert(.requested(price), forKey: token.id)
-                    result[token] = .requested(price)
-                } catch {
-                    // Parsing error
-                    cache.removeValue(forKey: token.id)
-                    result[token] = nil
-
-                    errorObserver.handleError(error)
-                }
+                result[token] = record
+                try await database.write(for: token.id, value: record)
             } else {
-                // No price, we will not request it again.
-                cache.insert(.requested(nil), forKey: token.id)
-                result[token] = nil
+                let record = TokenPriceRecord.requested(nil)
+
+                result[token] = record
+                try await database.write(for: token.id, value: record)
             }
         }
+
+        try? await database.flush()
 
         // Transform values of TokenPriceRecord? to TokenPrice?
         return result
@@ -122,6 +103,57 @@ public class PriceServiceImpl: PriceService {
     public func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice? {
         let result = try await getPrices(tokens: [token], fiat: fiat)
         return result.values.first ?? nil
+    }
+
+    internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+        var result: [SomeToken: TokenPrice] = [:]
+
+        // Request missing token price
+        let query: [KeyAppTokenProviderData.TokenQuery] = Dictionary(
+            grouping: tokens,
+            by: \.network
+        ).map { (network: TokenNetwork, tokens: [AnyToken]) in
+            let addresses = tokens.map(\.addressPriceMapping)
+
+            return KeyAppTokenProviderData.TokenQuery(chainId: network.rawValue, addresses: addresses)
+        }
+
+        let newPrices = try await api.getTokensPrice(
+            KeyAppTokenProviderData.Params(query: query)
+        )
+
+        for chain in newPrices {
+            for tokenData in chain.data {
+                // Token should be from requested list
+                let token = tokens.first { token in token.addressPriceMapping == tokenData.address }
+                guard let token = token?.asSomeToken else {
+                    continue
+                }
+
+                if
+                    let priceValueContainer = tokenData.price[fiat],
+                    let priceValue = priceValueContainer
+                {
+                    do {
+                        // Parse
+                        let price = try parseTokenPrice(token: token, value: priceValue, fiat: fiat)
+
+                        // Ok case
+                        result[token] = price
+                    } catch {
+                        // Parsing error
+                        result[token] = nil
+                        errorObserver.handleError(error)
+                    }
+                } else {
+                    // No price, we will not request it again.
+                    result[token] = nil
+                }
+            }
+        }
+
+        // Transform values of TokenPriceRecord? to TokenPrice?
+        return result
     }
 
     func parseTokenPrice(token: SomeToken, value: String, fiat: String) throws -> TokenPrice {
@@ -147,12 +179,13 @@ public class PriceServiceImpl: PriceService {
 }
 
 internal extension AnyToken {
+    // TODO: Wait backend fix for handling native token
     var addressPriceMapping: String {
         switch network {
         case .solana:
             switch primaryKey {
             case .native:
-                return  SolanaToken.nativeSolana.address
+                return SolanaToken.nativeSolana.address
             case let .contract(address):
                 return address
             }
