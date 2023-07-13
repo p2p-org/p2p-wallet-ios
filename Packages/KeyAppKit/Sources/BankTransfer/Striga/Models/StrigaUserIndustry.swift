@@ -6,7 +6,7 @@ public enum StrigaUserIndustry: String, CaseIterable, Codable {
     case publicSectorAdministration = "PUBLIC_SECTOR_ADMINISTRATION"
     case artEntertainment = "ART_ENTERTAINMENT"
     case autoAviation = "AUTO_AVIATION"
-    case bankingLending = "BANKING_LENGING"
+    case bankingLending = "BANKING_LENDING"
     case businessConsultancyLegal = "BUSINESS_CONSULTANCY_LEGAL"
     case constructionRepair = "CONSTRUCTION_REPAIR"
     case educationProfessionalServices = "EDUCATION_PROFESSIONAL_SERVICES"
