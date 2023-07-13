@@ -80,6 +80,7 @@ public struct NewTextButton: View {
             .frame(height: size.height)
             .frame(maxWidth: expandable ? .infinity : nil)
         }
+        .frame(maxWidth: expandable ? .infinity : nil)
         .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
         .background(isEnabled ? appearance.backgroundColor : Color(Asset.Colors.rain.color))
         .cornerRadius(appearance.borderRadius)

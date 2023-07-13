@@ -1,10 +1,6 @@
-//
-//  ConnectionErrorVC.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 05/05/2021.
-//
 import Foundation
+import UIKit
+import BEPureLayout
 
 extension UIView {
     @discardableResult
@@ -68,7 +64,7 @@ class ConnectionErrorView: BEView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 30))
 
         // separator
-        let separator = UIView.defaultSeparator()
+        let separator = UIView.separator(height: 1, color: .separator)
         view.addSubview(separator)
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)

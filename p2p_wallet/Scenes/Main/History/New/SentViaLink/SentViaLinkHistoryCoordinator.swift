@@ -3,6 +3,7 @@ import KeyAppUI
 import Combine
 import Resolver
 import Send
+import UIKit
 
 final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Properties

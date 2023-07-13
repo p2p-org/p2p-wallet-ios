@@ -75,6 +75,9 @@ final class CustomTabBar: UITabBar {
 
     func updateSelectedViewPositionIfNeeded() {
         guard let currentIndex = currentIndex else { return }
-        selectedView.center = CGPoint(x: subviews[currentIndex + 1].center.x, y: 0)
+        let buttons = subviews.compactMap { NSStringFromClass(type(of: $0)) == "UITabBarButton" ? $0 : nil }
+
+        guard currentIndex < buttons.count else { return }
+        selectedView.center = CGPoint(x: buttons[currentIndex].center.x, y: 0)
     }
 }

@@ -1,6 +1,7 @@
 import SolanaSwift
 import Jupiter
 import Resolver
+import Foundation
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
@@ -49,7 +50,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
-            let diffRoutesTime = abs(Date().timeIntervalSince1970 - (route._receiveAt ?? Date()).timeIntervalSince1970)
+            let diffRoutesTime = abs(Date().timeIntervalSince1970 - route._receiveAt.timeIntervalSince1970)
                 .toString(minimumFractionDigits: 9)
             
             let diffTxTime = abs(Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)

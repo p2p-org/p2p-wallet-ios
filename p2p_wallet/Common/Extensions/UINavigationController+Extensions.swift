@@ -1,11 +1,5 @@
-//
-//  UINavigationController+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 12/03/2021.
-//
-
 import Foundation
+import UIKit
 
 extension UINavigationController {
     override open var childForStatusBarStyle: UIViewController? {

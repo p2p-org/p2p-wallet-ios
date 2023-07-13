@@ -1,14 +1,8 @@
-//
-//  AuthenticationHandler.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 10/01/2022.
-//
-
 import Foundation
 import Resolver
 import Combine
 import AnalyticsManager
+import UIKit
 
 protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)

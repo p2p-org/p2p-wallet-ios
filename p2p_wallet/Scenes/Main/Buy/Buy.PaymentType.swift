@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 enum PaymentType: String, DefaultsSerializable, CaseIterable {
     case card

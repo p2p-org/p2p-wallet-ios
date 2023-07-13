@@ -13,9 +13,7 @@ if [ -z "$JIRA_USER_EMAIL" ] || [ -z "$JIRA_API_TOKEN" ]; then
 fi
 
 # Run git log commands and concatenate the outputs into log_output
-git fetch origin main
-baseBranchPath=$(git branch -r | grep main | xargs)
-log_output=$(git log "$baseBranchPath".."$1" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
+log_output=$(git log origin/main..origin/"$1" --grep='PWN' --regexp-ignore-case --pretty=format:%s)
 
 # Extract the release version from the provided parameter
 release=$(echo "$1" | sed 's/^release\///')
@@ -47,11 +45,12 @@ for match in "${unique_matches[@]}"; do
             --data "{\"update\":{\"fixVersions\":[{\"set\":[{\"name\":\"iOS $release\"}]}]}}" \
             "$JIRA_BASE_URL/rest/api/2/issue/$key")
 
+        echo "$update_response"
+
         if [ "$(echo "$update_response" | jq -r '.id')" != "null" ]; then
             echo "  - Fix version updated successfully"
         else
             echo "  - Failed to update fix version"
-            echo "$update_response"
         fi
 
     else

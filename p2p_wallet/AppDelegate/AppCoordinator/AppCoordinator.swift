@@ -1,6 +1,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppKitCore
 import KeyAppUI
 import Onboarding
 import OrcaSwapSwift
@@ -9,6 +10,7 @@ import Sell
 import Sentry
 import SolanaSwift
 import UIKit
+import BEPureLayout
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies

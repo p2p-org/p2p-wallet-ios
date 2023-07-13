@@ -1,6 +1,8 @@
 import Combine
 import SkeletonUI
 import SwiftUI
+import UIKit
+import BEPureLayout
 
 struct CoinLogoView: UIViewRepresentable {
     let size: CGFloat

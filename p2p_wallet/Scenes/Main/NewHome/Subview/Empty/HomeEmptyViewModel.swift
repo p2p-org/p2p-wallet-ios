@@ -1,10 +1,3 @@
-//
-//  HomeEmptyViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,7 @@ import Resolver
 import SolanaSwift
 import KeyAppKitCore
 import KeyAppBusiness
+import UIKit
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies

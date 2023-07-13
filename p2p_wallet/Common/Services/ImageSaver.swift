@@ -1,11 +1,5 @@
-//
-//  ImageSaver.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 11.02.2022.
-//
-
 import Photos
+import UIKit
 
 protocol ImageSaverType: AnyObject {
     func save(image: UIImage, resultHandler: ((Result<Void, ImageSaver.Error>) -> Void)?)

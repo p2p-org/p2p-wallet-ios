@@ -1,4 +1,5 @@
 import Combine
+import UIKit
 
 enum TermsAndPolicyType: String {
     case termsOfService = "Terms_of_service"
