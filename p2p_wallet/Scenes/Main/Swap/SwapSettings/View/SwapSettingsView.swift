@@ -25,7 +25,7 @@ struct SwapSettingsView: View {
     var exchangeRate: some View {
         Text(viewModel.info.exchangeRateInfo)
             .apply(style: .label1)
-            .foregroundColor(Color(Asset.Colors.night.color))
+            .foregroundColor(Color(.night))
             .accessibilityIdentifier("SwapView.priceInfoLabel")
             .if(viewModel.isLoading) { view in
                 view.skeleton(with: true, size: CGSize(width: 160, height: 16))
@@ -58,7 +58,7 @@ struct SwapSettingsView: View {
                 }
             }
         }
-        .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.rain.color))
+        .modifier(ListBackgroundModifier(separatorColor: .rain))
         .listStyle(InsetGroupedListStyle())
         .scrollDismissesKeyboard()
     }
@@ -146,8 +146,7 @@ struct SwapSettingsView: View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
-            subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color : Asset.Colors
-                .mountain.color,
+            subtitleColor: fee?.shouldHighlightAmountDescription == true ? .mint : .mountain,
             trailingSubtitle: fee?.amountInFiatDescription,
             identifier: identifier
         )
@@ -170,11 +169,11 @@ struct SwapSettingsView: View {
     private func commonRow(
         title: String,
         subtitle: String?,
-        subtitleColor: UIColor = Asset.Colors.mountain.color,
+        subtitleColor: ColorResource = .mountain,
         trailingSubtitle: String? = nil,
         trailingView: AnyView = Image(.infoStraight)
             .resizable()
-            .foregroundColor(Color(Asset.Colors.mountain.color))
+            .foregroundColor(Color(.mountain))
             .frame(width: 20, height: 20)
             .castToAnyView(),
         identifier: RowIdentifier?
@@ -193,7 +192,7 @@ struct SwapSettingsView: View {
 
             Text(trailingSubtitle)
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .layoutPriority(1)
                 .skeleton(with: viewModel.isLoading, size: .init(width: 52, height: 16))
 

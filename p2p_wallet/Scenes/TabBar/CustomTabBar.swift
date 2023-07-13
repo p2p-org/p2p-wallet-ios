@@ -13,7 +13,7 @@ final class CustomTabBar: UITabBar {
     private lazy var middleButton: UIButton! = {
         let middleButton = UIButton()
         middleButton.frame.size = CGSize(width: 68, height: 68)
-        middleButton.backgroundColor = Asset.Colors.snow.color
+        middleButton.backgroundColor = .init(resource: .snow)
         middleButton.layer.cornerRadius = 34
         middleButton.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         middleButton.setImage(UIImage(resource: .tabBarCenter), for: .normal)
@@ -26,7 +26,7 @@ final class CustomTabBar: UITabBar {
         let selectedView = UIView()
         selectedView.frame.size = CGSize(width: 36, height: 4)
         selectedView.layer.cornerRadius = 2
-        selectedView.backgroundColor = Asset.Colors.lime.color
+        selectedView.backgroundColor = .init(resource: .lime)
         addSubview(selectedView)
         return selectedView
     }()

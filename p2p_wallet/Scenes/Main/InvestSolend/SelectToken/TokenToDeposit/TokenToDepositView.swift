@@ -29,11 +29,11 @@ struct TokenToDepositView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }
@@ -69,20 +69,20 @@ struct TokenToDepositView: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(model.amount != nil ? model.amount?.tokenAmountFormattedString(symbol: model.symbol) ?? "" : model.symbol)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2))
                 Text(model.name)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
             if let apy = model.apy {
                 VStack(alignment: .trailing, spacing: 8) {
                     Text(apy.percentFormat())
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                     Text(L10n.apy)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .font(uiFont: .font(of: .label1))
                 }
             }

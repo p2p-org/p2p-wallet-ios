@@ -8,7 +8,7 @@ struct MoonpayInfoView: View {
 
     var body: some View {
         VStack {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                    .frame(width: 31, height: 4)
                    .cornerRadius(2)
                    .padding(.vertical, 6)
@@ -23,25 +23,25 @@ struct MoonpayInfoView: View {
                     Text("1")
                         .fontWeight(.semibold)
                         .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .frame(width: 24, height: 24)
                         .background(
                             Circle()
-                                .fill(Color(Asset.Colors.night.color))
+                                .fill(Color(.night))
                         )
 
                     Rectangle()
-                        .fill(Color(Asset.Colors.mountain.color))
+                        .fill(Color(.mountain))
                         .frame(width: 1, height: 70)
 
                     Text("2")
                         .fontWeight(.semibold)
                         .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .frame(width: 24, height: 20)
                         .background(
                             Circle()
-                                .stroke(Color(Asset.Colors.mountain.color), lineWidth: 1.5)
+                                .stroke(Color(.mountain), lineWidth: 1.5)
                         )
                 }
 
@@ -49,20 +49,20 @@ struct MoonpayInfoView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(L10n.youWillBeRedirectedToOurPaymentProvider)
                             .apply(style: .text1)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
 
                         Text(L10n.youWillNeedToEnterYourIBANAndPassKYC)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(L10n.transferSOLToOurPaymentProviderFromKeyApp)
                             .apply(style: .text1)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                         Text(L10n.nobodyHasAccessToYourFundsSoYouNeedToExecuteTheTransactionCashOut)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                     }
                 }
                 .padding(.leading, 10)
@@ -70,7 +70,7 @@ struct MoonpayInfoView: View {
             }
             .padding(.vertical, 20)
             .padding(.horizontal, 12)
-            .background(Color(Asset.Colors.smoke.color))
+            .background(Color(.smoke))
             .cornerRadius(20)
             .padding(.horizontal, 16)
             .padding(.top, 10)
@@ -82,7 +82,7 @@ struct MoonpayInfoView: View {
                     CheckboxView(isChecked: $isChecked)
                     Text(L10n.donTShowMeAgain)
                         .apply(style: .text3)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Spacer()
                 }
                 .padding(.horizontal, 35)

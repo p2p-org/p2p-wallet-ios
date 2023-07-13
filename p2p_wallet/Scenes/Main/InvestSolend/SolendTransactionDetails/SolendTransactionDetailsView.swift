@@ -20,13 +20,13 @@ struct SolendTransactionDetailsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
             HStack(alignment: .bottom, spacing: 0) {
                 Spacer()
                 Text(L10n.transactionDetails)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                     .padding(.top, 18)
                 Spacer()
@@ -41,7 +41,7 @@ struct SolendTransactionDetailsView: View {
             }
             .padding(.trailing, 16)
             .padding(.leading, 32)
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 20)
@@ -99,11 +99,11 @@ struct SolendTransactionDetailsView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }
@@ -111,14 +111,14 @@ struct SolendTransactionDetailsView: View {
         }
         .padding(.top, 6)
         .padding(.bottom, 16)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(radius: 20, corners: [.topLeft, .topRight])
     }
 
     private func cell(title: String, state: CellState) -> some View {
         HStack(spacing: 12) {
             Text(title)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .font(uiFont: .font(of: .text2))
             Spacer()
             switch state {
@@ -146,10 +146,10 @@ struct SolendTransactionDetailsView: View {
                 Image(.feeInfo)
                     .frame(width: 16, height: 16)
             }
-            .foregroundColor(Color(Asset.Colors.mint.color))
+            .foregroundColor(Color(.mint))
         } else {
             Text(text)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2))
         }
     }

@@ -18,13 +18,13 @@ struct BuyTransactionDetailsView: View {
 
     var body: some View {
         VStack(spacing: 18) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.top, 6)
             VStack(spacing: 43) {
                 Text(L10n.transactionDetails)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                 VStack(spacing: 34) {
                     VStack(spacing: 46) {
@@ -38,11 +38,11 @@ struct BuyTransactionDetailsView: View {
                         },
                         label: {
                             Text(L10n.done)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text2, weight: .bold))
                                 .frame(height: 56)
                                 .frame(maxWidth: .infinity)
-                                .background(Color(Asset.Colors.rain.color))
+                                .background(Color(.rain))
                                 .cornerRadius(12)
                                 .padding(.bottom, 16)
                         }
@@ -59,7 +59,7 @@ struct BuyTransactionDetailsView: View {
                 amountView(
                     title: "\(model.token.symbol) \(L10n.price)",
                     amount: model.convertedAmount(model.price),
-                    amountColor: Asset.Colors.mountain.color
+                    amountColor: .mountain
                 )
                 amountView(
                     title: L10n.purchaseCost(model.token.symbol),
@@ -73,13 +73,13 @@ struct BuyTransactionDetailsView: View {
                     title: L10n.networkFee,
                     amount: model.convertedAmount(model.networkFee)
                 )
-                Color(Asset.Colors.rain.color)
+                Color(.rain)
                     .frame(height: 1)
             }
             amountView(
                 title: L10n.total,
                 amount: model.convertedAmount(model.total),
-                titleColor: Asset.Colors.night.color,
+                titleColor: .night,
                 font: .font(of: .text3, weight: .bold)
             )
         }
@@ -88,8 +88,8 @@ struct BuyTransactionDetailsView: View {
     private func amountView(
         title: String,
         amount: String,
-        titleColor: UIColor = Asset.Colors.mountain.color,
-        amountColor: UIColor = Asset.Colors.night.color,
+        titleColor: ColorResource = .mountain,
+        amountColor: ColorResource = .night,
         font: UIFont = .font(of: .text3)
     ) -> some View {
         HStack {

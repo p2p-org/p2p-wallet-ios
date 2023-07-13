@@ -20,9 +20,9 @@ struct DerivableAccountsView: View {
 
             Text(L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultKeyAppWillUseM4450100AsTheDerivationPathForTheMainWallet)
                 .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.all, 18)
-                .background(Color(Asset.Colors.cloud.color))
+                .background(Color(.cloud))
                 .cornerRadius(radius: 12, corners: .allCorners)
                 .padding(.horizontal, 16)
 

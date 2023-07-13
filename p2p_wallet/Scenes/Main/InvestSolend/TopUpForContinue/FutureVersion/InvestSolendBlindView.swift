@@ -13,12 +13,12 @@ struct InvestSolendBlindView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.top, 3)
             headerView
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 25)
@@ -40,19 +40,19 @@ struct InvestSolendBlindView: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.symbol)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2))
                 Text(viewModel.name)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 8) {
                 Text(viewModel.apy)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2, weight: .semibold))
                 Text("APY")
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
         }
@@ -64,21 +64,21 @@ struct InvestSolendBlindView: View {
     private var middleView: some View {
         VStack(spacing: 24) {
             Text("You have 0 \(viewModel.symbol)")
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .title1, weight: .bold))
             switch viewModel.model.strategy {
             case .withoutAnyTokens:
                 Text("To earn rewards, you need to\nexchange some token for \(viewModel.symbol)")
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title3))
             case .withoutOnlyTokenForDeposit:
                 if viewModel.usdcOrSol {
                     Text("To earn rewards, you need to\ntrade for USDC or buy \(viewModel.symbol)")
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .title3))
                 } else {
                     Text("To earn rewards, you need to\nexchange some token for \(viewModel.symbol)")
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .title3))
                 }
             }
@@ -128,10 +128,10 @@ struct InvestSolendBlindView: View {
                 action: {},
                 label: {
                     Text(viewModel.firstActionTitle)
-                        .foregroundColor(Color(Asset.Colors.lime.color))
+                        .foregroundColor(Color(.lime))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                 }
             )
@@ -140,10 +140,10 @@ struct InvestSolendBlindView: View {
                     action: {},
                     label: {
                         Text("\(L10n.buy) \(viewModel.symbol)")
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .frame(height: 56)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.rain.color))
+                            .background(Color(.rain))
                             .cornerRadius(12)
                     }
                 )

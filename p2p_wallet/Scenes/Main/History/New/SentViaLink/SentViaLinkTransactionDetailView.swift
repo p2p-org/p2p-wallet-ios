@@ -52,7 +52,7 @@ struct SentViaLinkTransactionDetailView: View {
             // Indicator
             RoundedRectangle(cornerRadius: 2)
                 .frame(width: 31, height: 4)
-                .foregroundColor(Color(Asset.Colors.rain.color))
+                .foregroundColor(Color(.rain))
                 .padding(.top, 6)
                 .padding(.bottom, 18)
             
@@ -66,7 +66,7 @@ struct SentViaLinkTransactionDetailView: View {
             // Subtitle
             Text("\(transaction?.creationDayInString ?? L10n.unknownDate) @ \(transaction?.creationTimeInString ?? L10n.unknownTime)")
                 .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .padding(.bottom, 20)
             
             // Tokens info
@@ -110,12 +110,12 @@ struct SentViaLinkTransactionDetailView: View {
             // Amount in token
             Text(transaction?.amount.tokenAmountFormattedString(symbol: transaction?.token.symbol ?? ""))
                 .apply(style: .text2)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .accessibilityIdentifier(.accessibilityCryptoAmountLabel)
         }
         .padding(.vertical, 32)
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
     
     private var linksInfo: some View {
@@ -127,7 +127,7 @@ struct SentViaLinkTransactionDetailView: View {
                     .accessibilityIdentifier(.accessibilityLinkLabel)
                 Text(L10n.uniqueOneTimeLinkWorksOnceOnly)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
             
             Spacer()
@@ -152,9 +152,9 @@ struct SentViaLinkTransactionDetailView: View {
             Image(.infoFill)
                 .resizable()
                 .frame(width: 20, height: 20)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(14)
-                .background(Color(.f2f5fa))
+                .background(Color(.f2F5Fa))
                 .cornerRadius(radius: 24, corners: .allCorners)
             
             Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress
@@ -168,7 +168,7 @@ struct SentViaLinkTransactionDetailView: View {
         }
             .padding(.horizontal, 16)
             .padding(.vertical, 4)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(radius: 12, corners: .allCorners)
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
@@ -184,12 +184,12 @@ struct SentViaLinkTransactionDetailView: View {
                 Text(L10n.share)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.snow.color))
+                    .foregroundColor(Color(.snow))
                 Spacer()
             }
                 .padding(.vertical, 16)
                 .padding(.horizontal, 19)
-                .background(Color(Asset.Colors.night.color))
+                .background(Color(.night))
                 .cornerRadius(radius: 12, corners: .allCorners)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 12)
@@ -206,7 +206,7 @@ struct SentViaLinkTransactionDetailView: View {
                 Text(L10n.close)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Spacer()
             }
             .padding(.vertical, 16)

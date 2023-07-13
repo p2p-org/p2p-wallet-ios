@@ -144,9 +144,9 @@ private class QrCodeCard: BECompositionView {
             
             // Action buttons
             UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
-                UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: .init(resource: .night))
                     .onTap { [unowned self] in self.onCopy?(pubKey) }
-                UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: .init(resource: .night))
                     .onTap {
                         Task { [weak self] in
                             guard let self else { return }
@@ -159,7 +159,7 @@ private class QrCodeCard: BECompositionView {
                             self.onShare?(image)
                         }
                     }
-                UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: Asset.Colors.night.color)
+                UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: .init(resource: .night))
                     .onTap {
                         Task { [weak self] in
                             guard let self else { return }
@@ -174,7 +174,7 @@ private class QrCodeCard: BECompositionView {
                     }
             }.padding(.init(x: 0, y: 4))
             
-        }.border(width: 1, color: .f2f2f7)
+        }.border(width: 1, color: .init(resource: .f2F2F7))
             .box(cornerRadius: 12)
             .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
     }
@@ -197,17 +197,17 @@ private class QrCodeCard: BECompositionView {
         }
         
         let address = NSMutableAttributedString(string: pubKey)
-        address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
+        address.addAttribute(.foregroundColor, value: UIColor(resource: .h5887Ff), range: NSRange(location: 0, length: 4))
         address.addAttribute(
             .foregroundColor,
-            value: UIColor.h5887ff,
+            value: UIColor(resource: .h5887Ff),
             range: NSRange(location: address.length - 4, length: 4)
         )
         pubKeyView?.attributedText = address
     }
     
     private func tinted(image: ImageResource) -> UIImage {
-        .init(resource: image).withTintColor(Asset.Colors.night.color)
+        .init(resource: image).withTintColor(.init(resource: .night))
     }
     
     func onCopy(callback: @escaping BECallback<String?>) -> Self {
@@ -235,7 +235,7 @@ private class QrCodeView: BEView {
     private lazy var logoImageView: CoinLogoImageView = {
         let imageView = CoinLogoImageView(size: coinLogoSize)
         imageView.layer.borderWidth = 4
-        imageView.layer.borderColor = UIColor.textWhite.cgColor
+        imageView.layer.borderColor = UIColor(resource: .textWhite).cgColor
         imageView.layer.cornerRadius = coinLogoSize / 2
         imageView.layer.masksToBounds = true
         return imageView
@@ -360,6 +360,6 @@ private extension UIView {
         @BEStackViewBuilder builder: () -> [BEStackViewElement]
     ) -> UIView {
         UIStackView(axis: axis, spacing: spacing, alignment: alignment, distribution: distribution, builder: builder)
-            .padding(contentInset, backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
+            .padding(contentInset, backgroundColor: .init(resource: .a3A5Ba).withAlphaComponent(0.05), cornerRadius: 12)
     }
 }

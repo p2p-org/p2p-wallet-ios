@@ -14,7 +14,7 @@ extension NSMutableAttributedString {
         _ text: String,
         size: CGFloat = 15,
         weight: UIFont.Weight = .regular,
-        color: UIColor = .textBlack,
+        color: UIColor = .init(resource: .textBlack),
         baselineOffset: CGFloat? = nil
     ) -> NSMutableAttributedString {
         var attrs: [NSAttributedString.Key: Any] = [

@@ -29,7 +29,7 @@ struct SentViaLinkHistoryView: View {
                 }
             }
         }
-            .background(Color(Asset.Colors.smoke.color))
+            .background(Color(.smoke))
             .onReceive(transactionsPublisher, perform: onReceive(transactions:))
     }
     
@@ -42,7 +42,7 @@ struct SentViaLinkHistoryView: View {
                 SentViaLinkHistoryTransactionView(
                     transaction: section.transactions[index]
                 )
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: 16, index: index, itemsCount: section.transactions.count)
                     .onTapGesture {
                         Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
@@ -59,12 +59,12 @@ struct SentViaLinkHistoryView: View {
             Text(section.id.uppercased())
                 .fontWeight(.semibold)
                 .apply(style: .caps)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
             Spacer()
         }
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
-            .background(Color(Asset.Colors.smoke.color))
+            .background(Color(.smoke))
     }
     
     // MARK: - Helpers

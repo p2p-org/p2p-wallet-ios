@@ -2,11 +2,11 @@ import UIKit
 import KeyAppUI
 
 struct CreateUsernameParameters {
-    let backgroundColor: UIColor
+    let backgroundColor: ColorResource
     let buttonStyle: TextButton.Style
 
     init(
-        backgroundColor: UIColor = Asset.Colors.lime.color,
+        backgroundColor: ColorResource = .lime,
         buttonStyle: TextButton.Style = .primary
     ) {
         self.backgroundColor = backgroundColor

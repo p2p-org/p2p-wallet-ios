@@ -15,16 +15,16 @@ struct SendTransactionStatusDetailsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(viewModel.title)
                         .font(uiFont: .font(of: .text2, weight: .semibold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     Text(viewModel.description)
                         .apply(style: .text3)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     if let fee = viewModel.feeInfo {
                         Text(fee)
                             .apply(style: .text3)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .padding(.all, 20)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -41,7 +41,7 @@ struct SendTransactionStatusDetailsView: View {
                 .padding(.top, 16)
                 .background(
                     Rectangle()
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                 )
         }
         .navigationTitle(L10n.details)

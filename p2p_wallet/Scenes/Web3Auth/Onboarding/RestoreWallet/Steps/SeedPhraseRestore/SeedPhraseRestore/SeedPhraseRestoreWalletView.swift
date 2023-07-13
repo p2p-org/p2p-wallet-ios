@@ -14,7 +14,7 @@ struct SeedPhraseRestoreWalletView: View {
             VStack {
                 Text(L10n.enterYourSolanaWalletSeedPhrase)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .padding(.top, 4)
                 inputView.padding(.top, 2)
 
@@ -48,7 +48,7 @@ struct SeedPhraseRestoreWalletView: View {
                 HStack {
                     Text(viewModel.canContinue ? "\(L10n.seedPhrase) ✅" : L10n.seedPhrase)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .padding(.top, 17)
                     Spacer()
                     HStack {
@@ -66,14 +66,14 @@ struct SeedPhraseRestoreWalletView: View {
 
                 SeedPhraseTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused)
                 .frame(maxHeight: 343)
-                .colorMultiply(Color(Asset.Colors.smoke.color))
+                .colorMultiply(Color(.smoke))
 
             }.padding(.horizontal, 12)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                .stroke(Color(.rain), lineWidth: 1)
         )
         .cornerRadius(16)
         .padding(.horizontal, 16)
@@ -91,7 +91,7 @@ struct SeedPhraseRestoreWalletView: View {
         }
             .frame(height: 32)
             .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-            .background(viewModel.seed.isEmpty ? Color(Asset.Colors.lime.color) : Color.clear)
+            .background(viewModel.seed.isEmpty ? Color(.lime) : Color.clear)
             .cornerRadius(8)
             .fixedSize()
             .onTapGesture {
@@ -111,7 +111,7 @@ struct SeedPhraseRestoreWalletView: View {
         }
             .frame(height: 32)
             .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-            .background(Color(Asset.Colors.rain.color))
+            .background(Color(.rain))
             .cornerRadius(8)
             .fixedSize()
             .onTapGesture {
@@ -133,7 +133,7 @@ struct SeedPhraseRestoreWalletView: View {
             .frame(maxWidth: UIScreen.main.bounds.width, minHeight: 38)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                    .stroke(Color(.rain), lineWidth: 1)
             )
     }
 }

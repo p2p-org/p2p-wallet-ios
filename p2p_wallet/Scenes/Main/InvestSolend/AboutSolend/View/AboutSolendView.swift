@@ -18,7 +18,7 @@ struct AboutSolendView: View {
     var body: some View {
         VStack(spacing: 26) {
             PagingView(
-                fillColor: Color(Asset.Colors.night.color),
+                fillColor: Color(.night),
                 content: [
                     PageContent {
                         AboutSolendSlideView(
@@ -51,11 +51,11 @@ struct AboutSolendView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }

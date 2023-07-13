@@ -27,17 +27,17 @@ struct SolendErrorBannerView: View {
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 48)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.snow.color))
+                        .background(Color(.snow))
                         .cornerRadius(12)
                         .padding(.top, 8)
                 }
             )
         }
-        .foregroundColor(Color(Asset.Colors.night.color))
+        .foregroundColor(Color(.night))
         .padding(.top, 24)
         .padding(.bottom, 20)
         .padding(.horizontal, 20)
-        .background(Color(Asset.Colors.rain.color))
+        .background(Color(.rain))
         .cornerRadius(28)
     }
 }

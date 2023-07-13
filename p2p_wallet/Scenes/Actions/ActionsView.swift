@@ -21,11 +21,11 @@ struct ActionsView: View {
 
     var body: some View {
         VStack(spacing: 28) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
             Text(L10n.actions)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text1, weight: .bold))
             VStack(spacing: 16) {
                 if isSellAvailable {
@@ -82,11 +82,11 @@ struct ActionsView: View {
                 },
                 label: {
                     Text(L10n.cancel)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text1, weight: .bold))
                         .frame(height: 60)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.rain.color))
+                        .background(Color(.rain))
                         .cornerRadius(12)
                 }
             )
@@ -107,11 +107,11 @@ struct ActionsView: View {
             action: action,
             label: {
                 ZStack(alignment: .leading) {
-                    Color(Asset.Colors.snow.color)
+                    Color(.snow)
                         .cornerRadius(12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                .stroke(Color(.rain), lineWidth: 1)
                         )
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .aspectRatio(1, contentMode: .fit)
@@ -125,10 +125,10 @@ struct ActionsView: View {
                         Image(image)
                         VStack(alignment: .leading, spacing: 8) {
                             Text(title)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text1, weight: .bold))
                             Text(subtitle)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .font(uiFont: .font(of: .label1, weight: .regular))
                                 .multilineTextAlignment(.leading)
                         }
@@ -149,11 +149,11 @@ struct ActionsView: View {
             action: action,
             label: {
                 ZStack(alignment: .leading) {
-                    Color(Asset.Colors.snow.color)
+                    Color(.snow)
                         .cornerRadius(12)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                .stroke(Color(.rain), lineWidth: 1)
                         )
                         .shadow(
                             color: Color(UIColor(red: 0.043, green: 0.122, blue: 0.208, alpha: 0.1)),
@@ -166,10 +166,10 @@ struct ActionsView: View {
                             .padding(EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 0))
                         VStack(alignment: .leading, spacing: 4) {
                             Text(title)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text1, weight: .bold))
                             Text(subtitle)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .font(uiFont: .font(of: .label1, weight: .regular))
                                 .multilineTextAlignment(.leading)
                         }

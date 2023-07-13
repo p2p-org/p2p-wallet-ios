@@ -47,13 +47,13 @@ struct HomeBuyNotification<Content: View>: View {
 
     var body: some View {
         VStack {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.top, 6)
 
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.top, 11)
 
@@ -68,11 +68,11 @@ struct HomeBuyNotification<Content: View>: View {
                     },
                     label: {
                         Text(buttonTitle)
-                            .foregroundColor(Color(Asset.Colors.lime.color))
+                            .foregroundColor(Color(.lime))
                             .font(uiFont: .font(of: .text2, weight: .bold))
                             .frame(height: 58)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.night.color))
+                            .background(Color(.night))
                             .cornerRadius(12)
                             .padding(.horizontal, 2)
                             .padding(.bottom, 16)
@@ -93,25 +93,25 @@ struct HomeBuyTips: View {
                 Text("1")
                     .fontWeight(.semibold)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.snow.color))
+                    .foregroundColor(Color(.snow))
                     .frame(width: 24, height: 24)
                     .background(
                         Circle()
-                            .fill(Color(Asset.Colors.night.color))
+                            .fill(Color(.night))
                     )
 
                 Rectangle()
-                    .fill(Color(Asset.Colors.mountain.color))
+                    .fill(Color(.mountain))
                     .frame(width: 1, height: 34)
 
                 Text("2")
                     .fontWeight(.semibold)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .frame(width: 24, height: 20)
                     .background(
                         Circle()
-                            .stroke(Color(Asset.Colors.mountain.color), lineWidth: 1.5)
+                            .stroke(Color(.mountain), lineWidth: 1.5)
                     )
             }
             VStack(alignment: .leading, spacing: 16) {
@@ -119,27 +119,27 @@ struct HomeBuyTips: View {
                     Text(L10n.buyingAsTheBaseCurrency(sourceSymbol))
                         .apply(style: .text1)
                         .minimumScaleFactor(0.9)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     Text(L10n.purchasingOnTheMoonpaySWebsite)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.exchanging(sourceSymbol, destinationSymbol))
                         .apply(style: .text1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Text(L10n.thereWouldBeNoAdditionalCosts)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
             }
 
             Spacer()
         }
         .padding(.all, 20)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .cornerRadius(20)
     }
 }

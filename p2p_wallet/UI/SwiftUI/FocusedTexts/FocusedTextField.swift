@@ -5,14 +5,14 @@ import KeyAppUI
 struct FocusedTextField<T: UITextField>: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
-    @Binding private var textColor: UIColor
+    @Binding private var textColor: ColorResource
     private let validation: NSPredicate?
     private var configuration = { (_: T) in }
 
     init(
         text: Binding<String>,
         isFirstResponder: Binding<Bool>,
-        textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
+        textColor: Binding<ColorResource> = Binding.constant(.night),
         validation: NSPredicate? = nil,
         configuration: @escaping (T) -> Void = { _ in }
     ) {
@@ -32,7 +32,7 @@ struct FocusedTextField<T: UITextField>: UIViewRepresentable {
             action: #selector(context.coordinator.textViewDidChange),
             for: .editingChanged
         )
-        view.textColor = textColor
+        view.textColor = .init(resource: textColor)
         return view
     }
 
@@ -46,7 +46,7 @@ struct FocusedTextField<T: UITextField>: UIViewRepresentable {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
         configuration(uiView)
-        uiView.textColor = textColor
+        uiView.textColor = .init(resource: textColor)
     }
 
     func makeCoordinator() -> Coordinator {

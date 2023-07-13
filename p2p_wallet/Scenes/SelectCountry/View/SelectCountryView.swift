@@ -97,7 +97,7 @@ struct SelectCountryView: View {
             Text(flag)
                 .font(uiFont: .font(of: .title1, weight: .bold))
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
         }
         .padding(.vertical, 6)
@@ -129,7 +129,7 @@ private extension SelectCountryView {
         VStack(spacing: 20) {
             Image(.womanNotFound)
             Text(L10n.sorryWeDonTKnowThatCountry)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
         }
     }

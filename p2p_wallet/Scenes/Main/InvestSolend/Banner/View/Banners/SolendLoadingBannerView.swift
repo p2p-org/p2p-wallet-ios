@@ -22,7 +22,7 @@ struct SolendLoadingBannerView: View {
             Spacer()
         }
         .padding(.top, 10)
-        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(.rain)))
     }
 }
 

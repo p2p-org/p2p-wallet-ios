@@ -103,14 +103,14 @@ private extension ChooseItemView {
             }
             spacer(height: 28)
         }
-        .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.smoke.color))
+        .modifier(ListBackgroundModifier(separatorColor: .smoke))
         .environment(\.defaultMinListRowHeight, 12)
         .scrollDismissesKeyboard()
     }
 
     func spacer(height: CGFloat) -> some View {
         Spacer()
-            .listRowBackground(Color(Asset.Colors.smoke.color))
+            .listRowBackground(Color(.smoke))
             .frame(height: height)
     }
 }
@@ -118,9 +118,9 @@ private extension ChooseItemView {
 private extension Text {
     func sectionStyle() -> some View {
         return self.apply(style: .text4)
-            .foregroundColor(Color(Asset.Colors.mountain.color))
+            .foregroundColor(Color(.mountain))
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
-            .listRowBackground(Color(Asset.Colors.smoke.color))
+            .listRowBackground(Color(.smoke))
     }
 }
 

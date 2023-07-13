@@ -5,7 +5,7 @@ struct SendInputFeePromptView: View {
 
     @ObservedObject private var viewModel: SendInputFeePromptViewModel
 
-    private let mainColor = Asset.Colors.night.color
+    private let mainColor = ColorResource.night
 
     init(viewModel: SendInputFeePromptViewModel) {
         self.viewModel = viewModel

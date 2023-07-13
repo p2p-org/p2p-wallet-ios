@@ -11,7 +11,7 @@ struct SwapEthBanner: View {
             HStack(alignment: .top, spacing: 8) {
                 Text(text)
                     .apply(style: .text1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Spacer()
                 Button {
                     close()

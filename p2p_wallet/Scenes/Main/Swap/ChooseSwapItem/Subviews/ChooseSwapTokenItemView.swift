@@ -37,11 +37,11 @@ struct ChooseSwapTokenItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(token.token.name)
                     .font(uiFont: .font(of: .text3, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .lineLimit(1)
                 Text(subtitle)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
             Spacer()
             rightView
@@ -53,7 +53,7 @@ struct ChooseSwapTokenItemView: View {
             if let amountInCurrentFiat = token.userWallet?.amountInCurrentFiat {
                 Text(amountInCurrentFiat.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             } else {
                 SwiftUI.EmptyView()
             }
@@ -61,10 +61,10 @@ struct ChooseSwapTokenItemView: View {
             if token.isPopular, !chosen {
                 Text(L10n.popular)
                     .font(uiFont: .font(of: .text4))
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(Color(Asset.Colors.rain.color))
+                    .background(Color(.rain))
                     .cornerRadius(32)
             } else {
                 SwiftUI.EmptyView()

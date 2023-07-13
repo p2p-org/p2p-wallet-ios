@@ -32,11 +32,11 @@ struct WormholeClaimView: View {
 
             } else {
                 Circle()
-                    .fill(Color(Asset.Colors.smoke.color))
+                    .fill(Color(.smoke))
                     .overlay(
                         Image(.imageOutlineIcon)
                             .renderingMode(.template)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                     )
                     .clipped()
                     .frame(width: 64, height: 64)
@@ -54,7 +54,7 @@ struct WormholeClaimView: View {
             if !viewModel.model.subtitle.isEmpty {
                 Text(viewModel.model.subtitle)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .padding(.top, 4)
             }
 
@@ -70,7 +70,7 @@ struct WormholeClaimView: View {
                         // Amount
                         Text(viewModel.model.fees)
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .skeleton(
                                 with: viewModel.model.isLoading,
                                 size: .init(width: 100, height: 24)
@@ -81,7 +81,7 @@ struct WormholeClaimView: View {
                         } label: {
                             Image(.info)
                                 .resizable()
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .frame(width: 20, height: 20)
                         }
                         .disabled(!viewModel.model.claimButtonEnable)
@@ -109,7 +109,7 @@ struct WormholeClaimView: View {
                         // Amount
                         Text(viewModel.model.getAmount ?? "")
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .skeleton(
                                 with: viewModel.model.isLoading,
                                 size: .init(width: 100, height: 24)
@@ -124,7 +124,7 @@ struct WormholeClaimView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(Asset.Colors.snow.color))
+                    .fill(Color(.snow))
             )
             .padding(.top, 32)
 
@@ -148,7 +148,7 @@ struct WormholeClaimView: View {
         }
         .padding(.horizontal, 16)
         .background(
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .ignoresSafeArea()
         )
     }

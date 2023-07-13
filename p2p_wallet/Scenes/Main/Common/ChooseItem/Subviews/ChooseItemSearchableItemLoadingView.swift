@@ -16,7 +16,7 @@ struct ChooseItemSearchableItemLoadingView: View {
             .padding(.vertical, 20)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .foregroundColor(Color(Asset.Colors.snow.color))
+                    .foregroundColor(Color(.snow))
             )
             .padding(.top, 44)
             .frame(height: 88)
@@ -27,14 +27,14 @@ struct ChooseItemSearchableItemLoadingView: View {
 
     private var iconPlaceholder: some View {
         Circle()
-            .fill(Color(Asset.Colors.rain.color))
+            .fill(Color(.rain))
             .skeleton(with: true)
             .frame(width: 48, height: 48)
     }
 
     private var textPlaceholder: some View {
         RoundedRectangle(cornerRadius: 4)
-            .fill(Color(Asset.Colors.rain.color))
+            .fill(Color(.rain))
             .skeleton(with: true)
             .frame(width: 120, height: 12)
     }

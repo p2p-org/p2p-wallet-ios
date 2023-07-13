@@ -37,7 +37,7 @@ struct SendInputView: View {
 
     var loadedView: some View {
         ZStack(alignment: .top) {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
@@ -61,7 +61,7 @@ struct SendInputView: View {
             if viewModel.currentState.sendViaLinkSeed != nil {
                 Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimMoney)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 16)
             } else {
@@ -72,7 +72,7 @@ struct SendInputView: View {
             HStack(spacing: 4) {
                 Text(L10n.youWillSend)
                     .apply(style: .text4)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
 
                 Spacer()
 
@@ -80,12 +80,13 @@ struct SendInputView: View {
                     HStack(spacing: 4) {
                         Text(viewModel.feeTitle)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.sky.color))
+                            .foregroundColor(Color(.sky))
                             .onTapGesture(perform: viewModel.feeInfoPressed.send)
                         if viewModel.isFeeLoading {
                             CircularProgressIndicatorView(
-                                backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                foregroundColor: Asset.Colors.sky.color
+                                backgroundColor: .init(resource: .sky)
+                                    .withAlphaComponent(0.6),
+                                foregroundColor: .init(resource: .sky)
                             )
                             .frame(width: 16, height: 16)
                         } else {
@@ -152,7 +153,7 @@ struct SendInputView: View {
                     .fill(Color(UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)))
                     .frame(width: 48, height: 48)
                 Image(uiImage: Asset.Icons.warning.image)
-                    .foregroundColor(Color(Asset.Colors.rose.color))
+                    .foregroundColor(Color(.rose))
             }
             Text("An error occurred updating the rates. Please try again 🥺")
                 .apply(style: .text4)
@@ -185,11 +186,11 @@ struct SendInputView: View {
             }
             Image(.arrowUpDown)
                 .renderingMode(.template)
-                .foregroundColor(Color(Asset.Colors.rain.color))
+                .foregroundColor(Color(.rain))
                 .frame(width: 16, height: 16)
         }
         .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(Asset.Colors.snow.color)))
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.snow)))
         .frame(height: 90)
     }
 

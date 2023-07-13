@@ -20,11 +20,11 @@ struct BaseErrorView: View {
                     .accessibilityIdentifier("BaseErrorView.image")
                 VStack(spacing: 8) {
                     Text(L10n.sorry)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .title1, weight: .bold))
                         .accessibilityIdentifier("BaseErrorView.titleLabel")
                     Text(L10n.OopsSomethingWentWrong.pleaseTryAgainLater)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .text1))
                         .multilineTextAlignment(.center)
                         .accessibilityIdentifier("BaseErrorView.subtitleLabel")

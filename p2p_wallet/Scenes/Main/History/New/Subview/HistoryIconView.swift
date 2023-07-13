@@ -21,11 +21,11 @@ struct HistoryIconView: View {
             switch icon {
             case let .icon(image):
                 RoundedRectangle(cornerRadius: 21)
-                    .fill(Color(Asset.Colors.smoke.color))
+                    .fill(Color(.smoke))
                     .overlay(
                         Image(image)
                             .renderingMode(.template)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                     )
             case let .single(url):
                 KFImage
@@ -39,7 +39,7 @@ struct HistoryIconView: View {
                     .fade(duration: 0.25)
             case let .double(from, to):
                 RoundedRectangle(cornerRadius: 21)
-                    .fill(Color(Asset.Colors.smoke.color))
+                    .fill(Color(.smoke))
                     .overlay(
                         KFImage
                             .url(from)

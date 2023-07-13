@@ -65,7 +65,8 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                     .attributedString(
                         with: "Check the number \(self.viewModel.phone)",
                         of: .text1
-                    ).withForegroundColor(Asset.Colors.night.color)
+                    )
+                    .withForegroundColor(.init(resource: .night))
                 )
 
                 BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
@@ -105,7 +106,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                         of: .text1,
                         weight: .regular
                     ).withForegroundColor(
-                        isEnabled ? Asset.Colors.sky.color : Asset.Colors.mountain.color
+                        .init(resource: isEnabled ? .sky : .mountain)
                     ),
                     for: .normal
                 )
@@ -164,7 +165,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             target: self,
             action: #selector(onBack)
         )
-        backButton.tintColor = Asset.Colors.night.color
+        backButton.tintColor = .init(resource: .night)
         navigationItem.leftBarButtonItem = backButton
 
         if !disableRightButton {
@@ -173,7 +174,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
             infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
             infoButton.contentMode = .scaleAspectFill
-            infoButton.tintColor = Asset.Colors.night.color
+            infoButton.tintColor = .init(resource: .night)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
         }
     }

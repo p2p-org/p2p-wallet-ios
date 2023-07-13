@@ -5,7 +5,7 @@ struct ColoredBackground<Content: View>: View {
     let content: Content
     let backgroundColor: Color
 
-    init(@ViewBuilder _ content: () -> Content, color: UIColor = Asset.Colors.smoke.color) {
+    init(@ViewBuilder _ content: () -> Content, color: ColorResource = .smoke) {
         self.content = content()
         self.backgroundColor = Color(color)
     }

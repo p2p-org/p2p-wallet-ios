@@ -20,13 +20,13 @@ struct SettingsRowView<Leading: View>: View {
             leading
                 .frame(width: 24, height: 24)
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2))
                 .lineLimit(1)
             if withArrow {
                 Spacer()
                 Image(.cellArrow)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
     }
@@ -37,7 +37,7 @@ struct SettingsRow_Preview: PreviewProvider {
         SettingsRowView(title: "Example", withArrow: true) {
             Image(.recoveryKit)
                 .overlay(
-                    AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color)).offset(x: 2.5, y: -2.5),
+                    AlertIndicatorView(fillColor: Color(.rose)).offset(x: 2.5, y: -2.5),
                     alignment: .topTrailing
                 )
         }

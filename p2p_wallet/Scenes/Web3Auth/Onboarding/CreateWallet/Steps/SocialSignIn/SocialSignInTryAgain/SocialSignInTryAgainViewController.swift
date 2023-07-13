@@ -50,6 +50,6 @@ class SocialSignInTryAgainViewController: BaseViewController {
                     }
                 }
             }
-        }.backgroundColor(color: Asset.Colors.lime.color)
+        }.backgroundColor(color: .init(resource: .lime))
     }
 }

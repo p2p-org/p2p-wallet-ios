@@ -26,8 +26,8 @@ class ConnectionErrorView: BEView {
     // MARK: - Subviews
 
     private lazy var refreshButton = WLButton.stepButton(
-        enabledColor: .eff3ff,
-        textColor: .h5887ff,
+        enabledColor: .init(resource: .eff3Ff),
+        textColor: .init(resource: .h5887Ff),
         label: L10n.refresh
     )
         .onTap { [unowned self] in
@@ -50,7 +50,7 @@ class ConnectionErrorView: BEView {
                 text: L10n.yourConnectionToTheInternetHasBeenInterrupted,
                 textSize: 17,
                 weight: .medium,
-                textColor: .textSecondary,
+                textColor: .init(resource: .textSecondary),
                 numberOfLines: 0,
                 textAlignment: .center
             )
@@ -64,7 +64,7 @@ class ConnectionErrorView: BEView {
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 30))
 
         // separator
-        let separator = UIView.separator(height: 1, color: .separator)
+        let separator = UIView.separator(height: 1, color: .init(resource: .separator))
         view.addSubview(separator)
         separator.autoPinEdge(toSuperviewEdge: .leading)
         separator.autoPinEdge(toSuperviewEdge: .trailing)
@@ -100,13 +100,13 @@ class WLButton: UIButton {
         var backgroundColor: UIColor {
             switch self {
             case .black:
-                return .blackButtonBackground
+                return .init(resource: .blackButtonBackground)
             case .sub:
-                return .h2b2b2b
+                return .init(resource: .h2B2B2B)
             case .blue:
-                return .h5887ff
+                return .init(resource: .h5887Ff)
             case .gray:
-                return .grayPanel
+                return .init(resource: .grayPanel)
             case .white:
                 return .white
             }
@@ -115,7 +115,7 @@ class WLButton: UIButton {
         var disabledColor: UIColor? {
             switch self {
             case .blue:
-                return .a3a5ba.onDarkMode(.h404040)
+                return UIColor(resource: .a3A5Ba).onDarkMode(.init(resource: .h404040))
             default:
                 return nil
             }
@@ -124,11 +124,11 @@ class WLButton: UIButton {
         var textColor: UIColor {
             switch self {
             case .gray:
-                return .textBlack
+                return .init(resource: .textBlack)
             case .sub, .blue, .black:
                 return .white
             case .white:
-                return .h5887ff
+                return .init(resource: .h5887Ff)
             }
         }
     }

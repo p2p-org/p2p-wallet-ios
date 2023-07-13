@@ -8,8 +8,8 @@ struct CircularProgressIndicatorView: UIViewRepresentable {
     private let foregroundColor: UIColor
 
     init(
-        backgroundColor: UIColor = Asset.Colors.night.color,
-        foregroundColor: UIColor = Asset.Colors.lime.color
+        backgroundColor: UIColor = .init(resource: .night),
+        foregroundColor: UIColor = .init(resource: .lime)
     ) {
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor

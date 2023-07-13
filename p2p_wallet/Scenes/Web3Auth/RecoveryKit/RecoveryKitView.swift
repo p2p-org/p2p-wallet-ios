@@ -37,7 +37,7 @@ struct RecoveryKitView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
-                .background(Color(Asset.Colors.lime.color))
+                .background(Color(.lime))
                 .cornerRadius(28)
                 .padding(.top, safeAreaInsets.top + 50)
 
@@ -46,7 +46,7 @@ struct RecoveryKitView: View {
                     VStack(alignment: .leading) {
                         Text(L10n.multiFactorAuthentication.uppercased())
                             .apply(style: .caps)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .padding(.leading, 16)
 
                         VStack(spacing: 0) {
@@ -70,12 +70,12 @@ struct RecoveryKitView: View {
                                 subtitle: metadata.email
                             )
                         }
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .background(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.night))
+                        .background(Color(.snow))
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                .stroke(Color(.rain), lineWidth: 1)
                         )
 
                         Text(L10n
@@ -83,7 +83,7 @@ struct RecoveryKitView: View {
                             .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain 
                         )
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .padding(.leading, 16)
                     }.frame(maxWidth: .infinity)
                 }
@@ -112,19 +112,19 @@ struct RecoveryKitView: View {
                             title: L10n.deleteMyAccount,
                             subtitle: L10n.pending.uppercaseFirst + "..."
                         )
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .background(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.night))
+                        .background(Color(.snow))
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                .stroke(Color(.rain), lineWidth: 1)
                         )
                     }
                 }
 
             }.padding(.horizontal, 16)
         }
-        .background(Color(Asset.Colors.cloud.color))
+        .background(Color(.cloud))
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             viewModel.onAppear()

@@ -55,7 +55,7 @@ struct HomeAccountsView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(L10n.tokens)
                 .font(uiFont: .font(of: .title3, weight: .semibold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.accounts.count) {
@@ -76,7 +76,7 @@ struct HomeAccountsView: View {
                         HStack(spacing: 8) {
                             Image(isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
                             Text(L10n.hiddenTokens)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .font(.system(size: 16))
                                 .padding(.vertical, 12)
                             Spacer()
@@ -96,7 +96,7 @@ struct HomeAccountsView: View {
             }
         }
         .padding(.top, 32)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
     }
 
     private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {

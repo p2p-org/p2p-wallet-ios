@@ -64,7 +64,7 @@ extension String {
         )
 
         let colors = StaticColorCollection(
-            body: textColor ?? UIColor.textBlack
+            body: textColor ?? UIColor(resource: .textBlack)
         )
 
         var paragraph = StaticParagraphStyleCollection()

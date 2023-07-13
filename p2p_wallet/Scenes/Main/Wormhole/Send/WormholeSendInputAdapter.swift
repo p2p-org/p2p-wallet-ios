@@ -4,7 +4,6 @@ import KeyAppKitCore
 import KeyAppUI
 import Send
 import Wormhole
-import UIKit
 
 struct WormholeSendInputStateAdapter: Equatable {
     let cryptoFormatter: CryptoFormatter = .init()
@@ -119,12 +118,12 @@ struct WormholeSendInputStateAdapter: Equatable {
         }
     }
 
-    var inputColor: UIColor {
+    var inputColor: ColorResource {
         switch state {
         case let .error(input, output, error) where error == .maxAmountReached:
-            return Asset.Colors.rose.color
+            return .rose
         default:
-            return Asset.Colors.night.color
+            return .night
         }
     }
 

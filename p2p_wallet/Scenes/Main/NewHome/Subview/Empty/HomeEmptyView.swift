@@ -15,7 +15,7 @@ struct HomeEmptyView: View {
             .padding(.top, 22)
             .padding(.bottom, 16)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .customRefreshable {
             await viewModel.reloadData()
         }
@@ -25,7 +25,7 @@ struct HomeEmptyView: View {
         ZStack(alignment: .bottom) {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    Color(Asset.Colors.smoke.color)
+                    Color(.smoke)
                         .frame(height: 87)
                     Color(.fern)
                         .frame(height: 200)
@@ -36,7 +36,7 @@ struct HomeEmptyView: View {
             VStack(spacing: 19) {
                 VStack(spacing: 13) {
                     Text(L10n.topUpYourAccountToGetStarted)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .fontWeight(.bold)
                         .apply(style: .text1)
                     Text(L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay)
@@ -44,7 +44,7 @@ struct HomeEmptyView: View {
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .padding(.horizontal, 24)
                 }
                 Button(
@@ -53,11 +53,11 @@ struct HomeEmptyView: View {
                     },
                     label: {
                         Text(L10n.receive)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .font(uiFont: .font(of: .text4, weight: .semibold))
                             .frame(height: 48)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.snow.color))
+                            .background(Color(.snow))
                             .cornerRadius(8)
                             .padding(.horizontal, 24)
                     }
@@ -71,7 +71,7 @@ struct HomeEmptyView: View {
     private var scrollingContent: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L10n.currenciesAvailable)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.horizontal, 16)
                 .padding(.top, 3)

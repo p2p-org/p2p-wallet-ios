@@ -15,7 +15,7 @@ struct SolendBannerViewModifier: ViewModifier {
         ZStack {
             backgroundColor
             content
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.top, 36)
                 .padding(.bottom, 20)
                 .padding(.horizontal, 20)

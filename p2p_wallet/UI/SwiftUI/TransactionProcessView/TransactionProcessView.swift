@@ -110,21 +110,21 @@ extension TransactionProcessView {
             case .loading:
                 image = .lightningFilled
                 imageSize = CGSize(width: 24, height: 24)
-                backgroundColor = Color(Asset.Colors.cloud.color)
-                circleColor = Color(Asset.Colors.smoke.color)
-                imageColor = Color(Asset.Colors.mountain.color)
+                backgroundColor = Color(.cloud)
+                circleColor = Color(.smoke)
+                imageColor = Color(.mountain)
             case .succeed:
                 image = .lightningFilled
                 imageSize = CGSize(width: 24, height: 24)
-                backgroundColor = Color(.cdf6cd).opacity(0.3)
-                circleColor = Color(.cdf6cd)
+                backgroundColor = Color(.cdf6Cd).opacity(0.3)
+                circleColor = Color(.cdf6Cd)
                 imageColor = Color(.h04D004)
             case .error:
                 image = .solendSubtract
                 imageSize = CGSize(width: 20, height: 18)
                 backgroundColor = Color(.ffdce9).opacity(0.3)
                 circleColor = Color(.ffdce9)
-                imageColor = Color(Asset.Colors.rose.color)
+                imageColor = Color(.rose)
             }
         }
     }
@@ -133,7 +133,7 @@ extension TransactionProcessView {
 private extension Text {
     func messageStyled() -> some View {
         apply(style: .text4)
-            .foregroundColor(Color(Asset.Colors.night.color))
+            .foregroundColor(Color(.night))
             .fixedSize(horizontal: false, vertical: true)
     }
 }

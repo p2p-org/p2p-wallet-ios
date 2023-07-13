@@ -50,7 +50,7 @@ struct HomeSkeletonView: View {
                     .padding(.vertical, 32)
             }
             .frame(maxWidth: .infinity)
-            .background(Color(Asset.Colors.smoke.color))
+            .background(Color(.smoke))
             VStack(alignment: .leading, spacing: 0) {
                 Text("")
                     .skeleton(

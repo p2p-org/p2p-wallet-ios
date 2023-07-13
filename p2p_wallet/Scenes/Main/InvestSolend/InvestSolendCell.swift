@@ -27,26 +27,26 @@ struct InvestSolendCell: View {
                 .frame(width: 48, height: 48)
             } else {
                 Circle()
-                    .fill(Color(Asset.Colors.mountain.color))
+                    .fill(Color(.mountain))
                     .frame(width: 48, height: 48)
             }
             VStack(alignment: .leading, spacing: 6) {
                 if let deposit = amount {
                     Text("\(deposit) \(asset.symbol)")
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .apply(style: .text2)
                 } else {
                     Text(asset.symbol)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .apply(style: .text2)
                 }
                 Text(asset.name)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .apply(style: .label1)
             }
             Spacer()
             Text(apy?.formatApy ?? "N/A")
-                .foregroundColor(Color(apy != nil ? Asset.Colors.night.color : Asset.Colors.rose.color))
+                .foregroundColor(Color(apy != nil ? .night : .rose))
                 .font(uiFont: .font(of: .text2, weight: .semibold))
                 .skeleton(with: isLoading, size: CGSize(width: 40, height: 20))
         }

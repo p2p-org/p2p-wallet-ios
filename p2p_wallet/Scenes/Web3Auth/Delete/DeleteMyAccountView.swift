@@ -66,7 +66,7 @@ struct DeleteMyAccountView: View {
                 .cornerRadius(32)
                 .overlay(
                     RoundedRectangle(cornerRadius: 32)
-                        .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                        .stroke(Color(.rain), lineWidth: 1)
                 )
                 .offset(x: 0, y: 16)
         }

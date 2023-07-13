@@ -230,17 +230,17 @@ final class TabBarController: UITabBarController {
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
-        standardAppearance.backgroundColor = Asset.Colors.snow.color
+        standardAppearance.backgroundColor = .init(resource: .snow)
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
-            .foregroundColor: Asset.Colors.mountain.color,
+            .foregroundColor: UIColor(resource: .mountain),
         ]
         standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
         ]
-        standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
-        standardAppearance.stackedLayoutAppearance.selected.iconColor = Asset.Colors.night.color
+        standardAppearance.stackedLayoutAppearance.normal.iconColor = .init(resource: .mountain)
+        standardAppearance.stackedLayoutAppearance.selected.iconColor = .init(resource: .night)
         standardAppearance.stackedItemPositioning = .automatic
         standardAppearance.shadowImage = nil
         standardAppearance.shadowColor = nil

@@ -61,7 +61,7 @@ struct ActionsPanelView: View {
             if !balance.isEmpty {
                 Text(balance)
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .padding(.top, 24)
                     .padding(.bottom, usdAmount.isEmpty ? 46 : 12)
             } else {
@@ -72,7 +72,7 @@ struct ActionsPanelView: View {
             if !usdAmount.isEmpty {
                 Text(usdAmount)
                     .font(uiFont: .font(of: .text3))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .padding(.bottom, 46)
             }
             HStack(spacing: 32) {
@@ -85,7 +85,7 @@ struct ActionsPanelView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 2)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
 
     private func tokenOperation(title: String, image: ImageResource, action: @escaping () -> Void) -> some View {
@@ -100,7 +100,7 @@ struct ActionsPanelView: View {
                     Text(title)
                         .fontWeight(.semibold)
                         .apply(style: .label2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
             }
         )

@@ -26,7 +26,7 @@ struct DepositSolendView: View {
                     Text(viewModel.title)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
             }
         }
@@ -68,7 +68,7 @@ struct DepositSolendView: View {
             HStack {
                 Text(viewModel.amountTitle)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Spacer()
                 Button { [weak viewModel] in
                     // use max
@@ -78,11 +78,11 @@ struct DepositSolendView: View {
                     if viewModel.isUsingMax {
                         Text(L10n.usingTheMAXAmount)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                     } else {
                         Text(viewModel.maxText)
                             .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.sky.color))
+                            .foregroundColor(Color(.sky))
                     }
                 }
             }.padding(.horizontal, 8)
@@ -108,7 +108,7 @@ struct DepositSolendView: View {
                 HStack {
                     Spacer()
                     Circle()
-                        .fill(Color(Asset.Colors.mint.color))
+                        .fill(Color(.mint))
                         .frame(width: 56, height: 56)
                         .overlay(Image(.check))
                     Spacer()
@@ -137,7 +137,7 @@ struct DepositSolendView: View {
                             viewModel.showDetailTapped()
                         } label: {
                             Circle()
-                                .fill(Color(Asset.Colors.lime.color))
+                                .fill(Color(.lime))
                                 .frame(width: 56, height: 56)
                                 .overlay(Image(.infoStraight))
                         }
@@ -145,10 +145,10 @@ struct DepositSolendView: View {
                 } else {
                     HStack(spacing: 8) {
                         RoundedRectangle(cornerSize: .init(width: 28, height: 28))
-                            .fill(Color(Asset.Colors.rain.color))
+                            .fill(Color(.rain))
                             .overlay(
                                 Text(viewModel.buttonText)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .foregroundColor(Color(.mountain))
                                     .font(uiFont: .font(of: .text2, weight: .semibold))
                             )
                             .frame(height: 56)
@@ -157,7 +157,7 @@ struct DepositSolendView: View {
                                 showingAlert = true
                             }) {
                                 Circle()
-                                    .fill(Color(Asset.Colors.rose.color.withAlphaComponent(0.2)))
+                                    .fill(Color(.rose).opacity(0.2))
                                     .frame(width: 56, height: 56)
                                     .overlay(Image(.solendSubtract))
                             }
@@ -202,7 +202,7 @@ struct DepositSolendView: View {
                 Text(viewModel.feeText)
                     .apply(style: .text4)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .frame(minHeight: 16)
                     .padding(.top, 8)
                     .padding(.bottom, 16)

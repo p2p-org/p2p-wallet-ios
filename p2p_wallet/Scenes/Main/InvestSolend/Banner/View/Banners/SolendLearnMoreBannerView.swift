@@ -21,11 +21,11 @@ struct SolendLearnMoreBannerView: View {
                 .font(uiFont: .font(of: .text2, weight: .semibold))
                 .frame(height: 48)
                 .frame(maxWidth: .infinity)
-                .background(Color(Asset.Colors.snow.color))
+                .background(Color(.snow))
                 .cornerRadius(12)
                 .padding(.top, 8)
         }
-        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.lime.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(.lime)))
     }
 }
 

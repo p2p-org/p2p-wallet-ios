@@ -21,7 +21,7 @@ struct ForgetPinView: View {
     var body: some View {
         VStack {
             // Indicator
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.vertical, 6)
@@ -79,10 +79,10 @@ struct ForgetPinView: View {
         label: {
             ZStack {
                 Circle()
-                    .fill(Color(Asset.Colors.rain.color))
+                    .fill(Color(.rain))
                 Image(uiImage: Asset.MaterialIcon.close.image)
                     .resizable()
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .frame(width: 16, height: 16)
             }.frame(width: 24, height: 24)
         }

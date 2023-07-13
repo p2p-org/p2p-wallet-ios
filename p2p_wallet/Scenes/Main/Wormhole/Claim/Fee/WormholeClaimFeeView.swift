@@ -13,13 +13,13 @@ struct WormholeClaimFeeView: View {
 
             HStack {
                 Circle()
-                    .fill(Color(Asset.Colors.smoke.color))
+                    .fill(Color(.smoke))
                     .frame(width: 48, height: 48)
                     .overlay(
                         Image(.lightningFilled)
                             .renderingMode(.template)
                             .resizable()
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                             .frame(width: 15, height: 21.5)
                     )
                 VStack(alignment: .leading, spacing: 2) {
@@ -40,7 +40,7 @@ struct WormholeClaimFeeView: View {
                 }
             }
             .padding(.all, 16)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(12)
             .padding(.top, 20)
 
@@ -138,13 +138,13 @@ private struct WormholeFeeView: View {
                     .skeleton(with: isLoading, size: .init(width: 100, height: 16))
                 Text(subtitle)
                     .apply(style: .label1)
-                    .foregroundColor(Color(isFree ? Asset.Colors.mint.color : Asset.Colors.mountain.color))
+                    .foregroundColor(Color(isFree ? .mint : .mountain))
                     .skeleton(with: isLoading, size: .init(width: 200, height: 16))
             }
             Spacer()
             Text(detail)
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .skeleton(with: isLoading, size: .init(width: 100, height: 16))
         }
     }

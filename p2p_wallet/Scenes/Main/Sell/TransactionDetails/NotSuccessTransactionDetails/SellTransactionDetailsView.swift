@@ -46,12 +46,12 @@ struct SellTransactionDetailsView: View {
     private var textView: some View {
         HStack {
             Text(viewModel.sendInfo?.0 ?? "")
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .font(uiFont: .font(of: .text4))
             Spacer()
             HStack(spacing: 8) {
                 Text(viewModel.sendInfo?.1 ?? "")
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text4, weight: .semibold))
                 if viewModel.strategy.isYouNeedToSend {
                     Image(.copyReceiverAddress)
@@ -81,11 +81,11 @@ struct SellTransactionDetailsView: View {
             },
             label: {
                 Text(viewModel.topButtonTitle)
-                    .foregroundColor(Color(viewModel.isProcessing ? Asset.Colors.night.color : Asset.Colors.snow.color))
+                    .foregroundColor(Color(viewModel.isProcessing ? .night : .snow))
                     .font(uiFont: .font(of: .text2, weight: .semibold))
                     .frame(height: 56)
                     .frame(maxWidth: .infinity)
-                    .background(Color(viewModel.isProcessing ? Asset.Colors.rain.color : Asset.Colors.night.color))
+                    .background(Color(viewModel.isProcessing ? .rain : .night))
                     .cornerRadius(12)
                     .padding(.horizontal, 24)
             }
@@ -99,7 +99,7 @@ struct SellTransactionDetailsView: View {
             },
             label: {
                 Text(viewModel.bottomButtonTitle)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text2, weight: .semibold))
                     .frame(height: 56)
                     .frame(maxWidth: .infinity)

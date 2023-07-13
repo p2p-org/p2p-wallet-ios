@@ -42,7 +42,7 @@ struct RecipientSearchField: View {
                             Image(uiImage: Asset.Icons.past.image)
                                 .resizable()
                                 .frame(width: 18, height: 18)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         }
                         .accessibilityIdentifier("RecipientSearchField.paste")
                 } else {
@@ -51,14 +51,14 @@ struct RecipientSearchField: View {
                             Image(.crossIcon)
                                 .resizable()
                                 .frame(width: 12, height: 12)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         }
                         .accessibilityIdentifier("RecipientSearchField.clear")
                 }
             }
             .padding(.horizontal, 18)
             .background(
-                Color(Asset.Colors.rain.color)
+                Color(.rain)
                     .cornerRadius(radius: 12, corners: .allCorners)
             )
 
@@ -69,7 +69,7 @@ struct RecipientSearchField: View {
                     Image(uiImage: Asset.Icons.qr.image)
                         .resizable()
                         .frame(width: 18, height: 18)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Rectangle()
                         .frame(width: 30, height: 30)
                         .opacity(0)

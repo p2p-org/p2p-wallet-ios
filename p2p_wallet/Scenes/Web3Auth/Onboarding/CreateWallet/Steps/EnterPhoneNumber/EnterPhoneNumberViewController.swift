@@ -142,7 +142,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
-        infoButton.tintColor = Asset.Colors.night.color
+        infoButton.tintColor = .init(resource: .night)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
     }
 
@@ -154,7 +154,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
             target: self,
             action: #selector(onBack)
         )
-        backButton.tintColor = Asset.Colors.night.color
+        backButton.tintColor = .init(resource: .night)
         navigationItem.leftBarButtonItem = backButton
     }
 
@@ -210,7 +210,7 @@ class PhoneTextField: BaseTextFieldView {
                 width: 8,
                 height: 5,
                 imageNamed: "expand-icon",
-                tintColor: Asset.Colors.night.color
+                tintColor: .init(resource: .night)
             ).padding(.init(only: .left, inset: 4))
         }
     }

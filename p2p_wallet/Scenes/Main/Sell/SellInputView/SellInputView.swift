@@ -45,7 +45,7 @@ struct SellInputView: View {
             sellButton
         }
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .onAppear {
             analyticsManager.log(event: .sellAmount)
         }
@@ -64,7 +64,7 @@ struct SellInputView: View {
             HStack {
                 Text(viewModel.currentInputTypeCode)
                    .apply(style: .largeTitle)
-                   .foregroundColor(Color(Asset.Colors.night.color))
+                   .foregroundColor(Color(.night))
 
                 Spacer()
 
@@ -78,12 +78,12 @@ struct SellInputView: View {
             HStack {
                 Text(L10n.cashOutReceive(viewModel.baseCurrencyCode, (viewModel.quoteCurrencyCode)))
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
 
                 Spacer()
                 Text("≈ " + viewModel.quoteReceiveAmount.toString() + " " + viewModel.quoteCurrencyCode)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
         .blockStyle()
@@ -98,7 +98,7 @@ struct SellInputView: View {
                 L10n.switchTo(viewModel.showingBaseAmount ? viewModel.quoteCurrencyCode : viewModel.baseCurrencyCode)
             )
             .apply(style: .label1)
-            .foregroundColor(Color(Asset.Colors.sky.color))
+            .foregroundColor(Color(.sky))
         }
     }
 
@@ -109,13 +109,13 @@ struct SellInputView: View {
             HStack(spacing: 4) {
                 Text(L10n.all)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 Text(
                     (viewModel.maxBaseAmount ?? 0).toString(maximumFractionDigits: 2, roundingMode: .down) +
                     " \(viewModel.baseCurrencyCode)"
                 )
                 .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.sky.color))
+                    .foregroundColor(Color(.sky))
             }
         }
     }
@@ -126,14 +126,14 @@ struct SellInputView: View {
             VStack(alignment: .center, spacing: 4) {
                 Text(L10n.poweredBy + " Moonpay")
                     .apply(style: .label1)
-                    .foregroundColor(Color(UIColor.h9799af))
+                    .foregroundColor(Color(.h9799Af))
                 Button {
                     viewModel.moonpayLicenseTap()
                 } label: {
                     Text(L10n.license)
                         .apply(style: .label1)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
             }
             Spacer()
@@ -153,14 +153,14 @@ struct SellInputView: View {
                     )
             case .loaded(let exchangeRate):
                 Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString(maximumFractionDigits: 2)) \(viewModel.quoteCurrencyCode)")
-                    .descriptionTextStyle(color: Color(Asset.Colors.night.color))
+                    .descriptionTextStyle(color: Color(.night))
             case .error(let error):
                 #if !RELEASE
                 Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
-                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                    .descriptionTextStyle(color: Color(.rose))
                 #else
                 Text(L10n.errorWhenUpdatingPrices)
-                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                    .descriptionTextStyle(color: Color(.rose))
                 #endif
             }
             Spacer()
@@ -185,18 +185,18 @@ struct SellInputView: View {
                 Text(L10n.allFeesIncluded(fee.baseAmount.toString(maximumFractionDigits: 2), viewModel.baseCurrencyCode, fee.quoteAmount.toString(), viewModel.quoteCurrencyCode))
                     .apply(style: .label1)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             case .error(let error):
                 #if !RELEASE
                 Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
                     .apply(style: .label1)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.rose.color))
+                    .foregroundColor(Color(.rose))
                 #else
                 Text(L10n.errorWhenUpdatingPrices)
                     .apply(style: .label1)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.rose.color))
+                    .foregroundColor(Color(.rose))
                 #endif
             }
             Spacer()
@@ -237,16 +237,16 @@ private extension View {
     func blockStyle(hasError: Bool = false) -> some View {
         frame(maxWidth: .infinity)
             .padding(16)
-            .background(Color(Asset.Colors.snow.color))
+            .background(Color(.snow))
             .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(Asset.Colors.rose.color), lineWidth: hasError ? 1 : 0)
+                    .stroke(Color(.rose), lineWidth: hasError ? 1 : 0)
             )
             .padding(.horizontal, 16)
     }
 
-    func descriptionTextStyle(color: Color = Color(Asset.Colors.mountain.color)) -> some View {
+    func descriptionTextStyle(color: Color = Color(.mountain)) -> some View {
         foregroundColor(color)
             .font(uiFont: UIFont.font(of: .label1, weight: .regular))
     }

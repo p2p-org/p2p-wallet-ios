@@ -21,7 +21,7 @@ struct ICloudRestoreScreen: View {
         }, onInfo: { [weak viewModel] in
             viewModel?.infoPressed()
         })
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .edgesIgnoringSafeArea(.all)
         .frame(maxHeight: .infinity)
     }
@@ -37,13 +37,13 @@ struct ICloudRestoreScreen: View {
 
             Text(L10n.chooseYourWallet)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .padding(.top, 24)
 
             Text(L10n.found(L10n.dWallet(viewModel.accounts.count)))
                 .font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .padding(.top, 16)
         }

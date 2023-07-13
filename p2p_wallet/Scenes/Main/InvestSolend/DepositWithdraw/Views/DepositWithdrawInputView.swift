@@ -91,7 +91,7 @@ struct DepositWithdrawInputView: View {
                 width: reader.size.width
             ) }
         }.frame(height: 62)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(12)
     }
 
@@ -100,7 +100,7 @@ struct DepositWithdrawInputView: View {
             HStack(spacing: 0) {
                 Text(value)
                     .font(uiFont: fontSynchorinze.font)
-                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .foregroundColor(Color(.night).opacity(0.3))
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 8)
             }
@@ -192,7 +192,7 @@ private struct TextfieldView: UIViewRepresentable {
         textField.text = text
         ctx.coordinator.adjustFont(textField)
         textField.font = fontSynchorinze.font
-        textField.textColor = hasInputError ? Asset.Colors.rose.color : Asset.Colors.night.color
+        textField.textColor = .init(resource: hasInputError ? .rose : .night)
     }
 
     func makeCoordinator() -> Coordinator {

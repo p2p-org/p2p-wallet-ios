@@ -63,7 +63,7 @@ struct PincodeVerifyView: View {
             label: {
                 Text(L10n.iForgotPIN)
                     .apply(style: .text1)
-                    .foregroundColor(Color(Asset.Colors.sky.color))
+                    .foregroundColor(Color(.sky))
                     .padding(.top, 24)
             }
         }
@@ -78,7 +78,7 @@ struct PincodeVerifyView: View {
         }
         .padding(.top, safeAreaInsets.top + 50)
         .padding(.bottom, 54)
-        .background(Color(Asset.Colors.rain.color))
+        .background(Color(.rain))
         .edgesIgnoringSafeArea(.all)
     }
 }

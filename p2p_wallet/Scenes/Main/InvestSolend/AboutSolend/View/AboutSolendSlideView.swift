@@ -17,7 +17,7 @@ struct AboutSolendSlideView: View {
             Text(subtitle)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2))
                 .padding(.horizontal, 20)
         }

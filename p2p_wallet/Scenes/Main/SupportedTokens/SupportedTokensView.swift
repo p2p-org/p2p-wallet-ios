@@ -15,7 +15,7 @@ struct SupportedTokensView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(.buttonSearch)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 TextField(L10n.search, text: $viewModel.filter)
                     .introspectTextField { field in
                         field.clearButtonMode = .whileEditing
@@ -46,7 +46,7 @@ struct SupportedTokensView: View {
                         HStack {
                             Text(L10n.hereSWhatWeFound.uppercased())
                                 .apply(style: .caps)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .padding(.leading, 16)
                                 .padding(.top, 32)
                                 .padding(.bottom, 12)
@@ -63,7 +63,7 @@ struct SupportedTokensView: View {
             }
         }
         .background(
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .ignoresSafeArea()
         )
     }
@@ -81,7 +81,7 @@ struct SupportedTokensView: View {
                     if item.id != viewModel.tokens.last?.id {
                         Divider()
                             .frame(height: 1)
-                            .overlay(Color(Asset.Colors.rain.color))
+                            .overlay(Color(.rain))
                             .padding(.top, 10)
                             .padding(.leading, 20)
                     } else {
@@ -94,7 +94,7 @@ struct SupportedTokensView: View {
             }
         }
         .padding(.top, 16)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(16)
         .padding(.horizontal, 16)
     }
