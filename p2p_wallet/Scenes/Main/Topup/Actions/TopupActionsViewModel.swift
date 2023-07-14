@@ -49,6 +49,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     }
 
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
+    private let shouldCheckBankTransfer = PassthroughSubject<Void, Never>()
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
     private var shouldShowBankTransfer: Bool {
         // always enabled for mocking
@@ -80,31 +81,34 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func bindBankTransfer() {
-        // Sending tapped event only after BTS is in ready state
-        Publishers.CombineLatest(
-            bankTransferService.state,
-            tappedItemSubject.eraseToAnyPublisher()
-        ).filter { _, action in
-            action == .transfer
-        }.sinkAsync { [weak self] state, action in
-            await MainActor.run {
-                self?.setTransferLoadingState(isLoading: (state.status != .ready && !state.hasError) || !state.value.isIBANNotReady)
+        shouldCheckBankTransfer
+            .withLatestFrom(bankTransferService.state)
+            .filter({ !$0.isFetching })
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                self?.setTransferLoadingState(isLoading: false)
                 // Toggling error
                 if self?.shouldShowErrorSubject.value == false {
                     self?.shouldShowErrorSubject.send(state.hasError || state.value.isIBANNotReady)
                 }
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
 
-        tappedItemSubject.withLatestFrom(bankTransferService.state).filter({ state in
-            state.hasError || state.value.isIBANNotReady
-        }).sinkAsync { [weak self] state in
-            await MainActor.run {
-                self?.setTransferLoadingState(isLoading: true)
-                self?.shouldShowErrorSubject.send(false)
+        tappedItemSubject
+            .filter({ $0 == .transfer })
+            .withLatestFrom(bankTransferService.state).filter({ state in
+                state.hasError || state.value.isIBANNotReady
+            })
+            .sinkAsync { [weak self] state in
+                guard let self else { return }
+                await MainActor.run {
+                    self.setTransferLoadingState(isLoading: true)
+                    self.shouldShowErrorSubject.send(false)
+                }
+                await self.bankTransferService.reload()
+                self.shouldCheckBankTransfer.send(())
             }
-            await self?.bankTransferService.reload()
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
 
         shouldShowErrorSubject.filter { $0 }.sinkAsync { [weak self] value in
             await MainActor.run {
