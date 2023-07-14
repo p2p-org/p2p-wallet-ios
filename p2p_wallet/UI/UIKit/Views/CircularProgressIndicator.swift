@@ -1,10 +1,6 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import UIKit
 
-public class CircularProgressIndicator: UIView {
+class CircularProgressIndicator: UIView {
     var backgroundLayer: CALayer? {
         willSet {
             backgroundLayer?.removeFromSuperlayer()
@@ -53,16 +49,13 @@ public class CircularProgressIndicator: UIView {
 
     let progressLineLength: CGFloat = 0.25
 
-    public convenience init() {
-        self.init(
-            backgroundCircularColor: Asset.Colors.night.color,
-            foregroundCircularColor: Asset.Colors.lime.color
-        )
+    convenience init() {
+        self.init()
     }
 
-    public init(
-        backgroundCircularColor: UIColor = Asset.Colors.night.color,
-        foregroundCircularColor: UIColor = Asset.Colors.lime.color
+    init(
+        backgroundCircularColor: UIColor = .init(resource: .night),
+        foregroundCircularColor: UIColor = .init(resource: .lime)
     ) {
         self.backgroundCircularColor = backgroundCircularColor
         self.foregroundCircularColor = foregroundCircularColor
@@ -77,7 +70,7 @@ public class CircularProgressIndicator: UIView {
         fatalError()
     }
 
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         drawAllLayers()
         super.layoutSubviews()
     }
@@ -147,7 +140,7 @@ public class CircularProgressIndicator: UIView {
         )
     }
 
-    override public var isHidden: Bool {
+    override var isHidden: Bool {
         didSet {
             if isHidden { stopAnimation() } else { startAnimation() }
         }

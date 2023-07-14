@@ -51,21 +51,6 @@ public extension UIView {
     
 }
 
-
-extension IconButton: CustomSkeletonable {
-    
-    public func makeCustomSkeletonable() {
-        isSkeletonable = true
-        imageView.view?.isSkeletonable = true
-        titleView.view?.isSkeletonable = true
-        titleView.view?.linesCornerRadius = SkeletonAppearance.labelCornerRadius
-        titleView.view?.lastLineFillPercent = 100
-        titleSpacing.view?.isSkeletonable = false
-        (subviews.first as? UIStackView)?.isSkeletonable = true
-        (subviews.first as? UIStackView)?.arrangedSubviews.forEach {$0.isSkeletonable = true}
-    }
-}
-
 //extension BESpacer: CustomSkeletonable {
 //    public func makeCustomSkeletonable() {
 //        isSkeletonable = false

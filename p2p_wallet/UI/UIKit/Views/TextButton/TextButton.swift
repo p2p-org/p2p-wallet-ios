@@ -8,14 +8,14 @@ import PureLayout
 import UIKit
 
 /// A button where primary focus is text. Leading and trailing icons are secondary.
-public class TextButton: ButtonControl<TextButtonAppearance> {
+class TextButton: ButtonControl<TextButtonAppearance> {
     /// Button title text
-    public var title: String {
+    var title: String {
         didSet { titleView.text = title }
     }
 
     /// Button leading icon image
-    public var leadingImage: UIImage? {
+    var leadingImage: UIImage? {
         didSet {
             leadingImageView.image = leadingImage
             updateLeading()
@@ -23,14 +23,14 @@ public class TextButton: ButtonControl<TextButtonAppearance> {
     }
 
     /// Button trailing icon image
-    public var trailingImage: UIImage? {
+    var trailingImage: UIImage? {
         didSet {
             trailingImageView.image = trailingImage
             updateTrailing()
         }
     }
 
-    public var isLoading: Bool = false {
+    var isLoading: Bool = false {
         didSet {
             updateLeading()
             updateTrailing()
@@ -56,7 +56,7 @@ public class TextButton: ButtonControl<TextButtonAppearance> {
 
     // MARK: Init
 
-    public init(leadingImage: UIImage? = nil, title: String, trailingImage: UIImage? = nil, themes: ThemeState<TextButtonAppearance>) {
+    init(leadingImage: UIImage? = nil, title: String, trailingImage: UIImage? = nil, themes: ThemeState<TextButtonAppearance>) {
         self.leadingImage = leadingImage
         self.trailingImage = trailingImage
         self.title = title

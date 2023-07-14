@@ -20,7 +20,7 @@ final class TipView: BECompositionView {
 
     // MARK: - Inits
 
-    public init(
+    init(
         content: TipContent,
         theme: TipTheme,
         pointerPosition: TipPointerPosition
@@ -48,7 +48,7 @@ final class TipView: BECompositionView {
         drawShadow()
     }
 
-    override public func build() -> UIView {
+    override func build() -> UIView {
         BEContainer {
             BEVStack(spacing: 20) {
                 BEHStack(spacing: .zero, alignment: .top) {

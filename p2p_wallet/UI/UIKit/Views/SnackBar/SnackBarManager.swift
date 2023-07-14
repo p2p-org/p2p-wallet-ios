@@ -4,17 +4,17 @@ protocol SnackBarManagerDelegate {
     func snackBarDidDismiss()
 }
 
-public class SnackBarManager: SnackBarManagerDelegate {
+class SnackBarManager: SnackBarManagerDelegate {
     
     /// Behavior on showing snackbar
-    public enum Behavior: Equatable {
+    enum Behavior: Equatable {
         case queued
         case dismissOldWhenAddingNew
     }
     
-    static public let shared = SnackBarManager()
+    static let shared = SnackBarManager()
     
-    public var behavior: Behavior = .dismissOldWhenAddingNew
+    var behavior: Behavior = .dismissOldWhenAddingNew
     
     private var queue = SynchronizedArray<SnackBar>()
     
@@ -93,7 +93,7 @@ public class SnackBarManager: SnackBarManagerDelegate {
         dismiss(first)
     }
     
-    public func dismissAll() {
+    func dismissAll() {
         while let vc = queue.removeFirst() {
             vc.removeFromSuperview()
             vc.hideCompletion?()

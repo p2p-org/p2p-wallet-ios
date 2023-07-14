@@ -3,23 +3,23 @@ import Foundation
 import PureLayout
 import UIKit
 
-public class SnackBar: BECompositionView {
+class SnackBar: BECompositionView {
 
     // MARK: - Properties
     var autoHide: Bool = true
     var hideCompletion: (() -> Void)?
 
-    public var title: String? {
+    var title: String? {
         didSet {
             (leadingView.view as? UILabel)?.text = title
         }
     }
 
-    public var text: String {
+    var text: String {
         didSet { textView.text = text }
     }
 
-    public var icon: UIImage? {
+    var icon: UIImage? {
         didSet {
             (leadingView.view as? UIImageView)?.image = icon
         }
@@ -39,7 +39,7 @@ public class SnackBar: BECompositionView {
         textColor: .white
     )
 
-    public init(
+    init(
         title: String? = nil,
         icon: UIImage?,
         text: String,
@@ -54,7 +54,7 @@ public class SnackBar: BECompositionView {
 
     // MARK: -
 
-    override public func build() -> UIView {
+    override func build() -> UIView {
         BEContainer {
             BEHStack(spacing: 14, alignment: .center, distribution: .fill) {
                 // Leading
@@ -77,7 +77,7 @@ public class SnackBar: BECompositionView {
                     UILabel(
                         text: title,
                         textSize: appearance.titleFontSize,
-                        textColor: Asset.Colors.snow.color,
+                        textColor: .init(resource: .snow),
                         numberOfLines: appearance.numberOnLines
                     ).bind(leadingView)
                         .margin(.init(only: .left, inset: 6))
@@ -91,7 +91,7 @@ public class SnackBar: BECompositionView {
                 UILabel(
                     text: text,
                     font: appearance.textFont,
-                    textColor: Asset.Colors.snow.color,
+                    textColor: .init(resource: .snow),
                     numberOfLines: appearance.numberOnLines
                 ).bind(textView)
                 .margin(.init(top: 20, left: 0, bottom: 20, right: 0))
@@ -106,7 +106,7 @@ public class SnackBar: BECompositionView {
                     trailing
                 }
             }
-        }.backgroundColor(color: Asset.Colors.night.color)
+        }.backgroundColor(color: .init(resource: .night))
         .box(cornerRadius: appearance.cornerRadius)
         .border(width: 1, color: appearance.borderColor)
     }

@@ -2,51 +2,51 @@ import UIKit
 import SwiftUI
 import BEPureLayout
 
-public struct SliderButtonView: UIViewRepresentable {
+struct SliderButtonView: UIViewRepresentable {
     let title: String
     let image: UIImage
     let style: SliderButton.Style
     @Binding var isOn: Bool
 
-    public init(title: String, image: UIImage, style: SliderButton.Style, isOn: Binding<Bool>) {
+    init(title: String, image: UIImage, style: SliderButton.Style, isOn: Binding<Bool>) {
         self.title = title
         self.image = image
         self.style = style
         self._isOn = isOn
     }
 
-    public func makeUIView(context: Context) -> SliderButton {
+    func makeUIView(context: Context) -> SliderButton {
         SliderButton(image: image, title: title, style: style)
             .onChanged { self.isOn = $0 }
     }
 
-    public func updateUIView(_ uiView: SliderButton, context: Context) {
+    func updateUIView(_ uiView: SliderButton, context: Context) {
         uiView.title = title
         uiView.image = image
         uiView.set(isOn: isOn)
     }
 }
 
-public final class SliderButton: BEView {
+final class SliderButton: BEView {
 
     // MARK: - Public variables
-    public var isOn: Bool = false
-    public var onChanged: ((Bool) -> Void)?
+    var isOn: Bool = false
+    var onChanged: ((Bool) -> Void)?
 
-    public var image: UIImage {
+    var image: UIImage {
         didSet {
             imageView.image = image
         }
     }
 
-    public var title: String? {
+    var title: String? {
         didSet {
             titleView.text = title
         }
     }
 
     @discardableResult
-    public func onChanged(_ callback: ((Bool) -> Void)?) -> Self {
+    func onChanged(_ callback: ((Bool) -> Void)?) -> Self {
         onChanged = callback
         return self
     }
@@ -70,14 +70,14 @@ public final class SliderButton: BEView {
 
     // MARK: - Init
 
-    public init(image: UIImage, title: String? = nil, theme: SliderButtonAppearance) {
+    init(image: UIImage, title: String? = nil, theme: SliderButtonAppearance) {
         self.image = image
         self.title = title
         self.theme = theme
         super.init(frame: .zero)
     }
 
-    public override func commonInit() {
+    override func commonInit() {
         super.commonInit()
         let child = build()
         addSubview(child)
@@ -87,12 +87,12 @@ public final class SliderButton: BEView {
 
     // MARK: - Public
 
-    public func set(isOn: Bool) {
+    func set(isOn: Bool) {
         guard isOn != self.isOn else { return }
         animateGradientAndControl(moveToLeft: !isOn)
     }
 
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         addImageControl()
         addMaskLayer()
@@ -145,7 +145,7 @@ public final class SliderButton: BEView {
         guard let sublayers = imageControl.layer.sublayers, !sublayers.contains(shimmerLayer) else { return }
 
         func color(alpha: CGFloat) -> CGColor {
-            Asset.Colors.snow.color.withAlphaComponent(alpha).cgColor
+            UIColor(resource: .snow).withAlphaComponent(alpha).cgColor
         }
 
         shimmerLayer.cornerRadius = imageControl.bounds.width / 2
@@ -348,9 +348,9 @@ public final class SliderButton: BEView {
             gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
             gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
             gradientLayer.locations = [0.0, 1.0]
-            gradientLayer.colors = [Asset.Colors.lime.color.cgColor, Asset.Colors.lime.color.withAlphaComponent(0).cgColor]
+            gradientLayer.colors = [UIColor(resource: .lime).cgColor, UIColor(resource: .lime).withAlphaComponent(0).cgColor]
         } else {
-            gradientLayer.backgroundColor = Asset.Colors.lime.color.cgColor
+            gradientLayer.backgroundColor = UIColor(resource: .lime).cgColor
         }
         gradientLayer.cornerRadius = size.height / 2
     }
@@ -370,12 +370,12 @@ private enum Constants {
 private class SliderContainer: BEView {
     private let child: UIView
 
-    required public init(@BEViewBuilder builder: Builder) {
+    required init(@BEViewBuilder builder: Builder) {
         child = builder().build()
         super.init(frame: .zero)
     }
 
-    final public override func commonInit() {
+    final override func commonInit() {
         super.commonInit()
         super.addSubview(child)
         child.autoCenterInSuperview()

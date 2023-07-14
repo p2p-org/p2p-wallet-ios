@@ -14,25 +14,25 @@ struct TipAppearance {
 
         switch theme {
         case .snow:
-            backgroundColor = Asset.Colors.snow.color
-            textColor = Asset.Colors.night.color
+            backgroundColor = UIColor(resource: .snow)
+            textColor = UIColor(resource: .night)
             nextButtonStyle = .third
             skipButtonStyle = .ghost
-            countColor = Asset.Colors.mountain.color
+            countColor = UIColor(resource: .mountain)
 
         case .night:
-            backgroundColor = Asset.Colors.night.color
-            textColor = Asset.Colors.snow.color
+            backgroundColor = UIColor(resource: .night)
+            textColor = UIColor(resource: .snow)
             nextButtonStyle = .third
             skipButtonStyle = .ghostLime
-            countColor = Asset.Colors.mountain.color
+            countColor = UIColor(resource: .mountain)
 
         case .lime:
-            backgroundColor = Asset.Colors.lime.color
-            textColor = Asset.Colors.night.color
+            backgroundColor = UIColor(resource: .lime)
+            textColor = UIColor(resource: .night)
             nextButtonStyle = .primary
             skipButtonStyle = .ghost
-            countColor = Asset.Colors.mountain.color
+            countColor = UIColor(resource: .mountain)
 
         }
 

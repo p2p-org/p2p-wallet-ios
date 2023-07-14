@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct NewTextButton: View {
+struct NewTextButton: View {
     private let title: String
     private let action: () -> Void
     private let size: TextButton.Size
@@ -13,7 +13,7 @@ public struct NewTextButton: View {
 
     private let appearance: NewTextButtonAppearance
 
-    public init(
+    init(
         title: String,
         size: TextButton.Size,
         style: TextButton.Style,
@@ -46,7 +46,7 @@ public struct NewTextButton: View {
         )
     }
 
-    public var body: some View {
+    var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
                 if let leading {
@@ -81,8 +81,8 @@ public struct NewTextButton: View {
             .frame(maxWidth: expandable ? .infinity : nil)
         }
         .frame(maxWidth: expandable ? .infinity : nil)
-        .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
-        .background(isEnabled ? appearance.backgroundColor : Color(Asset.Colors.rain.color))
+        .foregroundColor(isEnabled ? appearance.foregroundColor : Color(.mountain))
+        .background(isEnabled ? appearance.backgroundColor : Color(.rain))
         .cornerRadius(appearance.borderRadius)
         .disabled(!isEnabled || isLoading)
         .overlay(
@@ -115,14 +115,14 @@ struct NewTextButton_Previews: PreviewProvider {
                 title: "Title",
                 size: .medium,
                 style: .primary,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                trailing: .init(resource: .arrowForward)
             ) { }
 
             NewTextButton(
                 title: "Title",
                 size: .large,
                 style: .second,
-                leading: Asset.MaterialIcon.arrowForward.image
+                leading: .init(resource: .arrowForward)
             ) { }
 
             NewTextButton(
@@ -137,7 +137,7 @@ struct NewTextButton_Previews: PreviewProvider {
                 size: .large,
                 style: .outlineLime,
                 isLoading: true,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                trailing: .init(resource: .arrowForward)
             ) { }
 
             NewTextButton(

@@ -1,4 +1,4 @@
-public enum TipPointerPosition {
+enum TipPointerPosition {
     case topLeft, topCenter, topRight
     case rightTop, rightCenter, rightBottom
     case bottomLeft, bottomCenter, bottomRight

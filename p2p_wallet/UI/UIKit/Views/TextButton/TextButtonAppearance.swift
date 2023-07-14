@@ -6,7 +6,7 @@ import Foundation
 import UIKit
 
 /// A theme for ``TextButton``
-public struct TextButtonAppearance {
+struct TextButtonAppearance {
     /// A background color of button.
     let backgroundColor: UIColor
 
@@ -34,7 +34,7 @@ public struct TextButtonAppearance {
     /// A border color
     let borderColor: UIColor?
 
-    public init(
+    init(
         backgroundColor: UIColor,
         foregroundColor: UIColor,
         font: UIFont,
@@ -56,16 +56,16 @@ public struct TextButtonAppearance {
         self.borderColor = borderColor
     }
 
-    public static func `default`() -> Self {
+    static func `default`() -> Self {
         .init(
-            backgroundColor: Asset.Colors.night.color,
-            foregroundColor: Asset.Colors.lime.color,
+            backgroundColor: UIColor(resource: .night),
+            foregroundColor: UIColor(resource: .lime),
             font: .systemFont(ofSize: 16, weight: .medium),
             contentPadding: .init(top: 0, left: 28, bottom: 0, right: 20),
             iconSpacing: 12,
             borderRadius: 12,
-            loadingBackgroundColor: Asset.Colors.night.color,
-            loadingForegroundColor: Asset.Colors.snow.color,
+            loadingBackgroundColor: UIColor(resource: .night),
+            loadingForegroundColor: UIColor(resource: .snow),
             borderColor: nil
         )
     }

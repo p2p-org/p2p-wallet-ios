@@ -6,8 +6,8 @@ import BEPureLayout
 import Foundation
 import UIKit
 
-public class ButtonControl<T>: UIControl {
-    public typealias ThemeState<T> = [State: T]
+class ButtonControl<T>: UIControl {
+    typealias ThemeState<T> = [State: T]
     
     var onPressed: BECallback<ButtonControl<T>>?
 
@@ -66,14 +66,14 @@ public class ButtonControl<T>: UIControl {
 
     // MARK: Touches handler
 
-    override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if onPressed != nil || state.contains(.disabled) { isHighlighted = true }
         update()
 
         super.touchesBegan(touches, with: event)
     }
 
-    override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let location = touches.first?.location(in: superview) else { return }
         isHighlighted = false
 
@@ -87,19 +87,19 @@ public class ButtonControl<T>: UIControl {
         super.touchesEnded(touches, with: event)
     }
 
-    override public func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         isHighlighted = false
         update()
         super.touchesCancelled(touches, with: event)
     }
 
     @discardableResult
-    public func onPressed(_ callback: BECallback<ButtonControl<T>>?) -> Self {
+    func onPressed(_ callback: BECallback<ButtonControl<T>>?) -> Self {
         onPressed = callback
         return self
     }
 
-    override public var isEnabled: Bool {
+    override var isEnabled: Bool {
         get { super.isEnabled }
         set {
             super.isEnabled = newValue

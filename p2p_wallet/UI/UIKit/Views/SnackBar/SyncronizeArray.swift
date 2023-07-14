@@ -1,22 +1,22 @@
 import Foundation
 
-public class SynchronizedArray<T> {
+class SynchronizedArray<T> {
     private var array: [T] = []
     private let accessQueue = DispatchQueue(label: "org.p2p.keyappui.syncronizeArray", attributes: .concurrent)
 
-    public func append(_ newElement: T) {
+    func append(_ newElement: T) {
         accessQueue.async(qos: .default, flags: .barrier) {
             self.array.append(newElement)
         }
     }
 
-    public func remove(at index: Int) {
+    func remove(at index: Int) {
         accessQueue.async(qos: .default, flags: .barrier) {
             self.array.remove(at: index)
         }
     }
     
-    public func removeFirst() -> T? {
+    func removeFirst() -> T? {
         var el: T?
         accessQueue.sync {
             let index = 0
@@ -27,7 +27,7 @@ public class SynchronizedArray<T> {
         return el
     }
 
-    public var count: Int {
+    var count: Int {
         var count = 0
         accessQueue.sync {
             count = self.array.count
@@ -35,7 +35,7 @@ public class SynchronizedArray<T> {
         return count
     }
 
-    public func first() -> T? {
+    func first() -> T? {
         var element: T?
         accessQueue.sync {
             if !self.array.isEmpty {
@@ -46,7 +46,7 @@ public class SynchronizedArray<T> {
         return element
     }
 
-    public subscript(index: Int) -> T {
+    subscript(index: Int) -> T {
         set {
             accessQueue.async(qos: .default, flags: .barrier) {
                 self.array[index] = newValue
@@ -65,7 +65,7 @@ public class SynchronizedArray<T> {
 }
 
 extension SynchronizedArray where T: Equatable {
-    public func remove(element: T) {
+    func remove(element: T) {
         accessQueue.async(qos: .default, flags: .barrier) {
             self.array.removeAll { el in
                 el == element

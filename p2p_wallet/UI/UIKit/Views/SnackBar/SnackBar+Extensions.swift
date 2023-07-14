@@ -4,7 +4,7 @@ import UIKit
 
 extension SnackBar {
     @discardableResult
-    public convenience init(title: String? = nil, icon: UIImage? = nil, text: String, buttonTitle: String? = nil, buttonAction: (() -> Void)? = nil) {
+    convenience init(title: String? = nil, icon: UIImage? = nil, text: String, buttonTitle: String? = nil, buttonAction: (() -> Void)? = nil) {
         let button = buttonTitle != nil ? TextButton(title: buttonTitle ?? "", style: .primary, size: .small).onPressed { _ in
             buttonAction?()
         } : nil
@@ -17,7 +17,7 @@ extension SnackBar {
     ///   - view: a target view controller
     ///   - autoDismiss: user can dismiss the snackbar
     ///   - dismissCompletion: completion called after dismiss
-    public func show(in view: UIView, autoHide: Bool = true, hideCompletion: (() -> Void)? = nil) {
+    func show(in view: UIView, autoHide: Bool = true, hideCompletion: (() -> Void)? = nil) {
         // add subview and layout
         view.addSubview(self)
         autoPinEdgesToSuperviewSafeArea(with: .init(x: 4, y: 5), excludingEdge: .bottom)
@@ -30,7 +30,7 @@ extension SnackBar {
         SnackBarManager.shared.present(self)
     }
 
-    public static func hide(animated _: Bool = true) {
+    static func hide(animated _: Bool = true) {
         SnackBarManager.shared.dismissCurrent()
     }
 }

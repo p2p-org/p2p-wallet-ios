@@ -1,6 +1,6 @@
 import UIKit
 
-public struct SliderButtonAppearance {
+struct SliderButtonAppearance {
     /// A background color of button.
     let backgroundColor: UIColor
 
@@ -22,7 +22,7 @@ public struct SliderButtonAppearance {
     /// A progress color of button
     let progressColor: UIColor?
 
-    public init(
+    init(
         backgroundColor: UIColor,
         titleColor: UIColor,
         font: UIFont,
@@ -40,13 +40,13 @@ public struct SliderButtonAppearance {
         self.progressColor = progressColor
     }
 
-    public static func `default`() -> Self {
+    static func `default`() -> Self {
         .init(
-            backgroundColor: Asset.Colors.night.color,
-            titleColor: Asset.Colors.snow.color,
+            backgroundColor: UIColor(resource: .night),
+            titleColor: UIColor(resource: .snow),
             font: .systemFont(ofSize: 16, weight: .semibold),
-            iconColor: Asset.Colors.night.color,
-            iconBackgroundColor: Asset.Colors.lime.color,
+            iconColor: UIColor(resource: .night),
+            iconBackgroundColor: UIColor(resource: .lime),
             isGradient: true,
             progressColor: nil
         )

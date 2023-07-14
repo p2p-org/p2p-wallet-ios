@@ -5,7 +5,7 @@
 import SwiftUI
 
 /// A theme for ``NewTextButton``
-public struct NewTextButtonAppearance {
+struct NewTextButtonAppearance {
     /// A background color of button.
     let backgroundColor: Color
 
@@ -30,7 +30,7 @@ public struct NewTextButtonAppearance {
     /// A border color
     let borderWidth: CGFloat?
 
-    public init(
+    init(
         backgroundColor: Color,
         foregroundColor: Color,
         font: Font,

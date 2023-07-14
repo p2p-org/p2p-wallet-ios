@@ -1,18 +1,18 @@
 import CoreGraphics
 import UIKit
 
-public protocol TipManagerDelegate: AnyObject {
+protocol TipManagerDelegate: AnyObject {
     func next(after number: Int)
 }
 
-public final class TipManager {
+final class TipManager {
 
-    public weak var delegate: TipManagerDelegate?
+    weak var delegate: TipManagerDelegate?
     private weak var currentTip: TipView?
 
-    public init() { }
+    init() { }
 
-    public func createTip(content: TipContent, theme: TipTheme, pointerPosition: TipPointerPosition) -> UIView {
+    func createTip(content: TipContent, theme: TipTheme, pointerPosition: TipPointerPosition) -> UIView {
         hideCurrentTip()
 
         let tipView = TipView(content: content, theme: theme, pointerPosition: pointerPosition)

@@ -5,7 +5,7 @@
 import UIKit
 import SwiftUI
 
-public extension TextButton {
+extension TextButton {
     enum Style: CaseIterable {
         case primary
         case primaryWhite
@@ -21,87 +21,87 @@ public extension TextButton {
         case outlineLime
         case outlineRose
 
-        public var backgroundColor: UIColor {
+        var backgroundColor: UIColor {
             switch self {
-            case .primary, .primaryWhite: return Asset.Colors.night.color
-            case .second: return Asset.Colors.rain.color
-            case .third: return Asset.Colors.lime.color
+            case .primary, .primaryWhite: return UIColor(resource: .night)
+            case .second: return UIColor(resource: .rain)
+            case .third: return UIColor(resource: .lime)
             case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime, .outlineRose: return .clear
-            case .inverted, .invertedRed: return Asset.Colors.snow.color
+            case .inverted, .invertedRed: return UIColor(resource: .snow)
             }
         }
 
-        public var disabledBackgroundColor: UIColor? {
+        var disabledBackgroundColor: UIColor? {
             switch self {
             case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime, .outlineRose: return .clear
-            default: return Asset.Colors.rain.color
+            default: return UIColor(resource: .rain)
             }
         }
 
-        public var foreground: UIColor {
+        var foreground: UIColor {
             switch self {
-            case .primary, .ghostLime, .outlineLime: return Asset.Colors.lime.color
-            case .primaryWhite, .ghostWhite, .outlineWhite: return Asset.Colors.snow.color
-            case .second, .third, .ghost, .inverted, .outlineBlack: return Asset.Colors.night.color
-            case .invertedRed, .outlineRose: return Asset.Colors.rose.color
+            case .primary, .ghostLime, .outlineLime: return UIColor(resource: .lime)
+            case .primaryWhite, .ghostWhite, .outlineWhite: return UIColor(resource: .snow)
+            case .second, .third, .ghost, .inverted, .outlineBlack: return UIColor(resource: .night)
+            case .invertedRed, .outlineRose: return UIColor(resource: .rose)
             }
         }
 
-        public var disabledForegroundColor: UIColor? {
-            Asset.Colors.mountain.color
+        var disabledForegroundColor: UIColor? {
+            UIColor(resource: .mountain)
         }
 
-        public var borderColor: UIColor? {
+        var borderColor: UIColor? {
             switch self {
-            case .outlineBlack: return Asset.Colors.night.color
-            case .outlineWhite: return Asset.Colors.snow.color
-            case .outlineLime: return Asset.Colors.lime.color
-            case .outlineRose: return Asset.Colors.rose.color
+            case .outlineBlack: return UIColor(resource: .night)
+            case .outlineWhite: return UIColor(resource: .snow)
+            case .outlineLime: return UIColor(resource: .lime)
+            case .outlineRose: return UIColor(resource: .rose)
             default: return nil
             }
         }
 
-        public func borderWidth(size: Size) -> CGFloat? {
+        func borderWidth(size: Size) -> CGFloat? {
             switch size {
             case .large, .medium: return 2
             case .small: return 1
             }
         }
 
-        public func font(size: Size) -> UIFont {
+        func font(size: Size) -> UIFont {
             switch size {
             case .large, .medium: return UIFont.font(of: .text2, weight: .bold)
             case .small: return UIFont.font(of: .text4, weight: .semibold)
             }
         }
 
-        public func font(size: Size) -> Font {
+        func font(size: Size) -> Font {
             switch size {
             case .large, .medium: return Font.system(size: UIFont.fontSize(of: .text2), weight: .bold)
             case .small: return Font.system(size: UIFont.fontSize(of: .text4), weight: .semibold)
             }
         }
 
-        public var highlight: UIColor {
+        var highlight: UIColor {
             switch self {
             default: return .gray
             }
         }
 
-        public var loadingBackgroundColor: UIColor {
+        var loadingBackgroundColor: UIColor {
             switch self {
-            case .primary, .primaryWhite, .ghostWhite, .ghostLime, .outlineWhite, .outlineLime: return Asset.Colors.snow.color.withAlphaComponent(0.6)
-            case .invertedRed, .outlineRose: return Asset.Colors.rain.color
-            default: return Asset.Colors.night.color.withAlphaComponent(0.6)
+            case .primary, .primaryWhite, .ghostWhite, .ghostLime, .outlineWhite, .outlineLime: return UIColor(resource: .snow).withAlphaComponent(0.6)
+            case .invertedRed, .outlineRose: return UIColor(resource: .rain)
+            default: return UIColor(resource: .night).withAlphaComponent(0.6)
             }
         }
 
-        public var loadingForegroundColor: UIColor {
+        var loadingForegroundColor: UIColor {
             switch self {
-            case .primary, .ghostLime, .outlineLime: return Asset.Colors.lime.color
-            case .primaryWhite, .ghostWhite, .outlineWhite: return Asset.Colors.snow.color
-            case .second, .third, .ghost, .inverted, .outlineBlack: return Asset.Colors.night.color
-            case .invertedRed, .outlineRose: return Asset.Colors.rose.color
+            case .primary, .ghostLime, .outlineLime: return UIColor(resource: .lime)
+            case .primaryWhite, .ghostWhite, .outlineWhite: return UIColor(resource: .snow)
+            case .second, .third, .ghost, .inverted, .outlineBlack: return UIColor(resource: .night)
+            case .invertedRed, .outlineRose: return UIColor(resource: .rose)
             }
         }
     }
@@ -111,7 +111,7 @@ public extension TextButton {
         case medium
         case small
 
-        public var height: CGFloat {
+        var height: CGFloat {
             switch self {
             case .small: return 32
             case .medium: return 48
@@ -119,7 +119,7 @@ public extension TextButton {
             }
         }
 
-        public var borderRadius: CGFloat {
+        var borderRadius: CGFloat {
             switch self {
             case .small: return 8
             case .medium: return 12

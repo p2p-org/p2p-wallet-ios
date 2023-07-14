@@ -1,6 +1,6 @@
 import UIKit
 
-public extension SliderButton {
+extension SliderButton {
     enum Style: CaseIterable {
         case white
         case black
@@ -8,36 +8,36 @@ public extension SliderButton {
 
         var backgroundColor: UIColor {
             switch self {
-            case .white: return Asset.Colors.snow.color
-            case .black, .solidBlack: return Asset.Colors.night.color
+            case .white: return UIColor(resource: .snow)
+            case .black, .solidBlack: return UIColor(resource: .night)
             }
         }
 
         var iconColor: UIColor {
             switch self {
-            case .white: return Asset.Colors.lime.color
-            case .black, .solidBlack: return Asset.Colors.night.color
+            case .white: return UIColor(resource: .lime)
+            case .black, .solidBlack: return UIColor(resource: .night)
             }
         }
 
         var iconBackgroundColor: UIColor {
             switch self {
-            case .white: return Asset.Colors.night.color
-            case .black, .solidBlack: return Asset.Colors.lime.color
+            case .white: return UIColor(resource: .night)
+            case .black, .solidBlack: return UIColor(resource: .lime)
             }
         }
 
         var titleColor: UIColor {
             switch self {
-            case .white: return Asset.Colors.night.color
-            case .black, .solidBlack: return Asset.Colors.snow.color
+            case .white: return UIColor(resource: .night)
+            case .black, .solidBlack: return UIColor(resource: .snow)
             }
         }
 
         var progressColor: UIColor? {
             switch self {
             case .white, .black: return nil
-            case .solidBlack: return Asset.Colors.night.color
+            case .solidBlack: return UIColor(resource: .night)
             }
         }
 
