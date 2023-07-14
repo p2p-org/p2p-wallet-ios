@@ -151,7 +151,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         /// Parallel price updating. We will show price later.
         realtimeStream
             .filter { $0.status == .initializing || $0.status == .ready }
-            .debounce(for: .seconds(0.05), scheduler: RunLoop.main)
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .asyncMap { state -> [SomeToken: TokenPrice?] in
                 do {
                     return try await priceService.getPrices(
