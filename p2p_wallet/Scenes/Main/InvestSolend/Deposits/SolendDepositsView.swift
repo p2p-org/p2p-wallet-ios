@@ -1,4 +1,3 @@
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import Solend

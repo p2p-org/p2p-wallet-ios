@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct DerivableAccountsCardView: View {
 

@@ -1,7 +1,6 @@
 import Combine
 import SolanaSwift
 import SwiftUI
-import KeyAppUI
 
 enum ChooseWalletTokenStrategy {
     case feeToken(tokens: [Wallet], feeInFiat: Double)

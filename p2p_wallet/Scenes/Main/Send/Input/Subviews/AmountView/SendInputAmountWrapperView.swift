@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 // This view is a wrapper since it is extracted in another common view SendInputAmountView. Right now it is needed

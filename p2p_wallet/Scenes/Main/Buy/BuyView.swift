@@ -1,4 +1,3 @@
-import KeyAppUI
 import SkeletonUI
 import SolanaSwift
 import SwiftUI

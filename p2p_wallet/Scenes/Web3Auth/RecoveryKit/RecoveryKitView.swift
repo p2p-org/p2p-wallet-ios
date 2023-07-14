@@ -1,5 +1,4 @@
 import KeyAppKitCore
-import KeyAppUI
 import Onboarding
 import Resolver
 import SwiftUI
