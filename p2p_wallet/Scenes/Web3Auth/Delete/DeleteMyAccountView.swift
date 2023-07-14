@@ -33,7 +33,7 @@ struct DeleteMyAccountView: View {
                 BottomActionContainer {
                     SliderButtonView(
                         title: L10n.yesDeleteIt,
-                        image: Asset.Icons.key.image,
+                        image: .init(resource: .key),
                         style: .white,
                         isOn: $slider
                     )

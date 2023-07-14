@@ -202,7 +202,7 @@ struct RecipientSearchView: View {
 
     private func tryLater(title: String) -> some View {
         VStack(alignment: .center, spacing: 28) {
-            Image(uiImage: Asset.Icons.warning.image)
+            Image(.warning)
                 .foregroundColor(Color(.rose))
             Text(title)
                 .apply(style: .text3)
@@ -304,7 +304,7 @@ struct RecipientSearchView: View {
                             title: L10n.scanQR,
                             style: .primary,
                             size: .large,
-                            leading: Asset.Icons.qr.image
+                            leading: .init(resource: .qr)
                         ) {
                             viewModel.qr()
                         }
@@ -316,7 +316,7 @@ struct RecipientSearchView: View {
                             title: L10n.paste,
                             style: .primary,
                             size: .large,
-                            leading: Asset.Icons.past.image
+                            leading: .init(resource: .paste)
                         ) {
                             viewModel.past()
                         }
@@ -354,7 +354,7 @@ struct RecipientSearchView: View {
 
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
-                                Image(uiImage: Asset.Icons.warning.image)
+                                Image(.warning)
                                     .foregroundColor(Color(.sun))
                                 Text(L10n.cautionThisAddressHasNoFunds)
                                     .apply(style: .label1)

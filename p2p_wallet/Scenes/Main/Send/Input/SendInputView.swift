@@ -145,7 +145,7 @@ struct SendInputView: View {
                 Circle()
                     .fill(Color(UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)))
                     .frame(width: 48, height: 48)
-                Image(uiImage: Asset.Icons.warning.image)
+                Image(.warning)
                     .foregroundColor(Color(.rose))
             }
             Text("An error occurred updating the rates. Please try again 🥺")

@@ -37,7 +37,7 @@ struct SeedPhraseDetailView: View {
                     if viewModel.state == .lock {
                         SliderButtonView(
                             title: L10n.showMySeedPhrase,
-                            image: Asset.Icons.key.image,
+                            image: .init(resource: .key),
                             style: .white,
                             isOn: $viewModel.isSliderOn
                         )
@@ -47,7 +47,7 @@ struct SeedPhraseDetailView: View {
                             title: L10n.copy,
                             style: .third,
                             size: .large,
-                            trailing: Asset.Icons.copyFilled.image
+                            trailing: .init(resource: .copyFilled)
                         ) { viewModel.copy() }
                             .frame(height: TextButton.Size.large.height)
                     }

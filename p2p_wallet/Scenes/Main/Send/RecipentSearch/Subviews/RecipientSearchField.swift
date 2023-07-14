@@ -32,7 +32,7 @@ struct RecipientSearchField: View {
                 } else if text.isEmpty {
                     Button { past() }
                     label: {
-                            Image(uiImage: Asset.Icons.past.image)
+                            Image(.paste)
                                 .resizable()
                                 .frame(width: 18, height: 18)
                                 .foregroundColor(Color(.night))
@@ -59,7 +59,7 @@ struct RecipientSearchField: View {
                 scan()
             } label: {
                 ZStack {
-                    Image(uiImage: Asset.Icons.qr.image)
+                    Image(.qr)
                         .resizable()
                         .frame(width: 18, height: 18)
                         .foregroundColor(Color(.night))

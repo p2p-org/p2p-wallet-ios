@@ -32,7 +32,7 @@ struct PincodeChangeStartView: View {
                 BottomActionContainer {
                     SliderButtonView(
                         title: L10n.changeMyPIN,
-                        image: Asset.Icons.key.image,
+                        image: .init(resource: .key),
                         style: .white,
                         isOn: $isOn
                     )
