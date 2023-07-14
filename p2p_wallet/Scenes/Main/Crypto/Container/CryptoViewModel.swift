@@ -32,12 +32,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
     
-    @Published private(set) var balance: String = "0"
-    @Published private(set) var actions: [WalletActionType] = [.receive, .swap]
-    
     @Published var state = State.pending
-    
-    private var isInitialized = false
     
     /// Navigation subject (passed from Coordinator)
     let navigation: PassthroughSubject<CryptoNavigation, Never>
@@ -122,22 +117,6 @@ private extension CryptoViewModel {
                     }
                 }
             }
-            .store(in: &subscriptions)
-
-        // Check if accounts managers was initialized.
-        let solanaInitialization = solanaAccountsService
-            .statePublisher
-            .map { $0.status != .initializing }
-
-        let ethereumInitialization = ethereumAccountsService
-            .statePublisher
-            .map { $0.status != .initializing }
-
-        // Merge two services.
-        Publishers
-            .CombineLatest(solanaInitialization, ethereumInitialization)
-            .map { $0 && $1 }
-            .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, error, log

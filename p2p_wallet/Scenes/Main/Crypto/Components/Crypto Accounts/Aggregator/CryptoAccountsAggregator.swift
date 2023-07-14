@@ -43,8 +43,26 @@ struct CryptoAccountsAggregator: DataAggregator {
             return true
         }
 
-        let primaryAccounts = mergedAccounts.filter(primaryFilter)
-        let secondaryAccounts = mergedAccounts.filter { !primaryFilter(account: $0) }
+        let primaryAccounts = mergedAccounts
+            .filter(primaryFilter)
+            .sorted { lhs, rhs in
+                guard
+                    let lhsKey = lhs.sortingKey,
+                    let rhsKey = rhs.sortingKey
+                else { return false }
+                
+                return lhsKey > rhsKey
+            }
+        let secondaryAccounts = mergedAccounts
+            .filter { !primaryFilter(account: $0) }
+            .sorted { lhs, rhs in
+                guard
+                    let lhsKey = lhs.sortingKey,
+                    let rhsKey = rhs.sortingKey
+                else { return false }
+                
+                return lhsKey > rhsKey
+            }
 
         return (primaryAccounts, secondaryAccounts)
     }

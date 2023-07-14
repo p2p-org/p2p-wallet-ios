@@ -108,7 +108,7 @@ struct CryptoAccountsView: View {
             }
         }
         .padding(.top, 32)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(Asset.Colors.smoke.color))
     }
 
     
