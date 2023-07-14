@@ -135,7 +135,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     BankTransferRenderableAccount(
                         accountId: account.accountID,
                         token: token,
-                        amount: .init(amount: BigUInt(account.availableBalance.toCent()), token: token),
+                        visibleAmount: account.availableBalance,
+                        rawAmount: account.totalBalance,
                         status: action?.status == .processing ? .isClaimming : .readyToClaim
                     )
                 ]
@@ -236,16 +237,13 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let userWalletManager: UserWalletManager = Resolver.resolve()
         guard
             account.status != .isClaimming,
-            let walletPubKey = userWalletManager.wallet?.account.publicKey,
-            let amount = try? account.amount
+            let walletPubKey = userWalletManager.wallet?.account.publicKey
         else { return }
-
         let userAction = BankTransferClaimUserAction(
             id: account.id,
             accountId: account.accountId,
             token: account.token,
-            amount: CurrencyFormatter(hideSymbol: true).string(for: amount),
-//            fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
+            amount: String(account.rawAmount),
             receivingAddress: try! PublicKey.associatedTokenAddress(
                 walletAddress: walletPubKey,
                 tokenMintAddress: try! PublicKey(string: Token.usdc.address)
@@ -372,11 +370,5 @@ private extension HomeAccountsViewModel {
         default:
              shouldCloseBanner = true
         }
-    }
-}
-
-private extension Int {
-    func toCent() -> Double {
-        Double(self * 10_000)
     }
 }

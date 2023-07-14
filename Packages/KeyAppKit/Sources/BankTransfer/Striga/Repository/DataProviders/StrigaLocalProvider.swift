@@ -47,7 +47,7 @@ public actor StrigaLocalProviderImpl {
 
     private func migrate() {
         // Migration
-        let migrationKey = "StrigaLocalProviderImpl.migration10"
+        let migrationKey = "StrigaLocalProviderImpl.migration12"
         if !UserDefaults.standard.bool(forKey: migrationKey) {
             clear()
             UserDefaults.standard.set(true, forKey: migrationKey)
@@ -78,7 +78,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     }
 
     public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
-        try await save(model: whitelisted, in: accountFile)
+        try await save(model: whitelisted, in: whitelistedFile)
     }
 
     public func clear() {

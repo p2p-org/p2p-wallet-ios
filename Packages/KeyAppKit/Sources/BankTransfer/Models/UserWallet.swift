@@ -34,5 +34,10 @@ public struct USDCUserAccount: Codable {
     public let createdAt: String
     public let enriched: Bool
     public let blockchainDepositAddress: String?
-    public var availableBalance: Int // Available balance in cents
+    public var availableBalance: Int // Available balance in cents with fee
+    public var totalBalance: Int // Total balnce without Fee
+
+    mutating func setAvailableBalance(_ amount: Int) {
+        self.availableBalance = amount
+    }
 }

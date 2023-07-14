@@ -1,4 +1,5 @@
 import Foundation
+import KeyAppNetworking
 import Combine
 import SolanaSwift
 import TweetNacl
@@ -182,7 +183,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func getWallet(userId: String) async throws -> UserWallet? {
         var wallet: UserWallet? = await localProvider.getCachedUserData()?.wallet
         do {
-            wallet = try await remoteProvider.getAllWalletsByUser(
+             var userWallet = try await remoteProvider.getAllWalletsByUser(
                 userId: userId,
                 startDate: Date(timeIntervalSince1970: 1687564800),
                 endDate: Date(),
@@ -190,6 +191,21 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             ).wallets.map {
                 UserWallet($0, cached: wallet)
             }.first
+
+            if let account = userWallet?.accounts.usdc {
+                do {
+                    let fee = try await getFeeFor(userId: userId, account: account)
+                    let avBalance = account.availableBalance - fee
+                    userWallet?.accounts.usdc?.setAvailableBalance(max(0, avBalance))
+                } catch {
+                    Logger.log(
+                        event: "Striga get estimated fee",
+                        message: error.localizedDescription,
+                        logLevel: KeyAppKitLoggerLogLevel.warning
+                    )
+                }
+                wallet = userWallet
+            }
         } catch {
             Logger.log(
                 event: "Striga get all wallets",
@@ -200,7 +216,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
         if let eur = wallet?.accounts.eur, !eur.enriched {
             do {
-                let response: StrigaEnrichedEURAccountResponse = try await enrichAccount(userId: userId, accountId: eur.accountID)
+                let response: StrigaEnrichedEURAccountResponse = try await enrichAccount(
+                    userId: userId,
+                    accountId: eur.accountID
+                )
                 wallet?.accounts.eur = EURUserAccount(
                     accountID: eur.accountID,
                     currency: eur.currency,
@@ -220,16 +239,44 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             }
         }
 
+        do {
+            // Whitelist address
+            try await addWhitelistIfNeeded(
+                for: userId,
+                account: wallet?.accounts.usdc
+            )
+        } catch {
+            Logger.log(
+                event: "Striga add to Whitelist",
+                message: error.localizedDescription,
+                logLevel: KeyAppKitLoggerLogLevel.warning
+            )
+        }
+
         if let usdc = wallet?.accounts.usdc, !usdc.enriched {
             do {
-                let response: StrigaEnrichedUSDCAccountResponse = try await enrichAccount(userId: userId, accountId: usdc.accountID)
+                let response: StrigaEnrichedUSDCAccountResponse = try await enrichAccount(
+                    userId: userId,
+                    accountId: usdc.accountID
+                )
+                var fee = 0
+                do {
+                    fee = try await getFeeFor(userId: userId, account: usdc)
+                } catch {
+                    Logger.log(
+                        event: "Striga get estimated fee",
+                        message: error.localizedDescription,
+                        logLevel: KeyAppKitLoggerLogLevel.warning
+                    )
+                }
                 wallet?.accounts.usdc = USDCUserAccount(
                     accountID: usdc.accountID,
                     currency: usdc.currency,
                     createdAt: usdc.createdAt,
                     enriched: true,
                     blockchainDepositAddress: response.blockchainDepositAddress,
-                    availableBalance: usdc.availableBalance
+                    availableBalance: max(0, usdc.availableBalance - fee),
+                    totalBalance: usdc.availableBalance
                 )
             } catch {
                 // Skip error, do not block the flow
@@ -240,15 +287,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 )
             }
         }
-        // TODO: whitelisting after Striga implementation
-//        do {
-//            try await addWhitelistIfNeeded(
-//                for: userId,
-//                account: wallet?.accounts.usdc
-//            )
-//        } catch {
-//            debugPrint(error)
-//        }
         return wallet
     }
 
@@ -276,16 +314,27 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             let account,
             try await whitelistIdFor(account: account) == nil
         else { return }
+        do {
+            _ = try await remoteProvider.whitelistDestinationAddress(
+                userId: userId,
+                address: address,
+                currency: currency,
+                network: "SOL",
+                label: "SOL"
+            )
+        } catch HTTPClientError.invalidResponse(_, let data) {
+            let res = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
+            if StrigaWhitelistAddressError(rawValue: res?.errorCode ?? "") != .alreadyWhitelisted {
+                throw BankTransferError.missingMetadata
+            }
+        }
 
-        _ = try await remoteProvider.whitelistDestinationAddress(
-            userId: userId, address: address, currency: currency, network: "SOL", label: nil
-        )
         let whitelisted = try await remoteProvider.getWhitelistedUserDestinations(
             userId: userId,
-            currency: currency,
-            label: nil,
-            page: nil
-        )
+            currency: account.currency,
+            label: "SOL",
+            page: "0"
+        ).addresses
         try? await localProvider.save(whitelisted: whitelisted)
     }
 
@@ -310,6 +359,18 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
 
+    private func getFeeFor(userId: String, account: USDCUserAccount) async throws -> Int {
+        guard let whitelistId = try await whitelistIdFor(account: account) else {
+            throw BankTransferError.missingUserId
+        }
+        let fees = try await remoteProvider.initiateOnchainFeeEstimate(
+            userId: userId,
+            sourceAccountId: account.accountID,
+            whitelistedAddressId: whitelistId,
+            amount: "\(account.totalBalance)"
+        )
+        return Int(fees.totalFee) ?? 0
+    }
 }
 
 // MARK: - Helpers
@@ -342,7 +403,8 @@ private extension UserWallet {
                 createdAt: usdcAccount.createdAt,
                 enriched: cached?.accounts.usdc?.enriched ?? false,
                 blockchainDepositAddress: cached?.accounts.usdc?.blockchainDepositAddress,
-                availableBalance: Int(usdcAccount.availableBalance.amount) ?? 0
+                availableBalance: Int(usdcAccount.availableBalance.amount) ?? 0,
+                totalBalance: Int(usdcAccount.availableBalance.amount) ?? 0
             )
         }
         self.walletId = wallet.walletID

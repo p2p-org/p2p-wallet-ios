@@ -53,18 +53,25 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         viewController: navigationController,
                         phone: phone,
                         verifyHandler: { [unowned self] otp in
-                            try? await Task.sleep(seconds: 1)
-//                            try await bankTransferService.claimVerify(
-//                                OTP: otp,
-//                                challengeId: transaction.challengeId,
-//                                ip: getIPAddress()
-//                            )
+                            guard let userId = await bankTransferService.value.repository.getUserId() else {
+                                throw BankTransferError.missingMetadata
+                            }
+                            try await bankTransferService.value.repository
+                            .claimVerify(
+                                userId: userId,
+                                challengeId: transaction.challengeId,
+                                ip: getIPAddress(),
+                                verificationCode: otp
+                            )
                         },
                         resendHandler: { [unowned self] in
-                            try? await Task.sleep(seconds: 1)
-//                            try await bankTransferService.claimResendSMS(
-//                                challengeId: transaction.challengeId
-//                            )
+                            guard let userId = await bankTransferService.value.repository.getUserId() else {
+                                throw BankTransferError.missingMetadata
+                            }
+                            try await bankTransferService.value.repository.claimResendSMS(
+                                userId: userId,
+                                challengeId: transaction.challengeId
+                            )
                         }
                     )
                 )

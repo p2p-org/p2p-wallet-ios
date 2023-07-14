@@ -1,12 +1,17 @@
 import BankTransfer
 import Foundation
 import KeyAppKitCore
+import BigInt
 
 struct BankTransferRenderableAccount: RenderableAccount {
     let accountId: String
     let token: EthereumToken
-    let amount: CryptoAmount
+    let visibleAmount: Int
+    let rawAmount: Int
     var status: RenderableEthereumAccount.Status
+    private var amount: CryptoAmount {
+        .init(amount: BigUInt(visibleAmount.toCent()), token: token)
+    }
 
     var id: String {
         accountId
@@ -71,5 +76,11 @@ struct BankTransferRenderableAccount: RenderableAccount {
         default:
             return false
         }
+    }
+}
+
+private extension Int {
+    func toCent() -> Double {
+        Double(self * 10_000)
     }
 }
