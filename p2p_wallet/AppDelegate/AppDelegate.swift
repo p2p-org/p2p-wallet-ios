@@ -1,6 +1,5 @@
 import Firebase
 import Intercom
-import KeyAppUI
 import Lokalise
 import Resolver
 import Sentry

@@ -6,7 +6,6 @@
 //
 
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct SheetHeaderModifier: ViewModifier {

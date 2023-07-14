@@ -1,10 +1,3 @@
-//
-//  SlippageSettingsView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 08/03/2023.
-//
-
 import SwiftUI
 import KeyAppUI
 

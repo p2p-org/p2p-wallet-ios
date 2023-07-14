@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct RestoreSocialOptionView: View {

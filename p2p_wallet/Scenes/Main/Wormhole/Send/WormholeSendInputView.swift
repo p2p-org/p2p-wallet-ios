@@ -6,7 +6,6 @@
 //
 
 import KeyAppKitCore
-import KeyAppUI
 import Kingfisher
 import Resolver
 import SolanaSwift

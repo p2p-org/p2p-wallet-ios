@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 final class SendTransactionStatusCoordinator: Coordinator<Void> {

@@ -4,7 +4,6 @@
 //
 //  Created by Ivan on 06.12.2022.
 //
-import KeyAppUI
 import SwiftUI
 
 struct SendEmptyView: View {

@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 02.02.2023.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct HistoryItemView: View {

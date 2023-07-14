@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 import Combine
 
 struct SwapSwitchButton: View {

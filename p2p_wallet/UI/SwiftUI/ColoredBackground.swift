@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct ColoredBackground<Content: View>: View {
     let content: Content

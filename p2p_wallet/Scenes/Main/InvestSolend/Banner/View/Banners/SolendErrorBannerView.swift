@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import KeyAppUI
 
 struct SolendErrorBannerView: View {
     let title: String

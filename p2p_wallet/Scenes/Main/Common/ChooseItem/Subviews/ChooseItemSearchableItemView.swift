@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 enum ChooseItemSearchableItemViewState {
     case first, last, single, other

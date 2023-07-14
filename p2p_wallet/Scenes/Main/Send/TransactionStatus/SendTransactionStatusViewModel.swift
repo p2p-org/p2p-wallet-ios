@@ -1,6 +1,5 @@
 import Combine
 import FeeRelayerSwift
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import TransactionParser

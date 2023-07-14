@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 25.11.2022.
 //
 
-import KeyAppUI
 import Send
 import SwiftUI
 

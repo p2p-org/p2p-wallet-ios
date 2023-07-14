@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 07.10.2022.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct SolendUserDepositItem: Hashable {

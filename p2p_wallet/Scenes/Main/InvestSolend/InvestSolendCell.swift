@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 15.09.2022.
 //
 
-import KeyAppUI
 import Solend
 import SwiftUI
 

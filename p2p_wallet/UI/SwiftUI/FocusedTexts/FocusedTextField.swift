@@ -1,6 +1,5 @@
 import SwiftUI
 import UIKit
-import KeyAppUI
 
 struct FocusedTextField<T: UITextField>: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool

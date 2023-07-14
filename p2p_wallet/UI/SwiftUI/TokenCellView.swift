@@ -5,7 +5,6 @@
 //  Created by Ivan on 05.08.2022.
 //
 
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 

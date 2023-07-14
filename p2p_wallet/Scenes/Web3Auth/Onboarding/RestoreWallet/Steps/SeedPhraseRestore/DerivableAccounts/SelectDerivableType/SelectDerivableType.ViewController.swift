@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import SolanaSwift
 import UIKit
 

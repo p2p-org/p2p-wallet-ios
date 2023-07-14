@@ -1,6 +1,5 @@
 import SwiftUI
 import Kingfisher
-import KeyAppUI
 import SolanaSwift
 
 struct TransactionDetailIconView: View {

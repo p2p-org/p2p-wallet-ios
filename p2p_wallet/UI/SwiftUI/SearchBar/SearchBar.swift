@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import KeyAppUI
 
 struct SearchBar: View {
     let placeholder: String

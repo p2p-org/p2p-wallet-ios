@@ -6,7 +6,6 @@
 //
 
 import Combine
-import KeyAppUI
 import UIKit
 
 final class CustomTabBar: UITabBar {

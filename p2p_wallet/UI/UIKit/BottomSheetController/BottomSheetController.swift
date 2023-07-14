@@ -1,6 +1,5 @@
 import UIKit
 import SwiftUI
-import KeyAppUI
 
 struct ModalView<Content: View>: View {
     let content: Content

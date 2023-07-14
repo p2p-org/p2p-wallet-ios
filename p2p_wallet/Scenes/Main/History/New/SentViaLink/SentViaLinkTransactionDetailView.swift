@@ -8,7 +8,6 @@
 import AnalyticsManager
 import SwiftUI
 import Combine
-import KeyAppUI
 import Resolver
 import Send
 

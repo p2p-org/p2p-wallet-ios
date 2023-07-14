@@ -6,7 +6,6 @@
 //
 
 import Combine
-import KeyAppUI
 import Resolver
 import Send
 import SolanaSwift

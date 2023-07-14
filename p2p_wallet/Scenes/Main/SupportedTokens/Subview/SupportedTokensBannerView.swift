@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 08.03.2023.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct SupportedTokensBannerView: View {

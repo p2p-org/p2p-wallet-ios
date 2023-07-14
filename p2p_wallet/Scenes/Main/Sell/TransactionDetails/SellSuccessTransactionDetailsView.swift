@@ -7,7 +7,6 @@
 
 import Combine
 import SwiftUI
-import KeyAppUI
 
 struct SellSuccessTransactionDetailsView: View {
     let model: Model

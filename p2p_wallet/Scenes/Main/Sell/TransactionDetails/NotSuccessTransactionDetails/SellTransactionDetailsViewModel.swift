@@ -3,7 +3,6 @@ import Combine
 import Foundation
 import Resolver
 import Sell
-import KeyAppUI
 
 final class SellTransactionDetailsViewModel: ObservableObject {
 

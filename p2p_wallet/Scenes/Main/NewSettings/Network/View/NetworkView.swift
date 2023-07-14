@@ -5,7 +5,6 @@
 //  Created by Ivan on 31.08.2022.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct NetworkView: View {

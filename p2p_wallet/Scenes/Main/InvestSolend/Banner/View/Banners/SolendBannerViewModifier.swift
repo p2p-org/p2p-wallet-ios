@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import KeyAppUI
 
 struct SolendBannerViewModifier: ViewModifier {
     let backgroundColor: Color

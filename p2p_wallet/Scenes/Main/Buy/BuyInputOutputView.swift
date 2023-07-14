@@ -1,10 +1,3 @@
-//
-//  BuyInputOutputView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 05.09.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 

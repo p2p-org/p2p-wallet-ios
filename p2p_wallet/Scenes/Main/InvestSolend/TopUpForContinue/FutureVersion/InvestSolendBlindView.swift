@@ -5,7 +5,6 @@
 //  Created by Ivan on 27.09.2022.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct InvestSolendBlindView: View {

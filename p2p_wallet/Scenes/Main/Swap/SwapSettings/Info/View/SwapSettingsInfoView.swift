@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 import SkeletonUI
 
 struct SwapSettingsInfoView: View {

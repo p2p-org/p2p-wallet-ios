@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SwiftUI
-import KeyAppUI
 
 struct AmountTextField: UIViewRepresentable {
 

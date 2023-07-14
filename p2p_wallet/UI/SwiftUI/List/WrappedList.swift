@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct WrappedList<Content: View>: View {
     @ViewBuilder private let content: () -> Content

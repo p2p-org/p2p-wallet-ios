@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct ChooseItemSearchableItemLoadingView: View {
     var body: some View {

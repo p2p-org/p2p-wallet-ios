@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import KeyAppUI
 
 struct AlertIndicatorView: View {
     let fillColor: Color

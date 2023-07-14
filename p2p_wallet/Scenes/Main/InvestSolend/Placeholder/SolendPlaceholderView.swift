@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct SolendPlaceholderView: View {
     let texts: [String] = [

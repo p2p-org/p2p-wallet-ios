@@ -1,6 +1,5 @@
 import Foundation
 import Resolver
-import KeyAppUI
 import SolanaSwift
 import UIKit
 import BEPureLayout

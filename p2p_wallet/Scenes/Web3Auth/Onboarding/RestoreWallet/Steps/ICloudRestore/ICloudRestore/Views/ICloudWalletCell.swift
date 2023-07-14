@@ -1,10 +1,3 @@
-//
-//  ICloudWalletCell.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 18.08.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 

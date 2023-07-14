@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import KeyAppUI
 
 struct SettingsRowView<Leading: View>: View {
     

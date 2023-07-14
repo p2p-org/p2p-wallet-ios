@@ -8,7 +8,6 @@
 import AnalyticsManager
 import Combine
 import Intercom
-import KeyAppUI
 import Onboarding
 import Resolver
 import Sell

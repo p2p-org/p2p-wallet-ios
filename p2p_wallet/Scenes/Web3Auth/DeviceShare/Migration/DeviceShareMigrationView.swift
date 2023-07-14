@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 16.06.2023.
 //
 
-import KeyAppUI
 import Onboarding
 import SwiftUI
 

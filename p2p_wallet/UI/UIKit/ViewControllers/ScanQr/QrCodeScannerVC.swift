@@ -1,7 +1,6 @@
 import AnalyticsManager
 import AVFoundation
 import Foundation
-import KeyAppUI
 import PureLayout
 import Resolver
 import UIKit

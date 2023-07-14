@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 import SolanaSwift
 
 struct ChooseItemView<Content: View>: View {

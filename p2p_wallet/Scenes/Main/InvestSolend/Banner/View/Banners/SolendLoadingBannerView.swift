@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import KeyAppUI
 
 struct SolendLoadingBannerView: View {
     var body: some View {

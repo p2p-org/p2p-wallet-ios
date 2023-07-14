@@ -1,7 +1,6 @@
 import AnalyticsManager
 import SwiftUI
 import Combine
-import KeyAppUI
 import Resolver
 
 struct SentViaLinkHistoryView: View {

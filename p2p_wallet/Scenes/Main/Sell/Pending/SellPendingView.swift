@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import KeyAppUI
 import Sell
 
 struct SellPendingView: View {

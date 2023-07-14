@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 05.10.2022.
 //
 
-import KeyAppUI
 import SwiftUI
 
 struct SolendBalanceBannerView: View {

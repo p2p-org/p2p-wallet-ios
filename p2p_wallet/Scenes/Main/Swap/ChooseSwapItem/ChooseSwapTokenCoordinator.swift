@@ -1,7 +1,6 @@
 import Combine
 import SolanaSwift
 import SwiftUI
-import KeyAppUI
 
 final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     private let subject = PassthroughSubject<SwapToken?, Never>()

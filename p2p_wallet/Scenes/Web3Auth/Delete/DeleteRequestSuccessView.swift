@@ -1,10 +1,3 @@
-//
-//  DeleteRequestSuccess.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.11.2022.
-//
-
 import SwiftUI
 import KeyAppUI
 

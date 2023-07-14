@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import KeyAppUI
 
 struct TransactionProcessView: View {
     @Binding private var state: TransactionProcessView.Status

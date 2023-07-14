@@ -2,7 +2,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults

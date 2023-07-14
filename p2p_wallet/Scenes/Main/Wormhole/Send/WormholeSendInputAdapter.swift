@@ -1,7 +1,6 @@
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import Send
 import Wormhole
 
