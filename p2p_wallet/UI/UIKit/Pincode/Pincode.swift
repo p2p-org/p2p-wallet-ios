@@ -12,17 +12,17 @@ struct PincodeStateColor {
     let tapped: UIColor
 }
 
-public final class PinCode: BEView {
+final class PinCode: BEView {
     // MARK: - Properties
 
-    public var stackViewSpacing: CGFloat = 10 {
+    var stackViewSpacing: CGFloat = 10 {
         didSet {
             stackView.spacing = stackViewSpacing
         }
     }
 
     /// Put an delay after failure and reset, default is nil (no reset after failure)
-    public var resetingDelayInSeconds: Int?
+    var resetingDelayInSeconds: Int?
 
     /// Correct pincode for comparision, if not defined, the validation will always returns true
     private let correctPincode: String?
@@ -43,9 +43,9 @@ public final class PinCode: BEView {
     // MARK: - Callbacks
 
     /// onSuccess, return newPincode if needed
-    public var onSuccess: ((String?) -> Void)?
-    public var onFailed: (() -> Void)?
-    public var onFailedAndExceededMaxAttemps: (() -> Void)?
+    var onSuccess: ((String?) -> Void)?
+    var onFailed: (() -> Void)?
+    var onFailedAndExceededMaxAttemps: (() -> Void)?
 
     // MARK: - Subviews
 
@@ -63,7 +63,7 @@ public final class PinCode: BEView {
     let errorLabel = UILabel(
         textSize: 13,
         weight: .semibold,
-        textColor: Asset.Colors.rose.color,
+        textColor: UIColor(resource: .rose),
         numberOfLines: 0,
         textAlignment: .center
     )
@@ -72,7 +72,7 @@ public final class PinCode: BEView {
 
     // MARK: - Initializer
 
-    public init(correctPincode: String? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
+    init(correctPincode: String? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
         self.bottomLeftButton = bottomLeftButton
@@ -81,7 +81,7 @@ public final class PinCode: BEView {
 
     // MARK: - Methods
 
-    override public func commonInit() {
+    override func commonInit() {
         super.commonInit()
         // stack view
         addSubview(stackView)
@@ -104,12 +104,12 @@ public final class PinCode: BEView {
 
     // MARK: - Public methods
 
-    public func reset() {
+    func reset() {
         attemptsCount = 0
         currentPincode = nil
     }
 
-    public func setBlock(_ isBlocked: Bool) {
+    func setBlock(_ isBlocked: Bool) {
         numpadView.isUserInteractionEnabled = !isBlocked
     }
 

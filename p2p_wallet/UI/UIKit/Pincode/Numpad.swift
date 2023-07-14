@@ -5,18 +5,18 @@
 import BEPureLayout
 import Foundation
 
-public class NumpadView: BEView {
+class NumpadView: BEView {
     // MARK: - Constants
 
     private let buttonSize: CGFloat = 68
     private let spacing = 42.adaptiveHeight
     private let vSpacing = 12.adaptiveHeight
-    private let deleteButtonColor = PincodeStateColor(normal: Asset.Colors.night.color, tapped: Asset.Colors.night.color.withAlphaComponent(0.65))
+    private let deleteButtonColor = PincodeStateColor(normal: UIColor(resource: .night), tapped: UIColor(resource: .night).withAlphaComponent(0.65))
 
     // MARK: - Callback
 
-    public var didChooseNumber: ((Int) -> Void)?
-    public var didTapDelete: (() -> Void)?
+    var didChooseNumber: ((Int) -> Void)?
+    var didTapDelete: (() -> Void)?
 
     // MARK: - Subviews
 
@@ -36,13 +36,13 @@ public class NumpadView: BEView {
     private lazy var deleteButton = UIImageView(
         width: buttonSize,
         height: buttonSize,
-        image: Asset.Icons.remove.image,
+        image: UIImage(resource: .remove),
         contentMode: .center,
         tintColor: deleteButtonColor.normal
     )
     .onLongTap(self, action: #selector(deleteButtonDidTap), minimumPressDuration: 0)
 
-    public init(bottomLeftButton: UIView? = nil) {
+    init(bottomLeftButton: UIView? = nil) {
         self.bottomLeftButton = bottomLeftButton
         super.init(frame: .zero)
         configureForAutoLayout()
@@ -50,7 +50,7 @@ public class NumpadView: BEView {
 
     // MARK: - Methods
 
-    override public func commonInit() {
+    override func commonInit() {
         super.commonInit()
         let stackView = UIStackView(axis: .vertical, spacing: vSpacing, alignment: .fill, distribution: .equalSpacing)
 

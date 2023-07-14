@@ -9,8 +9,8 @@ class NumpadButton: BEView {
     // MARK: - Constant
 
     private let textSize: CGFloat = 32
-    private let customBgColor = PincodeStateColor(normal: .clear, tapped: Asset.Colors.night.color)
-    private let textColor = PincodeStateColor(normal: Asset.Colors.night.color, tapped: Asset.Colors.snow.color)
+    private let customBgColor = PincodeStateColor(normal: .clear, tapped: UIColor(resource: .night))
+    private let textColor = PincodeStateColor(normal: UIColor(resource: .night), tapped: UIColor(resource: .snow))
 
     // MARK: - Subviews
 

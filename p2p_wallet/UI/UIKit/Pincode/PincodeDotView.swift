@@ -13,13 +13,13 @@ class PinCodeDotsView: BEView {
     private let padding: UIEdgeInsets = .init(x: 13.adaptiveHeight, y: 8.adaptiveHeight)
     
     /// Default color for dots
-    private let defaultColor = Asset.Colors.night.color.withAlphaComponent(0.3)
+    private let defaultColor = UIColor(resource: .night).withAlphaComponent(0.3)
     /// Color for highlight state
-    private let highlightColor = Asset.Colors.night.color
+    private let highlightColor = UIColor(resource: .night)
     /// Color for error state
-    private let errorColor = Asset.Colors.rose.color
+    private let errorColor = UIColor(resource: .rose)
     /// Color for success state
-    private let successColor = Asset.Colors.mint.color
+    private let successColor = UIColor(resource: .mint)
 
     // MARK: - Properties
 
