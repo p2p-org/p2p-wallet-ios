@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct ChoosePhoneCodeView: View {
     @ObservedObject private var viewModel: ChoosePhoneCodeViewModel

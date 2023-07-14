@@ -3,7 +3,6 @@ import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
-import KeyAppUI
 import Resolver
 import Send
 import SolanaPricesAPIs

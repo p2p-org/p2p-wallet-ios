@@ -1,6 +1,5 @@
 import AnalyticsManager
 import Foundation
-import KeyAppUI
 import Resolver
 import UIKit
 import Combine

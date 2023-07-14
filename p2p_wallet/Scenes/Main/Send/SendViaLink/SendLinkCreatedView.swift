@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 private extension String {
     static let accessibilityTitleLabel = "SendLinkCreatedView.titleLabel"

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SocialSignInView: View {

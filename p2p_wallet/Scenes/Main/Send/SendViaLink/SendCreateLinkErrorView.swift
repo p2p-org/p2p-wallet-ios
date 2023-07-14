@@ -1,6 +1,5 @@
 import AnalyticsManager
 import SwiftUI
-import KeyAppUI
 import Resolver
 
 struct SendCreateLinkErrorView: View {

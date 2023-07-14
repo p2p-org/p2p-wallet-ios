@@ -1,5 +1,4 @@
 import History
-import KeyAppUI
 import SwiftUI
 
 struct NewHistoryView<Header: View>: View {

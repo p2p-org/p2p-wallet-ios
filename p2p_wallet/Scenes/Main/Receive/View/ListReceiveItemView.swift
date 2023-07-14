@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 /// Receive List row cell

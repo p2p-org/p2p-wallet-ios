@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 import Resolver
 
 struct DeleteMyAccountView: View {

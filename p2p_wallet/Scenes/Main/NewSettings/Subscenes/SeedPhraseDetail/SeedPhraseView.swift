@@ -1,5 +1,4 @@
 import CarPlay
-import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseView: View {

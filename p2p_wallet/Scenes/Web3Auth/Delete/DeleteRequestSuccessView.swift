@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct DeleteRequestSuccessView: View {
     var onDone: (() -> Void)?

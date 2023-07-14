@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 public struct ErrorView: View {

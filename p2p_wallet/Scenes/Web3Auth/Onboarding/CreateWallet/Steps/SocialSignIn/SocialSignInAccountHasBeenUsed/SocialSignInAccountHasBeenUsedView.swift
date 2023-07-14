@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import KeyAppUI
 import SwiftUI
 
 struct SocialSignInAccountHasBeenUsedView: View {
