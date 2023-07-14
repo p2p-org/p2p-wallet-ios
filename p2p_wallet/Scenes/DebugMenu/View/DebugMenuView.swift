@@ -40,10 +40,16 @@ struct DebugMenuView: View {
     var tokenService: some View {
         Section(header: Text("Token")) {
             DebugTextField(title: "Token:", content: $globalAppState.tokenEndpoint)
-            Button("Clear cache") {
+            Button("Clear token cache") {
                 let tokenService = Resolver.resolve(SolanaTokensService.self)
                 Task {
                     try await tokenService.reset()
+                }
+            }
+            Button("Clear price cache") {
+                let priceService = Resolver.resolve(PriceService.self)
+                Task {
+                    try await priceService.clear()
                 }
             }
         }

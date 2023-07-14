@@ -15,6 +15,8 @@ import SolanaSwift
 public protocol PriceService {
     func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
     func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
+    
+    func clear() async throws
 }
 
 /// This class service allow client to get exchange rate between token and fiat.
@@ -177,6 +179,10 @@ public class PriceServiceImpl: PriceService {
             value: parsedValue,
             token: token
         )
+    }
+    
+    public func clear() async throws {
+        database
     }
 }
 

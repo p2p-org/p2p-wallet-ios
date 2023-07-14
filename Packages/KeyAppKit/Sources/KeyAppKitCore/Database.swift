@@ -6,6 +6,8 @@ public protocol Database<Key, Value> {
 
     func read(for key: Key) async throws -> Value?
     func write(for key: Key, value: Value) async throws
+
+    func clear() async throws
 }
 
 /// Simple storable database
@@ -48,6 +50,11 @@ public actor StorableDatabase<Key: Codable & Hashable, Value: Codable & Hashable
     public func flush() async throws {
         let encodedData = try JSONEncoder().encode(data)
         try await storage.save(for: filePath, data: encodedData)
+    }
+
+    public func clear() async throws {
+        data = [:]
+        try await flush()
     }
 }
 
@@ -120,5 +127,10 @@ public actor LifetimeDatabase<Key: Codable & Hashable, Value: Codable & Hashable
     public func flush() async throws {
         let encodedData = try JSONEncoder().encode(data)
         try await storage.save(for: filePath, data: encodedData)
+    }
+
+    public func clear() async throws {
+        data = [:]
+        try await flush()
     }
 }
