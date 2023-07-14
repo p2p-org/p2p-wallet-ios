@@ -1,7 +1,7 @@
 import UIKit
 import BEPureLayout
 
-public class TextField: UITextField {
+public class TextField_Deprecated: UITextField {
     // Default padding
     let edgePadding: CGFloat = 16
 
@@ -41,14 +41,14 @@ public class TextField: UITextField {
     func placeholderView() -> UIView {
         UILabel(text: constantPlaceholder,
                 font: self.font,
-                textColor: Asset.Colors.night.color.withAlphaComponent(0.3)
+                textColor: UIColor(resource: .night).withAlphaComponent(0.3)
         )
             .bind(placeholderRef)
     }
 
     func placeholderCoverView() -> UIView {
         UIView().bind(coverViewRef).setup { vv in
-            vv.backgroundColor = Asset.Colors.rain.color
+            vv.backgroundColor = UIColor(resource: .rain)
             vv.isUserInteractionEnabled = false
         }
     }

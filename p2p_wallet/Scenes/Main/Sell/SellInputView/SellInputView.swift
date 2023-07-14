@@ -1,6 +1,5 @@
 import AnalyticsManager
 import SwiftUI
-import KeyAppUI
 import Combine
 import Resolver
 import SkeletonUI
@@ -222,7 +221,8 @@ struct SellInputView: View {
     func textField(value: Binding<Double?>, isFirstResponder: Binding<Bool>) -> DecimalTextField {
         DecimalTextField(
              value: value,
-             isFirstResponder: isFirstResponder
+             isFirstResponder: isFirstResponder,
+             textColor: .constant(.init(resource: .night))
          ) { textField in
              textField.font = .font(of: .largeTitle, weight: .regular)
              textField.keyboardType = .decimalPad

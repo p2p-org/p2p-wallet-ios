@@ -190,7 +190,7 @@ class PhoneTextField: BaseTextFieldView {
         textField?.textContentType = .telephoneNumber
         textField?.text = "+"
         textField?.font = UIFont.font(of: .title1, weight: .bold)
-        (textField as? TextField)?.onPaste = onPaste
+        (textField as? TextField_Deprecated)?.onPaste = onPaste
     }
 
     @available(*, unavailable)

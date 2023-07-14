@@ -23,14 +23,14 @@ public class UISeedPhrasesTextView: UITextView {
     private static let defaultTypingAttributes: [NSAttributedString.Key: Any] = {
         [
             .font: UIFont.font(of: .text3),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
             .paragraphStyle: defaultParagraphStyle
         ]
     }()
     
     private static let defaultIndexAttributes: [NSAttributedString.Key: Any] = {
         var attributes = defaultTypingAttributes
-        attributes[.foregroundColor] = Asset.Colors.mountain.color
+        attributes[.foregroundColor] = UIColor(resource: .mountain)
         attributes[.font] = UIFont.font(of: .text4)
         return attributes
     }()

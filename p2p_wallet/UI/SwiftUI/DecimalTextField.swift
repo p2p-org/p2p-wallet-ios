@@ -29,7 +29,7 @@ public struct DecimalTextField: UIViewRepresentable {
     public init(
         value: Binding<Double?>,
         isFirstResponder: Binding<Bool>,
-        textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
+        textColor: Binding<UIColor>,
         configuration: @escaping (UIDecimalTextField) -> Void = { _ in }
     ) {
         self.configuration = configuration

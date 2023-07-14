@@ -1,31 +1,31 @@
 import UIKit
 import BEPureLayout
 
-open class BaseTextFieldView: BECompositionView {
+class BaseTextFieldView: BECompositionView {
     
     // MARK: -
     
     private(set) var isBig = false
     
-    public var leftView: UIView? {
+    var leftView: UIView? {
         didSet {
             inputFieldRef.view?.leftView = leftView
         }
     }
     
-    public var leftViewMode: UITextField.ViewMode = .never {
+    var leftViewMode: UITextField.ViewMode = .never {
         didSet {
             textField?.leftViewMode = leftViewMode
         }
     }
     
-    public var rightView: UIView? {
+    var rightView: UIView? {
         didSet {
             inputFieldRef.view?.rightView = rightView
         }
     }
     
-    public var rightViewMode: UITextField.ViewMode = .never {
+    var rightViewMode: UITextField.ViewMode = .never {
         didSet {
             textField?.rightViewMode = rightViewMode
         }
@@ -34,34 +34,34 @@ open class BaseTextFieldView: BECompositionView {
     var topTipLabel = BERef<UILabel>()
     var bottomTipLabel = BERef<UILabel>()
     var container = BERef<UIView>()
-    var inputFieldRef = BERef<TextField>()
+    var inputFieldRef = BERef<TextField_Deprecated>()
     
-    public var textField: UITextField? {
+    var textField: UITextField? {
         return inputFieldRef.view
     }
     
     /// Set input text
-    public var text: String? {
+    var text: String? {
         didSet {
             inputFieldRef.text = text
         }
     }
     
     /// Set placeholder text
-    public var placeholder: String? {
+    var placeholder: String? {
         didSet {
             inputFieldRef.placeholder = placeholder
         }
     }
     
     /// Placeholder which doesn't disappear while typing
-    public var constantPlaceholder: String? {
+    var constantPlaceholder: String? {
         didSet {
             inputFieldRef.constantPlaceholder = constantPlaceholder
         }
     }
     
-    public var style: Style = .default {
+    var style: Style = .default {
         didSet {
             updateView()
         }
@@ -69,15 +69,15 @@ open class BaseTextFieldView: BECompositionView {
     
     // MARK: - Public
     
-    public func topTip(_ tip: String) {
+    func topTip(_ tip: String) {
         topTipLabel.view?.attributedText = .attributedString(
             with: tip,
             of: .label1,
             weight: .regular
-        ).withForegroundColor(Asset.Colors.mountain.color)
+        ).withForegroundColor(UIColor(resource: .mountain))
     }
     
-    public func bottomTip(_ tip: String) {
+    func bottomTip(_ tip: String) {
         bottomTipLabel.view?.attributedText = .attributedString(
             with: tip,
             of: .label1,
@@ -85,20 +85,20 @@ open class BaseTextFieldView: BECompositionView {
         ).withForegroundColor(bottomTipColor())
     }
     
-    public override func build() -> UIView {
+    override func build() -> UIView {
         BEVStack {
             UILabel().withAttributedText(
                 .attributedString(with: "", of: .label1, weight: .regular)
-                .withForegroundColor(Asset.Colors.mountain.color)
+                .withForegroundColor(UIColor(resource: .mountain))
             ).bind(topTipLabel).padding(.init(top: 0, left: 8, bottom: 6, right: 0))
             
             inputField.setup { input in
-                input.backgroundColor = Asset.Colors.rain.color
+                input.backgroundColor = UIColor(resource: .rain)
             }.box(cornerRadius: 12).bind(container)
             
             UILabel().withAttributedText(
                 .attributedString(with: "", of: .label1, weight: .regular)
-                .withForegroundColor(Asset.Colors.mountain.color)
+                .withForegroundColor(UIColor(resource: .mountain))
             ).bind(bottomTipLabel).padding(.init(top: 5, left: 8, bottom: 0, right: 0))
         }
     }
@@ -107,14 +107,14 @@ open class BaseTextFieldView: BECompositionView {
     
     private var inputField: UIView {
         BEVStack {
-            TextField(
-                backgroundColor: Asset.Colors.rain.color,
+            TextField_Deprecated(
+                backgroundColor: UIColor(resource: .rain),
                 font: UIFont.monospaceFont(of: .title1, weight: .bold),
-                textColor: Asset.Colors.night.color,
+                textColor: UIColor(resource: .night),
                 textAlignment: .left,
                 keyboardType: .default,
                 placeholder: "",
-                placeholderTextColor: Asset.Colors.night.color.withAlphaComponent(0.3)
+                placeholderTextColor: UIColor(resource: .night).withAlphaComponent(0.3)
             ).bind(inputFieldRef).frame(height: isBig ? 58 : 46).setup { input in
                 input.constantPlaceholder = constantPlaceholder
                 input.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -128,7 +128,7 @@ open class BaseTextFieldView: BECompositionView {
     
     // MARK: -
     
-    public init(leftView: UIView? = nil, rightView: UIView? = nil, isBig: Bool = false) {
+    init(leftView: UIView? = nil, rightView: UIView? = nil, isBig: Bool = false) {
         self.leftView = leftView
         self.inputFieldRef.view?.leftView = self.leftView
         self.rightView = rightView
@@ -138,7 +138,7 @@ open class BaseTextFieldView: BECompositionView {
         updateView()
     }
     
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -156,11 +156,11 @@ open class BaseTextFieldView: BECompositionView {
     private func bottomTipColor() -> UIColor {
         switch style {
         case .default:
-            return Asset.Colors.mountain.color
+            return UIColor(resource: .mountain)
         case .error:
-            return Asset.Colors.rose.color
+            return UIColor(resource: .rose)
         case .success:
-            return Asset.Colors.mint.color
+            return UIColor(resource: .mint)
         }
     }
     
@@ -169,15 +169,15 @@ open class BaseTextFieldView: BECompositionView {
         case .default:
             return UIColor.clear
         case .error:
-            return Asset.Colors.rose.color
+            return UIColor(resource: .rose)
         case .success:
-            return Asset.Colors.mint.color
+            return UIColor(resource: .mint)
         }
     }
     
     // MARK: -
     
-    public enum Style: CaseIterable {
+    enum Style: CaseIterable {
         case `default`
         case success
         case error

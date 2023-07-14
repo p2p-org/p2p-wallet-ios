@@ -39,6 +39,6 @@ public struct IndeterminateProgressBar: View {
 
 struct IndeterminateProgressBar_Previews: PreviewProvider {
     static var previews: some View {
-        IndeterminateProgressBar(indicatorColor: Color(Asset.Colors.night.color))
+        IndeterminateProgressBar(indicatorColor: Color(.night))
     }
 }
