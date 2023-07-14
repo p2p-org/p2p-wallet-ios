@@ -11,7 +11,7 @@ struct ICloudWalletCell: View {
             action()
         }, label: {
             HStack {
-                Image(uiImage: Asset.MaterialIcon.accountBalanceWalletOutlined.image)
+                Image(.accountBalanceWalletOutlined)
                     .aspectRatio(1, contentMode: .fit)
                     .foregroundColor(Color(.mountain))
                     .frame(width: 48, height: 48)
@@ -46,7 +46,7 @@ struct ICloudWalletCell: View {
                 }
 
                 Spacer()
-                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                Image(.chevronRight)
                     .foregroundColor(Color(.mountain))
                     .padding(.trailing, 14)
             }

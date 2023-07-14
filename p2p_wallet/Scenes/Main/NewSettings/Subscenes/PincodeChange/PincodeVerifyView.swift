@@ -65,7 +65,7 @@ struct PincodeVerifyView: View {
                 Button {
                     helpSubject.send()
                 } label: {
-                    Image(uiImage: Asset.MaterialIcon.helpOutline.image)
+                    Image(.helpOutline)
                 }
             }
         }

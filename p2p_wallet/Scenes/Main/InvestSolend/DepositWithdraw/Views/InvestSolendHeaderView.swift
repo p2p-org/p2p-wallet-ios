@@ -46,7 +46,7 @@ struct InvestSolendHeaderView: View {
                 }
             }
             if showDisclosure {
-                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                Image(.chevronRight)
                     .foregroundColor(Color(.night))
                     .padding(.trailing, -8)
                     .padding(.leading, -4)

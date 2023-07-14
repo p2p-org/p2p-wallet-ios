@@ -33,7 +33,7 @@ struct ChoosePhoneCodeItemView: View {
             }
             Spacer()
             if isSelected {
-                Image(uiImage: Asset.MaterialIcon.checkmark.image.withRenderingMode(.alwaysOriginal))
+                Image(.checkmarkBlueOriginal)
                     .frame(width: 14.3, height: 14.19)
             }
             

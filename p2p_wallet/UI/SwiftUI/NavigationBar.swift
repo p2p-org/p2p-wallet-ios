@@ -9,7 +9,7 @@ extension View {
                     leading: onBack != nil ? Button(
                         action: { onBack?() },
                         label: {
-                            Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
+                            Image(.arrowBackIos)
                                 .foregroundColor(Color(.night))
                         }
                     ) : nil

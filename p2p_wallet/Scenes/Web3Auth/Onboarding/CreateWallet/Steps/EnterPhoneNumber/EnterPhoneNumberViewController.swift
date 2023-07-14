@@ -120,7 +120,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheNumberToContinue
-            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? UIImage(resource: .arrowForward) : nil
         }.store(in: &store)
 
         viewModel.$isLoading.sink { [weak self] isLoading in
@@ -140,7 +140,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         // Right button
         let infoButton = UIButton()
         infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+        infoButton.setImage(.init(resource: .helpOutline), for: .normal)
         infoButton.contentMode = .scaleAspectFill
         infoButton.tintColor = .init(resource: .night)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
@@ -149,7 +149,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
     private func addLeftButton() {
         guard viewModel.isBackAvailable else { return }
         let backButton = UIBarButtonItem(
-            image: Asset.MaterialIcon.arrowBackIos.image,
+            image: .init(resource: .arrowBackIos),
             style: .plain,
             target: self,
             action: #selector(onBack)

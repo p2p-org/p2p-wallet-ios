@@ -70,7 +70,7 @@ struct SendInputTokenView: View {
                     .skeleton(with: skeleton, size: .init(width: 70, height: 20))
 
                 if isChangeEnabled {
-                    Image(uiImage: Asset.MaterialIcon.expandMore.image)
+                    Image(.expandMore)
                         .renderingMode(.template)
                         .foregroundColor(mainColor)
                         .frame(width: 24, height: 24)

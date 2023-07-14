@@ -19,7 +19,7 @@ struct DerivableAccountsCardView: View {
 
             Spacer()
 
-            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+            Image(.chevronRight)
                 .renderingMode(.template)
                 .foregroundColor(Color(.mountain))
                 .frame(width: 20, height: 25)

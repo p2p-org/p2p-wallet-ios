@@ -55,7 +55,7 @@ extension StartView {
                     title: L10n.createANewWallet,
                     style: .inverted,
                     size: .large,
-                    trailing: Asset.MaterialIcon.arrowForward.image
+                    trailing: UIImage(resource: .arrowForward)
                 ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                     .styled()
 

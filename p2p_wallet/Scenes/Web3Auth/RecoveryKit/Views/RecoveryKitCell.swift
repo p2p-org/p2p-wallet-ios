@@ -15,7 +15,7 @@ struct RecoveryKitCell: View {
                     .fontWeight(.semibold)
                     .apply(style: .text2)
                 Spacer()
-                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                Image(.chevronRight)
             }.padding(.horizontal, 16)
         }
         .frame(height: 55)

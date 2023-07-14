@@ -89,7 +89,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 title: L10n.enterTheCodeToContinue,
                 style: .primary,
                 size: .large,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                trailing: UIImage(resource: .arrowForward)
             ).bind(continueButtonRef)
         }.padding(.init(only: .bottom, inset: 18))
     }
@@ -116,7 +116,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheCodeToContinue
-            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? UIImage(resource: .arrowForward) : nil
         }.store(in: &store)
 
         if let textField = smsInputRef.view?.textField {
@@ -160,7 +160,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     func configureNavBar() {
         // Left button
         let backButton = UIBarButtonItem(
-            image: Asset.MaterialIcon.arrowBackIos.image,
+            image: .init(resource: .arrowBackIos),
             style: .plain,
             target: self,
             action: #selector(onBack)
@@ -172,7 +172,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             // Right button
             let infoButton = UIButton()
             infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-            infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+            infoButton.setImage(.init(resource: .helpOutline), for: .normal)
             infoButton.contentMode = .scaleAspectFill
             infoButton.tintColor = .init(resource: .night)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)

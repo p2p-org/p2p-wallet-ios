@@ -13,14 +13,14 @@ extension View {
                 leading: onBack != nil ? Button(
                     action: { onBack?() },
                     label: {
-                        Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
+                        Image(.arrowBackIos)
                             .foregroundColor(Color(.night))
                     }
                 ) : nil,
                 trailing: onInfo != nil ? Button(
                     action: { onInfo?() },
                     label: {
-                        Image(uiImage: Asset.MaterialIcon.helpOutline.image)
+                        Image(.helpOutline)
                             .foregroundColor(Color(.night))
                     }
                 ) : nil

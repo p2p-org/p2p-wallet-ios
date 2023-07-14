@@ -248,7 +248,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                         .apply(style: .text3)
                         .accessibilityIdentifier("BuyView.total")
                         .foregroundColor(Color(.mountain))
-                    Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                    Image(.chevronRight)
                         .foregroundColor(Color(.mountain))
                 }
             }

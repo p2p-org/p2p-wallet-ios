@@ -142,7 +142,7 @@ final class PincodeViewController: BaseViewController {
         guard viewModel.isBackAvailable else { return }
         guard navigationController != nil else {
             let closeButton = UIButton(width: 43, height: 43)
-            closeButton.setImage(Asset.MaterialIcon.arrowBackIos.image, for: .normal)
+            closeButton.setImage(.init(resource: .arrowBackIos), for: .normal)
             closeButton.tintColor = .init(resource: .night)
             closeButton.onTap { [weak self] in
                 self?.close()
@@ -152,7 +152,7 @@ final class PincodeViewController: BaseViewController {
             return
         }
         let backButton = UIBarButtonItem(
-            image: Asset.MaterialIcon.arrowBackIos.image,
+            image: .init(resource: .arrowBackIos),
             style: .plain,
             target: self,
             action: #selector(onBack)
@@ -168,7 +168,7 @@ final class PincodeViewController: BaseViewController {
     private func addRightButton() {
         let infoButton = UIButton()
         infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
-        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+        infoButton.setImage(.init(resource: .helpOutline), for: .normal)
         infoButton.contentMode = .scaleAspectFill
         if navigationController != nil {
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)

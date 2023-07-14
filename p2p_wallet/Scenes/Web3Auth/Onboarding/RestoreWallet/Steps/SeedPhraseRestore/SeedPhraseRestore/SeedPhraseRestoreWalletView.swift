@@ -27,7 +27,7 @@ struct SeedPhraseRestoreWalletView: View {
                 title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
                 style: .primary,
                 size: .large,
-                trailing: viewModel.canContinue ? Asset.MaterialIcon.arrowForward.image : nil
+                trailing: viewModel.canContinue ? UIImage(resource: .arrowForward) : nil
             ) { [weak viewModel] in viewModel?.continueButtonTapped() }
                 .frame(height: 56)
                 .disabled(!viewModel.canContinue)
@@ -81,7 +81,7 @@ struct SeedPhraseRestoreWalletView: View {
 
     var pasteButton: some View {
         HStack {
-            Image(uiImage: Asset.MaterialIcon.copy.image)
+            Image(.copy)
                 .resizable()
                 .frame(width: 16, height: 16)
                 .foregroundColor(.black)
@@ -104,7 +104,7 @@ struct SeedPhraseRestoreWalletView: View {
             Text(L10n.clear)
                 .font(uiFont: UIFont.font(of: .text4))
                 .foregroundColor(.black)
-            Image(uiImage: Asset.MaterialIcon.clear.image)
+            Image(.clear)
                 .resizable()
                 .frame(width: 16, height: 16)
                 .foregroundColor(.black)

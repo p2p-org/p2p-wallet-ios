@@ -76,7 +76,7 @@ struct ForgetPinView: View {
             ZStack {
                 Circle()
                     .fill(Color(.rain))
-                Image(uiImage: Asset.MaterialIcon.close.image)
+                Image(.close)
                     .resizable()
                     .foregroundColor(Color(.mountain))
                     .frame(width: 16, height: 16)

@@ -131,7 +131,7 @@ struct RecoveryKitView: View {
         Button {
             viewModel.openHelp()
         } label: {
-            Image(uiImage: Asset.MaterialIcon.helpOutline.image)
+            Image(.helpOutline)
                 .frame(width: 30, height: 30)
                 .padding(.top, 20)
                 .padding(.trailing, 20)

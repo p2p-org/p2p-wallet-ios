@@ -1,7 +1,6 @@
 import Combine
 import SolanaSwift
 import SwiftUI
-import KeyAppUI
 
 final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
     private let subject = PassthroughSubject<Wallet?, Never>()
@@ -29,7 +28,7 @@ final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
         controller.title = L10n.pickAToken
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Asset.MaterialIcon.close.image, style: .plain, target: self, action: #selector(closeButtonTapped))
+        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: .init(resource: .close), style: .plain, target: self, action: #selector(closeButtonTapped))
         parentController.present(navigationController, animated: true)
 
         controller.onClose = { [weak self] in

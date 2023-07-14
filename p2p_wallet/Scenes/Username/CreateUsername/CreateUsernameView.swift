@@ -120,7 +120,7 @@ private extension CreateUsernameView {
                 .padding(.horizontal, 6)
 
             Button(action: viewModel.clearUsername.send) {
-                Image(uiImage: Asset.MaterialIcon.clear.image)
+                Image(.clear)
                     .accentColor(mainColor)
             }
             .frame(width: 16, height: 16)

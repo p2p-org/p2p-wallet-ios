@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 enum BuyInputOutputActiveSide {
@@ -101,7 +100,7 @@ struct BuyInputOutputView: View {
                     .foregroundColor(Color(.night).opacity(0.3))
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 8)
-                Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
+                Image(.arrowDropDown)
                     .frame(width: 7, height: 4)
                     .foregroundColor(Color(.night))
             }
