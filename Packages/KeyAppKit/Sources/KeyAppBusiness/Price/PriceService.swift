@@ -66,29 +66,31 @@ public class PriceServiceImpl: PriceService {
             }
         }
 
-        // Request missing prices
-        let newPrices = try await fetchTokenPrice(tokens: missingPriceTokenMints, fiat: fiat)
+        if !missingPriceTokenMints.isEmpty {
+            // Request missing prices
+            let newPrices = try await fetchTokenPrice(tokens: missingPriceTokenMints, fiat: fiat)
 
-        // Process missing token prices
-        for token in missingPriceTokenMints {
-            let token = token.asSomeToken
+            // Process missing token prices
+            for token in missingPriceTokenMints {
+                let token = token.asSomeToken
 
-            let price = newPrices[token]
+                let price = newPrices[token]
 
-            if let price {
-                let record = TokenPriceRecord.requested(price)
+                if let price {
+                    let record = TokenPriceRecord.requested(price)
 
-                result[token] = record
-                try? await database.write(for: token.id, value: record)
-            } else {
-                let record = TokenPriceRecord.requested(nil)
+                    result[token] = record
+                    try? await database.write(for: token.id, value: record)
+                } else {
+                    let record = TokenPriceRecord.requested(nil)
 
-                result[token] = record
-                try? await database.write(for: token.id, value: record)
+                    result[token] = record
+                    try? await database.write(for: token.id, value: record)
+                }
             }
-        }
 
-        try? await database.flush()
+            try? await database.flush()
+        }
 
         // Transform values of TokenPriceRecord? to TokenPrice?
         return result
