@@ -1,4 +1,3 @@
-import KeyAppUI
 import Kingfisher
 import SolanaSwift
 import SwiftUI

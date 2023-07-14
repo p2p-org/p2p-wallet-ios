@@ -1,5 +1,4 @@
 import KeyAppKitCore
-import KeyAppUI
 import SwiftUI
 import Wormhole
 

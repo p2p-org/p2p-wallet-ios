@@ -2,7 +2,6 @@ import AuthenticationServices
 import BEPureLayout
 import Combine
 import Foundation
-import KeyAppUI
 
 class SocialSignInTryAgainViewController: BaseViewController {
     let viewModel: SocialSignInTryAgainViewModel

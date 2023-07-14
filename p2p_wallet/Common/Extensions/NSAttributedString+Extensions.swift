@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public extension NSAttributedString {
+extension NSAttributedString {
     
     func withForegroundColor(_ color: UIColor) -> NSAttributedString {
         let string = NSMutableAttributedString(attributedString: self)
@@ -9,4 +9,13 @@ public extension NSAttributedString {
         return string
     }
     
+}
+
+extension String {
+    
+    func widthOfString(usingFont font: UIFont) -> CGFloat {
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let size = (self as NSString).size(withAttributes: fontAttributes)
+        return size.width
+    }
 }

@@ -1,5 +1,4 @@
 import SwiftUI
-import KeyAppUI
 
 struct SlippageSettingsView: View {
     @StateObject private var viewModel: SlippageSettingsViewModel
