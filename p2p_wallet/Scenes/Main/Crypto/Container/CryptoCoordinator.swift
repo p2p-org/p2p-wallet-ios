@@ -42,6 +42,8 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     
     // MARK: - Dependencies
     
+    @Injected private var analyticsManager: AnalyticsManager
+    
     // MARK: - Properties
     
     /// Navigation controller that handle the navigation stack
@@ -88,11 +90,33 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     private func navigate(to scene: CryptoNavigation) -> AnyPublisher<CryptoResult, Never> {
         switch scene {
-//        case .detail:
-//            let coordinator = CryptoDetailCoordinator()
-//            return coordinate(to: coordinator)
-//                .map {_ in ()}
-//                .eraseToAnyPublisher()
+        case .receive(_):
+            if available(.ethAddressEnabled) {
+                let coordinator = SupportedTokensCoordinator(
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                return coordinate(to: coordinator)
+                    .eraseToAnyPublisher()
+            } else {
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                return coordinate(to: coordinator).eraseToAnyPublisher()
+            }
+        case .swap:
+//            analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+            return coordinate(
+                to: JupiterSwapCoordinator(
+                    navigationController: navigationController,
+                    params: JupiterSwapParameters(
+                        dismissAfterCompletion: true,
+                        openKeyboardOnStart: true,
+                        source: .actionPanel
+                    )
+                )
+            )
+            .eraseToAnyPublisher()
         default:
             return Just(())
                 .eraseToAnyPublisher()

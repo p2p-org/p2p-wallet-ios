@@ -37,11 +37,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
         
         super.init()
         
-        if sellDataService.isAvailable {
-            actions = [.buy, .receive, .send, .cashOut]
-        } else {
-            actions = [.buy, .receive, .send]
-        }
+        actions = [.receive, .swap]
         
         bind()
     }
@@ -67,14 +63,9 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
             else { return }
             navigation.send(.receive(publicKey: pubkey))
-        case .buy:
-            navigation.send(.buy)
-        case .send:
-            navigation.send(.send)
         case .swap:
             navigation.send(.swap)
-        case .cashOut:
-            navigation.send(.cashOut)
+        default: break
         }
     }
 }

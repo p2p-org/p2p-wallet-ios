@@ -147,8 +147,10 @@ struct CryptoAccountsView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
-            .listStyle(.plain)
-            .frame(height: CGFloat(itemsCount) * 72)
+        .listStyle(.plain)
+        .cornerRadius(16)
+        .padding(.horizontal, 16)
+        .frame(height: CGFloat(itemsCount) * 72)
     }
 }
 
