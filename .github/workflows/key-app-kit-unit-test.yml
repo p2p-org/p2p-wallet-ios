@@ -18,7 +18,17 @@ jobs:
       - name: Run unit tests
         working-directory: ./Packages/KeyAppKit
         run: |
-          xcodebuild -scheme KeyAppKit-Package test -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" -parallel-testing-worker-count 3 -parallel-testing-enabled YES -enableCodeCoverage YES -resultBundlePath TestResults
+          xcodebuild \
+            -scheme KeyAppKit-Package \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" \
+            -parallel-testing-worker-count 3 \
+            -parallel-testing-enabled YES \
+            -resultBundlePath TestResults \
+            test \
+            | bundle exec xcpretty
+
+# xcodebuild -scheme KeyAppKit-Package test -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" -parallel-testing-worker-count 3 -parallel-testing-enabled YES -enableCodeCoverage YES -resultBundlePath TestResults
 #          swift test --enable-code-coverage
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
