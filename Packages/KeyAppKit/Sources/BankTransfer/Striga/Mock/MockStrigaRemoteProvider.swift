@@ -166,4 +166,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     ) async throws -> StrigaWhitelistAddressResponse {
         fatalError()
     }
+
+    public func exchangeRates() async throws -> StrigaExchangeRatesResponse {
+        return ["USDCEUR": StrigaExchangeRates(price: "0.9", buy: "0.9", sell: "0.88", timestamp: Int(Date().timeIntervalSince1970), currency: "Euros")]
+    }
 }
