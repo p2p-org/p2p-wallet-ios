@@ -110,6 +110,11 @@ let package = Package(
             name: "Jupiter",
             targets: ["Jupiter"]
         ),
+
+        .library(
+            name: "KeyAppStateMachine",
+            targets: ["KeyAppStateMachine"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
@@ -372,6 +377,17 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
+        
+        // StateMachine
+        .target(
+            name: "KeyAppStateMachine"
+        ),
+        
+        .testTarget(
+            name: "KeyAppStateMachineTests",
+            dependencies: ["KeyAppStateMachine"],
+            path: "Tests/UnitTests/KeyAppStateMachineTests"
+        )
     ]
 )
 
