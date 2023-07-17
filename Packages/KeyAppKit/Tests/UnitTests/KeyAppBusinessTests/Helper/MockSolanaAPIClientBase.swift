@@ -194,9 +194,9 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         fatalError()
     }
 
-    func getMultipleAccounts<T>(pubkeys _: [String],
+    func getMultipleAccounts<T>(pubkeys: [String],
                                 commitment _: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?]
     where T: SolanaSwift.BufferLayout {
-        fatalError()
+        pubkeys.map { _ in nil }
     }
 }

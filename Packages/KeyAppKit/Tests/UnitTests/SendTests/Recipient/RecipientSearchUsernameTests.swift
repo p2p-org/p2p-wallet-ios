@@ -5,12 +5,12 @@
 import Foundation
 import KeyAppKitCore
 import NameService
-@testable import Send
 import SolanaSwift
 import XCTest
+@testable import Send
 
 class RecipientSearchUsernameTests: XCTestCase {
-    let defaultInitialWalletEnvs: UserWalletEnvironments = .init(
+    let defaultInitialWalletEnvs: RecipientSearchConfig = .init(
         wallets: [
             SolanaAccount(
                 pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
@@ -29,8 +29,8 @@ class RecipientSearchUsernameTests: XCTestCase {
             ),
         ],
         ethereumAccount: nil,
-        exchangeRate: [:],
-        tokens: [.nativeSolana, .usdc, .usdt]
+        tokens: Dictionary(uniqueKeysWithValues: [.nativeSolana, .usdc, .usdt].map { ($0.address, $0) }),
+        ethereumSearch: true
     )
 
     let defaultSolanaClient: SolanaAPIClient = JSONRPCAPIClient(
@@ -68,7 +68,7 @@ class RecipientSearchUsernameTests: XCTestCase {
 
         let result = await service.search(
             input: "kirill",
-            env: defaultInitialWalletEnvs,
+            config: defaultInitialWalletEnvs,
             preChosenToken: nil
         )
 
@@ -120,7 +120,7 @@ class RecipientSearchUsernameTests: XCTestCase {
 
         let result = await service.search(
             input: "kirill",
-            env: defaultInitialWalletEnvs,
+            config: defaultInitialWalletEnvs,
             preChosenToken: nil
         )
 
@@ -160,7 +160,7 @@ class RecipientSearchUsernameTests: XCTestCase {
 
         let result = await service.search(
             input: "kirill",
-            env: defaultInitialWalletEnvs,
+            config: defaultInitialWalletEnvs,
             preChosenToken: nil
         )
 

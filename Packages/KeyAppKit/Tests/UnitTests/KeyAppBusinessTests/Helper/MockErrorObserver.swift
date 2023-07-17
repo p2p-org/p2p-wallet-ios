@@ -16,12 +16,4 @@ struct MockErrorObservable: ErrorObserver {
     func handleError(_ error: Error, config _: KeyAppKitCore.ErrorObserverConfig?) {
         print(error)
     }
-    
-    func handleError(_ error: Error, config: KeyAppKitCore.ErrorObserverConfig?) {
-        print(error)
-    }
-    
-    func handleError(_ error: Error, userInfo: [String : Any]?) {
-        print(error)
-    }
 }

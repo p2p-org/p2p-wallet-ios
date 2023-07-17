@@ -55,6 +55,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     public init(
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
+        realtimeSolanaAccountService: RealtimeSolanaAccountService? = nil,
         tokensService: SolanaTokensService,
         priceService: PriceService,
         fiat: String,
@@ -89,7 +90,9 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .store(in: &subscriptions)
 
         // Setup realtime service
-        if let owner = accountStorage.account?.publicKey.base58EncodedString {
+        if let realtimeSolanaAccountService {
+            realtimeService = realtimeSolanaAccountService
+        } else if let owner = accountStorage.account?.publicKey.base58EncodedString {
             realtimeService = RealtimeSolanaAccountServiceImpl(
                 owner: owner,
                 apiClient: solanaAPIClient,

@@ -10,7 +10,7 @@ final class PriceServiceTests: XCTestCase {
         let api = MockKeyAppTokenProvider()
         let priceService = PriceServiceImpl(api: api, errorObserver: MockErrorObservable(), lifetime: 10)
 
-        api.getTokensPriceResponse = [
+        api.tokensPriceResult = [
             .init(
                 chainId: "solana",
                 data: [
@@ -23,7 +23,7 @@ final class PriceServiceTests: XCTestCase {
         let immediatlyResult = try await priceService.getPrice(token: SolanaToken.nativeSolana, fiat: "usd")
         XCTAssertEqual(immediatlyResult?.value, 12.0, "The fetched value should correct.")
 
-        api.getTokensPriceResponse = [
+        api.tokensPriceResult = [
             .init(
                 chainId: "solana",
                 data: [
@@ -50,7 +50,7 @@ final class PriceServiceTests: XCTestCase {
             "The fetched value should be the same after 5 seconds because of caching."
         )
 
-        api.getTokensPriceResponse = []
+        api.tokensPriceResult = []
 
         // Test after 25 seconds
         try await Task.sleep(nanoseconds: 10_000_000_000)
@@ -101,20 +101,3 @@ final class PriceServiceTests: XCTestCase {
 //    }
 }
 
-final class MockKeyAppTokenProvider: KeyAppTokenProvider {
-    var getTokensPriceResponse: [KeyAppBusiness.KeyAppTokenProviderData.GetPriceInfoResult] = []
-
-    func getTokensInfo(
-        _: KeyAppBusiness.KeyAppTokenProviderData.Params<KeyAppBusiness.KeyAppTokenProviderData.TokenQuery>
-    ) async throws -> [KeyAppBusiness.KeyAppTokenProviderData.GetTokenInfoResult] {
-        []
-    }
-
-    func getTokensPrice(
-        _: KeyAppBusiness.KeyAppTokenProviderData.Params<KeyAppBusiness.KeyAppTokenProviderData.TokenQuery>
-    ) async throws -> [KeyAppBusiness.KeyAppTokenProviderData.GetPriceInfoResult] {
-        getTokensPriceResponse
-    }
-
-    func getTokens() async throws {}
-}
