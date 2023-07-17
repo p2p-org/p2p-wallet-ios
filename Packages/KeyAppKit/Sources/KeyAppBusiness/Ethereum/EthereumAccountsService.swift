@@ -105,7 +105,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
             .store(in: &subscriptions)
 
         priceService
-            .synchronisation
+            .onChangePublisher
             .sink { [weak self] in
                 self?.fetchPrice(fiat: fiat)
             }

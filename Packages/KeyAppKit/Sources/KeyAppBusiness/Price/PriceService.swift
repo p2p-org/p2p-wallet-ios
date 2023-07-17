@@ -17,8 +17,10 @@ public protocol PriceService {
     func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
     func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
 
-    var synchronisation: AnyPublisher<Void, Never> { get }
+    /// Emit request event to fetch new price.
+    var onChangePublisher: AnyPublisher<Void, Never> { get }
 
+    /// Clear cache.
     func clear() async throws
 }
 
@@ -38,17 +40,20 @@ public class PriceServiceImpl: PriceService {
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
 
-    let synchronisationTimer: Timer.TimerPublisher = .init(interval: 60, runLoop: .main, mode: .default)
-    let synchronisationTrigger: PassthroughSubject<Void, Never> = .init()
+    /// The timer synchronisation
+    let timerPublisher: Timer.TimerPublisher = .init(interval: 60, runLoop: .main, mode: .default)
+    
+    ///
+    let triggerPublisher: PassthroughSubject<Void, Never> = .init()
 
-    public var synchronisation: AnyPublisher<Void, Never> {
+    public var onChangePublisher: AnyPublisher<Void, Never> {
         Publishers
             .Merge(
-                synchronisationTimer
+                timerPublisher
                     .autoconnect()
                     .map { _ in }
                     .eraseToAnyPublisher(),
-                synchronisationTrigger
+                triggerPublisher
                     .eraseToAnyPublisher()
             )
             .eraseToAnyPublisher()
@@ -66,13 +71,11 @@ public class PriceServiceImpl: PriceService {
     }
 
     public func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
-        print("Fetch price", Date(), tokens.count)
-
         var shouldSynchronise = false
 
         defer {
             if shouldSynchronise {
-                synchronisationTrigger.send()
+                triggerPublisher.send()
             }
         }
 

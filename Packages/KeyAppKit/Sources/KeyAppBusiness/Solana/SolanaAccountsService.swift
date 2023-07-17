@@ -167,7 +167,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .store(in: &subscriptions)
 
         priceService
-            .synchronisation
+            .onChangePublisher
             .sink { [weak self] in
                 self?.fetchPrice(fiat: fiat)
             }
