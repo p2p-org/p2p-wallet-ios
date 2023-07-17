@@ -17,7 +17,7 @@ struct CryptoAccountsAggregator: DataAggregator {
             ethereumAccounts: [RenderableEthereumAccount]
         )
     )
-    -> (primary: [any RenderableAccount], secondary: [any RenderableAccount]) {
+    -> (primary: [any RenderableAccount], secondary: [any RenderableAccount], transfers: [any RenderableAccount]) {
         let (solanaAccounts, ethereumAccounts) = input
 
         var mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
@@ -42,9 +42,17 @@ struct CryptoAccountsAggregator: DataAggregator {
             }
             return true
         }
+        
+        func commonFilter(account: any RenderableAccount) -> Bool {
+            if case .button = account.detail {
+                return false
+            }
+            return true
+        }
 
         let primaryAccounts = mergedAccounts
             .filter(primaryFilter)
+            .filter(commonFilter)
             .sorted { lhs, rhs in
                 guard
                     let lhsKey = lhs.sortingKey,
@@ -55,6 +63,7 @@ struct CryptoAccountsAggregator: DataAggregator {
             }
         let secondaryAccounts = mergedAccounts
             .filter { !primaryFilter(account: $0) }
+            .filter(commonFilter)
             .sorted { lhs, rhs in
                 guard
                     let lhsKey = lhs.sortingKey,
@@ -63,7 +72,9 @@ struct CryptoAccountsAggregator: DataAggregator {
                 
                 return lhsKey > rhsKey
             }
+        let transferAccounts = mergedAccounts
+            .filter { !commonFilter(account: $0) }
 
-        return (primaryAccounts, secondaryAccounts)
+        return (primaryAccounts, secondaryAccounts, transferAccounts)
     }
 }

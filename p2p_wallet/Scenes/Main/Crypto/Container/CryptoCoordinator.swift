@@ -125,6 +125,38 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             )
             .map { _ in () }
             .eraseToAnyPublisher()
+        case let .claim(account, userAction):
+            if let userAction, userAction.status == .processing {
+                return coordinate(to: TransactionDetailCoordinator(
+                    viewModel: .init(userAction: userAction),
+                    presentingViewController: self.navigationController
+                ))
+                .map { _ in () }
+                .eraseToAnyPublisher()
+            } else {
+                return coordinate(
+                    to: WormholeClaimCoordinator(
+                        account: account,
+                        presentation: SmartCoordinatorPushPresentation(navigationController)
+                    )
+                )
+                .handleEvents(receiveOutput: { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case let .claiming(pendingTrx):
+                        self.coordinate(
+                            to: TransactionDetailCoordinator(
+                                viewModel: .init(userAction: pendingTrx),
+                                presentingViewController: self.navigationController
+                            )
+                        )
+                        .sink { _ in }
+                        .store(in: &self.subscriptions)
+                    }
+                })
+                .map { _ in () }
+                .eraseToAnyPublisher()
+            }
         default:
             return Just(())
                 .eraseToAnyPublisher()

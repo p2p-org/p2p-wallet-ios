@@ -70,11 +70,19 @@ struct CryptoAccountsView: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if !viewModel.transferAccounts.isEmpty {
+                wrappedList(itemsCount: viewModel.transferAccounts.count) {
+                    ForEach(viewModel.transferAccounts, id: \.id) {
+                        tokenCell(rendableAccount: $0, isVisiable: true)
+                    }
+                }
+            }
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
                     tokenCell(rendableAccount: $0, isVisiable: true)
                 }
             }
+            .padding(.top, 12)
             if !viewModel.hiddenAccounts.isEmpty {
                 Button(
                     action: {

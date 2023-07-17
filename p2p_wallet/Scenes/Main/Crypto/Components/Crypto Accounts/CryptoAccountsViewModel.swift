@@ -36,8 +36,11 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
     
-    /// Secondary list accounts. Will be normally hidded and need to be manually action from user to show in view.
+    /// Secondary list accounts. Will be normally hidden and require manuall action from user to be shown.
     var hiddenAccounts: [any RenderableAccount] = []
+    
+    /// Accounts for claiming transfers.
+    var transferAccounts: [any RenderableAccount] = []
     
     // MARK: - Initialization
     
@@ -95,9 +98,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
                 homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
             }
             .receive(on: RunLoop.main)
-            .sink { primary, secondary in
+            .sink { primary, secondary, transfer in
                 self.accounts = primary
                 self.hiddenAccounts = secondary
+                self.transferAccounts = transfer
             }
             .store(in: &subscriptions)
     }
