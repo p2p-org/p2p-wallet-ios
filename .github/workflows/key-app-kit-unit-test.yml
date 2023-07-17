@@ -8,8 +8,13 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: key-app-kit-unit-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  run_key_app_kit_unit_test:
+
     runs-on: macos-latest
 
     steps:
