@@ -46,7 +46,6 @@ jobs:
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppNetworkingTests \
             -only-testing:KeyAppStateMachineTests \
-            -only-testing:SolanaPricesAPIsUnitTests \
             | bundle exec xcpretty
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
