@@ -47,7 +47,9 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
     private func bind() {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
+                let equityValue: Double = state.value
+                    .filter { !$0.data.isUSDC }
+                    .reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .receive(on: RunLoop.main)

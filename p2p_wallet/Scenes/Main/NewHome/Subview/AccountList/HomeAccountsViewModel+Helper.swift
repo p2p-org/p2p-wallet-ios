@@ -12,6 +12,10 @@ extension Wallet {
     var isNFTToken: Bool {
         (token.decimals == 0) || scamAddresses.contains(token.address)
     }
+    
+    var isUSDC: Bool {
+        Token.usdc.address.contains(token.address)
+    }
 }
 
 extension Wallet: Identifiable {

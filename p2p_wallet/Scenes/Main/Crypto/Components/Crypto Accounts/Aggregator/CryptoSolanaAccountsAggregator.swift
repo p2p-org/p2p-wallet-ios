@@ -25,7 +25,7 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
         let (accounts, favourites, ignores, hideZeroBalance) = input
 
         return accounts
-            .filter { !$0.data.isNFTToken }
+            .filter { !$0.data.isNFTToken && !$0.data.isUSDC }
             .sorted(by: Self.defaultSorter)
             .map { account in
                 var tags: AccountTags = []
