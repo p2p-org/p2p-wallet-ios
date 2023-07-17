@@ -41,7 +41,7 @@ class RecruitmentDispatcher: Dispatcher {
     func actionWillBeginDispatching(
         action: RecruitmentAction,
         currentState: RecruitmentState
-    ) async -> RecruitmentState {
+    ) async -> RecruitmentState? {
         switch action {
         case .submitApplication(let applicantName):
             return currentState.modified {
@@ -77,9 +77,9 @@ class RecruitmentDispatcher: Dispatcher {
     func actionDidEndDispatching(
         action: RecruitmentAction,
         currentState: RecruitmentState
-    ) async -> RecruitmentState {
+    ) async -> RecruitmentState? {
         // No additional state modifications in this example
-        currentState
+        return nil
     }
 }
 

@@ -121,15 +121,15 @@ public actor StateMachine<
     private nonisolated func performAction(action: Action) async {
         // Log
         logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
-        
-        // loading state whene action is about to be dispatched
-        stateSubject.send(
-            await dispatcher.actionWillBeginDispatching(
-                action: action,
-                currentState: currentState
-            )
-        )
-        
+
+        if let intermediateState = await dispatcher.actionWillBeginDispatching(
+            action: action,
+            currentState: currentState
+        ) {
+            // loading state whene action is about to be dispatched if it is needed
+            stateSubject.send(intermediateState)
+        }
+
         // check cancellation
         guard !Task.isCancelled else {
             logIfVerbose(message: "❌ Action cancelled: \(action)")
@@ -155,14 +155,14 @@ public actor StateMachine<
         
         // Log
         logIfVerbose(message: "✅ Action did end dispatching: \(action)")
-        
-        // additional state when action is dispatched
-        stateSubject.send(
-            await dispatcher.actionDidEndDispatching(
-                action: action,
-                currentState: currentState
-            )
-        )
+
+        if let endState = await dispatcher.actionDidEndDispatching(
+            action: action,
+            currentState: currentState
+        ) {
+            // additional state when action is dispatched if it is needed
+            stateSubject.send(endState)
+        }
     }
     
     /// Save current action
