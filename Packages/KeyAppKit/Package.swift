@@ -213,7 +213,11 @@ let package = Package(
         .target(
             name: "JSBridge"
         ),
-        .testTarget(name: "JSBridgeTests", dependencies: ["JSBridge"]),
+        .testTarget(
+            name: "JSBridgeTests", 
+            dependencies: ["JSBridge"],
+            path: "Tests/UnitTests/JSBridgeTests"
+        ),
 
         // Countries
         .target(
