@@ -11,70 +11,75 @@ import Web3
 import Wormhole
 
 struct CryptoAccountsAggregator: DataAggregator {
-    func transform(
-        input: (
-            solanaAccounts: [RenderableSolanaAccount],
-            ethereumAccounts: [RenderableEthereumAccount]
-        )
+    typealias Input = (
+        solanaAccounts: [RenderableSolanaAccount],
+        ethereumAccounts: [RenderableEthereumAccount]
     )
-    -> (primary: [any RenderableAccount], secondary: [any RenderableAccount], transfers: [any RenderableAccount]) {
-        let (solanaAccounts, ethereumAccounts) = input
-
-        var mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
-
-        // Filter hidden accounts
-        mergedAccounts = mergedAccounts.filter { account in
-            if account.tags.contains(.hidden) {
-                return false
-            }
-
-            return true
-        }
-
-        // Split into two groups
-        func primaryFilter(account: any RenderableAccount) -> Bool {
-            if account.tags.contains(.favourite) {
+    typealias Output = (
+        transfers: [any RenderableAccount],
+        primary: [any RenderableAccount],
+        secondary: [any RenderableAccount]
+    )
+    
+    func transform(input: Input) -> Output {
+        let (solanaAccounts, allEthereumAccounts) = input
+        
+        /// Claimable transfer accounts
+        let transferAccounts = allEthereumAccounts.filter { ethAccount in
+            switch ethAccount.status {
+            case .readyToClaim, .isClaiming:
                 return true
-            }
-
-            if account.tags.contains(.ignore) {
+            default:
                 return false
             }
-            return true
         }
         
-        func commonFilter(account: any RenderableAccount) -> Bool {
-            if case .button = account.detail {
-                return false
-            }
+        /// Ethereum accounts without claimable transfers
+        let filteredEthereumAccounts = allEthereumAccounts.filter { account in
+            return transferAccounts.contains(account)
+        }
+
+        var mergedNonTransferAccounts: [any RenderableAccount] = filteredEthereumAccounts + solanaAccounts
+
+        let primaryAccounts = mergedNonTransferAccounts
+            .filter(hiddenFilter)
+            .filter(primaryFilter)
+            .sorted(by: commonSort)
+        
+        let secondaryAccounts = mergedNonTransferAccounts
+            .filter(hiddenFilter)
+            .filter { !primaryFilter(account: $0) }
+            .sorted(by: commonSort)
+
+        return (transferAccounts, primaryAccounts, secondaryAccounts)
+    }
+    
+    // MARK: - Helpers
+    
+    // Filter out hidden accounts
+    func hiddenFilter(account: any RenderableAccount) -> Bool {
+        !account.tags.contains(.hidden)
+    }
+
+    // Split into two groups
+    func primaryFilter(account: any RenderableAccount) -> Bool {
+        if account.tags.contains(.favourite) {
             return true
         }
 
-        let primaryAccounts = mergedAccounts
-            .filter(primaryFilter)
-            .filter(commonFilter)
-            .sorted { lhs, rhs in
-                guard
-                    let lhsKey = lhs.sortingKey,
-                    let rhsKey = rhs.sortingKey
-                else { return false }
-                
-                return lhsKey > rhsKey
-            }
-        let secondaryAccounts = mergedAccounts
-            .filter { !primaryFilter(account: $0) }
-            .filter(commonFilter)
-            .sorted { lhs, rhs in
-                guard
-                    let lhsKey = lhs.sortingKey,
-                    let rhsKey = rhs.sortingKey
-                else { return false }
-                
-                return lhsKey > rhsKey
-            }
-        let transferAccounts = mergedAccounts
-            .filter { !commonFilter(account: $0) }
-
-        return (primaryAccounts, secondaryAccounts, transferAccounts)
+        if account.tags.contains(.ignore) {
+            return false
+        }
+        return true
+    }
+    
+    // Sort by sorting key
+    func commonSort(lhs: any RenderableAccount, rhs: any RenderableAccount) -> Bool {
+        guard
+            let lhsKey = lhs.sortingKey,
+            let rhsKey = rhs.sortingKey
+        else { return false }
+        
+        return lhsKey > rhsKey
     }
 }

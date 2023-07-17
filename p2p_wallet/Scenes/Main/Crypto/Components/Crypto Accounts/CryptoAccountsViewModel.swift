@@ -33,14 +33,14 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     
+    /// Accounts for claiming transfers.
+    var transferAccounts: [any RenderableAccount] = []
+    
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
     
     /// Secondary list accounts. Will be normally hidden and require manuall action from user to be shown.
     var hiddenAccounts: [any RenderableAccount] = []
-    
-    /// Accounts for claiming transfers.
-    var transferAccounts: [any RenderableAccount] = []
     
     // MARK: - Initialization
     
@@ -98,10 +98,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
                 homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
             }
             .receive(on: RunLoop.main)
-            .sink { primary, secondary, transfer in
+            .sink { transfer, primary, secondary in
+                self.transferAccounts = transfer
                 self.accounts = primary
                 self.hiddenAccounts = secondary
-                self.transferAccounts = transfer
             }
             .store(in: &subscriptions)
     }

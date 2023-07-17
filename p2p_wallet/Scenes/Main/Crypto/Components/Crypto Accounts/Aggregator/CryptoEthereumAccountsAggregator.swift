@@ -56,7 +56,7 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
 
                 } else {
                     // Claiming is running.
-                    status = .isClamming
+                    status = .isClaiming
                 }
 
                 return RenderableEthereumAccount(
