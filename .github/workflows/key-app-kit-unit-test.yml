@@ -1,57 +1,89 @@
-# name: Key app kit unit test
+name: Key app kit unit test
 
-# on:
-#     pull_request:
-#         branches: [ develop ]
-#         paths:
-#             - 'Packages/KeyAppKit/Sources/**/*'
-#             - 'Packages/KeyAppKit/Tests/**/*'
+on:
+  pull_request:
+    paths:
+      - 'Packages/KeyAppKit/Sources/**/*'
+      - 'Packages/KeyAppKit/Tests/**/*'
 
-# jobs:
-#     build:
-#         runs-on: [self-hosted, macOS]
-# #        runs-on: macos-12
-        
-#         steps:
-#             - uses: actions/checkout@v3
+  workflow_dispatch:
 
-#             - name: Run unit tests
-#               working-directory: ./Packages/KeyAppKit
-#               run: |
-#                 xcodebuild -scheme KeyAppKit-Package test -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" -parallel-testing-worker-count 3 -parallel-testing-enabled YES -enableCodeCoverage YES -resultBundlePath TestResults
-# #                swift test --enable-code-coverage
+concurrency:
+  group: key-app-kit-unit-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
-# #            - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
-# #              id: coverage-files
-#             - uses: TrGiLong/xcresulttool@fix-tests-is-not-interable
-#               with:
-#                 path: ./Packages/KeyAppKit/TestResults.xcresult
-#               if: success() || failure()
+jobs:
+  run_key_app_kit_unit_test:
+    name: Run KeyAppKit unit testing
+    runs-on: macos-13
+    env: 
+      XCODE_VERSION: "14.3.1"
+    steps:
 
-# #              with:
-# #                search-paths: |
-# #                  ./Packages/KeyAppKit/.build
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
 
-# #            - name: Test coverage
-# #              uses: maxep/spm-lcov-action@0.3.1
-# #              with:
-# #                output-file: ./coverage/lcov.info
-# #                target-name-filter: '(KeyAppBusiness|Wormhole|Moonpay)'
-# #
-# #            - name: Bot comment
-# #              uses: romeovs/lcov-reporter-action@v0.3.1
-# #              with:
-# #                  lcov-file: ${{fromJSON(steps.coverage-files.outputs.files)[0]}}
-# #                  filter-changed-files: true
+      - name: Install xcbeautify
+        run: |
+          brew install xcbeautify
 
-# #    - name: Convert to standard format
-# #      run: |
-# #        xcrun llvm-cov export -format="lcov" .build/debug/KeyAppKitPackageTests.xctest/Contents/MacOS/KeyAppKitPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
-# #    - uses: codecov/codecov-action@v3
-# #      with:
-# #          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-# #          files: ./info.lcov # optional
-# #          flags: unittests # optional
-# #          name: codecov-umbrella # optional
-# #          fail_ci_if_error: true # optional (default = false)
-# #          verbose: true # optional (default = false)
+      - uses: actions/checkout@v3
+
+      - name: Select XCode Version
+        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+      - name: Run unit tests
+        working-directory: ./Packages/KeyAppKit
+        run: |
+          xcodebuild test \
+            -scheme KeyAppKit-Package \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" \
+            -parallel-testing-worker-count 3 \
+            -parallel-testing-enabled YES \
+            -resultBundlePath TestResults \
+            -only-testing:CountriesAPIUnitTests \
+            -only-testing:JSBridgeTests \
+            -only-testing:KeyAppNetworkingTests \
+            -only-testing:KeyAppStateMachineTests \
+            | xcbeautify
+
+      # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
+      #   id: coverage-files
+
+      - uses: TrGiLong/xcresulttool@fix-tests-is-not-interable
+        with:
+          path: ./Packages/KeyAppKit/TestResults.xcresult
+        if: success() || failure()
+
+#              with:
+#                search-paths: |
+#                  ./Packages/KeyAppKit/.build
+
+#            - name: Test coverage
+#              uses: maxep/spm-lcov-action@0.3.1
+#              with:
+#                output-file: ./coverage/lcov.info
+#                target-name-filter: '(KeyAppBusiness|Wormhole|Moonpay)'
+#
+#            - name: Bot comment
+#              uses: romeovs/lcov-reporter-action@v0.3.1
+#              with:
+#                  lcov-file: ${{fromJSON(steps.coverage-files.outputs.files)[0]}}
+#                  filter-changed-files: true
+
+#    - name: Convert to standard format
+#      run: |
+#        xcrun llvm-cov export -format="lcov" .build/debug/KeyAppKitPackageTests.xctest/Contents/MacOS/KeyAppKitPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
+#    - uses: codecov/codecov-action@v3
+#      with:
+#          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+#          files: ./info.lcov # optional
+#          flags: unittests # optional
+#          name: codecov-umbrella # optional
+#          fail_ci_if_error: true # optional (default = false)
+#          verbose: true # optional (default = false)
