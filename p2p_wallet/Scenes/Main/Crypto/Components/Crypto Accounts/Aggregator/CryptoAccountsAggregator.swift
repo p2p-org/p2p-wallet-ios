@@ -36,10 +36,10 @@ struct CryptoAccountsAggregator: DataAggregator {
         
         /// Ethereum accounts without claimable transfers
         let filteredEthereumAccounts = allEthereumAccounts.filter { account in
-            return transferAccounts.contains(account)
+            return !transferAccounts.contains(account)
         }
 
-        var mergedNonTransferAccounts: [any RenderableAccount] = filteredEthereumAccounts + solanaAccounts
+        let mergedNonTransferAccounts: [any RenderableAccount] = filteredEthereumAccounts + solanaAccounts
 
         let primaryAccounts = mergedNonTransferAccounts
             .filter(hiddenFilter)
