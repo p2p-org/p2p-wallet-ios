@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "7147f6126e24ebf65f8c65e64afce5915c178c42",
-          "version": "3.6.5"
+          "revision": "9bc965a326df8d5115f0b7bb77f09c542b8ec417",
+          "version": "3.6.6"
         }
       },
       {
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "324bc65a28323660fad8a36a7a37f0c2c78eeb9a",
-          "version": "2.55.0"
+          "revision": "5f542894dd8efbd766d8adf73ef2f947b0cd5e21",
+          "version": "2.56.0"
         }
       },
       {
