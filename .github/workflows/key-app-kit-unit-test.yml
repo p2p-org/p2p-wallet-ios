@@ -25,7 +25,10 @@ jobs:
             -parallel-testing-worker-count 3 \
             -parallel-testing-enabled YES \
             -resultBundlePath TestResults \
+            -only-testing:CountriesAPIUnitTests \
+            -only-testing:JSBridgeTests \
             -only-testing:KeyAppNetworkingTests \
+            -only-testing:SolanaPricesAPIsUnitTests \
             | bundle exec xcpretty
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
