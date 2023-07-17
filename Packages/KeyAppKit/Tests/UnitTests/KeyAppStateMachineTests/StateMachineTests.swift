@@ -183,6 +183,61 @@ final class StateMachineTests: XCTestCase {
             sendingStatus: .completed
         ))
     }
+
+    func testAcceptNewActions_CancelingPreviousActionOrWaiting_ShouldPerformActionsCorrectly() async throws {
+        
+        // Accept an action and then immediately accept multiple new actions
+        Task.detached {
+            // first action
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+            
+            // second action, should cancel first action
+            self.dispatcher.newActionShouldCancelPreviousAction = true
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
+            
+            // third action, should not cancel second action
+            self.dispatcher.newActionShouldCancelPreviousAction = false
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Third"))
+            
+            // forth action, should cancel third action
+            self.dispatcher.newActionShouldCancelPreviousAction = true
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Fourth"))
+        }
+        
+        let states = try await collectResult(finishWhenReceiving: .init(
+            applicantName: "Napoleon The Fourth",
+            sendingStatus: .completed
+        ))
+        
+        // Verify the states are as expected
+        XCTAssertEqual(states.count, 7)
+        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[1], .init(
+            applicantName: "Napoleon The First",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[2], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[3], .init(
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
+        ))
+        XCTAssertEqual(states[4], .init(
+            applicantName: "Napoleon The Third",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[5], .init(
+            applicantName: "Napoleon The Fourth",
+            sendingStatus: .sending
+        ))
+        XCTAssertEqual(states[6], .init(
+            applicantName: "Napoleon The Fourth",
+            sendingStatus: .completed
+        ))
+    }
+
     
     // MARK: - Helpers
 
