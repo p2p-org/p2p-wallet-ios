@@ -1,15 +1,17 @@
+import AnalyticsManager
 import Combine
 import FeeRelayerSwift
+import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import SolanaSwift
 import TransactionParser
-import AnalyticsManager
-import Foundation
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var priceService: PriceService
 
@@ -17,7 +19,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     let errorMessageTap = PassthroughSubject<Void, Never>()
     let openDetails = PassthroughSubject<SendTransactionStatusDetailsParameters, Never>()
 
-    @Published var token: Token
+    @Published var token: SolanaToken
     @Published var title: String = L10n.transactionSubmitted
     @Published var subtitle: String = ""
     @Published var transactionFiatAmount: String
@@ -179,7 +181,27 @@ extension SendTransactionStatusViewModel {
 
 private extension SendTransactionStatusViewModel {
     func logSend(event: KeyAppAnalyticsEvent, signature: String) {
-        guard case let .sendNewConfirmButtonClick(sendFlow, token, max, amountToken, amountUSD, fee, fiatInput, _, pubKey) = event else { return }
-        analyticsManager.log(event: .sendNewConfirmButtonClick(sendFlow: sendFlow, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: pubKey))
+        guard case let .sendNewConfirmButtonClick(
+            sendFlow,
+            token,
+            max,
+            amountToken,
+            amountUSD,
+            fee,
+            fiatInput,
+            _,
+            pubKey
+        ) = event else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
+            sendFlow: sendFlow,
+            token: token,
+            max: max,
+            amountToken: amountToken,
+            amountUSD: amountUSD,
+            fee: fee,
+            fiatInput: fiatInput,
+            signature: signature,
+            pubKey: pubKey
+        ))
     }
 }

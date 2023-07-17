@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/amplitude/analytics-connector-ios.git",
       "state" : {
-        "revision" : "d3d682a26ca6f4947ece2c2e627971bb41b940fa",
-        "version" : "1.0.1"
+        "revision" : "d2f3ec4b022211a67d5d4509135d84359f7f8b8d",
+        "version" : "1.0.2"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AppsFlyerSDK/AppsFlyerFramework",
       "state" : {
-        "revision" : "aabfaf81d95e21f711850e87c60b9ef70b2bc6c4",
-        "version" : "6.9.2"
+        "revision" : "a8e607ae6fc19b1e26f440cadf0dac28fd4c81ac",
+        "version" : "6.12.0"
       }
     },
     {
@@ -163,12 +163,12 @@
       }
     },
     {
-      "identity" : "intercom-ios",
+      "identity" : "intercom-ios-sp",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/intercom/intercom-ios.git",
+      "location" : "https://github.com/intercom/intercom-ios-sp",
       "state" : {
-        "revision" : "7d1072dc39ebaf8af117b697730b6aaa834e5f48",
-        "version" : "12.4.3"
+        "revision" : "1031655ceb49a8c8975b0cb138fe3bed897d159e",
+        "version" : "15.0.3"
       }
     },
     {
@@ -358,24 +358,6 @@
       "state" : {
         "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
         "version" : "1.0.4"
-      }
-    },
-    {
-      "identity" : "swift-docc-plugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-docc-plugin",
-      "state" : {
-        "revision" : "9b1258905c21fc1b97bf03d1b4ca12c4ec4e5fda",
-        "version" : "1.2.0"
-      }
-    },
-    {
-      "identity" : "swift-docc-symbolkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-docc-symbolkit",
-      "state" : {
-        "revision" : "b45d1f2ed151d057b54504d653e0da5552844e34",
-        "version" : "1.0.0"
       }
     },
     {

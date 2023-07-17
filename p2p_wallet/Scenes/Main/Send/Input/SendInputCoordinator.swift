@@ -42,7 +42,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             recipient: recipient,
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
-            source: source,
+            flow: flow,
             allowSwitchingMainAmountType: allowSwitchingMainAmountType,
             sendViaLinkSeed: sendViaLinkSeed
         )

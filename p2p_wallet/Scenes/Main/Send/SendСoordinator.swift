@@ -33,7 +33,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     let hideTabBar: Bool
     let result = PassthroughSubject<SendResult, Never>()
 
-    private let source: SendSource
+    let flow: SendFlow
     let preChosenWallet: SolanaAccount?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?

@@ -81,7 +81,7 @@ public extension AsyncValueState where T: Sequence {
     }
 }
 
-public class AsyncValue<T> {
+open class AsyncValue<T> {
     public typealias Request = () async -> (T?, Error?)
     public typealias ThrowableRequest = () async throws -> T
 

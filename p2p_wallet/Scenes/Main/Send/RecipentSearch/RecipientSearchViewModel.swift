@@ -98,7 +98,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     init(
         preChosenWallet: SolanaAccount?,
-        source: SendSource,
+        flow: SendFlow,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve()
@@ -203,7 +203,9 @@ class RecipientSearchViewModel: ObservableObject {
         } else {
             isSearching = true
             searchTask = Task { [weak self] in
-                let result = await recipientSearchService.search(
+                guard let self else { return }
+                
+                let result = await self.recipientSearchService.search(
                     input: currentSearchTerm,
                     config: config,
                     preChosenToken: preChosenWallet?.token

@@ -368,7 +368,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         analyticsManager.log(event: .sendNewConfirmButtonClick(
             sendFlow: SendFlow.bridge.rawValue,
-            token: input.solanaAccount.data.token.symbol,
+            token: input.solanaAccount.token.symbol,
             max: wasMaxUsed,
             amountToken: Double(input.amount.amount.description) ?? 0,
             amountUSD: input.solanaAccount.price != nil ? (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 : 0.0,
