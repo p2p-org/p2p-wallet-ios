@@ -15,24 +15,6 @@ public protocol StrigaLocalProvider {
 
 public actor StrigaLocalProviderImpl {
 
-    private let registrationFile: URL = {
-        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        let cacheDirectoryPath = arrayPaths[0]
-        return cacheDirectoryPath.appendingPathComponent("/striga-registration.data")
-    }()
-
-    private let accountFile: URL = {
-        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        let cacheDirectoryPath = arrayPaths[0]
-        return cacheDirectoryPath.appendingPathComponent("/striga-account.data")
-    }()
-
-    private let whitelistedFile: URL = {
-        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        let cacheDirectoryPath = arrayPaths[0]
-        return cacheDirectoryPath.appendingPathComponent("/striga-whitelisted.data")
-    }()
-
     // MARK: - Initializer
 
     public init() {
@@ -58,33 +40,33 @@ public actor StrigaLocalProviderImpl {
 extension StrigaLocalProviderImpl: StrigaLocalProvider {
 
     public func getCachedRegistrationData() -> StrigaUserDetailsResponse? {
-        return get(from: registrationFile)
+        return get(from: cacheFileFor(.registration))
     }
 
     public func save(registrationData: StrigaUserDetailsResponse) async throws {
-        try await save(model: registrationData, in: registrationFile)
+        try await save(model: registrationData, in: cacheFileFor(.registration))
     }
 
     public func getCachedUserData() async -> UserData? {
-        return get(from: accountFile)
+        return get(from: cacheFileFor(.account))
     }
 
     public func save(userData: UserData) async throws {
-        try await save(model: userData, in: accountFile)
+        try await save(model: userData, in: cacheFileFor(.account))
     }
 
     public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
-        (get(from: whitelistedFile) ?? [])
+        (get(from: cacheFileFor(.whitelisted)) ?? [])
     }
 
     public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
-        try await save(model: whitelisted, in: whitelistedFile)
+        try await save(model: whitelisted, in: cacheFileFor(.whitelisted))
     }
 
     public func clear() {
-        try? FileManager.default.removeItem(at: registrationFile)
-        try? FileManager.default.removeItem(at: accountFile)
-        try? FileManager.default.removeItem(at: whitelistedFile)
+        for name in CacheFileName.allCases {
+            try? FileManager.default.removeItem(at: cacheFileFor(name))
+        }
     }
 
     // MARK: - Helpers
@@ -98,5 +80,20 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     private func save<T: Encodable>(model: T, in file: URL) async throws {
         let data = try JSONEncoder().encode(model)
         try data.write(to: file)
+    }
+
+    // Cache files
+
+    enum CacheFileName: String, CaseIterable {
+        case registration
+        case account
+        case whitelisted
+        case KYC
+    }
+
+    private func cacheFileFor(_ name: CacheFileName) -> URL {
+        let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        let cacheDirectoryPath = arrayPaths[0]
+        return cacheDirectoryPath.appendingPathComponent("/\(name).data")
     }
 }

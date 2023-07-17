@@ -19,6 +19,11 @@ public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: B
     public init(repository: Provider) {
         self.repository = repository
     }
+
+    // MARK: - Private
+
+    /// Used to cache last KYC status
+    private var cachedKYC: StrigaKYC? // It has StrigaKYCStatus type because it's used in BankTransferService protocol
 }
 
 extension BankTransferServiceImpl {
@@ -110,7 +115,14 @@ extension BankTransferServiceImpl {
 
     private func handleRegisteredUser(userId: String) async throws {
         // check kyc status
-        let kycStatus = try await repository.getKYCStatus()
+        var kycStatus: StrigaKYC
+        if let cachedKYC {
+            kycStatus = cachedKYC
+        } else {
+            kycStatus = try await repository.getKYCStatus()
+            // If status is approved -- cache response, ignore other fields
+            cachedKYC = kycStatus.status == .approved ? kycStatus : nil
+        }
         // get user details
         let registrationData = try await repository.getRegistrationData()
 
