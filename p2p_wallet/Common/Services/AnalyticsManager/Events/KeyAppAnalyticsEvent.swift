@@ -2,30 +2,9 @@ import AnalyticsManager
 import Foundation
 
 enum KeyAppAnalyticsEvent: AnalyticsEvent {
-    // MARK: - Onboarding
-
-    /// Event 32: The user sees the splash screen
-    case splashViewed
-
-    /// Event 33: The user swipes the slider on the splash screen once
-    case splashCreating
-
-    /// Event 34: The user presses the "I already have a wallet" button
-    case splashRestoring
 
     // MARK: - Create wallet
 
-    case createSeedInvoked
-    case backingUpCopying
-    case backingUpSaving
-    case backingUpRenewing
-    case usernameSkipped(usernameField: String)
-    case usernameSaved(lastScreen: String)
-    case usernameReserved
-    case createWalletTermsAndConditionsClick
-    case backingUpIcloud
-    case backingUpManually
-    case backingUpError
     case createPhoneClickButton
     case createSmsScreen
     case restorePhoneScreen
@@ -33,69 +12,50 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case restoreSmsScreen
     case restoreSmsValidation(result: Bool)
 
-    /// Event 49: The wallet was successfully created
-    case walletCreated(lastScreen: String)
-
-    /// Event 50: The wallet was successfully created
-    case walletRestored(lastScreen: String)
-
     // setup
-    case setupPinKeydown1
-    case setupPinKeydown2
     case setupOpen(fromPage: String)
-    case setupFaceidOpen
-    case bioApproved(lastScreen: String)
-    case bioRejected
-    case setupAllowPushOpen
-    case pushApprove
-    case setupFinishOpen
-    case setupFinishClick
-    case setupWelcomeBackOpen
-    // recovery
-    case recoveryOpen(fromPage: String)
-    case restoreManualInvoked
-    case restoreAppleInvoked
-    case recoveryEnterSeedOpen
-    case recoveryEnterSeedPaste
-    case recoveryEnterSeedKeydown
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
-    case recoveryDoneClick
     case recoveryDerivableAccountsOpen
+    
+    // MARK: - Tabbar
+
+    case mainSwap
+    case mainWallet
+    case mainHistory
+    case mainSettings
 
     // MARK: - Main
 
+    // Actions bar
+    case mainScreenBuyBar
+    case mainScreenReceiveBar
+    case mainScreenSendBar
+    case mainScreenSwapBar
+    case mainScreenCashOutBar
+
     case mainScreenWalletsOpen(isSellEnabled: Bool)
-    case mainScreenBuyOpen
     case mainCopyAddress
-    case mainScreenSendOpen
-    case mainScreenSwapOpen
-    case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)
-    case mainSwap(isSellEnabled: Bool)
+    case mainScreenHiddenTokens
 
-    // token_details
+    // MARK: - Tokens
+    // Action panel
+    case tokenScreenBuyBar
+    case tokenScreenReceiveBar
+    case tokenScreenSendBar
+    case tokenScreenSwapBar
+
+    // tap on transaction on a token screen
+    case tokenScreenTransaction(transactionId: String)
+
     case tokenDetailsOpen(tokenTicker: String)
-    case tokenDetailQrClick
-    case tokenDetailsBuyClick
-    case tokenReceiveViewed
-    case tokenDetailsSendClick
-    case tokenDetailsSwapClick
-    case tokenDetailsDetailsOpen
-    case tokenDetailsAddressCopy
-    case tokenDetailsActivityScroll(pageNum: Int)
 
     // MARK: - Receive
 
     case receiveViewed(fromPage: String)
-    case receiveNameCopy
-    case receiveAddressCopied
-    case receiveNameShare
-    case receiveWalletAddressCopy
-    case receiveUsercardShared
     case receiveQRSaved
-    case receiveViewingExplorer
     case receiveStartScreen
     case receiveTokenClick(tokenName: String)
     case receiveNetworkScreenOpen
@@ -104,50 +64,31 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case receiveCopyLongAddressClick(network: String)
     case receiveCopyAddressUsername
     case actionButtonReceive
+    case actionButtonBuy
 
     // MARK: - Send
 
-    case sendStartScreen
     case sendViewed(lastScreen: String)
-    case sendSelectTokenClick(tokenTicker: String)
-    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR)
-    case sendAmountKeydown(sum: Double)
-    case sendAvailableClick(sum: Double)
-    case sendAddressKeydown
-    case sendQR_Scanning
-    case sendSendClick(tokenTicker: String, sum: Double)
-    case sendExplorerClick(txStatus: String)
-    case sendRecipientScreen
-    case sendReviewScreen
-    case sendPaste
-    case sendFillingAddress
-    case sendApprovedScreen
     case actionButtonSend
     case sendNewConfirmButtonClick(
-        source: String,
+        sendFlow: String,
         token: String,
         max: Bool,
         amountToken: Double,
         amountUSD: Double,
         fee: Bool,
-        fiatInput: Bool
+        fiatInput: Bool,
+        signature: String,
+        pubKey: String?
     )
     // Bridges
     case sendBridgesScreenOpen
-    case sendBridgesConfirmButtonClick(
-        tokenName: String,
-        tokenValue: Double,
-        valueFiat: Double,
-        fee: Double
-    )
-    case sendClickChangeTokenChosen(source: String, sendFlow: String)
-    case sendClickChangeTokenValue(source: String)
-    case sendClickChangeTokenValue(source: String, sendFlow: String)
-    case sendStartScreenOpen(lastScreen: String)
+    case sendClickChangeTokenChosen(sendFlow: String)
+    case sendClickChangeTokenValue(sendFlow: String)
     case sendClickStartCreateLink
     case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
     case sendClickChangeTokenValue(tokenName: String, tokenValue: Double, sendFlow: String)
-    case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendClickCreateLink(sendFlow: String, tokenName: String, tokenValue: Double, pubkey: String)
     case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
     case sendClickShareLink
     case sendClickCopyLink
@@ -160,9 +101,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewRecipientAdd(type: String, source: String)
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
-    case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
-    case sendnewFreeTransactionClick(source: String, sendFlow: String)
+    case sendnewInputScreen(sendFlow: String)
+    case sendnewTokenInputClick(tokenName: String, sendFlow: String)
+    case sendnewFreeTransactionClick(sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
     // MARK: - Swap
@@ -170,67 +111,13 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapViewed(lastScreen: String)
     case swapChangingTokenA(tokenA_Name: String)
     case swapChangingTokenB(tokenB_Name: String)
-    case swapTokenAAmountKeydown(sum: Double)
-    case swapTokenBAmountKeydown(sum: Double)
-    case swapAvailableClick(sum: Double)
-    case swapReversing
-    case swapShowingSettings
-    case swapSlippageClick
-    case swapPayNetworkFeeWithClick
-    case swapSwapFeesClick
-    case swapSlippageKeydown(slippage: Double)
-    case swapTryAgainClick(error: String)
     case swapStartScreen
-    case swapClickReviewButton
     case actionButtonSwap
-    case swapExplorerClick(txStatus: String)
 
-    // #131
-    case swapUserConfirmed(
-        tokenA_Name: String,
-        tokenB_Name: String,
-        swapSum: Double,
-        swapMAX: Bool,
-        swapUSD: Double,
-        priceSlippage: Double,
-        feesSource: String
-    )
-
-    // #132
-    case swapStarted(
-        tokenA_Name: String,
-        tokenB_Name: String,
-        swapSum: Double,
-        swapMAX: Bool,
-        swapUSD: Double,
-        priceSlippage: Double,
-        feesSource: String
-    )
-
-    // #133
-    case swapApprovedByNetwork(
-        tokenA_Name: String,
-        tokenB_Name: String,
-        swapSum: Double,
-        swapMAX: Bool,
-        swapUSD: Double,
-        priceSlippage: Double,
-        feesSource: String
-    )
-
-    // #134
-    case swapCompleted(
-        tokenA_Name: String,
-        tokenB_Name: String,
-        swapSum: Double,
-        swapMAX: Bool,
-        swapUSD: Double,
-        priceSlippage: Double,
-        feesSource: String
-    )
     case swapClickApproveButton
 
     // MARK: - Jupiter swap
+
     case swapStartScreenNew(lastScreen: String, from: String, to: String)
     case swapChangingTokenAClick(tokenAName: String)
     case swapChangingTokenBClick(tokenBName: String)
@@ -253,13 +140,14 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapTransactionProgressScreenDone
     case swapErrorDefault(isBlockchainRelated: Bool)
     case swapErrorSlippage
-    // Swap settings
 
+    // Swap settings
     case swapSettingsClick
     case swapSettingsFeeClick(feeName: String)
     case swapSettingsSlippage(slippageLevelPercent: Double)
     case swapSettingsSlippageCustom(slippageLevelPercent: Double)
     case swapSettingsSwappingThroughChoice(variant: String)
+
     // MARK: - Scan QR
 
     case scanQrSuccess
@@ -272,14 +160,18 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case settingsBackupOpen
     case settingsLanguageSelected(language: String)
     case settingsSecuritySelected(faceId: Bool)
+    
+    case settingsSupportClick
+    case settingsRecoveryClick
+    case settingsPinClick
+    case settingsNetworkClick
+    case settingsFaceidClick
+    case settingsLogOut
 
     case networkChanging(networkName: String)
     case signedOut
-    case signOut
 
     // choose token
-    case tokenListViewed(lastScreen: String, tokenListLocation: String)
-    case tokenListSearching(searchString: String)
     case tokenChosen(tokenName: String)
 
     // Buy
@@ -332,14 +224,15 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case creationPhoneScreen
     case createSmsValidation(result: Bool)
     case createConfirmPin(result: Bool)
+    case createConfirmPinScreenOpened
+    case createConfirmPinFirstClick
+    case restoreConfirmPinScreenOpened
+    case restoreConfirmPinFirstClick
     case usernameCreationScreen
     case usernameCreationButton(result: Bool)
     case restoreSeed
     case onboardingMerged
     case login
-
-    // RenBTC
-    case renbtcCreation(result: String)
     
     // PhoneScreen
     case creationLoginScreen
@@ -349,15 +242,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
 
     case startDeleteAccount
     case confirmDeleteAccount
-
-    // MARK: - Action
-
-    case actionPanelSendToken(tokenName: String)
-    case actionPanelSwapToken(tokenName: String)
-
-    // MARK: - QR
-    
-    case QR_Share
 
     // MARK: - Seed
 
@@ -400,4 +284,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case claimClickEnd
     case claimErrorAlreadyClaimed
     case claimErrorDefaultReject
+
+    // MARK: - Transaction
+
+    case transactionBlockchainLinkClick
 }

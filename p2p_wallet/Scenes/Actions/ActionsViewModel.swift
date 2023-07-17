@@ -75,19 +75,18 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
 
         action.sink(receiveValue: { [unowned self] actionType in
             switch actionType {
-            case .buy, .topUp:
+            case .buy:
+                analyticsManager.log(event: .actionButtonBuy)
+            case .topUp:
                 break
             case .receive:
                 analyticsManager.log(event: .actionButtonReceive)
-                analyticsManager.log(event: .mainScreenReceiveOpen)
                 analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
             case .swap:
                 analyticsManager.log(event: .actionButtonSwap)
-                analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
             case .send:
                 analyticsManager.log(event: .actionButtonSend)
-                analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
             case .cashOut:
                 analyticsManager.log(event: .sellClicked(source: "Action_Panel"))

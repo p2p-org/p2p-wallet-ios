@@ -69,6 +69,9 @@ struct ReceiveView: View {
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             }
         }
+        .onTapGesture {
+            viewModel.qrTapped()
+        }
     }
 
     var list: some View {

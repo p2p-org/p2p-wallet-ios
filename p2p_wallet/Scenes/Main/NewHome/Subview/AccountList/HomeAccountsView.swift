@@ -80,6 +80,7 @@ struct HomeAccountsView: View {
             if !viewModel.hiddenAccounts.isEmpty {
                 Button(
                     action: {
+                        viewModel.hiddenTokensTapped()
                         let generator = UIImpactFeedbackGenerator(style: .light)
                         generator.impactOccurred()
                         withAnimation {

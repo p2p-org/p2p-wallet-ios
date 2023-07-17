@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import History
@@ -19,6 +20,7 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var analyticsManager: AnalyticsManager
 
     @Published var rendableTransaction: any RenderableTransactionDetail
 
@@ -108,6 +110,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     func explore() {
+        analyticsManager.log(event: .transactionBlockchainLinkClick)
         guard let url = URL(string: rendableTransaction.url ?? "")
         else { return }
         action.send(.open(url))

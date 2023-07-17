@@ -17,7 +17,7 @@ final class TabBarViewModel {
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
-    
+
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -33,7 +33,6 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
-        
         listenDidBecomeActiveForDeeplinks()
     }
 

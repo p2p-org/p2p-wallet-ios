@@ -260,14 +260,19 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case .receive:
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
             else { return }
+            analyticsManager.log(event: .mainScreenReceiveBar)
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
+            analyticsManager.log(event: .mainScreenBuyBar)
             navigation.send(.buy)
         case .send:
+            analyticsManager.log(event: .mainScreenSendBar)
             navigation.send(.send)
         case .swap:
+            analyticsManager.log(event: .mainScreenSwapBar)
             navigation.send(.swap)
         case .cashOut:
+            analyticsManager.log(event: .mainScreenCashOutBar)
             navigation.send(.cashOut)
         case .topUp:
             navigation.send(.topUp)
@@ -290,6 +295,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
         smallBanner = nil
         shouldCloseBanner = false
+    }
+
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 
