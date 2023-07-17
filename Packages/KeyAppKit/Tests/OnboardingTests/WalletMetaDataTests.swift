@@ -10,9 +10,9 @@ import XCTest
 
 final class WalletMetaDataTests: XCTestCase {
     func testMerge1() throws {
-        let past5SecondsAgo = Date() - 5
-        let past15SecondsAgo = Date() - 15
-        let current = Date()
+        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
+        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
+        let current = UInt64(Date().timeIntervalSince1970)
 
         let local = WalletMetaData(
             ethPublic: "123",
@@ -53,9 +53,9 @@ final class WalletMetaDataTests: XCTestCase {
     }
     
     func testMerge2() throws {
-        let past5SecondsAgo = Date() - 5
-        let past15SecondsAgo = Date() - 15
-        let current = Date()
+        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
+        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
+        let current = UInt64(Date().timeIntervalSince1970)
 
         let local = WalletMetaData(
             ethPublic: "123",
@@ -98,9 +98,9 @@ final class WalletMetaDataTests: XCTestCase {
     }
     
     func testMergeTwoDifferentMetadata() throws {
-        let past5SecondsAgo = Date() - 5
-        let past15SecondsAgo = Date() - 15
-        let current = Date()
+        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
+        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
+        let current = UInt64(Date().timeIntervalSince1970)
 
         let local = WalletMetaData(
             ethPublic: "123",
