@@ -16,8 +16,8 @@ final class SolanaAccountsServiceTests: XCTestCase {
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),
             priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
-            accountObservableService: MockSolanaAccountsObservableService(),
             fiat: "usd",
+            proxyConfiguration: .init(address: "", port: 1),
             errorObservable: MockErrorObservable()
         )
 
@@ -38,15 +38,14 @@ final class SolanaAccountsServiceTests: XCTestCase {
     func testMonitoringByObservableService() async throws {
         let accountStorage = MockAccountStorage()
         let solanaAPIClient = MockSolanaAPIClient()
-        let observableService = MockSolanaAccountsObservableService()
 
         let service = SolanaAccountsService(
             accountStorage: accountStorage,
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),
             priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
-            accountObservableService: observableService,
             fiat: "usd",
+            proxyConfiguration: .init(address: "", port: 1),
             errorObservable: MockErrorObservable()
         )
 
@@ -58,8 +57,6 @@ final class SolanaAccountsServiceTests: XCTestCase {
         XCTAssertEqual(service.state.value.nativeWallet?.data.lamports, 0)
 
         solanaAPIClient.balance = 5000
-
-        observableService.allAccountsNotificcationsSubject.send(.init(pubkey: accountStorage.account!.publicKey.base58EncodedString, lamports: 5000))
 
         // After 2 second
         try await Task.sleep(nanoseconds: 1000000000)
@@ -95,12 +92,12 @@ private struct MockSolanaTokensRepository: SolanaTokensRepository {
     }
 }
 
-private struct MockSolanaAccountsObservableService: SolanaAccountsObservableService {
-    var isConnected: Bool = true
-
-    func subscribeAccountNotification(account: String) async throws {}
-
-    var allAccountsNotificcationsSubject: PassthroughSubject<SolanaAccountEvent, Never> = .init()
-
-    var allAccountsNotificcationsPublisher: AnyPublisher<SolanaAccountEvent, Never> { allAccountsNotificcationsSubject.eraseToAnyPublisher() }
-}
+//private struct MockSolanaAccountsObservableService: SolanaAccountsObservableService {
+//    var isConnected: Bool = true
+//
+//    func subscribeAccountNotification(account: String) async throws {}
+//
+//    var allAccountsNotificcationsSubject: PassthroughSubject<SolanaAccountEvent, Never> = .init()
+//
+//    var allAccountsNotificcationsPublisher: AnyPublisher<SolanaAccountEvent, Never> { allAccountsNotificcationsSubject.eraseToAnyPublisher() }
+//}
