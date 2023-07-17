@@ -27,6 +27,10 @@ jobs:
           rm -rf ./.??* || true
           ls -la ./
 
+      - name: Install xcbeautify
+        run: |
+          brew install xcbeautify
+
       - uses: actions/checkout@v3
 
       - name: Select XCode Version
@@ -46,7 +50,7 @@ jobs:
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppNetworkingTests \
             -only-testing:KeyAppStateMachineTests \
-            | bundle exec xcpretty
+            | xcbeautify
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
       #   id: coverage-files
