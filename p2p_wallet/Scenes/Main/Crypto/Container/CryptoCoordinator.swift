@@ -105,7 +105,6 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 return coordinate(to: coordinator).eraseToAnyPublisher()
             }
         case .swap:
-//            analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
             return coordinate(
                 to: JupiterSwapCoordinator(
                     navigationController: navigationController,
@@ -116,6 +115,15 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                     )
                 )
             )
+            .eraseToAnyPublisher()
+        case let .solanaAccount(solanaAccount):
+            return coordinate(
+                to: AccountDetailsCoordinator(
+                    args: .solanaAccount(solanaAccount),
+                    presentingViewController: navigationController
+                )
+            )
+            .map { _ in () }
             .eraseToAnyPublisher()
         default:
             return Just(())

@@ -63,5 +63,3 @@ struct CryptoView: View {
         }
     }
 }
-
-#warning("What is analyticId for this screen?")
