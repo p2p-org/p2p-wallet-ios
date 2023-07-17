@@ -10,9 +10,15 @@ import SolanaSwift
 public final class SolanaAccountsService: NSObject, AccountsService {
     public typealias Account = SolanaAccount
 
-    // MARK: - Properties
+    // MARK: - Service
+    
+    let priceService: PriceService
+
+    let errorObservable: ErrorObserver
 
     public let realtimeService: RealtimeSolanaAccountService?
+    
+    // MARK: - Properties
 
     var subscriptions = [AnyCancellable]()
 
@@ -55,6 +61,9 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         proxyConfiguration: ProxyConfiguration?,
         errorObservable: any ErrorObserver
     ) {
+        self.priceService = priceService
+        self.errorObservable = errorObservable
+
         // Setup async value
         originStream = .init(initialItem: []) { () async -> ([Account]?, Swift.Error?) in
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
@@ -152,19 +161,15 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         realtimeStream
             .filter { $0.status == .initializing || $0.status == .ready }
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
-            .asyncMap { state -> [SomeToken: TokenPrice?] in
-                do {
-                    return try await priceService.getPrices(
-                        tokens: state.value.map(\.token),
-                        fiat: fiat
-                    )
-                } catch {
-                    errorObservable.handleError(error)
-                    return [:]
-                }
+            .sink { [weak self] _ in
+                self?.fetchPrice(fiat: fiat)
             }
-            .sink { [weak self] price in
-                self?.priceStream.send(price)
+            .store(in: &subscriptions)
+
+        priceService
+            .synchronisation
+            .sink { [weak self] in
+                self?.fetchPrice(fiat: fiat)
             }
             .store(in: &subscriptions)
 
@@ -198,6 +203,21 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     /// Fetch new data from blockchain.
     public func fetch() async throws {
         try await originStream.fetch()?.value
+    }
+
+    internal func fetchPrice(fiat: String) {
+        Task { [priceService, errorObservable, priceStream] in
+            do {
+                let prices = try await priceService.getPrices(
+                    tokens: state.value.map(\.token),
+                    fiat: fiat
+                )
+
+                priceStream.send(prices)
+            } catch {
+                errorObservable.handleError(error)
+            }
+        }
     }
 }
 

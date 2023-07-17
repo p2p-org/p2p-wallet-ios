@@ -7,6 +7,7 @@
 
 import BigDecimal
 import Cache
+import Combine
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
@@ -15,7 +16,9 @@ import SolanaSwift
 public protocol PriceService {
     func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
     func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
-    
+
+    var synchronisation: AnyPublisher<Void, Never> { get }
+
     func clear() async throws
 }
 
@@ -35,6 +38,22 @@ public class PriceServiceImpl: PriceService {
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
 
+    let synchronisationTimer: Timer.TimerPublisher = .init(interval: 60, runLoop: .main, mode: .default)
+    let synchronisationTrigger: PassthroughSubject<Void, Never> = .init()
+
+    public var synchronisation: AnyPublisher<Void, Never> {
+        Publishers
+            .Merge(
+                synchronisationTimer
+                    .autoconnect()
+                    .map { _ in }
+                    .eraseToAnyPublisher(),
+                synchronisationTrigger
+                    .eraseToAnyPublisher()
+            )
+            .eraseToAnyPublisher()
+    }
+
     public init(api: KeyAppTokenProvider, errorObserver: ErrorObserver, lifetime: TimeInterval = 60 * 5) {
         self.api = api
         self.errorObserver = errorObserver
@@ -47,6 +66,16 @@ public class PriceServiceImpl: PriceService {
     }
 
     public func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+        print("Fetch price", Date(), tokens.count)
+
+        var shouldSynchronise = false
+
+        defer {
+            if shouldSynchronise {
+                synchronisationTrigger.send()
+            }
+        }
+
         if tokens.isEmpty {
             return [:]
         }
@@ -91,6 +120,7 @@ public class PriceServiceImpl: PriceService {
                 }
             }
 
+            shouldSynchronise = true
             try? await database.flush()
         }
 
@@ -180,7 +210,7 @@ public class PriceServiceImpl: PriceService {
             token: token
         )
     }
-    
+
     public func clear() async throws {
         database
     }

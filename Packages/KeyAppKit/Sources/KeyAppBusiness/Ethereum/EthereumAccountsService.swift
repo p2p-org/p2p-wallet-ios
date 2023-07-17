@@ -13,15 +13,30 @@ import Web3
 public final class EthereumAccountsService: NSObject, AccountsService {
     public typealias Account = EthereumAccount
 
+    // MARK: - Service
+
+    let priceService: PriceService
+
+    let errorObservable: ErrorObserver
+
+    // MARK: - Properties
+
     var subscriptions = [AnyCancellable]()
+
+    // MARK: - Source
 
     let accounts: AsyncValue<[Account]>
 
     let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
+    // MARK: - Output
+
     public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
 
     public var state: AsyncValueState<[Account]> { stateSubject.value }
+
+    /// Requested token price base on final stream.
+    let priceStream: CurrentValueSubject<[SomeToken: TokenPrice], Never> = .init([:])
 
     public init(
         address: String,
@@ -32,6 +47,9 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         errorObservable: any ErrorObserver,
         enable: Bool
     ) {
+        self.priceService = priceService
+        self.errorObservable = errorObservable
+
         let address = try? EthereumAddress(hex: address, eip55: false)
 
         accounts = .init(initialItem: [], request: {
@@ -77,25 +95,26 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         super.init()
 
         /// Updating price
-        let prices = accounts
+        accounts
             .statePublisher
             .filter { $0.status == .initializing || $0.status == .ready }
-            .asyncMap { state in
-                do {
-                    return try await priceService.getPrices(
-                        tokens: state.value.map(\.token),
-                        fiat: fiat
-                    )
-                } catch {
-                    errorObservable.handleError(error)
-                    return [:]
-                }
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.fetchPrice(fiat: fiat)
             }
+            .store(in: &subscriptions)
+
+        priceService
+            .synchronisation
+            .sink { [weak self] in
+                self?.fetchPrice(fiat: fiat)
+            }
+            .store(in: &subscriptions)
 
         Publishers
             .CombineLatest(
                 accounts.statePublisher,
-                prices
+                priceStream
             )
             .map { state, prices in
                 state.apply { accounts in
@@ -104,8 +123,11 @@ public final class EthereumAccountsService: NSObject, AccountsService {
                     for index in newAccounts.indices {
                         let token = newAccounts[index].token.asSomeToken
                         if let price = prices[token] {
-                            newAccounts[index]
-                                .price = .init(currencyCode: fiat.uppercased(), value: price.value, token: token)
+                            newAccounts[index].price = .init(
+                                currencyCode: fiat.uppercased(),
+                                value: price.value,
+                                token: token
+                            )
                         }
                     }
 
@@ -117,7 +139,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
             })
             .store(in: &subscriptions)
 
-        // Update every 30 seconds accounts and balance
+        // Update every 30 seconds accounts
         Timer
             .publish(every: 30, on: .main, in: .default)
             .autoconnect()
@@ -162,6 +184,21 @@ public final class EthereumAccountsService: NSObject, AccountsService {
     /// Fetch new data from blockchain.
     public func fetch() async throws {
         try await accounts.fetch()?.value
+    }
+
+    internal func fetchPrice(fiat: String) {
+        Task { [priceService, errorObservable, priceStream] in
+            do {
+                let prices = try await priceService.getPrices(
+                    tokens: state.value.map(\.token),
+                    fiat: fiat
+                )
+
+                priceStream.send(prices)
+            } catch {
+                errorObservable.handleError(error)
+            }
+        }
     }
 }
 
