@@ -22,7 +22,8 @@ struct SendTransaction: RawTransactionType {
     let payingFeeWallet: SolanaAccount?
     let feeAmount: FeeAmount
     let currency: String
-
+    let analyticEvent: KeyAppAnalyticsEvent
+    
     // MARK: - Computed properties
 
     var isSendingViaLink: Bool {

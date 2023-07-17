@@ -55,7 +55,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             }
             .sink { _ in }
             .store(in: &subscriptions)
-    
+
         viewModel.back
             .sink(receiveValue: { [unowned self] in
                 // pop viewcontroller and resultSubject.send(.none)
@@ -64,12 +64,16 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             .store(in: &subscriptions)
 
         viewModel.presentSOLInfo
-            .sink { [unowned self] in
-                self.viewModel?.isEnteringBaseAmount = false
-                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc)).sink {
-                    self.viewModel?.isEnteringBaseAmount = true
-                }.store(in: &subscriptions)
-            }
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.viewModel?.isEnteringBaseAmount = false
+            })
+            .flatMap({ [unowned self, unowned vc] _ in
+                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc))
+                    .handleEvents(receiveOutput: { [weak self] in
+                        self?.viewModel?.isEnteringBaseAmount = true
+                    })
+            })
+            .sink {}
             .store(in: &subscriptions)
 
         vc.deallocatedPublisher()

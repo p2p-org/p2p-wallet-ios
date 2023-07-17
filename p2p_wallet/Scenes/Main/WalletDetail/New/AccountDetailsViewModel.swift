@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -37,14 +38,19 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
         // Handle action
         let onAction = { [weak actionSubject] (action: RendableAccountDetailsAction) in
+            let analyticsManager: AnalyticsManager = Resolver.resolve()
             switch action {
             case .buy:
+                analyticsManager.log(event: .tokenScreenBuyBar)
                 actionSubject?.send(.openBuy)
             case .swap:
                 actionSubject?.send(.openSwap(solanaAccount))
+                analyticsManager.log(event: .tokenScreenSwapBar)
             case .send:
+                analyticsManager.log(event: .tokenScreenSendBar)
                 actionSubject?.send(.openSend)
             case .receive:
+                analyticsManager.log(event: .tokenScreenReceiveBar)
                 actionSubject?.send(.openReceive)
             }
         }

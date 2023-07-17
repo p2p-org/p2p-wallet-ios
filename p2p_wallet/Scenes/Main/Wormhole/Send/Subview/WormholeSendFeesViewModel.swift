@@ -75,6 +75,6 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        analyticsManager.log(event: .sendnewFreeTransactionClick(source: SendSource.none.rawValue, sendFlow: "Bridge"))
+        analyticsManager.log(event: .sendnewFreeTransactionClick(sendFlow: SendFlow.bridge.rawValue))
     }
 }

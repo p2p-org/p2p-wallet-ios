@@ -56,10 +56,16 @@ jobs:
           chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
       - name: Install project
-        shell: bash
+        env:
+          IS_CI: 'true'
         run: |
           chmod u+x Scripts/install.sh && Scripts/install.sh
+        shell: bash
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0

@@ -109,6 +109,11 @@ let package = Package(
             name: "Jupiter",
             targets: ["Jupiter"]
         ),
+
+        .library(
+            name: "KeyAppStateMachine",
+            targets: ["KeyAppStateMachine"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "v3.1"),
@@ -195,7 +200,11 @@ let package = Package(
         .target(
             name: "JSBridge"
         ),
-        .testTarget(name: "JSBridgeTests", dependencies: ["JSBridge"]),
+        .testTarget(
+            name: "JSBridgeTests", 
+            dependencies: ["JSBridge"],
+            path: "Tests/UnitTests/JSBridgeTests"
+        ),
 
         // Countries
         .target(
@@ -357,10 +366,16 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
+        
+        // StateMachine
+        .target(
+            name: "KeyAppStateMachine"
+        ),
+        
+        .testTarget(
+            name: "KeyAppStateMachineTests",
+            dependencies: ["KeyAppStateMachine"],
+            path: "Tests/UnitTests/KeyAppStateMachineTests"
+        )
     ]
 )
-
-#if swift(>=5.6)
-    // For generating docs purpose
-    package.dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
-#endif

@@ -17,8 +17,8 @@ enum SendResult {
     case cancelled
 }
 
-enum SendSource: String {
-    case sell, none, bridge
+enum SendFlow: String {
+    case send, sell, bridge, sendViaLink = "Send_Via_Link"
 }
 
 final class SendCoordinator: Coordinator<SendResult> {
@@ -47,7 +47,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
-        source: SendSource = .none,
+        flow: SendFlow = .send,
         allowSwitchingMainAmountType: Bool
     ) {
         self.rootViewController = rootViewController
@@ -55,7 +55,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         self.preChosenRecipient = preChosenRecipient
         self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
-        self.source = source
+        self.flow = flow
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
         super.init()
     }
@@ -92,7 +92,7 @@ final class SendCoordinator: Coordinator<SendResult> {
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
-            source: source,
+            flow: flow,
             pushedWithoutRecipientSearchView: true,
             allowSwitchingMainAmountType: allowSwitchingMainAmountType
         ))
@@ -113,7 +113,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
     private func startFlowWithNoPreChosenRecipient() {
         // Setup view
-        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
+        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, flow: flow)
         vm.coordinator.selectRecipientPublisher
             .filter { $0.category != .ethereumAddress }
             .flatMap { [unowned self] in
@@ -122,7 +122,7 @@ final class SendCoordinator: Coordinator<SendResult> {
                     preChosenWallet: preChosenWallet,
                     preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
-                    source: source,
+                    flow: flow,
                     allowSwitchingMainAmountType: allowSwitchingMainAmountType
                 ))
             }
@@ -229,7 +229,7 @@ final class SendCoordinator: Coordinator<SendResult> {
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
-            source: .none,
+            flow: .sendViaLink,
             allowSwitchingMainAmountType: true,
             sendViaLinkSeed: seed
         ))

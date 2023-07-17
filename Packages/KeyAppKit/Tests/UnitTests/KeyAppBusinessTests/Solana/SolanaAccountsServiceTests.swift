@@ -18,6 +18,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
             priceService: PriceService(api: MockSolanaPricesAPI()),
             accountObservableService: MockSolanaAccountsObservableService(),
             fiat: "usd",
+            proxyConfiguration: .init(address: "", port: 1),
             errorObservable: MockErrorObservable()
         )
 
@@ -38,7 +39,6 @@ final class SolanaAccountsServiceTests: XCTestCase {
     func testMonitoringByObservableService() async throws {
         let accountStorage = MockAccountStorage()
         let solanaAPIClient = MockSolanaAPIClient()
-        let observableService = MockSolanaAccountsObservableService()
 
         let service = SolanaAccountsService(
             accountStorage: accountStorage,
@@ -47,6 +47,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
             priceService: PriceService(api: MockSolanaPricesAPI()),
             accountObservableService: observableService,
             fiat: "usd",
+            proxyConfiguration: .init(address: "", port: 1),
             errorObservable: MockErrorObservable()
         )
 

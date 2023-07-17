@@ -45,7 +45,7 @@ struct SendViaLinkState: Equatable {
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: SolanaAccount?
     private var subscriptions = Set<AnyCancellable>()
-    private let source: SendSource
+    private let flow: SendFlow
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaAccountsService: SolanaAccountsService
@@ -106,7 +106,7 @@ class RecipientSearchViewModel: ObservableObject {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
         self.sendHistoryService = sendHistoryService
-        self.source = source
+        self.flow = flow
 
         let ethereumSearch: Bool
         if let preChosenWallet {
@@ -311,7 +311,7 @@ private extension RecipientSearchViewModel {
     }
 
     func logOpen() {
-        analyticsManager.log(event: .sendnewRecipientScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewRecipientScreen(source: flow.rawValue))
     }
 
     func logRecipient(recipient: Recipient, fromQR: Bool) {
@@ -327,6 +327,6 @@ private extension RecipientSearchViewModel {
             }
         }
         analyticsManager
-            .log(event: .sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
+            .log(event: .sendnewRecipientAdd(type: inputType.rawValue, source: flow.rawValue))
     }
 }
