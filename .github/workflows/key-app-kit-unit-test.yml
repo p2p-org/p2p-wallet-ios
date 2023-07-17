@@ -15,7 +15,7 @@ concurrency:
 jobs:
   run_key_app_kit_unit_test:
     name: Run KeyAppKit unit testing
-    runs-on: macos-latest
+    runs-on: macos-13
     env: 
       XCODE_VERSION: "14.3.1"
     steps:
