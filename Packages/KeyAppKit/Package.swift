@@ -394,8 +394,3 @@ let package = Package(
         )
     ]
 )
-
-#if swift(>=5.6)
-    // For generating docs purpose
-    package.dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
-#endif
