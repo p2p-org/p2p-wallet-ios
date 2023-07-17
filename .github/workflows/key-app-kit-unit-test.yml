@@ -14,11 +14,23 @@ concurrency:
 
 jobs:
   run_key_app_kit_unit_test:
-
+    name: Run KeyAppKit unit testing
     runs-on: macos-latest
-
+    env: 
+      XCODE_VERSION: "14.3.1"
     steps:
+
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
       - uses: actions/checkout@v3
+
+      - name: Select XCode Version
+        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Run unit tests
         working-directory: ./Packages/KeyAppKit
@@ -33,6 +45,7 @@ jobs:
             -only-testing:CountriesAPIUnitTests \
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppNetworkingTests \
+            -only-testing:KeyAppStateMachineTests \
             -only-testing:SolanaPricesAPIsUnitTests \
             | bundle exec xcpretty
 
