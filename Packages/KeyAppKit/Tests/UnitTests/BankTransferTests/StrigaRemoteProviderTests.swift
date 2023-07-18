@@ -485,6 +485,35 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(result.gasPrice, "18.313")
     }
 
+    func testExchangeRates_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {"ETHEUR":{"price":"1693","buy":"1701.47","sell":"1684.53","timestamp":1689670715581,"currency":"Euros"},"USDCEUR":{"price":"0.9","buy":"0.9","sell":"0.88","timestamp":1689670714000,"currency":"Euros"},"USDCUSDT":{"price":"1","buy":"1.01","sell":"0.99","timestamp":1689670714000,"currency":"Tether"},"USDTEUR":{"price":"0.9","buy":"0.9","sell":"0.88","timestamp":1689670717071,"currency":"Euros"},"BTCEUR":{"price":"26729","buy":"26862.65","sell":"26595.35","timestamp":1689670717094,"currency":"Euros"},"BTCUSDC":{"price":"30026.55","buy":"30176.69","sell":"29876.41","timestamp":1689670714000,"currency":"USD Coin"},"BTCUSDT":{"price":"30017.27","buy":"30167.36","sell":"29867.18","timestamp":1689670717006,"currency":"Tether"},"BUSDEUR":{"price":"1.13","buy":"1.13","sell":"1.11","timestamp":1689670710865,"currency":"Binance USD"},"BNBEUR":{"price":"215.9","buy":"216.98","sell":"214.82","timestamp":1689670709965,"currency":"Euros"},"LINKBUSD":{"price":"7.06","buy":"7.1","sell":"7.02","timestamp":1689670716666,"currency":"Binance USD"},"MATICBUSD":{"price":"0.76","buy":"0.76","sell":"0.75","timestamp":1689670715736,"currency":"Binance USD"},"SUSHIBUSD":{"price":"0.74","buy":"0.75","sell":"0.73","timestamp":1689670715694,"currency":"Binance USD"},"UNIBUSD":{"price":"6.16","buy":"6.19","sell":"6.12","timestamp":1689670714011,"currency":"Binance USD"},"1INCHBUSD":{"price":"0.38","buy":"0.39","sell":"0.37","timestamp":1689670716518,"currency":"Binance USD"}}
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        let result = try await provider.exchangeRates()
+
+        // Assert
+        XCTAssertNotNil(result["USDCEUR"])
+        XCTAssertEqual(result["USDCEUR"]?.price, "0.9")
+        XCTAssertEqual(result["USDCEUR"]?.buy, "0.9")
+        XCTAssertEqual(result["USDCEUR"]?.sell, "0.88")
+        XCTAssertEqual(result.isEmpty, false)
+    }
+
+    func testExchangeRates_FailedResponse() async throws {
+        // Arrange
+        let mockData = "Unauthorized"
+        let provider = try getMockProvider(responseString: mockData, statusCode: 401)
+
+        let result = try await provider.exchangeRates()
+
+        // Assert
+        XCTAssertNil(result["USDCEUR"])
+        XCTAssertEqual(result.isEmpty, true)
+    }
+
     // MARK: - Helper Methods
     
     func getMockProvider(responseString: String, statusCode: Int) throws -> StrigaRemoteProvider {
