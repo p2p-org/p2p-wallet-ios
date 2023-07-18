@@ -4,30 +4,18 @@
 
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 final class SolanaAccountsAggregator: DataAggregator {
-    func transform(input: (accounts: [SolanaAccount], fiat: String, prices: [Token: CurrentPrice?]))
+    func transform(input: (accounts: [SolanaAccount], prices: [SomeToken: TokenPrice?]))
     -> [SolanaAccount] {
-        let (accounts, fiat, prices) = input
+        let (accounts, prices) = input
 
         let output = accounts.map { account in
             var account = account
-            let token = account.data.token
 
-            if let price = prices[token] {
-                let value: Decimal?
-                if let priceValue = price?.value {
-                    value = Decimal(floatLiteral: priceValue)
-                } else {
-                    value = nil
-                }
-
-                account.price = TokenPrice(currencyCode: fiat, value: value, token: token)
-
-                // Legacy code
-                account.data.price = price
+            if let price = prices[account.token.asSomeToken] {
+                account.price = price
             }
 
             return account

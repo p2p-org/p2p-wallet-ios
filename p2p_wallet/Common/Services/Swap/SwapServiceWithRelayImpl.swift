@@ -4,6 +4,7 @@
 
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import OrcaSwapSwift
 import Resolver
 import SolanaSwift
@@ -16,7 +17,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     @Injected private var swapFeeCalculator: SwapFeeRelayerCalculator
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var accountStorage: SolanaAccountStorage
-    
+
     var prefersDirectSwap: Bool {
         GlobalAppState.shared.preferDirectSwap
     }
@@ -32,13 +33,25 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     ) async throws -> [PoolsPair] {
         try await orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
     }
-    
-    func findBestPoolsPairForInputAmount(_ inputAmount: UInt64, from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair? {
-        try orcaSwap.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs, prefersDirectSwap: prefersDirectSwap)
+
+    func findBestPoolsPairForInputAmount(_ inputAmount: UInt64,
+                                         from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair?
+    {
+        try orcaSwap.findBestPoolsPairForInputAmount(
+            inputAmount,
+            from: poolsPairs,
+            prefersDirectSwap: prefersDirectSwap
+        )
     }
-    
-    func findBestPoolsPairForEstimatedAmount(_ estimatedAmount: UInt64, from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair? {
-        try orcaSwap.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs, prefersDirectSwap: prefersDirectSwap)
+
+    func findBestPoolsPairForEstimatedAmount(_ estimatedAmount: UInt64,
+                                             from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair?
+    {
+        try orcaSwap.findBestPoolsPairForEstimatedAmount(
+            estimatedAmount,
+            from: poolsPairs,
+            prefersDirectSwap: prefersDirectSwap
+        )
     }
 
     func getFees(
@@ -46,7 +59,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: PoolsPair?,
-        payingWallet: Wallet?,
+        payingWallet: SolanaAccount?,
         inputAmount: Double?,
         slippage: Double
     ) async throws -> _SwapFeeInfo {
@@ -155,7 +168,12 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                         .init(
                             type: .liquidityProviderFee,
                             lamports: liquidityProviderFees.first!,
-                            token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
+                            token: .unsupported(
+                                mint: "",
+                                decimals: decimals,
+                                symbol: intermediaryTokenName,
+                                supply: nil
+                            )
                         )
                     )
                 }
@@ -178,10 +196,10 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: Token,
-        payingWallet: Wallet
+        payingWallet: SolanaAccount
     ) async throws -> [PayingFee] {
         let context = try await relayContextManager.getCurrentContextOrUpdate()
-        
+
         let sourceMint = try PublicKey(string: sourceMint)
         let destinationTokenMint = try PublicKey(string: destinationToken.address)
         let destinationAddress = try? PublicKey(string: destinationAddress)
@@ -195,7 +213,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             destinationAddress: destinationAddress
         )
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isSwappingNatively(
             context,
             expectedTransactionFee: networkFee.transaction,
@@ -239,7 +258,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
             info = .init(
                 alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
-                alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
+                alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp
+                    .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
                 payBy: L10n.paidByKeyApp
             )
         }
@@ -295,7 +315,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let account = accountStorage.account else {
             throw SolanaError.unauthorized
         }
-        
+
         // update and get current context
         try await relayContextManager.update()
         let context = try await relayContextManager.getCurrentContextOrUpdate()
@@ -321,7 +341,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             )
             return [id.transactionId]
         }
-        
+
         // CASE 2: FeeRelayer involved
         let sourceAddress = try PublicKey(string: sourceAddress)
         let sourceTokenMint = try PublicKey(string: sourceTokenMint)
@@ -329,9 +349,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         let destinationAddress = try? PublicKey(string: destinationAddress)
 
         // Build transaction
-        
+
         let latestBlockhash = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
-        
+
         let builder = SwapTransactionBuilderImpl(
             network: solanaAPIClient.endpoint.network,
             transitTokenAccountManager: TransitTokenAccountManagerImpl(
@@ -344,7 +364,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             minimumTokenAccountBalance: context.minimumTokenAccountBalance,
             lamportsPerSignature: context.lamportsPerSignature
         )
-    
+
         let result = try await builder.buildSwapTransaction(
             userAccount: account,
             pools: poolsPair,
@@ -367,7 +387,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
     }
 
-    /// when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+    /// when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+    /// fee relayer)
     private func isSwappingNatively(
         _ context: RelayContext,
         expectedTransactionFee: UInt64? = nil,

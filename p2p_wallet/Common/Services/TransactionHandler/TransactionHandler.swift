@@ -38,8 +38,8 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: SolanaAPIClient
-    @Injected var walletsRepository: WalletsRepository
-    @Injected var pricesService: PricesServiceType
+    @Injected var walletsRepository: SolanaAccountsService
+    @Injected var pricesService: PriceService
     @Injected var errorObserver: ErrorObserver
 
     // MARK: - Properties

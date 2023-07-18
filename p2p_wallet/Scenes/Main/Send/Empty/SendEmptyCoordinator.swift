@@ -8,11 +8,13 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import UIKit
 
 final class SendEmptyCoordinator: Coordinator<Void> {
+    @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
@@ -38,12 +40,17 @@ final class SendEmptyCoordinator: Coordinator<Void> {
             receive: {
                 self.log(event: .sendnewReceiveClickButton(source: self.flow.rawValue))
                 if available(.ethAddressEnabled) {
-                    let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(self.navigationController))
+                    let coordinator =
+                        SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(self
+                                .navigationController))
                     self.coordinate(to: coordinator)
                         .sink { _ in }
                         .store(in: &self.subscriptions)
                 } else {
-                    let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), navigationController: self.navigationController)
+                    let coordinator = ReceiveCoordinator(
+                        network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                        navigationController: self.navigationController
+                    )
                     self.coordinate(to: coordinator)
                         .sink { _ in }
                         .store(in: &self.subscriptions)

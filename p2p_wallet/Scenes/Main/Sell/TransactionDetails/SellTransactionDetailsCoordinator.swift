@@ -7,13 +7,14 @@
 
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SafariServices
 import Sell
 import UIKit
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: SolanaAccountsService
 
     private let viewController: UIViewController
     private let strategy: Strategy

@@ -1,6 +1,5 @@
 import Jupiter
 import Resolver
-import SolanaPricesAPIs
 import SolanaSwift
 import Foundation
 

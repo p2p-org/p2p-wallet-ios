@@ -56,7 +56,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     let owner: String
 
     let apiClient: SolanaAPIClient
-    let tokensService: SolanaTokensRepository
+    let tokensService: SolanaTokensService
     var proxyConfiguration: ProxyConfiguration?
     let errorObserver: ErrorObserver
 
@@ -79,7 +79,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     init(
         owner: String,
         apiClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
+        tokensService: SolanaTokensService,
         proxyConfiguration: ProxyConfiguration?,
         errorObserver: ErrorObserver
     ) {
@@ -158,7 +158,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                         let requestType = JSONRPCRequest<SolanaNotification<SolanaAccountChange>>.self
                         if let data = dataStr.data(using: .utf8) {
                             let request = try decoder.decode(requestType, from: data)
-                            self?.receiveNotification(notification: request.params)
+                            try await self?.receiveNotification(notification: request.params)
                         }
                     }
                 } catch {
@@ -267,22 +267,36 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         getLatestAccountsStateTask = Task {
             do {
                 // Updating native account balance and get spl tokens
-                // TODO: Need to optimize
-                let (balance, splAccounts) = try await(
+                let (balance, (resolved, _)) = try await(
                     apiClient.getBalance(account: owner, commitment: "confirmed"),
-                    apiClient.getTokenWallets(account: owner, tokensRepository: tokensService, commitment: "confirmed")
+                    apiClient.getAccountBalances(
+                        for: owner,
+                        tokensRepository: tokensService,
+                        commitment: "confirmed"
+                    )
                 )
 
                 if Task.isCancelled { return }
 
                 let solanaAccount = SolanaAccount(
-                    data: Wallet.nativeSolana(
-                        pubkey: owner,
-                        lamport: balance
-                    )
+                    address: owner,
+                    lamports: balance,
+                    token: try await tokensService.nativeToken
                 )
 
-                let accounts = [solanaAccount] + splAccounts.map { SolanaAccount(data: $0, price: nil) }
+                let accounts = [solanaAccount] + resolved
+                    .map { accountBalance in
+                        guard let pubKey = accountBalance.pubkey else {
+                            return nil
+                        }
+
+                        return SolanaAccount(
+                            address: pubKey,
+                            lamports: accountBalance.lamports ?? 0,
+                            token: accountBalance.token
+                        )
+                    }
+                    .compactMap { $0 }
 
                 for account in accounts {
                     accountsSubject.send(account)
@@ -311,22 +325,18 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                     // Parse
                     var reader = BinaryReader(bytes: data.bytes)
-                    let tokenAccountData = try AccountInfo(from: &reader)
+                    let tokenAccountData = try SPLTokenAccountState(from: &reader)
 
-                    // Bad code because of O(n)
-                    let tokens = try await tokensService.getTokensList(useCache: true)
-                    let token = tokens.first { $0.address == tokenAccountData.mint.base58EncodedString }
+                    // Get token
+                    let token = try await tokensService.get(address: tokenAccountData.mint)
 
                     // TODO: Add case when token info is invalid
                     if let token {
-                        let wallet = SolanaSwift.Wallet(
-                            pubkey: pubKey,
+                        let splAccount = SolanaAccount(
+                            address: pubKey,
                             lamports: tokenAccountData.lamports,
-                            supply: nil,
                             token: token
                         )
-
-                        let splAccount = SolanaAccount(data: wallet)
                         accountsSubject.send(splAccount)
                     }
 
@@ -337,15 +347,12 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         }
     }
 
-    func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) {
-        let wallet = SolanaSwift.Wallet(
-            pubkey: owner,
+    func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) async throws {
+        let nativeSolanaAccount = SolanaAccount(
+            address: owner,
             lamports: notification.result.value.lamports,
-            supply: nil,
-            token: .nativeSolana
+            token: try await tokensService.nativeToken
         )
-
-        let nativeSolanaAccount = SolanaAccount(data: wallet)
         accountsSubject.send(nativeSolanaAccount)
     }
 }

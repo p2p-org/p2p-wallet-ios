@@ -68,18 +68,3 @@ extension AppEventHandler: ChangeThemeResponder {
         delegate?.userDidChangeTheme(to: style)
     }
 }
-
-// MARK: - Helpers
-
-private func errorToString(_ error: Error?) -> String? {
-    var error = error?.localizedDescription ?? L10n.unknownError
-    switch error {
-    case "Passcode not set.":
-        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
-    case "Canceled by user.":
-        return nil
-    default:
-        break
-    }
-    return error
-}

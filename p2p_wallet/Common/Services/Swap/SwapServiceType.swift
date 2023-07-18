@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import SolanaSwift
+import KeyAppKitCore
 import OrcaSwapSwift
+import SolanaSwift
 
 ///  This protocol describes an interface for swapping service.
 ///  In general you have to call `load` method first to prepare a service.
@@ -20,13 +21,13 @@ protocol SwapServiceType {
         from sourceMint: String,
         to destinationMint: String
     ) async throws -> [PoolsPair]
-    
+
     /// Find best route (poolsPair for swapping) for user's input amount
     func findBestPoolsPairForInputAmount(
         _ inputAmount: UInt64,
         from poolsPairs: [PoolsPair]
     ) throws -> PoolsPair?
-    
+
     /// Find best route (poolsPair for swapping) for user's estimated amount
     func findBestPoolsPairForEstimatedAmount(
         _ estimatedAmount: UInt64,
@@ -52,7 +53,7 @@ protocol SwapServiceType {
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: PoolsPair?,
-        payingWallet: Wallet?,
+        payingWallet: SolanaAccount?,
         inputAmount: Double?,
         slippage: Double
     ) async throws -> _SwapFeeInfo

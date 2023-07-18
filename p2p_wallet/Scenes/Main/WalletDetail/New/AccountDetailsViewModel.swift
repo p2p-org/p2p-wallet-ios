@@ -11,8 +11,8 @@ enum AccountDetailsAction {
     case openBuy
     case openReceive
     case openSend
-    case openSwap(Wallet?)
-    case openSwapWithDestination(Wallet?, Wallet?)
+    case openSwap(SolanaAccount?)
+    case openSwapWithDestination(SolanaAccount?, SolanaAccount?)
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
@@ -44,8 +44,8 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 analyticsManager.log(event: .tokenScreenBuyBar)
                 actionSubject?.send(.openBuy)
             case .swap:
+                actionSubject?.send(.openSwap(solanaAccount))
                 analyticsManager.log(event: .tokenScreenSwapBar)
-                actionSubject?.send(.openSwap(solanaAccount.data))
             case .send:
                 analyticsManager.log(event: .tokenScreenSendBar)
                 actionSubject?.send(.openSend)
@@ -68,7 +68,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
         let solanaAccountPublisher = solanaAccountsManager
             .statePublisher
             .receive(on: RunLoop.main)
-            .compactMap { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
+            .compactMap { $0.value.first(where: { $0.address == solanaAccount.address }) }
 
         let jupiterDataStatusPublisher = jupiterTokensRepository.status
 
@@ -76,7 +76,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             .map { account, status in
                 RendableNewSolanaAccountDetails(
                     account: account,
-                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account.data, for: status),
+                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account, for: status),
                     onAction: onAction
                 )
             }
@@ -93,18 +93,18 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 SolanaToken.usdt.address: Wormhole.SupportedToken.usdt,
             ]
 
-            if let supportedWormholeToken = supportedTokens[solanaAccount.data.token.address], !Defaults.ethBannerShouldHide {
+            if let supportedWormholeToken = supportedTokens[solanaAccount.token.address], !Defaults.ethBannerShouldHide {
                 banner = .init(
                     title: L10n.toSendToEthereumNetworkYouHaveToSwapItTo(
-                        solanaAccount.data.token.symbol,
+                        solanaAccount.token.symbol,
                         supportedWormholeToken.symbol
                     ),
                     action: { [weak actionSubject] in
                         actionSubject?
                             .send(
                                 .openSwapWithDestination(
-                                    solanaAccount.data,
-                                    Wallet(token: supportedWormholeToken)
+                                    solanaAccount,
+                                    SolanaAccount(token: supportedWormholeToken)
                                 )
                             )
                     }, close: { [weak self] in
@@ -119,7 +119,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
-    static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
+    static func isSwapAvailableFor(wallet: SolanaAccount, for status: JupiterDataStatus) -> Bool {
         switch status {
         case let .ready(swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
             return true

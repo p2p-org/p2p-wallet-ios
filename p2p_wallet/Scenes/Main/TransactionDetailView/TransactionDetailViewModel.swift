@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import History
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -49,21 +50,20 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         Task {
-            let tokenRepository: TokensRepository = Resolver.resolve()
+            let tokenRepository: SolanaTokensService = Resolver.resolve()
             self.rendableTransaction = try await RendableDetailHistoryTransaction(
                 trx: historyTransaction,
-                allTokens: tokenRepository.getTokensList(useCache: true)
+                allTokens: Set(tokenRepository.all().values)
             )
         }
     }
 
     init(pendingTransaction: PendingTransaction, statusContext: String? = nil) {
         let pendingService: TransactionHandlerType = Resolver.resolve()
-        let priceService: PricesService = Resolver.resolve()
 
         style = .active
         self.statusContext = statusContext
-        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction)
 
         super.init()
 
@@ -71,7 +71,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
-                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
+                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx)
             }
             .store(in: &subscriptions)
     }

@@ -1,5 +1,6 @@
 import Foundation
 import JazziconSwift
+import KeyAppKitCore
 import SolanaSwift
 import UIKit
 import BEPureLayout
@@ -74,7 +75,7 @@ class CoinLogoImageView: BEView {
         wrappingView.alpha = 0 // UNKNOWN: isHidden not working
     }
 
-    func setUp(wallet: Wallet? = nil) {
+    func setUp(wallet: SolanaAccount? = nil) {
         setUp(token: wallet?.token)
     }
 
@@ -115,10 +116,12 @@ class CoinLogoImageView: BEView {
         }
 
         // wrapped by
-        if let wrappedBy = token?.wrappedBy {
-            wrappingView.alpha = 1
-            wrappingTokenIcon.image = wrappedBy.image
-        }
+        /*
+         if let wrappedBy = token?.wrapped {
+             wrappingView.alpha = 1
+             wrappingTokenIcon.image = wrappedBy.image
+         }
+          */
     }
 
     func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {

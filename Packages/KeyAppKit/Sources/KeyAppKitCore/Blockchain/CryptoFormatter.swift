@@ -4,7 +4,7 @@ import Foundation
 /// Factory class for automatically creating formatter.
 public enum CryptoFormatterFactory {
     public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
-        if token.network == .ethereum, token.tokenPrimaryKey == "native" && token.decimals == 18 {
+        if token.network == .ethereum, token.primaryKey == .native && token.decimals == 18 {
             return ETHCryptoFormatter(style: style)
         } else {
             return CryptoFormatter()

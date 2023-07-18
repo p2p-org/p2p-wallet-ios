@@ -1,19 +1,20 @@
 import Jupiter
+import KeyAppKitCore
 import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     /// Auto choose token logic
     static func autoChoose(swapTokens: [SwapToken]) -> (fromToken: SwapToken, toToken: SwapToken)? {
-        let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
-        let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
+        let usdc = swapTokens.first(where: { $0.address == SolanaToken.usdc.address })
+        let solana = swapTokens.first(where: { $0.address == SolanaToken.nativeSolana.address })
 
-        let userWallets = swapTokens.compactMap { $0.userWallet }.filter({ $0.amount > 0 })
+        let userWallets = swapTokens.compactMap(\.userWallet).filter { $0.lamports > 0 }
 
         if userWallets.isEmpty, let usdc, let solana {
             return (usdc, solana)
-        } else if let usdcWallet = usdc?.userWallet, let usdc, let solana, usdcWallet.amount > 0 {
+        } else if let usdcWallet = usdc?.userWallet, let usdc, let solana, usdcWallet.lamports > 0 {
             return (usdc, solana)
-        } else if let solanaWallet = solana?.userWallet, let usdc, let solana, solanaWallet.amount > 0 {
+        } else if let solanaWallet = solana?.userWallet, let usdc, let solana, solanaWallet.lamports > 0 {
             return (solana, usdc)
         } else if let solana {
             let userWallet = userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
@@ -27,8 +28,8 @@ extension JupiterSwapBusinessLogic {
     }
 
     static func autoChooseToToken(for preChosenFromToken: SwapToken, from swapTokens: [SwapToken]) -> SwapToken? {
-        let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
-        let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
+        let usdc = swapTokens.first(where: { $0.address == SolanaToken.usdc.address })
+        let solana = swapTokens.first(where: { $0.address == SolanaToken.nativeSolana.address })
 
         if let solana, preChosenFromToken.address == usdc?.address {
             return solana

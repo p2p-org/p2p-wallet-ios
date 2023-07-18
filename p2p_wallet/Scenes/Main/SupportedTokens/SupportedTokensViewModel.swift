@@ -1,10 +1,10 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import Wormhole
-import AnalyticsManager
 
 enum SupportedTokensAction {
     case receive(SupportedTokenItem)
@@ -12,7 +12,7 @@ enum SupportedTokensAction {
 
 class SupportedTokensViewModel: BaseViewModel, ObservableObject {
     let actionSubject: PassthroughSubject<SupportedTokensAction, Never> = .init()
-    
+
     @Injected private var analyticsManager: AnalyticsManager
 
     /// Solana tokens
@@ -32,15 +32,15 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
     }
 
     init(
-        solanaTokenRepository: SolanaTokensRepository = Resolver.resolve(),
-        ethereumTokenRepository: EthereumTokensRepository = Resolver.resolve()
+        solanaTokenRepository: SolanaTokensService = Resolver.resolve(),
+        ethereumTokenRepository _: EthereumTokensRepository = Resolver.resolve()
     ) {
         super.init()
 
         // Get solana token list
         Task {
             // List all tokens
-            let tokens = try await solanaTokenRepository.getTokensList()
+            let tokens = try await solanaTokenRepository.all().values
 
             // Filter tokens
             let filteredToken = tokens
@@ -53,7 +53,8 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
                 }
                 .filter { token in
                     // Ignore stable coin by symbol, because there are many of them.
-                    !SupportedTokensBusinnes.wellKnownTokens.map(\.symbol).contains(token.symbol.trimmingCharacters(in: .whitespacesAndNewlines))
+                    !SupportedTokensBusinnes.wellKnownTokens.map(\.symbol)
+                        .contains(token.symbol.trimmingCharacters(in: .whitespacesAndNewlines))
                 }
                 .map { SupportedTokenItem(solana: $0) }
 
@@ -66,11 +67,13 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
             .map { Array($0) }
             .combineLatest($filter)
             .map(SupportedTokensBusinnes.filterByKeyword)
-            .map { [weak self] in $0.sorted { SupportedTokensBusinnes.sortToken(lhs: $0, rhs: $1, filter: self?.filter ?? "") } }
+            .map { [weak self] in
+                $0.sorted { SupportedTokensBusinnes.sortToken(lhs: $0, rhs: $1, filter: self?.filter ?? "") }
+            }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.tokens, on: self)
             .store(in: &subscriptions)
-        
+
         analyticsManager.log(event: .receiveStartScreen)
     }
 
@@ -126,7 +129,7 @@ enum SupportedTokensBusinnes {
             "BNB",
             "WBNB",
             "MATIC",
-            "CRV"
+            "CRV",
         ]
 
         return priority.firstIndex { i in i == symbol } ?? priority.count
@@ -136,7 +139,7 @@ enum SupportedTokensBusinnes {
         // key - solana symbol, value - eth symbol
         [
             "BNB": "WBNB",
-            "AVAX": "WAVAX"
+            "AVAX": "WAVAX",
         ]
     }
 
@@ -151,7 +154,9 @@ enum SupportedTokensBusinnes {
                 name: "Ethereum", symbol: "ETH", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
-                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389")!),
+                icon: .url(
+                    URL(string: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389")!
+                ),
                 name: "USDC", symbol: "USDC", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
@@ -159,21 +164,29 @@ enum SupportedTokensBusinnes {
                 name: "USDT", symbol: "USDT", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
-                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1670992574")!),
+                icon: .url(
+                    URL(
+                        string: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1670992574"
+                    )!
+                ),
                 name: "Avalanche", symbol: "AVAX", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
-                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1644979850")!),
+                icon: .url(
+                    URL(string: "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1644979850")!
+                ),
                 name: "Binance Coin", symbol: "BNB", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
-                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912")!),
+                icon: .url(
+                    URL(string: "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912")!
+                ),
                 name: "Polygon", symbol: "MATIC", availableNetwork: [.ethereum, .solana]
             ),
             SupportedTokenItem(
                 icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484")!),
                 name: "Curve DAO Token", symbol: "CRV", availableNetwork: [.ethereum, .solana]
-            )
+            ),
         ]
     }
 

@@ -2,6 +2,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppUI
 import Moonpay
 import Resolver
@@ -53,9 +54,9 @@ final class BuyViewModel: ObservableObject {
     // Dependencies
     @Injected private var moonpayProvider: Moonpay.Provider
     @Injected var exchangeService: BuyExchangeService
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: PriceService
 
     // Defaults
 //    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -187,12 +188,15 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] =
-                    try await pricesService.getCurrentPrices(
+                self.tokenPrices[fiat] = Dictionary(
+                    try await pricesService.getPrices(
                         tokens: BuyViewModel.tokens,
-                        toFiat: fiat
+                        fiat: fiat.rawValue
                     )
-                    .mapValues { $0.value }
+                    .map { token, price in
+                        (token.address, price.doubleValue)
+                    }
+                ) { lhs, _ in lhs }
             }
 
             let banks = try await exchangeService.isBankTransferEnabled()

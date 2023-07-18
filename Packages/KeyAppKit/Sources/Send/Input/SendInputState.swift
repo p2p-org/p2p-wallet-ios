@@ -4,6 +4,7 @@
 
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 public enum Amount: Equatable {
@@ -65,7 +66,7 @@ public struct SendInputState: Equatable {
         case requiredInitialize
         case missingFeeRelayer
         case initializeFailed(NSError)
-        
+
         case unknown(NSError)
     }
 
@@ -119,7 +120,7 @@ public struct SendInputState: Equatable {
     ///
     /// Current state for free transactions
     public let feeRelayerContext: RelayContext?
-    
+
     /// Send via link
     public let sendViaLinkSeed: String?
     public var isSendingViaLink: Bool {
@@ -239,14 +240,14 @@ public extension SendInputState {
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 
-    var sourceWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
+    var sourceWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
             wallet.token.address == token.address
         }
     }
 
-    var feeWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
+    var feeWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
             wallet.token.address == tokenFee.address
         }
     }

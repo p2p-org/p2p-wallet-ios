@@ -1,4 +1,5 @@
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension RecipientSearchServiceImpl {
@@ -6,7 +7,7 @@ extension RecipientSearchServiceImpl {
     func searchBySolanaAddress(
         _ address: PublicKey,
         config: RecipientSearchConfig,
-        preChosenToken: Token?
+        preChosenToken: SolanaToken?
     ) async -> RecipientSearchResult {
         do {
             // get address
@@ -16,13 +17,13 @@ extension RecipientSearchServiceImpl {
             var attributes: Recipient.Attribute = []
 
             // Check self-sending
-            if let wallet: Wallet = config.wallets
-                .first(where: { (wallet: Wallet) in wallet.pubkey == addressBase58 })
+            if let wallet: SolanaAccount = config.wallets
+                .first(where: { (wallet: SolanaAccount) in wallet.address == addressBase58 })
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,
-                    category: wallet.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
-                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.isNativeSOL)?
+                    category: wallet.token.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
+                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.token.isNativeSOL)?
                                 .pubkey)) ?? address,
                         token: wallet.token
                     ),
@@ -53,7 +54,7 @@ extension RecipientSearchServiceImpl {
                     // detect token
                     let token = config
                         .tokens[accountInfo.mint.base58EncodedString] ??
-                        .unsupported(mint: accountInfo.mint.base58EncodedString)
+                        .unsupported(mint: accountInfo.mint.base58EncodedString, decimals: 1, symbol: "", supply: nil)
 
                     // detect category
                     let category = Recipient.Category.solanaTokenAddress(
@@ -141,8 +142,8 @@ extension RecipientSearchServiceImpl {
         for wallet in wallets {
             try Task.checkCancellation()
 
+            let balance = wallet.lamports
             guard
-                let balance = wallet.lamports,
                 let mint = try? PublicKey(string: wallet.token.address)
             else { continue }
 
@@ -166,8 +167,8 @@ extension RecipientSearchServiceImpl {
         for wallet in wallets {
             try Task.checkCancellation()
 
+            let balance = wallet.lamports
             guard
-                let balance = wallet.lamports,
                 let mint = try? PublicKey(string: wallet.token.address)
             else { continue }
 

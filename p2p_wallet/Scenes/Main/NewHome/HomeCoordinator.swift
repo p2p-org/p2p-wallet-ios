@@ -150,7 +150,7 @@ final class HomeCoordinator: Coordinator<Void> {
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
-                    presentingViewController: self.navigationController
+                    presentingViewController: navigationController
                 ))
                 .map { _ in () }
                 .eraseToAnyPublisher()
@@ -218,8 +218,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
 
         case let .solanaAccount(solanaAccount):
-            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
-            
+            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.token.symbol))
+
             return coordinate(
                 to: AccountDetailsCoordinator(
                     args: .solanaAccount(solanaAccount),
@@ -244,10 +244,6 @@ final class HomeCoordinator: Coordinator<Void> {
             }
 
             // Other
-            var token = token
-            if token == .renBTC {
-                token = Token(.renBTC, customSymbol: "BTC")
-            }
             return coordinate(
                 to: HomeBuyNotificationCoordinator(
                     tokenFrom: .usdc, tokenTo: token, controller: navigationController
@@ -272,7 +268,9 @@ final class HomeCoordinator: Coordinator<Void> {
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    Task {
+                        try? await Resolver.resolve(SolanaAccountsService.self).fetch()
+                    }
                 })
             }
             return Just(())

@@ -222,11 +222,11 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
 // MARK: - MockSolanaAPIClient
 
 private class MockSolanaAPIClient: MockSolanaAPIClientBase {
-    var getSignaturesForAddressResponse: String!
-    var getTransactionResponse: String!
-    var getBalanceResponse: String!
-    var getTokensAccountByOwnerResponse: String!
-    var getTokenAccountBalanceResponse: String!
+    var getSignaturesForAddressResponse: String = ""
+    var getTransactionResponse: String = ""
+    var getBalanceResponse: String = ""
+    var getTokensAccountByOwnerResponse: String = ""
+    var getTokenAccountBalanceResponse: String = ""
     
     override func getBalance(account: String, commitment: Commitment?) async throws -> UInt64 {
         try decode(Rpc<UInt64>.self, from: getBalanceResponse).value

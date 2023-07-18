@@ -7,10 +7,35 @@
 
 import Foundation
 
+public enum TokenPrimaryKey: Hashable, Codable {
+    case native
+    case contract(String)
+
+    /// Token identify
+    public var id: String {
+        switch self {
+        case .native:
+            return "native"
+        case let .contract(value):
+            return value
+        }
+    }
+}
+
 /// Any token for easy converable
 public protocol AnyToken {
-    /// Token primary key
-    var tokenPrimaryKey: String { get }
+    /// It's a normalised string of token primary key.
+    ///
+    /// Format: {network}-{tokenPrimaryKey.id}
+    /// It can be smart contract address or `native` text in case native
+    /// token.
+    var id: String { get }
+
+    /// Normalised token id.
+    var primaryKey: TokenPrimaryKey { get }
+
+    /// The network, that define this token.
+    var network: TokenNetwork { get }
 
     /// Token symbol
     var symbol: String { get }
@@ -21,22 +46,41 @@ public protocol AnyToken {
     /// Decimal for token
     var decimals: UInt8 { get }
 
-    var network: TokenNetwork { get }
+    /// Token address
+    @available(*, deprecated, message: "Legacy code")
+    var address: String { get }
 }
 
 public extension AnyToken {
+    var id: String { "\(network)-\(primaryKey.id)" }
+
     var asSomeToken: SomeToken {
-        SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals, network: network)
+        SomeToken(tokenPrimaryKey: primaryKey, symbol: symbol, name: name, decimals: decimals, network: network)
+    }
+
+    var address: String {
+        switch network {
+        case .solana:
+            switch primaryKey {
+            case .native:
+                return SolanaToken.nativeSolana.address
+            case let .contract(address):
+                return address
+            }
+        default:
+            return primaryKey.id
+        }
     }
 }
 
-public enum TokenNetwork: Hashable, Codable {
+public enum TokenNetwork: String, Hashable, Codable {
     case solana
     case ethereum
 }
 
+/// Base application token
 public struct SomeToken: AnyToken, Hashable, Codable {
-    public let tokenPrimaryKey: String
+    public let primaryKey: TokenPrimaryKey
 
     public let symbol: String
 
@@ -47,13 +91,13 @@ public struct SomeToken: AnyToken, Hashable, Codable {
     public let network: TokenNetwork
 
     public init(
-        tokenPrimaryKey: String,
+        tokenPrimaryKey: TokenPrimaryKey,
         symbol: String,
         name: String,
         decimals: UInt8,
         network: TokenNetwork
     ) {
-        self.tokenPrimaryKey = tokenPrimaryKey
+        primaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name
         self.decimals = decimals

@@ -3,10 +3,10 @@ import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
 import UIKit
 
@@ -31,7 +31,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var sourceWallet: Wallet
+    @Published var sourceWallet: SolanaAccount
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
@@ -73,7 +73,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
-    let changeFeeToken = PassthroughSubject<Wallet, Never>()
+    let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
@@ -91,13 +91,13 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
+    private let walletsRepository: SolanaAccountsService
+    private let pricesService: PriceService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
         recipient: Recipient,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
         flow: SendFlow,
         allowSwitchingMainAmountType: Bool,
@@ -107,19 +107,19 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.preChosenAmount = preChosenAmount
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
-        let repository = Resolver.resolve(WalletsRepository.self)
+        let repository = Resolver.resolve(SolanaAccountsService.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
 
-        let pricesService = Resolver.resolve(PricesService.self)
+        let pricesService = Resolver.resolve(PriceService.self)
         self.pricesService = pricesService
 
         // Setup source token
-        let tokenInWallet: Wallet
+        let tokenInWallet: SolanaAccount
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
-                .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
+                .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: Token.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -127,22 +127,22 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
                     .filter(\.isSendable)
-                    .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+                    .sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
                             return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: Token.nativeSolana)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+            .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
 
-        var exchangeRate = [String: CurrentPrice]()
+        var exchangeRate = [String: TokenPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
             exchangeRate[$0.token.symbol] = $0.price
@@ -396,24 +396,21 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
-            pricesService.isPricesAvailablePublisher,
-            $sourceWallet.eraseToAnyPublisher()
-        )
-        .sink { [weak self] isPriceAvailable, currentWallet in
-            guard let self else { return }
-            if !isPriceAvailable || currentWallet.price == nil {
-                self.turnOffInputSwitch()
-            } else if
-                let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
-            {
-                self.turnOffInputSwitch()
-            } else {
-                self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+        $sourceWallet.eraseToAnyPublisher()
+            .sink { [weak self] currentWallet in
+                guard let self else { return }
+                if currentWallet.price == nil {
+                    self.turnOffInputSwitch()
+                } else if
+                    let amount = currentWallet.amount,
+                    currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                {
+                    self.turnOffInputSwitch()
+                } else {
+                    self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+                }
             }
-        }
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
     }
 }
 
@@ -661,12 +658,12 @@ private extension SendInputViewModel {
     }
 }
 
-private extension Wallet {
+private extension SolanaAccount {
     var isSendable: Bool {
         lamports ?? 0 > 0 && !isNFTToken
     }
 
     var isUsdcOrUsdt: Bool {
-        [Token.usdc.address, Token.usdt.address].contains(mintAddress)
+        [Token.usdc.address, Token.usdt.address].contains(token.address)
     }
 }

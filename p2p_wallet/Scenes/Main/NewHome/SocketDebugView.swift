@@ -7,6 +7,7 @@
 
 import Combine
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SwiftUI
 
