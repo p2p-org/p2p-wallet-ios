@@ -88,7 +88,6 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
         case registration
         case account
         case whitelisted
-        case KYC
     }
 
     private func cacheFileFor(_ name: CacheFileName) -> URL {
