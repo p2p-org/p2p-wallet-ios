@@ -322,7 +322,8 @@ let package = Package(
             dependencies: [
                 "KeyAppNetworking",
                 "KeyAppKitCore",
-                "KeyAppBusiness"
+                "KeyAppBusiness",
+                "KeyAppKitLogger"
             ]
         ),
 

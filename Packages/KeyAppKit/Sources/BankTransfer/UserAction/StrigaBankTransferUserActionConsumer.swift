@@ -1,5 +1,4 @@
 import Combine
-import Resolver
 import KeyAppBusiness
 import Foundation
 import KeyAppKitCore
@@ -24,10 +23,17 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
     public let persistence: UserActionPersistentStorage
     let database: SynchronizedDatabase<String, Action> = .init()
 
-    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+    private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+    private let solanaAccountService: SolanaAccountsService
 
-    public init(persistence: UserActionPersistentStorage) {
+    public init(
+        persistence: UserActionPersistentStorage,
+        bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>,
+        solanaAccountService: SolanaAccountsService
+    ) {
         self.persistence = persistence
+        self.bankTransferService = bankTransferService
+        self.solanaAccountService = solanaAccountService
     }
 
     public var onUpdate: AnyPublisher<any UserAction, Never> {
@@ -64,7 +70,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 return
             }
 
-            let solanaAccountService: SolanaAccountsService = Resolver.resolve()
+            
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.data.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)

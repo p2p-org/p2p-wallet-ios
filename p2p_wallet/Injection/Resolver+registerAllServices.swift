@@ -415,7 +415,9 @@ extension Resolver: ResolverRegistering {
                         persistence: resolve()
                     ),
                     StrigaBankTransferUserActionConsumer(
-                        persistence: resolve()
+                        persistence: resolve(),
+                        bankTransferService: resolve(),
+                        solanaAccountService: resolve()
                     )
                 ]
             )
