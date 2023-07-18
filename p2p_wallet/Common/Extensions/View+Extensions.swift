@@ -11,6 +11,10 @@ extension View {
     func uiView() -> UIView {
         asViewController().view
     }
+
+    func castToAnyView() -> AnyView {
+        AnyView(self)
+    }
 }
 
 // MARK: - Font
