@@ -304,6 +304,18 @@ struct StrigaEndpoint: HTTPEndpoint {
         )
     }
 
+    static func exchangeRates(
+        baseURL: String,
+        keyPair: KeyPair
+    ) throws -> Self {
+        try StrigaEndpoint(
+            baseURL: baseURL,
+            path: "/trade/rates",
+            method: .post,
+            keyPair: keyPair,
+            body: nil
+        )
+    }
 }
 
 extension KeyPair {

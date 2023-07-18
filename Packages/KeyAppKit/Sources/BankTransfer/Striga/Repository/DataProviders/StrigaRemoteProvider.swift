@@ -88,4 +88,7 @@ public protocol StrigaRemoteProvider: AnyObject {
         label: String?
     ) async throws -> StrigaWhitelistAddressResponse
 
+    /// Exchange Rates
+    /// - SeeAlso: [Exchange Rates](https://www.sandbox.striga.com/api/v1/trade/rates)
+    func exchangeRates() async throws -> StrigaExchangeRatesResponse
 }

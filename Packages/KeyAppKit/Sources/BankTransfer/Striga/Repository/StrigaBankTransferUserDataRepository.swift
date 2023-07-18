@@ -355,6 +355,14 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         )
     }
 
+    public func exchangeRates(from fromToken: String, to toToken: String) async throws -> StrigaExchangeRates {
+        let key = [fromToken, toToken].joined().uppercased()
+        if let data = try await remoteProvider.exchangeRates()[key] {
+            return data
+        }
+        throw StrigaProviderError.invalidRateTokens
+    }
+
     // MARK: - Private
     private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
