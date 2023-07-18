@@ -233,9 +233,9 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.method, .post)
         
         let expectedHeader = [
-            "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": try keyPair.getSignedTimestampMessage(),
+            "Content-Type": "application/json"
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
         
@@ -269,7 +269,7 @@ class StrigaEndpointTests: XCTestCase {
         ]
         XCTAssertEqual(endpoint.header, expectedHeaders)
 
-        let expectedBody = "{\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
+        let expectedBody = "{\"accountCreation\":false,\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
         XCTAssertEqual(endpoint.body!, expectedBody)
     }
 
@@ -313,7 +313,7 @@ class StrigaEndpointTests: XCTestCase {
             ip: "ipString"
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/resend-otp")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/confirm")
         XCTAssertEqual(endpoint.method, .post)
 
         let expectedHeader = [
