@@ -32,20 +32,20 @@ struct CryptoView: View {
 
     var body: some View {
         ZStack {
+            Color(Asset.Colors.smoke.color)
+                .edgesIgnoringSafeArea(.all)
             switch viewModel.state {
             case .pending:
-                Text("Pending")
+                CryptoPendingView()
             case .empty:
-                Text("Empty")
+                CryptoEmptyView(
+                    actionsPanelView: actionsPanelView
+                )
             case .accounts:
-                ZStack {
-                    Color(Asset.Colors.smoke.color)
-                        .edgesIgnoringSafeArea(.all)
-                    CryptoAccountsView(
-                        viewModel: accountsViewModel,
-                        actionsPanelView: actionsPanelView
-                    )
-                }
+                CryptoAccountsView(
+                    viewModel: accountsViewModel,
+                    actionsPanelView: actionsPanelView
+                )
             }
         }
         .onAppear {
