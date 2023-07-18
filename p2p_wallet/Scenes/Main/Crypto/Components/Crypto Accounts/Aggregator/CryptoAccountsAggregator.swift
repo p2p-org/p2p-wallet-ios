@@ -9,6 +9,7 @@ import Foundation
 import KeyAppKitCore
 import Web3
 import Wormhole
+import BigDecimal
 
 struct CryptoAccountsAggregator: DataAggregator {
     typealias Input = (
@@ -39,17 +40,15 @@ struct CryptoAccountsAggregator: DataAggregator {
             return !transferAccounts.contains(account)
         }
 
-        let mergedNonTransferAccounts: [any RenderableAccount] = filteredEthereumAccounts + solanaAccounts
-
-        let primaryAccounts = mergedNonTransferAccounts
+        let mergedNonTransferAccounts: [any SortableAccount] = (filteredEthereumAccounts + solanaAccounts)
             .filter(hiddenFilter)
-            .filter(primaryFilter)
             .sorted(by: commonSort)
         
+        let primaryAccounts = mergedNonTransferAccounts
+            .filter(primaryFilter)
+        
         let secondaryAccounts = mergedNonTransferAccounts
-            .filter(hiddenFilter)
             .filter { !primaryFilter(account: $0) }
-            .sorted(by: commonSort)
 
         return (transferAccounts, primaryAccounts, secondaryAccounts)
     }
@@ -74,7 +73,7 @@ struct CryptoAccountsAggregator: DataAggregator {
     }
     
     // Sort by sorting key
-    func commonSort(lhs: any RenderableAccount, rhs: any RenderableAccount) -> Bool {
+    func commonSort(lhs: any SortableAccount, rhs: any SortableAccount) -> Bool {
         guard
             let lhsKey = lhs.sortingKey,
             let rhsKey = rhs.sortingKey

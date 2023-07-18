@@ -1,6 +1,5 @@
 import Foundation
 import UIKit
-import BigDecimal
 
 protocol RenderableAccount: Identifiable where ID == String {
     var id: String { get }
@@ -18,8 +17,6 @@ protocol RenderableAccount: Identifiable where ID == String {
     var extraAction: AccountExtraAction? { get }
 
     var tags: AccountTags { get }
-    
-    var sortingKey: BigDecimal? { get }
 }
 
 extension RenderableAccount {
@@ -34,10 +31,6 @@ extension RenderableAccount {
         default:
             return true
         }
-    }
-    
-    var sortingKey: BigDecimal? {
-        return nil
     }
 }
 

@@ -6,7 +6,7 @@ import Wormhole
 import UIKit
 import BigDecimal
 
-struct RenderableEthereumAccount: RenderableAccount, Equatable {
+struct RenderableEthereumAccount: RenderableAccount, SortableAccount, Equatable {
     let account: EthereumAccount
     let status: Status
     let userAction: WormholeClaimUserAction?
