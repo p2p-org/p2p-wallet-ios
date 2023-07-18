@@ -1,10 +1,3 @@
-//
-//  CryptoEthereumAccountsAggregator.swift
-//  p2p_wallet
-//
-//  Created by Zafar Ivaev on 13/07/23.
-//
-
 import Foundation
 import KeyAppKitCore
 import Web3

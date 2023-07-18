@@ -1,10 +1,3 @@
-//
-//  CryptoCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Zafar Ivaev on 12/07/23.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation

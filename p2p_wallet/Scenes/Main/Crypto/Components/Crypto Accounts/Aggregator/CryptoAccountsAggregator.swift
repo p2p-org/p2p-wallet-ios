@@ -1,10 +1,3 @@
-//
-//  CryptoAccountsAggregator.swift
-//  p2p_wallet
-//
-//  Created by Zafar Ivaev on 13/07/23.
-//
-
 import Foundation
 import KeyAppKitCore
 import Web3
@@ -40,7 +33,7 @@ struct CryptoAccountsAggregator: DataAggregator {
             return !transferAccounts.contains(account)
         }
 
-        let mergedNonTransferAccounts: [any SortableAccount] = (filteredEthereumAccounts + solanaAccounts)
+        let mergedNonTransferAccounts: [any RenderableAccount] = (filteredEthereumAccounts + solanaAccounts)
             .filter(hiddenFilter)
             .sorted(by: commonSort)
         

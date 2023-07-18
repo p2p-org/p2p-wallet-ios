@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-protocol RenderableAccount: Identifiable where ID == String {
+protocol RenderableAccount: SortableAccount, Identifiable where ID == String {
     var id: String { get }
 
     var icon: AccountIcon { get }

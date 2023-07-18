@@ -2,7 +2,7 @@ import Foundation
 import KeyAppBusiness
 import BigDecimal
 
-struct RenderableSolanaAccount: RenderableAccount, SortableAccount {
+struct RenderableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
     
     var id: String {
