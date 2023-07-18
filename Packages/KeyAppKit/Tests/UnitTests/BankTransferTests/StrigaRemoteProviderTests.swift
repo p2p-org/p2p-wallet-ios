@@ -504,20 +504,22 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testExchangeRates_FailedResponse() async throws {
         // Arrange
-        let mockData = "Unauthorized"
-        let provider = try getMockProvider(responseString: mockData, statusCode: 401)
-
-        let result = try await provider.exchangeRates()
-
-        // Assert
-        XCTAssertNil(result["USDCEUR"])
-        XCTAssertEqual(result.isEmpty, true)
+        var result: StrigaExchangeRatesResponse?
+        let mockData = ""
+        do {
+            let provider = try getMockProvider(responseString: mockData, statusCode: 0, error: NSError(domain: "", code: NSURLErrorTimedOut))
+            result = try await provider.exchangeRates()
+        } catch let error {
+            // Assert
+            XCTAssertNil(result)
+            XCTAssertEqual((error as NSError).code, NSURLErrorTimedOut)
+        }
     }
 
     // MARK: - Helper Methods
     
-    func getMockProvider(responseString: String, statusCode: Int) throws -> StrigaRemoteProvider {
-        let mockURLSession = MockURLSession(responseString: responseString, statusCode: statusCode, error: nil)
+    func getMockProvider(responseString: String, statusCode: Int, error: Error? = nil) throws -> StrigaRemoteProvider {
+        let mockURLSession = MockURLSession(responseString: responseString, statusCode: statusCode, error: error)
         let httpClient = HTTPClient(urlSession: mockURLSession)
         return StrigaRemoteProviderImpl(baseURL: "https://example.com/api", solanaKeyPair: try KeyPair(), httpClient: httpClient)
     }
