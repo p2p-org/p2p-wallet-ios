@@ -1497,3 +1497,4 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nVeuillez vous connecter avec le bon compte %@.";
 "Incorrect %@ account" = "Compte %@ incorrect";
 "You've used all 5 codes. Try again later. For help, contact support." = "Vous avez utilisé les 5 codes.  Réessayez plus tard.  Pour obtenir de l'aide, contactez l'assistance.";
+"For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money" = "Pour ce transfert, le taux de change n'est pas garanti :\nnous utiliserons le taux au moment de la réception de l'argent";

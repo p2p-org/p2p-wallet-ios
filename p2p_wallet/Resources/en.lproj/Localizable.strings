@@ -1461,3 +1461,4 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nPlease log in with the correct %@ account.";
 "Incorrect %@ account" = "Incorrect %@ account";
 "You've used all 5 codes. Try again later. For help, contact support." = "You've used all 5 codes. Try again later. For help, contact support.";
+"For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money" = "For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money";
