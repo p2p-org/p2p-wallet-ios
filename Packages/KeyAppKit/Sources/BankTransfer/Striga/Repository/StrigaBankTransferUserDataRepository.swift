@@ -136,6 +136,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
             if let userId = await getUserId(),
+               cachedData.mobileNumber == nil,
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 // save to local provider
