@@ -17,8 +17,6 @@ private extension String {
 }
 
 final class BuyViewModel: ObservableObject {
-    typealias IpInfo = Moonpay.Provider.IpAddressResponse
-
     var coordinatorIO = CoordinatorIO()
 
     // MARK: - To View

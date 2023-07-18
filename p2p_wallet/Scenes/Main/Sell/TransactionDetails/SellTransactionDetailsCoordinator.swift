@@ -13,8 +13,6 @@ import SafariServices
 import Sell
 import UIKit
 
-private typealias Result = SellTransactionDetailsCoorditor.Result
-
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
     @Injected private var walletsRepository: SolanaAccountsService
 

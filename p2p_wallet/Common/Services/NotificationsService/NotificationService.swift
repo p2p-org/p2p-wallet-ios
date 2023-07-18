@@ -1,14 +1,12 @@
 import AnalyticsManager
+import BEPureLayout
+import Combine
 import Foundation
 import KeyAppUI
 import Resolver
 import UIKit
-import Combine
-import BEPureLayout
 
 protocol NotificationService {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
-
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
     func deleteDeviceToken(ethAddress: String?) async throws
     func showInAppNotification(_ notification: InAppNotification)
@@ -71,7 +69,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String? = nil) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
-        
+
         let result = try await notificationRepository.sendDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey,
@@ -82,7 +80,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 deviceModel: UIDevice.current.model
             )
         ))
-        
+
         print(result)
 
         Defaults.lastDeviceToken = deviceToken
@@ -117,7 +115,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: title ?? "😓",
                 text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow()
+            .showInKeyWindow()
         }
     }
 
@@ -127,7 +125,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: title ?? "😓",
                 text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow(autoHide: withAutoHidden)
+            .showInKeyWindow(autoHide: withAutoHidden)
         }
     }
 
@@ -156,7 +154,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: "😓",
                 text: L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow()
+            .showInKeyWindow()
         }
     }
 
