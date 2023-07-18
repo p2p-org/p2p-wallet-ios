@@ -1401,3 +1401,6 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nVui lòng đăng nhập bằng đúng tài khoản %@.";
 "Incorrect %@ account" = "Tài khoản %@ không chính xác";
 "You've used all 5 codes. Try again later. For help, contact support." = "Bạn đã sử dụng tất cả 5 mã.  Thử lại sau.  Để được giúp đỡ, hãy liên hệ với bộ phận hỗ trợ.";
+"Crypto" = "tiền điện tử";
+"My Crypto" = "Tiền điện tử của tôi";
+"Incoming transfer" = "chuyển đến";

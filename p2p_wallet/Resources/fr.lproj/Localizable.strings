@@ -1399,3 +1399,6 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nVeuillez vous connecter avec le bon compte %@.";
 "Incorrect %@ account" = "Compte %@ incorrect";
 "You've used all 5 codes. Try again later. For help, contact support." = "Vous avez utilisé les 5 codes.  Réessayez plus tard.  Pour obtenir de l'aide, contactez l'assistance.";
+"Crypto" = "Crypto";
+"My Crypto" = "Ma crypto";
+"Incoming transfer" = "Transfert entrant";
