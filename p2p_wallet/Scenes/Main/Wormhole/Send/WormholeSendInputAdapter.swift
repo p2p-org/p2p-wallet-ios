@@ -3,8 +3,8 @@ import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppUI
 import Send
-import Wormhole
 import UIKit
+import Wormhole
 
 struct WormholeSendInputStateAdapter: Equatable {
     let cryptoFormatter: CryptoFormatter = .init()
@@ -40,10 +40,6 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var inputAccount: SolanaAccountsService.Account? {
         input?.solanaAccount
-    }
-
-    var selectedToken: SolanaToken {
-        inputAccount?.token ?? .nativeSolana
     }
 
     var inputAccountSkeleton: Bool {

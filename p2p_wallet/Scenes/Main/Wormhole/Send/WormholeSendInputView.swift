@@ -15,9 +15,6 @@ import SwiftUI
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
 
-    let inputFount = UIFont.font(of: .title2, weight: .bold)
-    @State private var switchAreaOpacity: Double = 1
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Title
@@ -140,11 +137,6 @@ struct WormholeSendInputView: View {
                 .edgesIgnoringSafeArea(.all)
         )
     }
-
-    func textWidth(font: UIFont, text: String) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        return (text as NSString).size(withAttributes: fontAttributes).width
-    }
 }
 
 struct WormholeSendInputView_Previews: PreviewProvider {
@@ -158,11 +150,5 @@ struct WormholeSendInputView_Previews: PreviewProvider {
                 )
             )
         )
-    }
-}
-
-private extension Text {
-    func secondaryStyle() -> some View {
-        foregroundColor(Color(Asset.Colors.mountain.color)).apply(style: .text4).lineLimit(1)
     }
 }

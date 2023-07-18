@@ -14,10 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     @Injected private var notificationService: NotificationService
 
-    static var shared: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
-    }
-
     private lazy var proxyAppDelegate = AppDelegateProxyService()
 
     override init() {
@@ -124,27 +120,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
-    
+
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         proxyAppDelegate.application(application, performActionFor: shortcutItem, completionHandler: completionHandler)
     }
-    
+
     func applicationDidEnterBackground(_ application: UIApplication) {
         proxyAppDelegate.applicationDidEnterBackground(application)
     }
-    
+
     func applicationWillEnterForeground(_ application: UIApplication) {
         proxyAppDelegate.applicationWillEnterForeground(application)
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         proxyAppDelegate.applicationWillResignActive(application)
     }
-    
+
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
         proxyAppDelegate.applicationDidReceiveMemoryWarning(application)
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         proxyAppDelegate.applicationWillTerminate(application)
     }

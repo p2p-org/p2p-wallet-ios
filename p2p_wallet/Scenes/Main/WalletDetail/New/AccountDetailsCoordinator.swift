@@ -16,11 +16,9 @@ enum AccountDetailsCoordinatorArgs {
 
 enum AccountDetailsCoordinatorResult {
     case cancel
-    case done
 }
 
 class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var analyticsManager: AnalyticsManager
 
     let args: AccountDetailsCoordinatorArgs
@@ -32,12 +30,12 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
     override func build() -> UIViewController {
         let detailAccountVM: AccountDetailsViewModel
-        let historyListVM: AccountDetailsHistoryViewModel
+        let historyListVM: HistoryViewModel
 
         switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.token.address, account: account)
+            historyListVM = .init(mint: account.token.address)
         }
 
         historyListVM.actionSubject
@@ -336,7 +334,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
     func openBuy() {
         guard case let .solanaAccount(account) = args else { return }
 
-        let token: Token
+        let token: TokenMetadata
         switch account.token.symbol {
         case "SOL":
             token = .nativeSolana
