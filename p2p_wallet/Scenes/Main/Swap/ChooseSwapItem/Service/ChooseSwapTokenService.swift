@@ -22,10 +22,11 @@ final class ChooseSwapTokenService: ChooseItemService {
         self.swapTokens = CurrentValueSubject(swapTokens)
         self.fromToken = fromToken
 
+        let popularsToken = SwapToken.popularTokenMints
         if fromToken {
-            preferTokens = ["USDC", "USDT"]
+            preferTokens = Array(popularsToken.prefix(2)) // USDC, USDT only
         } else {
-            preferTokens = SwapToken.preferTokens
+            preferTokens = popularsToken
         }
 
         statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(status: .ready, value: []))
@@ -77,7 +78,7 @@ private extension ChooseSwapTokenService {
                 } else {
                     let preferTokens = Set(self.preferTokens)
                     tokens.forEach {
-                        if preferTokens.contains($0.token.symbol) {
+                        if preferTokens.contains($0.token.address) {
                             firstSection.append($0)
                         } else {
                             secondSection.append($0)
