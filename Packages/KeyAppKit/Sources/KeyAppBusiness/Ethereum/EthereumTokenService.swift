@@ -29,29 +29,34 @@ public final class EthereumTokensRepository {
 
     /// Resolve native token
     public func resolveNativeToken() async throws -> EthereumToken {
-        // Load from cache
-        if let nativeToken = try await database.read(for: "native") {
-            return nativeToken
-        }
+        EthereumToken()
 
-        // Fetch
-        let response = try await provider.getTokensInfo(
-            .init(
-                query: [
-                    .init(chainId: "ethereum", addresses: ["native"]),
-                ]
-            )
-        )
+        // TODO: Wait backend
+        /*
+         // Load from cache
+         if let nativeToken = try await database.read(for: "native") {
+             return nativeToken
+         }
 
-        guard let tokenData = response.first?.data.first else {
-            throw Error.nativeTokenCanNotBeResolved
-        }
+         // Fetch
+         let response = try await provider.getTokensInfo(
+             .init(
+                 query: [
+                     .init(chainId: "ethereum", addresses: ["native"]),
+                 ]
+             )
+         )
 
-        // Parse and store
-        let nativeToken = try parseToken(tokenData: tokenData)
-        try? await database.write(for: "native", value: nativeToken)
+         guard let tokenData = response.first?.data.first else {
+             throw Error.nativeTokenCanNotBeResolved
+         }
 
-        return nativeToken
+         // Parse and store
+         let nativeToken = try parseToken(tokenData: tokenData)
+         try? await database.write(for: "native", value: nativeToken)
+
+         return nativeToken
+          */
     }
 
     /// Resolve ERC-20 token by address.
