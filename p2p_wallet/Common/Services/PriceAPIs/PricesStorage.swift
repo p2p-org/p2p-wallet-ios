@@ -24,21 +24,3 @@ actor InMemoryPricesStorage: PricesStorage {
         self.prices = prices
     }
 }
-
-actor UserDefaultsPricesStorage: PricesStorage {
-    func retrievePrices() -> TokenPriceMap {
-        var prices: TokenPriceMap = [:]
-        let data = Defaults.prices
-        if !data.isEmpty,
-           let cachedPrices = try? PropertyListDecoder().decode(TokenPriceMap.self, from: data)
-        {
-            prices = cachedPrices
-        }
-        return prices
-    }
-
-    func savePrices(_ prices: TokenPriceMap) {
-        guard let data = try? PropertyListEncoder().encode(prices) else { return }
-        Defaults.prices = data
-    }
-}

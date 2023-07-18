@@ -3,11 +3,11 @@ import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppUI
+import Moonpay
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
-import Moonpay
 
 let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
 
@@ -16,9 +16,6 @@ private extension String {
 }
 
 final class BuyViewModel: ObservableObject {
-    
-    typealias IpInfo = Moonpay.Provider.IpAddressResponse
-    
     var coordinatorIO = CoordinatorIO()
 
     // MARK: - To View
@@ -75,7 +72,7 @@ final class BuyViewModel: ObservableObject {
     private static let tokens: [Token] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = [.eur, .gbp, .usd]
     private static let defaultToken = Token.usdc
-    
+
     // MARK: - Init
 
     init(
@@ -245,10 +242,10 @@ final class BuyViewModel: ObservableObject {
                 self.areMethodsLoading = false
             }
         }
-        
+
         getBuyAvailability()
     }
-    
+
     private func getBuyAvailability() {
         Task {
             let ipInfo = try await moonpayProvider.ipAddresses()
@@ -261,14 +258,14 @@ final class BuyViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func setNewCountryInfo(flag: String, title: String, isBuyAllowed: Bool) {
         guard !title.isEmpty else {
             state = .usual
             self.flag = .neutralFlag
             return
         }
-        
+
         if isBuyAllowed {
             state = .usual
         } else {
@@ -283,15 +280,15 @@ final class BuyViewModel: ObservableObject {
             analyticsManager.log(event: .buyBlockedScreenOpen)
         }
         self.flag = flag
-        self.countryTitle = title
+        countryTitle = title
     }
-    
+
     // MARK: - From View
-    
+
     func goBackClicked() {
         coordinatorIO.close.send()
     }
-    
+
     func changeTheRegionClicked() {
         coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
             flag: flag,
@@ -299,7 +296,7 @@ final class BuyViewModel: ObservableObject {
         ))
         analyticsManager.log(event: .buyBlockedRegionClick)
     }
-    
+
     func flagClicked() {
         coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
             flag: flag,
@@ -307,7 +304,7 @@ final class BuyViewModel: ObservableObject {
         ))
         analyticsManager.log(event: .buyChangeCountryClick)
     }
-    
+
     // MARK: -
 
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
@@ -570,13 +567,12 @@ final class BuyViewModel: ObservableObject {
             return true
         }
     }
-    
+
     func countrySelected(_ country: SelectCountryViewModel.Model, buyAllowed: Bool) {
         setNewCountryInfo(flag: country.flag, title: country.title, isBuyAllowed: buyAllowed)
     }
 
     struct CoordinatorIO {
-        
         // To Coordinator
         let showDetail = PassthroughSubject<(
             Buy.ExchangeOutput,
@@ -588,7 +584,7 @@ final class BuyViewModel: ObservableObject {
         let showFiatSelect = PassthroughSubject<[Fiat], Never>()
         let navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         let chooseCountry = PassthroughSubject<SelectCountryViewModel.Model, Never>()
-        
+
         // From Coordinator
         let tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         let fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)

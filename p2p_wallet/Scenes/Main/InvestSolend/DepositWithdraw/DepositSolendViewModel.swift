@@ -6,10 +6,6 @@ import Resolver
 import SolanaSwift
 import Solend
 
-enum DepositSolendViewModelError {
-    case invalidFeePayer
-}
-
 @MainActor
 class DepositSolendViewModel: ObservableObject {
     private let strategy: Strategy
@@ -297,45 +293,45 @@ class DepositSolendViewModel: ObservableObject {
 
     func processFee(fee: SolendFeePaying) {
         let mint = Token.solendSupportedTokens
-            .first(where: {$0.symbol == fee.symbol})?
+            .first(where: { $0.symbol == fee.symbol })?
             .address ?? ""
-        
+
         // Fee
         let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
-        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(mint: mint)?.value ?? 0)
+        let fiatTransferFee: Double = transferFee * (priceService.currentPrice(mint: mint)?.value ?? 0)
 
         let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
-        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(mint: mint)?.value ?? 0)
+        let fiatRentFee: Double = rentFee * (priceService.currentPrice(mint: mint)?.value ?? 0)
 
         // Total
-        var total: Lamports = self.inputLamport
-        var fiatTotal: Double = self.tokenToAmount(amount: self.amountFrom(lamports: total))
+        var total: Lamports = inputLamport
+        var fiatTotal: Double = tokenToAmount(amount: amountFrom(lamports: total))
 
         if invest.asset.symbol == fee.symbol {
             total = total + fee.fee.transaction + fee.fee.accountBalances
-            fiatTotal = self.tokenToAmount(amount: self.amountFrom(lamports: total))
+            fiatTotal = tokenToAmount(amount: amountFrom(lamports: total))
         } else {
             fiatTotal = fiatTotal + fiatTransferFee + fiatRentFee
         }
 
         // Text label
-        let tokenAmount = self.amountFrom(lamports: total)
-        let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
-        let amountText = tokenAmount.tokenAmountFormattedString(symbol: self.invest.asset.symbol) + " (" + fiatAmount
-            .fiatAmountFormattedString(currency: self.fiat) + ")"
-        self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
+        let tokenAmount = amountFrom(lamports: total)
+        let fiatAmount = tokenToAmount(amount: amountFrom(lamports: total))
+        let amountText = tokenAmount.tokenAmountFormattedString(symbol: invest.asset.symbol) + " (" + fiatAmount
+            .fiatAmountFormattedString(currency: fiat) + ")"
+        feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
 
-        self.detailItem.send(
+        detailItem.send(
             .init(
-                amount: self.amountFrom(lamports: inputLamport),
-                fiatAmount: self.tokenToAmount(amount: self.amountFrom(lamports: inputLamport)),
+                amount: amountFrom(lamports: inputLamport),
+                fiatAmount: tokenToAmount(amount: amountFrom(lamports: inputLamport)),
                 transferFee: transferFee,
                 fiatTransferFee: fiatTransferFee,
                 fee: rentFee,
                 fiatFee: fiatRentFee,
                 total: invest.asset.symbol == fee.symbol ? tokenAmount : nil,
                 fiatTotal: fiatTotal,
-                symbol: self.invest.asset.symbol,
+                symbol: invest.asset.symbol,
                 feeSymbol: fee.symbol
             )
         )
@@ -499,7 +495,7 @@ class DepositSolendViewModel: ObservableObject {
                 deposits
                     .map { asset, market, userDeposit in
                         let mint = Token.solendSupportedTokens
-                            .first(where: {$0.symbol == userDeposit?.symbol})?
+                            .first(where: { $0.symbol == userDeposit?.symbol })?
                             .address ?? ""
                         return TokenToWithdrawView.Model(
                             amount: userDeposit?.depositedAmount.double,

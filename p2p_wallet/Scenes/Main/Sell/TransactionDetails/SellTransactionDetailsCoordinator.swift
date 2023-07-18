@@ -7,16 +7,14 @@
 
 import Combine
 import Foundation
-import UIKit
 import Resolver
-import Sell
 import SafariServices
-
-private typealias Result = SellTransactionDetailsCoorditor.Result
+import Sell
+import UIKit
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
     @Injected private var walletsRepository: WalletsRepository
-    
+
     private let viewController: UIViewController
     private let strategy: Strategy
     private let transaction: SellDataServiceTransaction
