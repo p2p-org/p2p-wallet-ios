@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SolanaSwift
 import KeyAppKitCore
+import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
@@ -26,9 +26,10 @@ extension JupiterSwapBusinessLogic {
         // update from Token only if it is from userWallets
         if let fromUserWallet = userWallets
             .first(where: {
-                $0.pubkey == state.fromToken.userWallet?.pubkey &&
-                $0.mintAddress == state.fromToken.address
-            }) {
+                $0.address == state.fromToken.userWallet?.address &&
+                    $0.mintAddress == state.fromToken.address
+            })
+        {
             fromToken = SwapToken(
                 token: fromUserWallet.token,
                 userWallet: fromUserWallet
@@ -39,8 +40,8 @@ extension JupiterSwapBusinessLogic {
         var toToken: SwapToken?
         if let toUserWallet: SolanaAccount = userWallets
             .first(where: {
-                $0.pubkey == state.toToken.userWallet?.pubkey &&
-                $0.mintAddress == state.toToken.address
+                $0.address == state.toToken.userWallet?.address &&
+                    $0.mintAddress == state.toToken.address
             })
         {
             toToken = SwapToken(

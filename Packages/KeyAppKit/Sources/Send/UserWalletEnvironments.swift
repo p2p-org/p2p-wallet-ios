@@ -11,7 +11,7 @@ public struct UserWalletEnvironments: Equatable {
     let ethereumAccount: String?
 
     let exchangeRate: [String: TokenPrice]
-    let tokens: Set<Token>
+    let tokens: Set<TokenMetadata>
 
     let rentExemptionAmountForWalletAccount: Lamports
     let rentExemptionAmountForSPLAccount: Lamports
@@ -20,7 +20,7 @@ public struct UserWalletEnvironments: Equatable {
         wallets: [SolanaAccount],
         ethereumAccount: String?,
         exchangeRate: [String: TokenPrice],
-        tokens: Set<Token>,
+        tokens: Set<TokenMetadata>,
         rentExemptionAmountForWalletAccount: Lamports = 890_880,
         rentExemptionAmountForSPLAccount: Lamports = 2_039_280
     ) {
@@ -36,7 +36,7 @@ public struct UserWalletEnvironments: Equatable {
         .init(wallets: [], ethereumAccount: nil, exchangeRate: [:], tokens: [])
     }
 
-    public func copy(tokens: Set<Token>? = nil) -> Self {
+    public func copy(tokens: Set<TokenMetadata>? = nil) -> Self {
         .init(
             wallets: wallets,
             ethereumAccount: ethereumAccount,

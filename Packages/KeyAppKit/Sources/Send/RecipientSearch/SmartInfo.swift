@@ -7,14 +7,14 @@ import SolanaSwift
 
 public enum SolanaAddressInfo {
     case empty
-    case splAccount(AccountInfo)
+    case splAccount(SPLTokenAccountState)
 }
 
 extension SolanaAddressInfo: BufferLayout {
     public init(from reader: inout SolanaSwift.BinaryReader) throws {
         if reader.isEmpty {
             self = .empty
-        } else if let accountInfo = try? AccountInfo.init(from: &reader) {
+        } else if let accountInfo = try? SPLTokenAccountState.init(from: &reader) {
             self = .splAccount(accountInfo)
         } else {
             self = .empty

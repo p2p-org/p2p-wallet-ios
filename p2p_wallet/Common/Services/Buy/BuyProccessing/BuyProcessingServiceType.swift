@@ -43,7 +43,7 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: to.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
+                walletAddress: walletRepository.nativeWallet?.address,
                 baseCurrencyCode: from.moonpayCode,
                 baseCurrencyAmount: amount,
                 paymentMethod: paymentMethod == "card" ? .creditDebitCard :

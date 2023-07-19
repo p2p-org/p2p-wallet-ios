@@ -358,7 +358,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 }
 
 extension ReceiveNetwork.Image {
-    init?(token: Token) {
+    init?(token: TokenMetadata) {
         if let image = token.image {
             self = .image(image)
         } else if let urlStr = token.logoURI, let url = URL(string: urlStr) {

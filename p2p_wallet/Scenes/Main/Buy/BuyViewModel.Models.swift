@@ -4,7 +4,7 @@ import UIKit
 
 extension BuyViewModel {
     struct BuyForm: Equatable {
-        var token: Token
+        var token: TokenMetadata
         var tokenAmount: Double?
         var fiat: Fiat
         var fiatAmount: Double?

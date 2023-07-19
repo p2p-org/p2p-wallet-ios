@@ -151,7 +151,7 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
         
         let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
         XCTAssertEqual(claimableTokenInfo.lamports, 1000000)
-        XCTAssertEqual(claimableTokenInfo.mintAddress, Token.nativeSolana.address)
+        XCTAssertEqual(claimableTokenInfo.mintAddress, TokenMetadata.nativeSolana.address)
         XCTAssertEqual(claimableTokenInfo.decimals, 9)
         XCTAssertEqual(claimableTokenInfo.account, "2b7iQq3PbWwWTotRSDFNXT9DauU418aCHK4jcAzETUem")
     }
@@ -163,7 +163,7 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
         
         let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
         XCTAssertEqual(claimableTokenInfo.lamports, 1000000)
-        XCTAssertEqual(claimableTokenInfo.mintAddress, Token.nativeSolana.address)
+        XCTAssertEqual(claimableTokenInfo.mintAddress, TokenMetadata.nativeSolana.address)
         XCTAssertEqual(claimableTokenInfo.decimals, 9)
         XCTAssertEqual(claimableTokenInfo.account, "7sYroAgRW6TmmXTHH7vwG2yZFUVhN7u8j8iArywLUcgs")
     }

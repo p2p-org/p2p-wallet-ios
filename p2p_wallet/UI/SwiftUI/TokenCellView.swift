@@ -17,13 +17,13 @@ struct TokenCellViewItem: Hashable {
         amountInCurrentFiat = wallet.priceInCurrentFiat == nil ? nil : wallet.amountInCurrentFiat
     }
 
-    init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {
+    init(token: TokenMetadata, amount: Double? = nil, fiat: Fiat? = nil) {
         self.token = token
         self.amount = amount
         self.fiat = fiat
     }
 
-    var token: Token
+    var token: TokenMetadata
     var amount: Double?
     var fiat: Fiat?
     var amountInCurrentFiat: Double?

@@ -12,7 +12,7 @@ final class BuyCoordinator: Coordinator<Void> {
     private let presentingViewController: UIViewController?
     private let context: Context
     private var shouldPush = true
-    private var defaultToken: Token?
+    private var defaultToken: TokenMetadata?
     private let targetTokenSymbol: String?
 
     private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
@@ -21,7 +21,7 @@ final class BuyCoordinator: Coordinator<Void> {
     init(
         navigationController: UINavigationController? = nil,
         context: Context,
-        defaultToken: Token? = nil,
+        defaultToken: TokenMetadata? = nil,
         presentingViewController: UIViewController? = nil,
         shouldPush: Bool = true,
         targetTokenSymbol: String? = nil

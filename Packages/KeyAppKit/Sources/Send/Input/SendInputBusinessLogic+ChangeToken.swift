@@ -10,7 +10,7 @@ import SolanaSwift
 extension SendInputBusinessLogic {
     static func changeToken(
         state: SendInputState,
-        token: Token,
+        token: TokenMetadata,
         services: SendInputServices
     ) async -> SendInputState {
         guard let feeRelayerContext = state.feeRelayerContext else {
@@ -85,9 +85,9 @@ extension SendInputBusinessLogic {
     static func autoSelectTokenFee(
         userWallets: [SolanaAccount],
         feeInSol: FeeAmount,
-        token: Token,
+        token: TokenMetadata,
         services: SendInputServices
-    ) async -> (token: Token, fee: FeeAmount?) {
+    ) async -> (token: TokenMetadata, fee: FeeAmount?) {
         var preferOrder = ["SOL": 2]
         if !preferOrder.keys.contains(token.symbol) {
             preferOrder[token.symbol] = 1

@@ -84,7 +84,7 @@ private class QrCodeCard: BECompositionView {
         }
     }
 
-    var token: Token? {
+    var token: TokenMetadata? {
         didSet { qrView.with(string: pubKey, token: token) }
     }
 
@@ -101,7 +101,7 @@ private class QrCodeCard: BECompositionView {
     init(
         username: String? = nil,
         pubKey: String? = nil,
-        token: Token? = nil,
+        token: TokenMetadata? = nil,
         showCoinLogo: Bool = true
     ) {
         self.username = username
@@ -263,13 +263,13 @@ private class QrCodeView: BEView {
         }
     }
 
-    func setUp(string: String?, token: Token? = nil) {
+    func setUp(string: String?, token: TokenMetadata? = nil) {
         qrCodeImageView.setQrCode(string: string)
         logoImageView.setUp(token: token ?? .nativeSolana)
     }
 
     @discardableResult
-    func with(string: String?, token: Token? = nil) -> Self {
+    func with(string: String?, token: TokenMetadata? = nil) -> Self {
         setUp(string: string, token: token)
         return self
     }

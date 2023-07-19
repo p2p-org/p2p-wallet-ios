@@ -31,7 +31,7 @@ public struct SolanaAccount: Identifiable, Equatable, Hashable {
     }
 
     @available(*, deprecated)
-    public init(pubkey: String? = nil, lamports: Lamports? = nil, token: Token) {
+    public init(pubkey: String? = nil, lamports: Lamports? = nil, token: TokenMetadata) {
         address = pubkey ?? ""
         self.lamports = lamports ?? 0
         self.token = token

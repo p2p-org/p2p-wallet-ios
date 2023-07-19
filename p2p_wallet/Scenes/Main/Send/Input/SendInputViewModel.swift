@@ -661,6 +661,6 @@ private extension SolanaAccount {
     }
 
     var isUsdcOrUsdt: Bool {
-        [Token.usdc.address, Token.usdt.address].contains(token.address)
+        [TokenMetadata.usdc.address, TokenMetadata.usdt.address].contains(token.address)
     }
 }

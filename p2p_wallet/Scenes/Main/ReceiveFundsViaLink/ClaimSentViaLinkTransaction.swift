@@ -18,7 +18,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     // MARK: - Properties
 
     let claimableTokenInfo: ClaimableTokenInfo
-    let token: Token
+    let token: TokenMetadata
     let destinationWallet: SolanaAccount
     let tokenAmount: Double
 

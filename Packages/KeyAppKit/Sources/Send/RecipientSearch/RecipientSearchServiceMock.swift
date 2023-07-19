@@ -11,5 +11,5 @@ public class RecipientSearchServiceMock: RecipientSearchService {
     public init(result: RecipientSearchResult) { self.result = result }
 
     public func search(input _: String, config _: RecipientSearchConfig,
-                       preChosenToken _: Token?) async -> RecipientSearchResult { result }
+                       preChosenToken _: TokenMetadata?) async -> RecipientSearchResult { result }
 }

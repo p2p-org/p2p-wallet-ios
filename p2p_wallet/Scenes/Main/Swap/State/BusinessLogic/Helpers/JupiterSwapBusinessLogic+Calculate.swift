@@ -88,7 +88,7 @@ extension JupiterSwapBusinessLogic {
         if let balance = state.fromToken.userWallet?.amount {
             if state.amountFrom > balance {
                 status = .error(reason: .notEnoughFromToken)
-            } else if state.fromToken.address == Token.nativeSolana.address {
+            } else if state.fromToken.address == TokenMetadata.nativeSolana.address {
                 status = await validateNativeSOL(balance: balance, state: state, services: services)
             } else {
                 status = .ready

@@ -153,7 +153,7 @@ struct JupiterSwapState: Equatable {
         else { return nil }
 
         // FIXME: - paying fee token
-        let payingFeeToken = Token.nativeSolana
+        let payingFeeToken = TokenMetadata.nativeSolana
 
         let networkFeeAmount = signatureFee
             .convertToBalance(decimals: payingFeeToken.decimals)
@@ -176,10 +176,10 @@ struct JupiterSwapState: Equatable {
 
         // get fee in SOL
         let accountCreationFeeInSOL = fees.totalFeeAndDeposits
-            .convertToBalance(decimals: Token.nativeSolana.decimals)
+            .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals)
 
         // prepare for converting
-        let payingFeeToken: Token
+        let payingFeeToken: TokenMetadata
         let accountCreationFee: Double
 
         // convert to toToken
@@ -187,13 +187,14 @@ struct JupiterSwapState: Equatable {
            tokenPrice > 0
         {
             payingFeeToken = toToken.token
-            accountCreationFee = ((tokensPriceMap[Token.nativeSolana.address] / tokenPrice) * accountCreationFeeInSOL)
+            accountCreationFee =
+                ((tokensPriceMap[TokenMetadata.nativeSolana.address] / tokenPrice) * accountCreationFeeInSOL)
                 .rounded(decimals: payingFeeToken.decimals)
         }
 
         // fallback to SOL
         else {
-            payingFeeToken = Token.nativeSolana
+            payingFeeToken = TokenMetadata.nativeSolana
             accountCreationFee = accountCreationFeeInSOL
         }
 

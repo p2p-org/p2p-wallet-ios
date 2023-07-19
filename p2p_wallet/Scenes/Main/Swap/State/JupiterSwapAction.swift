@@ -5,7 +5,7 @@ import SolanaSwift
 enum JupiterSwapAction: Equatable {
     case initialize(
         account: KeyPair?,
-        jupiterTokens: [Token],
+        jupiterTokens: [TokenMetadata],
         routeMap: RouteMap,
         preChosenFromTokenMintAddress: String?,
         preChosenToTokenMintAddress: String?

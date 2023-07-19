@@ -16,7 +16,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     private let navigation: PassthroughSubject<HomeNavigation, Never>
 
-    private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /* .renBTC, */ .eth, .usdt]
+    private var popularCoinsTokens: [TokenMetadata] = [.usdc, .nativeSolana, /* .renBTC, */ .eth, .usdt]
     @Published var popularCoins = [PopularCoin]()
 
     // MARK: - Initializer
@@ -102,7 +102,7 @@ extension HomeEmptyViewModel {
 }
 
 extension HomeEmptyViewModel {
-    func title(for token: Token) -> String {
+    func title(for token: TokenMetadata) -> String {
         if token == .eth {
             return "Ethereum"
         } else if token == .renBTC {
@@ -111,7 +111,7 @@ extension HomeEmptyViewModel {
         return token.name
     }
 
-    func image(for token: Token) -> UIImage {
+    func image(for token: TokenMetadata) -> UIImage {
         if token == .nativeSolana {
             return .solanaIcon
         }
