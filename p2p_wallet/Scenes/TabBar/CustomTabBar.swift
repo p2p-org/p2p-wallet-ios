@@ -15,8 +15,7 @@ final class CustomTabBar: UITabBar {
         middleButton.frame.size = CGSize(width: 68, height: 68)
         middleButton.backgroundColor = Asset.Colors.snow.color
         middleButton.layer.cornerRadius = 34
-        middleButton.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
-        middleButton.setImage(.tabBarCenter, for: .normal)
+        middleButton.setImage(.tabBarSend, for: .normal)
         middleButton.addTarget(self, action: #selector(middleButtonAction), for: .touchUpInside)
         addSubview(middleButton)
         return middleButton
@@ -46,7 +45,7 @@ final class CustomTabBar: UITabBar {
 
         middleButton.center = CGPoint(
             x: frame.width / 2,
-            y: frame.height / 2 - Self.additionalHeight - 6
+            y: frame.height / 2 - Self.additionalHeight - 15
         )
         updateSelectedViewPositionIfNeeded()
 
@@ -66,11 +65,6 @@ final class CustomTabBar: UITabBar {
 
     @objc func middleButtonAction() {
         middleButtonClickedSubject.send()
-    }
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard !clipsToBounds, !isHidden, alpha > 0 else { return nil }
-        return middleButton.frame.contains(point) ? middleButton : super.hitTest(point, with: event)
     }
 
     func updateSelectedViewPositionIfNeeded() {

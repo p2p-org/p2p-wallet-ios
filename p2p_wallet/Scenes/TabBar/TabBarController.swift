@@ -64,15 +64,11 @@ final class TabBarController: UITabBarController {
 
     func setupTabs() {
         TabItem.allCases.enumerated().forEach { index, item in
-            if item == .actions {
-                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
-            } else {
-                viewControllers?[index].tabBarItem = UITabBarItem(
-                    title: item.displayTitle,
-                    image: item.image,
-                    selectedImage: item.image
-                )
-            }
+            viewControllers?[index].tabBarItem = UITabBarItem(
+                title: item.displayTitle,
+                image: item.image,
+                selectedImage: item.image
+            )
         }
 
         deviceShareMigration
@@ -305,15 +301,17 @@ extension TabBarController: UITabBarControllerDelegate {
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
         }
-
-        customTabBar.updateSelectedViewPositionIfNeeded()
-
-        if TabItem(rawValue: selectedIndex) == .wallet,
+        
+        if TabItem(rawValue: selectedIndex) == .send {
+            return false
+        } else if TabItem(rawValue: selectedIndex) == .wallet,
                   (viewController as! UINavigationController).viewControllers.count == 1,
                   self.selectedIndex == selectedIndex
         {
             homeTabClickedTwicelySubject.send()
         }
+        
+        customTabBar.updateSelectedViewPositionIfNeeded()
 
         return true
     }
@@ -328,7 +326,7 @@ private extension TabItem {
             return .tabBarSelectedWallet
         case .crypto:
             return .tabBarCrypto
-        case .actions:
+        case .send:
             return UIImage()
         case .history:
             return .tabBarHistory
@@ -343,8 +341,8 @@ private extension TabItem {
             return L10n.wallet
         case .crypto:
             return L10n.crypto
-        case .actions:
-            return ""
+        case .send:
+            return L10n.send
         case .history:
             return L10n.history
         case .settings:
