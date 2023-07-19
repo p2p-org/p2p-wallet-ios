@@ -1,4 +1,5 @@
 import Foundation
+import Resolver
 import UIKit
 
 extension Bundle {
@@ -11,7 +12,7 @@ extension Bundle {
     }
 
     fileprivate static func valueForCurrentBundle() -> Bundle {
-        let currentLanguage = LocalizationManager().currentLanguage()
+        let currentLanguage = Resolver.resolve(LocalizationManagerType.self).currentLanguage()
 
         return main.path(forResource: currentLanguage.code, ofType: "lproj")
             .flatMap(Bundle.init(path:)) ?? main

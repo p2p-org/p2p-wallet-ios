@@ -1,6 +1,7 @@
 import Foundation
 
 protocol LocalizationManagerType: AnyObject {
+    func currentLanguage() -> LocalizedLanguage
     func selectableLanguages() -> [(LocalizedLanguage, Bool)]
     func changeCurrentLanguage(_: LocalizedLanguage)
 }
