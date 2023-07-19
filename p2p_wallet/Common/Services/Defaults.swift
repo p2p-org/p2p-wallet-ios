@@ -64,9 +64,6 @@ extension DefaultsKeys {
         .init(#function, defaultValue: [:])
     }
 
-    // Solend
-    var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-
     // Send
     var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 

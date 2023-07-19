@@ -5,14 +5,6 @@ import SolanaSwift
 import UIKit
 
 extension AppCoordinator: AppEventHandlerDelegate {
-    func didStartLoading() {
-        window?.showLoadingIndicatorView()
-    }
-
-    func didStopLoading() {
-        window?.hideLoadingIndicatorView()
-    }
-
     func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         Task {
@@ -39,11 +31,11 @@ extension AppCoordinator: AppEventHandlerDelegate {
     func userDidChangeTheme(to style: UIUserInterfaceStyle) {
         window?.overrideUserInterfaceStyle = style
     }
-    
+
     func disablePincodeOnFirstAppear() {
         showAuthenticationOnMainOnAppear = false
     }
-    
+
     func refresh() {
         ResolverScope.session.reset()
         reloadEvent.send()
