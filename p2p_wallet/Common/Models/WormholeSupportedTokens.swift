@@ -5,7 +5,7 @@ import SolanaSwift
 class WormholeSupportedTokens {
     static var bridges: [SupportedToken.WormholeBridge] {
         SupportedToken.bridges.filter { bridge in
-            return bridge.solAddress == Token.nativeSolana.address ? available(.solanaEthAddressEnabled) : true
+            return bridge.solAddress == TokenMetadata.nativeSolana.address ? available(.solanaEthAddressEnabled) : true
         }
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import NameService
 import SolanaSwift
+import KeyAppKitCore
 
 extension RecipientSearchServiceImpl {
     /// Search by name
@@ -26,7 +27,7 @@ extension RecipientSearchServiceImpl {
                     }
                 }
                 .filter { (recipient: Recipient) -> Bool in
-                    !config.wallets.contains { (wallet: Wallet) in wallet.pubkey == recipient.address }
+                    !config.wallets.contains { (wallet: SolanaAccount) in wallet.address == recipient.address }
                 }
                 .sorted { (lhs: Recipient, rhs: Recipient) in
                     switch (lhs.category, rhs.category) {

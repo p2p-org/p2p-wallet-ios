@@ -1,15 +1,14 @@
+import BEPureLayout
 import Foundation
 import JazziconSwift
+import KeyAppKitCore
 import SolanaSwift
 import UIKit
-import BEPureLayout
 
 class CoinLogoImageView: BEView {
     static var cachedJazziconSeeds = [String: UInt32]()
 
     // MARK: - Properties
-
-    private let size: CGFloat
 
     private var seed: UInt32? {
         willSet {
@@ -40,7 +39,6 @@ class CoinLogoImageView: BEView {
     // MARK: - Initializer
 
     init(size: CGFloat, cornerRadius: CGFloat = 12, backgroundColor: UIColor? = nil) {
-        self.size = size
         super.init(frame: .zero)
         configureForAutoLayout()
         autoSetDimensions(to: .init(width: size, height: size))
@@ -74,11 +72,7 @@ class CoinLogoImageView: BEView {
         wrappingView.alpha = 0 // UNKNOWN: isHidden not working
     }
 
-    func setUp(wallet: Wallet? = nil) {
-        setUp(token: wallet?.token)
-    }
-
-    func setUp(token: Token? = nil, placeholder: UIImage? = nil) {
+    func setUp(token: TokenMetadata? = nil, placeholder: UIImage? = nil) {
         // default
         wrappingView.alpha = 0
         backgroundColor = .clear
@@ -115,10 +109,12 @@ class CoinLogoImageView: BEView {
         }
 
         // wrapped by
-        if let wrappedBy = token?.wrappedBy {
-            wrappingView.alpha = 1
-            wrappingTokenIcon.image = wrappedBy.image
-        }
+        /*
+         if let wrappedBy = token?.wrapped {
+             wrappingView.alpha = 1
+             wrappingTokenIcon.image = wrappedBy.image
+         }
+          */
     }
 
     func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {

@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 /// A strategy for orca swap transactions.
 public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
@@ -13,9 +14,9 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
     ]
 
     private let apiClient: SolanaAPIClient
-    private let tokensRepository: SolanaTokensRepository
+    private let tokensRepository: TokenRepository
 
-    init(apiClient: SolanaAPIClient, tokensRepository: SolanaTokensRepository) {
+    init(apiClient: SolanaAPIClient, tokensRepository: TokenRepository) {
         self.apiClient = apiClient
         self.tokensRepository = tokensRepository
     }
@@ -62,7 +63,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
         else { return nil }
 
         let totalInstructions = transactionInfo.transaction.message.instructions.count
-        
+
         // Swap from native SOL
         if sourceChange == .zero, swapInstructionIndex + 1 < totalInstructions {
             let closeInstruction = transactionInfo.transaction.message.instructions[swapInstructionIndex + 1]
@@ -109,16 +110,16 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
     }
 
     func parseToken(_ transactionInfo: TransactionInfo,
-                    for address: String) async throws -> (wallet: Wallet, amount: Double)?
+                    for address: String) async throws -> (wallet: SolanaAccount, amount: Double)?
     {
         guard let addressIndex = transactionInfo.transaction.message.accountKeys
             .firstIndex(where: { $0.publicKey.base58EncodedString == address }) else { return nil }
 
         let mintAddress: String = transactionInfo.meta?.postTokenBalances?
-            .first(where: { $0.accountIndex == addressIndex })?.mint ?? Token.nativeSolana.address
+            .first(where: { $0.accountIndex == addressIndex })?.mint ?? TokenMetadata.nativeSolana.address
 
         let preWalletBalance: Lamports
-        if mintAddress == Token.nativeSolana.address {
+        if mintAddress == TokenMetadata.nativeSolana.address {
             preWalletBalance = transactionInfo.meta?.preBalances?[addressIndex] ?? 0
         } else {
             preWalletBalance = transactionInfo.meta?.preTokenBalances?
@@ -126,11 +127,11 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
         }
         let preBalance: Double
         let postBalance: Double
-        if mintAddress == Token.nativeSolana.address {
+        if mintAddress == TokenMetadata.nativeSolana.address {
             preBalance = transactionInfo.meta?.preBalances?[addressIndex]
-                .convertToBalance(decimals: Token.nativeSolana.decimals) ?? 0
+                .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0
             postBalance = transactionInfo.meta?.postBalances?[addressIndex]
-                .convertToBalance(decimals: Token.nativeSolana.decimals) ?? 0
+                .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0
         } else {
             preBalance = transactionInfo.meta?.preTokenBalances?
                 .first(where: { $0.accountIndex == addressIndex })?.uiTokenAmount.uiAmount ?? 0
@@ -138,9 +139,9 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
                 .first(where: { $0.accountIndex == addressIndex })?.uiTokenAmount.uiAmount ?? 0
         }
 
-        let sourceToken: Token = try await tokensRepository.getTokenWithMint(mintAddress)
+        let sourceToken: TokenMetadata = try await tokensRepository.safeGet(address: mintAddress)
 
-        let wallet = Wallet(
+        let wallet = SolanaAccount(
             pubkey: try? PublicKey(string: address).base58EncodedString,
             lamports: preWalletBalance,
             token: sourceToken

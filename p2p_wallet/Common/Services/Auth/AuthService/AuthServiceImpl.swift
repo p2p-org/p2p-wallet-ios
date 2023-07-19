@@ -22,6 +22,4 @@ final class AuthServiceImpl: AuthService {
 
         return try await service.auth()
     }
-
-    func phoneSignIn(_: String) async throws {}
 }

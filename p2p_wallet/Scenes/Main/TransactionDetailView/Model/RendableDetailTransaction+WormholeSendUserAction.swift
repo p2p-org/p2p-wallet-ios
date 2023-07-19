@@ -15,8 +15,6 @@ import Wormhole
 struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeSendUserAction
 
-    var signature: String? { userAction.id }
-
     var status: TransactionDetailStatus {
         switch userAction.status {
         case .pending, .processing:

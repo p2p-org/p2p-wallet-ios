@@ -13,10 +13,10 @@ final class HomeBuyNotificationCoordinator: Coordinator<HomeBuyNotificationCoord
     private let transition = PanelTransition()
     private let result = PassthroughSubject<HomeBuyNotificationCoordinatorResult, Never>()
     let controller: UIViewController
-    let tokenFrom: Token
-    let tokenTo: Token
+    let tokenFrom: TokenMetadata
+    let tokenTo: TokenMetadata
 
-    init(tokenFrom: Token, tokenTo: Token, controller: UIViewController) {
+    init(tokenFrom: TokenMetadata, tokenTo: TokenMetadata, controller: UIViewController) {
         self.tokenFrom = tokenFrom
         self.tokenTo = tokenTo
         self.controller = controller

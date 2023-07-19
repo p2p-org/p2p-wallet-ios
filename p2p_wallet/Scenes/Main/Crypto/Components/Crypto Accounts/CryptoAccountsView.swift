@@ -15,7 +15,6 @@ struct CryptoAccountsView: View {
     @State var isHiddenSectionDisabled: Bool = true
     @State var currentUserInteractionCellID: String?
     @State var scrollAnimationIsEnded = true
-    @State var isEarnBannerClosed = Defaults.isEarnBannerClosed
     
     // MARK: - Initializer
     

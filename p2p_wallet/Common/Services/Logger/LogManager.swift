@@ -200,7 +200,7 @@ KeyAppKitCore.ErrorObserver {
                         name: action.token.name,
                         solanaMint: SupportedToken.ERC20(rawValue: action.token.erc20Address ?? "")?
                             .solanaMintAddress ?? "",
-                        ethMint: action.token.tokenPrimaryKey,
+                        ethMint: action.token.id,
                         claimAmount: CryptoFormatter().string(amount: action.amountInCrypto)
                     ),
                     userPubkey: data.userPubkey,
@@ -227,7 +227,7 @@ KeyAppKitCore.ErrorObserver {
                 let message = SendWormholeAlertLoggerErrorMessage(
                     tokenToSend: .init(
                         name: action.sourceToken.name,
-                        mint: action.sourceToken.tokenPrimaryKey,
+                        mint: action.sourceToken.id,
                         sendAmount: CryptoFormatter().string(amount: action.amount)
                     ),
                     arbiterFeeAmount: action.fees.arbiter?.amount ?? "",

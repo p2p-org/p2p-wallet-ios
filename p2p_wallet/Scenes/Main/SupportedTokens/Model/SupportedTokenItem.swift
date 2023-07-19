@@ -44,26 +44,14 @@ struct SupportedTokenItem: Identifiable, Hashable {
             let uri = token.logoURI,
             let url = URL(string: uri)
         {
-            self.icon = .url(url)
+            icon = .url(url)
         } else {
-            self.icon = .placeholder
+            icon = .placeholder
         }
 
-        self.name = token.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.symbol = token.symbol.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.availableNetwork = [.solana]
-    }
-
-    init(ethereum token: EthereumToken) {
-        if let url = token.logo {
-            self.icon = .url(url)
-        } else {
-            self.icon = .placeholder
-        }
-
-        self.name = token.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.symbol = token.symbol.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.availableNetwork = [.ethereum]
+        name = token.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        symbol = token.symbol.trimmingCharacters(in: .whitespacesAndNewlines)
+        availableNetwork = [.solana]
     }
 
     func hash(into hasher: inout Hasher) {

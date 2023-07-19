@@ -1,13 +1,7 @@
 import Foundation
 
-protocol SensitiveDataFilter {
-    var rules: [SensitiveDataFilterRule] { get }
-    func map(string: String) -> String
-    func map(data: [AnyHashable: AnyHashable]) -> [AnyHashable: AnyHashable]
-}
-
 /// Default sensitive data filter, consist of basic rules
-class DefaultSensitiveDataFilter: SensitiveDataFilter {
+class DefaultSensitiveDataFilter {
     var rules: [SensitiveDataFilterRule] = [PrivateKeySensitiveDataFilterRule()]
 
     func map(string: String) -> String {
@@ -17,18 +11,7 @@ class DefaultSensitiveDataFilter: SensitiveDataFilter {
         }
         return ret
     }
-
-    func map(data: [AnyHashable: AnyHashable]) -> [AnyHashable: AnyHashable] {
-        var newData = data
-        data.keys.forEach { key in
-            if let value = data[key] as? String {
-                newData[key] = self.map(string: value)
-            }
-        }
-        return newData
-    }
 }
-
 
 protocol SensitiveDataFilterRule {
     func map(_ string: String) -> String
@@ -42,7 +25,10 @@ struct PrivateKeySensitiveDataFilterRule: SensitiveDataFilterRule {
     func map(_ string: String) -> String {
         var str = string
         regs.forEach { reg in
-            guard let regex = try? NSRegularExpression(pattern: reg, options: NSRegularExpression.Options.caseInsensitive) else {
+            guard let regex = try? NSRegularExpression(
+                pattern: reg,
+                options: NSRegularExpression.Options.caseInsensitive
+            ) else {
                 return
             }
             let range = NSMakeRange(0, string.count)

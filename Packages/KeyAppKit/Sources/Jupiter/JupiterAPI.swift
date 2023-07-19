@@ -11,7 +11,7 @@ public enum SwapMode: String {
 }
 
 public protocol JupiterAPI {
-    func getTokens() async throws -> [Token]
+    func getTokens() async throws -> [TokenMetadata]
     
     func quote(
         inputMint: String,

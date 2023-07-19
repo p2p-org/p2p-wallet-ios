@@ -116,7 +116,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let pubkey = renderableAccount.account.address
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {

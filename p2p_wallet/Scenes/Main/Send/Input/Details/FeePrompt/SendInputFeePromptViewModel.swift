@@ -1,9 +1,10 @@
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
 final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
-
     let close = PassthroughSubject<Void, Never>()
     let chooseToken = PassthroughSubject<Void, Never>()
 
@@ -11,15 +12,14 @@ final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
     @Published var description: String
     @Published var isChooseTokenAvailable: Bool
     @Published var continueTitle: String
-    @Published var feeToken: Wallet
+    @Published var feeToken: SolanaAccount
 
     let feeInFiat: Double
 
-    init(feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
+    init(feeToken: SolanaAccount, feeInToken: FeeAmount, availableFeeTokens: [SolanaAccount]) {
         title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
-        let priceService = Resolver.resolve(PricesServiceType.self)
-        let price = priceService.currentPrice(mint: feeToken.token.address)
-        let feeInFiat = (feeInToken.accountBalances.convertToBalance(decimals: feeToken.token.decimals) * price?.value)
+        let price = feeToken.price?.doubleValue
+        let feeInFiat = feeInToken.accountBalances.convertToBalance(decimals: feeToken.token.decimals) * price
         self.feeInFiat = feeInFiat
         let fiatAmount = feeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         description = L10n.youWillHaveToPayAOneTimeFeeToCreateAnAccountForThisAddress(fiatAmount)

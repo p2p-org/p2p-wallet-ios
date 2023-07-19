@@ -3,13 +3,14 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 /// The strategy for parsing creation account transactions.
 public class CreationAccountParseStrategy: TransactionParseStrategy {
-    private let tokensRepository: SolanaTokensRepository
+    private let tokensRepository: TokenRepository
 
-    init(tokensRepository: SolanaTokensRepository) { self.tokensRepository = tokensRepository }
+    init(tokensRepository: TokenRepository) { self.tokensRepository = tokensRepository }
 
     public func isHandlable(with transactionInfo: SolanaSwift.TransactionInfo) -> Bool {
         let instructions = transactionInfo.transaction.message.instructions
@@ -38,19 +39,26 @@ public class CreationAccountParseStrategy: TransactionParseStrategy {
         let instructions = transactionInfo.transaction.message.instructions
 
         if let program = extractProgram(instructions, with: "spl-associated-token-account") {
-            let token = try await tokensRepository.getTokenWithMint(program.parsed?.info.mint)
-            return CreateAccountInfo(fee: nil, newWallet: Wallet(pubkey: program.parsed?.info.account, token: token))
+            let token = try await tokensRepository.safeGet(
+                address: program.parsed?.info.mint
+            )
+            return CreateAccountInfo(
+                fee: nil,
+                newWallet: SolanaAccount(pubkey: program.parsed?.info.account, lamports: 0, token: token)
+            )
         } else {
             let info = instructions[0].parsed?.info
             let initializeAccountInfo = instructions.last?.parsed?.info
             let fee = info?.lamports?.convertToBalance(decimals: Decimals.SOL)
 
-            let token = try await tokensRepository.getTokenWithMint(initializeAccountInfo?.mint)
+            let token = try await tokensRepository.safeGet(
+                address: initializeAccountInfo?.mint
+            )
             return CreateAccountInfo(
                 fee: fee,
-                newWallet: Wallet(
+                newWallet: SolanaAccount(
                     pubkey: info?.newAccount,
-                    lamports: nil,
+                    lamports: 0,
                     token: token
                 )
             )

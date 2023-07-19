@@ -16,7 +16,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
 
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
@@ -49,7 +48,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
         if sellDataService.isAvailable {
@@ -128,7 +126,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let pubkey = renderableAccount.account.address
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {
@@ -145,7 +143,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
+                navigation
+                    .send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
             default:
                 break
             }
@@ -158,30 +157,31 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
             else { return }
+            analyticsManager.log(event: .mainScreenReceiveBar)
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
+            analyticsManager.log(event: .mainScreenBuyBar)
             navigation.send(.buy)
         case .send:
+            analyticsManager.log(event: .mainScreenSendBar)
             navigation.send(.send)
         case .swap:
+            analyticsManager.log(event: .mainScreenSwapBar)
             navigation.send(.swap)
         case .cashOut:
+            analyticsManager.log(event: .mainScreenCashOutBar)
             navigation.send(.cashOut)
         }
-    }
-
-    func earn() {
-        navigation.send(.earn)
     }
 
     func scrollToTop() {
         scrollOnTheTop = true
     }
 
-    func sellTapped() {
-        navigation.send(.cashOut)
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 

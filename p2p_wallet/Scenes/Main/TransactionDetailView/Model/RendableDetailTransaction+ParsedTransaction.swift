@@ -94,26 +94,26 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.sendTo,
-                    values: [.init(text: RecipientFormatter.format(destination: info.destination?.pubkey ?? ""))]
+                    values: [.init(text: RecipientFormatter.format(destination: info.destination?.address ?? ""))]
                 )
             )
         } else if let info = trx.info as? CloseAccountInfo {
             result.append(
                 .init(
                     title: "Account closed",
-                    values: [.init(text: RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? ""))]
+                    values: [.init(text: RecipientFormatter.format(destination: info.closedWallet?.address ?? ""))]
                 )
             )
         } else if let info = trx.info as? CreateAccountInfo {
             result.append(
                 .init(
                     title: "Account created",
-                    values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? ""))]
+                    values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.address ?? ""))]
                 )
             )
         }
 
-        let feeAmountFormatted: Double = trx.fee?.total.convertToBalance(decimals: Token.nativeSolana.decimals) ?? 0.0
+        let feeAmountFormatted: Double = trx.fee?.total.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0.0
         result
             .append(
                 .init(

@@ -40,9 +40,3 @@ class ReAuthSocialSignInViewModel: BaseViewModel, ObservableObject {
         onClose.send()
     }
 }
-
-extension ReAuthSocialSignInViewModel {
-    enum Action {
-        case onContinue
-    }
-}

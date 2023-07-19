@@ -1,10 +1,3 @@
-//
-//  TabBarController.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Intercom
@@ -20,7 +13,6 @@ final class TabBarController: UITabBarController {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
-    @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var deviceShareMigration: DeviceShareMigrationService
 
@@ -29,8 +21,6 @@ final class TabBarController: UITabBarController {
     var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
-    private let solendTutorialSubject = PassthroughSubject<Void, Never>()
-    var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
     private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
     var jupiterSwapClicked: AnyPublisher<Void, Never> { jupiterSwapClickedSubject.eraseToAnyPublisher() }
 
@@ -193,11 +183,13 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
+
         pincodeViewModel.infoDidTap
             .sink(receiveValue: { [unowned self] in
                 helpLauncher.launch()
             })
             .store(in: &subscriptions)
+
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -359,6 +351,19 @@ private extension TabItem {
             return L10n.history
         case .settings:
             return L10n.settings
+        }
+    }
+
+    var analyticsEvent: AnalyticsEvent? {
+        switch self {
+        case .wallet:
+            return KeyAppAnalyticsEvent.mainWallet
+        case .history:
+            return KeyAppAnalyticsEvent.mainHistory
+        case .settings:
+            return KeyAppAnalyticsEvent.mainSettings
+        default:
+            return nil
         }
     }
 }
