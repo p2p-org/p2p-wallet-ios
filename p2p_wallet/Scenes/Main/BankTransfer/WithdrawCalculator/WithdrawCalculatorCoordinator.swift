@@ -15,6 +15,25 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
         vc.title = L10n.withdraw
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
+
+        viewModel.openBankTransfer
+            .sink { [weak self] _ in self?.openBankTransfer() }
+            .store(in: &subscriptions)
+
+        viewModel.openWithdraw
+            .sink { [weak self] _ in self?.openWithdraw() }
+            .store(in: &subscriptions)
+
         return vc.deallocatedPublisher().eraseToAnyPublisher()
+    }
+
+    private func openBankTransfer() {
+        coordinate(to: BankTransferCoordinator(viewController: navigationController))
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
+    }
+
+    private func openWithdraw() {
+        // todo
     }
 }

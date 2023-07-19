@@ -21,6 +21,9 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
 
     let actionPressed = PassthroughSubject<Void, Never>()
     let allButtonPressed = PassthroughSubject<Void, Never>()
+    let openBankTransfer = PassthroughSubject<Void, Never>()
+    let openWithdraw = PassthroughSubject<Void, Never>()
+    let proceedBankTransfer = PassthroughSubject<Void, Never>()
 
     @Published var actionData = WithdrawCalculatorAction.zero
     @Published var isLoading = false
@@ -154,10 +157,30 @@ private extension WithdrawCalculatorViewModel {
             .store(in: &subscriptions)
 
         actionPressed
-            .sinkAsync { [weak self] _ in
-                self?.isLoading = true
-                try! await Task.sleep(seconds: 3)
-                self?.isLoading = false
+            .withLatestFrom(bankTransferService.value.state)
+            .sinkAsync { [weak self] state in
+                guard let self else { return }
+                if state.value.kycStatus != .approved {
+                    self.openBankTransfer.send()
+                } else if state.value.isIBANNotReady {
+                    self.isLoading = true
+                    await self.bankTransferService.value.reload()
+                    self.proceedBankTransfer.send()
+                }
+                // todo add get statement request
+            }
+            .store(in: &subscriptions)
+
+        proceedBankTransfer
+            .withLatestFrom(bankTransferService.value.state)
+            .sinkAsync { [weak self] state in
+                guard let self else { return }
+                if state.value.isIBANNotReady {
+                    self.notificationService.showDefaultErrorNotification()
+                } else {
+                    // iban and bic
+                    // todo add get statement request
+                }
             }
             .store(in: &subscriptions)
     }

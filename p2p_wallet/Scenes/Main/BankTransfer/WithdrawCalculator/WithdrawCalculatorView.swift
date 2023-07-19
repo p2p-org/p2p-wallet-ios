@@ -17,7 +17,8 @@ struct WithdrawCalculatorView: View {
                         expandable: true,
                         isEnabled: viewModel.actionData.isEnabled,
                         isLoading: viewModel.isLoading,
-                        trailing: viewModel.actionData.isEnabled ? .arrowForward.withRenderingMode(.alwaysTemplate) : nil,
+                        trailing: viewModel.actionData.isEnabled ? .arrowForward
+                            .withRenderingMode(.alwaysTemplate) : nil,
                         action: viewModel.actionPressed.send
                     )
                     .padding(.top, 12)
@@ -29,10 +30,10 @@ struct WithdrawCalculatorView: View {
             .padding(.horizontal, 16)
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 // We need delay because BigInputView is UITextField
                 viewModel.isFromFirstResponder = true
-            })
+            }
         }
     }
 
