@@ -24,7 +24,7 @@ extension RecipientSearchServiceImpl {
                     address: addressBase58,
                     category: wallet.token.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
                         walletAddress: (try? PublicKey(string: config.wallets.first(where: \.token.isNativeSOL)?
-                                .pubkey)) ?? address,
+                            .address)) ?? address,
                         token: wallet.token
                     ),
                     attributes: [.funds, attributes]

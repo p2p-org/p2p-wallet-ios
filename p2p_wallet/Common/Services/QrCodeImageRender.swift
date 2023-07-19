@@ -4,7 +4,7 @@ import UIKit
 import BEPureLayout
 
 protocol QrCodeImageRender {
-    func render(username: String?, address: String?, token: Token?, showTokenIcon: Bool) async throws -> UIImage
+    func render(username: String?, address: String?, token: TokenMetadata?, showTokenIcon: Bool) async throws -> UIImage
 }
 
 @MainActor
@@ -120,7 +120,7 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
             .backgroundColor(color: theme.backgroundColor)
     }
     
-    func render(username: String?, address: String?, token: Token?,
+    func render(username: String?, address: String?, token: TokenMetadata?,
                 showTokenIcon: Bool) async throws -> UIImage
     {
         guard let address = address else {
@@ -131,7 +131,7 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
             return renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground()
         }
         
-        let image = try await tokenIcon(urlString: token?.logoURI ?? Token.nativeSolana.logoURI)
+        let image = try await tokenIcon(urlString: token?.logoURI ?? TokenMetadata.nativeSolana.logoURI)
         return renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
     }
 }

@@ -23,7 +23,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     // Properties
     private let url: URL
     private var claimableToken: ClaimableTokenInfo?
-    private var token: Token?
+    private var token: TokenMetadata?
 
     // MARK: - To Coordinator
 
@@ -161,7 +161,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 let claimableToken = try await self.sendViaLinkDataService.getClaimableTokenInfo(url: self.url)
 
                 // Native solana token
-                let token: Token
+                let token: TokenMetadata
                 if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
                     token = .nativeSolana
                 }
@@ -269,7 +269,7 @@ extension ReceiveFundsViaLinkViewModel {
     }
 
     struct Model {
-        let token: Token
+        let token: TokenMetadata
         let cryptoAmount: String
     }
 }

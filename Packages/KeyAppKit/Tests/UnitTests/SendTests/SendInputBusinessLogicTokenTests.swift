@@ -166,7 +166,7 @@ import XCTest
 //                            lamports: 100_000,
 //                            owner: TokenProgram.id.base58EncodedString,
 //                            data: AccountInfo(
-//                                mint: try PublicKey(string: Token.usdc.address),
+//                                mint: try PublicKey(string: TokenMetadata.usdc.address),
 //                                owner: try PublicKey(string: "5bYReP8iw5UuLVS5wmnXfEfrYCKdiQ1FFAZQao8JqY7V"),
 //                                lamports: 50_000_000,
 //                                delegateOption: 0,

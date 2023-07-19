@@ -1,6 +1,6 @@
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension SwapTransactionBuilderImpl {
     func checkDestination(
@@ -15,14 +15,14 @@ extension SwapTransactionBuilderImpl {
             // return the address
             output.userDestinationTokenAccountAddress = destinationAddress
         }
-        
+
         // else, find real destination
         else {
             let result = try await destinationAnalysator.analyseDestination(
                 owner: owner.publicKey,
                 mint: destinationMint
             )
-            
+
             switch result {
             case .wsolAccount:
                 // For native solana, create and initialize WSOL
@@ -32,7 +32,7 @@ extension SwapTransactionBuilderImpl {
                         from: feePayerAddress,
                         toNewPubkey: destinationNewAccount.publicKey,
                         lamports: minimumTokenAccountBalance,
-                        space: AccountInfo.BUFFER_LENGTH,
+                        space: SPLTokenAccountState.BUFFER_LENGTH,
                         programId: TokenProgram.id
                     ),
                     TokenProgram.initializeAccountInstruction(
@@ -41,18 +41,18 @@ extension SwapTransactionBuilderImpl {
                         owner: owner.publicKey
                     ),
                 ])
-                
+
                 // return the address
                 output.userDestinationTokenAccountAddress = destinationNewAccount.publicKey
                 output.accountCreationFee += minimumTokenAccountBalance
                 output.destinationNewAccount = destinationNewAccount
-            case .splAccount(let needsCreation):
+            case let .splAccount(needsCreation):
                 // For other token, get associated token address
                 let associatedAddress = try PublicKey.associatedTokenAddress(
                     walletAddress: owner.publicKey,
                     tokenMintAddress: destinationMint
                 )
-                
+
                 if needsCreation {
                     let instruction = try AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
                         mint: destinationMint,
@@ -60,7 +60,8 @@ extension SwapTransactionBuilderImpl {
                         payer: feePayerAddress
                     )
 
-                    // SPECIAL CASE WHEN WE SWAP FROM SOL TO NON-CREATED SPL TOKEN, THEN WE NEEDS ADDITIONAL TRANSACTION BECAUSE TRANSACTION IS TOO LARGE
+                    // SPECIAL CASE WHEN WE SWAP FROM SOL TO NON-CREATED SPL TOKEN, THEN WE NEEDS ADDITIONAL TRANSACTION
+                    // BECAUSE TRANSACTION IS TOO LARGE
                     if output.sourceWSOLNewAccount != nil {
                         output.additionalTransaction = try makeTransaction(
                             instructions: [instruction],
@@ -73,7 +74,7 @@ extension SwapTransactionBuilderImpl {
                         output.accountCreationFee += minimumTokenAccountBalance
                     }
                 }
-                
+
                 // return the address
                 output.userDestinationTokenAccountAddress = associatedAddress
             }

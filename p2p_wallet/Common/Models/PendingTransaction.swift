@@ -101,19 +101,20 @@ extension PendingTransaction {
                 authority: authority,
                 destinationAuthority: nil,
                 rawAmount: transaction.amount,
-                account: transaction.walletToken.pubkey
+                account: transaction.walletToken.address
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
         case let transaction as SwapRawTransactionType:
             var destinationWallet = transaction.destinationWallet
             if let authority = try? PublicKey(string: authority),
-               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
+               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress),
+               let address = try? PublicKey.associatedTokenAddress(
+                   walletAddress: authority,
+                   tokenMintAddress: mintAddress
+               ).base58EncodedString
             {
-                destinationWallet.pubkey = try? PublicKey.associatedTokenAddress(
-                    walletAddress: authority,
-                    tokenMintAddress: mintAddress
-                ).base58EncodedString
+                destinationWallet.address = address
             }
 
             value = SwapInfo(

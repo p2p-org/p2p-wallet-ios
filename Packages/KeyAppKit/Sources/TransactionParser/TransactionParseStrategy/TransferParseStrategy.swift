@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import Foundation
-import SolanaSwift
 import KeyAppKitCore
+import SolanaSwift
 
 /// A strategy for parsing transfer transactions.
 public class TransferParseStrategy: TransactionParseStrategy {
@@ -134,7 +134,7 @@ public class TransferParseStrategy: TransactionParseStrategy {
             )
         } else {
             // Mint not found
-            let accountInfo: BufferInfo<AccountInfo>? = try await apiClient
+            let accountInfo: BufferInfo<SPLTokenAccountState>? = try await apiClient
                 .getAccountInfo(account: sourcePubkey, or: destinationPubkey)
             let token = try await tokensRepository.safeGet(address: accountInfo?.data.mint.base58EncodedString)
             let source = SolanaAccount(pubkey: sourcePubkey, lamports: nil, token: token)
@@ -151,10 +151,10 @@ public class TransferParseStrategy: TransactionParseStrategy {
         }
 
         if transferInfo.destinationAuthority != nil { return transferInfo }
-        guard let account = transferInfo.destination?.pubkey else { return transferInfo }
+        guard let account = transferInfo.destination?.address else { return transferInfo }
 
         do {
-            let accountInfo: BufferInfo<AccountInfo>? = try await apiClient.getAccountInfo(account: account)
+            let accountInfo: BufferInfo<SPLTokenAccountState>? = try await apiClient.getAccountInfo(account: account)
             return TransferInfo(
                 source: transferInfo.source,
                 destination: transferInfo.destination,

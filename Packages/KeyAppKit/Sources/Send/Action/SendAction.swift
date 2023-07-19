@@ -46,7 +46,7 @@ public class SendActionServiceImpl: SendActionService {
         operationType: StatsInfo.OperationType
     ) async throws -> String {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { throw SendError.invalidSourceWallet }
+        let sender = wallet.address
 
         // assert payingFeeWallet
         if !ignoreTopUp && feeWallet == nil {
@@ -157,7 +157,7 @@ public class SendActionServiceImpl: SendActionService {
         memo: String?
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { throw SendError.invalidSourceWallet }
+        let sender = wallet.address
         guard let account = account else { throw SolanaError.unauthorized }
         guard let context = contextManager.currentContext else { throw RelayContextManagerError.invalidContext }
         // prepare fee payer
@@ -201,8 +201,8 @@ public class SendActionServiceImpl: SendActionService {
 
         // add memo
         if let memo {
-            preparedTransaction.transaction.instructions.append(
-                try MemoProgram.createMemoInstruction(memo: memo)
+            try preparedTransaction.transaction.instructions.append(
+                MemoProgram.createMemoInstruction(memo: memo)
             )
         }
 
@@ -222,10 +222,9 @@ public class SendActionServiceImpl: SendActionService {
 
     private func getPayingFeeToken(feeWallet: SolanaAccount?) throws -> FeeRelayerSwift.TokenAccount? {
         if let feeWallet = feeWallet {
-            guard
-                let addressString = feeWallet.pubkey,
-                let address = try? PublicKey(string: addressString),
-                let mintAddress = try? PublicKey(string: feeWallet.token.address)
+            let addressString = feeWallet.address
+            guard let address = try? PublicKey(string: addressString),
+                  let mintAddress = try? PublicKey(string: feeWallet.token.address)
             else {
                 throw SendError.invalidPayingFeeWallet
             }

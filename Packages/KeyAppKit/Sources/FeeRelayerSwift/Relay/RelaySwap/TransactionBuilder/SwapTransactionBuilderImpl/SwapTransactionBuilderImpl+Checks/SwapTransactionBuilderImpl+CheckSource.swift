@@ -29,7 +29,7 @@ extension SwapTransactionBuilderImpl {
                     from: feePayerAddress,
                     toNewPubkey: sourceWSOLNewAccount!.publicKey,
                     lamports: minimumTokenAccountBalance + inputAmount,
-                    space: AccountInfo.BUFFER_LENGTH,
+                    space: SPLTokenAccountState.BUFFER_LENGTH,
                     programId: TokenProgram.id
                 ),
                 TokenProgram.initializeAccountInstruction(

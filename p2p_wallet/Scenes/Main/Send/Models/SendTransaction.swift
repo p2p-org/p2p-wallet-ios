@@ -1,11 +1,9 @@
 import FeeRelayerSwift
+import Foundation
 import KeyAppKitCore
 import Resolver
 import Send
 import SolanaSwift
-import Resolver
-import FeeRelayerSwift
-import Foundation
 
 struct SendTransaction: RawTransactionType {
     // MARK: - Properties
@@ -23,14 +21,14 @@ struct SendTransaction: RawTransactionType {
     let feeAmount: FeeAmount
     let currency: String
     let analyticEvent: KeyAppAnalyticsEvent
-    
+
     // MARK: - Computed properties
 
     var isSendingViaLink: Bool {
         sendViaLinkSeed != nil
     }
 
-    var token: Token {
+    var token: TokenMetadata {
         walletToken.token
     }
 
@@ -239,7 +237,7 @@ struct SendTransaction: RawTransactionType {
 
 private func saveSendViaLinkTransaction(
     seed: String,
-    token: Token,
+    token: TokenMetadata,
     amountInToken: Double,
     amountInFiat: Double
 ) {

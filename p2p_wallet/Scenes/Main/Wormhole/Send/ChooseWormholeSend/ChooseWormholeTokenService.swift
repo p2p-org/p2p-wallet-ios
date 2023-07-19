@@ -25,7 +25,7 @@ final class ChooseWormholeTokenService: ChooseItemService {
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [SolanaAccount] else { return section }
-            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdcet.symbol]))
+            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [TokenMetadata.usdcet.symbol]))
         }
         let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems

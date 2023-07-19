@@ -46,7 +46,7 @@ public class TransitTokenAccountManagerImpl: TransitTokenAccountManager {
     public func checkIfNeedsCreateTransitTokenAccount(transitToken: TokenAccount?) async throws -> Bool? {
         guard let transitToken = transitToken else { return nil }
 
-        guard let account: BufferInfo<AccountInfo> = try await solanaAPIClient.getAccountInfo(account: transitToken.address.base58EncodedString) else {
+        guard let account: BufferInfo<SPLTokenAccountState> = try await solanaAPIClient.getAccountInfo(account: transitToken.address.base58EncodedString) else {
             return true
         }
         

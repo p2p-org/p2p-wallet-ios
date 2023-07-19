@@ -69,14 +69,14 @@ final class BuyViewModel: ObservableObject {
     // Defaults
     private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
-    private static let tokens: [Token] = [.usdc, .nativeSolana]
+    private static let tokens: [TokenMetadata] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = [.eur, .gbp, .usd]
-    private static let defaultToken = Token.usdc
+    private static let defaultToken = TokenMetadata.usdc
 
     // MARK: - Init
 
     init(
-        defaultToken: Token? = nil,
+        defaultToken: TokenMetadata? = nil,
         targetSymbol: String? = nil
     ) {
         self.targetSymbol = targetSymbol
@@ -88,7 +88,7 @@ final class BuyViewModel: ObservableObject {
         }
 
         fiatAmount = String(
-            buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
+            buyMinPrices[Fiat.usd.rawValue]?[TokenMetadata.nativeSolana.symbol] ??
                 BuyViewModel.defaultMinAmount
         )
 
@@ -203,7 +203,7 @@ final class BuyViewModel: ObservableObject {
             self.buyMinPrices = [:]
 //    var minPrices = [String: [String: Double]]()
 //    for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
-//        for aToken in [Token.nativeSolana, Token.usdc] {
+//        for aToken in [TokenMetadata.nativeSolana, TokenMetadata.usdc] {
 //            guard
 //                let from = aFiat.buyFiatCurrency(),
 //                let to = aToken.buyCryptoCurrency() else { continue }
@@ -577,7 +577,7 @@ final class BuyViewModel: ObservableObject {
             Buy.ExchangeOutput,
             exchangeRate: Double,
             fiat: Fiat,
-            token: Token
+            token: TokenMetadata
         ), Never>()
         let showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
         let showFiatSelect = PassthroughSubject<[Fiat], Never>()
@@ -585,7 +585,7 @@ final class BuyViewModel: ObservableObject {
         let chooseCountry = PassthroughSubject<SelectCountryViewModel.Model, Never>()
 
         // From Coordinator
-        let tokenSelected = CurrentValueSubject<Token?, Never>(nil)
+        let tokenSelected = CurrentValueSubject<TokenMetadata?, Never>(nil)
         let fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         let buy = PassthroughSubject<URL, Never>()
         let license = PassthroughSubject<URL, Never>()

@@ -52,7 +52,7 @@ public struct TransferInfo: Hashable {
 
   /// A current transfer type that depends on account view.
   public var transferType: TransferType? {
-    (source?.pubkey == account || authority == account) ? .send : .receive
+      (source?.address == account || authority == account) ? .send : .receive
   }
 
   @available(*, deprecated, renamed: "account")

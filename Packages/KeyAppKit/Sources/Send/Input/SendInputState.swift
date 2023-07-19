@@ -36,8 +36,8 @@ public enum SendInputAction: Equatable {
 
     case changeAmountInFiat(Double)
     case changeAmountInToken(Double)
-    case changeUserToken(Token)
-    case changeFeeToken(Token)
+    case changeUserToken(TokenMetadata)
+    case changeFeeToken(TokenMetadata)
 }
 
 public struct SendInputServices {
@@ -81,11 +81,11 @@ public struct SendInputState: Equatable {
         public let walletAccount: BufferInfo<SolanaAddressInfo>?
 
         ///  Usable when recipient category is ``Recipient.Category.solanaAddress``
-        public let splAccounts: [SolanaSwift.TokenAccount<AccountInfo>]
+        public let splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
 
         public init(
             walletAccount: BufferInfo<SolanaAddressInfo>?,
-            splAccounts: [SolanaSwift.TokenAccount<AccountInfo>]
+            splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
         ) {
             self.walletAccount = walletAccount
             self.splAccounts = splAccounts
@@ -101,7 +101,7 @@ public struct SendInputState: Equatable {
 
     public let recipient: Recipient
     public let recipientAdditionalInfo: RecipientAdditionalInfo
-    public let token: Token
+    public let token: TokenMetadata
     public let userWalletEnvironments: UserWalletEnvironments
 
     public let amountInFiat: Double
@@ -111,7 +111,7 @@ public struct SendInputState: Equatable {
     public let fee: FeeAmount
 
     /// Selected fee token
-    public let tokenFee: Token
+    public let tokenFee: TokenMetadata
 
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
@@ -131,12 +131,12 @@ public struct SendInputState: Equatable {
         status: Status,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo,
-        token: Token,
+        token: TokenMetadata,
         userWalletEnvironments: UserWalletEnvironments,
         amountInFiat: Double,
         amountInToken: Double,
         fee: FeeAmount,
-        tokenFee: Token,
+        tokenFee: TokenMetadata,
         feeInToken: FeeAmount,
         feeRelayerContext: RelayContext?,
         sendViaLinkSeed: String?
@@ -159,8 +159,8 @@ public struct SendInputState: Equatable {
         status: Status = .requiredInitialize,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo = .zero,
-        token: Token,
-        feeToken: Token,
+        token: TokenMetadata,
+        feeToken: TokenMetadata,
         userWalletState: UserWalletEnvironments,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?
@@ -185,12 +185,12 @@ public struct SendInputState: Equatable {
         status: Status? = nil,
         recipient: Recipient? = nil,
         recipientAdditionalInfo: RecipientAdditionalInfo? = nil,
-        token: Token? = nil,
+        token: TokenMetadata? = nil,
         userWalletEnvironments: UserWalletEnvironments? = nil,
         amountInFiat: Double? = nil,
         amountInToken: Double? = nil,
         fee: FeeAmount? = nil,
-        tokenFee: Token? = nil,
+        tokenFee: TokenMetadata? = nil,
         feeInToken: FeeAmount? = nil,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?? = nil

@@ -21,7 +21,7 @@ enum HomeNavigation: Equatable {
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
     // HomeEmpty
-    case topUpCoin(Token)
+    case topUpCoin(TokenMetadata)
     // Error
     case error(show: Bool)
 }
@@ -233,7 +233,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
         case let .topUpCoin(token):
             // SOL, USDC
-            if [Token.nativeSolana, .usdc].contains(token) {
+            if [TokenMetadata.nativeSolana, .usdc].contains(token) {
                 let coordinator = BuyCoordinator(
                     navigationController: navigationController,
                     context: .fromHome,

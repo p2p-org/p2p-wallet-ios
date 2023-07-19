@@ -26,5 +26,5 @@ public struct CloseAccountInfo: Hashable {
 extension CloseAccountInfo: Info {
   public var amount: Double? { reimbursedAmount ?? 0 }
   public var symbol: String? { "SOL" }
-  public var mintAddress: String? { Token.nativeSolana.address }
+  public var mintAddress: String? { TokenMetadata.nativeSolana.address }
 }

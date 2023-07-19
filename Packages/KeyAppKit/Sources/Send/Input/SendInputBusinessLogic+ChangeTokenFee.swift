@@ -9,7 +9,7 @@ import SolanaSwift
 extension SendInputBusinessLogic {
     static func changeFeeToken(
         state: SendInputState,
-        feeToken: Token,
+        feeToken: TokenMetadata,
         services: SendInputServices
     ) async -> SendInputState {
         guard let feeRelayerContext = state.feeRelayerContext else {

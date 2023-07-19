@@ -7,7 +7,7 @@ import UIKit
 struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     let trx: HistoryTransaction
 
-    let allTokens: Set<SolanaSwift.Token>
+    let allTokens: Set<SolanaSwift.TokenMetadata>
 
     var status: TransactionDetailStatus {
         switch trx.status {

@@ -3,7 +3,7 @@ import KeyAppKitCore
 import SolanaSwift
 
 struct SwapToken: Equatable {
-    let token: Token
+    let token: TokenMetadata
     let userWallet: SolanaAccount?
 
     var address: String { token.address }

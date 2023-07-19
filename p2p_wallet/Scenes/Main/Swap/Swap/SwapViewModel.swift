@@ -120,7 +120,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                     else { return nil }
 
                     return .init(
-                        pubkey: token.userWallet?.pubkey,
+                        pubkey: token.userWallet?.address,
                         balance: token.userWallet?.amount,
                         symbol: token.token.symbol,
                         mint: token.token.address
@@ -241,7 +241,7 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func initialize(jupiterTokens: [Token], routeMap: RouteMap) async {
+    func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
         let newState = await stateMachine
             .accept(
                 action: .initialize(
@@ -369,7 +369,7 @@ private extension SwapViewModel {
                 isEnabled: false,
                 title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals)))
             )
-            if state.fromToken.address == Token.nativeSolana.address, !wasMinToastShown {
+            if state.fromToken.address == TokenMetadata.nativeSolana.address, !wasMinToastShown {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
                 wasMinToastShown = true
             }

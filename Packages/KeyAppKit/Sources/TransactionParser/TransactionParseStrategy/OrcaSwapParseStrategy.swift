@@ -81,7 +81,8 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
         guard let destinationInfo: ParsedInstruction.Parsed.Info = destination.parsed?.info else { return nil }
 
         // Get accounts info
-        let (sourceAccount, destinationAccount): (BufferInfo<AccountInfo>?, BufferInfo<AccountInfo>?) = try await(
+        let (sourceAccount, destinationAccount): (BufferInfo<SPLTokenAccountState>?,
+                                                  BufferInfo<SPLTokenAccountState>?) = try await(
             apiClient
                 .getAccountInfo(account: sourceInfo.source, or: sourceInfo.destination),
             apiClient
@@ -91,7 +92,7 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
         try Task.checkCancellation()
 
         // Get tokens info
-        let (sourceToken, destinationToken): (Token, Token) = try await(
+        let (sourceToken, destinationToken): (TokenMetadata, TokenMetadata) = try await(
             tokensRepository.safeGet(address: sourceAccount?.data.mint),
             tokensRepository.safeGet(address: destinationAccount?.data.mint)
         )

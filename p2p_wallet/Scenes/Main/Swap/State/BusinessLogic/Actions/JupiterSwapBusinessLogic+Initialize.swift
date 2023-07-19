@@ -10,7 +10,7 @@ extension JupiterSwapBusinessLogic {
         state _: JupiterSwapState,
         services _: JupiterSwapServices,
         account: KeyPair?,
-        jupiterTokens: [Token],
+        jupiterTokens: [TokenMetadata],
         routeMap: RouteMap,
         preChosenFromTokenMintAddress: String?,
         preChosenToTokenMintAddress: String?
@@ -51,7 +51,7 @@ extension JupiterSwapBusinessLogic {
     // MARK: - Helpers
 
     private static func getSwapTokens(
-        _ jupiterTokens: [Token]
+        _ jupiterTokens: [TokenMetadata]
     ) async -> [SwapToken] {
         // wait for wallets repository to be loaded and get wallets
         let walletsRepository = Resolver.resolve(SolanaAccountsService.self)

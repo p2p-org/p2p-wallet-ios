@@ -4,7 +4,7 @@ import SolanaSwift
 
 public protocol SendFeeCalculator: AnyObject {
     func getFees(
-        from token: Token,
+        from token: TokenMetadata,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -20,7 +20,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
     // MARK: - Fees calculator
 
     public func getFees(
-        from token: Token,
+        from token: TokenMetadata,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,

@@ -30,5 +30,5 @@ public struct CreateAccountInfo: Hashable {
 extension CreateAccountInfo: Info {
   public var amount: Double? { -(fee ?? 0) }
   public var symbol: String? { "SOL" }
-  public var mintAddress: String? { Token.nativeSolana.address }
+  public var mintAddress: String? { TokenMetadata.nativeSolana.address }
 }
