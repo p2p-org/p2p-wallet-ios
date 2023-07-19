@@ -1500,3 +1500,7 @@
 "Incorrect %@ account" = "Tài khoản %@ không chính xác";
 "You've used all 5 codes. Try again later. For help, contact support." = "Bạn đã sử dụng tất cả 5 mã.  Thử lại sau.  Để được giúp đỡ, hãy liên hệ với bộ phận hỗ trợ.";
 "For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money" = "Đối với chuyển khoản này, tỷ giá hối đoái không được đảm bảo:\nchúng tôi sẽ sử dụng tỷ giá tại thời điểm nhận tiền";
+"Can’t withdraw now" = "Không thể rút tiền ngay bây giờ";
+"Not enough money" = "Không đủ tiền";
+"Only %@ per one transfer" = "Chỉ %@ cho một lần chuyển";
+"%@ as minimal amount for transfer" = "%@ là số tiền tối thiểu để chuyển";

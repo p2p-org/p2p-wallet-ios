@@ -1462,3 +1462,7 @@
 "Incorrect %@ account" = "Incorrect %@ account";
 "You've used all 5 codes. Try again later. For help, contact support." = "You've used all 5 codes. Try again later. For help, contact support.";
 "For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money" = "For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money";
+"Can’t withdraw now" = "Can’t withdraw now";
+"Not enough money" = "Not enough money";
+"Only %@ per one transfer" = "Only %@ per one transfer";
+"%@ as minimal amount for transfer" = "%@ as minimal amount for transfer";

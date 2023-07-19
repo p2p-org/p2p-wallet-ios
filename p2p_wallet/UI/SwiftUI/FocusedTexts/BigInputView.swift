@@ -1,9 +1,8 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct BigInputView: View {
-
-    let allButtonPressed: () -> Void
+    let allButtonPressed: (() -> Void)?
     let amountFieldTap: (() -> Void)?
     let changeTokenPressed: (() -> Void)?
     let accessibilityIdPrefix: String
@@ -24,7 +23,7 @@ struct BigInputView: View {
     @Binding var fiatAmountTextColor: UIColor
 
     init(
-        allButtonPressed: @escaping () -> Void,
+        allButtonPressed: (() -> Void)?,
         amountFieldTap: (() -> Void)?,
         changeTokenPressed: (() -> Void)?,
         accessibilityIdPrefix: String,
@@ -49,18 +48,18 @@ struct BigInputView: View {
         self.accessibilityIdPrefix = accessibilityIdPrefix
         self.title = title
         self.isBalanceVisible = isBalanceVisible
-        self._amount = amount
-        self._amountTextColor = amountTextColor
-        self._isFirstResponder = isFirstResponder
-        self._decimalLength = decimalLength
-        self._isEditable = isEditable
-        self._balance = balance
-        self._balanceText = balanceText
-        self._tokenSymbol = tokenSymbol
-        self._isLoading = isLoading
-        self._isAmountLoading = isAmountLoading
-        self._fiatAmount = fiatAmount
-        self._fiatAmountTextColor = fiatAmountTextColor
+        _amount = amount
+        _amountTextColor = amountTextColor
+        _isFirstResponder = isFirstResponder
+        _decimalLength = decimalLength
+        _isEditable = isEditable
+        _balance = balance
+        _balanceText = balanceText
+        _tokenSymbol = tokenSymbol
+        _isLoading = isLoading
+        _isAmountLoading = isAmountLoading
+        _fiatAmount = fiatAmount
+        _fiatAmountTextColor = fiatAmountTextColor
     }
 
     var body: some View {
@@ -72,7 +71,7 @@ struct BigInputView: View {
 
                 Spacer()
 
-                if isEditable && balance != nil && !isLoading  {
+                if isEditable && balance != nil && !isLoading {
                     allButton
                 }
             }
@@ -100,13 +99,14 @@ struct BigInputView: View {
         .padding(EdgeInsets(top: 12, leading: 16, bottom: 16, trailing: 12))
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .foregroundColor(Color(Asset.Colors.snow.color).opacity(isEditable ? 1 : 0.6)))
+                .foregroundColor(Color(Asset.Colors.snow.color).opacity(isEditable ? 1 : 0.6))
+        )
     }
 }
 
 private extension BigInputView {
     var allButton: some View {
-        Button(action: allButtonPressed, label: {
+        Button(action: { allButtonPressed?() }, label: {
             HStack(spacing: 4) {
                 Text(L10n.all.uppercaseFirst)
                     .subtitleStyle()
@@ -168,7 +168,6 @@ private extension BigInputView {
         }
         .if(!isEditable) { view in
             view.onTapGesture { amountFieldTap?() }
-            
         }
         .frame(height: 32)
     }
@@ -185,6 +184,6 @@ private extension BigInputView {
 
 private extension Text {
     func subtitleStyle(color: Color = Color(Asset.Colors.silver.color)) -> some View {
-        self.apply(style: .label1).foregroundColor(color)
+        apply(style: .label1).foregroundColor(color)
     }
 }

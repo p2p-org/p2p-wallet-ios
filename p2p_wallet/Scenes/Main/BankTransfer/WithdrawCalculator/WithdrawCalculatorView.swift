@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct WithdrawCalculatorView: View {
     @ObservedObject var viewModel: WithdrawCalculatorViewModel
@@ -15,16 +15,23 @@ struct WithdrawCalculatorView: View {
                 Spacer()
 
                 NewTextButton(
-                    title: L10n.next.uppercaseFirst,
+                    title: viewModel.actionData.title,
                     style: .primaryWhite,
                     expandable: true,
-                    isLoading: false,
-                    trailing: .arrowForward.withRenderingMode(.alwaysTemplate),
-                    action: viewModel.nextPressed.send
+                    isEnabled: viewModel.actionData.isEnabled,
+                    isLoading: viewModel.isLoading,
+                    trailing: viewModel.actionData.isEnabled ? .arrowForward.withRenderingMode(.alwaysTemplate) : nil,
+                    action: viewModel.actionPressed.send
                 )
                 .padding(.bottom, 36)
             }
             .padding(.horizontal, 16)
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                // We need delay because BigInputView is UITextField
+                viewModel.isFromFirstResponder = true
+            })
         }
     }
 
@@ -60,27 +67,29 @@ struct WithdrawCalculatorView: View {
             }
             .frame(height: 16)
     }
-    
+
     var fromInput: some View {
         BigInputView(
-            allButtonPressed: { },
+            allButtonPressed: viewModel.allButtonPressed.send,
             amountFieldTap: nil,
             changeTokenPressed: nil,
             accessibilityIdPrefix: "\(WithdrawCalculatorView.self).from",
             title: L10n.youPay,
             isBalanceVisible: false,
             amount: $viewModel.fromAmount,
+            amountTextColor: $viewModel.fromAmountTextColor,
             isFirstResponder: $viewModel.isFromFirstResponder,
             decimalLength: $viewModel.fromDecimalLength,
+            isEditable: $viewModel.isFromEnabled,
             balance: $viewModel.fromBalance,
-            balanceText: .constant(""),
+            balanceText: $viewModel.fromBalanceText,
             tokenSymbol: $viewModel.fromTokenSymbol
         )
     }
 
     var toInput: some View {
         BigInputView(
-            allButtonPressed: { },
+            allButtonPressed: nil,
             amountFieldTap: nil,
             changeTokenPressed: nil,
             accessibilityIdPrefix: "\(WithdrawCalculatorView.self).to",
@@ -89,6 +98,7 @@ struct WithdrawCalculatorView: View {
             amount: $viewModel.toAmount,
             isFirstResponder: $viewModel.isToFirstResponder,
             decimalLength: $viewModel.toDecimalLength,
+            isEditable: $viewModel.isToEnabled,
             balance: .constant(nil),
             balanceText: .constant(""),
             tokenSymbol: $viewModel.toTokenSymbol
