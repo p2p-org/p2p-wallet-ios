@@ -13,15 +13,15 @@ import Wormhole
 /// ViewModel of `CryptoAccounts` scene
 final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     
-    // MARK: - Properties
+    // MARK: - Dependencies
     
     private let solanaAccountsService: SolanaAccountsService
     private let ethereumAccountsService: EthereumAccountsService
     private let userActionService: UserActionService
-    
     private let favouriteAccountsStore: FavouriteAccountsDataSource
-    
     private let navigation: PassthroughSubject<CryptoNavigation, Never>
+    
+    // MARK: - Properties
     
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances

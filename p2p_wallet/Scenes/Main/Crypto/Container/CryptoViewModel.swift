@@ -12,11 +12,10 @@ import Wormhole
 /// ViewModel of `Crypto` scene
 final class CryptoViewModel: BaseViewModel, ObservableObject {
 
-    // MARK: - Properties
+    // MARK: - Dependencies
     
     @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var ethereumAccountsService: EthereumAccountsService
-
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
@@ -25,10 +24,11 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
     
-    @Published var state = State.pending
-    
-    /// Navigation subject (passed from Coordinator)
     let navigation: PassthroughSubject<CryptoNavigation, Never>
+    
+    // MARK: - Properties
+    
+    @Published var state = State.pending
     
     // MARK: - Initializers
     

@@ -18,7 +18,7 @@ struct CryptoAccountsAggregator: DataAggregator {
     func transform(input: Input) -> Output {
         let (solanaAccounts, allEthereumAccounts) = input
         
-        /// Claimable transfer accounts
+        // Claimable transfer accounts
         let transferAccounts = allEthereumAccounts.filter { ethAccount in
             switch ethAccount.status {
             case .readyToClaim, .isClaiming:
@@ -28,7 +28,7 @@ struct CryptoAccountsAggregator: DataAggregator {
             }
         }
         
-        /// Ethereum accounts without claimable transfers
+        // Ethereum accounts without claimable transfers
         let filteredEthereumAccounts = allEthereumAccounts.filter { account in
             return !transferAccounts.contains(account)
         }
@@ -48,12 +48,12 @@ struct CryptoAccountsAggregator: DataAggregator {
     
     // MARK: - Helpers
     
-    // Filter out hidden accounts
+    /// Filter out hidden accounts
     func hiddenFilter(account: any RenderableAccount) -> Bool {
         !account.tags.contains(.hidden)
     }
 
-    // Split into two groups
+    /// Split into two groups
     func primaryFilter(account: any RenderableAccount) -> Bool {
         if account.tags.contains(.favourite) {
             return true
@@ -65,7 +65,7 @@ struct CryptoAccountsAggregator: DataAggregator {
         return true
     }
     
-    // Sort by sorting key
+    /// Sort by sorting key
     func commonSort(lhs: any SortableAccount, rhs: any SortableAccount) -> Bool {
         guard
             let lhsKey = lhs.sortingKey,
