@@ -29,34 +29,44 @@ public final class EthereumTokensRepository {
 
     /// Resolve native token
     public func resolveNativeToken() async throws -> EthereumToken {
-        EthereumToken()
+        // Load from cache
+        if let nativeToken = try await database.read(for: "native") {
+            return nativeToken
+        }
 
-        // TODO: Wait backend
-        /*
-         // Load from cache
-         if let nativeToken = try await database.read(for: "native") {
-             return nativeToken
-         }
+        // Fetch
+        let response = try await provider.getTokensInfo(
+            .init(
+                query: [
+                    .init(chainId: "ethereum", addresses: ["native"]),
+                ]
+            )
+        )
 
-         // Fetch
-         let response = try await provider.getTokensInfo(
-             .init(
-                 query: [
-                     .init(chainId: "ethereum", addresses: ["native"]),
-                 ]
-             )
-         )
+        guard let tokenData = response.first?.data.first else {
+            throw Error.nativeTokenCanNotBeResolved
+        }
 
-         guard let tokenData = response.first?.data.first else {
-             throw Error.nativeTokenCanNotBeResolved
-         }
+        // Parse and store
+        // Logo
+        let logo: URL?
+        if let logoUrl = tokenData.logoUrl {
+            logo = URL(string: logoUrl)
+        } else {
+            logo = nil
+        }
+        
+        let nativeToken = EthereumToken(
+            name: tokenData.name,
+            symbol: tokenData.symbol,
+            decimals: tokenData.decimals,
+            logo: logo,
+            contractType: .native
+        )
 
-         // Parse and store
-         let nativeToken = try parseToken(tokenData: tokenData)
-         try? await database.write(for: "native", value: nativeToken)
+        try? await database.write(for: "native", value: nativeToken)
 
-         return nativeToken
-          */
+        return nativeToken
     }
 
     /// Resolve ERC-20 token by address.

@@ -89,4 +89,3 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
         }
     }
 }
-
