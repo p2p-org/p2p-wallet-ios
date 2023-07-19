@@ -40,10 +40,6 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
 class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 
-    init(from currentPresentation: SmartCoordinatorPresentation) {
-        presentingViewController = currentPresentation.presentingViewController
-    }
-
     init(_ presentingNavigationController: UINavigationController) {
         presentingViewController = presentingNavigationController
     }
@@ -55,39 +51,6 @@ class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
         }
 
         presentingViewController.pushViewController(presentedViewController, animated: true)
-    }
-}
-
-class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
-    var presentingViewController: UIViewController
-
-    private var subscriptions = [AnyCancellable]()
-    private let transition: PanelTransition = .init()
-    private let height: CGFloat
-
-    init(from currentPresentation: SmartCoordinatorPresentation, height: CGFloat) {
-        presentingViewController = currentPresentation.presentingViewController
-        self.height = height
-    }
-
-    init(_ presentingViewController: UIViewController, height: CGFloat) {
-        self.presentingViewController = presentingViewController
-        self.height = height
-    }
-
-    func run(presentedViewController: UIViewController) {
-        // Prepare
-        transition.containerHeight = height
-        transition.dimmClicked
-            .sink(receiveValue: { _ in presentedViewController.dismiss(animated: true) })
-            .store(in: &subscriptions)
-
-        presentedViewController.view.layer.cornerRadius = 16
-        presentedViewController.transitioningDelegate = transition
-        presentedViewController.modalPresentationStyle = .custom
-
-        // Presentation
-        presentingViewController.present(presentedViewController, animated: true)
     }
 }
 

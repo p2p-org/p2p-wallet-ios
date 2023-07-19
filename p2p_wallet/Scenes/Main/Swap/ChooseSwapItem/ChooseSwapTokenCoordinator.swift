@@ -1,7 +1,7 @@
 import Combine
+import KeyAppUI
 import SolanaSwift
 import SwiftUI
-import KeyAppUI
 
 final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     private let subject = PassthroughSubject<SwapToken?, Never>()
@@ -61,6 +61,6 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     }
 
     @objc private func closeButtonTapped() {
-        self.close(token: nil)
+        close(token: nil)
     }
 }

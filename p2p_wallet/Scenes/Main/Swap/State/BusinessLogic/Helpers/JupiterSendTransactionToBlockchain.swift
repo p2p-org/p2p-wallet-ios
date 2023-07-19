@@ -7,8 +7,8 @@
 
 import Jupiter
 import SolanaSwift
-import WalletCore
 import Task_retrying
+import WalletCore
 
 extension JupiterSwapBusinessLogic {
     static func sendToBlockchain(
@@ -29,7 +29,6 @@ extension JupiterSwapBusinessLogic {
                     return try await _sendToBlockchain(
                         account: account,
                         swapTransaction: swapTransaction,
-                        route: route,
                         services: services
                     )
                 }
@@ -43,23 +42,21 @@ extension JupiterSwapBusinessLogic {
                         feeAccount: nil,
                         computeUnitPriceMicroLamports: nil
                     )
-                    
+
                     // retry
                     return try await _sendToBlockchain(
                         account: account,
                         swapTransaction: swapTransaction.stringValue,
-                        route: route,
                         services: services
                     )
                 }
             }
         ).value
     }
-    
+
     private static func _sendToBlockchain(
         account: KeyPair,
         swapTransaction: String,
-        route: Route,
         services: JupiterSwapServices
     ) async throws -> String {
         // get versioned transaction
@@ -68,7 +65,7 @@ extension JupiterSwapBusinessLogic {
         else {
             throw JupiterError.invalidResponse
         }
-        
+
         // send to block chain
         let transactionId = try await sendToBlockchain(
             account: account,
@@ -77,7 +74,7 @@ extension JupiterSwapBusinessLogic {
         )
         return transactionId
     }
-    
+
     private static func sendToBlockchain(
         account: KeyPair,
         versionedTransaction: VersionedTransaction,
@@ -85,13 +82,13 @@ extension JupiterSwapBusinessLogic {
     ) async throws -> String {
         // get versioned transaction
         var versionedTransaction = versionedTransaction
-        
+
         // get blockhash if needed (don't need any more)
 //        if versionedTransaction.message.value.recentBlockhash == nil {
 //            let blockHash = try await solanaAPIClient.getRecentBlockhash()
 //            versionedTransaction.setRecentBlockHash(blockHash)
 //        }
-        
+
         // sign transaction
         try versionedTransaction.sign(signers: [account])
 
@@ -100,7 +97,7 @@ extension JupiterSwapBusinessLogic {
 
         // send to blockchain
         return try await solanaAPIClient.sendTransaction(
-            transaction: serializedTransaction ,
+            transaction: serializedTransaction,
             configs: RequestConfiguration(encoding: "base64")!
         )
     }

@@ -4,7 +4,7 @@ import SolanaSwift
 struct SendViaLinkTransactionInfo: Codable, Identifiable {
     let amount: Double
     let amountInFiat: Double
-    let token: Token
+    let token: TokenMetadata
     let seed: String
     let timestamp: Date
     

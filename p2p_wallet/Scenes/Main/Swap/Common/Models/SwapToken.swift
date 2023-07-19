@@ -1,9 +1,10 @@
-import SolanaSwift
 import Jupiter
+import KeyAppKitCore
+import SolanaSwift
 
 struct SwapToken: Equatable {
-    let token: Token
-    let userWallet: Wallet?
+    let token: TokenMetadata
+    let userWallet: SolanaAccount?
 
     var address: String { token.address }
 }
@@ -11,7 +12,8 @@ struct SwapToken: Equatable {
 extension SwapToken {
     static let nativeSolana = SwapToken(
         token: .nativeSolana,
-        userWallet: nil)
+        userWallet: nil
+    )
 }
 
 extension SwapToken {

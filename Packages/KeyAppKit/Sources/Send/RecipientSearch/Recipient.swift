@@ -25,7 +25,7 @@ public struct Recipient: Hashable, Codable {
         case username(name: String, domain: String)
 
         case solanaAddress
-        case solanaTokenAddress(walletAddress: PublicKey, token: Token)
+        case solanaTokenAddress(walletAddress: PublicKey, token: TokenMetadata)
 
         case bitcoinAddress
         case ethereumAddress

@@ -971,7 +971,7 @@
 "Excluding fees you will deposit" = "Hors frais vous déposerez";
 "Withdraw funds" = "Retirer des fonds";
 "✅ Using the MAX amount" = "✅ Utilisation du montant MAX";
-"You are trying to deposit more funds than possible. If you want to deposit the maximum amount, press “Deposit MAX amount”." = "Vous essayez de déposer plus de fonds que possible.  Si vous souhaitez déposer le montant maximum, appuyez sur "Déposer le montant MAX".";
+"You are trying to deposit more funds than possible. If you want to deposit the maximum amount, press “Deposit MAX amount”." = "Vous essayez de déposer plus de fonds que possible.  Si vous souhaitez déposer le montant maximum, appuyez sur ”Déposer le montant MAX”.";
 "Slide to deposit" = "Glisser pour déposer";
 "Slide to withdraw" = "Faites glisser pour retirer";
 "Yielding" = "céder";
@@ -1218,7 +1218,7 @@
 "Key App doesn’t make any profit from swap 💚" = "Key App ne tire aucun profit de l'échange 💚";
 "You receive" = "Vous recevez";
 "Counting..." = "Compte...";
-"You can enter “You pay” field only" = "Vous ne pouvez saisir que le champ "Vous payez"";
+"You can enter “You pay” field only" = "Vous ne pouvez saisir que le champ “Vous payez“";
 "Not enough %@" = "Pas assez %@";
 "Buy with Moonpay" = "Acheter avec Moonpay";
 "License" = "Licence";
@@ -1370,6 +1370,7 @@
 "Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
 "Transaction fees" = "Les frais de transaction";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ est le montant minimum à recevoir du réseau Ethereum";
+"Your QR code was copied" = "Votre code QR a été copié";
 "We've noticed that you're using a new device." = "Nous avons remarqué que vous utilisez un nouvel appareil.";
 "For security, change your authorization device to restore access For security, change your authorization device to restore access if needed." = "Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès. Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès si nécessaire.";
 "This device" = "Cet appareil";

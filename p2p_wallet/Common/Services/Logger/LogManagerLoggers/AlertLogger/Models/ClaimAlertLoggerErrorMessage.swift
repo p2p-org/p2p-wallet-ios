@@ -28,7 +28,8 @@ struct ClaimAlertLoggerErrorMessage: Codable {
 }
 
 extension ClaimAlertLoggerErrorMessage {
-    // MARK: - Token
+    // MARK: - TokenMetadata
+
     struct Token: Codable {
         let name, solanaMint, ethMint: String
         let claimAmount: String

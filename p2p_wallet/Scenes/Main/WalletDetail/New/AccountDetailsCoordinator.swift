@@ -1,12 +1,7 @@
-//
-//  AccountDetailsCoordiantor.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
+import AnalyticsManager
 import Combine
 import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Sell
@@ -21,11 +16,11 @@ enum AccountDetailsCoordinatorArgs {
 
 enum AccountDetailsCoordinatorResult {
     case cancel
-    case done
 }
 
 class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
-    @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
+
     let args: AccountDetailsCoordinatorArgs
 
     init(args: AccountDetailsCoordinatorArgs, presentingViewController: UINavigationController) {
@@ -35,12 +30,12 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
     override func build() -> UIViewController {
         let detailAccountVM: AccountDetailsViewModel
-        let historyListVM: AccountDetailsHistoryViewModel
+        let historyListVM: HistoryViewModel
 
         switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.data.token.address, account: account)
+            historyListVM = .init(mint: account.token.address)
         }
 
         historyListVM.actionSubject
@@ -83,6 +78,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
     private func openDetailTransaction(action: NewHistoryAction) {
         switch action {
         case let .openParsedTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature ?? ""))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(parsedTransaction: trx),
                 presentingViewController: presentation.presentingViewController
@@ -105,6 +101,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 .store(in: &subscriptions)
 
         case let .openHistoryTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),
                 presentingViewController: presentation.presentingViewController
@@ -115,9 +112,11 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 .store(in: &subscriptions)
 
         case let .openSellTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.id))
             openSell(trx)
 
         case let .openPendingTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.transactionId ?? ""))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(pendingTransaction: trx),
                 presentingViewController: presentation.presentingViewController
@@ -172,18 +171,18 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             .map(\.receiveFromAddress)
             .compactMap { $0 }
 
-        if account.data.token.isNative {
+        if account.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
                 var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
-                if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+                if let logoURL = URL(string: account.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
 
                 openReceive(item:
                     .init(
                         icon: icon,
-                        name: account.data.name,
-                        symbol: account.data.token.symbol,
+                        name: account.address,
+                        symbol: account.token.symbol,
                         availableNetwork: [.solana, .ethereum]
                     ))
 
@@ -191,17 +190,17 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             }
         }
 
-        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.data.token.address) {
+        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.address) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
-            if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+            if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
 
             openReceive(item:
                 .init(
                     icon: icon,
-                    name: account.data.name,
-                    symbol: account.data.token.symbol,
+                    name: account.address,
+                    symbol: account.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))
 
@@ -210,8 +209,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         let coordinator = ReceiveCoordinator(
             network: .solana(
-                tokenSymbol: account.data.token.symbol,
-                tokenImage: .init(token: account.data.token)
+                tokenSymbol: account.token.symbol,
+                tokenImage: .init(token: account.token)
             ),
             presentation: SmartCoordinatorPushPresentation(navigationController)
         )
@@ -256,7 +255,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
     }
 
-    func openSwap(destination: Wallet? = nil) {
+    func openSwap(destination: SolanaAccount? = nil) {
         guard case let .solanaAccount(account) = args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
@@ -267,7 +266,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     dismissAfterCompletion: true,
                     openKeyboardOnStart: true,
                     source: .tapToken,
-                    preChosenWallet: account.data,
+                    preChosenWallet: account,
                     destinationWallet: destination,
                     hideTabBar: true
                 )
@@ -288,7 +287,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
-            preChosenWallet: account.data,
+            preChosenWallet: account,
             hideTabBar: true,
             allowSwitchingMainAmountType: true
         )
@@ -335,8 +334,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
     func openBuy() {
         guard case let .solanaAccount(account) = args else { return }
 
-        let token: Token
-        switch account.data.token.symbol {
+        let token: TokenMetadata
+        switch account.token.symbol {
         case "SOL":
             token = .nativeSolana
         case "USDC":
@@ -359,7 +358,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 }
 
 extension ReceiveNetwork.Image {
-    init?(token: Token) {
+    init?(token: TokenMetadata) {
         if let image = token.image {
             self = .image(image)
         } else if let urlStr = token.logoURI, let url = URL(string: urlStr) {

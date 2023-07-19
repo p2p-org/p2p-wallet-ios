@@ -6,13 +6,13 @@
 //
 
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import SolanaSwift
 import TransactionParser
 
 struct PendingTransaction {
     enum TransactionStatus {
-        static let maxConfirmed = 31
-
         case sending
         case confirmed(_ numberOfConfirmed: Int)
         case finalized
@@ -26,7 +26,7 @@ struct PendingTransaction {
                 return nil
             }
         }
-        
+
         var isSent: Bool {
             switch self {
             case .sending:
@@ -35,38 +35,13 @@ struct PendingTransaction {
                 return true
             }
         }
-        
+
         var isFinalized: Bool {
             switch self {
             case .finalized:
                 return true
             default:
                 return false
-            }
-        }
-
-        var isProcessing: Bool {
-            switch self {
-            case .sending, .confirmed:
-                return true
-            default:
-                return false
-            }
-        }
-
-        var progress: Float {
-            switch self {
-            case .sending:
-                return 0
-            case var .confirmed(numberOfConfirmed):
-                // treat all number of confirmed as unfinalized
-                if numberOfConfirmed >= Self.maxConfirmed {
-                    numberOfConfirmed = Self.maxConfirmed - 1
-                }
-                // return
-                return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
-            case .finalized, .error:
-                return 1
             }
         }
 
@@ -78,36 +53,22 @@ struct PendingTransaction {
                 return nil
             }
         }
-
-        public var rawValue: String {
-            switch self {
-            case .sending:
-                return "sending"
-            case let .confirmed(value):
-                return "processing(\(value))"
-            case .finalized:
-                return "finalized"
-            case .error:
-                return "error"
-            }
-        }
     }
 
     let trxIndex: Int
     var transactionId: String?
     let sentAt: Date
-    var writtenToRepository: Bool = false
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
     var slot: UInt64 = 0
-    
+
     var isConfirmedOrError: Bool {
         status.error != nil || status.isFinalized || (status.numberOfConfirmations ?? 0) > 0
     }
 }
 
 extension PendingTransaction {
-    func parse(pricesService: PricesServiceType, authority: String? = nil) -> ParsedTransaction? {
+    func parse(pricesService _: PriceService, authority: String? = nil) -> ParsedTransaction? {
         // status
         let status: ParsedTransaction.Status
 
@@ -132,23 +93,28 @@ extension PendingTransaction {
         case let transaction as SendTransaction:
             value = TransferInfo(
                 source: transaction.walletToken,
-                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
+                destination: SolanaAccount(
+                    pubkey: transaction.recipient.address,
+                    lamports: 0,
+                    token: transaction.walletToken.token
+                ),
                 authority: authority,
                 destinationAuthority: nil,
                 rawAmount: transaction.amount,
-                account: transaction.walletToken.pubkey
+                account: transaction.walletToken.address
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
         case let transaction as SwapRawTransactionType:
             var destinationWallet = transaction.destinationWallet
             if let authority = try? PublicKey(string: authority),
-               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
+               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress),
+               let address = try? PublicKey.associatedTokenAddress(
+                   walletAddress: authority,
+                   tokenMintAddress: mintAddress
+               ).base58EncodedString
             {
-                destinationWallet.pubkey = try? PublicKey.associatedTokenAddress(
-                    walletAddress: authority,
-                    tokenMintAddress: mintAddress
-                ).base58EncodedString
+                destinationWallet.address = address
             }
 
             value = SwapInfo(
@@ -158,15 +124,14 @@ extension PendingTransaction {
                 destinationAmount: transaction.toAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
-                .value
+            amountInFiat = transaction.fromAmount * transaction.sourceWallet.price?.doubleValue
             fee = transaction.feeAmount
         case let transaction as ClaimSentViaLinkTransaction:
             value = TransferInfo(
-                source: Wallet(
+                source: SolanaAccount(
                     pubkey: transaction.claimableTokenInfo.account,
                     token: transaction.token
-                ) ,
+                ),
                 destination: transaction.destinationWallet,
                 authority: nil,
                 destinationAuthority: nil,

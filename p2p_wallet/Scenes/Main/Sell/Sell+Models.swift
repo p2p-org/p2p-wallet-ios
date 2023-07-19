@@ -6,7 +6,3 @@ enum SellNavigation {
     case showPending(transactions: [SellDataServiceTransaction], fiat: any ProviderFiat)
     case moonpayInfo
 }
-
-enum SellError: Error {
-    case invalidURL
-}

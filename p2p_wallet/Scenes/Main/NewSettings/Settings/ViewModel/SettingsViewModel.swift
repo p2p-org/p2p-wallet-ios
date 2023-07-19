@@ -59,6 +59,23 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
         setUpAuthType()
         updateNameIfNeeded()
         bind()
+
+        openActionSubject.compactMap {
+            switch $0 {
+            case .yourPin:
+                return KeyAppAnalyticsEvent.settingsPinClick
+            case .network:
+                return KeyAppAnalyticsEvent.settingsNetworkClick
+            case .support:
+                return KeyAppAnalyticsEvent.settingsSupportClick
+            case .recoveryKit:
+                return KeyAppAnalyticsEvent.settingsRecoveryClick
+            default:
+                return nil
+            }
+        }.sink { [weak self] event in
+            self?.analyticsManager.log(event: event)
+        }.store(in: &subscriptions)
     }
 
     private func setUpAuthType() {
@@ -78,6 +95,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func toggleBiometryEnabling() {
+        analyticsManager.log(event: .settingsFaceidClick)
         guard !isBiometryCheckGoing else { return }
         authenticationHandler.pauseAuthentication(true)
         let context = LAContext()
@@ -120,7 +138,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     func sendSignOutAnalytics() {
-        analyticsManager.log(event: .signOut)
+        analyticsManager.log(event: .settingsLogOut)
     }
 
     func signOut() {
@@ -159,13 +177,13 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
     
-    public func openTwitter() {
+    func openTwitter() {
         if let url = URL(string: "https://twitter.com/KeyApp_") {
             UIApplication.shared.open(url)
         }
     }
     
-    public func openDiscord() {
+    func openDiscord() {
         if let url = URL(string: "https://discord.gg/SpW3GmEYgU") {
             UIApplication.shared.open(url)
         }

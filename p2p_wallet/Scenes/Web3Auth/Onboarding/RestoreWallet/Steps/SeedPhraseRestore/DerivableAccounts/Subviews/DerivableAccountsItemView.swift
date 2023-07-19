@@ -1,21 +1,21 @@
-import SwiftUI
 import KeyAppUI
 import SolanaSwift
+import SwiftUI
 
 struct DerivableAccountsItemView: View {
-
-    private let nativeToken: Token
+    private let nativeToken: TokenMetadata
     private let address: String
     private let balanceInFiat: String
     private let balance: String
-    private let isBlured: Bool
 
     init(account: DerivableAccount) {
-        nativeToken = Token.nativeSolana
-        isBlured = account.isBlured ?? false
+        nativeToken = .nativeSolana
         address = account.info.publicKey.short()
         balanceInFiat = (account.amount * account.price).formattedFiat(roundingMode: .down)
-        balance = account.amount?.tokenAmountFormattedString(symbol: nativeToken.symbol, maximumFractionDigits: Int(nativeToken.decimals)) ?? ""
+        balance = account.amount?.tokenAmountFormattedString(
+            symbol: nativeToken.symbol,
+            maximumFractionDigits: Int(nativeToken.decimals)
+        ) ?? ""
     }
 
     var body: some View {
@@ -27,7 +27,7 @@ struct DerivableAccountsItemView: View {
                 Text(nativeToken.symbol)
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.night.color))
-                
+
                 Text(address)
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))

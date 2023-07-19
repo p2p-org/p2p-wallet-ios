@@ -1372,6 +1372,7 @@
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
+"Your QR code was copied" = "Mã QR của bạn đã được sao chép";
 "We've noticed that you're using a new device." = "Chúng tôi nhận thấy rằng bạn đang sử dụng một thiết bị mới.";
 "For security, change your authorization device to restore access For security, change your authorization device to restore access if needed." = "Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập nếu cần.";
 "This device" = "Thiết bị này";
@@ -1383,7 +1384,7 @@
 "Confirm access to your account that was used to create the wallet" = "Xác nhận quyền truy cập vào tài khoản của bạn đã được sử dụng để tạo ví";
 "Updating" = "Đang cập nhật";
 "Follow us on Twitter" = "theo dõi chúng tối trên Twitter";
-"Join our Discord" = "Tham gia bất hòa của chúng tôi";
+"Join our Discord" = "Tham gia Discord của chúng tôi";
 "Security and privacy" = "Bảo mật & quyền riêng tư";
 "To access your account from another device, you need to use any 2 factors from the list below" = "Để truy cập tài khoản của bạn từ một thiết bị khác, bạn cần sử dụng 2 yếu tố bất kỳ trong danh sách bên dưới";
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App tôn trọng quyền riêng tư của bạn - nó không thể truy cập vào tiền hoặc thông tin cá nhân của bạn. Thông tin của bạn được lưu trữ an toàn trên thiết bị của bạn và trong blockchain";

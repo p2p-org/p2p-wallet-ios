@@ -6,24 +6,25 @@
 //
 
 import Combine
+import KeyAppBusiness
 import KeyAppUI
+import Resolver
+import Sell
 import SwiftUI
 import SwiftyUserDefaults
-import Sell
-import Resolver
 
 struct ActionsView: View {
     @Injected private var sellDataService: any SellDataService
-    @Injected private var walletsRepository: WalletsRepository
-    
+    @Injected private var walletsRepository: SolanaAccountsService
+
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
     var isSellAvailable: Bool {
         available(.sellScenarioEnabled) &&
-        sellDataService.isAvailable &&
-        !walletsRepository.getWallets().isTotalAmountEmpty
+            sellDataService.isAvailable &&
+            !walletsRepository.getWallets().isTotalAmountEmpty
     }
 
     var body: some View {
@@ -205,7 +206,7 @@ extension ActionsView {
 extension ActionsView {
     var viewHeight: CGFloat {
         (UIScreen.main.bounds.width - 16 * 3)
-        + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
-        + (isSellAvailable ? 100 : 0)
+            + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
+            + (isSellAvailable ? 100 : 0)
     }
 }

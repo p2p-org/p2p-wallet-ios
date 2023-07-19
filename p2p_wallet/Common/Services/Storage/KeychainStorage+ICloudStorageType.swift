@@ -5,7 +5,7 @@
 import Foundation
 import KeychainSwift
 
-extension KeychainStorage: ICloudStorageType {
+extension KeychainStorage {
     func saveToICloud(account: RawAccount) -> Bool {
         var accountsToSave = [account]
 
@@ -39,11 +39,5 @@ extension KeychainStorage: ICloudStorageType {
 
         guard let data = icloudKeychain.getData(iCloudAccountsKey) else { return nil }
         return try? JSONDecoder().decode([RawAccount].self, from: data)
-    }
-
-    var didBackupUsingIcloud: Bool {
-        guard let phrases = account?.phrase.joined(separator: " ") else { return false }
-        return accountFromICloud()?
-            .contains(where: { $0.phrase == phrases && $0.derivablePath == derivablePath }) == true
     }
 }

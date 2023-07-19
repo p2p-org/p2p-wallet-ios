@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/amplitude/analytics-connector-ios.git",
         "state": {
           "branch": null,
-          "revision": "d3d682a26ca6f4947ece2c2e627971bb41b940fa",
-          "version": "1.0.1"
+          "revision": "d2f3ec4b022211a67d5d4509135d84359f7f8b8d",
+          "version": "1.0.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/AppsFlyerSDK/AppsFlyerFramework",
         "state": {
           "branch": null,
-          "revision": "aabfaf81d95e21f711850e87c60b9ef70b2bc6c4",
-          "version": "6.9.2"
+          "revision": "a8e607ae6fc19b1e26f440cadf0dac28fd4c81ac",
+          "version": "6.12.0"
         }
       },
       {
@@ -92,21 +92,12 @@
         }
       },
       {
-        "package": "FeeRelayerSwift",
-        "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
-        "state": {
-          "branch": "master",
-          "revision": "fdbc1a8c0ab13037e01e5493a2beccb84281acb5",
-          "version": null
-        }
-      },
-      {
         "package": "Firebase",
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk.git",
         "state": {
           "branch": null,
-          "revision": "e700a8f40c87c31cab7984875fcc1225d96b25bf",
-          "version": "10.11.0"
+          "revision": "a580250a9ff49ec38da5430cef20f88ddc831db2",
+          "version": "10.12.0"
         }
       },
       {
@@ -114,8 +105,8 @@
         "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
         "state": {
           "branch": null,
-          "revision": "62e3a0c09a75e2637f5300d46f05a59313f1c286",
-          "version": "10.11.0"
+          "revision": "0a226a8c50494c4cb877fbde27ab6374520a3354",
+          "version": "10.12.0"
         }
       },
       {
@@ -174,11 +165,11 @@
       },
       {
         "package": "Intercom",
-        "repositoryURL": "https://github.com/intercom/intercom-ios.git",
+        "repositoryURL": "https://github.com/intercom/intercom-ios-sp",
         "state": {
           "branch": null,
-          "revision": "5e5f0c032749be4539b6677c95319c3627c78cba",
-          "version": "15.0.1"
+          "revision": "1031655ceb49a8c8975b0cb138fe3bed897d159e",
+          "version": "15.0.3"
         }
       },
       {
@@ -254,21 +245,12 @@
         }
       },
       {
-        "package": "OrcaSwapSwift",
-        "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
-        "state": {
-          "branch": "main",
-          "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
-          "version": null
-        }
-      },
-      {
         "package": "PhoneNumberKit",
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "7147f6126e24ebf65f8c65e64afce5915c178c42",
-          "version": "3.6.5"
+          "revision": "9bc965a326df8d5115f0b7bb77f09c542b8ec417",
+          "version": "3.6.6"
         }
       },
       {
@@ -354,10 +336,10 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift",
         "state": {
-          "branch": "main",
-          "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
+          "branch": "v3.1",
+          "revision": "39c0c632c017b731aea6f4e4ca1b90decdcd4937",
           "version": null
         }
       },
@@ -380,30 +362,12 @@
         }
       },
       {
-        "package": "SwiftDocCPlugin",
-        "repositoryURL": "https://github.com/apple/swift-docc-plugin",
-        "state": {
-          "branch": null,
-          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
-          "version": "1.3.0"
-        }
-      },
-      {
-        "package": "SymbolKit",
-        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
-        "state": {
-          "branch": null,
-          "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "swift-nio",
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "324bc65a28323660fad8a36a7a37f0c2c78eeb9a",
-          "version": "2.55.0"
+          "revision": "5f542894dd8efbd766d8adf73ef2f947b0cd5e21",
+          "version": "2.56.0"
         }
       },
       {
@@ -440,15 +404,6 @@
           "branch": null,
           "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
           "version": "1.0.2"
-        }
-      },
-      {
-        "package": "SwiftProtobuf",
-        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
-        "state": {
-          "branch": null,
-          "revision": "f25867a208f459d3c5a06935dceb9083b11cd539",
-          "version": "1.22.0"
         }
       },
       {

@@ -36,6 +36,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
         }
 
         let currentEndpoints = APIEndPoint.definedEndpoints
+        let defaultFlags = StaticFlagsFetcher(featureFlags: [])
         #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
@@ -73,7 +74,6 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                 }
             }
         #endif
-
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {

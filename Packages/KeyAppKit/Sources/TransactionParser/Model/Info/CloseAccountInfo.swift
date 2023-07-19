@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(* , deprecated, renamed: "CloseAccountInfo")
 public typealias CloseAccountTransaction = CloseAccountInfo
@@ -14,9 +15,9 @@ public struct CloseAccountInfo: Hashable {
   public let reimbursedAmount: Double?
 
   // The closed wallet
-  public let closedWallet: Wallet?
+  public let closedWallet: SolanaAccount?
 
-  public init(reimbursedAmount: Double?, closedWallet: Wallet?) {
+  public init(reimbursedAmount: Double?, closedWallet: SolanaAccount?) {
     self.reimbursedAmount = reimbursedAmount
     self.closedWallet = closedWallet
   }
@@ -25,5 +26,5 @@ public struct CloseAccountInfo: Hashable {
 extension CloseAccountInfo: Info {
   public var amount: Double? { reimbursedAmount ?? 0 }
   public var symbol: String? { "SOL" }
-  public var mintAddress: String? { Token.nativeSolana.address }
+  public var mintAddress: String? { TokenMetadata.nativeSolana.address }
 }

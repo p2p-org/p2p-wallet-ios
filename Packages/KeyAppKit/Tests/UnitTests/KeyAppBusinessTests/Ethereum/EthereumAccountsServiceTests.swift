@@ -1,9 +1,8 @@
-@testable import KeyAppBusiness
 import XCTest
+@testable import KeyAppBusiness
 
 import Combine
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 import Web3
 
@@ -22,19 +21,17 @@ final class EthereumAccountsServiceTests: XCTestCase {
         )
 
         let web3 = Web3(provider: web3Provider)
+        let priceService = PriceServiceImpl(api: MockKeyAppTokenProvider(), errorObserver: MockErrorObservable())
+        let keyAppTokenProvider = MockKeyAppTokenProvider()
 
-        let pricesNetworkManager = MockPricesNetworkManager { _ in
-            ""
-        }
-        let priceService = EthereumPriceService(api: CoinGeckoPricesAPI(pricesNetworkManager: pricesNetworkManager))
-
-        let service = EthereumAccountsServiceImpl(
+        let service = EthereumAccountsService(
             address: "0x5Eaa9C2000a76DA450E9d1dAF44bb532337586EC",
             web3: web3,
-            ethereumTokenRepository: EthereumTokensRepository(web3: web3),
+            ethereumTokenRepository: EthereumTokensRepository(provider: keyAppTokenProvider),
             priceService: priceService,
             fiat: "usd",
-            errorObservable: MockErrorObservable()
+            errorObservable: MockErrorObservable(),
+            enable: true
         )
 
         // After 1 second

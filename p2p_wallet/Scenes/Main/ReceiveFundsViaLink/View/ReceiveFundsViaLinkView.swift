@@ -54,14 +54,14 @@ struct ReceiveFundsViaLinkView: View {
         }
     }
     
-    private func confirmView(token: Token, cryptoAmount: String) -> some View {
+    private func confirmView(token: TokenMetadata, cryptoAmount: String) -> some View {
         VStack(spacing: 52) {
             topPart(token: token, cryptoAmount: cryptoAmount)
             bottomPart
         }
     }
     
-   private func topPart(token: Token, cryptoAmount: String) -> some View {
+   private func topPart(token: TokenMetadata, cryptoAmount: String) -> some View {
         VStack(spacing: 16) {
             CoinLogoImageViewRepresentable(size: 66, args: .token(token))
                 .frame(width: 64, height: 64)

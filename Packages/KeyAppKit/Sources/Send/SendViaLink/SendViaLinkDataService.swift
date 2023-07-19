@@ -197,7 +197,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         let memo = memoPrefix + "-claim"
         
         // native sol
-        if token.mintAddress == Token.nativeSolana.address {
+        if token.mintAddress == TokenMetadata.nativeSolana.address {
             return try await claimNativeSOLToken(
                 keypair: token.keypair,
                 receiver: receiver,
@@ -209,7 +209,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         
         // spl token
         else {
-            let mre = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
+            let mre = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: SPLTokenAccountState.BUFFER_LENGTH)
             return try await claimSPLToken(
                 keypair: token.keypair,
                 receiver: receiver,
@@ -300,8 +300,8 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
 //        {
 //            return ClaimableTokenInfo(
 //                lamports: lamports,
-//                mintAddress: Token.nativeSolana.address,
-//                decimals: Token.nativeSolana.decimals,
+//                mintAddress: TokenMetadata.nativeSolana.address,
+//                decimals: TokenMetadata.nativeSolana.decimals,
 //                account: account,
 //                keypair: keypair
 //            )
@@ -343,8 +343,8 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         if solBalance > 0 {
             return ClaimableTokenInfo(
                 lamports: solBalance,
-                mintAddress: Token.nativeSolana.address,
-                decimals: Token.nativeSolana.decimals,
+                mintAddress: TokenMetadata.nativeSolana.address,
+                decimals: TokenMetadata.nativeSolana.decimals,
                 account: keypair.publicKey.base58EncodedString,
                 keypair: keypair
             )
