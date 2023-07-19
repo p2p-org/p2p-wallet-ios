@@ -10,20 +10,21 @@ struct WithdrawCalculatorView: View {
                 ScrollView {
                     contentView
                 }
+                .safeAreaInset(edge: .bottom, content: {
+                    NewTextButton(
+                        title: viewModel.actionData.title,
+                        style: .primaryWhite,
+                        expandable: true,
+                        isEnabled: viewModel.actionData.isEnabled,
+                        isLoading: viewModel.isLoading,
+                        trailing: viewModel.actionData.isEnabled ? .arrowForward.withRenderingMode(.alwaysTemplate) : nil,
+                        action: viewModel.actionPressed.send
+                    )
+                    .padding(.top, 12)
+                    .padding(.bottom, 36)
+                    .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.bottom))
+                })
                 .scrollDismissesKeyboard()
-
-                Spacer()
-
-                NewTextButton(
-                    title: viewModel.actionData.title,
-                    style: .primaryWhite,
-                    expandable: true,
-                    isEnabled: viewModel.actionData.isEnabled,
-                    isLoading: viewModel.isLoading,
-                    trailing: viewModel.actionData.isEnabled ? .arrowForward.withRenderingMode(.alwaysTemplate) : nil,
-                    action: viewModel.actionPressed.send
-                )
-                .padding(.bottom, 36)
             }
             .padding(.horizontal, 16)
         }
