@@ -38,7 +38,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     @Published var isFromEnabled = true
     @Published var isToEnabled = false
 
-    @Published var fromBalance: Double? = 20000
+    @Published var fromBalance: Double?
     @Published var fromBalanceText = ""
 
     @Published var fromTokenSymbol = Token.usdc.symbol.uppercased()
@@ -56,7 +56,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
         loadRates()
         bindProperties()
         bindReachibility()
-//        bindAccounts()
+        bindAccounts()
     }
 
     deinit {
