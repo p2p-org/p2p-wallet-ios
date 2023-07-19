@@ -22,7 +22,7 @@ extension KeychainStorage: AccountStorageType {
 
     func reloadSolanaAccount() async throws {
         guard let phrases = localKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
-        
+
         if GlobalAppState.shared.forcedWalletAddress.isEmpty {
             _account = try await KeyPair(
                 phrase: phrases,
@@ -30,9 +30,9 @@ extension KeychainStorage: AccountStorageType {
                 derivablePath: derivablePath
             )
         } else {
-            _account = KeyPair(
+            _account = try KeyPair(
                 phrase: phrases,
-                publicKey: try .init(string: GlobalAppState.shared.forcedWalletAddress),
+                publicKey: .init(string: GlobalAppState.shared.forcedWalletAddress),
                 secretKey: Data()
             )
         }
@@ -46,18 +46,6 @@ extension KeychainStorage: AccountStorageType {
     func save(walletIndex: Int) throws {
         localKeychain.set("\(walletIndex)", forKey: walletIndexKey)
         _account = nil
-    }
-
-    func getDerivablePath() -> DerivablePath? {
-        guard
-            let derivableTypeRaw = localKeychain.get(derivableTypeKey),
-            let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
-        else { return nil }
-
-        let walletIndexRaw = localKeychain.get(walletIndexKey)
-        let walletIndex = Int(walletIndexRaw ?? "0")
-
-        return .init(type: derivableType, walletIndex: walletIndex ?? 0)
     }
 
     func save(derivableType: DerivablePath.DerivableType) throws {

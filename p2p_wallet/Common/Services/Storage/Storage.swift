@@ -14,7 +14,6 @@ protocol StorageType {}
 protocol ICloudStorageType: AnyObject, StorageType {
     func saveToICloud(account: RawAccount) -> Bool
     func accountFromICloud() -> [RawAccount]?
-    var didBackupUsingIcloud: Bool { get }
 }
 
 protocol NameStorageType: StorageType {
@@ -31,8 +30,6 @@ protocol PincodeStorageType {
 
 protocol AccountStorageType: SolanaAccountStorage {
     var ethAddress: String? { get }
-
-    func getDerivablePath() -> DerivablePath?
 
     func reloadSolanaAccount() async throws
     func save(phrases: [String]) throws

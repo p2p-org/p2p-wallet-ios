@@ -33,7 +33,6 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
-    private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
     private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()

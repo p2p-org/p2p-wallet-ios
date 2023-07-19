@@ -2,7 +2,6 @@ import AnalyticsManager
 import Foundation
 
 enum KeyAppAnalyticsEvent: AnalyticsEvent {
-
     // MARK: - Create wallet
 
     case createPhoneClickButton
@@ -17,7 +16,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
     case recoveryDerivableAccountsOpen
-    
+
     // MARK: - Tabbar
 
     case mainSwap
@@ -36,12 +35,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
 
     case mainScreenWalletsOpen(isSellEnabled: Bool)
     case mainCopyAddress
-    case mainScreenSwapOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)
     case mainScreenHiddenTokens
 
     // MARK: - Tokens
+
     // Action panel
     case tokenScreenBuyBar
     case tokenScreenReceiveBar
@@ -50,8 +49,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
 
     // tap on transaction on a token screen
     case tokenScreenTransaction(transactionId: String)
-
-    case tokenDetailsOpen(tokenTicker: String)
 
     // MARK: - Receive
 
@@ -110,11 +107,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Swap
 
     case swapViewed(lastScreen: String)
-    case swapChangingTokenA(tokenA_Name: String)
-    case swapChangingTokenB(tokenB_Name: String)
-    case swapStartScreen
     case actionButtonSwap
-
     case swapClickApproveButton
 
     // MARK: - Jupiter swap
@@ -157,11 +150,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Settings
 
     case settingsHideBalancesClick(hide: Bool)
-    case settingsСurrencySelected(сurrency: String)
-    case settingsBackupOpen
-    case settingsLanguageSelected(language: String)
     case settingsSecuritySelected(faceId: Bool)
-    
     case settingsSupportClick
     case settingsRecoveryClick
     case settingsPinClick
@@ -171,9 +160,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
 
     case networkChanging(networkName: String)
     case signedOut
-
-    // choose token
-    case tokenChosen(tokenName: String)
 
     // Buy
     case buyCurrencyChanged(
@@ -186,7 +172,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     )
     case buyTotalShowed
     case buyChosenMethodPayment(type: String)
-    case buyStatusTransaction(success: Bool)
     case buyScreenOpened(lastScreen: String)
     case moonpayWindowOpened
     case moonpayWindowClosed
@@ -214,13 +199,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
-    case onboardingTorusRequest(
-        methodName: String,
-        minutes: Int,
-        seconds: Int,
-        milliseconds: Int,
-        result: String
-    )
     case onboardingStartButton
     case creationPhoneScreen
     case createSmsValidation(result: Bool)
@@ -234,7 +212,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case restoreSeed
     case onboardingMerged
     case login
-    
+
     // PhoneScreen
     case creationLoginScreen
 
@@ -259,15 +237,15 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellAmountNext
     case sellMoonpayOpenNotification
     case sellMoonpay
-    
+
     // MARK: - History
+
     case historyOpened(sentViaLink: Bool)
     case historySendClicked(status: String)
 
     // MARK: - Claim
 
     case claimAvailable(claim: Bool)
-    case claimBridgesButtonClick
     case claimBridgesScreenOpen(from: String) // main, push
     case claimBridgesFeeClick
     case claimBridgesClickConfirmed(tokenName: String, tokenValue: Double, valueFiat: Double, free: Bool)
@@ -275,9 +253,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case historySendClickTransaction
     case historySendClickCopyTransaction
     case historySendClickShareTransaction
-    
+
     // MARK: - Claim
-    
+
     case claimStartScreenOpen
     case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
     case claimClickHide

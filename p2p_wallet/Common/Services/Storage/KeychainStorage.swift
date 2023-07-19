@@ -17,9 +17,6 @@ class KeychainStorage: StorageType {
     let walletIndexKey: String
     let nameKey: String
     let ethAddressKey: String
-
-    let deviceShareKey: String = "deviceShareKey"
-
     let iCloudAccountsKey = "Keychain.Accounts"
     private let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
 

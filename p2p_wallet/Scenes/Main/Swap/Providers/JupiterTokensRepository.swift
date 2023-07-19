@@ -27,7 +27,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
-    @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var tokensService: SolanaTokensService
 
     // MARK: - Private params
@@ -92,7 +91,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             }
 
             // get solana cached token list
-            let solanaTokens = (try await tokensService.all()).values
+            let solanaTokens = try (await tokensService.all()).values
 
             // map solanaTokens to jupiter token
             jupiterTokens = jupiterTokens.map { jupiterToken in

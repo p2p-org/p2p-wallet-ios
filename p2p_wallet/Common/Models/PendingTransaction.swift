@@ -13,8 +13,6 @@ import TransactionParser
 
 struct PendingTransaction {
     enum TransactionStatus {
-        static let maxConfirmed = 31
-
         case sending
         case confirmed(_ numberOfConfirmed: Int)
         case finalized
@@ -47,31 +45,6 @@ struct PendingTransaction {
             }
         }
 
-        var isProcessing: Bool {
-            switch self {
-            case .sending, .confirmed:
-                return true
-            default:
-                return false
-            }
-        }
-
-        var progress: Float {
-            switch self {
-            case .sending:
-                return 0
-            case var .confirmed(numberOfConfirmed):
-                // treat all number of confirmed as unfinalized
-                if numberOfConfirmed >= Self.maxConfirmed {
-                    numberOfConfirmed = Self.maxConfirmed - 1
-                }
-                // return
-                return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
-            case .finalized, .error:
-                return 1
-            }
-        }
-
         var error: Swift.Error? {
             switch self {
             case let .error(error):
@@ -80,25 +53,11 @@ struct PendingTransaction {
                 return nil
             }
         }
-
-        public var rawValue: String {
-            switch self {
-            case .sending:
-                return "sending"
-            case let .confirmed(value):
-                return "processing(\(value))"
-            case .finalized:
-                return "finalized"
-            case .error:
-                return "error"
-            }
-        }
     }
 
     let trxIndex: Int
     var transactionId: String?
     let sentAt: Date
-    var writtenToRepository: Bool = false
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
     var slot: UInt64 = 0
