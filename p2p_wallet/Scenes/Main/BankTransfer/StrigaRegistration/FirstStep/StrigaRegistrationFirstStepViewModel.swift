@@ -40,7 +40,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     let choosePhoneCountryCode = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
-    var fieldsStatuses = [StrigaRegistrationField: StrigaRegistrationTextFieldStatus]()
+    var fieldsStatuses = [StrigaRegistrationField: StrigaFormTextFieldStatus]()
 
     @Published var selectedCountryOfBirth: Country?
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?

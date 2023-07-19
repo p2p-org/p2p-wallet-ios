@@ -1,25 +1,25 @@
 import SwiftUI
 import KeyAppUI
 
-struct StrigaRegistrationTextField: View {
+struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View {
 
-    let field: StrigaRegistrationField
+    let field: TextFieldType
     let placeholder: String
     let isEnabled: Bool
     let onSubmit: () -> Void
     let submitLabel: SubmitLabel
 
     @Binding var text: String
-    @Binding var focus: StrigaRegistrationField?
+    @Binding var focus: TextFieldType?
 
-    @FocusState private var isFocused: StrigaRegistrationField?
+    @FocusState private var isFocused: TextFieldType?
 
     init(
-        field: StrigaRegistrationField,
+        field: TextFieldType,
         placeholder: String,
         text: Binding<String>,
         isEnabled: Bool = true,
-        focus: Binding<StrigaRegistrationField?>,
+        focus: Binding<TextFieldType?>,
         onSubmit: @escaping () -> Void,
         submitLabel: SubmitLabel
     ) {
@@ -58,8 +58,8 @@ struct StrigaRegistrationTextField: View {
 struct StrigaRegistrationTextField_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            StrigaRegistrationTextField(
-                field: .email,
+            StrigaRegistrationTextField<StrigaRegistrationField>(
+                field: StrigaRegistrationField.email,
                 placeholder: "Enter email",
                 text: .constant(""),
                 focus: .constant(nil),
@@ -67,8 +67,8 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
                 submitLabel: .next
             )
 
-            StrigaRegistrationTextField(
-                field: .phoneNumber,
+            StrigaRegistrationTextField<StrigaRegistrationField>(
+                field: StrigaRegistrationField.phoneNumber,
                 placeholder: "Enter phone",
                 text: .constant(""),
                 focus: .constant(nil),

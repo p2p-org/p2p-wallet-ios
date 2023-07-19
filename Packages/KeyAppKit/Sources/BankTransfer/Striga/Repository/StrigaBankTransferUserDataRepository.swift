@@ -412,3 +412,23 @@ private extension UserWallet {
         self.accounts = UserAccounts(eur: eur, usdc: usdc)
     }
 }
+
+extension StrigaBankTransferUserDataRepository: WithdrawProvider {
+    public typealias WithdrawalInfo = StrigaWithdrawalInfo
+
+    public func withdrawalInfo() async throws -> WithdrawalInfo {
+        await localProvider.getCachedWithdrawalInfo() ??
+        /// GetAccountStatement here
+        WithdrawalInfo(IBAN: "IBAN", BIC: "BIC", receiver: "Receiver")
+    }
+
+    public func save(IBAN: String, BIC: String, receiver: String) async throws {
+        try await localProvider.save(
+            withdrawalInfo: .init(
+                IBAN: IBAN,
+                BIC: BIC,
+                receiver: receiver
+            )
+        )
+    }
+}

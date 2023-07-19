@@ -98,6 +98,33 @@ final class HomeCoordinator: Coordinator<Void> {
             .sink(receiveValue: {})
             .store(in: &subscriptions)
 
+        WithdrawCoordinator(
+            navigationController: self.navigationController
+        )
+            .start()
+            .flatMap({ result in
+                switch result {
+                case .verified:
+                    return BankTransferClaimCoordinator(
+                        navigationController: self.navigationController,
+                        transaction: StrigaClaimTransaction(
+                            challengeId: "1",
+                            token: .usdc,
+                            amount: 120,
+                            feeAmount: FeeAmount(
+                                transaction: 0,
+                                accountBalances: 0),
+                            fromAddress: "123",
+                            receivingAddress: "234"
+                        )
+                    ).start().map { _ in Void() }.eraseToAnyPublisher()
+                case .canceled:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            })
+            .sink { _ in }
+            .store(in: &self.subscriptions)
+
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }

@@ -50,3 +50,42 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
         return .fakeTransactionSignature(id: UUID().uuidString)
     }
 }
+
+protocol StrigaWithdrawTransactionType {
+    var IBAN: String { get }
+    var BIC: String { get }
+    var feeAmount: FeeAmount { get }
+    var amount: Double { get }
+}
+
+/// Default implemetation of `StrigaClaimTransactionType`
+struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType {
+
+    // MARK: - Properties
+    var IBAN: String
+    
+    var BIC: String
+    
+    var amount: Double
+
+    let token: Token = .usdc
+    let feeAmount: FeeAmount
+    let fromAddress: String
+    let receivingAddress: String
+    
+    var mainDescription: String {
+        ""
+    }
+
+    // MARK: - Methods
+
+    func createRequest() async throws -> String {
+        // get transaction from proxy api
+        
+        // sign transaction
+        
+        // TODO: - send to blockchain
+        try? await Task.sleep(seconds: 1)
+        return .fakeTransactionSignature(id: UUID().uuidString)
+    }
+}

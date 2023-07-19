@@ -41,7 +41,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     let chooseCountry = PassthroughSubject<Country?, Never>()
     let openHardError = PassthroughSubject<Void, Never>()
 
-    var fieldsStatuses = [StrigaRegistrationField: StrigaRegistrationTextFieldStatus]()
+    var fieldsStatuses = [StrigaRegistrationField: StrigaFormTextFieldStatus]()
 
     @Published var selectedCountry: Country?
     @Published var selectedIndustry: Industry?

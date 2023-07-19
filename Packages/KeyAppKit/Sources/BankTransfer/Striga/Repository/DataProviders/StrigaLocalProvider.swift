@@ -10,6 +10,9 @@ public protocol StrigaLocalProvider {
     func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse]
     func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws
 
+    func getCachedWithdrawalInfo() async -> StrigaWithdrawalInfo?
+    func save(withdrawalInfo: StrigaWithdrawalInfo) async throws
+
     func clear() async
 }
 
@@ -38,6 +41,14 @@ public actor StrigaLocalProviderImpl {
 }
 
 extension StrigaLocalProviderImpl: StrigaLocalProvider {
+
+    public func getCachedWithdrawalInfo() async -> StrigaWithdrawalInfo? {
+        return get(from: cacheFileFor(.withdrawalInfo))
+    }
+
+    public func save(withdrawalInfo: StrigaWithdrawalInfo) async throws {
+        try await save(model: withdrawalInfo, in: cacheFileFor(.withdrawalInfo))
+    }
 
     public func getCachedRegistrationData() -> StrigaUserDetailsResponse? {
         return get(from: cacheFileFor(.registration))
@@ -88,6 +99,8 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
         case registration
         case account
         case whitelisted
+        case withdrawalInfo
+    
     }
 
     private func cacheFileFor(_ name: CacheFileName) -> URL {
