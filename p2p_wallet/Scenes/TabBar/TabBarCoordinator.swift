@@ -112,14 +112,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             .sink(receiveValue: {})
             .store(in: &subscriptions)
 
-        // navigate to Earn from homeCoordinator
-//        homeCoordinator.navigation
-//            .filter { $0 == .earn }
-//            .sink(receiveValue: { [unowned self] _ in
-//                tabBarController.changeItem(to: .invest)
-//            })
-//            .store(in: &subscriptions)
-
         // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
             .sink(receiveValue: { [weak homeCoordinator] in
@@ -127,18 +119,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        // solen tutorial clicked
-//        tabBarController.solendTutorialClicked
-//            .sink(receiveValue: { [weak self] in
-//                self?.navigateToSolendTutorial()
-//            })
-//            .store(in: &subscriptions)
-//
-//        tabBarController.jupiterSwapClicked
-//            .sink { [weak self] in
-//                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
-//            }
-//            .store(in: &subscriptions)
         return homeNavigation
     }
     
@@ -246,100 +226,9 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
 
     // MARK: - Helpers
-
-    /// Navigate to SolendTutorial scene
-//    private func navigateToSolendTutorial() {
-//        var view = SolendTutorialView(viewModel: .init())
-//        view.doneHandler = { [weak self] in
-//            self?.tabBarController.changeItem(to: .invest)
-//        }
-//        let vc = UIHostingControllerWithoutNavigation(rootView: view)
-//        vc.modalPresentationStyle = .fullScreen
-//        tabBarController.present(vc, animated: true)
-//    }
     
     private func navigationControllerForSelectedTab() -> UINavigationController? {
-        tabBarController.viewControllers?[tabBarController.selectedIndex] as? UINavigationController
-    }
-    
-    /// Handle actions given by Actions button
-    private func handleAction(_ action: ActionsView.Action) {
-        guard
-            let navigationController = tabBarController.selectedViewController as? UINavigationController
-        else { return }
-
-        switch action {
-        case .buy:
-            let buyCoordinator = BuyCoordinator(
-                navigationController: navigationController,
-                context: .fromHome
-            )
-            coordinate(to: buyCoordinator)
-                .sink(receiveValue: {})
-                .store(in: &subscriptions)
-        case .receive:
-            if available(.ethAddressEnabled) {
-                let coordinator =
-                    SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
-                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
-            } else {
-                let coordinator = ReceiveCoordinator(
-                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
-                    presentation: SmartCoordinatorPushPresentation(navigationController)
-                )
-                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
-            }
-        case .swap:
-            routeToSwap(nc: navigationController, source: .actionPanel)
-        case .send:
-            if walletsRepository.getWallets().count > 0 {
-                analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
-                let sendCoordinator = SendCoordinator(
-                    rootViewController: navigationController,
-                    preChosenWallet: nil,
-                    hideTabBar: true,
-                    allowSwitchingMainAmountType: true
-                )
-                coordinate(to: sendCoordinator)
-                    .sink(receiveValue: { [weak self] result in
-                        switch result {
-                        case let .sent(model):
-                            navigationController.popToRootViewController(animated: true)
-                            self?.routeToSendTransactionStatus(model: model)
-
-                        case let .wormhole(userAction):
-                            navigationController.popToRootViewController(animated: true)
-                            self?.showUserAction(userAction: userAction)
-
-                        case .sentViaLink:
-                            navigationController.popToRootViewController(animated: true)
-
-                        case .cancelled:
-                            break
-                        }
-                    })
-                    .store(in: &subscriptions)
-            } else {
-                let emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                coordinate(to: emptySendCoordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-            }
-        case .cashOut:
-            guard available(.sellScenarioEnabled) else { return }
-            
-            let sellCoordinator = SellCoordinator(navigationController: navigationController)
-            coordinate(to: sellCoordinator)
-                .sink(receiveValue: { [weak self] result in
-                    switch result {
-                    case .completed, .interupted:
-                        self?.tabBarController.changeItem(to: .history)
-                    case .none:
-                        break
-                    }
-                })
-                .store(in: &subscriptions)
-        }
+        tabBarController.selectedViewController as? UINavigationController
     }
 
     private func routeToSendTransactionStatus(model: SendTransaction) {
