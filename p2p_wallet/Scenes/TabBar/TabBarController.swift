@@ -13,7 +13,6 @@ final class TabBarController: UITabBarController {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
-    @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var deviceShareMigration: DeviceShareMigrationService
 
@@ -22,8 +21,6 @@ final class TabBarController: UITabBarController {
     var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
-    private let solendTutorialSubject = PassthroughSubject<Void, Never>()
-    var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
     private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
     var jupiterSwapClicked: AnyPublisher<Void, Never> { jupiterSwapClickedSubject.eraseToAnyPublisher() }
 
@@ -307,16 +304,9 @@ extension TabBarController: UITabBarControllerDelegate {
             analyticsManager.log(event: event)
         }
 
-        if TabItem(rawValue: selectedIndex) == .invest {
-            if !available(.investSolendFeature) {
-                jupiterSwapClickedSubject.send()
-            } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
-                solendTutorialSubject.send()
-                return false
-            }
-        } else if TabItem(rawValue: selectedIndex) == .wallet,
-                  (viewController as! UINavigationController).viewControllers.count == 1,
-                  self.selectedIndex == selectedIndex
+        if TabItem(rawValue: selectedIndex) == .wallet,
+           (viewController as! UINavigationController).viewControllers.count == 1,
+           self.selectedIndex == selectedIndex
         {
             homeTabClickedTwicelySubject.send()
         }

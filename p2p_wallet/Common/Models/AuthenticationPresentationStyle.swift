@@ -10,25 +10,20 @@ import Foundation
 enum AuthenticationOptions {
     case required
     case fullscreen
-    case disableBiometric
-    case withResetPassword
     case withSignOut
     case withLogo
 }
 
 struct AuthenticationPresentationStyle {
-    var title: String
     let options: Set<AuthenticationOptions>
     var completion: ((_ resetPassword: Bool) -> Void)?
     let onCancel: (() -> Void)?
 
     init(
-        title: String = L10n.enterPINCode,
         options: Set<AuthenticationOptions> = [],
         completion: ((Bool) -> Void)? = nil,
         onCancel: (() -> Void)? = nil
     ) {
-        self.title = title
         self.options = options
         self.completion = completion
         self.onCancel = onCancel

@@ -9,17 +9,15 @@ import Foundation
 
 protocol RendableListOfframItem: Identifiable {
     var id: String { get }
-    
-    var date: Date { get }
-    
+
     var status: RendableListOfframStatus { get }
-    
+
     var title: String { get }
-    
+
     var subtitle: String { get }
-    
+
     var detail: String { get }
-    
+
     var onTap: (() -> Void)? { get }
 }
 

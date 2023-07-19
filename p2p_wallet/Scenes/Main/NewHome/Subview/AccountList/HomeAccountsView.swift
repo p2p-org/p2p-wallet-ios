@@ -10,7 +10,6 @@ struct HomeAccountsView: View {
     @State var isHiddenSectionDisabled: Bool = true
     @State var currentUserInteractionCellID: String?
     @State var scrollAnimationIsEnded = true
-    @State var isEarnBannerClosed = Defaults.isEarnBannerClosed
 
     var body: some View {
         ScrollViewReader { reader in
@@ -135,15 +134,15 @@ struct HomeAccountsView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
-            .listStyle(.plain)
-            .frame(height: CGFloat(itemsCount) * 72)
+        .listStyle(.plain)
+        .frame(height: CGFloat(itemsCount) * 72)
     }
 }
 
 private extension View {
     @ViewBuilder func swipeActions(
         isVisible: Bool,
-        currentUserInteractionCellID: Binding<String?>,
+        currentUserInteractionCellID _: Binding<String?>,
         action: @escaping () -> Void
     ) -> some View {
         swipeActions(allowsFullSwipe: true) {
@@ -152,11 +151,5 @@ private extension View {
             }
             .tint(.clear)
         }
-    }
-
-    func hideView(isVisible: Bool) -> AnyView {
-        Image(uiImage: isVisible ? .eyeHide : .eyeShow)
-            .animation(.default)
-            .castToAnyView()
     }
 }

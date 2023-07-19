@@ -24,7 +24,7 @@ final class BuyViewModel: ObservableObject {
     @Published var state: State = .usual
     @Published var flag = String.neutralFlag
     @Published var availableMethods = [PaymentTypeItem]()
-    @Published var token: Token
+    @Published var token: TokenMetadata
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
@@ -35,7 +35,6 @@ final class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = false
     @Published var exchangeOutput: Buy.ExchangeOutput?
-    @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
     @Published var buttonItem: ButtonItem = .init(
         title: L10n.buy + " \(defaultToken.symbol)",
@@ -131,10 +130,6 @@ final class BuyViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
 
-        coordinatorIO.navigationSlidingPercentage.sink { percentage in
-            self.navigationSlidingPercentage = percentage * 110 * 2
-        }.store(in: &subscriptions)
-
         totalPublisher
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { value in
@@ -188,8 +183,8 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] = Dictionary(
-                    try await pricesService.getPrices(
+                self.tokenPrices[fiat] = try Dictionary(
+                    await pricesService.getPrices(
                         tokens: BuyViewModel.tokens,
                         fiat: fiat.rawValue
                     )

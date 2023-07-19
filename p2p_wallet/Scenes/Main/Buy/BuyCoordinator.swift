@@ -1,11 +1,11 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import Moonpay
 import Resolver
 import SafariServices
 import SolanaSwift
 import SwiftUI
-import Moonpay
 
 final class BuyCoordinator: Coordinator<Void> {
     private var navigationController: UINavigationController!
@@ -43,7 +43,7 @@ final class BuyCoordinator: Coordinator<Void> {
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)
         }
-        
+
         if let presentingViewController = presentingViewController {
             DispatchQueue.main.async {
                 presentingViewController.show(self.navigationController, sender: nil)
@@ -64,7 +64,7 @@ final class BuyCoordinator: Coordinator<Void> {
         viewController.onClose = {
             result.send()
         }
-        
+
         viewController.navigationItem.largeTitleDisplayMode = .never
 
         viewModel.coordinatorIO.showDetail
@@ -159,12 +159,12 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.chooseCountry
             .sink(receiveValue: { [weak self] selectedCountry in
                 guard let self else { return }
-                
+
                 let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
                 let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
                     .asViewController(withoutUIKitNavBar: false)
                 viewController.navigationController?.pushViewController(selectCountryViewController, animated: true)
-                
+
                 selectCountryViewModel.selectCountry
                     .sink(receiveValue: { item in
                         viewModel.countrySelected(item.0, buyAllowed: item.buyAllowed)
@@ -178,7 +178,7 @@ final class BuyCoordinator: Coordinator<Void> {
                     .store(in: &self.subscriptions)
             })
             .store(in: &subscriptions)
-        
+
         return result.prefix(1).eraseToAnyPublisher()
     }
 
@@ -213,18 +213,5 @@ extension BuyCoordinator {
     enum Context {
         case fromHome
         case fromToken
-        case fromRenBTC
-        case fromInvest
-        case fromHistory
-
-        var screenName: String {
-            switch self {
-            case .fromHome: return "MainScreen"
-            case .fromToken: return "TokenScreen"
-            case .fromRenBTC: return "RenBTCScreen"
-            case .fromInvest: return "SolendScreen"
-            case .fromHistory: return "HistoryScreen"
-            }
-        }
     }
 }

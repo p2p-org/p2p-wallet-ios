@@ -5,6 +5,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppUI
+import OrcaSwapSwift
 import Resolver
 import Send
 import SolanaSwift
@@ -91,8 +92,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let walletsRepository: SolanaAccountsService
-    private let pricesService: PriceService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -108,18 +107,16 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
         let repository = Resolver.resolve(SolanaAccountsService.self)
-        walletsRepository = repository
         let wallets = repository.getWallets()
 
         let pricesService = Resolver.resolve(PriceService.self)
-        self.pricesService = pricesService
 
         // Setup source token
         let tokenInWallet: SolanaAccount
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
-                .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: Token.nativeSolana)
+                .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: TokenMetadata.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -134,16 +131,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                             return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: Token.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: TokenMetadata.nativeSolana)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
+            .first(where: { $0.token.address == TokenMetadata.usdc.address }) ??
+            SolanaAccount(token: TokenMetadata.usdc)
 
         var exchangeRate = [String: TokenPrice]()
-        var tokens = Set<Token>()
+        var tokens = Set<TokenMetadata>()
         wallets.forEach {
             exchangeRate[$0.token.symbol] = $0.price
             tokens.insert($0.token)
@@ -239,7 +237,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            try await Resolver.resolve(OrcaSwapType.self).load()
+            try await Resolver.resolve(RelayContextManager.self).update()
             loadingState = .loaded
         } catch {
             loadingState = .error(error.readableDescription)
@@ -341,7 +340,7 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress && self.currentState
+                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress, self.currentState
                     .fee != .zero
                 {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
@@ -403,7 +402,7 @@ private extension SendInputViewModel {
                     self.turnOffInputSwitch()
                 } else if
                     let amount = currentWallet.amount,
-                    currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                    currentWallet.isUsdcOrUsdt, abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
                 {
                     self.turnOffInputSwitch()
                 } else {
@@ -528,14 +527,6 @@ private extension SendInputViewModel {
         handleError(text: L10n.youHaveNoInternetConnection)
     }
 
-    func handleInitializingError() {
-        handleError(text: L10n.initializingError)
-    }
-
-    func handleUnknownError() {
-        handleError(text: L10n.somethingWentWrong)
-    }
-
     func handleError(text: String) {
         snackbar.send(SnackBar(title: "🥺", text: text, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
     }
@@ -598,7 +589,8 @@ private extension SendInputViewModel {
                 address: address,
                 payingFeeWallet: feeWallet,
                 feeAmount: currentState.feeInToken,
-                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol,
+                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol : sourceWallet.token
+                    .symbol,
                 analyticEvent: .sendNewConfirmButtonClick(
                     sendFlow: flow.rawValue,
                     token: currentState.token.symbol,
@@ -654,7 +646,12 @@ private extension SendInputViewModel {
     }
 
     func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
-        analyticsManager.log(event: .sendClickCreateLink(sendFlow: flow.rawValue, tokenName: symbol, tokenValue: amount, pubkey: pubkey))
+        analyticsManager.log(event: .sendClickCreateLink(
+            sendFlow: flow.rawValue,
+            tokenName: symbol,
+            tokenValue: amount,
+            pubkey: pubkey
+        ))
     }
 }
 

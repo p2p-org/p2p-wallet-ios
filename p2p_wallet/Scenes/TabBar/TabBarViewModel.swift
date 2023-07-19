@@ -10,7 +10,7 @@ final class TabBarViewModel {
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 

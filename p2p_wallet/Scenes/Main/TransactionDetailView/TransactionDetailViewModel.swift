@@ -20,7 +20,6 @@ enum TransactionDetailViewModelOutput {
 }
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
-    @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var rendableTransaction: any RenderableTransactionDetail

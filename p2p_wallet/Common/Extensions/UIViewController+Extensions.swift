@@ -61,104 +61,10 @@ extension UIViewController {
         return alertController
     }
 
-    func showError(
-        _ error: Error,
-        showPleaseTryAgain: Bool = false,
-        additionalMessage: String? = nil,
-        completion: (() -> Void)? = nil
-    ) {
-        let description = error.readableDescription
-        let vc = tabBarController ?? navigationController ?? parent ?? self
-
-        vc.showAlert(
-            title: L10n.error.uppercaseFirst,
-            message: description + (additionalMessage != nil ? "\n" + additionalMessage! : "") +
-                (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""),
-            buttonTitles: [L10n.ok]
-        ) { _ in
-            completion?()
-        }
-    }
-
-    func showWebsite(url: String) {
-        if let url = URL(string: url) {
-            let config = SFSafariViewController.Configuration()
-            config.entersReaderIfAvailable = true
-
-            let safariVC = SFSafariViewController(url: url, configuration: config)
-
-            present(safariVC, animated: true)
-        }
-    }
-
-    // MARK: - HUDs
-
-    func showIndetermineHud(_: String? = nil) {
-        view.showIndetermineHud()
-    }
-
-    func hideHud() {
-        view.hideHud()
-    }
-
     // MARK: - Keyboard
 
     @objc func hideKeyboard() {
         view.endEditing(true)
-    }
-
-    // MARK: - ChildVCs
-
-    func add(child: UIViewController, to view: UIView? = nil) {
-        guard child.parent == nil else {
-            return
-        }
-
-        addChild(child)
-        (view ?? self.view).addSubview(child.view)
-        child.view.configureForAutoLayout()
-        child.view.autoPinEdgesToSuperviewEdges()
-
-        child.didMove(toParent: self)
-    }
-
-    func removeAllChilds() {
-        for child in children {
-            child.willMove(toParent: nil)
-            child.view.removeFromSuperview()
-            child.removeFromParent()
-        }
-    }
-
-    func transition(
-        from oldVC: UIViewController? = nil,
-        to newVC: UIViewController,
-        in containerView: UIView? = nil,
-        completion: (() -> Void)? = nil
-    ) {
-        let oldVC = oldVC ?? children.last
-        let containerView = containerView ?? view
-
-        oldVC?.willMove(toParent: nil)
-        oldVC?.view.translatesAutoresizingMaskIntoConstraints = false
-
-        addChild(newVC)
-        containerView?.addSubview(newVC.view)
-        newVC.view.configureForAutoLayout()
-        newVC.view.autoPinEdgesToSuperviewEdges()
-
-        newVC.view.alpha = 0
-        newVC.view.layoutIfNeeded()
-
-        UIView.animate(withDuration: 0.3) {
-            newVC.view.alpha = 1
-            oldVC?.view.alpha = 0
-        } completion: { _ in
-            oldVC?.view.removeFromSuperview()
-            oldVC?.removeFromParent()
-            newVC.didMove(toParent: self)
-            completion?()
-        }
     }
 
     func forceResizeModal() {
@@ -204,27 +110,5 @@ extension UIViewController {
             let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
         else { return }
         method_exchangeImplementations(originalMethod, swizzledMethod)
-    }
-}
-
-// MARK: - ViewDidAppearSwizzle
-
-extension UIViewController {
-    static func swizzleViewDidAppear() {
-        if self != UIViewController.self { return }
-        let originalSelector = #selector(UIViewController.viewDidAppear(_:))
-        let swizzledSelector = #selector(UIViewController.viewDidAppearOverride(_:))
-        guard
-            let originalMethod = class_getInstanceMethod(self, originalSelector),
-            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
-        else { return }
-        method_exchangeImplementations(originalMethod, swizzledMethod)
-    }
-
-    @objc dynamic func viewDidAppearOverride(_ animated: Bool) {
-        viewDidAppearOverride(animated)
-        // TODO: - Finish logic. We need to finish code for getting analyticId from UIViewControllers and SwiftUI Views
-        guard let viewId = (UIApplication.topmostViewController() as? AnalyticView)?.analyticId else { return }
-        ScreenAnalyticTracker.shared.setCurrentViewId(viewId)
     }
 }

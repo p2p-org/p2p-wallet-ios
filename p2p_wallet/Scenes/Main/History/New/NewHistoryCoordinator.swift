@@ -234,6 +234,4 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { _ in }
             .store(in: &subscriptions)
     }
-
-    func openUserAction() {}
 }

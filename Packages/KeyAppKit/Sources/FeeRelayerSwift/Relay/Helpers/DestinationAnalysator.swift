@@ -28,11 +28,11 @@ public protocol DestinationAnalysator {
 
 public class DestinationAnalysatorImpl: DestinationAnalysator {
     private let solanaAPIClient: SolanaAPIClient
-    
+
     public init(solanaAPIClient: SolanaAPIClient) {
         self.solanaAPIClient = solanaAPIClient
     }
-    
+
     public func analyseDestination(
         owner: PublicKey,
         mint: PublicKey
@@ -41,14 +41,14 @@ public class DestinationAnalysatorImpl: DestinationAnalysator {
         if PublicKey.wrappedSOLMint == mint {
             return .wsolAccount
         }
-        
+
         // Destination is SPL token
         else {
             // Try to get associated account
             let address = try await solanaAPIClient.getAssociatedSPLTokenAddress(for: owner, mint: mint)
 
             // Check destination address is exist.
-            let info: BufferInfo<AccountInfo>? = try? await solanaAPIClient
+            let info: BufferInfo<SPLTokenAccountState>? = try? await solanaAPIClient
                 .getAccountInfo(account: address.base58EncodedString)
             let needsCreateDestinationTokenAccount = info?.owner != TokenProgram.id.base58EncodedString
 

@@ -14,8 +14,6 @@ import Sell
 import UIKit
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
-    @Injected private var walletsRepository: SolanaAccountsService
-
     private let viewController: UIViewController
     private let strategy: Strategy
     private let transaction: SellDataServiceTransaction

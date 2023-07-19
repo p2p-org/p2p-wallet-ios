@@ -8,7 +8,6 @@ struct DebugMenuView: View {
 
     @ObservedObject private var globalAppState = GlobalAppState.shared
     @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
-    @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
         self.viewModel = viewModel

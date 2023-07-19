@@ -12,13 +12,6 @@ protocol BuyProcessingServiceType {
 protocol BuyProcessingFactory {
     func create(
         walletRepository: SolanaAccountsService,
-        crypto: Buy.CryptoCurrency,
-        initialAmount: Double,
-        currency: Buy.FiatCurrency
-    ) throws -> BuyProcessingServiceType
-
-    func create(
-        walletRepository: SolanaAccountsService,
         fromCurrency: BuyCurrencyType,
         amount: Double,
         toCurrency: BuyCurrencyType,
@@ -28,26 +21,6 @@ protocol BuyProcessingFactory {
 
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
-        func create(
-            walletRepository: SolanaAccountsService,
-            crypto: CryptoCurrency,
-            initialAmount: Double,
-            currency: FiatCurrency
-        ) throws -> BuyProcessingServiceType {
-            MoonpayBuyProcessing(
-                environment: Defaults.apiEndPoint.network == .mainnetBeta ?
-                    .production :
-                    .staging,
-                apiKey: Defaults.apiEndPoint.network == .mainnetBeta ?
-                    .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
-                    .secretConfig("MOONPAY_STAGING_API_KEY")!,
-                currencyCode: crypto.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
-                baseCurrencyCode: currency.moonpayCode,
-                baseCurrencyAmount: initialAmount
-            )
-        }
-
         func create(
             walletRepository: SolanaAccountsService,
             fromCurrency: BuyCurrencyType,

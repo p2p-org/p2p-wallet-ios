@@ -4,7 +4,7 @@ import Onboarding
 
 class BaseOTPViewModel: BaseViewModel, ObservableObject {
     /// Toaster error
-    @Published public var error: String?
+    @Published var error: String?
 
     @MainActor
     internal func showError(error: Error?) {

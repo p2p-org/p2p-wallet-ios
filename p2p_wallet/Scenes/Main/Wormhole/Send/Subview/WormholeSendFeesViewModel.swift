@@ -32,10 +32,9 @@ struct WormholeSendFees: Identifiable {
 class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
 
-    @Published var loading: Bool = false
     @Published var fees: [WormholeSendFees] = []
 
-    public var close = PassthroughSubject<Void, Never>()
+    var close = PassthroughSubject<Void, Never>()
 
     init(fees: [WormholeSendFees]) {
         self.fees = fees

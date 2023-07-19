@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BEPureLayout
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -10,13 +11,11 @@ import Sell
 import Sentry
 import SolanaSwift
 import UIKit
-import BEPureLayout
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
-    private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
 
@@ -225,11 +224,6 @@ final class AppCoordinator: Coordinator<Void> {
     private func saveSecurity(data: SecurityData) {
         Resolver.resolve(PincodeStorageType.self).save(data.pincode)
         Defaults.isBiometryEnabled = data.isBiometryEnabled
-    }
-
-    private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
-        window?.rootViewController?.view.hideLoadingIndicatorView()
-        window?.animate(newRootViewController: vc)
     }
 
     private func bind() {

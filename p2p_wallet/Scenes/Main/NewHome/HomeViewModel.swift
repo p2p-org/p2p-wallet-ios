@@ -27,7 +27,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationsService: NotificationService
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService

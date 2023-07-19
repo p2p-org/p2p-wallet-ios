@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import Resolver
 import Onboarding
+import Resolver
 
 class OnboardingViewModel: BaseViewModel, ObservableObject {
     @Injected var tkeyFacadeManager: TKeyFacadeManager
@@ -16,7 +16,6 @@ class OnboardingViewModel: BaseViewModel, ObservableObject {
     @Injected var localWalletMetadataProvider: LocalWalletMetadataProvider
 
     @Published var tkeyInstance: String = "Init"
-    @Published var ethAddressTkeyInstance: String = "Running"
 
     @Published var torusUserData: String = ""
     @Published var remoteMetadata: String = ""
@@ -30,10 +29,6 @@ class OnboardingViewModel: BaseViewModel, ObservableObject {
                 self?.tkeyInstance = "Running"
             } else {
                 self?.tkeyInstance = "Nothing"
-            }
-
-            Task { [weak self] in
-                self?.ethAddressTkeyInstance = await facade?.ethAddress ?? ""
             }
 
         }.store(in: &subscriptions)

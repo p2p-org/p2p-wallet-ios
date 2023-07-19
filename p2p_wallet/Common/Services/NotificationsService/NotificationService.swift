@@ -4,6 +4,7 @@ import Combine
 import Foundation
 import KeyAppUI
 import Resolver
+import SolanaSwift
 import UIKit
 
 protocol NotificationService {
@@ -30,14 +31,16 @@ protocol NotificationService {
 
 final class NotificationServiceImpl: NSObject, NotificationService {
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var notificationRepository: NotificationRepository
 
-    private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
     private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()
-    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
+    var showNotification: AnyPublisher<NotificationType, Never> {
+        showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    }
+
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {

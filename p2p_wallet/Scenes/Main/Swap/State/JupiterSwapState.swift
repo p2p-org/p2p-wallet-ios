@@ -19,8 +19,6 @@ struct JupiterSwapState: Equatable {
         case inputTooHigh(Double)
         case equalSwapTokens
 
-        case unknown
-        case coingeckoPriceFailure
         case routeIsNotFound
         case createTransactionFailed
         case minimumAmount
@@ -85,12 +83,12 @@ struct JupiterSwapState: Equatable {
 
     /// Token that user's swapping to
     var toToken: SwapToken
-    
+
     /// SlippageBps is slippage multiplied by 100 (be careful)
     var slippageBps: Int
 
     // MARK: - Computed properties
-    
+
     /// Amount to
     var amountTo: Double? {
         guard let route else {
@@ -98,11 +96,6 @@ struct JupiterSwapState: Equatable {
         }
         return UInt64(route.outAmount)?
             .convertToBalance(decimals: toToken.token.decimals)
-    }
-    
-    /// All the wallets that user owns
-    var userWallets: [SolanaAccount] {
-        swapTokens.compactMap(\.userWallet)
     }
 
     var amountFromFiat: Double {

@@ -56,7 +56,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     private var wasMaxUsed: Bool = false
 
     // ActionButton
-    @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
 
@@ -400,7 +399,7 @@ extension WormholeSendInputViewModel {
         availableBridgeAccounts
             .sort { lhs, rhs in
                 // First pick USDCET
-                if lhs.token.symbol == Token.usdcet.symbol {
+                if lhs.token.symbol == TokenMetadata.usdcet.symbol {
                     return true
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)

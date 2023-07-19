@@ -18,9 +18,6 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
     /// Solana tokens
     @Published private var solana: Set<SupportedTokenItem> = []
 
-    /// Ethereum tokens
-    @Published private var ethereum: Set<SupportedTokenItem> = []
-
     /// Renderable final token list
     @Published var tokens: [SupportedTokenItem] = []
 
@@ -133,14 +130,6 @@ enum SupportedTokensBusinnes {
         ]
 
         return priority.firstIndex { i in i == symbol } ?? priority.count
-    }
-
-    static var knownSynonymTokens: [String: String] {
-        // key - solana symbol, value - eth symbol
-        [
-            "BNB": "WBNB",
-            "AVAX": "WAVAX",
-        ]
     }
 
     static var wellKnownTokens: [SupportedTokenItem] {

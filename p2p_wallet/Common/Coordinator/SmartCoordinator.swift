@@ -40,10 +40,6 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
 class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 
-    init(from currentPresentation: SmartCoordinatorPresentation) {
-        presentingViewController = currentPresentation.presentingViewController
-    }
-
     init(_ presentingNavigationController: UINavigationController) {
         presentingViewController = presentingNavigationController
     }

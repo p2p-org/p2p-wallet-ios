@@ -17,8 +17,6 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationsService: NotificationService
-    @Injected private var appEventHandler: AppEventHandlerType
-    @Injected private var iCloudStorage: ICloudStorageType
     @Injected private var pricesFetcher: PriceService
     @Injected private var solanaAPIClient: SolanaAPIClient
 
@@ -36,11 +34,9 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
     private let phrases: [String]
-    private var derivablePath: DerivablePath?
     private let cache = DerivableAccountsCache()
     private var task: Task<Void, Error>?
     private var state = FetcherState.initializing
-    private var error: Error?
 
     // MARK: - Initializer
 
@@ -116,7 +112,7 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
 
             for i in 0 ..< 5 {
                 group.addTask(priority: .userInitiated) {
-                    (i, try await KeyPair(
+                    try (i, await KeyPair(
                         phrase: phrases,
                         network: Defaults.apiEndPoint.network,
                         derivablePath: .init(type: derivableType, walletIndex: i)
@@ -256,7 +252,6 @@ private extension DerivableAccountsViewModel {
     func flush() {
         data = []
         state = .initializing
-        error = nil
     }
 
     func request(reload: Bool = false) {
@@ -266,7 +261,6 @@ private extension DerivableAccountsViewModel {
         }
 
         state = .loading
-        error = nil
 
         task = Task {
             do {
@@ -287,12 +281,10 @@ private extension DerivableAccountsViewModel {
 
     func handleNewData(_ newData: [DerivableAccount]) {
         data = newData
-        error = nil
         state = .loaded
     }
 
-    func handleError(_ error: Error) {
-        self.error = error
+    func handleError(_: Error) {
         state = .error
     }
 }

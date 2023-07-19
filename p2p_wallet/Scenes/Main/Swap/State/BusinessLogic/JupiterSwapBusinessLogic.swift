@@ -180,7 +180,7 @@ enum JupiterSwapBusinessLogic {
             )
         case let .updateUserWallets(userWallets):
             // get new state
-            return updateUserWallets(state: state, userWallets: userWallets, services: services)
+            return updateUserWallets(state: state, userWallets: userWallets)
         case let .updateTokensPriceMap(tokensPriceMap):
             // update tokens price
             return state.modified {

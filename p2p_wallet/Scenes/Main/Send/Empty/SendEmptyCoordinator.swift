@@ -14,7 +14,6 @@ import SolanaSwift
 import UIKit
 
 final class SendEmptyCoordinator: Coordinator<Void> {
-    @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
