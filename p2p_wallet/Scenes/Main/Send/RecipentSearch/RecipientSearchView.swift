@@ -441,12 +441,22 @@ struct RecipientSearchView_Previews: PreviewProvider {
     ))
 
     static var previews: some View {
+        Group {
+            recipientView(result: okCase)
+            recipientView(result: okNoFundCase)
+            recipientView(result: missingUserTokenResult)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private static func recipientView(result: RecipientSearchResult) -> NavigationView<RecipientSearchView> {
         NavigationView {
             RecipientSearchView(
                 viewModel: .init(
                     preChosenWallet: nil,
                     flow: .send,
-                    recipientSearchService: RecipientSearchServiceMock(result: okNoFundCase),
+                    recipientSearchService: RecipientSearchServiceMock(result: result),
                     sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider())
                 )
             )

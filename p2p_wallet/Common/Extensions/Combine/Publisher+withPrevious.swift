@@ -32,7 +32,7 @@ extension Publisher {
     /// - Parameter initialPreviousValue: The initial value to use as the "previous" value when the upstream publisher
     /// emits for the first time.
     /// - Returns: A publisher of a tuple of the previous and current elements from the upstream publisher.
-    func withPrevious(_ initialPreviousValue: Output) -> AnyPublisher<(previous: Output, current: Output), Failure> {
-        scan((initialPreviousValue, initialPreviousValue)) { ($0.1, $1) }.eraseToAnyPublisher()
-    }
+//    func withPrevious(_ initialPreviousValue: Output) -> AnyPublisher<(previous: Output, current: Output), Failure> {
+//        scan((initialPreviousValue, initialPreviousValue)) { ($0.1, $1) }.eraseToAnyPublisher()
+//    }
 }

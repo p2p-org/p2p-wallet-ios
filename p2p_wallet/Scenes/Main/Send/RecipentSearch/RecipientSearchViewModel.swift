@@ -9,6 +9,7 @@ import Foundation
 import History
 import KeyAppBusiness
 import KeyAppKitCore
+import OrcaSwapSwift
 import Resolver
 import Send
 import SolanaSwift
@@ -246,7 +247,7 @@ class RecipientSearchViewModel: ObservableObject {
         loadingState = .loading
         do {
             let _ = try await(
-                Resolver.resolve(SwapServiceType.self).reload(),
+                loadSwapService(),
                 checkIfSendViaLinkAvailable()
             )
             loadingState = .loaded
@@ -294,6 +295,13 @@ class RecipientSearchViewModel: ObservableObject {
             )
         }
     #endif
+
+    // MARK: - Helper
+
+    private func loadSwapService() async throws {
+        try await Resolver.resolve(OrcaSwapType.self).load()
+        try await Resolver.resolve(RelayContextManager.self).update()
+    }
 }
 
 // MARK: - Analytics

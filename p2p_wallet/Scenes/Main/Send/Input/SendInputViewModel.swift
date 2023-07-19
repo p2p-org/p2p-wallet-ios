@@ -5,6 +5,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppUI
+import OrcaSwapSwift
 import Resolver
 import Send
 import SolanaSwift
@@ -136,7 +137,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == TokenMetadata.usdc.address }) ?? SolanaAccount(token: TokenMetadata.usdc)
+            .first(where: { $0.token.address == TokenMetadata.usdc.address }) ??
+            SolanaAccount(token: TokenMetadata.usdc)
 
         var exchangeRate = [String: TokenPrice]()
         var tokens = Set<TokenMetadata>()
@@ -235,7 +237,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            try await Resolver.resolve(OrcaSwapType.self).load()
+            try await Resolver.resolve(RelayContextManager.self).update()
             loadingState = .loaded
         } catch {
             loadingState = .error(error.readableDescription)

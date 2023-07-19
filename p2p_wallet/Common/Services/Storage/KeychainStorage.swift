@@ -151,7 +151,6 @@ class KeychainStorage: StorageType {
         localKeychain.delete(pincodeAttemptsKey)
 
         removeAccountCache()
-        Resolver.resolve(UserSessionCache.self).clear()
     }
 
     private func removeAccountCache() {

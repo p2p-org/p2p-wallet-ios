@@ -311,9 +311,6 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
 
-        register { UserSessionCache() }
-            .scope(.session)
-
         register { PincodeServiceImpl() }
             .implements(PincodeService.self)
             .scope(.session)
@@ -466,11 +463,6 @@ extension Resolver: ResolverRegistering {
         register { FavouriteAccountsDataSource() }
             .scope(.session)
 
-        // SwapService
-        register { SwapServiceWithRelayImpl() }
-            .implements(SwapServiceType.self)
-            .scope(.session)
-
         // OrcaSwapSwift
         register { OrcaSwapSwift.NetworkConfigsProvider(network: Defaults.apiEndPoint.network.cluster) }
             .implements(OrcaSwapConfigsProvider.self)
@@ -594,7 +586,10 @@ extension Resolver: ResolverRegistering {
             RecipientSearchServiceImpl(
                 nameService: resolve(),
                 solanaClient: resolve(),
-                swapService: SwapServiceWrapper()
+                swapService: SwapServiceWrapper(
+                    orcaSwap: resolve(),
+                    relayService: resolve()
+                )
             )
         }
         .implements(RecipientSearchService.self)
