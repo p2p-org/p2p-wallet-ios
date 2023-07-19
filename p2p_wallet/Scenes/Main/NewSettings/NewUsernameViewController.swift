@@ -1,14 +1,14 @@
+import BEPureLayout
 import Foundation
-import Resolver
 import KeyAppUI
+import Resolver
 import SolanaSwift
 import UIKit
-import BEPureLayout
 
 class NewUsernameViewController: p2p_wallet.BaseViewController {
     @Injected private var imageSaver: ImageSaverType
     @Injected private var notificationsService: NotificationService
-    @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
+    @Injected private var storage: KeychainStorage
     @Injected private var clipboardManager: ClipboardManagerType
 
     override init() {
@@ -25,32 +25,32 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                     token: .nativeSolana,
                     showCoinLogo: false
                 )
-                    .onCopy { [weak self] _ in
-                        guard let self = self else { return }
-                        guard let publicKey = self.storage.account?.publicKey.base58EncodedString else { return }
-                        self.clipboardManager.copyToClipboard(publicKey)
-                        self.notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
-                    }.onShare { [weak self] image in
-                        let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-                        self?.present(vc, animated: true, completion: nil)
-                    }.onSave { [weak self] image in
-                        self?.imageSaver.save(image: image) { [weak self] result in
-                            switch result {
-                            case .success:
-                                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
-                            case let .failure(error):
-                                switch error {
-                                case .noAccess:
-                                    guard let self = self else { return }
-                                    PhotoLibraryAlertPresenter().present(on: self)
-                                case .restrictedRightNow:
-                                    break
-                                case let .unknown(error):
-                                    self?.notificationsService.showInAppNotification(.error(error))
-                                }
+                .onCopy { [weak self] _ in
+                    guard let self = self else { return }
+                    guard let publicKey = self.storage.account?.publicKey.base58EncodedString else { return }
+                    self.clipboardManager.copyToClipboard(publicKey)
+                    self.notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
+                }.onShare { [weak self] image in
+                    let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                    self?.present(vc, animated: true, completion: nil)
+                }.onSave { [weak self] image in
+                    self?.imageSaver.save(image: image) { [weak self] result in
+                        switch result {
+                        case .success:
+                            self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+                        case let .failure(error):
+                            switch error {
+                            case .noAccess:
+                                guard let self = self else { return }
+                                PhotoLibraryAlertPresenter().present(on: self)
+                            case .restrictedRightNow:
+                                break
+                            case let .unknown(error):
+                                self?.notificationsService.showInAppNotification(.error(error))
                             }
                         }
                     }
+                }
 
                 UIView.greyBannerView {
                     UILabel(
@@ -69,35 +69,35 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
 
 private class QrCodeCard: BECompositionView {
     @Injected var qrImageRender: QrCodeImageRender
-    
+
     var username: String? {
         didSet {
             guard let username = username else { return }
             updateUsername(username)
         }
     }
-    
+
     var pubKey: String? {
         didSet {
             updatePubKey(pubKey)
             qrView.with(string: pubKey, token: token)
         }
     }
-    
+
     var token: Token? {
         didSet { qrView.with(string: pubKey, token: token) }
     }
-    
+
     private let showCoinLogo: Bool
-    
+
     private var onCopy: BECallback<String?>?
     private var onShare: BECallback<UIImage>?
     private var onSave: BECallback<UIImage>?
-    
+
     private var pubKeyView: UILabel?
     private var usernameLabel: UILabel!
     private var qrView: QrCodeView!
-    
+
     init(
         username: String? = nil,
         pubKey: String? = nil,
@@ -108,10 +108,10 @@ private class QrCodeCard: BECompositionView {
         self.pubKey = pubKey
         self.token = token
         self.showCoinLogo = showCoinLogo
-        
+
         super.init()
     }
-    
+
     override func build() -> UIView {
         UIStackView(axis: .vertical, alignment: .fill) {
             // QR Code
@@ -123,14 +123,14 @@ private class QrCodeCard: BECompositionView {
                         guard let username = username else { return }
                         updateUsername(username)
                     }.padding(.init(x: 50, y: 26))
-                
+
                 // QR code
                 QrCodeView(size: 190, coinLogoSize: 32, showCoinLogo: showCoinLogo)
                     .setup { view in qrView = view }
                     .with(string: pubKey, token: token)
                     .autoAdjustWidthHeightRatio(1)
                     .padding(.init(x: 50, y: 0))
-                
+
                 // Address
                 UILabel(textSize: 15, weight: .semibold, numberOfLines: 5, textAlignment: .center)
                     .setup { label in
@@ -138,10 +138,10 @@ private class QrCodeCard: BECompositionView {
                         updatePubKey(pubKey)
                     }.padding(.init(x: 50, y: 24))
             }
-            
+
             // Divider
             UIView.separator(height: 1, color: .separator)
-            
+
             // Action buttons
             UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
                 UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: Asset.Colors.night.color)
@@ -173,12 +173,12 @@ private class QrCodeCard: BECompositionView {
                         }
                     }
             }.padding(.init(x: 0, y: 4))
-            
+
         }.border(width: 1, color: .f2f2f7)
             .box(cornerRadius: 12)
             .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
     }
-    
+
     private func updateUsername(_ username: String) {
         let text = NSMutableAttributedString(string: username)
         text.addAttribute(
@@ -189,13 +189,13 @@ private class QrCodeCard: BECompositionView {
         usernameLabel.attributedText = text
         usernameLabel.isHidden = username.isEmpty
     }
-    
+
     private func updatePubKey(_ pubKey: String?) {
         guard let pubKey = pubKey else {
             pubKeyView?.text = ""
             return
         }
-        
+
         let address = NSMutableAttributedString(string: pubKey)
         address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
         address.addAttribute(
@@ -205,21 +205,21 @@ private class QrCodeCard: BECompositionView {
         )
         pubKeyView?.attributedText = address
     }
-    
+
     private func tinted(image: UIImage) -> UIImage {
         image.withTintColor(Asset.Colors.night.color)
     }
-    
+
     func onCopy(callback: @escaping BECallback<String?>) -> Self {
         onCopy = callback
         return self
     }
-    
+
     func onShare(callback: @escaping BECallback<UIImage>) -> Self {
         onShare = callback
         return self
     }
-    
+
     func onSave(callback: @escaping BECallback<UIImage>) -> Self {
         onSave = callback
         return self
@@ -230,7 +230,7 @@ private class QrCodeView: BEView {
     private let size: CGFloat
     private let coinLogoSize: CGFloat
     private let showCoinLogo: Bool
-    
+
     private lazy var qrCodeImageView = QrCodeImageView(backgroundColor: .clear)
     private lazy var logoImageView: CoinLogoImageView = {
         let imageView = CoinLogoImageView(size: coinLogoSize)
@@ -240,34 +240,34 @@ private class QrCodeView: BEView {
         imageView.layer.masksToBounds = true
         return imageView
     }()
-    
+
     init(size: CGFloat, coinLogoSize: CGFloat, showCoinLogo: Bool = true) {
         self.size = size
         self.coinLogoSize = coinLogoSize
         self.showCoinLogo = showCoinLogo
         super.init(frame: .zero)
     }
-    
+
     override func commonInit() {
         super.commonInit()
         configureForAutoLayout()
         autoSetDimensions(to: .init(width: size, height: size))
         logoImageView.autoSetDimensions(to: .init(width: coinLogoSize, height: coinLogoSize))
-        
+
         addSubview(qrCodeImageView)
         qrCodeImageView.autoPinEdgesToSuperviewEdges()
-        
+
         if showCoinLogo {
             addSubview(logoImageView)
             logoImageView.autoCenterInSuperview()
         }
     }
-    
+
     func setUp(string: String?, token: Token? = nil) {
         qrCodeImageView.setQrCode(string: string)
         logoImageView.setUp(token: token ?? .nativeSolana)
     }
-    
+
     @discardableResult
     func with(string: String?, token: Token? = nil) -> Self {
         setUp(string: string, token: token)
@@ -281,20 +281,20 @@ private class QrCodeImageView: UIImageView {
             image = nil
             return
         }
-        
+
         if let imageFromCache = UIImageView.qrCodeCache.object(forKey: string as NSString) {
             image = imageFromCache
             return
         }
-        
+
         let data = string.data(using: String.Encoding.ascii)
-        
+
         DispatchQueue.global().async {
             var image: UIImage?
             if let filter = CIFilter(name: "CIQRCodeGenerator") {
                 filter.setValue(data, forKey: "inputMessage")
                 let transform = CGAffineTransform(scaleX: 10, y: 10)
-                
+
                 if let output = filter.outputImage?.transformed(by: transform) {
                     let qrCode = UIImage(ciImage: output)
                     image = qrCode
@@ -315,26 +315,26 @@ private final class PhotoLibraryAlertPresenter {
             message: L10n.thisIsRequiredForTheAppToSaveGeneratedQRCodesOrBackUpOfYourSeedPhrasesToYourPhotoLibrary,
             preferredStyle: .alert
         )
-        
+
         let notNowAction = UIAlertAction(
             title: L10n.cancel,
             style: .cancel,
             handler: nil
         )
-        
+
         alert.addAction(notNowAction)
-        
+
         let openSettingsAction = UIAlertAction(
             title: L10n.openSettings,
             style: .default,
             handler: goToAppPrivacySettings()
         )
-        
+
         alert.addAction(openSettingsAction)
-        
+
         viewController.present(alert, animated: true)
     }
-    
+
     private func goToAppPrivacySettings() -> (UIAlertAction) -> Void {
         { _ in
             guard
@@ -343,7 +343,7 @@ private final class PhotoLibraryAlertPresenter {
             else {
                 return assertionFailure("Not able to open App privacy settings")
             }
-            
+
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }

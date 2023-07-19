@@ -17,7 +17,7 @@ final class CreateNameServiceImpl: CreateNameService {
     @Injected private var nameCache: NameServiceCacheType
     @Injected private var nameStorage: NameStorageType
     @Injected private var nameService: NameService
-    @Injected private var storage: AccountStorageType
+    @Injected private var storage: SolanaAccountStorage
 
     private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 

@@ -5,7 +5,7 @@
 import Foundation
 import KeychainSwift
 
-extension KeychainStorage: ICloudStorageType {
+extension KeychainStorage {
     func saveToICloud(account: RawAccount) -> Bool {
         var accountsToSave = [account]
 

@@ -5,13 +5,14 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Reachability
 import Resolver
+import SolanaSwift
 import Wormhole
 
 class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
 
     let action: PassthroughSubject<Action, Never> = .init()
 

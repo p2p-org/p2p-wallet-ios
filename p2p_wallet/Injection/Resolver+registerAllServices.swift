@@ -60,16 +60,10 @@ extension Resolver: ResolverRegistering {
 
         // Storages
         register { KeychainStorage() }
-            .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .implements(SolanaAccountStorage.self)
             .implements(PincodeStorageType.self)
-            .implements(AccountStorageType.self)
             .implements(PincodeSeedPhrasesStorage.self)
-            .implements((AccountStorageType & NameStorageType).self)
-            .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
-            .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
-            .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
 
         register { DeviceShareManagerImpl() }
@@ -334,7 +328,7 @@ extension Resolver: ResolverRegistering {
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
                 relayService: Resolver.resolve(),
-                account: Resolver.resolve(AccountStorageType.self).account
+                account: Resolver.resolve(SolanaAccountStorage.self).account
             )
         }
         .implements(SendActionService.self)
