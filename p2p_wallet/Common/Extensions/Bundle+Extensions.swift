@@ -6,14 +6,6 @@ extension Bundle {
 
     // MARK: - Localization swizzle
 
-    static func swizzleLocalization() {
-        swizzle(
-            originalSelector: #selector(localizedString(forKey:value:table:)),
-            newSelector:
-            #selector(myLocalizedString(forKey:value:table:))
-        )
-    }
-
     @objc func myLocalizedString(forKey key: String, value: String?, table: String?) -> String {
         Bundle.current.myLocalizedString(forKey: key, value: value, table: table)
     }

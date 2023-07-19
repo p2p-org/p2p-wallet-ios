@@ -16,7 +16,7 @@ extension CreateWalletFlowState: DefaultsSerializable {}
 extension DefaultsKeys {
     // Device token
     var apnsDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
-    
+
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var pincodeAttemptsKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
@@ -30,7 +30,6 @@ extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isBiometryEnabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didSetEnableNotifications: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    var wasFirstAttemptForSendingToken: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var lastDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
     var apiEndPoint: DefaultsKey<APIEndPoint> {
         .init(
@@ -38,6 +37,7 @@ extension DefaultsKeys {
             defaultValue: .definedEndpoints.first!
         )
     }
+
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
@@ -49,28 +49,16 @@ extension DefaultsKeys {
     }
 
     var appearance: DefaultsKey<UIUserInterfaceStyle> { .init(#function, defaultValue: .unspecified) }
-    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.05) }
     var fiat: DefaultsKey<Fiat> { .init(#function, defaultValue: .usd) }
     var hiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var unhiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var hideZeroBalances: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
-    var p2pFeePayerPubkeys: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
-    var prices: DefaultsKey<Data> { .init(#function, defaultValue: Data()) }
-    var payingTokenMint: DefaultsKey<String> {
-        .init(#function, defaultValue: PublicKey.wrappedSOLMint.base58EncodedString)
-    }
 
     var forceCloseNameServiceBanner: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    var authenticationBlockingTime: DefaultsKey<Date?> { .init(#function, defaultValue: nil) }
     var shouldShowConfirmAlertOnSend: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
     var shouldShowConfirmAlertOnSwap: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
 
     var onboardingLastState: DefaultsKey<CreateWalletFlowState?> { .init(#function, defaultValue: nil) }
-
-    // Sepa Buy
-    var buyLastPaymentMethod: DefaultsKey<PaymentType> {
-        .init(#function, defaultValue: PaymentType.bank)
-    }
 
     var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
         .init(#function, defaultValue: [:])
@@ -78,7 +66,6 @@ extension DefaultsKeys {
 
     // Solend
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
     // Send
     var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
@@ -103,24 +90,19 @@ extension DefaultsKeys {
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
     }
-    
+
     var swapRouteRefeshRate: DefaultsKey<Double?> {
         .init(
             #function,
             defaultValue: RemoteConfig.remoteConfig().swapRouteRefresh
         )
     }
-    
-    #if !RELEASE
-    var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    var isFakeSendTransactionNetworkError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
-    #endif
 
-    // Sell/RampOff
-    var isSellAvailable: DefaultsKey<Bool?> {
-        .init(#function, defaultValue: nil)
-    }
+    #if !RELEASE
+        var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+        var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+        var isFakeSendTransactionNetworkError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    #endif
 
     var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
@@ -138,11 +120,6 @@ extension DefaultsKeys {
     }
 
     var toTokenAddress: DefaultsKey<String?> {
-        .init(#function, defaultValue: nil)
-    }
-    
-    // Send via link: seeds mapped by user publickeys
-    var sendViaLinkTransactions: DefaultsKey<Data?> {
         .init(#function, defaultValue: nil)
     }
 

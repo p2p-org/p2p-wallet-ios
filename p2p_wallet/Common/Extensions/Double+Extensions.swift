@@ -7,13 +7,6 @@
 
 import Foundation
 
-// MARK: - Constants
-
-extension Double {
-    /// Maximum slippage value allowed
-    static var maxSlippage: Self { 0.5 }
-}
-
 // MARK: - Optional operations
 
 extension Optional where Wrapped == Double {
@@ -50,10 +43,6 @@ extension Optional where Wrapped == Double {
         if right == 0 { return 0 }
         return left.orZero / right
     }
-
-    var isNilOrZero: Bool {
-        orZero == 0
-    }
 }
 
 // MARK: - Rounding
@@ -74,7 +63,6 @@ extension Double {
 // MARK: - Format
 
 extension Double {
-    
     /// Convert double value to string
     public func toString(
         minimumFractionDigits: Int = 0,
@@ -155,13 +143,12 @@ extension Double {
             } else {
                 return "< 0.01 \(currency.symbol)"
             }
-            
         }
-        
+
         // amount >= 0.01
         else {
             let formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
-            
+
             if currency == .usd {
                 return "\(currency.symbol) \(formattedString)"
             } else {
@@ -183,7 +170,7 @@ extension Double {
         currency: Fiat = .usd,
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
-        return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
+        "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 
     func percentFormat(maximumFractionDigits: Int = 2) -> String {

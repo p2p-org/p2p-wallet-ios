@@ -12,8 +12,7 @@ import KeyAppKitCore
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
-        userWallets: [SolanaAccount],
-        services: JupiterSwapServices
+        userWallets: [SolanaAccount]
     ) -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in

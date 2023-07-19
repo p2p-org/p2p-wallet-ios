@@ -11,7 +11,6 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: PriceService
 
     // MARK: - Properties
 
@@ -56,7 +55,6 @@ private extension HomeEmptyViewModel {
         // TODO: Should be removed
         popularCoins = popularCoinsTokens.map { token in
             PopularCoin(
-                id: token.symbol,
                 title: title(for: token),
                 amount: nil,
                 actionTitle: ActionType.buy.description,
@@ -70,20 +68,17 @@ private extension HomeEmptyViewModel {
 
 extension HomeEmptyViewModel {
     class PopularCoin {
-        let id: String
         let title: String
         let amount: String?
         @Published var actionTitle: String
         let image: UIImage
 
         init(
-            id: String,
             title: String,
             amount: String?,
             actionTitle: String,
             image: UIImage
         ) {
-            self.id = id
             self.title = title
             self.amount = amount
             self.actionTitle = actionTitle

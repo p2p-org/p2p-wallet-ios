@@ -16,7 +16,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
 
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
@@ -38,7 +37,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RenderableAccount] = []
 
     // MARK: - Initializer
-    
+
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
@@ -49,7 +48,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
         if sellDataService.isAvailable {
@@ -178,16 +176,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    func earn() {
-        navigation.send(.earn)
-    }
-
     func scrollToTop() {
         scrollOnTheTop = true
-    }
-
-    func sellTapped() {
-        navigation.send(.cashOut)
     }
 
     func hiddenTokensTapped() {
