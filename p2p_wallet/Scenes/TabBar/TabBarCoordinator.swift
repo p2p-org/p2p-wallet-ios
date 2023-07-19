@@ -38,7 +38,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
-        bind()
     }
 
     // MARK: - Life cycle
@@ -96,7 +95,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
         
-        listenToActionsButton()
+        listenToSendButton()
         listenToWallet()
     }
 
@@ -198,26 +197,39 @@ final class TabBarCoordinator: Coordinator<Void> {
         return settingsNavigation
     }
 
-    /// Listen to Actions Button
-    private func listenToActionsButton() {
+    /// Listen to Send Button
+    private func listenToSendButton() {
         tabBarController.middleButtonClicked
             .receive(on: RunLoop.main)
-            // vibration
-            .handleEvents(receiveOutput: { [unowned self] in
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
-                analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
-            })
-            // coordinate to ActionsCoordinator
-            .flatMap { [unowned self, unowned tabBarController] in
-                coordinate(to: ActionsCoordinator(viewController: tabBarController))
+            .compactMap { [weak self] in
+                return self?.navigationControllerForSelectedTab()
             }
+            .flatMap { [unowned self] navigationController -> AnyPublisher<SendResult, Never> in
+                return self.coordinate(
+                    to: SendCoordinator(
+                        rootViewController: navigationController,
+                        preChosenWallet: nil,
+                        hideTabBar: true,
+                        allowSwitchingMainAmountType: true
+                    )
+                )
+            }
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] result in
+                guard let navigationController = self?.navigationControllerForSelectedTab() else {
+                    return
+                }
                 switch result {
-                case .cancel:
+                case let .sent(model):
+                    navigationController.popToRootViewController(animated: true)
+                    self?.showSendTransactionStatus(navigationController: navigationController, model: model)
+                case let .wormhole(trx):
+                    navigationController.popToRootViewController(animated: true)
+                    self?.showUserAction(userAction: trx)
+                case .sentViaLink:
+                    navigationController.popToRootViewController(animated: true)
+                case .cancelled:
                     break
-                case let .action(type):
-                    self?.handleAction(type)
                 }
             })
             .store(in: &subscriptions)
@@ -245,7 +257,11 @@ final class TabBarCoordinator: Coordinator<Void> {
 //        vc.modalPresentationStyle = .fullScreen
 //        tabBarController.present(vc, animated: true)
 //    }
-
+    
+    private func navigationControllerForSelectedTab() -> UINavigationController? {
+        tabBarController.viewControllers?[tabBarController.selectedIndex] as? UINavigationController
+    }
+    
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
@@ -342,6 +358,12 @@ final class TabBarCoordinator: Coordinator<Void> {
         ))
         .sink(receiveValue: { _ in })
         .store(in: &subscriptions)
+    }
+    
+    private func showSendTransactionStatus(navigationController: UINavigationController, model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
     }
     
     private func routeToCrypto(
