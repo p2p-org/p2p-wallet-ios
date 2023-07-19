@@ -35,21 +35,4 @@ enum Fiat: String, CaseIterable, Hashable, Equatable {
             return "£"
         }
     }
-
-    var name: String {
-        switch self {
-        case .usd:
-            return L10n.unitedStatesDollar
-        case .eur:
-            return L10n.euro
-        case .cny:
-            return L10n.chineseYuan
-        case .vnd:
-            return L10n.vietnameseDong
-        case .rub:
-            return L10n.russianRuble
-        case .gbp:
-            return L10n.britishPoundSterling
-        }
-    }
 }

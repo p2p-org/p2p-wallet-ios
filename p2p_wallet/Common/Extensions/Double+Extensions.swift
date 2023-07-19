@@ -109,27 +109,6 @@ extension Double {
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
-    public func fixedDecimal(_ maxDecimal: Int, minDecimal: Int = 0) -> String {
-        if maxDecimal <= 0 { return "\(maxDecimal)" }
-        if self == 0.0 {
-            var r = "0."
-            for _ in 0 ..< maxDecimal { r += "0" }
-            return r
-        }
-
-        let formatter = NumberFormatter()
-        formatter.numberStyle = NumberFormatter.Style.decimal
-        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
-        formatter.decimalSeparator = "."
-        formatter.minimumFractionDigits = minDecimal
-        formatter.maximumFractionDigits = maxDecimal
-
-        return formatter.string(for: self) ?? toString(
-            minimumFractionDigits: minDecimal,
-            maximumFractionDigits: maxDecimal
-        )
-    }
-
     func fiatAmountFormattedString(
         maximumFractionDigits: Int = 2,
         currency: Fiat = Defaults.fiat,
@@ -171,9 +150,5 @@ extension Double {
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
-    }
-
-    func percentFormat(maximumFractionDigits: Int = 2) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
 }
