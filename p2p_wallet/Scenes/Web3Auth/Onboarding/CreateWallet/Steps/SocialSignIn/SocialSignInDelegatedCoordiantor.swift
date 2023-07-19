@@ -72,7 +72,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             let vc = SocialSignInAccountHasBeenUsedView(viewModel: vm)
             return UIHostingController(rootView: vc)
         case let .socialSignInTryAgain(socialProvider, _):
-            let vm = SocialSignInTryAgainViewModel(signInProvider: socialProvider)
+            let vm = SocialSignInTryAgainViewModel()
 
             vm.coordinator.startScreen.sinkAsync { [weak vm, stateMachine] in
                 if vm?.input.isLoading.value ?? false { return }
