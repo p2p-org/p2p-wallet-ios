@@ -41,7 +41,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value
-                    .filter { !$0.data.isUSDC }
+                    .filter { !$0.isUSDC }
                     .reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
@@ -55,7 +55,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
             else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .swap:

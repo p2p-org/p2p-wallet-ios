@@ -9,6 +9,7 @@ import Send
 import SolanaSwift
 import Wormhole
 
+
 /// ViewModel of `Crypto` scene
 final class CryptoViewModel: BaseViewModel, ObservableObject {
 
@@ -20,7 +21,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationsService: NotificationService
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
     
@@ -125,7 +126,7 @@ private extension CryptoViewModel {
                 }
 
                 let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
+                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
 
                 // Merge two status

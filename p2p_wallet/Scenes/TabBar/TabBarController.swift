@@ -350,9 +350,6 @@ private extension TabItem {
             return KeyAppAnalyticsEvent.mainHistory
         case .settings:
             return KeyAppAnalyticsEvent.mainSettings
-        case .invest:
-            // FIXME: OMG! this is how we check for swap tab :facepalm:
-            return !available(.investSolendFeature) ? KeyAppAnalyticsEvent.mainSwap : nil
         default:
             return nil
         }
