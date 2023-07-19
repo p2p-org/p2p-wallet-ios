@@ -1,13 +1,13 @@
 import Foundation
 
-public class ScreenAnalyticTracker {
-    public static let shared = ScreenAnalyticTracker()
+class ScreenAnalyticTracker {
+    static let shared = ScreenAnalyticTracker()
 
     private(set) var currentViewId = ""
 
     private init() {}
 
-    public func setCurrentViewId(_ viewId: String) {
+    func setCurrentViewId(_ viewId: String) {
         currentViewId = viewId
     }
 }

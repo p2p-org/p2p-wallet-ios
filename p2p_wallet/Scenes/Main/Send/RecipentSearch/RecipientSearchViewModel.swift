@@ -19,13 +19,6 @@ enum LoadableState: Equatable {
     case loading
     case loaded
     case error(String?)
-
-    var isError: Bool {
-        switch self {
-        case .error: return true
-        default: return false
-        }
-    }
 }
 
 /// State for SendViaLink feature
@@ -53,7 +46,6 @@ class RecipientSearchViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
 
-    private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
 
@@ -105,7 +97,6 @@ class RecipientSearchViewModel: ObservableObject {
     ) {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
-        self.sendHistoryService = sendHistoryService
         self.flow = flow
 
         let ethereumSearch: Bool
@@ -204,7 +195,7 @@ class RecipientSearchViewModel: ObservableObject {
             isSearching = true
             searchTask = Task { [weak self] in
                 guard let self else { return }
-                
+
                 let result = await self.recipientSearchService.search(
                     input: currentSearchTerm,
                     config: config,

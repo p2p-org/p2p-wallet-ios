@@ -23,7 +23,6 @@ enum RendableAccountDetailsAction: Identifiable {
 
 extension RendableAccountDetailsAction {
     enum ReceiveParam {
-        case wallet(SolanaAccount)
         case solanaAccount(SolanaAccount)
         case none
     }

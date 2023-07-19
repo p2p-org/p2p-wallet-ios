@@ -14,7 +14,6 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     @Injected private var tokensRepository: SolanaTokensService
-    @Injected private var walletsRepository: SolanaAccountsService
 
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
