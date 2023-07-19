@@ -288,6 +288,18 @@ final class TabBarController: UITabBarController {
             .map { $0 == nil }
             .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
+        
+        //Crypto alert on/off
+        viewModel.transferAccountsPublisher
+            .sink { [weak self] claimableTransferExist in
+                DispatchQueue.main.async {
+                    let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
+                    let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
+                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
+                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
+                }
+            }
+            .store(in: &subscriptions)
     }
 }
 

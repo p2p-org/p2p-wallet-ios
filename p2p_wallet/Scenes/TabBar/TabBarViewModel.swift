@@ -1,12 +1,16 @@
 import Combine
+import Wormhole
 import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import KeyAppBusiness
 import UIKit
 
 final class TabBarViewModel {
-    // Dependencies
+    
+    // MARK: - Dependencies
+    
     @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
@@ -14,12 +18,17 @@ final class TabBarViewModel {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
+    
+    @Injected private var userActionService: UserActionService
+    @Injected private var ethereumAccountsService: EthereumAccountsService
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    private let ethereumAggregator = CryptoEthereumAccountsAggregator()
 
     init() {
         pricesService.startObserving()
@@ -126,4 +135,26 @@ extension TabBarViewModel {
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
+    
+    var transferAccountsPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(
+            ethereumAccountsService.statePublisher,
+            userActionService.$actions.map { userActions in
+                userActions.compactMap { $0 as? WormholeClaimUserAction }
+            }
+        )
+        .map { state, actions in
+            let ethAccounts = self.ethereumAggregator.transform(input: (state.value, actions))
+            let transferAccounts = ethAccounts.filter { ethAccount in
+                switch ethAccount.status {
+                case .readyToClaim, .isClaiming:
+                    return true
+                default:
+                    return false
+                }
+            }
+            return !transferAccounts.isEmpty
+        }
+        .eraseToAnyPublisher()
+    }
 }
