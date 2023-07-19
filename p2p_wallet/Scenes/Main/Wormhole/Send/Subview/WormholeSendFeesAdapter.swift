@@ -1,10 +1,3 @@
-//
-//  WormholeSendFeesAdapter.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -62,23 +55,14 @@ struct WormholeSendFeesAdapter: Equatable {
         }
     }
 
-    let networkFee: Output?
-
-    let bridgeFee: Output?
-
     let arbiterFee: Output?
-
-    let messageFee: Output?
 
     let total: Output?
 
     init(state: WormholeSendInputState) {
         adapter = .init(state: state)
 
-        networkFee = Self.resolve(amount: adapter.output?.fees.networkFee)
-        bridgeFee = Self.resolve(amount: adapter.output?.fees.bridgeFee)
         arbiterFee = Self.resolve(amount: adapter.output?.fees.arbiter)
-        messageFee = Self.resolve(amount: adapter.output?.fees.messageAccountRent)
         total = Self.resolve(amount: adapter.output?.fees.totalAmount)
     }
 

@@ -77,13 +77,8 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     }
 
     private func showShareView(link: String, amount: Double, symbol: String) {
-        // get sender
-        let userWalletManager = Resolver.resolve(UserWalletManager.self)
-        let sender = userWalletManager.wallet?.name ?? userWalletManager.wallet?.account.publicKey.base58EncodedString
-
         // assertion
-        guard let sender,
-              let url = URL(string: link)
+        guard let url = URL(string: link)
         else { return }
 
         // form item to share

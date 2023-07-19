@@ -46,30 +46,9 @@ struct WormholeSendInputStateAdapter: Equatable {
         inputAccount == nil
     }
 
-    var cryptoAmount: CryptoAmount {
-        guard let input = input else {
-            return .init(amount: 0, token: SolanaToken.nativeSolana)
-        }
-
-        return input.amount
-    }
-
-    var cryptoAmountString: String {
-        cryptoFormatter.string(amount: cryptoAmount)
-    }
-
     // Fiat symbol
     var fiatString: String {
         Defaults.fiat.code
-    }
-
-    var amountInFiatString: String {
-        guard
-            let price = input?.solanaAccount.price,
-            let currencyAmount = try? cryptoAmount.toFiatAmount(price: price)
-        else { return "" }
-
-        return currencyFormatter.string(amount: currencyAmount)
     }
 
     var fees: String {

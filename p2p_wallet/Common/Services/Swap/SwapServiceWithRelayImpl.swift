@@ -103,7 +103,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         return try await relayService.feeCalculator.calculateFeeInPayingToken(
             orcaSwap: orcaSwap,
             feeInSOL: networkFee,
-            payingFeeTokenMint: try PublicKey(string: payingTokenMint)
+            payingFeeTokenMint: PublicKey(string: payingTokenMint)
         )
     }
 
@@ -226,7 +226,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             networkFee = try await relayService.feeCalculator.calculateNeededTopUpAmount(
                 context,
                 expectedFee: networkFee,
-                payingTokenMint: try PublicKey(string: payingWallet.mintAddress)
+                payingTokenMint: PublicKey(string: payingWallet.mintAddress)
             )
         }
 
@@ -237,7 +237,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             neededTopUpAmount = try await relayService.feeCalculator.calculateFeeInPayingToken(
                 orcaSwap: orcaSwap,
                 feeInSOL: networkFee,
-                payingFeeTokenMint: try PublicKey(string: payingWallet.mintAddress)
+                payingFeeTokenMint: PublicKey(string: payingWallet.mintAddress)
             ) ?? .zero
         } else {
             neededTopUpAmount = .zero
@@ -323,9 +323,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         // get paying fee token
         var payingFeeToken: FeeRelayerSwift.TokenAccount?
         if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
-            payingFeeToken = FeeRelayerSwift.TokenAccount(
-                address: try PublicKey(string: payingTokenAddress),
-                mint: try PublicKey(string: payingTokenMint)
+            payingFeeToken = try FeeRelayerSwift.TokenAccount(
+                address: PublicKey(string: payingTokenAddress),
+                mint: PublicKey(string: payingTokenMint)
             )
         }
 
