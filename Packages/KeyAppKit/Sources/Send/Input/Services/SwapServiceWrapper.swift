@@ -1,7 +1,6 @@
 import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
-import Resolver
 import SolanaSwift
 
 public class SwapServiceWrapper: Send.SwapService {
