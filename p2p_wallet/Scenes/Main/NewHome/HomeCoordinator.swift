@@ -26,6 +26,7 @@ enum HomeNavigation: Equatable {
     case topUpCoin(Token)
     case topUp // Top up via bank transfer, bank card or crypto receive
     case bankTransfer // Only bank transfer
+    case withdraw
     // Error
     case error(show: Bool)
 }
@@ -253,6 +254,9 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
         case .bankTransfer:
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
+                .eraseToAnyPublisher()
+        case .withdraw:
+            return coordinate(to: WithdrawCalculatorCoordinator(navigationController: navigationController))
                 .eraseToAnyPublisher()
         case let .topUpCoin(token):
             // SOL, USDC

@@ -7,6 +7,7 @@ enum WalletActionType {
     case send
     case swap
     case cashOut
+    case withdraw
 
     var text: String {
         switch self {
@@ -22,12 +23,14 @@ enum WalletActionType {
             return L10n.swap
         case .cashOut:
             return L10n.cashOut
+        case .withdraw:
+            return L10n.withdraw
         }
     }
 
     var icon: UIImage {
         switch self {
-        case .topUp:
+        case .topUp, .withdraw:
             return .homeBuy
         case .receive:
             return .homeReceive

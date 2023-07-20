@@ -56,13 +56,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             }
             .store(in: &subscriptions)
 
-        navigationController.setViewControllers(
-            [
-                navigationController.viewControllers.first,
-                vc
-            ].compactMap { $0 },
-            animated: true
-        )
+        navigationController.pushViewController(vc, animated: true)
 
         return Publishers.Merge(
             vc.deallocatedPublisher()

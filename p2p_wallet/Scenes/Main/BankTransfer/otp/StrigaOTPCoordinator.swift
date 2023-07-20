@@ -216,14 +216,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     }
 
     private func present(controller: UIViewController) {
-        viewController
-            .setViewControllers(
-                [
-                    viewController.viewControllers.first,
-                    controller
-                ].compactMap { $0 },
-                animated: true
-            )
+        viewController.pushViewController(controller, animated: true)
     }
 
     private func dismiss(controller: UIViewController) {

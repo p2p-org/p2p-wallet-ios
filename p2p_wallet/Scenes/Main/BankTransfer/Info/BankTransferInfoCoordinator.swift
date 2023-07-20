@@ -88,6 +88,15 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                         )
                     )
                 })
+                .handleEvents(receiveOutput: { [weak self] result in
+                    guard let self else { return }
+                    switch result {
+                    case .completed:
+                        self.viewController.setViewControllers([self.viewController.viewControllers.first!], animated: false)
+                    case .canceled:
+                        break
+                    }
+                })
                 .map { result in
                     switch result {
                     case .completed:

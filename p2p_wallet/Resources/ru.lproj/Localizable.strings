@@ -1493,3 +1493,9 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nПожалуйста, войдите в систему с правильной учетной записью %@.";
 "Incorrect %@ account" = "Неверный аккаунт %@";
 "You've used all 5 codes. Try again later. For help, contact support." = "Вы использовали все 5 кодов.  Попробуйте позже.  За помощью обращайтесь в службу поддержки.";
+"For this transfer, the exchange rate isn't guaranteed:\nwe will use the rate at the moment of receiving money" = "Для этого перевода обменный курс не гарантируется:\nмы будем использовать курс на момент получения денег";
+"Can’t withdraw now" = "Не могу вывести сейчас";
+"Not enough money" = "Недостаточно денег";
+"Only %@ per one transfer" = "Только %@ за одну передачу";
+"%@ as minimal amount for transfer" = "%@ как минимальная сумма для перевода";
+"Getting rates" = "Получение ставок";
