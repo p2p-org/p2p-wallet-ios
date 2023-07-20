@@ -101,13 +101,13 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
                     // open detail
                     openDetails(pendingTransaction: pendingTransaction)
-                        .sink { [weak navigationController] _ in
+                        .sink { [weak self] _ in
                             // TODO: - Fix logic
 //                            guard let self else { return }
                             //            self.viewModel.logTransactionProgressDone()
 
-                            navigationController?.popToRootViewController(animated: true)
-                            self.subject.send(.completed)
+                            self?.navigationController.popToRootViewController(animated: true)
+                            self?.subject.send(.completed)
 //                            self.result.send(())
 //                            if self.params.dismissAfterCompletion {
 //                                self.navigationController.popViewController(animated: true)
