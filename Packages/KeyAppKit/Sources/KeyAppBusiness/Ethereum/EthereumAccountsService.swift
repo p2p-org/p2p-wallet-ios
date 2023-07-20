@@ -61,19 +61,18 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         super.init()
 
         /// Updating price
-        Publishers.Merge(
+        Publishers.CombineLatest(
             // There is changing in accounts
             accounts
                 .statePublisher
-                .filter { $0.status == .initializing || $0.status == .ready }
-                .map { _ in },
+                .filter { $0.status == .initializing || $0.status == .ready },
             // There is changing in price service
             priceService
                 .onChangePublisher
         )
         .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
-        .sink { [weak self] _ in
-            self?.fetchPrice(fiat: fiat)
+        .sink { [weak self] state, _ in
+            self?.fetchPrice(accounts: state.value, fiat: fiat)
         }
         .store(in: &subscriptions)
 
@@ -128,11 +127,11 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         try await accounts.fetch()?.value
     }
 
-    internal func fetchPrice(fiat: String) {
+    internal func fetchPrice(accounts: [EthereumAccount], fiat: String) {
         Task { [priceService, errorObservable, priceStream] in
             do {
                 let prices = try await priceService.getPrices(
-                    tokens: state.value.map(\.token),
+                    tokens: accounts.map(\.token),
                     fiat: fiat
                 )
 
@@ -168,7 +167,7 @@ internal class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
 
             do {
                 // Fetch balance and token balances
-                let (balance, wallet) = try await(
+                let (balance, wallet) = try await (
                     web3.eth.getBalance(address: address, block: .latest),
                     web3.eth.getTokenBalances(address: address)
                 )

@@ -117,18 +117,17 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .store(in: &subscriptions)
 
         /// Update price in case there are new accounts or changing in price from price service.
-        Publishers.Merge(
+        Publishers.CombineLatest(
             // There is a new changes in accounts.
             accountsStream
-                .filter { $0.status == .initializing || $0.status == .ready }
-                .map { _ in },
+                .filter { $0.status == .initializing || $0.status == .ready },
             // There is a change in price service.
             priceService
                 .onChangePublisher
         )
-        .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
-        .sink { [weak self] _ in
-            self?.fetchPrice(fiat: fiat)
+        .debounce(for: .seconds(0.15), scheduler: RunLoop.main)
+        .sink { [weak self] state, _ in
+            self?.fetchPrice(accounts: state.value, fiat: fiat)
         }
         .store(in: &subscriptions)
 
@@ -160,11 +159,11 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     }
 
     /// Fetch prices for current accounts.
-    internal func fetchPrice(fiat: String) {
+    internal func fetchPrice(accounts: [SolanaAccount], fiat: String) {
         Task { [priceService, errorObservable, priceStream] in
             do {
                 let prices = try await priceService.getPrices(
-                    tokens: state.value.map(\.token),
+                    tokens: accounts.map(\.token),
                     fiat: fiat
                 )
 
@@ -194,7 +193,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     }
 }
 
-public extension Array where Element == SolanaAccountsService.Account {
+public extension [SolanaAccountsService.Account] {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
         first(where: { $0.token.isNativeSOL })
@@ -242,7 +241,7 @@ internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, (resolved, _)) = try await(
+                let (balance, (resolved, _)) = try await (
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,
