@@ -148,6 +148,10 @@ public final class EthereumTokensRepository {
             contractType: .erc20(contract: EthereumAddress(hex: tokenData.address, eip55: false))
         )
     }
+
+    public func clear() async throws {
+        try await database.clear()
+    }
 }
 
 public extension EthereumTokensRepository {
