@@ -25,15 +25,11 @@ packages:
         branch: main
     KeyAppKit:
         path: ./Packages/KeyAppKit
-    BECollectionView:
-        url: https://github.com/p2p-org/BECollectionView.git
-        branch: master
+    KeyAppUI:
+        path: ./Packages/KeyAppUI
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
-    KeyAppUI:
-        url: git@github.com:p2p-org/KeyAppUI.git
-        branch: main
     Amplitude:
         url: https://github.com/amplitude/Amplitude-iOS.git
         from: 8.15.0
@@ -50,8 +46,8 @@ packages:
         url: https://github.com/sunshinejr/SwiftyUserDefaults.git
         exactVersion: 5.3.0
     Intercom:
-        url: https://github.com/intercom/intercom-ios.git
-        exactVersion: 12.4.3
+        url: https://github.com/intercom/intercom-ios-sp
+        exactVersion: 15.0.3
     Down:
         url: https://github.com/p2p-org/Down.git
         branch: master
@@ -63,7 +59,7 @@ packages:
         from: 7.6.2
     PhoneNumberKit:
         url: https://github.com/marmelroy/PhoneNumberKit.git
-        exactVersion: 3.3.4
+        from: 3.5.9
     SkeletonUI:
         url: https://github.com/p2p-org/SkeletonUI.git
         branch: master
@@ -78,7 +74,7 @@ packages:
         from: 6.2.4
     AppsFlyerLib:
         url: https://github.com/AppsFlyerSDK/AppsFlyerFramework
-        exactVersion: 6.9.2
+        exactVersion: 6.12.0
     Sentry:
         url: https://github.com/getsentry/sentry-cocoa
         exactVersion: 7.31.5
@@ -88,11 +84,14 @@ packages:
     JazziconSwift:
         url: https://github.com/p2p-org/JazziconSwift.git
         branch: master
+    Firebase:
+        url: https://github.com/firebase/firebase-ios-sdk.git
+        from: 10.7.0
 
 
 options:
     deploymentTarget:
-        iOS: 14.0
+        iOS: 15.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
     preGenCommand: sh Scripts/preGenCommand.sh
@@ -110,7 +109,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.6
+        MARKETING_VERSION: 2.8.0
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -150,15 +149,15 @@ aggregateTargets:
     Detect unused code:
         buildScripts:
         - name: SwiftGen
-          script: ${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml
+          script: /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
         - name: Periphery
-          script: ${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --format xcode
+          script: /opt/homebrew/bin/periphery scan --format xcode
 
 targets:
     p2p_wallet:
         type: application
         platform: iOS
-        deploymentTarget: 14.0
+        deploymentTarget: 15.0
         sources:
         - path: p2p_wallet
           name: p2p_wallet
@@ -209,16 +208,14 @@ targets:
             name: "[SCRIPT] Setup Firebase Environment GoogleService-Info.plist"
 
           - script: |
-                  if [ "${CONFIGURATION}" = "Release" ]; then
-                    echo "Swiftgen is disabled in Release mode"
-                    exit 0
+                  if [ "${CONFIGURATION}" == "Debug" ]; then
+                    /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
                   fi
-                  "$PODS_ROOT/SwiftGen/bin/swiftgen"
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
                   if [ "${CONFIGURATION}" != "Debug" ]; then
-                      ${PODS_ROOT}/FirebaseCrashlytics/run
+                      ${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
                   fi
             name: "[SCRIPT] Crashlytics Run"
             inputFiles:
@@ -296,10 +293,6 @@ targets:
 
             - package: Amplitude
             - package: Lokalise
-            - package: BECollectionView
-              product: BECollectionView_Core
-            - package: BECollectionView
-              product: BECollectionView_Combine
 
             - package: ReachabilitySwift
               product: Reachability
@@ -332,6 +325,15 @@ targets:
             - package: Task_retrying
 
             - package: JazziconSwift
+
+            - package: Firebase
+              product: FirebaseAnalytics
+
+            - package: Firebase
+              product: FirebaseCrashlytics
+
+            - package: Firebase
+              product: FirebaseRemoteConfig
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

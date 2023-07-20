@@ -17,11 +17,13 @@ struct WormholeClaimFee {
 
     let receive: Amount
 
-    let networkFee: Amount
+    let networkFee: Amount?
 
     let accountCreationFee: Amount?
 
-    let wormholeBridgeAndTrxFee: Amount
+    let wormholeBridgeAndTrxFee: Amount?
+
+    let total: Amount?
 
     static let emptyAmount: Amount = ("", "", false)
 
@@ -29,7 +31,8 @@ struct WormholeClaimFee {
         receive: Self.emptyAmount,
         networkFee: Self.emptyAmount,
         accountCreationFee: nil,
-        wormholeBridgeAndTrxFee: Self.emptyAmount
+        wormholeBridgeAndTrxFee: Self.emptyAmount,
+        total: nil
     )
 }
 
@@ -50,22 +53,32 @@ class WormholeClaimFeeAggregator: DataAggregator {
             false
         )
 
-        let networkFee: WormholeClaimFee.Amount
+        let networkFee: WormholeClaimFee.Amount?
         let accountCreationFee: WormholeClaimFee.Amount?
-        let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount
+        let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount?
+        let total: WormholeClaimFee.Amount?
 
         // Aggregating data
         if bundle.compensationDeclineReason == nil {
             networkFee = (L10n.paidByKeyApp, L10n.free, true)
             accountCreationFee = (L10n.paidByKeyApp, L10n.free, true)
             wormholeBridgeAndTrxFee = (L10n.paidByKeyApp, L10n.free, true)
-        } else {
-            // Network fee
-            networkFee = (
-                cryptoFormatter.string(amount: bundle.fees.gas),
-                currencyFormatter.string(amount: bundle.fees.gas),
+            total = (
+                cryptoFormatter.string(amount: bundle.resultAmount),
+                currencyFormatter.string(amount: bundle.resultAmount),
                 false
             )
+        } else {
+            // Network fee
+            if let gasInToken = bundle.fees.gasInToken {
+                networkFee = (
+                    cryptoFormatter.string(amount: gasInToken),
+                    currencyFormatter.string(amount: gasInToken),
+                    false
+                )
+            } else {
+                networkFee = nil
+            }
 
             // Create accounts fee
             if let createAccount = bundle.fees.createAccount {
@@ -79,9 +92,36 @@ class WormholeClaimFeeAggregator: DataAggregator {
             }
 
             // Network fee
-            wormholeBridgeAndTrxFee = (
-                cryptoFormatter.string(amount: bundle.fees.arbiter),
-                currencyFormatter.string(amount: bundle.fees.arbiter),
+            if let arbiter = bundle.fees.arbiter {
+                wormholeBridgeAndTrxFee = (
+                    cryptoFormatter.string(amount: arbiter),
+                    currencyFormatter.string(amount: arbiter),
+                    false
+                )
+            } else {
+                wormholeBridgeAndTrxFee = nil
+            }
+
+            // Total
+            let totalInCrypto = [
+                bundle.fees.gasInToken?.asCryptoAmount,
+                bundle.fees.arbiter?.asCryptoAmount,
+                bundle.fees.createAccount?.asCryptoAmount,
+            ]
+                .compactMap { $0 }
+                .reduce(bundle.resultAmount.asCryptoAmount, +)
+
+            let totalInFiat = [
+                bundle.fees.gasInToken?.asCurrencyAmount,
+                bundle.fees.arbiter?.asCurrencyAmount,
+                bundle.fees.createAccount?.asCurrencyAmount,
+            ]
+                .compactMap { $0 }
+                .reduce(bundle.resultAmount.asCurrencyAmount, +)
+
+            total = (
+                cryptoFormatter.string(amount: totalInCrypto),
+                currencyFormatter.string(amount: totalInFiat),
                 false
             )
         }
@@ -90,7 +130,8 @@ class WormholeClaimFeeAggregator: DataAggregator {
             receive: receive,
             networkFee: networkFee,
             accountCreationFee: accountCreationFee,
-            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee,
+            total: total
         )
     }
 }

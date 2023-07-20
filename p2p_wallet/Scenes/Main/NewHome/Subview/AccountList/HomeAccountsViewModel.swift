@@ -145,7 +145,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account))
+                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
             default:
                 break
             }
@@ -160,14 +160,19 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case .receive:
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
             else { return }
+            analyticsManager.log(event: .mainScreenReceiveBar)
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
+            analyticsManager.log(event: .mainScreenBuyBar)
             navigation.send(.buy)
         case .send:
+            analyticsManager.log(event: .mainScreenSendBar)
             navigation.send(.send)
         case .swap:
+            analyticsManager.log(event: .mainScreenSwapBar)
             navigation.send(.swap)
         case .cashOut:
+            analyticsManager.log(event: .mainScreenCashOutBar)
             navigation.send(.cashOut)
         }
     }
@@ -182,6 +187,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     func sellTapped() {
         navigation.send(.cashOut)
+    }
+
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 

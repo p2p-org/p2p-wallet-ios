@@ -1,10 +1,3 @@
-//
-//  RendableListTransactionItem+PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
@@ -83,7 +76,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SendTransaction:
             switch transaction.recipient.category {
             case let .username(name, domain):
-                return L10n.to("\(name).\(domain)")
+                return L10n.to("@\(name).\(domain)")
             case let .solanaTokenAddress(walletAddress, _):
                 return L10n.to(RecipientFormatter.shortFormat(destination: walletAddress.base58EncodedString))
             case .solanaAddress:

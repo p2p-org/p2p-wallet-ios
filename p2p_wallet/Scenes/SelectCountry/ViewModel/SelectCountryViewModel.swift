@@ -5,6 +5,7 @@
 //  Created by Ivan on 13.04.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -17,6 +18,7 @@ private extension String {
 final class SelectCountryViewModel: ObservableObject {
     
     // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var moonpayProvider: Moonpay.Provider
     
     // Private variables
@@ -38,6 +40,11 @@ final class SelectCountryViewModel: ObservableObject {
             searchItem()
         }
     }
+    @Published var isSearching = false {
+        didSet {
+            isSearchingChanged()
+        }
+    }
     
     // MARK: - Init
     
@@ -48,12 +55,18 @@ final class SelectCountryViewModel: ObservableObject {
     
     // MARK: - From View
     
+    func onAppear() {
+        analyticsManager.log(event: .regionBuyScreenOpen)
+    }
+    
     func countrySelected(model: Model) {
         guard let model = (models.first { $0.0 == model }) else { return }
+        analyticsManager.log(event: .regionBuyResultClick(country: model.0.title))
         selectCountrySubject.send(model)
     }
     
     func currentCountrySelected() {
+        analyticsManager.log(event: .regionBuyResultClick(country: selectedCountry.title))
         currentSelectedSubject.send()
     }
     
@@ -99,6 +112,11 @@ final class SelectCountryViewModel: ObservableObject {
         
         let filteredItems = models.filter { $0.0.title.contains(searchText) }
         state = !filteredItems.isEmpty ? .loaded(models: filteredItems.map{ $0.0 }) : .notFound
+    }
+    
+    private func isSearchingChanged() {
+        guard isSearching else { return }
+        analyticsManager.log(event: .regionBuySearchClick)
     }
 }
 

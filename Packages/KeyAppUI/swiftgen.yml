@@ -1,0 +1,11 @@
+xcassets:
+  inputs:
+    - Sources/KeyAppUI/Resources/MaterialIcon.xcassets
+    - Sources/KeyAppUI/Resources/Colors.xcassets
+    - Sources/KeyAppUI/Resources/Icons.xcassets
+  outputs:
+    - templateName: swift5
+      output: Sources/KeyAppUI/Generated/Asset+Generated.swift
+      params:
+        publicAccess: true
+        allValues: true

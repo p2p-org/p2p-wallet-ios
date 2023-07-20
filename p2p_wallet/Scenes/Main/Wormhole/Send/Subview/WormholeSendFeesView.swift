@@ -1,10 +1,3 @@
-//
-//  WormholeSendFeesView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import KeyAppUI
 import Send
 import SwiftUI
@@ -45,19 +38,23 @@ struct WormholeSendFeesView: View {
             .padding(.horizontal, 16)
 
             Button(action: {
-                    viewModel.close.send()
-                }, label: {
-                    Text(L10n.okay)
-                        .font(uiFont: .font(of: .text2, weight: .semibold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color(Asset.Colors.rain.color))
-                        .cornerRadius(12)
-                }
-            )
+                viewModel.close.send()
+            }, label: {
+                Text(L10n.okay)
+                    .font(uiFont: .font(of: .text2, weight: .semibold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color(Asset.Colors.rain.color))
+                    .cornerRadius(12)
+            })
             .padding(.horizontal, 16)
             .padding(.top, 16)
+
+            Spacer()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { (_) in
+            UIApplication.shared.keyWindow?.endEditing(true)
         }
     }
 }

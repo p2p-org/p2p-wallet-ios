@@ -14,17 +14,10 @@ struct SelectCountryView: View {
     @ObservedObject var viewModel: SelectCountryViewModel
     
     var body: some View {
-        if #available(iOS 15.0, *) {
+        WrapperForSearchingView(searching: $viewModel.isSearching) {
             searchableContent
-                .searchable(text: $viewModel.searchText)
-        } else {
-            VStack(spacing: 28) {
-                SearchBar(placeholder: L10n.search, text: $viewModel.searchText)
-                    .padding(.horizontal, 8)
-                    .padding(.top, 12)
-                searchableContent
-            }
         }
+        .searchable(text: $viewModel.searchText)
     }
     
     private var searchableContent: some View {
@@ -43,6 +36,9 @@ struct SelectCountryView: View {
                 Text(L10n.selectYourCountry)
                     .fontWeight(.semibold)
             }
+        }
+        .onAppear {
+            viewModel.onAppear()
         }
     }
     

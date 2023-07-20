@@ -33,38 +33,6 @@ struct WormholeSendInputView: View {
             .padding(.bottom, 30)
 
             VStack {
-                // Info
-                HStack {
-                    Text(L10n.youWillSend)
-                        .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-
-                    Spacer()
-
-                    Button {
-                        viewModel.action.send(.openFees)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(viewModel.adapter.fees)
-                                .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.sky.color))
-
-                            if viewModel.adapter.feesLoading {
-                                CircularProgressIndicatorView(
-                                    backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                    foregroundColor: Asset.Colors.sky.color
-                                )
-                                .frame(width: 16, height: 16)
-                            } else if !viewModel.adapter.fees.isEmpty {
-                                Image(uiImage: UIImage.infoSend)
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 8)
-
                 // Account view
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
@@ -91,11 +59,63 @@ struct WormholeSendInputView: View {
                         .token.symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
-                    isMaxButtonVisible: viewModel.input.isEmpty,
+                    isMaxButtonVisible: viewModel.isMaxButtonVisible,
                     isSwitchMainAmountTypeAvailable: !viewModel.adapter.disableSwitch
                 )
                 .padding(.top, 8)
             }
+
+            /// Fee
+            VStack(spacing: 8) {
+                HStack {
+                    Button {
+                        viewModel.action.send(.openFees)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(L10n.fee.uppercased())
+                                .apply(style: .caps)
+                                .foregroundColor(viewModel.adapter
+                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                    Color(Asset.Colors.mountain.color))
+
+                            Image(uiImage: UIImage.warningIcon)
+                                .resizable()
+                                .foregroundColor(viewModel.adapter
+                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                    Color(Asset.Colors.mountain.color))
+                                .frame(width: 16, height: 16)
+                            Spacer()
+                            if viewModel.adapter.feesLoading {
+                                CircularProgressIndicatorView()
+                                    .frame(width: 14, height: 14)
+                            } else {
+                                Text(viewModel.adapter.fees)
+                                    .apply(style: .text4)
+                                    .foregroundColor(viewModel.adapter
+                                        .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                        Color(Asset.Colors.mountain.color))
+                            }
+                        }
+                    }
+                }
+                HStack {
+                    Text(L10n.totalAmount.uppercased())
+                        .apply(style: .caps)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                    Spacer()
+                    if !viewModel.adapter.feesLoading {
+                        Text(
+                            viewModel.inputMode == .fiat ?
+                                viewModel.adapter.totalCurrencyAmount
+                                : viewModel.adapter.totalCryptoAmount
+                        )
+                        .apply(style: .text4)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                    }
+                }
+            }
+            .padding(.top, 12)
+            .padding(.horizontal, 16)
 
             Spacer()
 

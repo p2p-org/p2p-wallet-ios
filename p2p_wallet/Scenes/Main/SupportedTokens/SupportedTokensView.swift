@@ -17,6 +17,9 @@ struct SupportedTokensView: View {
                 Image(uiImage: UIImage.buttonSearch)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                 TextField(L10n.search, text: $viewModel.filter)
+                    .introspectTextField { field in
+                        field.clearButtonMode = .whileEditing
+                    }
             }
             .padding(.vertical, 7)
             .padding(.horizontal, 8)
@@ -58,9 +61,6 @@ struct SupportedTokensView: View {
                     list
                 }
             }
-        }
-        .onAppear {
-            UITextField.appearance().clearButtonMode = .whileEditing
         }
         .background(
             Color(Asset.Colors.smoke.color)

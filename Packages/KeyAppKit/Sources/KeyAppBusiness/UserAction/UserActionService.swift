@@ -16,7 +16,7 @@ public class UserActionService {
 
     /// Thread safe array update
     let accessQueue = DispatchQueue(label: "UserActionUpdateQueue", attributes: .concurrent)
-
+    #warning("REFACTOR: Remove @Published from non-observable class")
     @Published public var actions: [any UserAction] = []
 
     public init(consumers: [any UserActionConsumer]) {

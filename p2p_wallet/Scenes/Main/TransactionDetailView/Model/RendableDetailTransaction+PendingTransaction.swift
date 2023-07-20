@@ -11,7 +11,7 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Wormhole
 
-struct RendableDetailPendingTransaction: RendableTransactionDetail {
+struct RendableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
 
     let priceService: PricesService
@@ -145,7 +145,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 return .unchanged("")
             }
         case let transaction as ClaimSentViaLinkTransaction:
-            return .positive("+\(transaction.amountInFiat?.fiatAmountFormattedString() ?? "")")
+            if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
+                return .positive("+\(amountInFiat)")
+            }
+            return .unchanged("")
 
 //        case let transaction as WormholeClaimTransaction:
 //            if let value = CurrencyFormatter().string(for: transaction.bundle.resultAmount) {
@@ -337,6 +340,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         default:
             return L10n.done
         }
+    }
+    
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
     }
 }
 

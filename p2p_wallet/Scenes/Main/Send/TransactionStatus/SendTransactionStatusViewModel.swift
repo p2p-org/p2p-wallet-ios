@@ -4,10 +4,14 @@ import KeyAppUI
 import Resolver
 import SolanaSwift
 import TransactionParser
+import AnalyticsManager
+import Foundation
+import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var priceService: PricesServiceType
+    @Injected private var analyticsManager: AnalyticsManager
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()
@@ -19,7 +23,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var transactionFiatAmount: String
     @Published var transactionCryptoAmount: String
     @Published var info = [(title: String, detail: String)]()
-    @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+    @Published var state: State = .loading(message: L10n.itUsuallyTakesFewSecondsForATransactionToComplete)
     @Published var closeButtonTitle: String = L10n.done
 
     private var currentTransaction: ParsedTransaction?
@@ -74,6 +78,14 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
             })
             .store(in: &subscriptions)
 
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap { $0?.transactionId }
+            .prefix(1)
+            .sink(receiveValue: { [weak self] signature in
+                self?.logSend(event: transaction.analyticEvent, signature: signature)
+            })
+            .store(in: &subscriptions)
+
         errorMessageTap
             .sink { [weak self] in
                 guard let self = self else { return }
@@ -89,7 +101,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                if let error = error as? FeeRelayerError, error == .topUpSuccessButTransactionThrows {
+                if let error = error as? FeeRelayerError, error.message == "Topping up is successfull, but the transaction failed" {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
                 } else if let error = error as? SolanaError {
                     switch error {
@@ -160,5 +172,12 @@ extension SendTransactionStatusViewModel {
         case loading(message: String)
         case succeed(message: String)
         case error(message: NSAttributedString)
+    }
+}
+
+private extension SendTransactionStatusViewModel {
+    func logSend(event: KeyAppAnalyticsEvent, signature: String) {
+        guard case let .sendNewConfirmButtonClick(sendFlow, token, max, amountToken, amountUSD, fee, fiatInput, _, pubKey) = event else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(sendFlow: sendFlow, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: pubKey))
     }
 }

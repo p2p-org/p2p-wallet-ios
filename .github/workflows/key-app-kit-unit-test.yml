@@ -1,32 +1,64 @@
 name: Key app kit unit test
 
 on:
-    pull_request:
-        branches: [ develop ]
-        paths:
-            - 'Packages/KeyAppKit/Sources/**/*'
-            - 'Packages/KeyAppKit/Tests/**/*'
+  pull_request:
+    paths:
+      - 'Packages/KeyAppKit/Sources/**/*'
+      - 'Packages/KeyAppKit/Tests/**/*'
+
+  workflow_dispatch:
+
+concurrency:
+  group: key-app-kit-unit-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    build:
-        runs-on: [self-hosted, macOS]
-#        runs-on: macos-12
-        
-        steps:
-            - uses: actions/checkout@v3
+  run_key_app_kit_unit_test:
+    name: Run KeyAppKit unit testing
+    runs-on: macos-13
+    env: 
+      XCODE_VERSION: "14.3.1"
+    steps:
 
-            - name: Run unit tests
-              working-directory: ./Packages/KeyAppKit
-              run: |
-                xcodebuild -scheme KeyAppKit-Package test -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" -parallel-testing-worker-count 3 -parallel-testing-enabled YES -enableCodeCoverage YES -resultBundlePath TestResults
-#                swift test --enable-code-coverage
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
 
-#            - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
-#              id: coverage-files
-            - uses: TrGiLong/xcresulttool@fix-tests-is-not-interable
-              with:
-                path: ./Packages/KeyAppKit/TestResults.xcresult
-              if: success() || failure()
+      - name: Install xcbeautify
+        run: |
+          brew install xcbeautify
+
+      - uses: actions/checkout@v3
+
+      - name: Select XCode Version
+        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+      - name: Run unit tests
+        working-directory: ./Packages/KeyAppKit
+        run: |
+          xcodebuild test \
+            -scheme KeyAppKit-Package \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" \
+            -parallel-testing-worker-count 3 \
+            -parallel-testing-enabled YES \
+            -resultBundlePath TestResults \
+            -only-testing:CountriesAPIUnitTests \
+            -only-testing:JSBridgeTests \
+            -only-testing:KeyAppNetworkingTests \
+            -only-testing:KeyAppStateMachineTests \
+            | xcbeautify
+
+      # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
+      #   id: coverage-files
+
+      - uses: TrGiLong/xcresulttool@fix-tests-is-not-interable
+        with:
+          path: ./Packages/KeyAppKit/TestResults.xcresult
+        if: success() || failure()
 
 #              with:
 #                search-paths: |

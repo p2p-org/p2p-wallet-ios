@@ -8,7 +8,7 @@ struct ReceiveView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.f2F5Fa)
+            Color(UIColor.f2f5fa)
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 ScrollView {
@@ -68,6 +68,9 @@ struct ReceiveView: View {
                     .background(Color(Asset.Colors.snow.color))
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             }
+        }
+        .onTapGesture {
+            viewModel.qrTapped()
         }
     }
 

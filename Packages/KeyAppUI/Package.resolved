@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BEPureLayout",
+        "repositoryURL": "https://github.com/p2p-org/BEPureLayout.git",
+        "state": {
+          "branch": "master",
+          "revision": "f00ffab3fc02a36774593ab222b77ee8cbdc872a",
+          "version": null
+        }
+      },
+      {
+        "package": "PureLayout",
+        "repositoryURL": "https://github.com/PureLayout/PureLayout.git",
+        "state": {
+          "branch": null,
+          "revision": "3bcbfe370f85b81254de4d6b9df3dd4a70d4ca89",
+          "version": "3.1.8"
+        }
+      },
+      {
+        "package": "SkeletonView",
+        "repositoryURL": "https://github.com/Juanpe/SkeletonView.git",
+        "state": {
+          "branch": null,
+          "revision": "b640c1d8eee79c3a5ad6e0ae1afd2ae0fea30423",
+          "version": "1.29.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

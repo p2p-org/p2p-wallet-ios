@@ -58,6 +58,8 @@ public enum WormholeSendInputState: Equatable {
                 input.solanaAccount = account
                 input.amount = .init(amount: input.amount.value, token: account.data.token)
                 return .calculating(newInput: input)
+            case let .calculate:
+                return .calculating(newInput: input)
             default:
                 return self
             }
@@ -91,18 +93,9 @@ public enum WormholeSendInputState: Equatable {
                 }
 
                 var alert: WormholeSendInputAlert?
+                let resultAmount = fees.totalAmount?.asCryptoAmount ?? input.amount.with(amount: 0)
 
-                if fees.resultAmount == nil {
-                    let error: WormholeSendInputError
-
-                    if input.amount.value > 0 {
-                        // Fee is greater than sending amount
-                        error = .feeIsMoreThanInputAmount
-                    } else {
-                        // No input amount
-                        error = .insufficientInputAmount
-                    }
-
+                if resultAmount > input.solanaAccount.cryptoAmount {
                     return .error(
                         input: input,
                         output: .init(
@@ -110,7 +103,7 @@ public enum WormholeSendInputState: Equatable {
                             fees: fees,
                             relayContext: relayContext
                         ),
-                        error: error
+                        error: .insufficientInputAmount
                     )
                 }
 

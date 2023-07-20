@@ -1,10 +1,4 @@
-//
-//  DetailTransactionViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.02.2023.
-//
-
+import AnalyticsManager
 import Combine
 import Foundation
 import History
@@ -26,7 +20,11 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Published var rendableTransaction: any RendableTransactionDetail
+    @Injected private var analyticsManager: AnalyticsManager
+
+    @Published var rendableTransaction: any RenderableTransactionDetail
+
+    @Published var forceHidingStatus: Bool = false
 
     let style: TransactionDetailStyle
 
@@ -34,7 +32,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     var statusContext: String?
 
-    init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
+    init(rendableDetailTransaction: any RenderableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         rendableTransaction = rendableDetailTransaction
     }
@@ -86,32 +84,34 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        userActionService
-            .observer(id: userAction.id)
-            .receive(on: RunLoop.main)
-            .sink { userAction in
-                self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
-            }
-            .store(in: &subscriptions)
-    }
+        // Hide status in case transaction is ready
+        switch rendableTransaction.status {
+        case .succeed:
+            forceHidingStatus = true
+        default:
+            forceHidingStatus = false
+        }
 
-    convenience init(submit rawTransaction: RawTransactionType) {
-        let pendingService: TransactionHandlerType = Resolver.resolve()
-
-        let idx = pendingService.sendTransaction(rawTransaction)
-        let pendingTransaction = pendingService.getProcessingTransaction(index: idx)
-
-        self.init(pendingTransaction: pendingTransaction)
+        if userAction.status != .ready {
+            userActionService
+                .observer(id: userAction.id)
+                .receive(on: RunLoop.main)
+                .sink { userAction in
+                    self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
+                }
+                .store(in: &subscriptions)
+        }
     }
 
     func share() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        guard let url = URL(string: rendableTransaction.url ?? "")
         else { return }
         action.send(.share(url))
     }
 
     func explore() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        analyticsManager.log(event: .transactionBlockchainLinkClick)
+        guard let url = URL(string: rendableTransaction.url ?? "")
         else { return }
         action.send(.open(url))
     }

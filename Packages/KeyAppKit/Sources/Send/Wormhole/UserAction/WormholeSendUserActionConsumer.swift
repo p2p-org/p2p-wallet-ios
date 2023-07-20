@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import Combine
 import FeeRelayerSwift
 import Foundation
@@ -34,6 +27,8 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
     let relayService: RelayService
 
+    let solanaTokenService: SolanaTokensService
+
     let errorObserver: ErrorObserver
 
     public let persistence: UserActionPersistentStorage
@@ -60,6 +55,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         solanaClient: SolanaAPIClient,
         wormholeAPI: WormholeAPI,
         relayService: RelayService,
+        solanaTokenService: SolanaTokensService,
         errorObserver: ErrorObserver,
         persistence: UserActionPersistentStorage
     ) {
@@ -68,44 +64,19 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         self.solanaClient = solanaClient
         self.wormholeAPI = wormholeAPI
         self.relayService = relayService
+        self.solanaTokenService = solanaTokenService
         self.errorObserver = errorObserver
         self.persistence = persistence
-
-        database
-            .link(to: persistence, in: Self.table)
-            .store(in: &subscriptions)
     }
 
     public func start() {
-        Task {
-            // Restore and filter
-            try? await database.restore(from: self.persistence, table: Self.table) { _, userAction in
-                switch userAction.status {
-                case .pending:
-                    return false
-                case .processing:
-                    // Remove if user action is live longer then 3 hours
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 60 * 3 {
-                        return false
-                    }
-                case .ready, .error:
-                    // Remove if user action is live longer then 3 minutes
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 3 {
-                        return false
-                    }
-                }
-
-                return true
-            }
-
-            // Update bundle periodic
-            monitoringTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
-                self?.monitor()
-            }
-
-            // First fetch
-            monitor()
+        // Update bundle periodic
+        monitoringTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.monitor()
         }
+
+        // First fetch
+        monitor()
     }
 
     deinit {
@@ -121,23 +92,15 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         switch event {
         case let .track(sendStatus):
             Task { [weak self] in
-                // Only update record
-                if var userAction = await self?.database.get(for: sendStatus.message) {
-                    switch userAction.status {
-                    case .processing:
-                        switch sendStatus.status {
-                        case .pending, .inProgress:
-                            return
-                        case .completed:
-                            userAction.status = .ready
-                        case .canceled, .expired, .failed:
-                            userAction.status = .error(Error.sendingFailure)
-                        }
-                    default:
-                        return
-                    }
+                guard let self = self else { return }
 
-                    await self?.database.set(for: userAction.message, userAction)
+                let userAction = try? await WormholeSendUserAction(
+                    sendStatus: sendStatus,
+                    solanaTokensService: self.solanaTokenService
+                )
+
+                if let userAction {
+                    await self.database.set(for: userAction.id, userAction)
                 }
             }
 
@@ -155,27 +118,22 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         guard let action = action as? Action else { return }
 
         Task { [weak self] in
-            await self?.database.set(for: action.message, action)
-
-            /// Network fee in Solana network.
-            let transactionFee: CryptoAmount = [action.fees.networkFee, action.fees.bridgeFee]
-                .compactMap { $0 }
-                .map(\.asCryptoAmount)
-                .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
-
-            /// Account creation fee in Solana network.
-            let accountCreationFee = action.fees.messageAccountRent?
-                .asCryptoAmount ?? CryptoAmount(token: SolanaToken.nativeSolana)
+            await self?.database.set(for: action.id, action)
 
             /// Preparing transaction
             guard
-                let data = Data(base64Encoded: action.transaction.transaction, options: .ignoreUnknownCharacters),
+                let transaction = action.transaction?.transaction,
+                let data = Data(base64Encoded: transaction, options: .ignoreUnknownCharacters),
                 var versionedTransaction = try? VersionedTransaction.deserialize(data: data),
                 let configs = RequestConfiguration(encoding: "base64"),
                 let signer = self?.signer
             else {
                 let error = WormholeSendUserActionError.preparingTransactionFailure
-                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
+                self?.errorObserver.handleError(
+                    error,
+                    userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action]
+                )
+                self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
                 return
             }
 
@@ -185,29 +143,33 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                 // Relay service sign transacion
                 // TODO: extract first n required signers for safety.
-                if versionedTransaction.message.value.staticAccountKeys.contains(action.relayContext.feePayerAddress) {
-                    let fullySignedTransaction = try await self?.relayService.signTransaction(
-                        transactions: [versionedTransaction],
-                        config: .init(operationType: .other)
-                    ).first
+                let fullySignedTransaction = try await self?.relayService.signTransaction(
+                    transactions: [versionedTransaction],
+                    config: .init(operationType: .other)
+                ).first
 
-                    guard let fullySignedTransaction else {
-                        let error = WormholeSendUserActionError.feeRelaySignFailure
-                        self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
-                        return
-                    }
-
-                    versionedTransaction = fullySignedTransaction
+                guard let fullySignedTransaction else {
+                    let error = WormholeSendUserActionError.feeRelaySignFailure
+                    self?.errorObserver.handleError(
+                        error,
+                        userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action]
+                    )
+                    self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
+                    return
                 }
+
+                versionedTransaction = fullySignedTransaction
 
                 // Submit transaction
                 let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
                 _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
             } catch {
-                self?.errorObserver.handleError(error)
-
+                self?.errorObserver.handleError(
+                    error,
+                    userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action]
+                )
                 let error = WormholeSendUserActionError.submittingToBlockchainFailure
-                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
+                self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
             }
         }
     }

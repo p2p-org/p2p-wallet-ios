@@ -84,6 +84,14 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
         )
     }
 
+    public func toFiatAmountIfPresent(price: TokenPrice?) throws -> CurrencyAmount? {
+        if let price {
+            return try toFiatAmount(price: price)
+        } else {
+            return nil
+        }
+    }
+
     public func toFiatAmount(price: TokenPrice) throws -> CurrencyAmount {
         guard price.token.tokenPrimaryKey == token.tokenPrimaryKey else {
             throw ConvertError.invalidPriceForToken(expected: token.symbol, actual: price.token.symbol)

@@ -12,7 +12,7 @@ import KeyAppKitCore
 import Send
 import Wormhole
 
-struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
+struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeSendUserAction
 
     var signature: String? { userAction.id }
@@ -60,7 +60,7 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
     var amountInFiat: TransactionDetailChange {
         if let currencyAmount = userAction.currencyAmount {
             let value = CurrencyFormatter().string(amount: currencyAmount)
-            return .negative(value)
+            return .negative("-\(value)")
         } else {
             return .unchanged("")
         }
@@ -80,7 +80,8 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
                 title: L10n.sendTo,
                 values: [
                     .init(text: RecipientFormatter.format(destination: userAction.recipient)),
-                ]
+                ],
+                copyableValue: userAction.recipient
             )
         )
 
@@ -90,11 +91,11 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
         if let arbiterFee = userAction.fees.arbiter {
             result.append(
                 .init(
-                    title: L10n.transferFee,
+                    title: L10n.transactionFee,
                     values: [
                         .init(
                             text: cryptoFormatter.string(amount: arbiterFee),
-                            secondaryText: cryptoFormatter.string(amount: arbiterFee)
+                            secondaryText: currencyFormatter.string(amount: arbiterFee)
                         ),
                     ]
                 )
@@ -105,10 +106,30 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
     }
 
     var actions: [TransactionDetailAction] {
-        []
+        switch status {
+        case .succeed:
+            if userAction.solanaTransaction != nil {
+                return [
+                    .share,
+                    .explorer,
+                ]
+            } else {
+                return []
+            }
+        default:
+            return []
+        }
     }
 
     var buttonTitle: String {
         L10n.done
+    }
+
+    var url: String? {
+        if let solanaTransaction = userAction.solanaTransaction {
+            return "https://explorer.solana.com/tx/\(solanaTransaction)"
+        } else {
+            return nil
+        }
     }
 }

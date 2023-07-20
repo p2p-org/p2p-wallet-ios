@@ -207,7 +207,7 @@ struct SendInputView: View {
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.actionButtonData,
                 showFinished: viewModel.showFinished
-           ) .accessibilityIdentifier("send-slider")
+           ).accessibilityIdentifier("send-slider")
         }
     }
     
@@ -252,7 +252,7 @@ struct SendInputView_Previews: PreviewProvider {
                 ),
                 preChosenWallet: nil,
                 preChosenAmount: nil,
-                source: .none,
+                flow: .send,
                 allowSwitchingMainAmountType: false,
                 sendViaLinkSeed: nil
             )

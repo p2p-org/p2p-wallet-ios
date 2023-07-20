@@ -39,6 +39,12 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
+
+DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
+
+DISCORD_MESSAGE_API_BEARER_TOKEN = ENV["DISCORD_MESSAGE_API_BEARER_TOKEN"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -107,7 +113,8 @@ def create_release_build(match_type, configuration)
     readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
-    api_key: api_key
+    api_key: api_key,
+    force_for_new_devices: true
   )
 
   gym(
@@ -154,7 +161,22 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
 end 
 
 def notify(version, message)
-  # upload to slack
+  # to discord
+  begin
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json",
+      "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+  rescue => ex
+    UI.important('Failed to send message, but continuing anyway!')
+  end
+
+  # to slack
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "PWN-#{version}.ipa",
@@ -173,11 +195,6 @@ def commit_changes
   push_git_tags(tag: tag_name)
 end 
 
-def update_xcconfig
-  config_url = "../p2p_wallet/Config.xcconfig"
-  sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
-end
-
 def upload_dsym_to_analytic_providers
   sentry_upload_dsym(
     auth_token: SENTRY_TOKEN,
@@ -187,17 +204,31 @@ def upload_dsym_to_analytic_providers
 end
 
 def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
-  # update xcconfig
-  update_xcconfig
+  # Get the remote origin URL
+  remote_url = sh("git config --get remote.origin.url", log: false).strip
 
-  # get number of builds released of this feature
-  number_of_released_builds = 0
+  # Get the tags matching the pattern (build_prefix.*)
+  tags = sh("git ls-remote --tags #{remote_url} '#{tag_prefix}/#{build_prefix.to_s}.*'").strip.split("\n")
+
+  # Extract the tag names from the ls-remote output
+  tag_names = tags.map { |tag| tag.split("\t")[1].split("/").last }
+
+  # Find last build number
+  if tag_names.empty?
+    number_of_released_builds = 0
+  else
+    # Sort the tag names in descending order
+    sorted_build_numbers = tag_names
+      .map { |tag| tag.split(".").last.to_i }
+      .sort { |a, b| b <=> a }
+
+    # Extract the number following the dot in the tag
+    number_of_released_builds = sorted_build_numbers.first
+  end
+
+  # Increase the number to create new tag
   build_number = number_of_released_builds + 1
   current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
-  while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
-    build_number += 1
-    current_build = build_prefix.to_s + "." + build_number.to_s
-  end
 
   # set build number
   increment_build_number(
@@ -264,8 +295,8 @@ platform :ios do
       nil
     )
 
-    # notify tester
-    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    # notify testers
+    message = "A build **#{version}** was uploaded for testing this feature.\\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
     # output
@@ -276,9 +307,6 @@ platform :ios do
   end
 
   lane :release do
-    # update xcconfig
-    update_xcconfig
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -324,6 +352,26 @@ platform :ios do
       tag = "#{tag_prefix}#{version}(#{build_number})"
     end
 
+    # get full version
+    full_version = "#{version} (#{build_number})"
+
+    # post to discord
+    build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
+
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json", 
+        "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
+    
+
     # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
@@ -355,11 +403,28 @@ platform :ios do
       )
     end
 
+    # notify testers
+    message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
+
+    # post to discord
+    begin
+      sh(
+        "curl", 
+        "-v", 
+        "-X", "POST", 
+        "-H", "Content-Type: application/json",
+        "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
+        "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        DISCORD_MESSAGE_API_ENDPOINT
+      )
+    rescue => ex
+      UI.important('Failed to send message, but continuing anyway!')
+    end
+
     # post to slack
-    full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
+      message: message,
       channel: "#p2p-wallet-builds-ios"
     )
 
@@ -400,7 +465,7 @@ platform :ios do
     )
 
     # notify tester
-    message = "A daily build #{version} was uploaded."
+    message = "A daily build **#{version}** was uploaded."
     notify(version, message)
   end
 
@@ -417,11 +482,21 @@ platform :ios do
       devices: devices
     )
 
+    # login to appstore connect
+    api_key = app_store_connect_api_key(
+      key_id: APPLE_KEY_ID,
+      issuer_id: APPLE_ISSUER_ID,
+      key_content: APPLE_KEY_CONTENT,
+      is_key_content_base64: true,
+      duration: 1200,
+      in_house: false
+    )
+
     # match
     match(
       type: "adhoc",
       git_url: PROVISIONING_REPO,
-      app_identifier: "#{appIdentifier}",
+      app_identifier: DEVELOPER_APP_IDENTIFIER,
       git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
       readonly: false,
       keychain_name: TEMP_KEYCHAIN_USER,

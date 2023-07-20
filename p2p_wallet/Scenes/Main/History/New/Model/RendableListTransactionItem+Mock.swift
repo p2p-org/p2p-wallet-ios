@@ -1,12 +1,6 @@
-//
-//  NewHistoryListItem+Mock.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 import SolanaSwift
+import UIKit
 
 struct MockedRendableListTransactionItem: RendableListTransactionItem {
     var id: String
@@ -77,7 +71,7 @@ extension MockedRendableListTransactionItem {
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
             title: "Receive",
             subtitle: "From ...S39N",
-            detail: (.positive, "+$5 268.65"),
+            detail: (.unchanged, ""),
             subdetail: "+0.3271523 renBTC"
         )
     }

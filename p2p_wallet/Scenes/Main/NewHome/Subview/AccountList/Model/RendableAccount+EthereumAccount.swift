@@ -3,11 +3,12 @@ import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 import Wormhole
+import UIKit
 
 struct RenderableEthereumAccount: RenderableAccount {
     let account: EthereumAccount
-
     let status: Status
+    let userAction: WormholeClaimUserAction?
 
     var id: String {
         switch account.token.contractType {
@@ -35,8 +36,13 @@ struct RenderableEthereumAccount: RenderableAccount {
     }
 
     var subtitle: String {
-        CryptoFormatterFactory.formatter(with: account.representedBalance.token, style: .short)
-            .string(amount: account.representedBalance)
+        if let userAction {
+            return CryptoFormatterFactory.formatter(with: userAction.amountInCrypto.token, style: .short)
+                .string(amount: userAction.amountInCrypto)
+        } else {
+            return CryptoFormatterFactory.formatter(with: account.representedBalance.token, style: .short)
+                .string(amount: account.representedBalance)
+        }
     }
 
     var detail: AccountDetail {
@@ -62,7 +68,11 @@ struct RenderableEthereumAccount: RenderableAccount {
         var tags: AccountTags = []
 
         if status == .balanceToLow {
-            tags.insert(.ignore)
+            if account.balance == 0 {
+                tags.insert(.hidden)
+            } else {
+                tags.insert(.ignore)
+            }
         }
 
         return tags

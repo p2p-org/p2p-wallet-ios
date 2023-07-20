@@ -1,13 +1,7 @@
-//
-//  NewHistoryModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 02.02.2023.
-//
-
 import Foundation
 import History
 import SolanaSwift
+import UIKit
 
 protocol RendableListTransactionItem: Identifiable {
     var id: String { get }

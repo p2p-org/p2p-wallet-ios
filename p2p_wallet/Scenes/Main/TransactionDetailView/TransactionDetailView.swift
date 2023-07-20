@@ -151,10 +151,14 @@ struct DetailTransactionView: View {
     }
 
     var status: some View {
-        if
-            case let .succeed(message) = viewModel.rendableTransaction.status,
-            message.isEmpty
-        {
+        if viewModel.forceHidingStatus {
+            return AnyView(
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .padding(.bottom, 12)
+            )
+        } else if case let .succeed(message) = viewModel.rendableTransaction.status, message.isEmpty {
             return AnyView(
                 Rectangle()
                     .fill(.clear)

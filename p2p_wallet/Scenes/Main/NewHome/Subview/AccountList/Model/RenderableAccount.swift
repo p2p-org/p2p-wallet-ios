@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 protocol RenderableAccount: Identifiable where ID == String {
     var id: String { get }
@@ -36,11 +37,14 @@ extension RenderableAccount {
 struct AccountTags: OptionSet {
     let rawValue: Int
 
-    /// Should be in favourite list. (Always display on top section)
+    /// Account will be in favourite list. (Always display on top section)
     static let favourite = AccountTags(rawValue: 1 << 0)
 
-    /// Should be in ignore list. (Second section)
+    /// Account will be in ignore list. (Second section)
     static let ignore = AccountTags(rawValue: 1 << 1)
+    
+    /// Account will be hidden.
+    static let hidden = AccountTags(rawValue: 1 << 2)
 }
 
 enum AccountExtraAction {

@@ -1,14 +1,8 @@
-//
-//  TabBarController.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Intercom
 import KeyAppUI
+import Onboarding
 import Resolver
 import Sell
 import SwiftUI
@@ -21,6 +15,7 @@ final class TabBarController: UITabBarController {
     @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
+    @Injected private var deviceShareMigration: DeviceShareMigrationService
 
     // MARK: - Publishers
 
@@ -72,6 +67,22 @@ final class TabBarController: UITabBarController {
                 )
             }
         }
+
+        deviceShareMigration
+            .isMigrationAvailablePublisher
+            .sink { [weak self] migrationIsAvailable in
+                DispatchQueue.main.async {
+                    if migrationIsAvailable {
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                            .selectedImage = .selectedTabBarSettingsWithAlert
+                    } else {
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                    }
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     func changeItem(to item: TabItem) {
@@ -119,9 +130,9 @@ final class TabBarController: UITabBarController {
     }
 
     // MARK: - Authentications
-    
+
     private var lockWindow: UIWindow?
-    
+
     private func setUpLockWindow() {
         lockWindow = UIWindow(frame: UIScreen.main.bounds)
         let lockVC = BaseVC()
@@ -136,7 +147,7 @@ final class TabBarController: UITabBarController {
         lockWindow?.makeKeyAndVisible()
         solanaTracker.stopTracking()
     }
-    
+
     private func removeLockWindow() {
         lockWindow?.rootViewController?.view.removeFromSuperview()
         lockWindow?.rootViewController = nil
@@ -179,11 +190,13 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
+
         pincodeViewModel.infoDidTap
             .sink(receiveValue: { [unowned self] in
                 helpLauncher.launch()
             })
             .store(in: &subscriptions)
+
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -227,11 +240,9 @@ final class TabBarController: UITabBarController {
         standardAppearance.shadowImage = nil
         standardAppearance.shadowColor = nil
         UITabBar.appearance().standardAppearance = standardAppearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
-        }
+        UITabBar.appearance().scrollEdgeAppearance = standardAppearance
     }
-    
+
     private var viewWillAppearTriggered = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -291,7 +302,11 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         customTabBar.updateSelectedViewPositionIfNeeded()
-        
+        // TODO: Move from Controller
+        if let item = TabItem(rawValue: selectedIndex), let event = item.analyticsEvent {
+            analyticsManager.log(event: event)
+        }
+
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
                 jupiterSwapClickedSubject.send()
@@ -300,8 +315,8 @@ extension TabBarController: UITabBarControllerDelegate {
                 return false
             }
         } else if TabItem(rawValue: selectedIndex) == .wallet,
-           (viewController as! UINavigationController).viewControllers.count == 1,
-           self.selectedIndex == selectedIndex
+                  (viewController as! UINavigationController).viewControllers.count == 1,
+                  self.selectedIndex == selectedIndex
         {
             homeTabClickedTwicelySubject.send()
         }
@@ -340,6 +355,22 @@ private extension TabItem {
             return L10n.history
         case .settings:
             return L10n.settings
+        }
+    }
+
+    var analyticsEvent: AnalyticsEvent? {
+        switch self {
+        case .wallet:
+            return KeyAppAnalyticsEvent.mainWallet
+        case .history:
+            return KeyAppAnalyticsEvent.mainHistory
+        case .settings:
+            return KeyAppAnalyticsEvent.mainSettings
+        case .invest:
+            // FIXME: OMG! this is how we check for swap tab :facepalm:
+            return !available(.investSolendFeature) ? KeyAppAnalyticsEvent.mainSwap : nil
+        default:
+            return nil
         }
     }
 }

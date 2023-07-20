@@ -1,10 +1,3 @@
-//
-//  ReceiveFundsViaLinkViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 23.03.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -12,6 +5,7 @@ import SolanaSwift
 import Send
 import Resolver
 import FeeRelayerSwift
+import UIKit
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
@@ -113,7 +107,10 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .compactMap {$0}
-            .filter { $0.isConfirmedOrError }
+//            .filter { $0.isConfirmedOrError } // numberOfConfirmation is greater than 0
+            .filter {
+                $0.status.isSent // numberOfConfirmation is greater than OR EQUAL 0, increase the speed by returning success status right after it is sent
+            }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
