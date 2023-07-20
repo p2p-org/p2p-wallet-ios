@@ -343,7 +343,7 @@ private extension TabItem {
     var image: UIImage {
         switch self {
         case .wallet:
-            return .tabBarSelectedWallet
+            return .tabBarWallet
         case .crypto:
             return .tabBarCrypto
         case .send:
