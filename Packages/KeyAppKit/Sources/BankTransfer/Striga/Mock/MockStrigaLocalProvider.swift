@@ -88,6 +88,14 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         fatalError()
     }
 
+    public func getCachedWithdrawalInfo() async -> StrigaWithdrawalInfo? {
+        fatalError()
+    }
+
+    public func save(withdrawalInfo: StrigaWithdrawalInfo) async throws {
+        fatalError()
+    }
+
     public func clear() async {
         self.cachedRegistrationData = nil
         self.useCase = .unregisteredUser

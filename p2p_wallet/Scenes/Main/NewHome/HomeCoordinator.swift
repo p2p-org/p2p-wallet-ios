@@ -98,7 +98,6 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }

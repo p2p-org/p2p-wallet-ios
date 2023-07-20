@@ -3,7 +3,7 @@ import KeyAppUI
 import CountriesAPI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias Cell = StrigaRegistrationCell
+fileprivate typealias Cell = StrigaFormCell
 fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationFirstStepView: View {

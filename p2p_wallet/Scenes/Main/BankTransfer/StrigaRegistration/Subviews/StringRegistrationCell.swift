@@ -1,19 +1,19 @@
 import SwiftUI
 import KeyAppUI
 
-enum StrigaRegistrationTextFieldStatus: Equatable {
+enum StrigaFormTextFieldStatus: Equatable {
     case valid
     case invalid(error: String)
 }
 
-struct StrigaRegistrationCell<Content: View>: View {
+struct StrigaFormCell<Content: View>: View {
     let title: String
-    let status: StrigaRegistrationTextFieldStatus
+    let status: StrigaFormTextFieldStatus
     @ViewBuilder private var content: () -> Content
 
     init(
         title: String,
-        status: StrigaRegistrationTextFieldStatus? = .valid,
+        status: StrigaFormTextFieldStatus? = .valid,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title

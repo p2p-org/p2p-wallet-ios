@@ -2,7 +2,7 @@ import SwiftUI
 import KeyAppUI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias Cell = StrigaRegistrationCell
+fileprivate typealias Cell = StrigaFormCell
 fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationSecondStepView: View {
