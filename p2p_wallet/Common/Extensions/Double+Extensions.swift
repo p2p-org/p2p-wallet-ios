@@ -120,6 +120,23 @@ extension Double {
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
     }
+    
+    public func formattedForWallet() -> String {
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        
+        if abs(self) >= 1000000 {
+            formatter.multiplier = 0.000001
+            formatter.positiveSuffix = "M"
+        } else if abs(self) >= 1000 {
+            formatter.multiplier = 0.001
+            formatter.positiveSuffix = "k"
+        }
+        
+        return formatter.string(from: self as NSNumber) ?? "0"
+    }
 
     public func fixedDecimal(_ maxDecimal: Int, minDecimal: Int = 0) -> String {
         if maxDecimal <= 0 { return "\(maxDecimal)" }

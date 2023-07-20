@@ -5,6 +5,7 @@ import NameService
 import Resolver
 import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
 import UIKit
 
 final class TabBarViewModel {
@@ -21,6 +22,7 @@ final class TabBarViewModel {
     
     @Injected private var userActionService: UserActionService
     @Injected private var ethereumAccountsService: EthereumAccountsService
+    @Injected private var solanaAccountsService: SolanaAccountsService
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
@@ -156,5 +158,15 @@ extension TabBarViewModel {
             return !transferAccounts.isEmpty
         }
         .eraseToAnyPublisher()
+    }
+    
+    var walletBalancePublisher: AnyPublisher<String, Never> {
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
+                return "\(Defaults.fiat.symbol)\(equityValue.formattedForWallet())"
+            }
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 }
