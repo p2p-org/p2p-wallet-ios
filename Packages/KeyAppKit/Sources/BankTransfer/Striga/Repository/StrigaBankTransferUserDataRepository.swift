@@ -422,6 +422,9 @@ private extension UserWallet {
 }
 
 extension StrigaBankTransferUserDataRepository {
+
+    // MARK: - Withdrawal
+
     public func withdrawalInfo() async throws -> WithdrawalInfo? {
         await localProvider.getCachedWithdrawalInfo()// ??
         /// GetAccountStatement here

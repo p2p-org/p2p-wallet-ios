@@ -169,9 +169,8 @@ extension BankTransferServiceImpl {
         )
     }
     
-    public func withdrawalInfo() async throws -> Provider.WithdrawalInfo? {
+    public func getWithdrawalInfo() async throws -> Provider.WithdrawalInfo? {
         try await repository.withdrawalInfo()
-    
     }
 
     public func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {
