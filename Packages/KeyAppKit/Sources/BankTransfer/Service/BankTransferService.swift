@@ -24,8 +24,7 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
     
     func getKYCToken() async throws -> String
 
-    // WithdrowalProvider
-    func withdrawalInfo() async throws -> WithdrawalInfo?
+    func getWithdrawalInfo() async throws -> WithdrawalInfo?
     func saveWithdrawalInfo(info: WithdrawalInfo) async throws
 }
 

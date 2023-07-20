@@ -100,7 +100,6 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
         case account
         case whitelisted
         case withdrawalInfo
-    
     }
 
     private func cacheFileFor(_ name: CacheFileName) -> URL {
