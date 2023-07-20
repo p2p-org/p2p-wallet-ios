@@ -316,6 +316,30 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: nil
         )
     }
+    
+    static func getAccountStatement(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        accountId: String,
+        startDate: Date,
+        endDate: Date,
+        page: Int
+    ) throws -> Self {
+        try StrigaEndpoint(
+            baseURL: baseURL,
+            path: "/wallets/get/account/statement",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": .init(userId),
+                "accountId": .init(accountId),
+                "startDate": .init(startDate.millisecondsSince1970),
+                "endDate": .init(endDate.millisecondsSince1970),
+                "page": .init(page)
+            ] as [String: KeyAppNetworking.AnyEncodable]
+        )
+    }
 }
 
 extension KeyPair {

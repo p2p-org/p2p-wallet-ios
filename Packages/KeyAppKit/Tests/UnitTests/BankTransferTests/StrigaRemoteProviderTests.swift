@@ -515,6 +515,49 @@ final class StrigaRemoteProviderTests: XCTestCase {
             XCTAssertEqual((error as NSError).code, NSURLErrorTimedOut)
         }
     }
+    
+    func testGetAccountStatement_SuccessfulEmptyResponse() async throws {
+        // Arrange
+        let mockData = """
+            {"transactions":[],"count":0,"total":0}
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        let result = try await provider.getAccountStatement(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            accountId: "4dc6ecb29d74198e9e507f8025cad011",
+            startDate: Date(timeIntervalSince1970: 1687564800),
+            endDate: Date(),
+            page: 1
+        )
+
+        // Assert
+        XCTAssertEqual(result.transactions.isEmpty, true)
+    }
+    
+    func testGetAccountStatement_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {"transactions":[{"id":"af9d7fa5-4676-4190-ada1-06615c018f99","accountId":"d23cd18146112c1547be09a11ec2b7fb","syncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","sourceSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","destinationSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","debit":"5000","timestamp":"2023-07-20T13:54:36.826Z","txType":"EXCHANGE_DEBIT","txSubType":"CURRENCY_EXCHANGE_PENDING","memo":"Swap 5000 EUR to USDC","memoPayer":"Simulate Payin","exchangeRate":"1","balanceBefore":{"amount":"5000","currency":"cents"},"balanceAfter":{"amount":"0","currency":"cents"}},{"id":"a25e0dd1-8f4f-441d-a671-2f7d1e9738e6","accountId":"d23cd18146112c1547be09a11ec2b7fb","syncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","sourceSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","credit":"5000","timestamp":"2023-07-20T13:54:36.321Z","txType":"SEPA_PAYIN_COMPLETED","memo":"Simulate Payin","exchangeRate":"1","balanceBefore":{"amount":"0","currency":"cents"},"balanceAfter":{"amount":"5000","currency":"cents"},"bankingTransactionId":"a25e0dd1-8f4f-441d-a671-2f7d1e9738e6","bankingTransactionShortId":"20230720-MQ3R2H","bankingSenderBic":"BUKBGB22","bankingSenderIban":"GB29NWBK60161331926819","bankingSenderName":"Boris Johnson","bankingPaymentType":"SEPA","bankingSenderInformation":null,"bankingSenderRoutingCodes":[],"bankingSenderAccountNumber":null,"bankingTransactionDateTime":"2023-07-20T13:54:35.904836","bankingTransactionReference":"Simulate Payin"},{"id":"7c2075cb-7037-45f2-aeb6-dc1a61334f1a","accountId":"d23cd18146112c1547be09a11ec2b7fb","syncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","sourceSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","destinationSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","debit":"1000","timestamp":"2023-07-20T13:54:21.603Z","txType":"EXCHANGE_DEBIT","txSubType":"CURRENCY_EXCHANGE_PENDING","memo":"Swap 1000 EUR to USDC","memoPayer":"Simulate Payin","exchangeRate":"1","balanceBefore":{"amount":"1000","currency":"cents"},"balanceAfter":{"amount":"0","currency":"cents"}},{"id":"5c29131d-186e-47ad-a9c2-252368fc88ea","accountId":"d23cd18146112c1547be09a11ec2b7fb","syncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","sourceSyncedOwnerId":"54dd6616-f959-41b6-9d96-6d9fddaa3473","credit":"1000","timestamp":"2023-07-20T13:54:20.988Z","txType":"SEPA_PAYIN_COMPLETED","memo":"Simulate Payin","exchangeRate":"1","balanceBefore":{"amount":"0","currency":"cents"},"balanceAfter":{"amount":"1000","currency":"cents"},"bankingTransactionId":"5c29131d-186e-47ad-a9c2-252368fc88ea","bankingTransactionShortId":"20230720-RAF998","bankingSenderBic":"BUKBGB22","bankingSenderIban":"GB29NWBK60161331926819","bankingSenderName":"Boris Johnson","bankingPaymentType":"SEPA","bankingSenderInformation":null,"bankingSenderRoutingCodes":[],"bankingSenderAccountNumber":null,"bankingTransactionDateTime":"2023-07-20T13:54:19.754214","bankingTransactionReference":"Simulate Payin"}],"count":4,"total":4}
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        let result = try await provider.getAccountStatement(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            accountId: "4dc6ecb29d74198e9e507f8025cad011",
+            startDate: Date(timeIntervalSince1970: 1687564800),
+            endDate: Date(),
+            page: 1
+        )
+        debugPrint(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" }))
+        // Assert
+        XCTAssertEqual(result.transactions.isEmpty, false)
+        XCTAssertEqual(result.transactions.contains(where: { $0.txType == "SEPA_PAYOUT_COMPLETED" }), false)
+        XCTAssertEqual(result.transactions.contains(where: { $0.txType == "SEPA_PAYOUT_INITIATED" }), false)
+        XCTAssertEqual(result.transactions.contains(where: { $0.txType == "SEPA_PAYIN_COMPLETED" }), true)
+        XCTAssertNotNil(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" })?.bankingSenderIban)
+        XCTAssertNotNil(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" })?.bankingSenderBic)
+    }
 
     // MARK: - Helper Methods
     

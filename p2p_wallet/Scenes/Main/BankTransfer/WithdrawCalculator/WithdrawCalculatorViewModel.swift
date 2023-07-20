@@ -23,7 +23,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     let allButtonPressed = PassthroughSubject<Void, Never>()
     let openBankTransfer = PassthroughSubject<Void, Never>()
     let openWithdraw = PassthroughSubject<StrigaWithdrawalInfo, Never>()
-    let proceedBankTransfer = PassthroughSubject<Void, Never>()
+    let proceedWithdraw = PassthroughSubject<Void, Never>()
 
     @Published var actionData = WithdrawCalculatorAction.zero
     @Published var isLoading = false
@@ -160,34 +160,35 @@ private extension WithdrawCalculatorViewModel {
             .withLatestFrom(bankTransferService.value.state)
             .sinkAsync { [weak self] state in
                 guard let self else { return }
-                self.openWithdraw.send(StrigaWithdrawalInfo(IBAN: "4560001 5001 5800 1234 0000 11", BIC: "TRONLOLIPOPXXX", receiver: "Lord Voldemort"))
-//                if state.value.kycStatus != .approved {
-//                    self.openBankTransfer.send()
-//                } else if state.value.isIBANNotReady {
-//                    self.isLoading = true
-//                    await self.bankTransferService.value.reload()
-//                    self.proceedBankTransfer.send()
-//                }
-                // todo add get statement request
+                if state.value.kycStatus != .approved {
+                    self.openBankTransfer.send()
+                } else if state.value.isIBANNotReady {
+                    self.isLoading = true
+                    await self.bankTransferService.value.reload()
+                    self.isLoading = false
+                    self.proceedWithdraw.send()
+                } else {
+                    self.proceedWithdraw.send()
+                }
             }
             .store(in: &subscriptions)
 
-        proceedBankTransfer
+        proceedWithdraw
             .withLatestFrom(bankTransferService.value.state)
             .sinkAsync { [weak self] state in
                 guard let self else { return }
                 if state.value.isIBANNotReady {
                     self.notificationService.showDefaultErrorNotification()
                 } else {
-                    // iban and bic
-                    // todo add get statement request
+                    let info = await self.getWithdrawalInfo()
+                    self.openWithdraw.send(info)
                 }
             }
             .store(in: &subscriptions)
 
         $arePricesLoading
             .filter { $0 }
-            .map { _ in return WithdrawCalculatorAction(isEnabled: false, title: L10n.gettingRates) }
+            .map { _ in WithdrawCalculatorAction(isEnabled: false, title: L10n.gettingRates) }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.actionData, on: self)
             .store(in: &subscriptions)
@@ -278,6 +279,15 @@ private extension WithdrawCalculatorViewModel {
 
     func cancelUpdate() {
         exchangeRatesTimer?.invalidate()
+    }
+
+    func getWithdrawalInfo() async -> StrigaWithdrawalInfo {
+        self.isLoading = true
+        let info = try? await self.bankTransferService.value.getWithdrawalInfo()
+        let regData = try? await self.bankTransferService.value.getRegistrationData()
+        let receiver = [regData?.firstName, regData?.lastName].compactMap { $0 }.joined(separator: " ")
+        self.isLoading = false
+        return info ?? StrigaWithdrawalInfo(receiver: receiver)
     }
 }
 

@@ -421,17 +421,44 @@ private extension UserWallet {
     }
 }
 
-extension StrigaBankTransferUserDataRepository {
-
+public extension StrigaBankTransferUserDataRepository {
     // MARK: - Withdrawal
 
-    public func withdrawalInfo() async throws -> WithdrawalInfo? {
-        await localProvider.getCachedWithdrawalInfo()// ??
-        /// GetAccountStatement here
-//        WithdrawalInfo(IBAN: "IBAN", BIC: "BIC", receiver: "Receiver")
+    func getWithdrawalInfo(userId: String) async throws -> StrigaWithdrawalInfo? {
+        if let cached = await localProvider.getCachedWithdrawalInfo() {
+            return cached
+        } else {
+            guard let accountId = await localProvider.getCachedUserData()?.wallet?.accounts.eur?.accountID else {
+                throw StrigaProviderError.missingAccountId
+            }
+
+            let transactions = try await remoteProvider.getAccountStatement(
+                userId: userId,
+                accountId: accountId,
+                startDate: Constants.startDate,
+                endDate: Date(),
+                page: 1
+            ).transactions
+            let completedTransaction = transactions.first(where: { $0.txType == Constants.sepaPayoutCompleted })
+            let initialTransaction = transactions
+                .first(where: { $0.id == completedTransaction?.id && $0.txType == Constants.sepaPayoutInitiated }) ??
+                transactions.first(where: { $0.txType == Constants.sepaPayinCompleted })
+
+            let regData = await localProvider.getCachedRegistrationData()
+
+            let info = WithdrawalInfo(
+                IBAN: initialTransaction?.bankingSenderIban,
+                BIC: initialTransaction?.bankingSenderBic,
+                receiver: [regData?.firstName, regData?.lastName].compactMap { $0 }.joined(separator: " ")
+            )
+            if info.IBAN != nil && info.BIC != nil {
+                try? await save(info)
+            }
+            return info
+        }
     }
-    
-    public func save(_ info: StrigaWithdrawalInfo) async throws {
+
+    func save(_ info: StrigaWithdrawalInfo) async throws {
         try await localProvider.save(
             withdrawalInfo: .init(
                 IBAN: info.IBAN,
@@ -440,4 +467,11 @@ extension StrigaBankTransferUserDataRepository {
             )
         )
     }
+}
+
+private enum Constants {
+    static let startDate = Date(timeIntervalSince1970: 1687564800) // 24.06.2023
+    static let sepaPayoutCompleted = "SEPA_PAYOUT_COMPLETED"
+    static let sepaPayoutInitiated = "SEPA_PAYOUT_INITIATED"
+    static let sepaPayinCompleted = "SEPA_PAYIN_COMPLETED"
 }
