@@ -5,9 +5,13 @@ import Resolver
 
 class WithdrawViewModel: BaseViewModel, ObservableObject {
     typealias FieldStatus = StrigaFormTextFieldStatus
-    typealias Provider = any WithdrawProvider
 
+    // MARK: -
+
+    @Injected var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
     @Injected var notificationService: NotificationService
+
+    // MARK: -
 
     @Published var IBAN: String = ""
     @Published var BIC: String = ""
@@ -23,13 +27,9 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         actionCompletedSubject.eraseToAnyPublisher()
     }
 
-    var provider: Provider
     init(
-        provider: Provider,
-        withdrawalInfo: any WithdrawalInfoType
+        withdrawalInfo: StrigaWithdrawalInfo
     ) {
-        self.provider = provider
-
         super.init()
 
         self.IBAN = withdrawalInfo.IBAN ?? ""
@@ -55,7 +55,6 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             .map { self.formatIBAN($0) }
             .assignWeak(to: \.IBAN, on: self)
             .store(in: &subscriptions)
-
     }
 
     func action() async {
@@ -70,10 +69,12 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         }
         // Save to local
         do {
-            try await provider.save(
-                IBAN: IBAN.filterIBAN(),
-                BIC: BIC,
-                receiver: receiver
+            try await bankTransferService.value.saveWithdrawalInfo(info:
+                .init(
+                    IBAN: IBAN.filterIBAN(),
+                    BIC: BIC,
+                    receiver: receiver
+                )
             )
         } catch {
             notificationService.showDefaultErrorNotification()

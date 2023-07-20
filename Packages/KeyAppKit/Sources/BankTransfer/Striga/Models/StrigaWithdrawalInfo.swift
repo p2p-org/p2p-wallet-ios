@@ -1,6 +1,6 @@
 import Foundation
 
-public struct StrigaWithdrawalInfo: WithdrawalInfoType, Codable {
+public struct StrigaWithdrawalInfo: Codable {
     public var IBAN: String?
     public var BIC: String?
     public var receiver: String

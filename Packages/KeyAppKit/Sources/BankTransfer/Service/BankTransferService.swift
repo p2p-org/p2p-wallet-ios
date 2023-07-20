@@ -3,6 +3,7 @@ import KeyAppKitCore
 
 public protocol BankTransferService<Provider> where Provider: BankTransferUserDataRepository {
     associatedtype Provider
+    typealias WithdrawalInfo = Provider.WithdrawalInfo
 
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
     
@@ -22,6 +23,10 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
+
+    // WithdrowalProvider
+    func withdrawalInfo() async throws -> WithdrawalInfo?
+    func saveWithdrawalInfo(info: WithdrawalInfo) async throws
 }
 
 public class AnyBankTransferService<Provider: BankTransferUserDataRepository> {

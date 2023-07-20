@@ -1,4 +1,6 @@
 public protocol BankTransferUserDataRepository {
+    associatedtype WithdrawalInfo
+
     func getUserId() async -> String?
 
     func getKYCStatus() async throws -> StrigaKYC
@@ -17,4 +19,7 @@ public protocol BankTransferUserDataRepository {
     func clearCache() async
 
     func getWallet(userId: String) async throws -> UserWallet?
+    
+    func withdrawalInfo() async throws -> WithdrawalInfo?
+    func save(_ info: WithdrawalInfo) async throws
 }

@@ -26,7 +26,6 @@ enum HomeNavigation: Equatable {
     case topUpCoin(Token)
     case topUp // Top up via bank transfer, bank card or crypto receive
     case bankTransfer // Only bank transfer
-    case withdraw(StrigaWithdrawalInfo)
     // Error
     case error(show: Bool)
 }
@@ -98,7 +97,6 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -300,36 +298,6 @@ final class HomeCoordinator: Coordinator<Void> {
                 })
             }
             return Just(())
-                .eraseToAnyPublisher()
-        case .withdraw(let withdrawalInfo):
-            return coordinate(to:
-                WithdrawCoordinator(
-                    navigationController: self.navigationController,
-                    withdrawalInfo: withdrawalInfo
-                )
-            )
-                .flatMap({ result in
-                    switch result {
-                    case .verified:
-                        return self.coordinate(to:
-                            BankTransferClaimCoordinator(
-                                navigationController: self.navigationController,
-                                transaction: StrigaClaimTransaction(
-                                    challengeId: "1",
-                                    token: .usdc,
-                                    amount: 120,
-                                    feeAmount: FeeAmount(
-                                        transaction: 0,
-                                        accountBalances: 0),
-                                    fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
-                                    receivingAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH"
-                                )
-                            )).map { _ in Void() }
-                    case .canceled:
-                        fatalError()
-//                        return Just(()).eraseToAnyPublisher()
-                    }
-                })
                 .eraseToAnyPublisher()
         }
     }

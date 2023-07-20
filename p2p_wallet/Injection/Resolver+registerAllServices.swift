@@ -424,68 +424,6 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.session)
 
-        register {
-            StrigaBankTransferUserDataRepository(
-                localProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaLocalProvider(
-                        useCase: .unregisteredUser,
-                        hasCachedInput: true
-                    ) :
-                    StrigaLocalProviderImpl(),
-                remoteProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaRemoteProvider(
-                        useCase: .unregisteredUser,
-                        mockUserId: "user-id",
-                        mockKYCToken: "kyc-token"
-                    ) :
-                    StrigaRemoteProviderImpl(
-                        baseURL: GlobalAppState.shared.strigaEndpoint,
-                        solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
-                    ),
-                metadataProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaMetadataProvider(
-                        useCase: .unregisteredUser,
-                        mockUserId: "user-id"
-                    ) :
-                    Resolver.resolve(StrigaMetadataProvider.self),
-                commonInfoProvider: CommonInfoLocalProviderImpl(),
-                solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
-            )
-        }
-        .implements(BankTransferUserDataRepository.self)
-        .scope(.session)
-
-        register {
-            StrigaBankTransferUserDataRepository(
-                localProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaLocalProvider(
-                        useCase: .unregisteredUser,
-                        hasCachedInput: true
-                    ) :
-                    StrigaLocalProviderImpl(),
-                remoteProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaRemoteProvider(
-                        useCase: .unregisteredUser,
-                        mockUserId: "user-id",
-                        mockKYCToken: "kyc-token"
-                    ) :
-                    StrigaRemoteProviderImpl(
-                        baseURL: GlobalAppState.shared.strigaEndpoint,
-                        solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
-                    ),
-                metadataProvider: GlobalAppState.shared.strigaMockingEnabled ?
-                    MockStrigaMetadataProvider(
-                        useCase: .unregisteredUser,
-                        mockUserId: "user-id"
-                    ) :
-                    Resolver.resolve(StrigaMetadataProvider.self),
-                commonInfoProvider: CommonInfoLocalProviderImpl(),
-                solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
-            )
-        }
-        .implements((any WithdrawProvider).self)
-        .scope(.session)
-
         register { RelayServiceImpl(
             contextManager: resolve(),
             orcaSwap: resolve(),
@@ -673,7 +611,32 @@ extension Resolver: ResolverRegistering {
         
         register {
             BankTransferServiceImpl<StrigaBankTransferUserDataRepository>(
-                repository: resolve()
+                repository: StrigaBankTransferUserDataRepository(
+                    localProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaLocalProvider(
+                            useCase: .unregisteredUser,
+                            hasCachedInput: true
+                        ) :
+                        StrigaLocalProviderImpl(),
+                    remoteProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaRemoteProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id",
+                            mockKYCToken: "kyc-token"
+                        ) :
+                        StrigaRemoteProviderImpl(
+                            baseURL: GlobalAppState.shared.strigaEndpoint,
+                            solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
+                        ),
+                    metadataProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaMetadataProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id"
+                        ) :
+                        Resolver.resolve(StrigaMetadataProvider.self),
+                    commonInfoProvider: CommonInfoLocalProviderImpl(),
+                    solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
+                )
             )
         }
         .implements((any BankTransferService).self)

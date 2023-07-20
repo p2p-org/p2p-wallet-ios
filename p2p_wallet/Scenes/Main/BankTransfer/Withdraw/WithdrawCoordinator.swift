@@ -8,12 +8,12 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 
     let navigationController: UINavigationController
     let strategy: Strategy
-    let withdrawalInfo: any WithdrawalInfoType
+    let withdrawalInfo: StrigaWithdrawalInfo
 
     init(
         navigationController: UINavigationController,
         strategy: Strategy = .gathering,
-        withdrawalInfo: any WithdrawalInfoType
+        withdrawalInfo: StrigaWithdrawalInfo
     ) {
         self.navigationController = navigationController
         self.strategy = strategy
@@ -23,7 +23,6 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 
     override func start() -> AnyPublisher<WithdrawCoordinator.Result, Never> {
         let viewModel = WithdrawViewModel(
-            provider: Resolver.resolve(),
             withdrawalInfo: StrigaWithdrawalInfo(
                 IBAN: withdrawalInfo.BIC,
                 BIC: withdrawalInfo.IBAN,

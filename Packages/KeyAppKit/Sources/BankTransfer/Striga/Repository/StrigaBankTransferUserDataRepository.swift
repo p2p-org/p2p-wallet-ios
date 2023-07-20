@@ -7,7 +7,7 @@ import KeyAppKitCore
 import KeyAppKitLogger
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
-
+    public typealias WithdrawalInfo = StrigaWithdrawalInfo
     // MARK: - Properties
 
     private let localProvider: StrigaLocalProvider
@@ -413,21 +413,19 @@ private extension UserWallet {
     }
 }
 
-extension StrigaBankTransferUserDataRepository: WithdrawProvider {
-    public typealias WithdrawalInfo = StrigaWithdrawalInfo
-
+extension StrigaBankTransferUserDataRepository {
     public func withdrawalInfo() async throws -> WithdrawalInfo? {
         await localProvider.getCachedWithdrawalInfo()// ??
         /// GetAccountStatement here
 //        WithdrawalInfo(IBAN: "IBAN", BIC: "BIC", receiver: "Receiver")
     }
-
-    public func save(IBAN: String, BIC: String, receiver: String) async throws {
+    
+    public func save(_ info: StrigaWithdrawalInfo) async throws {
         try await localProvider.save(
             withdrawalInfo: .init(
-                IBAN: IBAN,
-                BIC: BIC,
-                receiver: receiver
+                IBAN: info.IBAN,
+                BIC: info.BIC,
+                receiver: info.receiver
             )
         )
     }
