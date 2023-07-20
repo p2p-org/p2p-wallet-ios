@@ -71,7 +71,7 @@ private extension WithdrawCalculatorViewModel {
     func bindProperties() {
         Publishers.CombineLatest(
             $fromAmount.eraseToAnyPublisher(),
-            $exchangeRates.eraseToAnyPublisher()
+            $exchangeRates.eraseToAnyPublisher() // Calculate only toAmount with newRates and not visa versa
         )
         .sink { [weak self] amount, rates in
             guard let self, let rates else { return }
@@ -84,20 +84,17 @@ private extension WithdrawCalculatorViewModel {
         }
         .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
-            $toAmount.eraseToAnyPublisher(),
-            $exchangeRates.eraseToAnyPublisher()
-        )
-        .sink { [weak self] amount, rates in
-            guard let self, let rates else { return }
-            var newFromAmount: Double?
-            if let amount {
-                newFromAmount = amount / Double(rates.sell)
+        $toAmount
+            .sink { [weak self] amount in
+                guard let self, let rates = self.exchangeRates else { return }
+                var newFromAmount: Double?
+                if let amount {
+                    newFromAmount = amount / Double(rates.sell)
+                }
+                guard self.fromAmount != newFromAmount else { return }
+                self.fromAmount = newFromAmount
             }
-            guard self.fromAmount != newFromAmount else { return }
-            self.fromAmount = newFromAmount
-        }
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
 
         // Validation
         Publishers.CombineLatest3(
