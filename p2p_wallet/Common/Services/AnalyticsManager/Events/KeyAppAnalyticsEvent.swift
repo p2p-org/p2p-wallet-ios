@@ -2,7 +2,6 @@ import AnalyticsManager
 import Foundation
 
 enum KeyAppAnalyticsEvent: AnalyticsEvent {
-
     // MARK: - Create wallet
 
     case createPhoneClickButton
@@ -17,7 +16,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
     case recoveryDerivableAccountsOpen
-    
+
     // MARK: - Tabbar
 
     case mainSwap
@@ -42,6 +41,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case mainScreenHiddenTokens
 
     // MARK: - Tokens
+
     // Action panel
     case tokenScreenBuyBar
     case tokenScreenReceiveBar
@@ -161,7 +161,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case settingsBackupOpen
     case settingsLanguageSelected(language: String)
     case settingsSecuritySelected(faceId: Bool)
-    
+
     case settingsSupportClick
     case settingsRecoveryClick
     case settingsPinClick
@@ -234,7 +234,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case restoreSeed
     case onboardingMerged
     case login
-    
+
     // PhoneScreen
     case creationLoginScreen
 
@@ -259,8 +259,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellAmountNext
     case sellMoonpayOpenNotification
     case sellMoonpay
-    
+
     // MARK: - History
+
     case historyOpened(sentViaLink: Bool)
     case historySendClicked(status: String)
 
@@ -275,9 +276,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case historySendClickTransaction
     case historySendClickCopyTransaction
     case historySendClickShareTransaction
-    
+
     // MARK: - Claim
-    
+
     case claimStartScreenOpen
     case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
     case claimClickHide
@@ -289,4 +290,18 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Transaction
 
     case transactionBlockchainLinkClick
+
+    // MARK: - Client error
+
+    case bridgesClientFrontendError(errorValue: String)
+    case bridgesClientUserError(errorValue: String)
+
+    case swapClientFrontendError(errorValue: String)
+    case swapClientUserError(errorValue: String)
+
+    case onboardingClientFrontendError(errorValue: String)
+    case onboardingClientUserError(errorValue: String)
+
+    case sendClientFrontendError(errorValue: String)
+    case sendClientUserError(errorValue: String)
 }
