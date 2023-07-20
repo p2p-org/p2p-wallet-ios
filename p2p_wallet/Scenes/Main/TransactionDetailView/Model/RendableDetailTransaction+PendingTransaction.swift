@@ -1,17 +1,10 @@
-//
-//  RendableDetailTransaction+PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
 import SolanaPricesAPIs
 import Wormhole
 
-struct RendableDetailPendingTransaction: RenderableTransactionDetail {
+struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
 
     let priceService: PricesService
@@ -115,6 +108,16 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 return .icon(.transactionReceive)
             }
 
+        case let transaction as StrigaWithdrawTransactionType:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionSend)
+            }
+
 //        case let transaction as WormholeClaimTransaction:
 //            guard let url = transaction.token.logo else {
 //                return .icon(.planet)
@@ -162,6 +165,12 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
         case let transaction as StrigaClaimTransactionType:
             if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
                 return .positive("+\(amountInFiat)")
+            }
+            return .unchanged("")
+            
+        case let transaction as StrigaWithdrawTransactionType:
+            if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
+                return .negative("-\(amountInFiat)")
             }
             return .unchanged("")
 
@@ -340,6 +349,26 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             )
             
+        case let transaction as StrigaWithdrawTransactionType:
+            result.append(
+                .init(
+                    title: L10n.iban,
+                    values: [
+                        .init(text: transaction.IBAN),
+                    ],
+                    copyableValue: transaction.IBAN
+                )
+            )
+            result.append(
+                .init(
+                    title: L10n.bic,
+                    values: [
+                        .init(text: transaction.BIC),
+                    ],
+                    copyableValue: transaction.BIC
+                )
+            )
+
         default:
             break
         }

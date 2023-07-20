@@ -183,6 +183,17 @@ extension PendingTransaction {
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
+
+        case let transaction as StrigaWithdrawTransactionType:
+            value = StrigaWithdrawInfo(
+                amount: transaction.amount,
+                token: transaction.token,
+                IBAN: transaction.IBAN,
+                BIC: transaction.BIC
+            )
+            amountInFiat = transaction.amountInFiat
+            fee = transaction.feeAmount
+
         default:
             return nil
         }

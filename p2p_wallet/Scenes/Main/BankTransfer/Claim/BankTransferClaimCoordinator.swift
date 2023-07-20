@@ -22,16 +22,15 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     // MARK: - Properties
 
     private let navigationController: UINavigationController
-    private let transaction: StrigaClaimTransactionType
-    
+    private let transaction: any RawTransactionType
+
     private let subject = PassthroughSubject<BankTransferClaimCoordinatorResult, Never>()
-    
 
     // MARK: - Initialization
 
     init(
         navigationController: UINavigationController,
-        transaction: StrigaClaimTransactionType
+        transaction: any RawTransactionType
     ) {
         self.navigationController = navigationController
         self.transaction = transaction
@@ -45,11 +44,11 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
             .prefix(1)
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] state in
-                guard let phone = state.value.mobileNumber else {
+                guard let phone = state.value.mobileNumber, let transaction = transaction as? any StrigaConfirmableTransactionType else {
                     return Just(StrigaOTPCoordinatorResult.canceled)
                         .eraseToAnyPublisher()
                 }
-                
+
                 return coordinate(
                     to: StrigaOTPCoordinator(
                         viewController: navigationController,
@@ -99,16 +98,16 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         rawTransaction: transaction,
                         status: .sending
                     )
-                    
+
                     // open detail
                     openDetails(pendingTransaction: pendingTransaction)
                         .sink { [weak self] _ in
                             // TODO: - Fix logic
-                            guard let self else { return }
+//                            guard let self else { return }
                             //            self.viewModel.logTransactionProgressDone()
-                            
-                            navigationController.popViewController(animated: true)
-                            self.subject.send(.completed)
+
+                            self?.navigationController.popToRootViewController(animated: true)
+                            self?.subject.send(.completed)
 //                            self.result.send(())
 //                            if self.params.dismissAfterCompletion {
 //                                self.navigationController.popViewController(animated: true)
@@ -126,13 +125,13 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                 }
             }
             .store(in: &subscriptions)
-        
+
         return subject.prefix(1).eraseToAnyPublisher()
     }
-    
+
     private func openDetails(pendingTransaction: PendingTransaction) -> AnyPublisher<TransactionDetailStatus, Never> {
         let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
-        
+
 //        self.viewModel.logTransactionProgressOpened()
         return coordinate(to: TransactionDetailCoordinator(
             viewModel: viewModel,
