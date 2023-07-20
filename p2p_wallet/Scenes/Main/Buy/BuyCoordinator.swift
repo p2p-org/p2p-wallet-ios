@@ -13,6 +13,7 @@ final class BuyCoordinator: Coordinator<Void> {
     private let context: Context
     private var shouldPush = true
     private var defaultToken: Token?
+    private let defaultPaymentType: PaymentType?
     private let targetTokenSymbol: String?
 
     private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
@@ -24,6 +25,7 @@ final class BuyCoordinator: Coordinator<Void> {
         defaultToken: Token? = nil,
         presentingViewController: UIViewController? = nil,
         shouldPush: Bool = true,
+        defaultPaymentType: PaymentType? = nil,
         targetTokenSymbol: String? = nil
     ) {
         self.navigationController = navigationController
@@ -31,12 +33,16 @@ final class BuyCoordinator: Coordinator<Void> {
         self.context = context
         self.shouldPush = shouldPush
         self.defaultToken = defaultToken
+        self.defaultPaymentType = defaultPaymentType
         self.targetTokenSymbol = targetTokenSymbol
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
+        if let defaultPaymentType = defaultPaymentType {
+            viewModel.selectedPayment = defaultPaymentType
+        }
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.title = L10n.buy
         viewController.hidesBottomBarWhenPushed = true

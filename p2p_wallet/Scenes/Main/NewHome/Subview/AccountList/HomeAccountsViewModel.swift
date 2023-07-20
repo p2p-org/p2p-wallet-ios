@@ -169,7 +169,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func actionClicked(_ action: HomeAction) {
-        
+        switch action {
+        case .addMoney:
+            navigation.send(.addMoney)
+        case .withdraw: break
+        }
     }
 
     func earn() {

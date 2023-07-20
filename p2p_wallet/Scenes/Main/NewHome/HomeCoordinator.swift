@@ -24,6 +24,9 @@ enum HomeNavigation: Equatable {
     case topUpCoin(Token)
     // Error
     case error(show: Bool)
+    
+    // Actions
+    case addMoney
 }
 
 final class HomeCoordinator: Coordinator<Void> {
@@ -277,6 +280,59 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             return Just(())
                 .eraseToAnyPublisher()
+            
+        case .addMoney:
+            coordinate(to: ActionsCoordinator(viewController: tabBarController))
+                .sink(receiveValue: { [weak self] result in
+                    switch result {
+                    case .cancel:
+                        break
+                    case let .action(type):
+                        self?.handleAction(type)
+                    }
+                })
+                .store(in: &subscriptions)
+            return Just(())
+                .eraseToAnyPublisher()
+        }
+    }
+    
+    private func handleAction(_ action: ActionsViewActionType) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+        
+        switch action {
+        case .bankTransfer:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome,
+                defaultPaymentType: .bank
+            )
+            coordinate(to: buyCoordinator)
+                .sink(receiveValue: {})
+                .store(in: &subscriptions)
+        case .bankCard:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome,
+                defaultPaymentType: .card
+            )
+            coordinate(to: buyCoordinator)
+                .sink(receiveValue: {})
+                .store(in: &subscriptions)
+        case .crypto:
+            if available(.ethAddressEnabled) {
+                let coordinator =
+                    SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            } else {
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            }
         }
     }
 
