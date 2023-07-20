@@ -42,7 +42,7 @@ public class PriceServiceImpl: PriceService {
 
     /// The timer synchronisation
     let timerPublisher: Timer.TimerPublisher = .init(interval: 60, runLoop: .main, mode: .default)
-    
+
     ///
     let triggerPublisher: PassthroughSubject<Void, Never> = .init()
 
@@ -215,18 +215,17 @@ public class PriceServiceImpl: PriceService {
     }
 
     public func clear() async throws {
-        database
+        try await database.clear()
     }
 }
 
 internal extension AnyToken {
-    // TODO: Wait backend fix for handling native token
     var addressPriceMapping: String {
         switch network {
         case .solana:
             switch primaryKey {
             case .native:
-                return SolanaToken.nativeSolana.address
+                return "native"
             case let .contract(address):
                 return address
             }
@@ -234,7 +233,7 @@ internal extension AnyToken {
         case .ethereum:
             switch primaryKey {
             case .native:
-                return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                return "native"
             case let .contract(address):
                 return address
             }
