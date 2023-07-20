@@ -8,12 +8,16 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 
     let navigationController: UINavigationController
     let strategy: Strategy
+    let withdrawalInfo: any WithdrawalInfoType
+
     init(
         navigationController: UINavigationController,
-        strategy: Strategy = .gathering
+        strategy: Strategy = .gathering,
+        withdrawalInfo: any WithdrawalInfoType
     ) {
         self.navigationController = navigationController
         self.strategy = strategy
+        self.withdrawalInfo = withdrawalInfo
         super.init()
     }
 
@@ -21,9 +25,9 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
         let viewModel = WithdrawViewModel(
             provider: Resolver.resolve(),
             withdrawalInfo: StrigaWithdrawalInfo(
-                IBAN: nil,
-                BIC: nil,
-                receiver: "Alexey Sidorov"
+                IBAN: withdrawalInfo.BIC,
+                BIC: withdrawalInfo.IBAN,
+                receiver: withdrawalInfo.receiver
             )
         )
         let view = WithdrawView(

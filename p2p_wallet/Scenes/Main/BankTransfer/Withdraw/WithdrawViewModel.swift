@@ -9,9 +9,9 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
 
     @Injected var notificationService: NotificationService
 
-    @Published var IBAN: String = "IBAN TextField"
-    @Published var BIC: String = "BIC TextField"
-    @Published var receiver: String = "Receiver TextField"
+    @Published var IBAN: String = ""
+    @Published var BIC: String = ""
+    @Published var receiver: String = ""
     @Published var actionTitle: String = "Withdraw"
     @Published var isDataValid = false
     @Published var fieldsStatuses = [WithdrawViewField: FieldStatus]()
@@ -26,7 +26,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     var provider: Provider
     init(
         provider: Provider,
-        withdrawalInfo: WithdrawalInfoType
+        withdrawalInfo: any WithdrawalInfoType
     ) {
         self.provider = provider
 

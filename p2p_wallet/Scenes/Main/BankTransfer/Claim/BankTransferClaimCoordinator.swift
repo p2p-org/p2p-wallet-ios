@@ -42,6 +42,8 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     override func start() -> AnyPublisher<BankTransferClaimCoordinatorResult, Never> {
         // Start OTP Coordinator
         bankTransferService.value.state
+            .prefix(1)
+            .receive(on: RunLoop.main)
             .flatMap { [unowned self] state in
                 guard let phone = state.value.mobileNumber else {
                     return Just(StrigaOTPCoordinatorResult.canceled)
@@ -56,13 +58,14 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                             guard let userId = await bankTransferService.value.repository.getUserId() else {
                                 throw BankTransferError.missingMetadata
                             }
-                            try await bankTransferService.value.repository
-                            .claimVerify(
-                                userId: userId,
-                                challengeId: transaction.challengeId,
-                                ip: getIPAddress(),
-                                verificationCode: otp
-                            )
+                            try? await Task.sleep(seconds: 1)
+//                            try await bankTransferService.value.repository
+//                            .claimVerify(
+//                                userId: userId,
+//                                challengeId: transaction.challengeId,
+//                                ip: getIPAddress(),
+//                                verificationCode: otp
+//                            )
                         },
                         resendHandler: { [unowned self] in
                             guard let userId = await bankTransferService.value.repository.getUserId() else {
