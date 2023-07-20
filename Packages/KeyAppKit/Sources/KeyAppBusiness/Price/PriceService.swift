@@ -13,7 +13,7 @@ import KeyAppKitCore
 import SolanaSwift
 
 /// Abstract class for getting exchange rate between token and fiat for any token.
-public protocol PriceService {
+public protocol PriceService: AnyObject {
     func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
     func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
 

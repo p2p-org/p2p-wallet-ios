@@ -27,9 +27,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     /// The stream of account by rpc call to node.
     let fetchedAccountsByRpc: AsyncValue<[Account]>
 
-    /// Requested token price base on final stream.
-    let priceStream: CurrentValueSubject<[SomeToken: TokenPrice?], Never> = .init([:])
-
     /// The final stream origin base on additional updating through socket.
     let accountsStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
@@ -117,31 +114,22 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .store(in: &subscriptions)
 
         /// Update price in case there are new accounts or changing in price from price service.
-        Publishers.CombineLatest(
-            // There is a new changes in accounts.
-            accountsStream
-                .filter { $0.status == .initializing || $0.status == .ready },
-            // There is a change in price service.
-            priceService
-                .onChangePublisher
-        )
-        .debounce(for: .seconds(0.15), scheduler: RunLoop.main)
-        .sink { [weak self] state, _ in
-            self?.fetchPrice(accounts: state.value, fiat: fiat)
-        }
-        .store(in: &subscriptions)
-
-        // Emit data to output
-        let accountsAggregator = SolanaAccountsAggregator()
-        Publishers
-            .CombineLatest(accountsStream, priceStream)
-            .map { state, prices in
-                var state = state
-                state.value = accountsAggregator.transform(input: (state.value, prices))
-                return state
+        accountsStream
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .map { [weak self] state in
+                self?.fetchPrice(for: state, fiat: fiat)
             }
+            .compactMap { $0 }
+            .switchToLatest()
             .sink { [weak outputSubject] state in
                 outputSubject?.send(state)
+            }
+            .store(in: &subscriptions)
+
+        priceService
+            .onChangePublisher
+            .sink { [weak accountsStream] in
+                accountsStream?.value.status = .ready
             }
             .store(in: &subscriptions)
 
@@ -158,18 +146,43 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         try await fetchedAccountsByRpc.fetch()?.value
     }
 
-    /// Fetch prices for current accounts.
-    internal func fetchPrice(accounts: [SolanaAccount], fiat: String) {
-        Task { [priceService, errorObservable, priceStream] in
-            do {
-                let prices = try await priceService.getPrices(
-                    tokens: accounts.map(\.token),
-                    fiat: fiat
-                )
+    internal func fetchPrice(
+        for state: AsyncValueState<[Account]>,
+        fiat: String
+    ) -> Future<AsyncValueState<[Account]>, Never> {
+        Future<AsyncValueState<[Account]>, Never> { [weak priceService, errorObservable] promise in
+            Task { [weak priceService, errorObservable] in
+                // Price service is unavailable
+                guard let priceService else {
+                    promise(.success(state))
+                    return
+                }
 
-                priceStream.send(prices)
-            } catch {
-                errorObservable.handleError(error)
+                var prices: [SomeToken: TokenPrice] = [:]
+                var caughtError: Error?
+
+                // Fetch price
+                do {
+                    prices = try await priceService.getPrices(
+                        tokens: state.value.map(\.token),
+                        fiat: fiat
+                    )
+                } catch {
+                    errorObservable.handleError(error)
+                    caughtError = error
+                }
+
+                // Aggregate data
+                let accountsAggregator = SolanaAccountsAggregator()
+                var state = state
+                state.value = accountsAggregator.transform(input: (state.value, prices))
+
+                // Assign error in case there is no previously error
+                if state.error == nil {
+                    state.error = caughtError
+                }
+
+                promise(Result.success(state))
             }
         }
     }
