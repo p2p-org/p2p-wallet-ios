@@ -63,7 +63,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         style = .active
         self.statusContext = statusContext
-        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+        rendableTransaction = RenderableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
 
         super.init()
 
@@ -71,7 +71,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
-                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
+                self.rendableTransaction = RenderableDetailPendingTransaction(trx: trx, priceService: priceService)
             }
             .store(in: &subscriptions)
     }

@@ -3,6 +3,10 @@ import Resolver
 import KeyAppBusiness
 import SolanaSwift
 
+protocol StrigaConfirmableTransactionType {
+    var challengeId: String { get }
+}
+
 /// Striga Claim trasaction type
 protocol StrigaClaimTransactionType: RawTransactionType {
     var challengeId: String { get }
@@ -23,7 +27,7 @@ extension StrigaClaimTransactionType {
 }
 
 /// Default implemetation of `StrigaClaimTransactionType`
-struct StrigaClaimTransaction: StrigaClaimTransactionType {
+struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTransactionType {
 
     // MARK: - Properties
 
@@ -51,28 +55,33 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType {
     }
 }
 
-protocol StrigaWithdrawTransactionType {
+protocol StrigaWithdrawTransactionType: RawTransactionType {
+    var token: Token { get }
     var IBAN: String { get }
     var BIC: String { get }
     var feeAmount: FeeAmount { get }
     var amount: Double { get }
 }
 
+extension StrigaWithdrawTransactionType {
+    var amountInFiat: Double? {
+        guard let value = Resolver.resolve(SolanaPriceService.self)
+            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
+        return value * amount
+    }
+}
+
 /// Default implemetation of `StrigaClaimTransactionType`
-struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType {
+struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmableTransactionType {
 
     // MARK: - Properties
-    var IBAN: String
-    
-    var BIC: String
-    
-    var amount: Double
 
+    var challengeId: String
+    var IBAN: String
+    var BIC: String
+    var amount: Double
     let token: Token = .usdc
     let feeAmount: FeeAmount
-    let fromAddress: String
-    let receivingAddress: String
-    
     var mainDescription: String {
         ""
     }

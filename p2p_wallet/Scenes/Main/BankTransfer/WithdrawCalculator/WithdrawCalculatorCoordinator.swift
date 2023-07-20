@@ -1,4 +1,5 @@
 import BankTransfer
+import Resolver
 import Combine
 import SolanaSwift
 import UIKit
@@ -36,30 +37,68 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
     }
 
     private func openWithdraw(model: StrigaWithdrawalInfo) {
-        coordinate(to: WithdrawCoordinator(navigationController: navigationController, withdrawalInfo: model))
-            .sink { result in
+        coordinate(to: WithdrawCoordinator(
+            navigationController: navigationController,
+            withdrawalInfo: model)
+        )
+            .handleEvents(receiveOutput: { [unowned self] result in
                 switch result {
                 case .verified:
-                    self.coordinate(to:
-                        BankTransferClaimCoordinator(
-                            navigationController: self.navigationController,
-                            transaction: StrigaClaimTransaction(
-                                challengeId: "1",
-                                token: .usdc,
-                                amount: 120,
-                                feeAmount: FeeAmount(
-                                    transaction: 0,
-                                    accountBalances: 0
-                                ),
-                                fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
-                                receivingAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH"
-                            )
-                        ))
+                    navigationController.popViewController(animated: true)
                 case .canceled:
-                    // TODO:
                     break
                 }
+            })
+            .handleEvents(receiveOutput: { [unowned self] result in
+                switch result {
+                case .verified:
+                    self.navigationController.popToRootViewController(animated: true)
+                case .canceled:
+                    break
+                }
+            })
+            .flatMap { [unowned self] result in
+                switch result {
+                case .verified:
+                    let transaction = StrigaWithdrawTransaction(
+                        challengeId: "1",
+                        IBAN: model.IBAN ?? "",
+                        BIC: model.BIC ?? "",
+                        amount: 120,
+                        feeAmount: FeeAmount(
+                            transaction: 0,
+                            accountBalances: 0
+                        )
+                    )
+
+                    // delegate work to transaction handler
+                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                        .sendTransaction(transaction as! RawTransactionType)
+
+                    // return pending transaction
+                    let pendingTransaction = PendingTransaction(
+                        trxIndex: transactionIndex,
+                        sentAt: Date(),
+                        rawTransaction: transaction,
+                        status: .sending
+                    )
+                    return self.openDetails(pendingTransaction: pendingTransaction)
+                        .map { _ in Void() }.eraseToAnyPublisher()
+                case .canceled:
+                    return Just(()).eraseToAnyPublisher()
+                }
             }
+            .sink { _ in }
             .store(in: &subscriptions)
+    }
+
+    private func openDetails(pendingTransaction: PendingTransaction) -> AnyPublisher<TransactionDetailStatus, Never> {
+        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
+
+//        self.viewModel.logTransactionProgressOpened()
+        return coordinate(to: TransactionDetailCoordinator(
+            viewModel: viewModel,
+            presentingViewController: navigationController
+        ))
     }
 }

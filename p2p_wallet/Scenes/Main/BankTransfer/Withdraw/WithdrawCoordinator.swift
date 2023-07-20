@@ -22,13 +22,7 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
     }
 
     override func start() -> AnyPublisher<WithdrawCoordinator.Result, Never> {
-        let viewModel = WithdrawViewModel(
-            withdrawalInfo: StrigaWithdrawalInfo(
-                IBAN: withdrawalInfo.BIC,
-                BIC: withdrawalInfo.IBAN,
-                receiver: withdrawalInfo.receiver
-            )
-        )
+        let viewModel = WithdrawViewModel(withdrawalInfo: withdrawalInfo)
         let view = WithdrawView(
             viewModel: viewModel
         )
@@ -41,7 +35,7 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
             viewModel.actionCompletedPublisher
                 .map { WithdrawCoordinator.Result.verified }
                 .handleEvents(receiveOutput: { _ in
-                    self.navigationController.popViewController(animated: true)
+                    self.navigationController.popToRootViewController(animated: true)
                 })
         )
         .prefix(1).eraseToAnyPublisher()
