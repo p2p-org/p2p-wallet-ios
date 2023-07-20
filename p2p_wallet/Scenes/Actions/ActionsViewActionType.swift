@@ -20,11 +20,11 @@ enum ActionsViewActionType: CaseIterable {
     var subtitle: String {
         switch self {
         case .bankTransfer:
-            return "1% fee"
+            return L10n._1Fee
         case .bankCard:
-            return "4.5% fees"
+            return L10n._45Fees
         case .crypto:
-            return "0% fees"
+            return L10n._0Fees
         }
     }
     
