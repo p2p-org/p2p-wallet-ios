@@ -262,6 +262,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = try StrigaEndpoint.exchangeRates(baseURL: baseURL, keyPair: keyPair)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaExchangeRatesResponse.self)
     }
+
+    public func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getAccountStatement(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId, startDate: startDate, endDate: endDate, page: page)
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAccountStatementResponse.self)
+    }
 }
 
 // MARK: - Error response

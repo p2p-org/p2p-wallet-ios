@@ -91,4 +91,13 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// Exchange Rates
     /// - SeeAlso: [Exchange Rates](https://www.sandbox.striga.com/api/v1/trade/rates)
     func exchangeRates() async throws -> StrigaExchangeRatesResponse
+
+    /// Get Account Statement
+    /// - Parameter userId: The Id of the user who is sending this transaction
+    /// - Parameter accountId: Unique Id of an account belonging to any wallet of this user
+    /// - Parameter startDate: Format as a UNIX Epoch timestamp with ms precision
+    /// - Parameter endDate: Format as a UNIX Epoch timestamp with ms precision
+    /// - Parameter page: Page number
+    /// - SeeAlso: [Get Account Statement](https://docs.striga.com/reference/get-account-statement)
+    func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse
 }

@@ -168,9 +168,10 @@ extension BankTransferServiceImpl {
             )
         )
     }
-    
+
     public func getWithdrawalInfo() async throws -> Provider.WithdrawalInfo? {
-        try await repository.withdrawalInfo()
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
+        return try await repository.getWithdrawalInfo(userId: userId)
     }
 
     public func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {

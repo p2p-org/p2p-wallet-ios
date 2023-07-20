@@ -170,4 +170,10 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     public func exchangeRates() async throws -> StrigaExchangeRatesResponse {
         return ["USDCEUR": StrigaExchangeRates(price: "0.9", buy: "0.9", sell: "0.88", timestamp: Int(Date().timeIntervalSince1970), currency: "Euros")]
     }
+
+    public func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse {
+        StrigaGetAccountStatementResponse(transactions: [
+            StrigaGetAccountStatementResponse.Transaction(id: "a25e0dd1-8f4f-441d-a671-2f7d1e9738e6", txType: "SEPA_PAYIN_COMPLETED", bankingSenderBic: "BUKBGB22", bankingSenderIban: "GB29NWBK60161331926819")
+        ])
+    }
 }

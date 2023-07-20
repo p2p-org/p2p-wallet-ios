@@ -19,7 +19,7 @@ public protocol BankTransferUserDataRepository {
     func clearCache() async
 
     func getWallet(userId: String) async throws -> UserWallet?
-    
-    func withdrawalInfo() async throws -> WithdrawalInfo?
+
+    func getWithdrawalInfo(userId: String) async throws -> WithdrawalInfo?
     func save(_ info: WithdrawalInfo) async throws
 }
