@@ -1498,3 +1498,4 @@
 "Not enough money" = "Недостаточно денег";
 "Only %@ per one transfer" = "Только %@ за одну передачу";
 "%@ as minimal amount for transfer" = "%@ как минимальная сумма для перевода";
+"Getting rates" = "Получение ставок";

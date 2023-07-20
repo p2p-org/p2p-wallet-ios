@@ -183,6 +183,13 @@ private extension WithdrawCalculatorViewModel {
                 }
             }
             .store(in: &subscriptions)
+
+        $arePricesLoading
+            .filter { $0 }
+            .map { _ in return WithdrawCalculatorAction(isEnabled: false, title: L10n.gettingRates) }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.actionData, on: self)
+            .store(in: &subscriptions)
     }
 
     func bindAccounts() {
@@ -210,7 +217,10 @@ private extension WithdrawCalculatorViewModel {
 
         reachability
             .isDisconnected
-            .sink { [weak self] in self?.cancelUpdate() }
+            .sink { [weak self] in
+                self?.cancelUpdate()
+                self?.notificationService.showConnectionErrorNotification()
+            }
             .store(in: &subscriptions)
     }
 
@@ -230,18 +240,23 @@ private extension WithdrawCalculatorViewModel {
                 changeEditing(isEnabled: true)
             } catch let error as NSError where error.isNetworkConnectionError {
                 notificationService.showConnectionErrorNotification()
-                arePricesLoading = false
-                actionData = WithdrawCalculatorAction.failure
+                commonErrorHandling()
             } catch {
-                notificationService.showDefaultErrorNotification()
-                arePricesLoading = false
+                commonErrorHandling()
                 exchangeRatesFailCount = exchangeRatesFailCount + 1
-                actionData = WithdrawCalculatorAction.failure
                 if exchangeRatesFailCount < Constants.exchangeRatesMaxFailNumber {
                     loadRates() // Call request again
+                } else {
+                    notificationService.showDefaultErrorNotification()
                 }
             }
         }
+    }
+
+    func commonErrorHandling() {
+        arePricesLoading = false
+        actionData = WithdrawCalculatorAction.failure
+        exchangeRates = nil
     }
 
     func changeEditing(isEnabled: Bool) {

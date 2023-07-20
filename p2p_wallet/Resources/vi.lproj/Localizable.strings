@@ -1504,3 +1504,4 @@
 "Not enough money" = "Không đủ tiền";
 "Only %@ per one transfer" = "Chỉ %@ cho một lần chuyển";
 "%@ as minimal amount for transfer" = "%@ là số tiền tối thiểu để chuyển";
+"Getting rates" = "Nhận giá";

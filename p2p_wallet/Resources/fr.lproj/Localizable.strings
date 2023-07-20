@@ -1502,3 +1502,4 @@
 "Not enough money" = "Pas assez d'argent";
 "Only %@ per one transfer" = "Seulement %@ par transfert";
 "%@ as minimal amount for transfer" = "%@ comme montant minimal pour le transfert";
+"Getting rates" = "Obtenir des tarifs";

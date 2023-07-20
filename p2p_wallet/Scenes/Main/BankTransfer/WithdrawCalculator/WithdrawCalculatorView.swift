@@ -85,7 +85,8 @@ struct WithdrawCalculatorView: View {
             isEditable: $viewModel.isFromEnabled,
             balance: $viewModel.fromBalance,
             balanceText: $viewModel.fromBalanceText,
-            tokenSymbol: $viewModel.fromTokenSymbol
+            tokenSymbol: $viewModel.fromTokenSymbol,
+            isAmountLoading: $viewModel.arePricesLoading
         )
     }
 
@@ -103,7 +104,8 @@ struct WithdrawCalculatorView: View {
             isEditable: $viewModel.isToEnabled,
             balance: .constant(nil),
             balanceText: .constant(""),
-            tokenSymbol: $viewModel.toTokenSymbol
+            tokenSymbol: $viewModel.toTokenSymbol,
+            isAmountLoading: $viewModel.arePricesLoading
         )
     }
 

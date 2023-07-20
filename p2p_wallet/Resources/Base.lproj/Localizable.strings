@@ -1467,3 +1467,4 @@
 "Not enough money" = "Not enough money";
 "Only %@ per one transfer" = "Only %@ per one transfer";
 "%@ as minimal amount for transfer" = "%@ as minimal amount for transfer";
+"Getting rates" = "Getting rates";
