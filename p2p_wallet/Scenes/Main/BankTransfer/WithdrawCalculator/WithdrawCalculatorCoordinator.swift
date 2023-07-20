@@ -1,4 +1,6 @@
+import BankTransfer
 import Combine
+import SolanaSwift
 import UIKit
 
 final class WithdrawCalculatorCoordinator: Coordinator<Void> {
@@ -21,7 +23,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         viewModel.openWithdraw
-            .sink { [weak self] _ in self?.openWithdraw() }
+            .sink { [weak self] model in self?.openWithdraw(model: model) }
             .store(in: &subscriptions)
 
         return vc.deallocatedPublisher().eraseToAnyPublisher()
@@ -33,7 +35,31 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func openWithdraw() {
-        // todo
+    private func openWithdraw(model: StrigaWithdrawalInfo) {
+        coordinate(to: WithdrawCoordinator(navigationController: navigationController, withdrawalInfo: model))
+            .sink { result in
+                switch result {
+                case .verified:
+                    self.coordinate(to:
+                        BankTransferClaimCoordinator(
+                            navigationController: self.navigationController,
+                            transaction: StrigaClaimTransaction(
+                                challengeId: "1",
+                                token: .usdc,
+                                amount: 120,
+                                feeAmount: FeeAmount(
+                                    transaction: 0,
+                                    accountBalances: 0
+                                ),
+                                fromAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH",
+                                receivingAddress: "4iP2r5437gMF5iavTyBApSaMyYUQbtvQ1yhHm6VpnijH"
+                            )
+                        ))
+                case .canceled:
+                    // TODO:
+                    break
+                }
+            }
+            .store(in: &subscriptions)
     }
 }

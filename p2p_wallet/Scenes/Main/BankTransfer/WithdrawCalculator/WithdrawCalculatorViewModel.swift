@@ -22,7 +22,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     let actionPressed = PassthroughSubject<Void, Never>()
     let allButtonPressed = PassthroughSubject<Void, Never>()
     let openBankTransfer = PassthroughSubject<Void, Never>()
-    let openWithdraw = PassthroughSubject<Void, Never>()
+    let openWithdraw = PassthroughSubject<StrigaWithdrawalInfo, Never>()
     let proceedBankTransfer = PassthroughSubject<Void, Never>()
 
     @Published var actionData = WithdrawCalculatorAction.zero
@@ -160,13 +160,14 @@ private extension WithdrawCalculatorViewModel {
             .withLatestFrom(bankTransferService.value.state)
             .sinkAsync { [weak self] state in
                 guard let self else { return }
-                if state.value.kycStatus != .approved {
-                    self.openBankTransfer.send()
-                } else if state.value.isIBANNotReady {
-                    self.isLoading = true
-                    await self.bankTransferService.value.reload()
-                    self.proceedBankTransfer.send()
-                }
+                self.openWithdraw.send(StrigaWithdrawalInfo(IBAN: "4560001 5001 5800 1234 0000 11", BIC: "TRONLOLIPOPXXX", receiver: "Lord Voldemort"))
+//                if state.value.kycStatus != .approved {
+//                    self.openBankTransfer.send()
+//                } else if state.value.isIBANNotReady {
+//                    self.isLoading = true
+//                    await self.bankTransferService.value.reload()
+//                    self.proceedBankTransfer.send()
+//                }
                 // todo add get statement request
             }
             .store(in: &subscriptions)
