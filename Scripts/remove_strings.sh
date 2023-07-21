@@ -15,6 +15,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     keys_to_remove+=("$line")
 done < "$output_file"
 
+# Discard any local changes in the file before processing
+discard_changes() {
+    local file="$1"
+    git -C "$parent_folder/p2p_wallet/Resources" checkout -- "$file"
+}
+
 # Function to remove lines containing keys from "Localizable.strings" files
 function remove_keys_from_localizable_strings {
     local file="$1"
@@ -27,6 +33,7 @@ function remove_keys_from_localizable_strings {
 
 # Find and process all "Localizable.strings" files in "p2p_wallet/Resources/*.lproj/" folders
 find "$parent_folder/p2p_wallet/Resources" -type f -name "Localizable.strings" | grep -E "/[a-z]+\.lproj/" | while read -r file; do
+    discard_changes "$file"
     remove_keys_from_localizable_strings "$file"
     echo "$file"
 done

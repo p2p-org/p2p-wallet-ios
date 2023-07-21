@@ -1,7 +1,6 @@
 %@ Account Creation
 %@ Closed
 %@ Created
-%@ found
 %@ is available
 %@ is successfully sent
 %@ is successfully swapped to %@
@@ -39,14 +38,12 @@ Adding token to your wallet
 Address
 Address copied to clipboard!
 Address copied!
-Address was copied to clipboard
 After 2 more incorrect PINs we’ll log out current account for your safety
 After first transaction you will\nbe able to view it here
 All deposits are stored 100%% non-custodiallity with keys held on this device
 All my products
 All my tokens
 All the ways to buy
-All tokens
 Allow
 Allow notifications
 Allow push notifications so you don’t miss any important updates on your account.
@@ -95,7 +92,6 @@ Terms and Conditions
 Change
 Change PIN-code
 Change the network?
-Change the region manually
 Change the token?
 Change your search phrase
 Change your settings to use camera for scanning Qr Code
@@ -226,7 +222,6 @@ Fee calculator not found
 Fee compensation pool not found
 Feedback
 Fetching receipt
-Fill 12 or 24 words
 Finding swapping routes
 Finish setup
 For security, change your authorization device to restore access For security, change your authorization device to restore access if needed.
@@ -236,7 +231,6 @@ Found associated wallet address
 Free by Key App
 French Franc
 Friends
-From %@
 frontrun
 Get up to 8%% APY on staking USDC
 Get your your own short crypto address
