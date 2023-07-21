@@ -307,6 +307,7 @@ final class HomeCoordinator: Coordinator<Void> {
             let buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
                 context: .fromHome,
+                defaultToken: .nativeSolana,
                 defaultPaymentType: .bank
             )
             coordinate(to: buyCoordinator)
@@ -316,6 +317,7 @@ final class HomeCoordinator: Coordinator<Void> {
             let buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
                 context: .fromHome,
+                defaultToken: .nativeSolana,
                 defaultPaymentType: .card
             )
             coordinate(to: buyCoordinator)
