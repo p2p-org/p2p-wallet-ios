@@ -72,6 +72,6 @@ extension ActionsView {
 extension ActionsView {
     var viewHeight: CGFloat {
         (UIScreen.main.bounds.width - 16 * 3)
-            + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 140
+            + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0)
     }
 }

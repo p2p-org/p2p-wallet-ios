@@ -113,7 +113,7 @@ extension Double {
         
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
         
         if abs(self) >= 1000000 {
             formatter.multiplier = 0.000001
