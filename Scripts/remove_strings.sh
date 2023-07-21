@@ -32,7 +32,7 @@ function remove_keys_from_localizable_strings {
 }
 
 # Find and process all "Localizable.strings" files in "p2p_wallet/Resources/*.lproj/" folders
-find "$parent_folder/p2p_wallet/Resources" -type f -name "Localizable.strings" | grep -E "/[a-z]+\.lproj/" | while read -r file; do
+find "$parent_folder/p2p_wallet/Resources" -type f -name "Localizable.strings" -path "*.lproj/*" | while read -r file; do
     discard_changes "$file"
     remove_keys_from_localizable_strings "$file"
     echo "$file"
