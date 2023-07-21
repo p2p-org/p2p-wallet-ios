@@ -15,8 +15,8 @@ import SwiftyUserDefaults
 
 struct ActionsView: View {
     @Injected private var sellDataService: any SellDataService
-    @Injected private var walletsRepository: WalletsRepository
-    
+    @Injected private var walletsRepository: SolanaAccountsService
+
     private let actionSubject = PassthroughSubject<ActionsViewActionType, Never>()
     var action: AnyPublisher<ActionsViewActionType, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
@@ -72,6 +72,6 @@ extension ActionsView {
 extension ActionsView {
     var viewHeight: CGFloat {
         (UIScreen.main.bounds.width - 16 * 3)
-        + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 140
+            + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 140
     }
 }

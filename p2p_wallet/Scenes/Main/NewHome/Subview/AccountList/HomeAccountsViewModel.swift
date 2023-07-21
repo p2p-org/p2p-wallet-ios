@@ -118,10 +118,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 
                 let equityValue: Double = Double(state.value
-                    .filter { $0.data.isUSDC }
-                    .reduce(0) { $0 + $1.data.amount }
+                    .filter { $0.isUSDC }
+                    .reduce(0) { $0 + $1.amount }
                 )
-                return "\(equityValue.tokenAmountFormattedString(symbol: L10n.usdc, maximumFractionDigits: 3))"
+                return "\(equityValue.tokenAmountFormattedString(symbol: "USDC", maximumFractionDigits: 3))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.usdcAmount, on: self)

@@ -46,7 +46,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
         let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setupHistory()
+        let (secondTab, thirdTab) = setupCryptoAndHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -69,7 +69,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         window.animate(newRootViewController: tabBarController)
 
         // re-register for push notification if not yet registered
-        if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
+        if Defaults.didSetEnableNotifications, Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
         }
 
@@ -81,7 +81,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func bind() {
         tabBarViewModel.moveToSendViaLinkClaim
             .sink { [weak self] url in
-                guard let self = self else { return }
+                guard let self else { return }
 
                 UIApplication.dismissCustomPresentedViewController {
                     let claimCoordinator = ReceiveFundsViaLinkCoordinator(
@@ -94,7 +94,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 }
             }
             .store(in: &subscriptions)
-        
+
         listenToSendButton()
         listenToWallet()
     }
@@ -121,16 +121,16 @@ final class TabBarCoordinator: Coordinator<Void> {
 
         return homeNavigation
     }
-    
+
     /// Set up Crypto and History scenes
     private func setupCryptoAndHistory() -> (UIViewController, UIViewController) {
         let cryptoNavigation = UINavigationController()
-        
+
         routeToCrypto(nc: cryptoNavigation)
-        
+
         let historyNavigation = UINavigationController()
         historyNavigation.navigationBar.prefersLargeTitles = true
-        
+
         let historyCoordinator = NewHistoryCoordinator(
             presentation: SmartCoordinatorPushPresentation(historyNavigation)
         )
@@ -139,25 +139,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         return (cryptoNavigation, historyNavigation)
-    }
-    
-    /// Set up Solend, history or feedback scene
-    private func setupHistory() -> (UIViewController, UIViewController) {
-        let solendOrSwapNavigation = UINavigationController()
-
-        routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
-
-        let historyNavigation = UINavigationController()
-        historyNavigation.navigationBar.prefersLargeTitles = true
-
-        let historyCoordinator = NewHistoryCoordinator(
-            presentation: SmartCoordinatorPushPresentation(historyNavigation)
-        )
-        coordinate(to: historyCoordinator)
-            .sink(receiveValue: { _ in })
-            .store(in: &subscriptions)
-
-        return (solendOrSwapNavigation, historyNavigation)
     }
 
     /// Set up Settings scene
@@ -175,10 +156,10 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarController.middleButtonClicked
             .receive(on: RunLoop.main)
             .compactMap { [weak self] in
-                return self?.navigationControllerForSelectedTab()
+                self?.navigationControllerForSelectedTab()
             }
             .flatMap { [unowned self] navigationController -> AnyPublisher<SendResult, Never> in
-                return self.coordinate(
+                self.coordinate(
                     to: SendCoordinator(
                         rootViewController: navigationController,
                         preChosenWallet: nil,
@@ -219,7 +200,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
 
     // MARK: - Helpers
-    
+
     private func navigationControllerForSelectedTab() -> UINavigationController? {
         tabBarController.selectedViewController as? UINavigationController
     }
@@ -241,13 +222,13 @@ final class TabBarCoordinator: Coordinator<Void> {
         .sink(receiveValue: { _ in })
         .store(in: &subscriptions)
     }
-    
+
     private func showSendTransactionStatus(navigationController: UINavigationController, model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
             .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
-    
+
     private func routeToCrypto(
         nc: UINavigationController
     ) {
