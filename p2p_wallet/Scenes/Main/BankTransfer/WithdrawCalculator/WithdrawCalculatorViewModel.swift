@@ -47,8 +47,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     @Published var fromTokenSymbol = Token.usdc.symbol.uppercased()
     @Published var toTokenSymbol = Constants.EUR.symbol
 
-    @Published var fromDecimalLength = Int(Token.usdc.decimals)
-    @Published var toDecimalLength = Constants.EUR.decimals
+    @Published var decimalLength = Constants.decimals
 
     private var exchangeRatesFailCount = 0
     private var exchangeRatesTimer: Timer?
@@ -134,7 +133,7 @@ private extension WithdrawCalculatorViewModel {
             .receive(on: RunLoop.main)
             .map { [weak self] balance in
                 guard let self, let balance else { return "" }
-                return balance.toString(maximumFractionDigits: self.fromDecimalLength)
+                return balance.toString(maximumFractionDigits: self.decimalLength)
             }
             .assignWeak(to: \.fromBalanceText, on: self)
             .store(in: &subscriptions)
@@ -291,9 +290,9 @@ private extension WithdrawCalculatorViewModel {
 private enum Constants {
     static let exchangeRatesMaxFailNumber = 3
     static let exchangeRatesInterval = TimeInterval(60)
+    static let decimals = 2
 
     enum EUR {
-        static let decimals = 2
         static let symbol = "EUR"
         static let min: Double = 10
         static let max: Double = 15000
