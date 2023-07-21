@@ -27,6 +27,8 @@ public final class EthereumAccountsService: NSObject, AccountsService {
 
     let accounts: AsyncValue<[Account]>
 
+    let accountsStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+
     let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     // MARK: - Output
@@ -60,49 +62,24 @@ public final class EthereumAccountsService: NSObject, AccountsService {
 
         super.init()
 
-        /// Updating price
-        Publishers.Merge(
-            // There is changing in accounts
-            accounts
-                .statePublisher
-                .filter { $0.status == .initializing || $0.status == .ready }
-                .map { _ in },
-            // There is changing in price service
-            priceService
-                .onChangePublisher
-        )
-        .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
-        .sink { [weak self] _ in
-            self?.fetchPrice(fiat: fiat)
-        }
-        .store(in: &subscriptions)
-
-        Publishers
-            .CombineLatest(
-                accounts.statePublisher,
-                priceStream
-            )
-            .map { state, prices in
-                state.apply { accounts in
-                    var newAccounts = accounts
-
-                    for index in newAccounts.indices {
-                        let token = newAccounts[index].token.asSomeToken
-                        if let price = prices[token] {
-                            newAccounts[index].price = .init(
-                                currencyCode: fiat.uppercased(),
-                                value: price.value,
-                                token: token
-                            )
-                        }
-                    }
-
-                    return newAccounts
-                }
+        accounts
+            .statePublisher
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .map { [weak self] state in
+                self?.fetchPrice(state: state, fiat: fiat)
             }
-            .sink(receiveValue: { [weak stateSubject] state in
+            .compactMap { $0 }
+            .switchToLatest()
+            .sink { [weak stateSubject] state in
                 stateSubject?.send(state)
-            })
+            }
+            .store(in: &subscriptions)
+
+        priceService
+            .onChangePublisher
+            .sink { [weak accounts] in
+                accounts?.state.status = .ready
+            }
             .store(in: &subscriptions)
 
         // Update every 30 seconds accounts
@@ -128,17 +105,56 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         try await accounts.fetch()?.value
     }
 
-    internal func fetchPrice(fiat: String) {
-        Task { [priceService, errorObservable, priceStream] in
-            do {
-                let prices = try await priceService.getPrices(
-                    tokens: state.value.map(\.token),
-                    fiat: fiat
-                )
+    internal func fetchPrice(
+        state: AsyncValueState<[EthereumAccount]>,
+        fiat: String
+    ) -> Future<AsyncValueState<[Account]>, Never> {
+        Future { [priceService, errorObservable] promise in
+            Task { [weak priceService, errorObservable] in
+                // Price service is unavailable
+                guard let priceService else {
+                    promise(.success(state))
+                    return
+                }
 
-                priceStream.send(prices)
-            } catch {
-                errorObservable.handleError(error)
+                var prices: [SomeToken: TokenPrice] = [:]
+                var caughtError: Error?
+
+                // Fetch price
+                do {
+                    prices = try await priceService.getPrices(
+                        tokens: state.value.map(\.token),
+                        fiat: fiat
+                    )
+                } catch {
+                    errorObservable.handleError(error)
+                    caughtError = error
+                }
+
+                // Aggregate
+                var aggregatedState = state.apply { accounts in
+                    var newAccounts = accounts
+
+                    for index in newAccounts.indices {
+                        let token = newAccounts[index].token.asSomeToken
+                        if let price = prices[token] {
+                            newAccounts[index].price = .init(
+                                currencyCode: fiat.uppercased(),
+                                value: price.value,
+                                token: token
+                            )
+                        }
+                    }
+
+                    return newAccounts
+                }
+
+                // Assign error in case there is no previously error
+                if aggregatedState.error == nil {
+                    aggregatedState.error = caughtError
+                }
+
+                promise(.success(aggregatedState))
             }
         }
     }
@@ -168,7 +184,7 @@ internal class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
 
             do {
                 // Fetch balance and token balances
-                let (balance, wallet) = try await(
+                let (balance, wallet) = try await (
                     web3.eth.getBalance(address: address, block: .latest),
                     web3.eth.getTokenBalances(address: address)
                 )

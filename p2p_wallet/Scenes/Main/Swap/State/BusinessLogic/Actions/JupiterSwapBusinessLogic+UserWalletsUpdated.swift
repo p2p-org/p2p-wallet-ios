@@ -40,8 +40,12 @@ extension JupiterSwapBusinessLogic {
         var toToken: SwapToken?
         if let toUserWallet: SolanaAccount = userWallets
             .first(where: {
-                $0.address == state.toToken.userWallet?.address &&
-                    $0.mintAddress == state.toToken.address
+                if let toTokenAddress = state.toToken.userWallet?.address {
+                    return $0.address == toTokenAddress
+                } else {
+                    return $0.mintAddress == state.toToken.address
+                }
+
             })
         {
             toToken = SwapToken(

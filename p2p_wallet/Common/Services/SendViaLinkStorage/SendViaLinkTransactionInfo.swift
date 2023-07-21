@@ -64,14 +64,6 @@ extension Array where Element == SendViaLinkTransactionInfo {
                 timestamp: Date()
                     .addingTimeInterval(-60*60*24*2) // 2 days ago
             ),
-            .init(
-                amount: 100,
-                amountInFiat: 1,
-                token: .srm,
-                seed: "UOO8ZTPqlwY6bJqE",
-                timestamp: Date()
-                    .addingTimeInterval(-60*60*24*1) // 3 days ago
-            )
         ]
     }
 }

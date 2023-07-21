@@ -73,6 +73,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
                 try? await storage.save(for: filename, data: encodedData)
             }
         } catch {
+            print(error)
             errorObserver.handleError(error)
         }
     }

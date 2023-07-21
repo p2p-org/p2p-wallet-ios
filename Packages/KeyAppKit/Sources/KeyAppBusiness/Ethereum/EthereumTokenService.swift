@@ -55,7 +55,7 @@ public final class EthereumTokensRepository {
         } else {
             logo = nil
         }
-        
+
         let nativeToken = EthereumToken(
             name: tokenData.name,
             symbol: tokenData.symbol,
@@ -65,6 +65,7 @@ public final class EthereumTokensRepository {
         )
 
         try? await database.write(for: "native", value: nativeToken)
+        try? await database.flush()
 
         return nativeToken
     }
@@ -84,6 +85,11 @@ public final class EthereumTokensRepository {
             if result[address] == nil {
                 missingTokenAddresses.append(address.hex(eip55: false))
             }
+        }
+
+        // There is no missing addresses
+        if missingTokenAddresses.isEmpty {
+            return result
         }
 
         // Fetch
@@ -115,6 +121,8 @@ public final class EthereumTokensRepository {
             }
         }
 
+        try? await database.flush()
+
         return result
     }
 
@@ -139,6 +147,10 @@ public final class EthereumTokensRepository {
             logo: logo,
             contractType: .erc20(contract: EthereumAddress(hex: tokenData.address, eip55: false))
         )
+    }
+
+    public func clear() async throws {
+        try await database.clear()
     }
 }
 

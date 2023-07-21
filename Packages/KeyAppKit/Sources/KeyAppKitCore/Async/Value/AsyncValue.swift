@@ -87,7 +87,14 @@ open class AsyncValue<T> {
 
     let stateSubject: CurrentValueSubject<AsyncValueState<T>, Never>
 
-    public var state: AsyncValueState<T> { stateSubject.value }
+    public var state: AsyncValueState<T> {
+        get {
+            stateSubject.value
+        }
+        set {
+            stateSubject.value = newValue
+        }
+    }
 
     public var statePublisher: AnyPublisher<AsyncValueState<T>, Never> { stateSubject.eraseToAnyPublisher() }
 
