@@ -293,15 +293,5 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
 
     // MARK: - Client error
 
-    case bridgesClientFrontendError(errorValue: String)
-    case bridgesClientUserError(errorValue: String)
-
-    case swapClientFrontendError(errorValue: String)
-    case swapClientUserError(errorValue: String)
-
-    case onboardingClientFrontendError(errorValue: String)
-    case onboardingClientUserError(errorValue: String)
-
-    case sendClientFrontendError(errorValue: String)
-    case sendClientUserError(errorValue: String)
+    case clientFrontendError(errorValue: String, errorFragment: String)
 }
