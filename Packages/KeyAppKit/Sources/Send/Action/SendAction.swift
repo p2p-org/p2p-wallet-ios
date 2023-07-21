@@ -78,10 +78,13 @@ public class SendActionServiceImpl: SendActionService {
         memo: String?,
         operationType: StatsInfo.OperationType
     ) async throws -> String {
+        // get currency for logging
         let currency = wallet.token.address
 
+        // get paying fee token
         let payingFeeToken = try? getPayingFeeToken(feeWallet: feeWallet)
 
+        // prepare sending to Solana (returning legacy transaction)
         var (preparedTransaction, useFeeRelayer) = try await prepareForSendingToSolanaNetworkViaRelayMethod(
             from: wallet,
             receiver: receiver,
@@ -89,14 +92,19 @@ public class SendActionServiceImpl: SendActionService {
             payingFeeToken: payingFeeToken,
             memo: memo
         )
+        
+        // add blockhash
         preparedTransaction.transaction.recentBlockhash = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
 
         if useFeeRelayer {
-            let feePayerSignature: String
             
             if ignoreTopUp {
-                feePayerSignature = try await relayService.signRelayTransaction(
-                    preparedTransaction,
+                let versionedTransactions = try await relayService.signTransaction(
+                    transactions: [
+                        VersionedTransaction(
+                            message: .legacy(try preparedTransaction.transaction.compileMessage())
+                        )
+                    ],
                     config: FeeRelayerConfiguration(
                         operationType: operationType,
                         currency: currency,
@@ -104,26 +112,21 @@ public class SendActionServiceImpl: SendActionService {
                     )
                 )
                 
-                // get feePayerPubkey and user account
-                guard let feePayerPubKey = contextManager.currentContext?.feePayerAddress,
-                      let account
-                else {
+                // assert result
+                guard var versionedTransaction = versionedTransactions.first else {
+                    throw FeeRelayerError.invalidSignature
+                }
+                
+                // assert account
+                guard let account else {
                     throw SolanaError.unauthorized
                 }
                 
                 // sign transaction by user
-                try preparedTransaction.transaction.sign(signers: [account])
-                
-                // add feePayer's signature
-                try preparedTransaction.transaction.addSignature(
-                    .init(
-                        signature: Data(Base58.decode(feePayerSignature)),
-                        publicKey: feePayerPubKey
-                    )
-                )
+                try versionedTransaction.sign(signers: [account])
                 
                 // serialize transaction
-                let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
+                let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
                 
                 // send to solanaBlockchain
                 return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
