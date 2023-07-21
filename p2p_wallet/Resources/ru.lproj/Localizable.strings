@@ -13,7 +13,6 @@
 "Receive" = "Пополнить";
 "Swap" = "Обменять";
 "Scan QR Code" = "Сканировать QR-код";
-"Something went wrong!\nPlease try again later" = "Что-то пошло не так!\nПовторите попытку позже";
 "Try again" = "Попробовать еще раз";
 "Copy" = "Копировать";
 "Share" = "Поделиться";
@@ -62,7 +61,6 @@
 "Sending" = "Отправка";
 "Transaction has been confirmed" = "Транзакция подтверждена";
 "Something went wrong" = "Что-то пошло не так";
-"We’ve locked your wallet, try again in %@" = "Мы заблокировали Ваш кошелек, попробуйте ввести PIN-код еще раз через %@";
 "Hide zero balances" = "Скрыть нулевые балансы";
 "Enter PIN-code" = "Введите PIN-код";
 "Create account" = "Открытие счета";
@@ -95,7 +93,6 @@
 "Network fee" = "Плата за сеть";
 "Tap to try again" = "Нажмите, чтобы повторить попытку";
 "Bitcoin" = "Биткойн";
-"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Если вы не завершите транзакцию в течение этого периода / сеанса / временных рамок, вы рискуете потерять депозиты.";
 "Transfer fee" = "Стоимость трансфера";
 "Free" = "Бесплатно";
 "Account creation fee" = "Комиссия за создание учетной записи";
@@ -128,7 +125,6 @@
 "Custom" = "Обычай";
 "The transaction is being processed" = "Транзакция обрабатывается";
 "Your PIN" = "Ваш PIN-код";
-"Ask a question / Request a feature" = "Задать вопрос / Запросить функцию";
 "App version" = "Версия приложения";
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
@@ -148,12 +144,9 @@
 "1 renBTC" = "1 ренБТС";
 "1 USDC" = "1 доллар США";
 "After first transaction you will be able to view it here" = "После первой транзакции вы сможете просмотреть ее здесь";
-"After first transaction you will\nbe able to view it here" = "После первой транзакции вы сможете\nпросмотреть ее здесь";
 "Sorry :(" = "Извини :(";
 "Sorry" = "Извини";
-"A **%@** to receive bitcoins over the Bitcoin network" = "**%@** для получения биткойнов через сеть биткойнов";
 "Your wallet list does not contain a renBTC account, and to create one **%@**." = "В вашем списке кошельков нет учетной записи renBTC, и для ее создания **%@**.";
-"You **%@** to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Вы **%@** платите за создание аккаунта, но если кто-то отправит renBTC на ваш адрес, он будет создан для вас.";
 "Country code" = "Код страны";
 "Use another account" = "Использовать другую учетную запись";
 "Continue restoring this wallet" = "Продолжить восстановление этого кошелька";
@@ -287,8 +280,6 @@
 "No lock-up periods" = "Нет периодов блокировки";
 "Earn up to %@%%" = "Заработайте до %@%%";
 "Stake your tokens and get rewards every day" = "Ставьте свои токены & получайте награды каждый день";
-"The funds have been withdrawn\nsuccessfully" = "Средства были выведены\nуспешно";
-"The funds have been deposited\nsuccessfully" = "Средства были зачислены\nуспешно";
 "Buying %@ as the base currency" = "Покупка %@ в качестве базовой валюты";
 "Exchanging %@ → %@" = "Замена %@ → %@";
 "Purchasing on the Moonpay’s website" = "Покупка на сайте Moonpay";
@@ -311,8 +302,6 @@
 "You’re goung to buy" = "Вы собираетесь купить";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "Сначала вам нужно купить %@, а затем обменять на %@ на главной странице.";
 "You’re going to buy %@" = "Вы собираетесь купить %@";
-"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "Вы собираетесь создать общедоступный биткойн-адрес, который будет действовать в течение следующих **24 часов**.  Вы по-прежнему можете хранить и отправлять биткойны без ограничений.";
-"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "Это **одноразовый адрес**, поэтому, если вы отправите несколько транзакций, ваши деньги будут потеряны.";
 "Solana has some problems." = "У Соланы проблемы.";
 "Address was copied to clipboard" = "Адрес скопирован в буфер обмена";
 "Pick Your Username" = "Выберите свое имя пользователя";
@@ -405,12 +394,10 @@
 "Initializing error" = "Ошибка инициализации";
 "Not available for now" = "Недоступно на данный момент";
 "Sending tokens has\nnever been EASIER" = "Отправка токенов\nникогда не была ПРОЩЕ";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Отправляйте криптовалюту в сети Bitcoin и Solana\n мгновенно и без комиссии";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Легко отправляйте токены с именами пользователей\nвместо длинных адресов";
 "Buy crypto" = "Купить крипто";
 "Free (%@ left for today)" = "Бесплатно (на сегодня осталось %@)";
 "Sending tokens has\nnever been EASIER" = "Отправка токенов\nникогда не была ПРОЩЕ";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Отправляйте криптовалюту в сети Bitcoin и Solana\n мгновенно и без комиссии";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Легко отправляйте токены с именами пользователей\nвместо длинных адресов";
 "Buy crypto" = "Купить крипто";
 "Send crypto in the Solana network\ninstantly and without fees" = "Отправляйте криптовалюту в сети Solana\nмгновенно и без комиссии";
@@ -514,7 +501,6 @@
 "Claim" = "Требовать";
 "You will get" = "Ты получишь";
 "Claiming" = "Заявка";
-"The link is ready!\nReceiver will be able to claim funds" = "Ссылка готова!\nПолучатель сможет запросить средства";
 "Send via link" = "Отправить по ссылке";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Цена выше из-за размера вашей сделки.  Подумайте о том, чтобы разделить вашу транзакцию на несколько свопов.";
 "The slippage could be" = "Проскальзывание может быть";

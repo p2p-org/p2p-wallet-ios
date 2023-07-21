@@ -13,7 +13,6 @@
 "Receive" = "Recevoir";
 "Swap" = "Échanger";
 "Scan QR Code" = "Scanner le code QR";
-"Something went wrong!\nPlease try again later" = "Une erreur s'est produite!\nVeuillez réessayer plus tard";
 "Try again" = "Réessayer";
 "Copy" = "Copie";
 "Share" = "Partager";
@@ -62,7 +61,6 @@
 "Sending" = "Envoi en cours";
 "Transaction has been confirmed" = "La transaction a été confirmée";
 "Something went wrong" = "Un problème est survenu";
-"We’ve locked your wallet, try again in %@" = "Nous avons verrouillé votre portefeuille, réessayez dans %@";
 "Hide zero balances" = "Masquer les soldes nuls";
 "Enter PIN-code" = "Entrez le code PIN";
 "Create account" = "Créer un Compte";
@@ -95,7 +93,6 @@
 "Network fee" = "Frais de réseau";
 "Tap to try again" = "Appuyez pour réessayer";
 "Bitcoin" = "Bitcoin";
-"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Si vous ne terminez pas votre transaction dans cette période/session/délai, vous risquez de perdre les dépôts.";
 "Transfer fee" = "Frais de transfert";
 "Free" = "Libérer";
 "Account creation fee" = "Frais de création de compte";
@@ -128,7 +125,6 @@
 "Custom" = "Personnalisé";
 "The transaction is being processed" = "La transaction est en cours de traitement";
 "Your PIN" = "Votre NIP";
-"Ask a question / Request a feature" = "Poser une question / Demander une fonctionnalité";
 "App version" = "Version de l'application";
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
@@ -148,12 +144,9 @@
 "1 renBTC" = "1 renBTC";
 "1 USDC" = "1 USDC";
 "After first transaction you will be able to view it here" = "Après la première transaction, vous pourrez le voir ici";
-"After first transaction you will\nbe able to view it here" = "Après la première transaction, vous\npouvez la voir ici";
 "Sorry :(" = "Désolé :(";
 "Sorry" = "Désolé";
-"A **%@** to receive bitcoins over the Bitcoin network" = "Un **%@** pour recevoir des bitcoins sur le réseau Bitcoin";
 "Your wallet list does not contain a renBTC account, and to create one **%@**." = "Votre liste de portefeuille ne contient pas de compte renBTC, et pour en créer un **%@**.";
-"You **%@** to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Vous **%@** payez pour la création du compte, mais si quelqu'un envoie renBTC à votre adresse, il sera créé pour vous.";
 "Country code" = "Code postal";
 "Use another account" = "Utiliser un autre compte";
 "Continue restoring this wallet" = "Continuer à restaurer ce portefeuille";
@@ -288,8 +281,6 @@
 "No lock-up periods" = "Pas de périodes de blocage";
 "Earn up to %@%%" = "Gagnez jusqu'à %@%%";
 "Stake your tokens and get rewards every day" = "Misez vos jetons et obtenez des récompenses tous les jours";
-"The funds have been withdrawn\nsuccessfully" = "Les fonds ont été retirés\navec succès";
-"The funds have been deposited\nsuccessfully" = "Les fonds ont été déposés\navec succès";
 "Buying %@ as the base currency" = "Acheter %@ comme devise de base";
 "Exchanging %@ → %@" = "Échange %@ → %@";
 "Purchasing on the Moonpay’s website" = "Achat sur le site de Moonpay";
@@ -312,8 +303,6 @@
 "You’re goung to buy" = "Vous allez acheter";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "Vous devez d'abord acheter %@ puis échanger contre %@ sur la page principale";
 "You’re going to buy %@" = "Vous allez acheter %@";
-"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "Vous allez créer une adresse Bitcoin publique qui sera valide pour les prochaines **24 heures**.  Vous pouvez toujours conserver et envoyer des Bitcoins sans restrictions.";
-"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "Il s'agit d'une **adresse unique**, donc si vous envoyez plusieurs transactions, votre argent sera perdu.";
 "Solana has some problems." = "Solana a quelques problèmes.";
 "Address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
 "Pick Your Username" = "Choisissez votre nom d'utilisateur";
@@ -406,12 +395,10 @@
 "Initializing error" = "Erreur d'initialisation";
 "Not available for now" = "Non disponible pour le moment";
 "Sending tokens has\nnever been EASIER" = "L'envoi de jetons n'a\njamais été PLUS FACILE";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Envoyez des cryptos dans le réseau Bitcoin et Solana\ninstantanément et sans frais";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Envoyez sans effort des jetons avec des noms d'utilisateur\nau lieu de longues adresses";
 "Buy crypto" = "Acheter des cryptos";
 "Free (%@ left for today)" = "Gratuit (%@ restant pour aujourd'hui)";
 "Sending tokens has\nnever been EASIER" = "L'envoi de jetons n'a\njamais été PLUS FACILE";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Envoyez des cryptos dans le réseau Bitcoin et Solana\ninstantanément et sans frais";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Envoyez sans effort des jetons avec des noms d'utilisateur\nau lieu de longues adresses";
 "Buy crypto" = "Acheter des cryptos";
 "Send crypto in the Solana network\ninstantly and without fees" = "Envoyez des cryptos sur le réseau Solana\ninstantanément et sans frais";
@@ -517,7 +504,6 @@
 "Claim" = "Réclamation";
 "You will get" = "Tu auras";
 "Claiming" = "Affirmant";
-"The link is ready!\nReceiver will be able to claim funds" = "Le lien est prêt !\nLe destinataire pourra réclamer des fonds";
 "Send via link" = "Envoyer via lien";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Le prix est plus élevé en raison de la taille de votre commerce.  Envisagez de diviser votre transaction en plusieurs swaps.";
 "The slippage could be" = "Le glissement pourrait être";

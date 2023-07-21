@@ -13,7 +13,6 @@
 "Receive" = "Receive";
 "Swap" = "Swap";
 "Scan QR Code" = "Scan QR Code";
-"Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
 "Try again" = "Try again";
 "Copy" = "Copy";
 "Share" = "Share";
@@ -61,7 +60,6 @@
 "Sending" = "Sending";
 "Transaction has been confirmed" = "Transaction has been confirmed";
 "Something went wrong" = "Something went wrong";
-"We’ve locked your wallet, try again in %@" = "We’ve locked your wallet, try again in %@";
 "Hide zero balances" = "Hide zero balances";
 "Enter PIN-code" = "Enter PIN-code";
 "Create account" = "Create Account";
@@ -94,7 +92,6 @@
 "Network fee" = "Network fee";
 "Tap to try again" = "Tap to try again";
 "Bitcoin" = "Bitcoin";
-"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits.";
 "Transfer fee" = "Transfer fee";
 "Free" = "Free";
 "Account creation fee" = "Account creation fee";
@@ -125,7 +122,6 @@
 "Custom" = "Custom";
 "The transaction is being processed" = "The transaction is being processed";
 "Your PIN" = "Your PIN";
-"Ask a question / Request a feature" = "Ask a question / Request a feature";
 "App version" = "App version";
 "Face ID" = "Face ID";
 "Touch ID" = "Touch ID";
@@ -141,11 +137,7 @@
 "Forgot your PIN?" = "Forgot your PIN?";
 "Insufficient funds to cover fees" = "Insufficient funds to cover fees";
 "The %@ fee was reserved, so you wouldn't pay it again the next time you created a transaction of the same type." = "The %@ fee was reserved, so you wouldn't pay it again the next time you created a transaction of the same type.";
-"After first transaction you will\nbe able to view it here" = "After first transaction you will\nbe able to view it here";
 "Sorry" = "Sorry";
-"A **%@** to receive bitcoins over the Bitcoin network" = "A **%@** to receive bitcoins over the Bitcoin network";
-"Your wallet list does not contain a renBTC account, and to create one **%@**" = "Your wallet list does not contain a renBTC account, and to create one **%@**.";
-"You **%@** to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "You **%@** to pay for account creation, but if someone sends renBTC to your address, it will be created for you.";
 "Country code" = "Country code";
 "Sorry, we don’t know a such country" = "Sorry, we don’t know a such country";
 "Create a new wallet" = "Create a new wallet";
@@ -271,8 +263,6 @@
 "Confirm your new PIN code" = "Confirm your new PIN code";
 "Earn up to %@%%" = "Earn up to %@%%";
 "Stake your tokens and get rewards every day" = "Stake your tokens & get rewards every day";
-"The funds have been withdrawn\nsuccessfully" = "The funds have been withdrawn\nsuccessfully";
-"The funds have been deposited\nsuccessfully" = "The funds have been deposited\nsuccessfully";
 "Buying %@ as the base currency" = "Buying %@ as the base currency";
 "Exchanging %@ → %@" = "Exchanging %@ → %@";
 "Purchasing on the Moonpay’s website" = "Purchasing on the Moonpay’s website";
@@ -285,8 +275,6 @@
 "Exchanging %@ → %@" = "Exchanging %@ → %@";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "You first need to buy %@ and then swap for %@ on the Main Page";
 "You’re going to buy %@" = "You’re going to buy %@";
-"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions.";
-"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "It’s a **one-time address**, so if you send multiple transactions, your money will be lost.";
 "Solana has some problems" = "Solana has some problems";
 "Address was copied to clipboard" = "Address was copied to clipboard";
 "Pick Your Username" = "Pick Your Username";
@@ -377,12 +365,10 @@
 "Initializing error" = "Initializing error";
 "Not available for now" = "Not available for now";
 "Sending tokens has\nnever been EASIER" = "Sending tokens has\nnever been EASIER";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Effortlessly send tokens with usernames\ninstead of long addresses";
 "Buy crypto" = "Buy crypto";
 "Send crypto in the Solana network\ninstantly and without fees" = "Send crypto in the Solana network\ninstantly and without fees";
 "Sending tokens has\nnever been EASIER" = "Sending tokens has\nnever been EASIER";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Effortlessly send tokens with usernames\ninstead of long addresses";
 "Buy crypto" = "Buy crypto";
 "Free (%@ left for today)" = "Free (%@ left for today)";
@@ -487,7 +473,6 @@
 "Claim" = "Claim";
 "You will get" = "You will get";
 "Claiming" = "Claiming";
-"The link is ready!\nReceiver will be able to claim funds" = "The link is ready!\nReceiver will be able to claim funds";
 "Send via link" = "Send via link";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps.";
 "The slippage could be" = "The slippage could be";

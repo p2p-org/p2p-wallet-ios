@@ -14,7 +14,6 @@
 "Swap" = "Chuyển đổi";
 "Explore  DeFi" = "Khám phá DeFi";
 "Scan QR Code" = "Quét mã QR";
-"Something went wrong!\nPlease try again later" = "Đã xảy ra lỗi!\nVui lòng thử lại sau";
 "Try again" = "Thử lại";
 "Copy" = "Sao chép";
 "Share" = "Chia sẻ";
@@ -64,7 +63,6 @@
 "Sending" = "Đang gửi";
 "Transaction has been confirmed" = "Giao dịch đã được xác nhận";
 "Something went wrong" = "Đã xảy ra lỗi";
-"We’ve locked your wallet, try again in %@" = "Chúng tôi đã khóa ví của bạn, hãy thử lại sau %@";
 "Hide zero balances" = "Ẩn ví rỗng";
 "Enter PIN-code" = "Nhập mã PIN";
 "Create account" = "Tạo Tài khoản";
@@ -97,7 +95,6 @@
 "Network fee" = "Phí mạng";
 "Tap to try again" = "Nhấn để thử lại";
 "Bitcoin" = "Bitcoin";
-"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Nếu bạn không hoàn thành giao dịch của mình trong khoảng thời gian/phiên/khung thời gian này, bạn có nguy cơ mất tiền gửi.";
 "Transfer fee" = "Phí chuyển tiền";
 "Free" = "Miễn phí";
 "Account creation fee" = "Phí tạo tài khoản";
@@ -130,7 +127,6 @@
 "Custom" = "Tuỳ chỉnh";
 "The transaction is being processed" = "Giao dịch đang được xử lý";
 "Your PIN" = "Ghim của bạn";
-"Ask a question / Request a feature" = "Đặt câu hỏi / Yêu cầu một tính năng";
 "App version" = "Phiên bản ứng dụng";
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
@@ -154,12 +150,9 @@
 "1 renBTC" = "1 renBTC";
 "1 USDC" = "1 USDC";
 "After first transaction you will be able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ có thể xem nó ở đây";
-"After first transaction you will\nbe able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ \n có thể xem nó ở đây";
 "Sorry :(" = "Xin lỗi :(";
 "Sorry" = "Xin lỗi";
-"A **%@** to receive bitcoins over the Bitcoin network" = "Một **%@** để nhận bitcoin qua mạng Bitcoin";
 "Your wallet list does not contain a renBTC account, and to create one **%@**." = "Danh sách ví của bạn không chứa tài khoản renBTC và để tạo một tài khoản **%@**.";
-"You **%@** to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Bạn **%@** để thanh toán cho việc tạo tài khoản, nhưng nếu ai đó gửi renBTC đến địa chỉ của bạn, nó sẽ được tạo cho bạn.";
 "Country code" = "Mã quốc gia";
 "Use another account" = "Sử dụng tài khoản khác";
 "Continue restoring this wallet" = "Tiếp tục khôi phục ví này";
@@ -293,8 +286,6 @@
 "No lock-up periods" = "Không có thời gian khóa";
 "Earn up to %@%%" = "Kiếm tới %@%%";
 "Stake your tokens and get rewards every day" = "Stake tokens của bạn & nhận phần thưởng mỗi ngày";
-"The funds have been withdrawn\nsuccessfully" = "Tiền đã được rút \n thành công";
-"The funds have been deposited\nsuccessfully" = "Tiền đã được gửi \n thành công";
 "Buying %@ as the base currency" = "Mua %@ làm tiền tệ cơ bản";
 "Exchanging %@ → %@" = "Trao đổi %@ → %@";
 "Purchasing on the Moonpay’s website" = "Mua hàng trên trang web của Moonpay";
@@ -317,8 +308,6 @@
 "You’re goung to buy" = "Bạn còn trẻ để mua";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "Trước tiên, bạn cần mua %@ và sau đó đổi lấy %@ trên Trang chính";
 "You’re going to buy %@" = "Bạn sẽ mua %@";
-"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "Bạn sẽ tạo một địa chỉ Bitcoin công khai sẽ có hiệu lực trong **24 giờ** tới.  Bạn vẫn có thể giữ và gửi Bitcoin mà không bị hạn chế.";
-"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "Đây là **địa chỉ dùng một lần**, vì vậy nếu bạn gửi nhiều giao dịch, tiền của bạn sẽ bị mất.";
 "Solana has some problems." = "Solana có một số vấn đề.";
 "Address was copied to clipboard" = "Địa chỉ đã được sao chép vào khay nhớ tạm";
 "Pick Your Username" = "Chọn tên đăng nhập của bạn";
@@ -411,12 +400,10 @@
 "Initializing error" = "Lỗi khi khởi tạo";
 "Not available for now" = "Không có sẵn cho bây giờ";
 "Sending tokens has\nnever been EASIER" = "Gửi mã thông báo chưa bao giờ DỄ DÀNG HƠN";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Gửi tiền điện tử trong mạng Bitcoin và Solana\nngay lập tức và không tính phí";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Dễ dàng gửi mã thông báo có tên người dùng\nthay vì địa chỉ dài";
 "Buy crypto" = "Mua tiền điện tử";
 "Send crypto in the Solana network\ninstantly and without fees" = "Gửi tiền điện tử trong mạng Solana\nngay lập tức và không tính phí";
 "Sending tokens has\nnever been EASIER" = "Gửi mã thông báo chưa bao giờ DỄ DÀNG HƠN";
-"Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees" = "Gửi tiền điện tử trong mạng Bitcoin và Solana\nngay lập tức và không tính phí";
 "Effortlessly send tokens with usernames\ninstead of long addresses" = "Dễ dàng gửi mã thông báo có tên người dùng\nthay vì địa chỉ dài";
 "Buy crypto" = "Mua tiền điện tử";
 "Free (%@ left for today)" = "Miễn phí (còn %@ cho hôm nay)";
@@ -522,7 +509,6 @@
 "Claim" = "Khẳng định";
 "You will get" = "Bạn sẽ nhận được";
 "Claiming" = "Khiếu nại";
-"The link is ready!\nReceiver will be able to claim funds" = "Liên kết đã sẵn sàng!\nNgười nhận sẽ có thể yêu cầu tiền";
 "Send via link" = "Gửi qua liên kết";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Giá cao hơn vì quy mô giao dịch của bạn.  Cân nhắc chia giao dịch của bạn thành nhiều giao dịch hoán đổi.";
 "The slippage could be" = "Sự trượt giá có thể là";
