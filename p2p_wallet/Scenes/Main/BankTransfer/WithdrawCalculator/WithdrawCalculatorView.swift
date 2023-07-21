@@ -22,7 +22,7 @@ struct WithdrawCalculatorView: View {
                         action: viewModel.actionPressed.send
                     )
                     .padding(.top, 12)
-                    .padding(.bottom, 36)
+                    .padding(.bottom, 16)
                     .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.bottom))
                 })
                 .scrollDismissesKeyboard()
