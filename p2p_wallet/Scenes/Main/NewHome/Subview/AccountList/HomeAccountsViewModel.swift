@@ -26,7 +26,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     let navigation: PassthroughSubject<HomeNavigation, Never>
 
     @Published private(set) var balance: String = ""
-    @Published private(set) var actions: [WalletActionType] = []
+    @Published private(set) var usdcAmount: String = ""
+    @Published private(set) var actions: [HomeAction] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
@@ -50,12 +51,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         self.solanaAccountsService = solanaAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        if sellDataService.isAvailable {
-            actions = [.buy, .receive, .send, .cashOut]
-        } else {
-            actions = [.buy, .receive, .send]
-        }
-
+        self.actions = [.addMoney]
+        
         super.init()
 
         // TODO: Replace with combine
@@ -105,14 +102,30 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Balance
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                let equityValue: Double = state.value.reduce(0) {
+                    $0 + $1.amountInFiatDouble
+                }
+                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
+        
+        // USDC amount
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                
+                let equityValue: Double = Double(state.value
+                    .filter { $0.data.isUSDC }
+                    .reduce(0) { $0 + $1.data.amount }
+                )
+                return "\(equityValue.tokenAmountFormattedString(symbol: L10n.usdc, maximumFractionDigits: 3))"
+            }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.usdcAmount, on: self)
+            .store(in: &subscriptions)
     }
 
     func refresh() async {
@@ -154,25 +167,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    func actionClicked(_ action: WalletActionType) {
+    func actionClicked(_ action: HomeAction) {
         switch action {
-        case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
-            else { return }
-            analyticsManager.log(event: .mainScreenReceiveBar)
-            navigation.send(.receive(publicKey: pubkey))
-        case .buy:
-            analyticsManager.log(event: .mainScreenBuyBar)
-            navigation.send(.buy)
-        case .send:
-            analyticsManager.log(event: .mainScreenSendBar)
-            navigation.send(.send)
-        case .swap:
-            analyticsManager.log(event: .mainScreenSwapBar)
-            navigation.send(.swap)
-        case .cashOut:
-            analyticsManager.log(event: .mainScreenCashOutBar)
-            navigation.send(.cashOut)
+        case .addMoney:
+            navigation.send(.addMoney)
+        case .withdraw: break
         }
     }
 

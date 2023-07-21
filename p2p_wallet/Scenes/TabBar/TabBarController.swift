@@ -281,7 +281,7 @@ final class TabBarController: UITabBarController {
             .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
         
-        //Crypto alert on/off
+        // Crypto alert on/off
         viewModel.transferAccountsPublisher
             .sink { [weak self] claimableTransferExist in
                 DispatchQueue.main.async {
@@ -290,6 +290,14 @@ final class TabBarController: UITabBarController {
                     self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
                     self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
                 }
+            }
+            .store(in: &subscriptions)
+        
+        // Wallet balance
+        viewModel.walletBalancePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] balanceString in
+                self?.viewControllers?[TabItem.wallet.rawValue].tabBarItem.title = balanceString
             }
             .store(in: &subscriptions)
     }
@@ -327,7 +335,7 @@ private extension TabItem {
     var image: UIImage {
         switch self {
         case .wallet:
-            return .tabBarSelectedWallet
+            return .tabBarWallet
         case .crypto:
             return .tabBarCrypto
         case .send:
@@ -342,7 +350,7 @@ private extension TabItem {
     var displayTitle: String {
         switch self {
         case .wallet:
-            return L10n.wallet
+            return ""
         case .crypto:
             return L10n.crypto
         case .send:

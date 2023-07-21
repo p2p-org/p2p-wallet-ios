@@ -17,9 +17,10 @@ struct HomeAccountsView: View {
                 VStack(spacing: 0) {
                     header
                         .padding(.top, 11)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, 16)
                         .id(0)
-                    content
+                    actionsView
+                    
                 }
             }
             .customRefreshable {
@@ -41,9 +42,16 @@ struct HomeAccountsView: View {
 
     private var header: some View {
         ActionsPanelView(
-            actions: viewModel.actions,
+            actions: [],
             balance: viewModel.balance,
-            usdAmount: "",
+            usdAmount: viewModel.usdcAmount,
+            action: { _ in }
+        )
+    }
+    
+    private var actionsView: some View {
+        HomeActionsView(
+            actions: viewModel.actions,
             action: {
                 viewModel.actionClicked($0)
             }
