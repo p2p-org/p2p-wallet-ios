@@ -266,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
       "state" : {
-        "revision" : "ec957ccddbcc710ccc64c9dcbd4c7006fcf8b73a",
-        "version" : "2.2.0"
+        "revision" : "c22f76b709dc4bb6d274398259e75c191e50998a",
+        "version" : "2.3.0"
       }
     },
     {
@@ -339,7 +339,7 @@
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
         "branch" : "v3.1",
-        "revision" : "39c0c632c017b731aea6f4e4ca1b90decdcd4937"
+        "revision" : "1e94960cfc2be639b5973637cd703342ebbccd7b"
       }
     },
     {
@@ -365,8 +365,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "324bc65a28323660fad8a36a7a37f0c2c78eeb9a",
-        "version" : "2.55.0"
+        "revision" : "5f542894dd8efbd766d8adf73ef2f947b0cd5e21",
+        "version" : "2.56.0"
       }
     },
     {

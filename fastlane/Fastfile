@@ -166,7 +166,6 @@ def notify(version, message)
     sh(
       "curl", 
       "-v", 
-      "-X", "POST", 
       "-H", "Content-Type: application/json",
       "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
       "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
@@ -362,7 +361,6 @@ platform :ios do
       sh(
         "curl", 
         "-v", 
-        "-X", "POST", 
         "-H", "Content-Type: application/json", 
         "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
         DISCORD_MESSAGE_API_ENDPOINT
@@ -411,7 +409,6 @@ platform :ios do
       sh(
         "curl", 
         "-v", 
-        "-X", "POST", 
         "-H", "Content-Type: application/json",
         "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
         "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
