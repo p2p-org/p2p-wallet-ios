@@ -101,14 +101,18 @@ private extension WithdrawCalculatorViewModel {
             $fromAmount.eraseToAnyPublisher(),
             $toAmount.eraseToAnyPublisher()
         )
+        .filter { $0.0 != nil } // Only if $exchangeRates is not failed. Otherwise it has own state
         .sink { [weak self] _, fromAmount, toAmount in
             guard let self else { return }
             switch (fromAmount, toAmount) {
             case (nil, _), (Double.zero, _):
                 self.actionData = .zero
                 self.fromAmountTextColor = Asset.Colors.night.color
-            case (fromAmount, toAmount) where fromAmount > self.fromBalance:
-                self.actionData = WithdrawCalculatorAction(isEnabled: false, title: L10n.notEnoughMoney)
+            case (fromAmount, toAmount) where toAmount > Constants.EUR.max:
+                actionData = WithdrawCalculatorAction(
+                    isEnabled: false,
+                    title: L10n.onlyPerOneTransfer(Constants.EUR.max.formattedFiat(currency: .eur))
+                )
                 self.fromAmountTextColor = Asset.Colors.rose.color
             case (fromAmount, toAmount) where toAmount < Constants.EUR.min:
                 actionData = WithdrawCalculatorAction(
@@ -116,11 +120,8 @@ private extension WithdrawCalculatorViewModel {
                     title: L10n.asMinimalAmountForTransfer(Constants.EUR.min.formattedFiat(currency: .eur))
                 )
                 self.fromAmountTextColor = Asset.Colors.rose.color
-            case (fromAmount, toAmount) where toAmount > Constants.EUR.max:
-                actionData = WithdrawCalculatorAction(
-                    isEnabled: false,
-                    title: L10n.onlyPerOneTransfer(Constants.EUR.max.formattedFiat(currency: .eur))
-                )
+            case (fromAmount, toAmount) where fromAmount > self.fromBalance:
+                self.actionData = WithdrawCalculatorAction(isEnabled: false, title: L10n.notEnoughMoney)
                 self.fromAmountTextColor = Asset.Colors.rose.color
             default:
                 actionData = WithdrawCalculatorAction(isEnabled: true, title: L10n.next.uppercaseFirst)
@@ -216,8 +217,8 @@ private extension WithdrawCalculatorViewModel {
         reachability
             .isDisconnected
             .sink { [weak self] in
-                self?.cancelUpdate()
                 self?.notificationService.showConnectionErrorNotification()
+                self?.commonErrorHandling()
             }
             .store(in: &subscriptions)
     }
@@ -236,6 +237,7 @@ private extension WithdrawCalculatorViewModel {
                 exchangeRatesFailCount = 0
                 scheduleRatesUpdate()
                 changeEditing(isEnabled: true)
+                isFromFirstResponder = true
             } catch let error as NSError where error.isNetworkConnectionError {
                 notificationService.showConnectionErrorNotification()
                 commonErrorHandling()
@@ -252,6 +254,7 @@ private extension WithdrawCalculatorViewModel {
     }
 
     func commonErrorHandling() {
+        cancelUpdate()
         arePricesLoading = false
         actionData = WithdrawCalculatorAction.failure
         exchangeRates = nil
