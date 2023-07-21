@@ -63,7 +63,7 @@ extension Array where Element == SendViaLinkTransactionInfo {
                 seed: "UOO8ZTPqlwY5bJqE",
                 timestamp: Date()
                     .addingTimeInterval(-60*60*24*2) // 2 days ago
-            )
+            ),
         ]
     }
 }
