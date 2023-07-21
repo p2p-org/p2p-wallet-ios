@@ -1,0 +1,541 @@
+%@ Account Creation
+%@ Closed
+%@ Created
+%@ found
+%@ is available
+%@ is successfully sent
+%@ is successfully swapped to %@
+**%@** is the remaining time to safely send the assets.
+%@ isn’t available
+%@ mint address
+%@ Network
+%@ signature
+%@ successfully sent
+%@ was sent successfully
+%@ → %@ swapped successfully
+%@-compatible address
+%@h ago
+%@m ago
+Plural format key: "%#@variable_0@"
+Plural format key: "%#@variable_0@"
+1 %@ Price
+1d
+1h
+1m
+1w
+24 hours
+4h
+A **%@** to receive bitcoins over the Bitcoin network
+A proportional amount of rewards will be withdrawn
+A slippage is the difference between the expected price and the actual price at which a trade is executed
+Accept
+Activities
+Activity
+actual
+Add token
+Add token to see wallet address
+Add wallet
+Adding token to your wallet
+Address
+Address copied to clipboard!
+Address copied!
+Address was copied to clipboard
+After 2 more incorrect PINs we’ll log out current account for your safety
+After first transaction you will\nbe able to view it here
+All deposits are stored 100%% non-custodiallity with keys held on this device
+All my products
+All my tokens
+All the ways to buy
+All tokens
+Allow
+Allow notifications
+Allow push notifications so you don’t miss any important updates on your account.
+amount
+Amount is not valid
+Amount is too small
+Amount is too small, expected %@, got %@
+An unexpected error occurred
+Any token can be received using username regardless of whether it is in your wallet's list
+Anytime you want, you can easily reserve a username by going to the settings
+App icon
+Are you sure that this %@ address is valid?
+Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet.
+As all your funds are insured, you don’t need to worry anymore
+Ask a question / Request a feature
+Attempt to debit an account but found no record of a prior credit.
+Authentication failed
+Available
+Back up your wallet
+Backing up
+Backup
+Backup is ready
+Backup manually
+Backup now
+Backup required
+Backup to iCloud
+Backup using iCloud
+Balances
+Be sure you can complete this transaction
+beta
+Bitcoin deposit address
+Block number
+Blockhash required
+British pound sterling
+but you can send to it multiple times within this session
+Buy %@
+Buy Cryptos with Credit Card, Fiat or Apple Pay
+Buy it
+Buy with credit card
+Buying %@
+By continuing, you agree to wallet's\n%@
+By continuing, you agree to wallet's %@ and %@
+Calculating minimum transaction amount…
+cannot exceed 50%%
+Terms and Conditions
+Change
+Change PIN-code
+Change the network?
+Change the region manually
+Change the token?
+Change your search phrase
+Change your settings to use camera for scanning Qr Code
+Changing currency
+Check enterred wallet address and try again.
+Checking address' validity
+Checking name’s availability
+Chinese Yuan
+Choose a token for buying
+Choose another destination wallet
+Choose another slippage
+Choose available username
+Choose destination wallet
+Choose source wallet
+Choose the correct words
+Choose the network
+Choose the recipient
+Choose the recipient to proceed
+Choose the token to pay fees
+Choose wallet
+Claim %@
+classic
+Close %@ account
+Close token account
+Closed wallet
+Receive at least:
+Combined tokens value
+Coming soon
+Completed
+Confirm it's you
+Confirm PIN-code
+Confirm sending %@
+Confirm swapping %@ → %@
+Confirm transactions
+Confirm your wallet PIN
+Confirmed
+Congratulations!
+Connection rate limits exceeded
+Contact
+Convenient and flexible
+Copied to the clipboard
+Copy to clipboard
+Could not create renBTC token, please try again later
+Could not derivate private key
+Could not retrieve account info
+Could not retrieve balance
+Could not retrieve exchange rate
+Create a PIN-code to protect your wallet
+Create address
+Create Bitcoin address
+create new wallet
+Create Token Account
+Creating
+creating an account
+Creating Token Account
+Creating your link
+Currency changed
+Current PIN-code
+Current price
+Custom slippage
+DApps
+Dark
+Date
+day
+Decimals mismatch
+Decline
+Default secure check
+Deposit
+Deposit (will be returned)
+Deposit confirmed
+Deposit fees
+Deposit into Solend
+Deposit MAX Amount
+Deposit to earn a yield
+Deposit your crypto
+Deposit your tokens and earn
+Depositing funds failed
+Destination network
+Didn't get it?
+Direct %@ address
+Discard
+Do this later
+Do you really want to logout?
+Don't miss out on important updates
+Don’t Allow
+Don’t book my name
+Don’t go over the available funds
+don’t have funds
+Earn a yield
+Earn balance
+Earn interest on your crypto
+Earn on your funds
+Earn up to %@ on %@
+Easy way to invest
+Enable FaceID
+Enable now
+Enable TouchID
+Enter a number less than %d%
+Enter a seed phrase from your account
+Enter correct security key
+Enter current PIN
+Enter input amount
+Enter security keys
+Enter seed phrases in a correct order to recover your wallet
+Enter the amount to proceed
+Enter the correct amount to continue
+Enter the recipient's address
+Enter username
+Enter username or skip
+Enter your security key
+Enter your seed phrase
+Error fetching market %@
+Error retrieving receipt
+Error sending transaction
+Error: %@
+Estimating...
+Euro
+Everything is broken
+Exceeded maximum number of instructions allowed
+Exchange
+Exchange rate
+Exchange rate is not valid
+Excluding fees you will deposit
+Excluding fees, you'll deposit
+expected
+Explore DeFi
+Fee calculator not found
+Fee compensation pool not found
+Feedback
+Fetching receipt
+Fill 12 or 24 words
+Finding swapping routes
+Finish setup
+For security, change your authorization device to restore access For security, change your authorization device to restore access if needed.
+for the last 24 hours
+found
+Found associated wallet address
+Free by Key App
+French Franc
+Friends
+From %@
+frontrun
+Get up to 8%% APY on staking USDC
+Get your your own short crypto address
+Getting creation fee
+Given pool token amount results in zero trading tokens
+Go back to profile
+Go back to wallet
+Go to wallet
+Great!
+Grow your portfolio by receiving rewards up to %@%%
+Hidden
+Hidden wallets
+Hide address detail
+Hide details
+Hide direct and mint addresses
+Hide fees
+Hide transaction details
+higher volatility
+Home
+I can complete this transaction within time
+I have saved these words in a safe place
+I understand
+I want to receive
+I want to receive renBTC
+I'm sure, It's correct
+ · If lost, no one can restore it\n · Keep it private, even from us
+If the network is changed to %@, the address field must be filled in with a %@.
+If the token is changed to %@, the address field must be filled in with a %@.
+If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever.
+If you cannot complete this transaction within the required time, please return at a later date.
+If you create a new wallet account, you will receive your security key that you must write down somewhere safe. This is the only way to recover your wallet.\n\nIf you still have access to your old wallet, sometimes you can recover your security key from it.\n\nUsing Custodian wallet, you still have the option to regain access to your data by asking a third party.
+If you do not finish your transaction within this period/session/time frame, you risk losing the deposits.
+If you have no backup, you may never be able to access this account.
+If you lose this device, you can recover your encrypted wallet backup from iCloud
+If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases
+Import a wallet
+Included fee %@
+Incorrect %@ account
+Incorrect %@ ID
+Incorrect account's owner
+Incorrect PIN, try again (%@ attempt left)
+Incorrect PIN-code
+Increase maximum price slippage
+Info
+Input amount is not valid
+Input amount is too small, minimum amount for swapping is %@
+Insufficient funds for fee
+Integrity of the route has been compromised
+Invalid account info
+Invalid estimated amount
+Invalid params
+Invalid status code
+Invisible
+is only open for 36 hours
+It must be an %@ wallet address
+It’s a **one-time address**, so if you send multiple transactions, your money will be lost.
+just now
+Keep control of your assets with instant withdrawals at any time.
+Language
+Learn more
+Leave
+Leave feedback
+Leave this page?
+Let your crypto work for you
+Let’s stay in touch
+Light
+Liquidity provider fee
+List of supported tokens
+Loading exchange rate
+Looks like you already have a wallet, but you still can create another one
+Low slippage caused the swap to fail
+Make another swap
+Make another transaction
+Make sure you understand the aspects
+Make your crypto working on you
+MAX amount is
+Max price slippage
+Maximum 15 latin characters and hyphens
+Method not found
+minimum
+Minimum purchase of %@ required.
+Minimum receive
+Minimum transaction amount of **%@**.
+Mint address
+Minting
+minutes
+month
+Multiple wallets found
+My balances
+name
+Name copied to clipboard
+Native Solana Token
+Needs at least %@
+New PIN-code
+New staking option available
+New wallet
+next
+No account
+No chart data available.
+No hidden costs
+No more than 15 alphanumerical latin lowercase characters and dashes
+No routes for swapping current token pair
+no signer found
+No transactions yet
+Non-native account can only be closed if its balance is zero
+None
+Not enough %@ to pay network fee
+Not enough balance
+Not enough funds
+Not enough output amount
+Not enough token balance
+Not enought %@
+Not yet reserved
+Nothing found
+Notifications
+One unified address to receive SOL or SPL Tokens
+only Bitcoin
+Open your link again
+or reset it with a seed phrase
+Or saving into Keychain
+or your SOL account's address
+passcodes do not match
+Pay %@ & Continue
+Pay fees with
+Pay network fee with
+Pay swap fees with
+Payments
+per
+PIN is set
+PIN-code changed!
+PIN-code must have 6 digits
+PIN-codes do not match
+Please choose another token and try again!
+Please choose paying with SOL
+Please re-enter PIN-code
+please try again later!
+Popular coins
+Powered by Project Serum
+Prices updated
+Private & secure
+Proceed & don’t show again
+Proceed without a username?
+PROFILE AND SECURITY
+PublicKey not found
+Reason
+Receive %@
+Receive **any token** within the Solana network even if it is not included in your wallet list
+Receive at least
+Receive at least: %@ %@
+Receive token
+Receive token using SOL wallet's address
+Receive tokens
+Received
+Received %@
+Received %@ renBTC
+Receiving %@ renBTC
+Receiving %@ renBTC: Pending
+Receiving status
+Receiving statuses
+Receiving via Bitcoin network
+Recipient
+Recovery kit
+Refresh page
+Refresh the page or check back later
+Reload
+renBTC
+renBTC account is required
+Renew
+Repeat new PIN-code
+Reserve username
+Reserve your username
+Reset and try again
+Reset it
+Reset PIN with a seed phrase
+Reset your PIN
+Resetting your PIN
+Restore manually
+Restore using iCloud
+Restoring wallet
+Result
+Retry
+Retry after
+Review & confirm
+Russian Ruble
+Save & Continue
+Save to iCloud
+save to Keychain
+Saved to iCloud
+Saved to Keychain
+Saving to iCloud
+Saving to Keychain
+Savings
+Scan or copy QR code
+Search token
+seconds
+Secure non-custodial bank of future
+Secure your wallet
+Security & Network
+security key
+Seed phrase must have 12 or 24 words
+Seed phrase must have at least 12 words
+SELECT
+Select currency
+Select Derivable Path
+Select the first token
+Select the second token
+Select token
+Select token to pay fees
+Select wallet
+Select word #%@
+Sell %@
+Sell all
+Send %@ %@
+Send coins
+Send crypto in the Bitcoin and Solana\nnetwork instantly and without fees
+Send crypto via link
+Send Now
+Send SOL or any SPL Tokens on one address
+Send to your wallet
+Send tokens
+Sender’s\naddress
+Sending token...
+Sending via link
+Sent
+Serum order creation (paid once per pair)
+Set up a new PIN
+Set up a new wallet PIN
+Set up a wallet PIN
+Share your Solana network address
+Show address
+Show address detail
+Show deposit
+Show deposit (%@)
+Show deposits
+Show details
+Show direct and mint addresses
+Show fees
+Show my private key
+Show swap details
+Show transaction details
+Show wallet address
+Show your security key
+Showing my address for
+Signer error
+Simple decentralized finance for everyone
+Simple finance for everyone
+Slide to deposit
+Slide to scan
+Slide to withdraw
+Slippage can occur at any time, but it is most prevalent during periods of %@
+Slippage error
+Slippage exceeds maximum
+Slippage isn't valid
+Slippage settings
+Slippage tolerance %@
+SOL and SPL Tokens
+SOL Price
+SOL purchase cost
+Solana
+Solana program error
+Solana RPC client error
+Solend is one of the most scalable, fastest and lowest fee DeFi lending protocol, that allows you to earn interest on your assets.
+Some parameters are missing
+Something went wrong!\nPlease try again later
+Sorry, we don't know such a country
+Source account is not valid
+Spend
+Spent
+Status
+Statuses received
+Statuses received (%@)
+Submitted to RenVM
+Submitting to RenVM
+Success
+Successfully changed PIN-code
+Successfully minted %@ renBTC!
+Suggest ways to improve Key App
+Superhero protection
+Swap fees
+Swap instruction exceeds desired slippage limit
+Swap now
+Swap settings
+Swap with crypto
+Swapping from %@ to %@ is currently unsupported
+Swapping is currently unavailable
+Swapping pools not found
+Switch language?
+Switching network...
+Switching to
+System
+System error
+Tap and hold to copy
+Tap button to retry!
+Tap here to retry
+tap refresh button to retry
+Tap to view in explorer
+Terms and conditions
+Terms of Use
+Terms of Use and Privacy Policy
+The address is not valid
+The definition
+The fee calculation failed due to overflow, underflow or unexpected 0
