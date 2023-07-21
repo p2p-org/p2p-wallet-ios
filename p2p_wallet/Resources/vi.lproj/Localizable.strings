@@ -31,7 +31,6 @@
 "Wallet address" = "Địa chỉ ví";
 "Something went wrong!\nPlease try again later" = "Đã xảy ra lỗi!\nVui lòng thử lại sau";
 "Try again" = "Thử lại";
-"There is nothing in here!" = "Không có gì ở đây!";
 "Copy" = "Sao chép";
 "Share" = "Chia sẻ";
 "Copied to clipboard" = "Đã sao chép vào clipboard";
@@ -99,7 +98,6 @@
 "Blockhash not found" = "Không tìm thấy blockhash";
 "You must select a wallet to send" = "Bạn phải chọn một ví để gửi";
 "Price" = "Giá bán";
-"The wallet address is not valid, it must be a %@ wallet address" = "Địa chỉ ví không hợp lệ, nó phải là địa chỉ ví %@";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Viết ra hoặc sao chép những từ này theo đúng thứ tự và giữ chúng ở nơi an toàn.\nSao chép chúng theo cách thủ công hoặc sao lưu vào iCloud";
 "You can not send tokens to yourself" = "Bạn không thể gửi tokens cho chính mình";
 "Visibility in token list" = "Hiển thị trong danh sách token";
@@ -128,9 +126,7 @@
 "Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
 "To %@" = "Đến %@";
-"From token %@" = "Từ %@";
 "You have not made any transaction yet" = "Bạn chưa thực hiện bất kỳ giao dịch nào";
-"The list is empty" = "Danh sách trống";
 "Check entered account info for sending. It should be account in Solana network" = "Kiểm tra thông tin tài khoản đã nhập để gửi. \nNó phải là tài khoản trong mạng Solana";
 "Wallet address is not valid" = "Địa chỉ ví không hợp lệ";
 "It must be an %@ wallet address " = "Nó phải là một địa chỉ ví %@";
@@ -159,7 +155,6 @@
 "Network changed" = "Mạng đã thay đổi";
 "Settings" = "Cài đặt";
 "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "Thư viện Chương trình Solana (SPL) là một tập hợp các chương trình trên blockchain do Solana duy trì. Chương trình SPL Token là tiêu chuẩn token của Solana blockchain.\n\nTương tự như ERC20 tokens trên mạng Ethereum, SPL tokens được thiết kế cho các ứng dụng DeFi. SPL Tokens có thể được giao dịch trên Serum, một sàn giao dịch phi tập trung dựa trên Solana và FTX.";
-"The phrases you has entered is not correct" = "Các cụm từ bạn đã nhập không chính xác";
 "pending" = "đang chờ xử lý";
 "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Lưu cụm bảo mật đó và giữ nó ở nơi an toàn. Nó sẽ được sử dụng để phục hồi và sao lưu.";
 "Could not create capture session" = "Không thể tạo phiên chụp";
@@ -176,7 +171,6 @@
 "Changed language to %@" = "Đã thay đổi ngôn ngữ thành %@";
 "Wrong signature" = "Chữ ký sai";
 "Buy" = "Mua";
-"There is no %@ wallet in your account" = "Không có ví %@ trong tài khoản của bạn";
 "Wrong hash format" = "Định dạng hash sai";
 "Wrong pubkey format" = "Định dạng pubkey sai";
 "Wrong keypair format" = "Định dạng cặp khóa sai";
@@ -189,8 +183,6 @@
 "Transaction Token" = "Token giao dịch";
 "Network fee" = "Phí mạng";
 "Tap to try again" = "Nhấn để thử lại";
-"Calculating fees" = "Đang tính phí";
-"Could not calculate exchange rate or swapping fees from current token pair" = "Không thể tính toán tỷ giá hối đoái hoặc phí hoán đổi từ cặp tokens hiện tại";
 "Bitcoin" = "Bitcoin";
 "Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Mỗi giao dịch đến địa chỉ này mất khoảng 60 phút để hoàn tất. Vì lý do bảo mật, bạn sẽ cần đợi 6 xác nhận trước khi có thể mint renBTC trên Solana.";
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "Nếu bạn không hoàn thành giao dịch của mình trong khoảng thời gian/phiên/khung thời gian này, bạn có nguy cơ mất tiền gửi.";
@@ -216,17 +208,10 @@
 "Saved to photo library" = "Đã lưu vào thư viện ảnh";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "Có một lỗi xảy ra. Bạn có thể thử lại hoặc đặt tên sau trong Cài đặt";
 "Use any lowercased latin characters and hyphens" = "Sử dụng bất kỳ ký tự Latinh viết thường nào và dấu gạch nối";
-"The username %@ is not available" = "Tên người dùng %@ không khả dụng";
 "Username must contain less than 15 characters" = "Tên người dùng phải có ít hơn 15 ký tự";
 "Error finding swapping routes. Tap here to try again!" = "Lỗi khi tìm các tuyến hoán đổi. Nhấn vào đây để thử lại!";
-"This trading pair is not supported" = "Cặp giao dịch này không được hỗ trợ";
-"Could not calculating fees" = "Không thể tính phí";
-"Could not connect to wallet" = "Không thể kết nối với ví";
 "Your account does not have enough %@ to cover fees" = "Tài khoản của bạn không có đủ %@ để trả phí";
-"This username is not associated with anyone" = "Tên người dùng này không được liên kết với bất kỳ ai";
-"There is an error occured, please try typing name again." = "Đã xảy ra lỗi, vui lòng thử nhập lại tên.";
 "Security key can't be saved into icloud. Please try again." = "Không thể lưu khóa bảo mật vào icloud. Vui lòng thử lại.";
-"The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "Tương lai của ngân hàng không giám sát: cách dễ dàng để mua, bán và nắm giữ tiền điện tử";
 "Nobody can access your private keys. Your data is fully safe" = "Không ai có thể truy cập các khóa riêng tư của bạn.\nDữ liệu của bạn hoàn toàn an toàn";
 "Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Gửi BTC, ETH, USDC mà không mất phí.\nHoán đổi BTC chỉ với $ 1";
 "Private and secure" = "Riêng tư & an toàn";
@@ -244,7 +229,6 @@
 "If you create a new wallet account" = "Nếu bạn tạo một tài khoản ví mới, bạn sẽ nhận được khóa bảo mật mà bạn phải ghi vào một nơi an toàn. Đây là cách duy nhất để khôi phục ví của bạn.\n\nNếu bạn vẫn có quyền truy cập vào ví cũ của mình, đôi khi bạn có thể khôi phục khóa bảo mật của mình từ đó.\n\nSử dụng ví Custodian, bạn vẫn có tùy chọn lấy lại quyền truy cập vào dữ liệu của mình bằng cách yêu cầu bên thứ ba.";
 "What is a security key?" = "Khóa bảo mật là gì?";
 "Verify your security key" = "Xác minh khóa bảo mật của bạn";
-"These words don’t match" = "Những từ này không khớp";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Các từ trong khóa bảo mật của bạn cần được chọn theo đúng thứ tự. Ngoài ra, bạn có thể tạo bản sao lưu iCloud";
 "Go back" = "Quay lại";
 "Choose your wallet" = "Chọn ví của bạn";
@@ -260,17 +244,13 @@
 "%@ is unavailable" = "%@ không khả dụng";
 "Username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Tên người dùng là địa chỉ công khai của bạn, cho phép bạn nhận bất kỳ token nào ngay cả khi bạn không có mã đó trong danh sách ví.\n\nĐiều quan trọng là bạn phải chọn tên người dùng chính xác mà bạn muốn, vì sau khi đã đặt, bạn không thể thay đổi nó.";
 "Scan QR" = "Quét QR";
-"There’s no address like this" = "Không có địa chỉ nào như thế này";
-"This address has no funds" = "Địa chỉ này không có tiền";
 "Caution: this address has no funds" = "Thận trọng: địa chỉ này không có tiền";
-"There is an error occurred, please try again" = "Đã xảy ra lỗi, vui lòng thử lại";
 "Review and confirm" = "Xem lại & xác nhận";
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Hãy chắc chắn rằng tất cả các chi tiết là chính xác trước khi xác nhận giao dịch. Sau khi xác nhận, nó không thể được đảo ngược.";
 "Recipient’s\naddress" = "Địa chỉ\nngười nhận";
 "Total" = "Toàn bộ";
 "Total fee" = "Tổng phí";
 "username or address" = "tên người dùng / địa chỉ";
-"There are %@ free transactions left for today" = "Còn lại %@ giao dịch miễn phí cho ngày hôm nay";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Nhận bất kỳ token nào trong mạng Solana ngay cả khi nó không có trong danh sách ví của bạn";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Khi bạn chọn mạng Bitcoin, địa chỉ của bạn chỉ chấp nhận Bitcoin.  Bạn có thể mất tài sản khi gửi một đồng xu khác. \n 0,000112 BTC là số tiền giao dịch tối thiểu và bạn có 36 giờ để hoàn tất giao dịch sau khi nhận được địa chỉ.";
 "You pay" = "Bạn trả tiền";
@@ -285,7 +265,6 @@
 "This address accepts only %@. You may lose assets by sending another coin." = "Địa chỉ này chỉ chấp nhận %@.  Bạn có thể mất tài sản khi gửi một đồng xu khác.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Mật mã chưa được đặt. Vì vậy, chúng tôi không thể xác minh bạn là chủ sở hữu của thiết bị.";
 "The transaction is being processed" = "Giao dịch đang được xử lý";
-"The swap is being processed" = "Giao dịch hoán đổi đang được xử lý";
 "The last one: " = "Cái cuối cùng:";
 "Your PIN" = "Ghim của bạn";
 "Ask a question / Request a feature" = "Đặt câu hỏi / Yêu cầu một tính năng";
@@ -314,20 +293,15 @@
 "Turn on notifications" = "Bật thông báo";
 "Pay the %@ fee with" = "Thanh toán phí %@ bằng";
 "The transaction has been rejected" = "Giao dịch đã bị từ chối";
-"The price slippage was set at %@" = "Mức trượt giá được đặt ở %@";
 "%@ purchase cost" = "%@ chi phí mua";
 "Transaction has been finalized" = "Giao dịch đã được hoàn tất";
 "Transaction has been sent" = "Giao dịch đã được gửi";
 "Sender’s address" = "Địa chỉ\nngười gửi";
-"This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
-"The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
 "Forgot your PIN?" = "Quên mã PIN của bạn?";
 "You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.\nĐặt lại mã PIN hoặc đợi %@.";
 "You have successfully set your PIN" = "Bạn đã đặt thành công mã PIN của mình";
 "Insufficient funds to cover fees" = "Không đủ tiền để trả phí";
-"The name service is experiencing some issues, please try again later." = "Dịch vụ tên đang gặp một số sự cố, vui lòng thử lại sau.";
 "Try again later" = "Thử lại sau";
-"The transaction failed due to a blockchain error" = "Giao dịch không thành công do lỗi trên blockchain";
 "The %@ fee was reserved, so you wouldn't pay it again the next time you created a transaction of the same type." = "Phí %@ đã được bảo lưu, vì vậy bạn sẽ không phải trả lại vào lần sau khi tạo giao dịch cùng loại.";
 "The wrong security key or words order. Please try again" = "Khóa bảo mật sai hoặc trật tự từ.  Vui lòng thử lại";
 "1 renBTC" = "1 renBTC";
@@ -489,7 +463,6 @@
 "Your current PIN code" = "Mã PIN hiện tại của bạn";
 "Create your new PIN code" = "Tạo mã PIN mới của bạn";
 "Confirm your new PIN code" = "Xác nhận mã PIN mới của bạn";
-"APY" = "APY";
 "Total rewards earned" = "Tổng số phần thưởng kiếm được";
 "No lock-up periods" = "Không có thời gian khóa";
 "Grow your portfolio by receiving rewards up to %@%" = "Phát triển danh mục đầu tư của bạn bằng cách nhận phần thưởng lên đến %@%%";
@@ -510,11 +483,8 @@
 "Top up balance to continue" = "Nạp tiền vào số dư để tiếp tục";
 "Withdrawing your funds from Solend. Just\nwait until it’s done" = "Rút tiền của bạn từ Solend.  Chỉ cần \n đợi cho đến khi nó hoàn tất";
 "The funds have been withdrawn\nsuccessfully" = "Tiền đã được rút \n thành công";
-"There was a problem withdrawing funds" = "Đã xảy ra sự cố khi rút tiền";
 "Sending your deposit to Solend. Just wait\nuntil it’s done" = "Gửi tiền gửi của bạn đến Solend.  Chỉ cần đợi \n cho đến khi hoàn tất";
 "The funds have been deposited\nsuccessfully" = "Tiền đã được gửi \n thành công";
-"There was a problem depositing funds" = "Đã xảy ra sự cố khi gửi tiền";
-"Add more" = "Bổ sung thêm";
 "Your deposits" = "Tiền gửi của bạn";
 "What is Solend?" = "Solend là gì?";
 "Like a deposit but with crypto.\nLow risks, all your funds are insured." = "Giống như một khoản tiền gửi nhưng với tiền điện tử. \n Rủi ro thấp, tất cả các khoản tiền của bạn đều được bảo hiểm.";
@@ -598,7 +568,6 @@
 "Keep your pin safe. Hide your pin from other people." = "Giữ an toàn cho mã pin của bạn.  Ẩn mã pin của bạn với người khác.";
 "Don't use the same pin for multiple accounts." = "Không sử dụng cùng một mã pin cho nhiều tài khoản.";
 "Wallet recovery" = "Khôi phục ví";
-"The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "Giao dịch đã được xác nhận trong mạng Solana, nhưng bạn cũng phải theo dõi nó trên mạng Bitcoin";
 "Recipient gets" = "Người nhận được";
 "Recipient’s address" = "Địa chỉ người nhận";
 "Tap to switch to %@" = "Nhấn để chuyển sang %@";
@@ -624,7 +593,6 @@
 "The transaction has been successfully completed 🤟" = "Giao dịch đã được hoàn tất thành công 🤟";
 "Recently used" = "Được sử dụng gần đây";
 "Make your first transaction" = "Thực hiện giao dịch đầu tiên của bạn";
-"To continue, paste or scan the address (Solana or Bitcoin) or type a username" = "Để tiếp tục, hãy dán hoặc quét địa chỉ (Solana hoặc Bitcoin) hoặc nhập tên người dùng";
 "To continue, paste or scan the address or type a username" = "Để tiếp tục, hãy dán hoặc quét địa chỉ hoặc nhập tên người dùng";
 "Fees: %@" = "Phí: %@";
 "Calculating the fees" = "Tính phí";
@@ -689,7 +657,6 @@
 "Funds were sent" = "Tiền đã được gửi";
 "To your bank account" = "Đến tài khoản ngân hàng của bạn";
 "Error with deleting. Try again" = "Lỗi khi xóa. Vui lòng thử lại";
-"There is no %@ in your wallet to sell" = "Không có %@ trong ví của bạn để bán";
 "via bank transfer" = "qua chuyển khoản ngân hàng";
 "Cash out crypto to fiat" = "Rút tiền điện tử thành fiat";
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL đã được gửi đến Moonpay và đang được xử lý.  Mọi thắc mắc liên quan đến giao dịch của bạn có thể được trả lời qua";
@@ -730,7 +697,6 @@
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "Received from" = "Nhận được tư";
-"There was a problem with the swap, your funds were refunded" = "Đã xảy ra sự cố với giao dịch hoán đổi, tiền của bạn đã được hoàn trả";
 "Swap details" = "chi tiết hoán đổi";
 "Your history will appear here.\nTo get started you can:" = "Lịch sử của bạn sẽ xuất hiện ở đây.\nĐể bắt đầu, bạn có thể:";
 "Oops! Something happened." = "Ối!  Một cái gì đó đã xảy ra.";

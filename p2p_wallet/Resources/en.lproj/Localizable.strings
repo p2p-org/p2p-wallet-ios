@@ -29,7 +29,6 @@
 "Wallet address" = "Wallet address";
 "Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
 "Try again" = "Try again";
-"There is nothing in here!" = "There is nothing in here!";
 "Copy" = "Copy";
 "Share" = "Share";
 "Copied to clipboard" = "Copied to clipboard";
@@ -96,7 +95,6 @@
 "Blockhash not found" = "Blockhash not found";
 "You must select a wallet to send" = "You must select a wallet to send";
 "Price" = "Price";
-"The wallet address is not valid, it must be a %@ wallet address" = "The wallet address is not valid, it must be a %@ wallet address";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud";
 "You can not send tokens to yourself" = "You can not send tokens to yourself";
 "Visibility in token list" = "Visibility in token list";
@@ -125,9 +123,7 @@
 "Close account" = "Close Account";
 "%@ to %@" = "%@ to %@";
 "To %@" = "To %@";
-"From token %@" = "From %@";
 "You have not made any transaction yet" = "You have not made any transaction yet";
-"The list is empty" = "The list is empty";
 "Check entered account info for sending. It should be account in Solana network" = "Check entered account info for sending.\nIt should be account in Solana network";
 "Wallet address is not valid" = "Wallet address is not valid";
 "It must be an %@ wallet address " = "It must be an %@ wallet address";
@@ -156,7 +152,6 @@
 "Network changed" = "Network changed";
 "Settings" = "Settings";
 "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC-20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications.";
-"The phrases you has entered is not correct" = "The phrases you has entered is not correct";
 "pending" = "pending";
 "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup.";
 "Could not create capture session" = "Could not create capture session";
@@ -173,7 +168,6 @@
 "Changed language to %@" = "Changed language to %@";
 "Wrong signature" = "Wrong signature";
 "Buy" = "Buy";
-"There is no %@ wallet in your account" = "There is no %@ wallet in your account";
 "Wrong hash format" = "Wrong hash format";
 "Wrong pubkey format" = "Wrong pubkey format";
 "Wrong keypair format" = "Wrong keypair format";
@@ -186,8 +180,6 @@
 "Transaction Token" = "Transaction Token";
 "Network fee" = "Network fee";
 "Tap to try again" = "Tap to try again";
-"Calculating fees" = "Calculating fees";
-"Could not calculate exchange rate or swapping fees from current token pair" = "Could not calculate exchange rate or swapping fees from current token pair";
 "Bitcoin" = "Bitcoin";
 "Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana.";
 "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits.";
@@ -212,17 +204,10 @@
 "Saved to photo library" = "Saved to photo library";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "There is an error occurred. You can either retry or reserve name later in Settings";
 "Use any lowercased latin characters and hyphens" = "Use any lowercased latin characters and hyphens";
-"The username %@ is not available" = "The username %@ is not available";
 "Username must contain less than 15 characters" = "Username must contain less than 15 characters";
 "Error finding swapping routes. Tap here to try again!" = "Error finding swapping routes. Tap here to try again!";
-"This trading pair is not supported" = "This trading pair is not supported";
-"Could not calculating fees" = "Could not calculating fees";
-"Could not connect to wallet" = "Could not connect to wallet";
 "Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
-"This username is not associated with anyone" = "This username is not associated with anyone";
-"There is an error occured, please try typing name again." = "There is an error occured, please try typing name again.";
 "Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
-"The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "The future of non-custodial banking: the easy way to buy, sell and hold cryptos";
 "Nobody can access your private keys. Your data is fully safe" = "Nobody can access your private keys.\nYour data is fully safe";
 "Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Send BTC, ETH, USDC with no fees.\nSwap BTC with only $1";
 "Private and secure" = "Private & secure";
@@ -240,7 +225,6 @@
 "If you create a new wallet account" = "If you create a new wallet account, you will receive your security key that you must write down somewhere safe. This is the only way to recover your wallet.\n\nIf you still have access to your old wallet, sometimes you can recover your security key from it.\n\nUsing Custodian wallet, you still have the option to regain access to your data by asking a third party.";
 "What is a security key?" = "What is a security key?";
 "Verify your security key" = "Verify your security key";
-"These words don’t match" = "These words don’t match";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup";
 "Go back" = "Go back";
 "Choose your wallet" = "Choose your wallet";
@@ -256,16 +240,12 @@
 "%@ is unavailable" = "%@ is unavailable";
 "Username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it.";
 "Scan QR" = "Scan QR";
-"There’s no address like this" = "There’s no address like this";
-"This address has no funds" = "This address has no funds";
 "Caution: this address has no funds" = "Caution: this address has no funds";
-"There is an error occurred, please try again" = "There is an error occurred, please try again";
 "Review and confirm" = "Review & confirm";
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
 "Total" = "Total";
 "Total fee" = "Total fee";
 "username or address" = "username or address";
-"There are %@ free transactions left for today" = "There are %@ free transactions left for today";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Receive **any token** within the Solana network even if it is not included in your wallet list";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
 "You pay" = "You pay";
@@ -280,7 +260,6 @@
 "This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
 "The transaction is being processed" = "The transaction is being processed";
-"The swap is being processed" = "The swap is being processed";
 "The last one: " = "The last one:";
 "Your PIN" = "Your PIN";
 "Ask a question / Request a feature" = "Ask a question / Request a feature";
@@ -304,20 +283,15 @@
 "Turn on notifications" = "Turn on notifications";
 "Pay the %@ fee with" = "Pay the %@ fee with";
 "The transaction has been rejected" = "The transaction has been rejected";
-"The price slippage was set at %@" = "The price slippage was set at %@";
 "%@ purchase cost" = "%@ purchase cost";
 "Transaction has been finalized" = "Transaction has been finalized";
 "Transaction has been sent" = "Transaction has been sent";
 "Sender’s address" = "Sender’s\naddress";
-"This value is calculated by subtracting the transaction fee from your balance." = "This value is calculated by subtracting the transaction fee from your balance.";
-"The maximum value is calculated by subtracting the transaction fee from your balance." = "The maximum value is calculated by subtracting the transaction fee from your balance.";
 "Forgot your PIN?" = "Forgot your PIN?";
 "You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@.";
 "You have successfully set your PIN" = "You have successfully set your PIN";
 "Insufficient funds to cover fees" = "Insufficient funds to cover fees";
-"The name service is experiencing some issues, please try again later." = "The name service is experiencing some issues, please try again later.";
 "Try again later" = "Try again later";
-"The transaction failed due to a blockchain error" = "The transaction failed due to a blockchain error";
 "The %@ fee was reserved, so you wouldn't pay it again the next time you created a transaction of the same type." = "The %@ fee was reserved, so you wouldn't pay it again the next time you created a transaction of the same type.";
 "The wrong security key or words order. Please try again" = "The wrong security key or words order. Please try again";
 "USDC" = "USDC";
@@ -470,7 +444,6 @@
 "Your current PIN code" = "Your current PIN code";
 "Create your new PIN code" = "Create your new PIN code";
 "Confirm your new PIN code" = "Confirm your new PIN code";
-"APY" = "APY";
 "Total rewards earned" = "Total rewards earned";
 "Grow your portfolio by receiving rewards up to %@%" = "Grow your portfolio by receiving rewards up to %@%%";
 "Token to deposit" = "Token to deposit";
@@ -489,11 +462,8 @@
 "Top up balance to continue" = "Top up balance to continue";
 "Withdrawing your funds from Solend. Just\nwait until it’s done" = "Withdrawing your funds from Solend. Just\nwait until it’s done";
 "The funds have been withdrawn\nsuccessfully" = "The funds have been withdrawn\nsuccessfully";
-"There was a problem withdrawing funds" = "There was a problem withdrawing funds";
 "Sending your deposit to Solend. Just wait\nuntil it’s done" = "Sending your deposit to Solend. Just wait\nuntil it’s done";
 "The funds have been deposited\nsuccessfully" = "The funds have been deposited\nsuccessfully";
-"There was a problem depositing funds" = "There was a problem depositing funds";
-"Add more" = "Add more";
 "Your deposits" = "Your deposits";
 "What is Solend?" = "What is Solend?";
 "Like a deposit but with crypto.\nLow risks, all your funds are insured." = "Like a deposit but with crypto.\nLow risks, all your funds are insured.";
@@ -566,7 +536,6 @@
 "Keep your pin safe. Hide your pin from other people." = "Keep your pin safe. Hide your pin from other people.";
 "Don't use the same pin for multiple accounts." = "Don't use the same pin for multiple accounts.";
 "Wallet recovery" = "Wallet recovery";
-"The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
 "Recipient gets" = "Recipient gets";
 "Recipient’s address" = "Recipient’s address";
 "Tap to switch to %@" = "Tap to switch to %@";
@@ -591,7 +560,6 @@
 "The transaction has been successfully completed 🤟" = "The transaction has been successfully completed 🤟";
 "Recently used" = "Recently used";
 "Make your first transaction" = "Make your first transaction";
-"To continue, paste or scan the address (Solana or Bitcoin) or type a username" = "To continue, paste or scan the address (Solana or Bitcoin) or type a username";
 "To continue, paste or scan the address or type a username" = "To continue, paste or scan the address or type a username";
 "Fees: %@" = "Fees: %@";
 "Calculating the fees" = "Calculating the fees";
@@ -655,7 +623,6 @@
 "Funds were sent" = "Funds were sent";
 "To your bank account" = "To your bank account";
 "Error with deleting. Try again" = "Error with deleting. Try again";
-"There is no %@ in your wallet to sell" = "There is no %@ in your wallet to sell";
 "via bank transfer" = "via bank transfer";
 "Cash out crypto to fiat" = "Cash out crypto to fiat";
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via";
@@ -697,7 +664,6 @@
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "Received from" = "Received from";
 "Swap details" = "Swap details";
-"There was a problem with the swap, your funds were refunded" = "There was a problem with the swap, your funds were refunded";
 "Your history will appear here.\nTo get started you can:" = "Your history will appear here.\nTo get started you can:";
 "Oops! Something happened." = "Oops! Something happened.";
 "Stake" = "Stake";
