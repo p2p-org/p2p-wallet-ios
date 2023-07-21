@@ -295,7 +295,7 @@ private enum Constants {
     enum EUR {
         static let decimals = 2
         static let symbol = "EUR"
-        static let min: Double = 1
+        static let min: Double = 10
         static let max: Double = 15000
     }
 }
