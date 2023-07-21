@@ -159,7 +159,9 @@ extension TabBarViewModel {
     var walletBalancePublisher: AnyPublisher<String, Never> {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
+                let equityValue: Double = state.value
+                    .filter { $0.data.isUSDC }
+                    .reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol)\(equityValue.formattedForWallet())"
             }
             .receive(on: RunLoop.main)
