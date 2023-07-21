@@ -10,6 +10,6 @@ private let scamAddresses: Set<String> = [
 extension SolanaAccount {
     // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
     var isNFTToken: Bool {
-        (token.decimals == 0) || scamAddresses.contains(token.address)
+        (token.decimals == 0) || scamAddresses.contains(token.mintAddress)
     }
 }

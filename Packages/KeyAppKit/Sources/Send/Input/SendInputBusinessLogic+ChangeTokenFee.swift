@@ -30,12 +30,12 @@ extension SendInputBusinessLogic {
                     from: state.token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: feeToken.address,
+                    payingTokenMint: feeToken.mintAddress,
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
                 feeInToken = (try? await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: fee,
-                    payingFeeTokenMint: try PublicKey(string: feeToken.address)
+                    payingFeeTokenMint: try PublicKey(string: feeToken.mintAddress)
                 )) ?? .zero
             }
 

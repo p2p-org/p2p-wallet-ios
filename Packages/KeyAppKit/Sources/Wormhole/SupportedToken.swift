@@ -5,7 +5,7 @@ public enum SupportedToken {
     public static let usdt: SolanaToken = .init(
         _tags: nil,
         chainId: 101,
-        address: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
+        mintAddress: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
         symbol: "USDTet",
         name: "Tether USD (Portal from Ethereum)",
         decimals: 6,

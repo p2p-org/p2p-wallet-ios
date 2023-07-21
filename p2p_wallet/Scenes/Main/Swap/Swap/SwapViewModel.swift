@@ -123,7 +123,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                         pubkey: token.userWallet?.address,
                         balance: token.userWallet?.amount,
                         symbol: token.token.symbol,
-                        mint: token.token.address
+                        mint: token.token.mintAddress
                     )
                 }
 
@@ -142,8 +142,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 ),
                 prices: stateMachine.currentState.tokensPriceMap
                     .filter { key, _ in
-                        currentState.fromToken.token.address.contains(key) ||
-                            currentState.toToken.token.address.contains(key)
+                        currentState.fromToken.token.mintAddress.contains(key) ||
+                        currentState.toToken.token.mintAddress.contains(key)
                     }
             )
 
@@ -222,7 +222,7 @@ private extension SwapViewModel {
                     action: .changeFromToken(token)
                 )
                 self.fromTokenInputViewModel.amount = nil // Reset previously set amount with new from token
-                Defaults.fromTokenAddress = token.address
+                Defaults.fromTokenAddress = token.mintAddress
             }
             .store(in: &subscriptions)
 
@@ -235,7 +235,7 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(
                     action: .changeToToken(token)
                 )
-                Defaults.toTokenAddress = token.address
+                Defaults.toTokenAddress = token.mintAddress
                 self.log(priceImpact: newState.priceImpact, value: newState.route?.priceImpactPct)
             }
             .store(in: &subscriptions)
@@ -369,7 +369,7 @@ private extension SwapViewModel {
                 isEnabled: false,
                 title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals)))
             )
-            if state.fromToken.address == TokenMetadata.nativeSolana.address, !wasMinToastShown {
+            if state.fromToken.mintAddress == TokenMetadata.nativeSolana.mintAddress, !wasMinToastShown {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
                 wasMinToastShown = true
             }

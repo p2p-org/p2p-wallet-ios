@@ -63,7 +63,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
                 // Update database
                 database.timestamps = result.timestamp
                 let tokens = result.tokens.map { token in
-                    (token.address, token)
+                    (token.mintAddress, token)
                 }
                 database.data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
                 status = .ready
@@ -125,7 +125,7 @@ private extension SolanaTokensService {
 public extension SolanaTokensService {
     var usdc: SolanaToken {
         get async throws {
-            try await getOrThrow(address: TokenMetadata.usdc.address)
+            try await getOrThrow(address: TokenMetadata.usdc.mintAddress)
         }
     }
 

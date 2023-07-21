@@ -69,13 +69,13 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                 data: SwapAlertLoggerMessage(
                     tokenA: .init(
                         name: sourceWallet.token.name,
-                        mint: sourceWallet.token.address,
+                        mint: sourceWallet.token.mintAddress,
                         sendAmount: fromAmount.toString(maximumFractionDigits: 9),
                         balance: sourceWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),
                     tokenB: .init(
                         name: destinationWallet.token.name,
-                        mint: destinationWallet.token.address,
+                        mint: destinationWallet.token.mintAddress,
                         expectedAmount: toAmount.toString(maximumFractionDigits: 9),
                         balance: destinationWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),

@@ -116,10 +116,10 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
             .firstIndex(where: { $0.publicKey.base58EncodedString == address }) else { return nil }
 
         let mintAddress: String = transactionInfo.meta?.postTokenBalances?
-            .first(where: { $0.accountIndex == addressIndex })?.mint ?? TokenMetadata.nativeSolana.address
+            .first(where: { $0.accountIndex == addressIndex })?.mint ?? TokenMetadata.nativeSolana.mintAddress
 
         let preWalletBalance: Lamports
-        if mintAddress == TokenMetadata.nativeSolana.address {
+        if mintAddress == TokenMetadata.nativeSolana.mintAddress {
             preWalletBalance = transactionInfo.meta?.preBalances?[addressIndex] ?? 0
         } else {
             preWalletBalance = transactionInfo.meta?.preTokenBalances?
@@ -127,7 +127,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
         }
         let preBalance: Double
         let postBalance: Double
-        if mintAddress == TokenMetadata.nativeSolana.address {
+        if mintAddress == TokenMetadata.nativeSolana.mintAddress {
             preBalance = transactionInfo.meta?.preBalances?[addressIndex]
                 .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0
             postBalance = transactionInfo.meta?.postBalances?[addressIndex]

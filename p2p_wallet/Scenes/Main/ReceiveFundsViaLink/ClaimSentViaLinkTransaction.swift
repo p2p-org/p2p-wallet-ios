@@ -128,7 +128,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                 data: ClaimSentViaLinkAlertLoggerMessage(
                     tokenToClaim: .init(
                         name: token.name,
-                        mint: token.address,
+                        mint: token.mintAddress,
                         claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
                         currency: token.symbol
                     ),

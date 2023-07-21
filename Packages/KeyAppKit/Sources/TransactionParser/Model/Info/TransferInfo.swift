@@ -68,5 +68,5 @@ extension TransferInfo: Info {
 
   public var symbol: String? { source?.token.symbol ?? destination?.token.symbol ?? "" }
     
-  public var mintAddress: String? { source?.token.address ?? destination?.token.address ?? "" }
+    public var mintAddress: String? { source?.token.mintAddress ?? destination?.token.mintAddress ?? "" }
 }

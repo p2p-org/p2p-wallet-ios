@@ -199,7 +199,7 @@ public class PriceServiceImpl: PriceService {
         /// Adjust prices for stable coin (usdc, usdt) make it equal to 1 if not depegged more than 2%
         if
             case let .contract(address) = token.primaryKey,
-            [SolanaToken.usdc.address, SolanaToken.usdt.address].contains(address),
+            [SolanaToken.usdc.mintAddress, SolanaToken.usdt.mintAddress].contains(address),
             token.network == .solana,
             fiat.uppercased() == "USD",
             (abs(parsedValue - 1.0) * 100) <= 2

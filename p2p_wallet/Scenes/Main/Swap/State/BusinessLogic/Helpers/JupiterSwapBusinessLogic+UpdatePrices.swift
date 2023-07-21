@@ -16,7 +16,7 @@ extension JupiterSwapBusinessLogic {
         let mints = state.route?.getMints() ?? []
         if mints.count > 2 {
             for mint in mints {
-                if let token = state.swapTokens.map(\.token).first(where: { $0.address == mint }) {
+                if let token = state.swapTokens.map(\.token).first(where: { $0.mintAddress == mint }) {
                     tokens.append(token)
                 }
             }

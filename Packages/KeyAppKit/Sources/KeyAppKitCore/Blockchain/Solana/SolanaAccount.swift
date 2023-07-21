@@ -51,7 +51,7 @@ public struct SolanaAccount: Identifiable, Equatable, Hashable {
 
 public extension SolanaAccount {
     var mintAddress: String {
-        token.address
+        token.mintAddress
     }
 
     @available(*, deprecated, renamed: "address")

@@ -15,7 +15,7 @@ struct RenderableSolanaAccount: RenderableAccount {
         {
             return .url(url)
         } else {
-            return .random(seed: account.token.address)
+            return .random(seed: account.token.mintAddress)
         }
     }
 

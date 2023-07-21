@@ -43,7 +43,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
 
         if let mint {
             userActionSends = userActionSends.filter { action in
-                action.sourceToken.address == mint
+                action.sourceToken.mintAddress == mint
             }
         }
 
@@ -75,7 +75,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
                     address != mint
                 {
                     return false
-                } else if send.amount.token.primaryKey == .native, mint != SolanaToken.nativeSolana.address {
+                } else if send.amount.token.primaryKey == .native, mint != SolanaToken.nativeSolana.mintAddress {
                     return false
                 }
             }

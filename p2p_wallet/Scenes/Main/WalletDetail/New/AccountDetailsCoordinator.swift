@@ -35,7 +35,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.token.address)
+            historyListVM = .init(mint: account.token.mintAddress)
         }
 
         historyListVM.actionSubject
@@ -190,7 +190,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             }
         }
 
-        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.address) {
+        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.mintAddress) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)

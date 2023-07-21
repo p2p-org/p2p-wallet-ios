@@ -30,7 +30,7 @@ extension SendInputBusinessLogic {
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: state.tokenFee.address,
+                    payingTokenMint: state.tokenFee.mintAddress,
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
             }
@@ -70,7 +70,7 @@ extension SendInputBusinessLogic {
     static func validateFee(state: SendInputState) async -> SendInputState {
         guard state.fee != .zero else { return state }
         guard let wallet: SolanaAccount = state.userWalletEnvironments.wallets
-            .first(where: { (wallet: SolanaAccount) in wallet.token.address == state.tokenFee.address })
+            .first(where: { (wallet: SolanaAccount) in wallet.token.mintAddress == state.tokenFee.mintAddress })
         else {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }
@@ -113,7 +113,7 @@ extension SendInputBusinessLogic {
             do {
                 let feeInToken: FeeAmount = (try await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: feeInSol,
-                    payingFeeTokenMint: try PublicKey(string: wallet.token.address)
+                    payingFeeTokenMint: try PublicKey(string: wallet.token.mintAddress)
                 )) ?? .zero
 
                 if feeInToken.total <= (wallet.lamports ?? 0) {

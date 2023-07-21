@@ -389,7 +389,7 @@ extension WormholeSendInputViewModel {
             if account.token.isNativeSOL {
                 return false
             } else {
-                return supportedToken.contains(account.token.address)
+                return supportedToken.contains(account.token.mintAddress)
             }
         }
 

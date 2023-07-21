@@ -189,7 +189,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         let bridgeTokens = SupportedToken.bridges.map(\.solAddress)
         if preChosenWallet == nil {
             vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
-        } else if bridgeTokens.contains(preChosenWallet?.token.address) {
+        } else if bridgeTokens.contains(preChosenWallet?.token.mintAddress) {
             vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
         } else {
             vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana networks")

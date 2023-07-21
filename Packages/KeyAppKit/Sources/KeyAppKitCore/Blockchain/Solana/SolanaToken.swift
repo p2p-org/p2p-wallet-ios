@@ -28,7 +28,7 @@ extension SolanaToken: AnyToken {
         if isNative {
             return .native
         } else {
-            return .contract(address)
+            return .contract(mintAddress)
         }
     }
 

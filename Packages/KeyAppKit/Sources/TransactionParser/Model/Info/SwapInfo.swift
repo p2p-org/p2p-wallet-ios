@@ -106,9 +106,9 @@ extension SwapInfo: Info {
     
   public var mintAddress: String? {
     switch direction {
-    case .spend: return source?.token.address
-    case .receive: return destination?.token.address
-    case .transitive: return destination?.token.address
+    case .spend: return source?.token.mintAddress
+    case .receive: return destination?.token.mintAddress
+    case .transitive: return destination?.token.mintAddress
     }
   }
 }

@@ -116,7 +116,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
-                .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: TokenMetadata.nativeSolana)
+                .first(where: { $0.token.mintAddress == token.mintAddress }) ??
+                SolanaAccount(token: TokenMetadata.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -137,7 +138,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == TokenMetadata.usdc.address }) ??
+            .first(where: { $0.token.mintAddress == TokenMetadata.usdc.mintAddress }) ??
             SolanaAccount(token: TokenMetadata.usdc)
 
         var exchangeRate = [String: TokenPrice]()
@@ -661,6 +662,6 @@ private extension SolanaAccount {
     }
 
     var isUsdcOrUsdt: Bool {
-        [TokenMetadata.usdc.address, TokenMetadata.usdt.address].contains(token.address)
+        [TokenMetadata.usdc.mintAddress, TokenMetadata.usdt.mintAddress].contains(token.mintAddress)
     }
 }
