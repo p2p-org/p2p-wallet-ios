@@ -24,7 +24,6 @@
 "From" = "From";
 "To" = "To";
 "Close" = "Close";
-"was turned off.\nDo you want to turn it on?" = "was turned off.\nDo you want to turn it on?";
 "Continue" = "Continue";
 "Processing" = "Processing";
 "Done" = "Done";
@@ -56,7 +55,6 @@
 "Socket returns an error" = "Socket returns an error";
 "Blockhash not found" = "Blockhash not found";
 "Price" = "Price";
-"Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone.";
 "Hide" = "Hide";
 "All tokens" = "All tokens";
 "Sending" = "Sending";
@@ -70,13 +68,11 @@
 "%@ to %@" = "%@ to %@";
 "To %@" = "To %@";
 "Error processing instruction 0:custom program error: 0x1" = "Error processing instruction 0:custom program error: 0x1";
-"Your %@ address will be disabled. This action can not be undone" = "Your %@ address will be disabled. This action can not be undone";
 "Currency" = "Currency";
 "Powered by" = "Powered by";
 "Connection problem" = "Connection problem";
 "Your connection to the Internet has been interrupted." = "Your connection to the Internet has been interrupted.";
 "Refresh" = "Refresh";
-"Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below";
 "Derivable Accounts" = "Derivable Accounts";
 "Restore" = "Restore";
 "deprecated" = "deprecated";
@@ -109,7 +105,6 @@
 "Save" = "Save";
 "Saved to photo library" = "Saved to photo library";
 "Create a new wallet" = "Create a new wallet";
-"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
 "Proceed" = "Proceed";
 "Go back" = "Go back";
 "Choose your wallet" = "Choose your wallet";
@@ -206,7 +201,6 @@
 "Seed phrase" = "Seed phrase";
 "Your seed phrase" = "Your seed phrase";
 "Multi-factor authentication" = "Multi-factor authentication";
-"Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors." = "Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors.";
 "Show" = "Show";
 "Change my PIN" = "Change my PIN";
 "Change PIN" = "Change PIN";
@@ -224,7 +218,6 @@
 "Key App’s" = "Key App’s";
 "Incorrect PIN. Try again" = "Incorrect PIN. Try again";
 "You were signed out" = "You were signed out";
-"You used too much numbers.\nFor your safety we stoped actions for %@" = "You used too much numbers.\nFor your safety we stoped actions for %@";
 "Your seed phrase must never be shared" = "Your seed phrase must never be shared";
 "Add a phone number to protect your account" = "Add a phone number to protect your account";
 "😢 PIN doesn't match. Please try again" = "😢 PIN doesn't match. Please try again";
@@ -254,7 +247,6 @@
 "You will need your social account or phone number to log in" = "You will need your social account or phone number to log in";
 "Easy to start" = "Easy to start";
 "Create your account in 1 minute" = "Create your account in 1 minute";
-"You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "You used too much numbers. For your safety, we have frozen your account for %@";
 "Almost done" = "Almost done";
 "Device" = "Device";
@@ -265,7 +257,6 @@
 "Use your social account to continue" = "Use your social account to continue";
 "Looks like you already have a wallet with" = "Looks like you already have a wallet with";
 "Key App" = "Key App";
-"Deposit your crypto. Earn up to 6%% on USD " = "Deposit your crypto. Earn up to 6%% on USD";
 "Buy over 150 currencies" = "Buy over 150 currencies";
 "Easy swap with credit card or bank transfer" = "Easy swap with credit card or bank transfer";
 "Send for free" = "Send for free";
@@ -279,7 +270,6 @@
 "Earn up to %@%%" = "Earn up to %@%%";
 "Stake your tokens and get rewards every day" = "Stake your tokens & get rewards every day";
 "The funds have been withdrawn\nsuccessfully" = "The funds have been withdrawn\nsuccessfully";
-"Sending your deposit to Solend. Just wait\nuntil it’s done" = "Sending your deposit to Solend. Just wait\nuntil it’s done";
 "The funds have been deposited\nsuccessfully" = "The funds have been deposited\nsuccessfully";
 "Buying %@ as the base currency" = "Buying %@ as the base currency";
 "Exchanging %@ → %@" = "Exchanging %@ → %@";
@@ -601,6 +591,5 @@
 "For security, change your authorization device to restore access if needed." = "For security, change your authorization device to restore access if needed.";
 "The device was successfully changed" = "The device was successfully changed";
 "Confirmation Code Limit Hit" = "Confirmation Code Limit Hit";
-"You've used all 5 codes. Try again in %@. For help, contact support." = "You've used all 5 codes. Try again in %@. For help, contact support.";
 "%@\nPlease log in with the correct %@ account." = "%@\nPlease log in with the correct %@ account.";
 "You've used all 5 codes. Try again later. For help, contact support." = "You've used all 5 codes. Try again later. For help, contact support.";

@@ -25,7 +25,6 @@
 "From" = "De";
 "To" = "À";
 "Close" = "proche";
-"was turned off.\nDo you want to turn it on?" = "a été désactivé.\nVoulez-vous l'activer?";
 "Continue" = "Continuer";
 "Processing" = "En traitement";
 "Done" = "Terminé";
@@ -58,7 +57,6 @@
 "Socket returns an error" = "Socket renvoie une erreur";
 "Blockhash not found" = "Blockhash introuvable";
 "Price" = "Prix";
-"Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Votre solde sera converti et transféré vers votre portefeuille SOL principal et votre adresse %@ sera désactivée. Cette action ne peut pas être annulée.";
 "Hide" = "Cacher";
 "All tokens" = "Tous les jetons";
 "Sending" = "Envoi en cours";
@@ -72,13 +70,11 @@
 "%@ to %@" = "%@ à %@";
 "To %@" = "À %@";
 "Error processing instruction 0:custom program error: 0x1" = "Erreur de traitement de l'instruction 0: erreur de programme personnalisé: 0x1";
-"Your %@ address will be disabled. This action can not be undone" = "Votre adresse %@ sera désactivée. Cette action ne peut pas être annulée";
 "Currency" = "Devise";
 "Powered by" = "Alimenté par";
 "Connection problem" = "Problème de connection";
 "Your connection to the Internet has been interrupted." = "Votre connexion à Internet a été interrompue.";
 "Refresh" = "Rafraîchir";
-"Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Votre portefeuille %@ n'a pas encore été créé.\nMais vous pouvez recevoir %@ en utilisant l'adresse de votre portefeuille SOL ci-dessous";
 "Derivable Accounts" = "Comptes dérivés";
 "Restore" = "Restaurer";
 "deprecated" = "obsolète";
@@ -112,7 +108,6 @@
 "Save" = "Sauvegarder";
 "Saved to photo library" = "Enregistré dans la photothèque";
 "Create a new wallet" = "Créer un nouveau portefeuille";
-"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "La restauration iCloud est destinée aux utilisateurs qui reviennent.\nColler la clé de sécurité manuellement est pour tout le monde";
 "Proceed" = "Procéder";
 "Go back" = "Retourner";
 "Choose your wallet" = "Choisissez votre portefeuille";
@@ -217,7 +212,6 @@
 "Seed phrase" = "Phrase de départ";
 "Your seed phrase" = "Votre phrase de départ";
 "Multi-factor authentication" = "Authentification multifacteur";
-"Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors." = "Votre clé privée est divisée en plusieurs facteurs.  Au moins, vous devriez avoir trois facteurs, mais vous pouvez en créer plus.  Pour vous connecter à différents appareils, vous avez besoin d'au moins deux facteurs.";
 "Show" = "Spectacle";
 "Change my PIN" = "Changer mon NIP";
 "Change PIN" = "Changer le NIP";
@@ -237,7 +231,6 @@
 "Incorrect PIN. Try again" = "NIP incorrect.  Réessayer";
 "You were signed out" = "Vous avez été déconnecté";
 "Afrer 5 incorrect app PIN codes" = "Après 5 codes PIN d'application incorrects";
-"You used too much numbers.\nFor your safety we stoped actions for %@" = "Vous avez utilisé trop de chiffres.\nPour votre sécurité, nous avons arrêté les actions pendant %@";
 "Your seed phrase must never be shared" = "Votre phrase de départ ne doit jamais être partagée";
 "Add a phone number to protect your account" = "Ajoutez un numéro de téléphone pour protéger votre compte";
 "😢 PIN doesn't match. Please try again" = "😢 Le code PIN ne correspond pas. Veuillez réessayer";
@@ -270,7 +263,6 @@
 "You will need your social account or phone number to log in" = "Vous aurez besoin de votre compte social ou de votre numéro de téléphone pour vous connecter";
 "Easy to start" = "Facile à démarrer";
 "Create your account in 1 minute" = "Créez votre compte en 1 minute";
-"You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "Vous avez utilisé 5 codes incorrects.\nPour votre sécurité, nous avons gelé votre compte pendant %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "Vous avez utilisé trop de chiffres.  Pour votre sécurité, nous avons gelé votre compte pendant %@";
 "Almost done" = "Presque fini";
 "Device" = "Dispositif";
@@ -283,7 +275,6 @@
 "Key App" = "Key App";
 "Never lose your funds" = "Ne perdez jamais vos fonds";
 "Only you have access to your funds. Nobody else. You can recover your wallet using your phone or email. No paper backups needed." = "Vous seul avez accès à vos fonds.  Personne d'autre.  Vous pouvez récupérer votre portefeuille en utilisant votre téléphone ou votre e-mail.  Aucune sauvegarde papier nécessaire.";
-"Deposit your crypto. Earn up to 6%% on USD " = "Déposez votre crypto.  Gagnez jusqu'à 6 % % en USD";
 "Buy over 150 currencies" = "Achetez plus de 150 devises";
 "Easy swap with credit card or bank transfer" = "Échange facile avec carte de crédit ou virement bancaire";
 "Send for free" = "Envoyez gratuitement";
@@ -298,7 +289,6 @@
 "Earn up to %@%%" = "Gagnez jusqu'à %@%%";
 "Stake your tokens and get rewards every day" = "Misez vos jetons et obtenez des récompenses tous les jours";
 "The funds have been withdrawn\nsuccessfully" = "Les fonds ont été retirés\navec succès";
-"Sending your deposit to Solend. Just wait\nuntil it’s done" = "Envoi de votre acompte à Solend.  Attendez\njusqu'à ce que ce soit fait";
 "The funds have been deposited\nsuccessfully" = "Les fonds ont été déposés\navec succès";
 "Buying %@ as the base currency" = "Acheter %@ comme devise de base";
 "Exchanging %@ → %@" = "Échange %@ → %@";
@@ -639,6 +629,5 @@
 "For security, change your authorization device to restore access if needed." = "Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès si nécessaire.";
 "The device was successfully changed" = "L'appareil a été changé avec succès";
 "Confirmation Code Limit Hit" = "Limite de code de confirmation atteinte";
-"You've used all 5 codes. Try again in %@. For help, contact support." = "Vous avez utilisé les 5 codes.  Réessayez dans %@.  Pour obtenir de l'aide, contactez l'assistance.";
 "%@\nPlease log in with the correct %@ account." = "%@\nVeuillez vous connecter avec le bon compte %@.";
 "You've used all 5 codes. Try again later. For help, contact support." = "Vous avez utilisé les 5 codes.  Réessayez plus tard.  Pour obtenir de l'aide, contactez l'assistance.";
