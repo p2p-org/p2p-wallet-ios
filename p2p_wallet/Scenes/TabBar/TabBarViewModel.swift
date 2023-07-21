@@ -11,7 +11,6 @@ final class TabBarViewModel {
     
     // MARK: - Dependencies
     
-    @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 

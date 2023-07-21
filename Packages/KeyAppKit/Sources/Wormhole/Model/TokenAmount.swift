@@ -106,7 +106,7 @@ extension TokenAmount: CryptoAmountConvertible {
                 token = SolanaToken(
                     _tags: nil,
                     chainId: 0,
-                    address: mint,
+                    mintAddress: mint,
                     symbol: symbol,
                     name: name,
                     decimals: decimals,
