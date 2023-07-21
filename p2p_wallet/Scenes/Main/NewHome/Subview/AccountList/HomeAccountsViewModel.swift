@@ -103,7 +103,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value
-                    .filter { $0.data.isUSDC }
+                    .filter { $0.isUSDC }
                     .reduce(0) {
                         $0 + $1.amountInFiatDouble
                     }
