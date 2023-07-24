@@ -25,13 +25,7 @@ protocol LogManagerLogger {
     func log(event: String, logLevel: LogLevel, data: String?)
 }
 
-protocol LogManager {
-    func setProviders(_ providers: [LogManagerLogger])
-    func log(event: String, logLevel: LogLevel, data: String?, shouldLogEvent: (() -> Bool)?)
-    func log(event: String, logLevel: LogLevel, data: (any Encodable)?)
-}
-
-class DefaultLogManager: LogManager {
+class DefaultLogManager {
     static let shared: DefaultLogManager = {
         let manager = DefaultLogManager()
         SolanaSwift.Logger.setLoggers([manager])
@@ -49,8 +43,7 @@ class DefaultLogManager: LogManager {
         self.providers = providers
     }
 
-    func log(event: String, logLevel: LogLevel, data: String? = nil, shouldLogEvent: (() -> Bool)? = nil) {
-        guard shouldLogEvent?() ?? true else { return }
+    func log(event: String, logLevel: LogLevel, data: String? = nil) {
         providers.forEach { provider in
             guard provider.supportedLogLevels.contains(logLevel) else { return }
             queue.async {
@@ -60,7 +53,7 @@ class DefaultLogManager: LogManager {
     }
 
     func log(event: String, logLevel: LogLevel, data: (any Encodable)?) {
-        log(event: event, logLevel: logLevel, data: data?.jsonString, shouldLogEvent: nil)
+        log(event: event, logLevel: logLevel, data: data?.jsonString)
     }
 
     func log(error: Error) {
