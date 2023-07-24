@@ -71,6 +71,7 @@ public class PriceServiceImpl: PriceService {
     }
 
     public func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+        let fiat = fiat.lowercased()
         var shouldSynchronise = false
 
         defer {
@@ -150,7 +151,7 @@ public class PriceServiceImpl: PriceService {
             grouping: tokens,
             by: \.network
         ).map { (network: TokenNetwork, tokens: [AnyToken]) in
-            let addresses = tokens.map(\.addressPriceMapping)
+            let addresses = tokens.map(\.addressPriceMapping).unique
 
             return KeyAppTokenProviderData.TokenQuery(chainId: network.rawValue, addresses: addresses)
         }
