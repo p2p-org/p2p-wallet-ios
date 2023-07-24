@@ -89,6 +89,21 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
         var result: [String: TokenMetadata] = [:]
         for address in addresses {
             result[address] = database.data[address]
+
+            // Special case handling for native token
+            if let nativeToken = result["native"] {
+                result["native"] = SolanaToken(
+                    _tags: [],
+                    chainId: nativeToken.chainId,
+                    mintAddress: "So11111111111111111111111111111111111111112",
+                    symbol: nativeToken.symbol,
+                    name: nativeToken.name,
+                    decimals: nativeToken.decimals,
+                    logoURI: nativeToken.logoURI,
+                    extensions: nativeToken.extensions,
+                    isNative: true
+                )
+            }
         }
 
         return result
@@ -132,7 +147,7 @@ public extension SolanaTokensService {
     // TODO: Wait backend for fix native token
     var nativeToken: SolanaToken {
         get async throws {
-            TokenMetadata.nativeSolana
+            try await await getOrThrow(address: "native")
         }
     }
 }
