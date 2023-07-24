@@ -1468,3 +1468,10 @@
 "Only %@ per one transfer" = "Only %@ per one transfer";
 "%@ as minimal amount for transfer" = "%@ as minimal amount for transfer";
 "Getting rates" = "Getting rates";
+"Invalid IBAN" = "Invalid IBAN";
+"Invalid BIC" = "Invalid BIC";
+"Withdrawal" = "Withdrawal";
+"Check your data" = "Check your data";
+"Receiver" = "Receiver";
+"Your bank account name must match the name registered to your Key App account" = "Your bank account name must match the name registered to your Key App account";
+"Your IBAN" = "Your IBAN";
