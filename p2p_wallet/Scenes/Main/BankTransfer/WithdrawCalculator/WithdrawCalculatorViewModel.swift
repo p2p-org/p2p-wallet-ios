@@ -141,6 +141,7 @@ private extension WithdrawCalculatorViewModel {
 
         allButtonPressed
             .map { [weak self] in self?.fromBalance }
+            .receive(on: RunLoop.main)
             .assignWeak(to: \.fromAmount, on: self)
             .store(in: &subscriptions)
 
@@ -200,6 +201,7 @@ private extension WithdrawCalculatorViewModel {
                 }
                 return nil
             }
+            .receive(on: RunLoop.main)
             .assignWeak(to: \.fromBalance, on: self)
             .store(in: &subscriptions)
     }
@@ -232,6 +234,9 @@ private extension WithdrawCalculatorViewModel {
                     from: fromTokenSymbol,
                     to: toTokenSymbol
                 )
+                if response.sell.isEmpty {
+                    throw StrigaProviderError.invalidResponse
+                }
                 exchangeRates = response
                 arePricesLoading = false
                 exchangeRatesFailCount = 0
@@ -258,6 +263,7 @@ private extension WithdrawCalculatorViewModel {
         arePricesLoading = false
         actionData = WithdrawCalculatorAction.failure
         exchangeRates = nil
+        changeEditing(isEnabled: false)
     }
 
     func changeEditing(isEnabled: Bool) {
