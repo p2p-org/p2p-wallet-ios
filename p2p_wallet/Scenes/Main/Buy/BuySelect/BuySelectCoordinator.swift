@@ -12,11 +12,9 @@ enum BuySelectCoordinatorResult<Model: Hashable> {
 final class BuySelectCoordinator<Model, Cell: BuySelectViewModelCell>:
 Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     private let controller: UIViewController
-    private let items: [Model]
     private let transition = PanelTransition()
     private let contentHeight: CGFloat
     private var viewModel: BuySelectViewModel<Model>
-    private var selectedModel: Model?
     private var title: String
 
     init(
@@ -28,9 +26,7 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     ) {
         self.title = title
         self.controller = controller
-        self.items = items
         self.contentHeight = contentHeight
-        self.selectedModel = selectedModel
 
         viewModel = BuySelectViewModel<Model>(
             items: items,
@@ -61,7 +57,7 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
                 viewControllerDismissed.eraseToAnyPublisher(),
                 transition.dimmClicked.eraseToAnyPublisher()
             )
-                .map { BuySelectCoordinatorResult.cancel },
+            .map { BuySelectCoordinatorResult.cancel },
             viewModel.coordinatorIO.didSelectModel.map { BuySelectCoordinatorResult.result(model: $0) }
         ).handleEvents(receiveOutput: { _ in
             viewController.dismiss(animated: true)

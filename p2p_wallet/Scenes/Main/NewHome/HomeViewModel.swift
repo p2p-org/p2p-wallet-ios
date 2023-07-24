@@ -27,7 +27,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationsService: NotificationService
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
@@ -59,7 +59,7 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
+        clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
         let text: String
         if nameStorage.getName() != nil {
             text = L10n.usernameWasCopiedToClipboard
@@ -170,7 +170,7 @@ private extension HomeViewModel {
                 }
 
                 let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
+                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
 
                 // TODO: Bad place

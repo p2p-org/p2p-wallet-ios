@@ -14,10 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     @Injected private var notificationService: NotificationService
 
-    static var shared: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
-    }
-
     private lazy var proxyAppDelegate = AppDelegateProxyService()
 
     override init() {
@@ -70,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         UIViewController.swizzleViewDidDisappear()
-        UIViewController.swizzleViewDidAppear()
+//        UIViewController.swizzleViewDidAppear()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

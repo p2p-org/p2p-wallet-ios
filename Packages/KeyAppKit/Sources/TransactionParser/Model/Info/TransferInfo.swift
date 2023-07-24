@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(*, deprecated, renamed: "TransferInfo")
 public typealias TransferTransaction = TransferInfo
@@ -16,10 +17,10 @@ public struct TransferInfo: Hashable {
   }
 
   /// The source account address.
-  public let source: Wallet?
+  public let source: SolanaAccount?
 
   /// The destination account address.
-  public let destination: Wallet?
+  public let destination: SolanaAccount?
 
   public let authority: String?
 
@@ -34,8 +35,8 @@ public struct TransferInfo: Hashable {
   public let account: String?
 
   public init(
-    source: Wallet?,
-    destination: Wallet?,
+    source: SolanaAccount?,
+    destination: SolanaAccount?,
     authority: String?,
     destinationAuthority: String?,
     rawAmount: Double?,
@@ -51,7 +52,7 @@ public struct TransferInfo: Hashable {
 
   /// A current transfer type that depends on account view.
   public var transferType: TransferType? {
-    (source?.pubkey == account || authority == account) ? .send : .receive
+      (source?.address == account || authority == account) ? .send : .receive
   }
 
   @available(*, deprecated, renamed: "account")
@@ -67,5 +68,5 @@ extension TransferInfo: Info {
 
   public var symbol: String? { source?.token.symbol ?? destination?.token.symbol ?? "" }
     
-  public var mintAddress: String? { source?.token.address ?? destination?.token.address ?? "" }
+    public var mintAddress: String? { source?.token.mintAddress ?? destination?.token.mintAddress ?? "" }
 }

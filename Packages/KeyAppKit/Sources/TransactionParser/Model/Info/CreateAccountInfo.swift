@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(* , deprecated, renamed: "CreateAccountInfo")
 public typealias CreateAccountTransaction = CreateAccountInfo
@@ -14,9 +15,9 @@ public struct CreateAccountInfo: Hashable {
   public let fee: Double?
 
   /// The created wallet.
-  public let newWallet: Wallet?
+  public let newWallet: SolanaAccount?
 
-  public init(fee: Double?, newWallet: Wallet?) {
+  public init(fee: Double?, newWallet: SolanaAccount?) {
     self.fee = fee
     self.newWallet = newWallet
   }
@@ -29,5 +30,5 @@ public struct CreateAccountInfo: Hashable {
 extension CreateAccountInfo: Info {
   public var amount: Double? { -(fee ?? 0) }
   public var symbol: String? { "SOL" }
-  public var mintAddress: String? { Token.nativeSolana.address }
+    public var mintAddress: String? { TokenMetadata.nativeSolana.mintAddress }
 }

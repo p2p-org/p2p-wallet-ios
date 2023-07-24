@@ -1,8 +1,7 @@
+import Foundation
 import Jupiter
 import Resolver
-import SolanaPricesAPIs
 import SolanaSwift
-import Foundation
 
 extension JupiterSwapBusinessLogic {
     static func calculateRoute(
@@ -18,7 +17,7 @@ extension JupiterSwapBusinessLogic {
         }
 
         // assert from token is not equal to toToken
-        guard state.fromToken.address != state.toToken.address else {
+        guard state.fromToken.mintAddress != state.toToken.mintAddress else {
             return state.error(.equalSwapTokens)
         }
 
@@ -29,8 +28,8 @@ extension JupiterSwapBusinessLogic {
         do {
             // call api to get routes and amount
             let data = try await services.jupiterClient.quote(
-                inputMint: state.fromToken.address,
-                outputMint: state.toToken.address,
+                inputMint: state.fromToken.mintAddress,
+                outputMint: state.toToken.mintAddress,
                 amount: "\(amountFromLamports)",
                 swapMode: nil,
                 slippageBps: state.slippageBps,
@@ -89,7 +88,7 @@ extension JupiterSwapBusinessLogic {
         if let balance = state.fromToken.userWallet?.amount {
             if state.amountFrom > balance {
                 status = .error(reason: .notEnoughFromToken)
-            } else if state.fromToken.address == Token.nativeSolana.address {
+            } else if state.fromToken.mintAddress == TokenMetadata.nativeSolana.mintAddress {
                 status = await validateNativeSOL(balance: balance, state: state, services: services)
             } else {
                 status = .ready

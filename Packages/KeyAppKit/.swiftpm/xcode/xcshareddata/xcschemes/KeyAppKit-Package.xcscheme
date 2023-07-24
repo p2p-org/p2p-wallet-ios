@@ -552,6 +552,34 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeeRelayerSwift"
+               BuildableName = "FeeRelayerSwift"
+               BlueprintName = "FeeRelayerSwift"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapSwift"
+               BuildableName = "OrcaSwapSwift"
+               BlueprintName = "OrcaSwapSwift"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -708,6 +736,36 @@
                BlueprintIdentifier = "WormholeTests"
                BuildableName = "WormholeTests"
                BlueprintName = "WormholeTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeeRelayerSwiftUnitTests"
+               BuildableName = "FeeRelayerSwiftUnitTests"
+               BlueprintName = "FeeRelayerSwiftUnitTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapIntegrationTests"
+               BuildableName = "OrcaSwapIntegrationTests"
+               BlueprintName = "OrcaSwapIntegrationTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapUnitTests"
+               BuildableName = "OrcaSwapUnitTests"
+               BlueprintName = "OrcaSwapUnitTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

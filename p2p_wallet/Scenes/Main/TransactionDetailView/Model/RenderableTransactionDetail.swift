@@ -12,8 +12,6 @@ protocol RenderableTransactionDetail {
 
     var subtitle: String { get }
 
-    var signature: String? { get }
-
     var icon: TransactionDetailIcon { get }
 
     var amountInFiat: TransactionDetailChange { get }
@@ -25,7 +23,7 @@ protocol RenderableTransactionDetail {
     var actions: [TransactionDetailAction] { get }
 
     var buttonTitle: String { get }
-    
+
     var url: String? { get }
 }
 
@@ -54,12 +52,10 @@ struct TransactionDetailExtraInfo {
     }
 
     let title: String
-    
+
     let values: [Value]
 
     let copyableValue: String?
-    
-    let url: String? = nil
 
     init(title: String, values: [Value], copyableValue: String? = nil) {
         self.title = title

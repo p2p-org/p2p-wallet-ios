@@ -10,7 +10,6 @@ import Resolver
 import UIKit
 
 final class SettingsCoordinator: Coordinator<Void> {
-    @Injected private var pinStorage: PincodeStorageType
     @Injected private var helpLauncher: HelpCenterLauncher
 
     private let navigationController: UINavigationController

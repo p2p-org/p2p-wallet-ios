@@ -8,6 +8,8 @@ import FeeRelayerSwift
 import Foundation
 import History
 import KeyAppBusiness
+import KeyAppKitCore
+import OrcaSwapSwift
 import Resolver
 import Send
 import SolanaSwift
@@ -18,13 +20,6 @@ enum LoadableState: Equatable {
     case loading
     case loaded
     case error(String?)
-
-    var isError: Bool {
-        switch self {
-        case .error: return true
-        default: return false
-        }
-    }
 }
 
 /// State for SendViaLink feature
@@ -42,17 +37,16 @@ struct SendViaLinkState: Equatable {
 
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
-    private let preChosenWallet: Wallet?
+    private let preChosenWallet: SolanaAccount?
     private var subscriptions = Set<AnyCancellable>()
     private let flow: SendFlow
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaAccountsService: SolanaAccountsService
-    @Injected private var tokensRepository: TokensRepository
+    @Injected private var tokensRepository: TokenRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
 
-    private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
 
@@ -96,7 +90,7 @@ class RecipientSearchViewModel: ObservableObject {
     let coordinator: Coordinator = .init()
 
     init(
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         flow: SendFlow,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
@@ -104,14 +98,14 @@ class RecipientSearchViewModel: ObservableObject {
     ) {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
-        self.sendHistoryService = sendHistoryService
         self.flow = flow
 
         let ethereumSearch: Bool
         if let preChosenWallet {
             // Check token is support wormhole
             if WormholeSupportedTokens.bridges
-                .map(\.solAddress).contains(preChosenWallet.token.address) {
+                .map(\.solAddress).contains(preChosenWallet.token.mintAddress)
+            {
                 ethereumSearch = true
             } else {
                 ethereumSearch = false
@@ -122,17 +116,17 @@ class RecipientSearchViewModel: ObservableObject {
         }
 
         config = .init(
-            wallets: solanaAccountsService.state.value.map(\.data),
+            wallets: solanaAccountsService.state.value,
             ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
             tokens: [:],
             ethereumSearch: ethereumSearch
         )
 
         Task {
-            let tokens = try await tokensRepository.getTokensList()
+            let tokens = try await tokensRepository.all()
             await MainActor.run { [weak self] in
                 guard let self = self else { return }
-                self.config.tokens = Dictionary(tokens.map { ($0.address, $0) }, uniquingKeysWith: { lhs, _ in lhs })
+                self.config.tokens = tokens
             }
         }
 
@@ -201,7 +195,9 @@ class RecipientSearchViewModel: ObservableObject {
         } else {
             isSearching = true
             searchTask = Task { [weak self] in
-                let result = await recipientSearchService.search(
+                guard let self else { return }
+
+                let result = await self.recipientSearchService.search(
                     input: currentSearchTerm,
                     config: config,
                     preChosenToken: preChosenWallet?.token
@@ -251,7 +247,7 @@ class RecipientSearchViewModel: ObservableObject {
         loadingState = .loading
         do {
             let _ = try await(
-                Resolver.resolve(SwapServiceType.self).reload(),
+                loadSwapService(),
                 checkIfSendViaLinkAvailable()
             )
             loadingState = .loaded
@@ -299,6 +295,13 @@ class RecipientSearchViewModel: ObservableObject {
             )
         }
     #endif
+
+    // MARK: - Helper
+
+    private func loadSwapService() async throws {
+        try await Resolver.resolve(OrcaSwapType.self).load()
+        try await Resolver.resolve(RelayContextManager.self).update()
+    }
 }
 
 // MARK: - Analytics

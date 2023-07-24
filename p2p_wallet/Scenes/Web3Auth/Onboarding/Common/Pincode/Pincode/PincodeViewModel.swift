@@ -24,7 +24,6 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
 
     @Published var title: String = ""
     @Published var snackbar: PincodeSnackbar?
-    @Published var showAlert: (String, String)?
     @Published var showForgetPin: Bool = false
     @Published var showFaceid: Bool = false
     @Published var showForgotModal: Bool = false
@@ -64,7 +63,9 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
         self.isBackAvailable = isBackAvailable
         self.successNotification = successNotification
         super.init()
-        // Put fake value into authenticationStatusSubject. It is need for cancelling background/foreground lock logic in AuthenticationHandler.observeAppNotifications(). Might be refactored with AuthenticationHandler changes and enter pincode task
+        // Put fake value into authenticationStatusSubject. It is need for cancelling background/foreground lock logic
+        // in AuthenticationHandler.observeAppNotifications(). Might be refactored with AuthenticationHandler changes
+        // and enter pincode task
         if !ignoreAuthHandler {
             authenticationHandler.authenticate(presentationStyle: .init())
         }
@@ -108,10 +109,6 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
                 }
             }
         )
-    }
-
-    func forgotModalShowed() {
-        showForgotModal.toggle()
     }
 
     func logout() {

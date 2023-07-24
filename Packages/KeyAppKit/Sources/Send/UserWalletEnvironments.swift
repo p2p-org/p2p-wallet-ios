@@ -3,24 +3,24 @@
 // found in the LICENSE file.
 
 import Foundation
-import SolanaPricesAPIs
 import SolanaSwift
+import KeyAppKitCore
 
 public struct UserWalletEnvironments: Equatable {
-    let wallets: [Wallet]
+    let wallets: [SolanaAccount]
     let ethereumAccount: String?
 
-    let exchangeRate: [String: CurrentPrice]
-    let tokens: Set<Token>
+    let exchangeRate: [String: TokenPrice]
+    let tokens: Set<TokenMetadata>
 
     let rentExemptionAmountForWalletAccount: Lamports
     let rentExemptionAmountForSPLAccount: Lamports
 
     public init(
-        wallets: [Wallet],
+        wallets: [SolanaAccount],
         ethereumAccount: String?,
-        exchangeRate: [String: CurrentPrice],
-        tokens: Set<Token>,
+        exchangeRate: [String: TokenPrice],
+        tokens: Set<TokenMetadata>,
         rentExemptionAmountForWalletAccount: Lamports = 890_880,
         rentExemptionAmountForSPLAccount: Lamports = 2_039_280
     ) {
@@ -36,7 +36,7 @@ public struct UserWalletEnvironments: Equatable {
         .init(wallets: [], ethereumAccount: nil, exchangeRate: [:], tokens: [])
     }
 
-    public func copy(tokens: Set<Token>? = nil) -> Self {
+    public func copy(tokens: Set<TokenMetadata>? = nil) -> Self {
         .init(
             wallets: wallets,
             ethereumAccount: ethereumAccount,

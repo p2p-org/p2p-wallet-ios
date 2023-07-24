@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(* , deprecated, renamed: "SwapInfo")
 public typealias SwapTransaction = SwapInfo
@@ -29,13 +30,13 @@ public struct SwapInfo: Hashable {
   }
 
   /// A source wallet
-  public let source: Wallet?
+  public let source: SolanaAccount?
 
   /// A swapping amount in source wallet
   public let sourceAmount: Double?
 
   /// A destination wallet
-  public let destination: Wallet?
+  public let destination: SolanaAccount?
 
   /// A receiving amount in destination wallet
   public let destinationAmount: Double?
@@ -46,9 +47,9 @@ public struct SwapInfo: Hashable {
   public var accountSymbol: String?
 
   public init(
-    source: Wallet?,
+    source: SolanaAccount?,
     sourceAmount: Double?,
-    destination: Wallet?,
+    destination: SolanaAccount?,
     destinationAmount: Double?,
     accountSymbol: String?
   ) {
@@ -105,9 +106,9 @@ extension SwapInfo: Info {
     
   public var mintAddress: String? {
     switch direction {
-    case .spend: return source?.token.address
-    case .receive: return destination?.token.address
-    case .transitive: return destination?.token.address
+    case .spend: return source?.token.mintAddress
+    case .receive: return destination?.token.mintAddress
+    case .transitive: return destination?.token.mintAddress
     }
   }
 }

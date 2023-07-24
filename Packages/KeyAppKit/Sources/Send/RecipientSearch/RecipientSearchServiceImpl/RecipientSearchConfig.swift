@@ -1,21 +1,20 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 14.04.2023.
-//
-
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 public struct RecipientSearchConfig {
-    public var wallets: [Wallet]
+    public var wallets: [SolanaAccount]
     public var ethereumAccount: String?
-    public var tokens: [String: Token]
+    public var tokens: [String: TokenMetadata]
 
     public var ethereumSearch: Bool
 
-    public init(wallets: [Wallet], ethereumAccount: String?, tokens: [String: Token], ethereumSearch: Bool) {
+    public init(
+        wallets: [SolanaAccount],
+        ethereumAccount: String?,
+        tokens: [String: TokenMetadata],
+        ethereumSearch: Bool
+    ) {
         self.wallets = wallets
         self.ethereumAccount = ethereumAccount
         self.tokens = tokens
