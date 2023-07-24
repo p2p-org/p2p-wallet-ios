@@ -15,6 +15,25 @@ extension DefaultLogManager {
     }()
 }
 
+// MARK: - SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType
+
+extension DefaultLogManager: SolanaSwiftLogger,
+    FeeRelayerSwiftLogger,
+    KeyAppKitLoggerType
+{
+    func log(event: String, data: String?, logLevel: SolanaSwift.SolanaSwiftLoggerLogLevel) {
+        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
+    }
+
+    func log(event: String, data: String?, logLevel: FeeRelayerSwift.FeeRelayerSwiftLoggerLogLevel) {
+        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
+    }
+
+    func log(event: String, data: String?, logLevel: KeyAppKitLogger.KeyAppKitLoggerLogLevel) {
+        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
+    }
+}
+
 // MARK: - DefaultLogLevelConvertible
 
 protocol DefaultLogLevelConvertible {
@@ -63,22 +82,5 @@ extension KeyAppKitLoggerLogLevel: DefaultLogLevelConvertible {
         case .debug:
             return .debug
         }
-    }
-}
-
-extension DefaultLogManager: SolanaSwiftLogger,
-    FeeRelayerSwiftLogger,
-    KeyAppKitLoggerType
-{
-    func log(event: String, data: String?, logLevel: SolanaSwift.SolanaSwiftLoggerLogLevel) {
-        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
-    }
-
-    func log(event: String, data: String?, logLevel: FeeRelayerSwift.FeeRelayerSwiftLoggerLogLevel) {
-        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
-    }
-
-    func log(event: String, data: String?, logLevel: KeyAppKitLogger.KeyAppKitLoggerLogLevel) {
-        log(event: event, logLevel: logLevel.convertToDefaultLogLevel(), data: data)
     }
 }
