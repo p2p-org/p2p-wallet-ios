@@ -1,11 +1,11 @@
 import Foundation
 
-final class AlertLogger: LogManagerLogger {
+final class AlertLogger: LogProvider {
     var supportedLogLevels: [LogLevel] = [.alert]
 
     private let url = URL(string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!)!
 
-    func log(event: String, logLevel: LogLevel, data: String?) {
+    func log(event: String, logLevel _: LogLevel, data: String?) {
         Task {
             // send request to endpoint
             var urlRequest = URLRequest(url: url)
@@ -17,6 +17,9 @@ final class AlertLogger: LogManagerLogger {
         }
     }
 
+    func convertLogLevelToCustomLogLevel(_ logLevel: LogLevel) -> LogLevel {
+        logLevel
+    }
 }
 
 // MARK: - Models

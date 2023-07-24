@@ -47,12 +47,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Sentry
         #if !DEBUG
-        SentrySDK.start { options in
-            options.dsn = .secretConfig("SENTRY_DSN")
-            options.tracesSampleRate = 1.0
-            options.enableNetworkTracking = true
-            options.enableOutOfMemoryTracking = true
-        }
+            SentrySDK.start { options in
+                options.dsn = .secretConfig("SENTRY_DSN")
+                options.tracesSampleRate = 1.0
+                options.enableNetworkTracking = true
+                options.enableOutOfMemoryTracking = true
+            }
         #endif
 
         Lokalise.shared.setProjectID(
@@ -109,7 +109,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
         var isGoogleServiceUrlHanded = false
-        Broadcaster.notify(AppUrlHandler.self) { isGoogleServiceUrlHanded = isGoogleServiceUrlHanded || $0.handle(url: url, options: options) }
+        Broadcaster.notify(AppUrlHandler.self) { isGoogleServiceUrlHanded = isGoogleServiceUrlHanded || $0.handle(
+            url: url,
+            options: options
+        ) }
         if isGoogleServiceUrlHanded {
             return true
         }
@@ -124,27 +127,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
-    
-    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+
+    func application(
+        _ application: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
         proxyAppDelegate.application(application, performActionFor: shortcutItem, completionHandler: completionHandler)
     }
-    
+
     func applicationDidEnterBackground(_ application: UIApplication) {
         proxyAppDelegate.applicationDidEnterBackground(application)
     }
-    
+
     func applicationWillEnterForeground(_ application: UIApplication) {
         proxyAppDelegate.applicationWillEnterForeground(application)
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         proxyAppDelegate.applicationWillResignActive(application)
     }
-    
+
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
         proxyAppDelegate.applicationDidReceiveMemoryWarning(application)
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         proxyAppDelegate.applicationWillTerminate(application)
     }
@@ -167,13 +174,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupLoggers() {
-        var loggers: [LogManagerLogger] = [
+        let loggers: [any LogProvider] = [
             SentryLogger(),
-            AlertLogger()
+            AlertLogger(),
         ]
-        if Environment.current == .debug {
-            loggers.append(LoggerSwiftLogger())
-        }
         DefaultLogManager.shared.setProviders(loggers)
     }
 
@@ -207,11 +211,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func setupFirebaseLogging() {
         var arguments = ProcessInfo.processInfo.arguments
         #if !RELEASE
-        arguments.removeAll { $0 == "-FIRDebugDisabled" }
-        arguments.append("-FIRDebugEnabled")
+            arguments.removeAll { $0 == "-FIRDebugDisabled" }
+            arguments.append("-FIRDebugEnabled")
         #else
-        arguments.removeAll { $0 == "-FIRDebugEnabled" }
-        arguments.append("-FIRDebugDisabled")
+            arguments.removeAll { $0 == "-FIRDebugEnabled" }
+            arguments.append("-FIRDebugDisabled")
         #endif
         ProcessInfo.processInfo.setValue(arguments, forKey: "arguments")
     }

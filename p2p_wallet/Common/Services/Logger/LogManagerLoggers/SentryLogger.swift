@@ -1,19 +1,18 @@
-import Foundation
-import Sentry
 import FeeRelayerSwift
+import Foundation
 import KeyAppKitLogger
+import Sentry
 import SolanaSwift
-import LoggerSwift
 
-class SentryLogger: LogManagerLogger {
+class SentryLogger: LogProvider {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
-    
+
     var supportedLogLevels: [LogLevel] = [.error, .alert]
-    
+
     func log(event: String, logLevel: LogLevel, data: String?) {
         guard supportedLogLevels.contains(logLevel) else { return }
         queue.sync {
-            let sentryEvent = Event(level: sentryLevel(logLevel: logLevel))
+            let sentryEvent = Event(level: convertLogLevelToCustomLogLevel(logLevel))
             sentryEvent.message = SentryMessage(formatted: event)
             SentrySDK.capture(event: sentryEvent) { scope in
                 scope.setExtras([
@@ -23,10 +22,10 @@ class SentryLogger: LogManagerLogger {
             }
         }
     }
-    
+
     // MARK: -
-    
-    private func sentryLevel(logLevel: LogLevel) -> SentryLevel {
+
+    func convertLogLevelToCustomLogLevel(_ logLevel: LogLevel) -> SentryLevel {
         switch logLevel {
         case .info:
             return SentryLevel.info
@@ -59,9 +58,9 @@ extension SentryLogger: SolanaSwiftLogger {
         case .debug:
             newLogLevel = .debug
         }
-        
+
         guard supportedLogLevels.contains(newLogLevel) else { return }
-        
+
         log(event: event, logLevel: newLogLevel, data: data)
     }
 }
@@ -79,9 +78,9 @@ extension SentryLogger: FeeRelayerSwiftLogger {
         case .debug:
             newLogLevel = .debug
         }
-        
+
         guard supportedLogLevels.contains(newLogLevel) else { return }
-        
+
         log(event: event, logLevel: newLogLevel, data: data)
     }
 }
@@ -99,9 +98,9 @@ extension SentryLogger: KeyAppKitLoggerType {
         case .debug:
             newLogLevel = .debug
         }
-        
+
         guard supportedLogLevels.contains(newLogLevel) else { return }
-        
+
         log(event: event, logLevel: newLogLevel, data: data)
     }
 }

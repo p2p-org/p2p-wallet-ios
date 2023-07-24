@@ -372,7 +372,6 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "BigDecimal", package: "BigDecimal"),
-                .product(name: "LoggerSwift", package: "LoggerSwift"),
             ]
         ),
 

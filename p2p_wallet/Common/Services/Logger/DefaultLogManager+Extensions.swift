@@ -9,23 +9,8 @@ import SolanaSwift
 import UIKit
 import Wormhole
 
-enum LogLevel: String {
-    case info
-    case error
-    case request
-    case response
-    case event
-    case warning
-    case debug
-    case alert
-}
-
-protocol LogManagerLogger {
-    var supportedLogLevels: [LogLevel] { get set }
-    func log(event: String, logLevel: LogLevel, data: String?)
-}
-
-class DefaultLogManager {
+extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType,
+KeyAppKitCore.ErrorObserver {
     static let shared: DefaultLogManager = {
         let manager = DefaultLogManager()
         SolanaSwift.Logger.setLoggers([manager])
@@ -34,42 +19,6 @@ class DefaultLogManager {
         return manager
     }()
 
-    let dataFilter = DefaultSensitiveDataFilter()
-
-    private(set) var providers: [LogManagerLogger] = []
-    private var queue = DispatchQueue(label: "DefaultLogManager", qos: .utility, attributes: [.concurrent])
-
-    func setProviders(_ providers: [LogManagerLogger] = [SentryLogger(), AlertLogger()]) {
-        self.providers = providers
-    }
-
-    func log(event: String, logLevel: LogLevel, data: String? = nil) {
-        providers.forEach { provider in
-            guard provider.supportedLogLevels.contains(logLevel) else { return }
-            queue.async {
-                provider.log(event: event, logLevel: logLevel, data: self.dataFilter.map(string: data ?? ""))
-            }
-        }
-    }
-
-    func log(event: String, logLevel: LogLevel, data: (any Encodable)?) {
-        log(event: event, logLevel: logLevel, data: data?.jsonString)
-    }
-
-    func log(error: Error) {
-        // capture error
-        if let error = error as? CustomNSError {
-            log(event: "Error", logLevel: .error, data: error.errorUserInfo[NSDebugDescriptionErrorKey] as? String)
-        }
-        // else
-        else {
-            log(event: "Error", logLevel: .error, data: String(reflecting: error))
-        }
-    }
-}
-
-extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType,
-KeyAppKitCore.ErrorObserver {
     func log(event: String, data: String?, logLevel: LogLevel) {
         var newLogLevel: LogLevel = .info
         switch logLevel {
