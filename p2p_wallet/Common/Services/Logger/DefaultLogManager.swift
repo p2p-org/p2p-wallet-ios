@@ -25,7 +25,7 @@ class DefaultLogManager {
     ///   - event: The event or description of the log message.
     ///   - logLevel: The log level of the message (e.g., error, warning, info, debug).
     ///   - data: Optional data associated with the log message (e.g., additional context).
-    func log(event: String, logLevel: LogLevel, data: String? = nil) {
+    func log(event: String, logLevel: DefaultLogLevel, data: String? = nil) {
         providers.forEach { provider in
             guard provider.supportedLogLevels.contains(logLevel) else { return }
             queue.async {
@@ -39,7 +39,7 @@ class DefaultLogManager {
     ///   - event: The event or description of the log message.
     ///   - logLevel: The log level of the message (e.g., error, warning, info, debug).
     ///   - data: Optional structured data associated with the log message.
-    func log(event: String, logLevel: LogLevel, data: (any Encodable)?) {
+    func log(event: String, logLevel: DefaultLogLevel, data: (any Encodable)?) {
         log(event: event, logLevel: logLevel, data: data?.jsonString)
     }
 

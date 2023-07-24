@@ -7,12 +7,12 @@ import SolanaSwift
 class SentryLogger: LogProvider {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
 
-    var supportedLogLevels: [LogLevel] = [.error, .alert]
+    var supportedLogLevels: [DefaultLogLevel] = [.error, .alert]
 
-    func log(event: String, logLevel: LogLevel, data: String?) {
+    func log(event: String, logLevel: DefaultLogLevel, data: String?) {
         guard supportedLogLevels.contains(logLevel) else { return }
         queue.sync {
-            let sentryEvent = Event(level: convertLogLevelToCustomLogLevel(logLevel))
+            let sentryEvent = Event(level: convertDefaultLogLevelToCustomLogLevel(logLevel))
             sentryEvent.message = SentryMessage(formatted: event)
             SentrySDK.capture(event: sentryEvent) { scope in
                 scope.setExtras([
@@ -25,7 +25,7 @@ class SentryLogger: LogProvider {
 
     // MARK: -
 
-    func convertLogLevelToCustomLogLevel(_ logLevel: LogLevel) -> SentryLevel {
+    func convertDefaultLogLevelToCustomLogLevel(_ logLevel: DefaultLogLevel) -> SentryLevel {
         switch logLevel {
         case .info:
             return SentryLevel.info
@@ -47,7 +47,7 @@ class SentryLogger: LogProvider {
 
 extension SentryLogger: SolanaSwiftLogger {
     func log(event: String, data: String?, logLevel: SolanaSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info
@@ -67,7 +67,7 @@ extension SentryLogger: SolanaSwiftLogger {
 
 extension SentryLogger: FeeRelayerSwiftLogger {
     func log(event: String, data: String?, logLevel: FeeRelayerSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info
@@ -87,7 +87,7 @@ extension SentryLogger: FeeRelayerSwiftLogger {
 
 extension SentryLogger: KeyAppKitLoggerType {
     func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info

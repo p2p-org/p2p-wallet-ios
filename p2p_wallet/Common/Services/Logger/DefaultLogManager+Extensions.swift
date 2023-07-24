@@ -9,8 +9,9 @@ import SolanaSwift
 import UIKit
 import Wormhole
 
-extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType,
-KeyAppKitCore.ErrorObserver {
+// MARK: - Singleton
+
+extension DefaultLogManager {
     static let shared: DefaultLogManager = {
         let manager = DefaultLogManager()
         SolanaSwift.Logger.setLoggers([manager])
@@ -18,9 +19,17 @@ KeyAppKitCore.ErrorObserver {
         KeyAppKitLogger.Logger.setLoggers([manager])
         return manager
     }()
+}
 
-    func log(event: String, data: String?, logLevel: LogLevel) {
-        var newLogLevel: LogLevel = .info
+// MARK: - Convenience methods
+
+extension DefaultLogManager: SolanaSwiftLogger,
+    FeeRelayerSwiftLogger,
+    KeyAppKitLoggerType,
+    KeyAppKitCore.ErrorObserver
+{
+    func log(event: String, data: String?, logLevel: DefaultLogLevel) {
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info
@@ -47,7 +56,7 @@ KeyAppKitCore.ErrorObserver {
     }
 
     func log(event: String, data: String?, logLevel: SolanaSwift.SolanaSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info
@@ -63,7 +72,7 @@ KeyAppKitCore.ErrorObserver {
     }
 
     func log(event: String, data: String?, logLevel: FeeRelayerSwift.FeeRelayerSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info
@@ -78,7 +87,7 @@ KeyAppKitCore.ErrorObserver {
     }
 
     func log(event: String, data: String?, logLevel: KeyAppKitLogger.KeyAppKitLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
+        var newLogLevel: DefaultLogLevel = .info
         switch logLevel {
         case .info:
             newLogLevel = .info

@@ -1,6 +1,6 @@
 import Foundation
 
-enum LogLevel: String {
+enum DefaultLogLevel: String {
     case info
     case error
     case request
