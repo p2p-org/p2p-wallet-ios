@@ -13,16 +13,16 @@ struct WithdrawView: View {
             VStack {
                 ScrollView {
                     form
+                        .padding(.top, 16)
                         .animation(.spring(blendDuration: 0.01), value: viewModel.fieldsStatuses)
                 }
-
-                Spacer()
-
+            }
+            .safeAreaInset(edge: .bottom, content: {
                 NewTextButton(
                     title: viewModel.actionTitle.uppercaseFirst,
                     style: .primaryWhite,
                     expandable: true,
-                    isEnabled: true,
+                    isEnabled: (viewModel.isDataValid || !viewModel.actionHasBeenTapped),
                     isLoading: viewModel.isLoading,
                     trailing: viewModel.isDataValid ? .arrowForward : nil,
                     action: {
@@ -32,8 +32,10 @@ struct WithdrawView: View {
                         }
                     }
                 )
-                .padding(.bottom, 20)
-            }
+                .padding(.top, 12)
+                .padding(.bottom, 36)
+                .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.bottom))
+            })
             .padding(.horizontal, 16)
         }
         .toolbar {
@@ -50,13 +52,14 @@ struct WithdrawView: View {
     var form: some View {
         VStack(spacing: 12) {
             StrigaFormCell(
-                title: L10n.iban,
+                title: L10n.yourIBAN,
                 status: viewModel.fieldsStatuses[.IBAN]
             ) {
                     StrigaRegistrationTextField<WithdrawViewField>(
                         field: .IBAN,
                         placeholder: "",
                         text: $viewModel.IBAN,
+                        showClearButton: true,
                         focus: $focus,
                         onSubmit: { focus = .BIC },
                         submitLabel: .next
@@ -67,19 +70,20 @@ struct WithdrawView: View {
                 title: L10n.bic,
                 status: viewModel.fieldsStatuses[.BIC]
             ) {
-                    StrigaRegistrationTextField<WithdrawViewField>(
-                        field: .BIC,
-                        placeholder: "",
-                        text: $viewModel.BIC,
-                        focus: $focus,
-                        onSubmit: { focus = nil },
-                        submitLabel: .done
-                    )
-                }
+                StrigaRegistrationTextField<WithdrawViewField>(
+                    field: .BIC,
+                    placeholder: "",
+                    text: $viewModel.BIC,
+                    showClearButton: true,
+                    focus: $focus,
+                    onSubmit: { focus = nil },
+                    submitLabel: .done
+                )
+            }
 
             VStack(spacing: 4) {
                 StrigaFormCell(
-                    title: "Receiver",
+                    title: L10n.receiver,
                     status: .valid) {
                         StrigaRegistrationTextField<WithdrawViewField>(
                             field: .receiver,
@@ -91,7 +95,7 @@ struct WithdrawView: View {
                             submitLabel: .next
                         )
                     }
-                Text("Your bank account name must match the name registered to your Key App account")
+                Text(L10n.yourBankAccountNameMustMatchTheNameRegisteredToYourKeyAppAccount)
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.night.color))
             }

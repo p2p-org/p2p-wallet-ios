@@ -1505,3 +1505,10 @@
 "Only %@ per one transfer" = "Chỉ %@ cho một lần chuyển";
 "%@ as minimal amount for transfer" = "%@ là số tiền tối thiểu để chuyển";
 "Getting rates" = "Nhận giá";
+"Invalid IBAN" = "IBAN không hợp lệ";
+"Invalid BIC" = "BIC không hợp lệ";
+"Withdrawal" = "Rút tiền";
+"Check your data" = "Kiểm tra dữ liệu của bạn";
+"Receiver" = "Người nhận";
+"Your bank account name must match the name registered to your Key App account" = "Tên tài khoản ngân hàng của bạn phải khớp với tên đã đăng ký với tài khoản Key App của bạn";
+"Your IBAN" = "IBAN của bạn";

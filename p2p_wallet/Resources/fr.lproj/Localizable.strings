@@ -1503,3 +1503,10 @@
 "Only %@ per one transfer" = "Seulement %@ par transfert";
 "%@ as minimal amount for transfer" = "%@ comme montant minimal pour le transfert";
 "Getting rates" = "Obtenir des tarifs";
+"Invalid IBAN" = "IBAN invalide";
+"Invalid BIC" = "BIC invalide";
+"Withdrawal" = "Retrait";
+"Check your data" = "Vérifiez vos données";
+"Receiver" = "Destinataire";
+"Your bank account name must match the name registered to your Key App account" = "Le nom de votre compte bancaire doit correspondre au nom enregistré sur votre compte Key App";
+"Your IBAN" = "Votre IBAN";

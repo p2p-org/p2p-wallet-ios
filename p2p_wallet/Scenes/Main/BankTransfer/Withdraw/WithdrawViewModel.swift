@@ -20,7 +20,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     @Published var isDataValid = false
     @Published var fieldsStatuses = [WithdrawViewField: FieldStatus]()
     @Published var isLoading = false
-    @Published private var actionHasBeenTapped = false
+    @Published var actionHasBeenTapped = false
 
     private let actionCompletedSubject = PassthroughSubject<Void, Never>()
     public var actionCompletedPublisher: AnyPublisher<Void, Never> {
@@ -40,20 +40,33 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             .drop(while: { _, _, actionHasBeenTapped in
                 !actionHasBeenTapped
             })
-            .map { iban, bic, _ in
+            .map { [unowned self] iban, bic, _ in
                 [
-                    WithdrawViewField.IBAN: self.checkIBAN(iban),
-                    WithdrawViewField.BIC: self.checkBIC(bic)
+                    WithdrawViewField.IBAN: checkIBAN(iban),
+                    WithdrawViewField.BIC: checkBIC(bic)
                 ]
             }
+            .handleEvents(receiveOutput: { [unowned self] fields in
+                isDataValid = fields.values.filter({ status in
+                    status == .valid
+                }).count == fields.keys.count
+                actionTitle = isDataValid ? L10n.withdrawal : L10n.checkYourData
+            })
             .assignWeak(to: \.fieldsStatuses, on: self)
             .store(in: &subscriptions)
 
         $IBAN
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .debounce(for: 0.0, scheduler: DispatchQueue.main)
             .removeDuplicates()
             .map { self.formatIBAN($0) }
             .assignWeak(to: \.IBAN, on: self)
+            .store(in: &subscriptions)
+
+        $BIC
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .map { $0.uppercased() }
+            .assignWeak(to: \.BIC, on: self)
             .store(in: &subscriptions)
     }
 
@@ -105,23 +118,23 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             index = nextIndex
         }
 
-        return formattedIBAN
+        return formattedIBAN.uppercased()
     }
 
     private func checkIBAN(_ iban: String) -> FieldStatus {
         let filteredIBAN = iban.filterIBAN()
         if filteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return .invalid(error: WithdrawViewFieldError.empty.rawValue)
+            return .invalid(error: WithdrawViewFieldError.empty.text)
         }
-        return filteredIBAN.passesMod97Check() ? .valid : .invalid(error: WithdrawViewFieldError.invalidIBAN.rawValue)
+        return filteredIBAN.passesMod97Check() ? .valid : .invalid(error: WithdrawViewFieldError.invalidIBAN.text)
     }
 
     private func checkBIC(_ bic: String) -> FieldStatus {
         let bic = bic.trimmingCharacters(in: .whitespacesAndNewlines)
         if bic.isEmpty {
-            return .invalid(error: WithdrawViewFieldError.empty.rawValue)
+            return .invalid(error: WithdrawViewFieldError.empty.text)
         }
-        return bic.passesBICCheck() ? .valid : .invalid(error: WithdrawViewFieldError.invalidBIC.rawValue)
+        return bic.passesBICCheck() ? .valid : .invalid(error: WithdrawViewFieldError.invalidBIC.text)
     }
 }
 
@@ -166,8 +179,19 @@ private extension String {
     }
 }
 
-enum WithdrawViewFieldError: String {
-    case empty = "Could not be empty"
-    case invalidIBAN = "Invalid IBAN"
-    case invalidBIC = "Invalid BIC"
+enum WithdrawViewFieldError {
+    case empty
+    case invalidIBAN
+    case invalidBIC
+
+    var text: String {
+        switch self {
+        case .empty:
+            return L10n.couldNotBeEmpty
+        case .invalidIBAN:
+            return L10n.invalidIBAN
+        case .invalidBIC:
+            return L10n.invalidBIC
+        }
+    }
 }

@@ -8,6 +8,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
     let isEnabled: Bool
     let onSubmit: () -> Void
     let submitLabel: SubmitLabel
+    let showClearButton: Bool
 
     @Binding var text: String
     @Binding var focus: TextFieldType?
@@ -19,6 +20,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
         placeholder: String,
         text: Binding<String>,
         isEnabled: Bool = true,
+        showClearButton: Bool = false,
         focus: Binding<TextFieldType?>,
         onSubmit: @escaping () -> Void,
         submitLabel: SubmitLabel
@@ -27,6 +29,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
         self.placeholder = placeholder
         self._text = text
         self.isEnabled = isEnabled
+        self.showClearButton = showClearButton
         self._focus = focus
         self.onSubmit = onSubmit
         self.submitLabel = submitLabel
@@ -50,6 +53,16 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
             .submitLabel(submitLabel)
             .onSubmit {
                 self.onSubmit()
+            }
+
+            if showClearButton, !text.isEmpty {
+                Button(action: { text = "" }) {
+                    Image(uiImage: .closeIcon)
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(Color(asset: Asset.Colors.night))
+                        .frame(width: 16, height: 16)
+                }.padding(.trailing, 16)
             }
         }
     }

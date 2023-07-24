@@ -1499,3 +1499,10 @@
 "Only %@ per one transfer" = "Только %@ за одну передачу";
 "%@ as minimal amount for transfer" = "%@ как минимальная сумма для перевода";
 "Getting rates" = "Получение ставок";
+"Invalid IBAN" = "Недействительный IBAN";
+"Invalid BIC" = "Неверный БИК";
+"Withdrawal" = "Снятие";
+"Check your data" = "Проверьте свои данные";
+"Receiver" = "Получатель";
+"Your bank account name must match the name registered to your Key App account" = "Имя вашего банковского счета должно совпадать с именем, зарегистрированным в вашей учетной записи Key App.";
+"Your IBAN" = "Ваш IBAN";
