@@ -19,10 +19,6 @@ let package = Package(
             name: "KeyAppKitLogger",
             targets: ["KeyAppKitLogger"]
         ),
-        .library(
-            name: "TransactionParser",
-            targets: ["TransactionParser"]
-        ),
 
         .library(
             name: "NameService",
@@ -113,7 +109,7 @@ let package = Package(
         .library(
             name: "KeyAppStateMachine",
             targets: ["KeyAppStateMachine"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "v3.1"),
@@ -141,22 +137,6 @@ let package = Package(
 
         // KeyAppKitLogger
         .target(name: "KeyAppKitLogger"),
-
-        // Transaction Parser
-        .target(
-            name: "TransactionParser",
-            dependencies: [
-                "Cache",
-                "KeyAppKitCore",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
-        ),
-        .testTarget(
-            name: "TransactionParserUnitTests",
-            dependencies: ["TransactionParser"],
-            path: "Tests/UnitTests/TransactionParserUnitTests",
-            resources: [.process("./Resource")]
-        ),
 
         // Name Service
         .target(
@@ -201,7 +181,7 @@ let package = Package(
             name: "JSBridge"
         ),
         .testTarget(
-            name: "JSBridgeTests", 
+            name: "JSBridgeTests",
             dependencies: ["JSBridge"],
             path: "Tests/UnitTests/JSBridgeTests"
         ),
@@ -242,7 +222,6 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 "FeeRelayerSwift",
                 "NameService",
-                "TransactionParser",
                 "History",
                 "Wormhole",
             ]
@@ -367,16 +346,16 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
-        
+
         // StateMachine
         .target(
             name: "KeyAppStateMachine"
         ),
-        
+
         .testTarget(
             name: "KeyAppStateMachineTests",
             dependencies: ["KeyAppStateMachine"],
             path: "Tests/UnitTests/KeyAppStateMachineTests"
-        )
+        ),
     ]
 )

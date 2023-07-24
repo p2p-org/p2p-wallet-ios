@@ -7,7 +7,6 @@ import Foundation
 import History
 import NameService
 import SolanaSwift
-import TransactionParser
 
 public protocol SendHistoryProvider {
     func getRecipients() async throws -> [Recipient]?

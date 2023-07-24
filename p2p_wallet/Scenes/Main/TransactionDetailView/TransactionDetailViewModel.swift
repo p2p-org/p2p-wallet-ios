@@ -6,7 +6,6 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
-import TransactionParser
 
 enum TransactionDetailStyle {
     case active
@@ -35,11 +34,6 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     init(rendableDetailTransaction: any RenderableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         rendableTransaction = rendableDetailTransaction
-    }
-
-    init(parsedTransaction: ParsedTransaction) {
-        style = .passive
-        rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
     }
 
     init(historyTransaction: HistoryTransaction) {

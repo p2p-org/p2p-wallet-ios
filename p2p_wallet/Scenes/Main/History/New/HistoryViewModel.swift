@@ -7,11 +7,8 @@ import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
-import TransactionParser
 
 enum NewHistoryAction {
-    case openParsedTransaction(ParsedTransaction)
-
     case openHistoryTransaction(HistoryTransaction)
 
     case openSellTransaction(SellDataServiceTransaction)
