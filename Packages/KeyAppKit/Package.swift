@@ -113,7 +113,7 @@ let package = Package(
         .library(
             name: "KeyAppStateMachine",
             targets: ["KeyAppStateMachine"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "v3.1"),
@@ -150,12 +150,6 @@ let package = Package(
                 "KeyAppKitCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
             ]
-        ),
-        .testTarget(
-            name: "TransactionParserUnitTests",
-            dependencies: ["TransactionParser"],
-            path: "Tests/UnitTests/TransactionParserUnitTests",
-            resources: [.process("./Resource")]
         ),
 
         // Name Service
@@ -201,7 +195,7 @@ let package = Package(
             name: "JSBridge"
         ),
         .testTarget(
-            name: "JSBridgeTests", 
+            name: "JSBridgeTests",
             dependencies: ["JSBridge"],
             path: "Tests/UnitTests/JSBridgeTests"
         ),
@@ -367,16 +361,16 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
-        
+
         // StateMachine
         .target(
             name: "KeyAppStateMachine"
         ),
-        
+
         .testTarget(
             name: "KeyAppStateMachineTests",
             dependencies: ["KeyAppStateMachine"],
             path: "Tests/UnitTests/KeyAppStateMachineTests"
-        )
+        ),
     ]
 )

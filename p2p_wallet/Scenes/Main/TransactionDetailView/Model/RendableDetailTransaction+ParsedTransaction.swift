@@ -61,10 +61,6 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
             {
                 return .single(sourceURL)
             }
-        } else if trx.info is CloseAccountInfo {
-            return .icon(.closeToken)
-        } else if trx.info is CreateAccountInfo {
-            return .icon(.transactionCreateAccount)
         }
 
         return .icon(.planet)
@@ -97,23 +93,10 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
                     values: [.init(text: RecipientFormatter.format(destination: info.destination?.address ?? ""))]
                 )
             )
-        } else if let info = trx.info as? CloseAccountInfo {
-            result.append(
-                .init(
-                    title: "Account closed",
-                    values: [.init(text: RecipientFormatter.format(destination: info.closedWallet?.address ?? ""))]
-                )
-            )
-        } else if let info = trx.info as? CreateAccountInfo {
-            result.append(
-                .init(
-                    title: "Account created",
-                    values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.address ?? ""))]
-                )
-            )
         }
 
-        let feeAmountFormatted: Double = trx.fee?.total.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0.0
+        let feeAmountFormatted: Double = trx.fee?.total
+            .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals) ?? 0.0
         result
             .append(
                 .init(
