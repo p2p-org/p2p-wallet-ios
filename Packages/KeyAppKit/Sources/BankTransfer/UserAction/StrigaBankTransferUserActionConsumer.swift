@@ -104,7 +104,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
         case let .complete(action, result):
             Task { [weak self] in
                 guard let self = self else { return }
-                var userAction = Action(
+                let userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
                     token: action.token,
@@ -173,5 +173,44 @@ public class BankTransferClaimUserAction: UserAction {
 
     public static func == (lhs: BankTransferClaimUserAction, rhs: BankTransferClaimUserAction) -> Bool {
         lhs.id == rhs.id
+    }
+}
+
+
+public class OutgoingBankTransferUserAction: UserAction {
+    public static func == (lhs: OutgoingBankTransferUserAction, rhs: OutgoingBankTransferUserAction) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    /// Unique internal id to track.
+    public var id: String
+    public var accountId: String
+    public let token: EthereumToken?
+    public let amount: String?
+    public let receivingAddress: String
+    /// Abstract status.
+    public var status: UserActionStatus
+    public var createdDate: Date
+    public var updatedDate: Date
+    public var result: BankTransferClaimUserActionResult?
+
+    public init(
+        id: String,
+        accountId: String,
+        token: EthereumToken?,
+        amount: String?,
+        receivingAddress: String,
+        status: UserActionStatus,
+        createdDate: Date = Date(),
+        updatedDate: Date = Date()
+    ) {
+        self.id = id
+        self.accountId = accountId
+        self.token = token
+        self.amount = amount
+        self.receivingAddress = receivingAddress
+        self.status = status
+        self.createdDate = createdDate
+        self.updatedDate = updatedDate
     }
 }

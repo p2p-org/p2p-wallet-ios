@@ -1,7 +1,10 @@
 import BankTransfer
-import Foundation
-import KeyAppKitCore
 import BigInt
+import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
+import Web3
+import Wormhole
 
 struct BankTransferRenderableAccount: RenderableAccount {
     let accountId: String
@@ -43,9 +46,9 @@ struct BankTransferRenderableAccount: RenderableAccount {
 
     var detail: AccountDetail {
         switch status {
-        case .readyToClaim:
+        case .ready:
             return .button(label: L10n.claim, enabled: true)
-        case .isClaimming:
+        case .isProcessing:
             return .button(label: L10n.claim, enabled: true)
         case .balanceToLow:
             return .text("")
@@ -71,7 +74,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
 
     var isLoading: Bool {
         switch status {
-        case .isClaimming:
+        case .isProcessing:
             return true
         default:
             return false
@@ -82,5 +85,104 @@ struct BankTransferRenderableAccount: RenderableAccount {
 private extension Int {
     func toCent() -> Double {
         Double(self * 10_000)
+    }
+}
+
+struct OutgoingBankTransferRenderableAccount: RenderableAccount {
+    let accountId: String
+    let fiat: Fiat
+    let visibleAmount: Double
+    var status: RenderableEthereumAccount.Status
+
+    var id: String { accountId }
+
+    var icon: AccountIcon { .image(.iconUpload) }
+
+    var wrapped: Bool { false }
+
+    var title: String { L10n.outgoingTransfer }
+
+    var subtitle: String {
+        String(format: "%.2f", visibleAmount) + " \(fiat.code)"
+    }
+
+    var detail: AccountDetail {
+        switch status {
+        case .ready, .isProcessing:
+            return .button(label: L10n.confirm, enabled: true)
+        case .balanceToLow:
+            return .text("")
+        }
+    }
+
+    var extraAction: AccountExtraAction? { nil }
+
+    var tags: AccountTags {
+        var tags: AccountTags = []
+
+        if status == .balanceToLow {
+            if visibleAmount == 0 {
+                tags.insert(.hidden)
+            } else {
+                tags.insert(.ignore)
+            }
+        }
+        return tags
+    }
+
+    var isLoading: Bool {
+        switch status {
+        case .isProcessing:
+            return true
+        default:
+            return false
+        }
+    }
+}
+
+class BankTransferRenderableAccountFactory {
+    static func renderableAccount(accounts: UserAccounts, actions: [any UserAction]) -> [any RenderableAccount] {
+        var transactions = [any RenderableAccount]()
+        if
+            let usdc = accounts.usdc,
+            usdc.availableBalance > 0,
+            let address = try? EthereumAddress(
+                hex: EthereumAddresses.ERC20.usdc.rawValue,
+                eip55: false
+        ) {
+            let token = EthereumToken(
+                name: SolanaToken.usdc.name,
+                symbol: SolanaToken.usdc.symbol,
+                decimals: 6,
+                logo: URL(string: SolanaToken.usdc.logoURI ?? ""),
+                contractType: .erc20(contract: address)
+            )
+            let action = actions
+                .compactMap { $0 as? BankTransferClaimUserAction }
+                .first(where: { action in
+                    action.id == usdc.accountID
+                })
+            transactions.append(
+                BankTransferRenderableAccount(
+                    accountId: usdc.accountID,
+                    token: token,
+                    visibleAmount: usdc.availableBalance,
+                    rawAmount: usdc.totalBalance,
+                    status: action?.status == .processing ? .isProcessing : .ready
+                )
+            )
+        }
+
+        if let eur = accounts.eur {
+            transactions.append(
+                    OutgoingBankTransferRenderableAccount(
+                    accountId: eur.accountID,
+                    fiat: .eur,
+                    visibleAmount: 1,
+                    status: .ready
+                )
+            )
+        }
+        return transactions
     }
 }

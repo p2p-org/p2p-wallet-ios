@@ -34,8 +34,8 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
                 .map { WithdrawCoordinator.Result.canceled },
             viewModel.actionCompletedPublisher
                 .map { WithdrawCoordinator.Result.verified }
-                .handleEvents(receiveOutput: { _ in
-                    self.navigationController.popToRootViewController(animated: true)
+                .handleEvents(receiveOutput: { [weak self] _ in
+                    self?.navigationController.popToRootViewController(animated: true)
                 })
         )
         .prefix(1).eraseToAnyPublisher()

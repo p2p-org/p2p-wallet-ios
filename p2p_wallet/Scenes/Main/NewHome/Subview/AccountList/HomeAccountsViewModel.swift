@@ -107,39 +107,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // bankTransferPublisher
         let bankTransferServicePublisher = Publishers.CombineLatest(
             bankTransferService.value.state
-                .compactMap { $0.value.wallet?.accounts.usdc },
-            userActionService.$actions.map { userActions in
-                userActions.compactMap { $0 as? BankTransferClaimUserAction }
-            }
+                .compactMap { $0.value.wallet?.accounts },
+            userActionService.$actions
+
         )
-            .compactMap { (account, actions) -> [BankTransferRenderableAccount]? in
-                guard
-                    account.availableBalance > 0,
-                    let address = try? EthereumAddress(
-                        hex: EthereumAddresses.ERC20.usdc.rawValue,
-                        eip55: false
-                    ) else { return nil }
-
-                let token = EthereumToken(
-                    name: SolanaToken.usdc.name,
-                    symbol: SolanaToken.usdc.symbol,
-                    decimals: 6,
-                    logo: URL(string: SolanaToken.usdc.logoURI ?? ""),
-                    contractType: .erc20(contract: address)
+            .compactMap { (account, actions) -> [any RenderableAccount] in
+                BankTransferRenderableAccountFactory.renderableAccount(
+                    accounts: account,
+                    actions: actions
                 )
-
-                let action = actions.first(where: { action in
-                    action.id == account.accountID
-                })
-                return [
-                    BankTransferRenderableAccount(
-                        accountId: account.accountID,
-                        token: token,
-                        visibleAmount: account.availableBalance,
-                        rawAmount: account.totalBalance,
-                        status: action?.status == .processing ? .isClaimming : .readyToClaim
-                    )
-                ]
             }
 
         let homeAccountsAggregator = HomeAccountsAggregator()
@@ -150,7 +126,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 bankTransferServicePublisher.prepend([])
             )
             .map { solanaAccounts, ethereumAccounts, bankTransferAccounts in
-                homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts, bankTransferAccounts))
+                homeAccountsAggregator
+                    .transform(input: (solanaAccounts, ethereumAccounts, bankTransferAccounts))
             }
             .receive(on: RunLoop.main)
             .sink { primary, secondary in
@@ -236,7 +213,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let userActionService: UserActionService = Resolver.resolve()
         let userWalletManager: UserWalletManager = Resolver.resolve()
         guard
-            account.status != .isClaimming,
+            account.status != .isProcessing,
             let walletPubKey = userWalletManager.wallet?.account.publicKey
         else { return }
         let userAction = BankTransferClaimUserAction(

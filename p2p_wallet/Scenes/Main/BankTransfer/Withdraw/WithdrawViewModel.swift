@@ -16,7 +16,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     @Published var IBAN: String = ""
     @Published var BIC: String = ""
     @Published var receiver: String = ""
-    @Published var actionTitle: String = "Withdraw"
+    @Published var actionTitle: String = L10n.withdraw
     @Published var isDataValid = false
     @Published var fieldsStatuses = [WithdrawViewField: FieldStatus]()
     @Published var isLoading = false
@@ -50,7 +50,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
                 isDataValid = fields.values.filter({ status in
                     status == .valid
                 }).count == fields.keys.count
-                actionTitle = isDataValid ? L10n.withdrawal : L10n.checkYourData
+                actionTitle = isDataValid ? L10n.withdraw : L10n.checkYourData
             })
             .assignWeak(to: \.fieldsStatuses, on: self)
             .store(in: &subscriptions)
