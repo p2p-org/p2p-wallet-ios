@@ -104,8 +104,13 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value
                     .filter { $0.isUSDC }
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
                     .reduce(0) {
-                        $0 + $1.amountInFiatDouble
+                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                            return $0 + $1.amount
+                        } else {
+                            return $0 + $1.amountInFiatDouble
+                        }
                     }
                 return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2))"
             }

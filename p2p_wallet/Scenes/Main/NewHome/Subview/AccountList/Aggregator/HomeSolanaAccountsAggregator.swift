@@ -40,7 +40,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
 
                 return RenderableSolanaAccount(
                     account: account,
-                    extraAction: .visiable,
+                    extraAction: .showHide,
                     tags: tags
                 )
             }

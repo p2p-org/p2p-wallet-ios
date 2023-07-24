@@ -30,10 +30,13 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
                 } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
                 }
+                
+                let canBeHidden = account.token.keyAppExtensions.canBeHidden ?? true
+                let extraAction: AccountExtraAction? = canBeHidden ? .showHide : nil
 
                 return RenderableSolanaAccount(
                     account: account,
-                    extraAction: .visiable,
+                    extraAction: extraAction,
                     tags: tags
                 )
             }
