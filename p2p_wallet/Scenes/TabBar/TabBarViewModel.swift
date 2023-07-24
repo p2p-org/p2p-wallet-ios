@@ -162,7 +162,7 @@ extension TabBarViewModel {
                 let equityValue: Double = state.value
                     .filter { $0.isUSDC }
                     .reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol)\(equityValue.formattedForWallet())"
+                return "\(Defaults.fiat.symbol)\(equityValue.formattedAsUnit())"
             }
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
