@@ -129,7 +129,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
-                    DefaultLogManager.shared.log(error: Error.missingBundle)
+                    DefaultLogManager.shared.log(
+                        event: "Error",
+                        logLevel: .error,
+                        data: String(reflecting: Error.missingBundle)
+                    )
                     return
                 }
 

@@ -42,17 +42,4 @@ class DefaultLogManager {
     func log(event: String, logLevel: DefaultLogLevel, data: (any Encodable)?) {
         log(event: event, logLevel: logLevel, data: data?.jsonString)
     }
-
-    /// Logs an error message.
-    /// - Parameter error: The error object to be logged.
-    func log(error: Error) {
-        // Capture error information
-        if let error = error as? CustomNSError {
-            log(event: "Error", logLevel: .error, data: error.errorUserInfo[NSDebugDescriptionErrorKey] as? String)
-        }
-        // Log non-custom errors
-        else {
-            log(event: "Error", logLevel: .error, data: String(reflecting: error))
-        }
-    }
 }
