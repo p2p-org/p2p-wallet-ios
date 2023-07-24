@@ -120,7 +120,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 guard let self else { return }
                 if let error = tx.status.error {
                     self.analyticsManager.log(event: .claimErrorDefaultReject)
-                    if (error as NSError).isNetworkConnectionError {
+                    if error.isNetworkConnectionError {
                         self.processingState = .error(message: NSAttributedString(
                             string: L10n.TheTransactionWasRejectedAfterFailedInternetConnection.openYourLinkAgain
                         ))
@@ -226,7 +226,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     }
 
     private func showError(_ error: Error) {
-        if (error as NSError).isNetworkConnectionError {
+        if error.isNetworkConnectionError {
             showConnectionError()
         } else {
             state = .failure(

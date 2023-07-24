@@ -74,7 +74,7 @@ extension JupiterSwapBusinessLogic {
     }
 
     private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
-        if (error as NSError).isNetworkConnectionError {
+        if error.isNetworkConnectionError {
             return state.error(.networkConnectionError(.gettingRoute))
         } else if (error as NSError).domain.contains("The value \"NaN\" cannot be converted to a number") {
             return state.error(.minimumAmount)

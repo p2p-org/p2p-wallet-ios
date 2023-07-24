@@ -53,7 +53,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
                 self?.logSend(signature: tx.transactionId)
 
                 if let error = tx.status.error {
-                    if (error as NSError).isNetworkConnectionError {
+                    if error.isNetworkConnectionError {
                         self?.result.send(.networkError)
                     } else {
                         self?.showOtherErrorView()
