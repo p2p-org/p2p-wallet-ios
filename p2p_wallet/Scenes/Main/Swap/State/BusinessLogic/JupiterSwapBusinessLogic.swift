@@ -288,7 +288,7 @@ enum JupiterSwapBusinessLogic {
                 }
             }
         } catch {
-            if (error as NSError).isNetworkConnectionError {
+            if error.isNetworkConnectionError {
                 return state.error(.networkConnectionError(.createTransaction(isSimulationOn: isSimulationOn)))
             }
             return state.error(.createTransactionFailed)
@@ -356,7 +356,7 @@ enum JupiterSwapBusinessLogic {
                 return nil
             }
         } catch {
-            if (error as NSError).isNetworkConnectionError {
+            if error.isNetworkConnectionError {
                 throw error
             }
             return nil // If simulation or transaction fails, then we skip this route and return nil
