@@ -1,106 +1,12 @@
-import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppKitLogger
 import Resolver
 import Send
-import SolanaSwift
 import UIKit
 import Wormhole
 
-// MARK: - Singleton
-
-extension DefaultLogManager {
-    static let shared: DefaultLogManager = {
-        let manager = DefaultLogManager()
-        SolanaSwift.Logger.setLoggers([manager])
-        FeeRelayerSwift.Logger.setLoggers([manager])
-        KeyAppKitLogger.Logger.setLoggers([manager])
-        return manager
-    }()
-}
-
-// MARK: - Convenience methods
-
-extension DefaultLogManager: SolanaSwiftLogger,
-    FeeRelayerSwiftLogger,
-    KeyAppKitLoggerType,
-    KeyAppKitCore.ErrorObserver
-{
-    func log(event: String, data: String?, logLevel: DefaultLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        case .request:
-            newLogLevel = .request
-        case .response:
-            newLogLevel = .response
-        case .event:
-            newLogLevel = .event
-        case .alert:
-            newLogLevel = .alert
-        }
-
-        providers.forEach { logger in
-            guard logger.supportedLogLevels.contains(newLogLevel) else { return }
-            log(event: event, logLevel: newLogLevel, data: data)
-        }
-    }
-
-    func log(event: String, data: String?, logLevel: SolanaSwift.SolanaSwiftLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        log(event: event, data: data, logLevel: newLogLevel)
-    }
-
-    func log(event: String, data: String?, logLevel: FeeRelayerSwift.FeeRelayerSwiftLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-        log(event: event, data: data, logLevel: newLogLevel)
-    }
-
-    func log(event: String, data: String?, logLevel: KeyAppKitLogger.KeyAppKitLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-        log(event: event, data: data, logLevel: newLogLevel)
-    }
-
+extension DefaultLogManager: KeyAppKitCore.ErrorObserver {
     func handleError(_ error: Error, config: ErrorObserverConfig?) {
         let config = config ?? .init(flags: [])
 

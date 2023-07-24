@@ -1,8 +1,5 @@
-import FeeRelayerSwift
 import Foundation
-import KeyAppKitLogger
 import Sentry
-import SolanaSwift
 
 class SentryLogger: LogProvider {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
@@ -28,79 +25,15 @@ class SentryLogger: LogProvider {
     func convertDefaultLogLevelToCustomLogLevel(_ logLevel: DefaultLogLevel) -> SentryLevel {
         switch logLevel {
         case .info:
-            return SentryLevel.info
+            return .info
+        case .warning:
+            return .warning
         case .error:
-            return SentryLevel.error
+            return .error
         case .alert:
-            return SentryLevel.error
-        case .request, .response:
-            return SentryLevel.info
-        case .event:
-            return SentryLevel.info
-        case .warning:
-            return SentryLevel.warning
+            return .error
         case .debug:
-            return SentryLevel.debug
+            return .debug
         }
-    }
-}
-
-extension SentryLogger: SolanaSwiftLogger {
-    func log(event: String, data: String?, logLevel: SolanaSwiftLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
-    }
-}
-
-extension SentryLogger: FeeRelayerSwiftLogger {
-    func log(event: String, data: String?, logLevel: FeeRelayerSwiftLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
-    }
-}
-
-extension SentryLogger: KeyAppKitLoggerType {
-    func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
-        var newLogLevel: DefaultLogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
     }
 }
