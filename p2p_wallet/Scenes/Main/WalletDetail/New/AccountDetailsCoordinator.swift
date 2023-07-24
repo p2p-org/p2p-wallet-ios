@@ -77,19 +77,6 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
     private func openDetailTransaction(action: NewHistoryAction) {
         switch action {
-        case let .openParsedTransaction(trx):
-            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature ?? ""))
-            let coordinator = TransactionDetailCoordinator(
-                viewModel: .init(parsedTransaction: trx),
-                presentingViewController: presentation.presentingViewController
-            )
-
-            coordinate(to: coordinator)
-                .sink { result in
-                    print(result)
-                }
-                .store(in: &subscriptions)
-
         case let .openUserAction(userAction):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(userAction: userAction),

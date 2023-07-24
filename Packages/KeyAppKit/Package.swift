@@ -19,10 +19,6 @@ let package = Package(
             name: "KeyAppKitLogger",
             targets: ["KeyAppKitLogger"]
         ),
-        .library(
-            name: "TransactionParser",
-            targets: ["TransactionParser"]
-        ),
 
         .library(
             name: "NameService",
@@ -142,16 +138,6 @@ let package = Package(
         // KeyAppKitLogger
         .target(name: "KeyAppKitLogger"),
 
-        // Transaction Parser
-        .target(
-            name: "TransactionParser",
-            dependencies: [
-                "Cache",
-                "KeyAppKitCore",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
-        ),
-
         // Name Service
         .target(
             name: "NameService",
@@ -236,7 +222,6 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 "FeeRelayerSwift",
                 "NameService",
-                "TransactionParser",
                 "History",
                 "Wormhole",
             ]

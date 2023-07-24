@@ -246,8 +246,6 @@ targets:
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
-              product: TransactionParser
-            - package: KeyAppKit
               product: NameService
             - package: KeyAppKit
               product: AnalyticsManager

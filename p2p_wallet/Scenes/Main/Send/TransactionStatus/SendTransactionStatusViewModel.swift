@@ -7,7 +7,6 @@ import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import SolanaSwift
-import TransactionParser
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
@@ -114,8 +113,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                         params = .init(
                             title: L10n.blockhashNotFound,
                             description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
-                                "", // parsedTransaction.blockhash ?? "",
-                                "" // parsedTransaction.blockhash ?? ""
+                                "", // blockhash ?? "",
+                                "" // blockhash ?? ""
                             )
                         )
                     case let .other(message) where message.contains("Instruction"):
@@ -129,7 +128,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                             title: L10n.thisTransactionHasAlreadyBeenProcessed,
                             description: L10n.TheBankHasSeenThisTransactionBefore
                                 .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(
-                                    "" // parsedTransaction.blockhash ?? ""
+                                    "" // blockhash ?? ""
                                 )
                         )
                     case let .other(message):
