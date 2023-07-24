@@ -134,6 +134,9 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                         logLevel: .error,
                         data: "Error.missingBundle"
                     )
+
+                    analyticsManager.log(title: "Missing bundle error", error: Error.missingBundle)
+
                     return
                 }
 

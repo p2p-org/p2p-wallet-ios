@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
@@ -41,6 +42,8 @@ class SocialSignInTryAgainViewModel: NSObject {
 //                self?.notificationService.showInAppNotification(.error(error))
             }
             DefaultLogManager.shared.log(event: error.readableDescription, logLevel: .error)
+
+            Resolver.resolve(AnalyticsManager.self).log(title: "SocialSignInError", error: error)
         }.store(in: &subscriptions)
     }
 }

@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -12,6 +13,12 @@ extension DefaultLogManager: KeyAppKitCore.ErrorObserver {
 
         // Default log
         log(event: config.domain ?? "Error", logLevel: .error, data: String(reflecting: error))
+
+        // Analytics
+        Resolver.resolve(AnalyticsManager.self).log(
+            title: "\(config.domain ?? "General") iOS Error",
+            error: error
+        )
 
         // Realtime log
         if config.flags.contains(.realtimeAlert) {
@@ -69,6 +76,10 @@ extension DefaultLogManager: KeyAppKitCore.ErrorObserver {
                     blockchainError: nil
                 )
                 self.log(event: "Wormhole Claim iOS Alarm", logLevel: .alert, data: message)
+                Resolver.resolve(AnalyticsManager.self).log(
+                    title: "Wormhole Claim iOS Error",
+                    error: error
+                )
             } else if error.domain == WormholeSendUserActionError.domain,
                       let action =
                       userInfo?[WormholeClaimUserActionError.UserInfoKey.action.rawValue] as? WormholeSendUserAction
@@ -97,6 +108,10 @@ extension DefaultLogManager: KeyAppKitCore.ErrorObserver {
                         .readableDescription : nil
                 )
                 self.log(event: "Wormhole Send iOS Alarm", logLevel: .alert, data: message)
+                Resolver.resolve(AnalyticsManager.self).log(
+                    title: "Wormhole Send iOS Error",
+                    error: error
+                )
             }
         }
     }
