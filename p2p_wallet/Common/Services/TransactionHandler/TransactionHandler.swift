@@ -12,7 +12,6 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
-import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
