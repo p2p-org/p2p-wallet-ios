@@ -13,7 +13,7 @@ extension AnalyticsManager {
         // Frontend error
         switch error.errorType {
         case .user:
-            break
+            return
         case .frontend:
             event = .clientFrontendError(
                 errorValue: title,
