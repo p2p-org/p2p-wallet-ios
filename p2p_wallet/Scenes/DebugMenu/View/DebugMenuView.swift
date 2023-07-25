@@ -45,14 +45,14 @@ struct DebugMenuView: View {
                     try await tokenService.reset()
                 }
             }
-            
+
             Button("Clear Ethereum cache") {
                 let tokenService = Resolver.resolve(EthereumTokensRepository.self)
                 Task {
                     try await tokenService.clear()
                 }
             }
-            
+
             Button("Clear price cache") {
                 let priceService = Resolver.resolve(PriceService.self)
                 Task {
@@ -82,11 +82,9 @@ struct DebugMenuView: View {
             Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
             Button {
                 Task {
+                    ResolverScope.application.reset()
                     ResolverScope.session.reset()
                     try await Resolver.resolve(UserWalletManager.self).refresh()
-
-                    // let app: AppEventHandlerType = Resolver.resolve()
-                    // app.delegate?.refresh()
                 }
             } label: { Text("Apply") }
         }
