@@ -36,11 +36,15 @@ struct RenderableSolanaAccount: RenderableAccount {
     }
 
     var detail: AccountDetail {
-        .text(
-            account
-                .amountInFiatDouble
-                .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
-        )
+        if account.price != nil {
+            return .text(
+                account
+                    .amountInFiatDouble
+                    .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
+            )
+        } else {
+            return .text("")
+        }
     }
 
     let extraAction: AccountExtraAction?
