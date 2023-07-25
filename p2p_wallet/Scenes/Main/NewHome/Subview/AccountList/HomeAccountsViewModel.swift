@@ -112,7 +112,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                             return $0 + $1.amountInFiatDouble
                         }
                     }
-                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2))"
+                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2, roundingMode: .down))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
