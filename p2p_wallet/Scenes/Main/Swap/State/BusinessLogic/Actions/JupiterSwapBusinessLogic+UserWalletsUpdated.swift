@@ -26,8 +26,11 @@ extension JupiterSwapBusinessLogic {
         // update from Token only if it is from userWallets
         if let fromUserWallet = userWallets
             .first(where: {
-                $0.address == state.fromToken.userWallet?.address &&
-                    $0.mintAddress == state.fromToken.mintAddress
+                if let fromTokenAddress = state.fromToken.userWallet?.address {
+                    return $0.address == fromTokenAddress
+                } else {
+                    return $0.mintAddress == state.fromToken.mintAddress
+                }
             })
         {
             fromToken = SwapToken(
