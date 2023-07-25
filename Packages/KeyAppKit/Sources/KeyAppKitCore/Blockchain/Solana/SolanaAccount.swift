@@ -11,7 +11,7 @@ import SolanaSwift
 /// Solana account data structure.
 /// This class is combination of raw account data and additional application data.
 public struct SolanaAccount: Identifiable, Equatable, Hashable {
-    public var id: String { address }
+    public var id: String { token.id }
 
     public var address: String
 
