@@ -128,7 +128,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     .filter { $0.isUSDC }
                     .reduce(0) { $0 + $1.amount }
                 )
-                return "\(equityValue.tokenAmountFormattedString(symbol: "USDC", maximumFractionDigits: 3))"
+                return "\(equityValue.tokenAmountFormattedString(symbol: "USDC", maximumFractionDigits: 2, roundingMode: .down))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.usdcAmount, on: self)
