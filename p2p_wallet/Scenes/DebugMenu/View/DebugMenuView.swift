@@ -82,9 +82,10 @@ struct DebugMenuView: View {
             Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
             Button {
                 Task {
-                    ResolverScope.application.reset()
                     ResolverScope.session.reset()
                     try await Resolver.resolve(UserWalletManager.self).refresh()
+                    (Resolver.resolve(KeyAppTokenProvider.self) as? KeyAppTokenHttpProvider)?.client
+                        .endpoint = globalAppState.tokenEndpoint
                 }
             } label: { Text("Apply") }
         }
