@@ -33,7 +33,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case mainScreenSwapBar
     case mainScreenCashOutBar
 
-    case mainScreenWalletsOpen(isSellEnabled: Bool)
+    case mainScreenOpened(isSellEnabled: Bool)
     case mainCopyAddress
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)

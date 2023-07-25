@@ -84,7 +84,7 @@ class HomeViewModel: ObservableObject {
         }
 
         analyticsManager.log(
-            event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
+            event: .mainScreenOpened(isSellEnabled: sellDataService.isAvailable)
         )
     }
 }
