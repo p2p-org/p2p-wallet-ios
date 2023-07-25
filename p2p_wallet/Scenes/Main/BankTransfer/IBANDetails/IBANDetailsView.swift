@@ -58,7 +58,16 @@ struct IBANDetailsView_Previews: PreviewProvider {
         NavigationView {
             IBANDetailsView(
                 viewModel: IBANDetailsViewModel(
-                    eurAccount: EURUserAccount(accountID: "", currency: "", createdAt: "", enriched: true, iban: "IBAN", bic: "BIC", bankAccountHolderName: "Name Surname")
+                    eurAccount: EURUserAccount(
+                        accountID: "",
+                        currency: "",
+                        createdAt: "",
+                        enriched: true,
+                        availableBalance: nil,
+                        iban: "IBAN",
+                        bic: "BIC",
+                        bankAccountHolderName: "Name Surname"
+                    )
                 )
             )
             .navigationTitle(L10n.euroAccount)

@@ -98,3 +98,5 @@ struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmab
         return .fakeTransactionSignature(id: UUID().uuidString)
     }
 }
+
+extension StrigaClaimTransaction: Equatable {}

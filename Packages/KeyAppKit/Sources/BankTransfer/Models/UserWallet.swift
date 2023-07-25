@@ -16,12 +16,23 @@ public struct EURUserAccount: Codable {
     public let iban: String?
     public let bic: String?
     public let bankAccountHolderName: String?
+    public let availableBalance: Int?
 
-    public init(accountID: String, currency: String, createdAt: String, enriched: Bool, iban: String? = nil, bic: String? = nil, bankAccountHolderName: String? = nil) {
+    public init(
+        accountID: String,
+        currency: String,
+        createdAt: String,
+        enriched: Bool,
+        availableBalance: Int?,
+        iban: String? = nil,
+        bic: String? = nil,
+        bankAccountHolderName: String? = nil
+    ) {
         self.accountID = accountID
         self.currency = currency
         self.createdAt = createdAt
         self.enriched = enriched
+        self.availableBalance = availableBalance
         self.iban = iban
         self.bic = bic
         self.bankAccountHolderName = bankAccountHolderName

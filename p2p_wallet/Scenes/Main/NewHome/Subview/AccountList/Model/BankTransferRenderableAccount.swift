@@ -1,5 +1,6 @@
 import BankTransfer
 import BigInt
+import BigDecimal
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -91,8 +92,13 @@ private extension Int {
 struct OutgoingBankTransferRenderableAccount: RenderableAccount {
     let accountId: String
     let fiat: Fiat
-    let visibleAmount: Double
+    let rawAmount: Int
     var status: RenderableEthereumAccount.Status
+    private var amount: CurrencyAmount {
+        CurrencyAmount(value: BigDecimal(floatLiteral: visibleAmount), currencyCode: fiat.code)
+    }
+
+    var visibleAmount: Double { Double(rawAmount) / 100 }
 
     var id: String { accountId }
 
@@ -100,10 +106,10 @@ struct OutgoingBankTransferRenderableAccount: RenderableAccount {
 
     var wrapped: Bool { false }
 
-    var title: String { L10n.outgoingTransfer }
+    var title: String { L10n.outcomingTransfer }
 
     var subtitle: String {
-        String(format: "%.2f", visibleAmount) + " \(fiat.code)"
+        CurrencyFormatter(defaultValue: "", hideSymbol: true).string(amount: amount).appending(" \(fiat.code)")
     }
 
     var detail: AccountDetail {
@@ -173,12 +179,12 @@ class BankTransferRenderableAccountFactory {
             )
         }
 
-        if let eur = accounts.eur {
+        if let eur = accounts.eur, let balance = eur.availableBalance, balance > 0 {
             transactions.append(
-                    OutgoingBankTransferRenderableAccount(
+                OutgoingBankTransferRenderableAccount(
                     accountId: eur.accountID,
                     fiat: .eur,
-                    visibleAmount: 1,
+                    rawAmount: balance,
                     status: .ready
                 )
             )

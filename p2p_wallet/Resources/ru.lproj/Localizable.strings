@@ -1506,4 +1506,4 @@
 "Receiver" = "Получатель";
 "Your bank account name must match the name registered to your Key App account" = "Имя вашего банковского счета должно совпадать с именем, зарегистрированным в вашей учетной записи Key App.";
 "Your IBAN" = "Ваш IBAN";
-"Outgoing transfer" = "Исходящий перевод";
+"Outcoming transfer" = "Исходящий перевод";

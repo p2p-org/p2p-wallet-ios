@@ -226,6 +226,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                     currency: eur.currency,
                     createdAt: eur.createdAt,
                     enriched: true,
+                    availableBalance: eur.availableBalance,
                     iban: response.iban,
                     bic: response.bic,
                     bankAccountHolderName: response.bankAccountHolderName
@@ -363,6 +364,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         throw StrigaProviderError.invalidRateTokens
     }
 
+    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> String {
+        try await remoteProvider.initiateSEPAPayment(userId: userId, accountId: accountId, amount: amount, iban: iban, bic: bic).challengeId
+    }
+
     // MARK: - Private
     private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
@@ -399,6 +404,7 @@ private extension UserWallet {
                 currency: eurAccount.currency,
                 createdAt: eurAccount.createdAt,
                 enriched: cached?.accounts.eur?.enriched ?? false,
+                availableBalance: Int(eurAccount.availableBalance.amount) ?? 0,
                 iban: cached?.accounts.eur?.iban,
                 bic: cached?.accounts.eur?.bic,
                 bankAccountHolderName: cached?.accounts.eur?.bankAccountHolderName

@@ -316,7 +316,31 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: nil
         )
     }
-    
+
+    static func initiateSEPAPayment(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        sourceAccountId: String,
+        amount: String,
+        iban: String,
+        bic: String
+    ) throws -> Self {
+        try StrigaEndpoint(
+            baseURL: baseURL,
+            path: "/wallets/send/initiate/bank",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": .init(userId),
+                "sourceAccountId": .init(sourceAccountId),
+                "amount": .init(amount),
+                "destination": .init(["iban": .init(iban),
+                                      "bic": .init(bic)] as [String: KeyAppNetworking.AnyEncodable]),
+            ] as [String: KeyAppNetworking.AnyEncodable]
+        )
+    }
+
     static func getAccountStatement(
         baseURL: String,
         keyPair: KeyPair,

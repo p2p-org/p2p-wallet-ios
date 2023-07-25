@@ -147,14 +147,12 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         userActionService.$actions
-            .compactMap {
-                $0.compactMap { $0 as? BankTransferClaimUserAction }
-            }
-            .flatMap { $0.publisher }
-            .handleEvents(receiveOutput: { val in
+            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction } }
+            .flatMap(\.publisher)
+            .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
-                case .error(let error):
-                    self.notificationService.showDefaultErrorNotification()
+                case .error:
+                    self?.notificationService.showDefaultErrorNotification()
                 default:
                     break
                 }
@@ -162,8 +160,27 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .filter { $0.status == .ready }
             .receive(on: RunLoop.main)
             .sink { [weak self] action in
-                self?.navigation.send(.bankTransferClaim(action))
+                guard let result = action.result else { return }
+                self?.handleClaim(result: result, in: action)
             }.store(in: &subscriptions)
+
+        userActionService.$actions
+            .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
+            .flatMap(\.publisher)
+            .filter { $0.status != .pending && $0.status != .processing }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] action in
+                switch action.status {
+                case .ready:
+                    guard let result = action.result else { return }
+                    self?.handleOutgoingConfirm(result: result, in: action)
+                case .error:
+                    self?.notificationService.showDefaultErrorNotification()
+                default:
+                    break
+                }
+            }
+            .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
     }
@@ -204,9 +221,25 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as BankTransferRenderableAccount:
             handleBankTransfer(account: renderableAccount)
 
+        case let renderableAccount as OutgoingBankTransferRenderableAccount:
+            handleBankTransfer(account: renderableAccount)
+
         default:
             break
         }
+    }
+
+    private func handleBankTransfer(account: OutgoingBankTransferRenderableAccount) {
+        let userActionService: UserActionService = Resolver.resolve()
+        guard account.status != .isProcessing else { return }
+        let userAction = OutgoingBankTransferUserAction(
+            id: account.id,
+            accountId: account.accountId,
+            amount: String(account.rawAmount),
+            status: .processing
+        )
+        // Execute and emit action.
+        userActionService.execute(action: userAction)
     }
 
     private func handleBankTransfer(account: BankTransferRenderableAccount) {
@@ -232,6 +265,33 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         userActionService.execute(action: userAction)
     }
 
+    private func handleOutgoingConfirm(result: OutgoingBankTransferUserActionResult, in action: OutgoingBankTransferUserAction) {
+        switch result {
+        case let .initiated(challengeId):
+            self.navigation.send(.bankTransferClaim(StrigaClaimTransaction(
+                challengeId: challengeId,
+                token: .usdc,
+                amount: Double(action.amount) ?? 0 / 100,
+                feeAmount: .zero,
+                fromAddress: "",
+                receivingAddress: ""
+            )))
+        case let .requestWithdrawInfo(receiver):
+            self.navigation.send(.withdrawInfo(StrigaWithdrawalInfo(receiver: receiver)))
+        }
+    }
+
+    private func handleClaim(result: BankTransferClaimUserActionResult, in action: BankTransferClaimUserAction) {
+        self.navigation.send(.bankTransferClaim(StrigaClaimTransaction(
+            challengeId: action.result?.challengeId ?? "",
+            token: action.result?.token ?? .usdc,
+            amount: Double(action.amount ?? "") ?? 0,
+            feeAmount: .zero,
+            fromAddress: action.result?.fromAddress ?? "",
+            receivingAddress: action.receivingAddress
+        )))
+    }
+
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
@@ -254,7 +314,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case .topUp:
             navigation.send(.topUp)
         case .withdraw:
-            navigation.send(.withdraw)
+            navigation.send(.withdrawCalculator)
         }
     }
 
