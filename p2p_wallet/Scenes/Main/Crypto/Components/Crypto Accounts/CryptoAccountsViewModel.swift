@@ -13,6 +13,8 @@ import Wormhole
 /// ViewModel of `CryptoAccounts` scene
 final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     
+    private var defaultsDisposables: [DefaultsDisposable] = []
+    
     // MARK: - Dependencies
     
     private let solanaAccountsService: SolanaAccountsService
@@ -52,6 +54,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         
         super.init()
         
+        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
+            self?.hideZeroBalance = change.newValue ?? false
+        })
+        
         self.bindAccounts()
     }
     
@@ -84,11 +90,11 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
                 solanaAggregator.transform(input: (state.value, favourites, ignores, hideZeroBalance))
             }
 
-        let homeAccountsAggregator = CryptoAccountsAggregator()
+        let cryptoAccountsAggregator = CryptoAccountsAggregator()
         Publishers
             .CombineLatest(solanaAccountsPublisher, ethereumAccountsPublisher)
             .map { solanaAccounts, ethereumAccounts in
-                homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
+                cryptoAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
             }
             .receive(on: RunLoop.main)
             .sink { transfer, primary, secondary in
