@@ -1,7 +1,6 @@
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitLogger
-import LoggerSwift
 import Sentry
 import SolanaSwift
 

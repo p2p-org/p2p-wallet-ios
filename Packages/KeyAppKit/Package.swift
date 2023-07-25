@@ -118,7 +118,6 @@ let package = Package(
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
-        .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
         .package(url: "https://github.com/vapor/websocket-kit", from: "2.8.0"),
     ],
     targets: [
@@ -337,7 +336,6 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "BigDecimal", package: "BigDecimal"),
-                .product(name: "LoggerSwift", package: "LoggerSwift"),
             ]
         ),
 
