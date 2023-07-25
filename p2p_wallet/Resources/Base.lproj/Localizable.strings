@@ -454,7 +454,6 @@
 "Buy with Moonpay" = "Buy with Moonpay";
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
-"The address was copied to clipboard" = "The address was copied to clipboard";
 "Confirm claiming the tokens " = "Confirm claiming\nthe tokens";
 "My Solana address" = "My Solana address";
 "My username" = "My username";
@@ -591,3 +590,6 @@
 "4,5%% fees" = "4,5%% fees";
 "withdraw" = "withdraw";
 "My crypto" = "My crypto";
+"Username copied to clipboard" = "Username copied to clipboard";
+"Address copied to clipboard" = "Address copied to clipboard";
+

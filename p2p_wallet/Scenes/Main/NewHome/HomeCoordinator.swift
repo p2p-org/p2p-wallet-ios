@@ -69,7 +69,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let viewModel = HomeViewModel()
         let homeView = HomeView(
             viewModel: viewModel,
-            viewModelWithTokens: tokensViewModel!,
+            accountsViewModel: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 

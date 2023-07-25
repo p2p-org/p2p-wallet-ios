@@ -624,3 +624,5 @@
 "4,5%% fees" = "4,5%% комиссии";
 "withdraw" = "отзывать";
 "My crypto" = "Моя крипта";
+"Username copied to clipboard" = "Имя пользователя скопировано в буфер обмена";
+"Address copied to clipboard" = "Адрес скопирован в буфер обмена";
