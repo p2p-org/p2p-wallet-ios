@@ -186,6 +186,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 blockchainError: nil
             )
         )
+
+        analyticsManager.log(title: "Wormhole Claim iOS Error", error: error)
     }
 
     var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }

@@ -1,4 +1,5 @@
 import AnalyticsManager
+import FeeRelayerSwift
 import Foundation
 import NameService
 import Onboarding
@@ -36,7 +37,8 @@ private extension Error {
             (self is Web3.Eth.Error) ||
             (self is Onboarding.APIGatewayError) ||
             (self is APIGatewayCooldownError) ||
-            (self is UndefinedAPIGatewayError)
+            (self is UndefinedAPIGatewayError) ||
+            (self is FeeRelayerSwift.HTTPClientError)
     }
 
     var isFrontendError: Bool {

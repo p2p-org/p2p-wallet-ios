@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Jupiter
 import KeyAppKitCore
 import Resolver
@@ -91,6 +92,9 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     diffTxTime: diffTxTime
                 )
             )
+
+            Resolver.resolve(AnalyticsManager.self).log(title: title, error: error)
+
             throw error
         }
     }
