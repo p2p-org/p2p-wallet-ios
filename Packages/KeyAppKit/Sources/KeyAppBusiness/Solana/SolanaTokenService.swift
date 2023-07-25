@@ -49,6 +49,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
             if let encodedData = try? await storage.load(for: filename) {
                 if let database = try? JSONDecoder().decode(Database.self, from: encodedData) {
                     self.database = database
+                    setupStaticToken(data: database.data)
                 }
             }
         }
@@ -65,7 +66,9 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
                 let tokens = result.tokens.map { token in
                     (token.mintAddress, token)
                 }
-                database.data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
+                let data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
+                database.data = data
+                setupStaticToken(data: data)
                 status = .ready
             }
 
@@ -76,6 +79,15 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
             print(error)
             errorObserver.handleError(error)
         }
+    }
+
+    public func setupStaticToken(data: [String: TokenMetadata]) {
+        TokenMetadata.nativeSolana = data["native"] ?? TokenMetadata.nativeSolana
+        TokenMetadata.usdc = data[PublicKey.usdcMint.base58EncodedString] ?? TokenMetadata.usdc
+        TokenMetadata.usdt = data[PublicKey.usdtMint.base58EncodedString] ?? TokenMetadata.usdt
+        TokenMetadata.eth = data[TokenMetadata.eth.mintAddress] ?? TokenMetadata.eth
+        TokenMetadata.usdcet = data[TokenMetadata.usdcet.mintAddress] ?? TokenMetadata.usdcet
+        TokenMetadata.renBTC = data[TokenMetadata.renBTC.mintAddress] ?? TokenMetadata.renBTC
     }
 
     public func get(address: String) async throws -> TokenMetadata? {
@@ -140,14 +152,37 @@ private extension SolanaTokensService {
 public extension SolanaTokensService {
     var usdc: SolanaToken {
         get async throws {
-            try await getOrThrow(address: TokenMetadata.usdc.mintAddress)
+            try await getOrThrow(address: PublicKey.usdcMint.base58EncodedString)
         }
     }
 
-    // TODO: Wait backend for fix native token
+    var usdt: SolanaToken {
+        get async throws {
+            try await getOrThrow(address: PublicKey.usdtMint.base58EncodedString)
+        }
+    }
+
+    var eth: SolanaToken {
+        get async throws {
+            try await getOrThrow(address: TokenMetadata.eth.mintAddress)
+        }
+    }
+
+    var usdcet: SolanaToken {
+        get async throws {
+            try await getOrThrow(address: TokenMetadata.usdcet.mintAddress)
+        }
+    }
+
+    var rentBTC: SolanaToken {
+        get async throws {
+            try await getOrThrow(address: TokenMetadata.renBTC.mintAddress)
+        }
+    }
+
     var nativeToken: SolanaToken {
         get async throws {
-            try await await getOrThrow(address: "native")
+            try await getOrThrow(address: "native")
         }
     }
 }
