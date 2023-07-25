@@ -30,10 +30,14 @@ struct WithdrawCalculatorView: View {
             .padding(.horizontal, 16)
         }
         .onAppear {
+            viewModel.isViewAppeared.send(true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 // We need delay because BigInputView is UITextField
                 viewModel.isFromFirstResponder = true
             }
+        }
+        .onDisappear {
+            viewModel.isViewAppeared.send(false)
         }
     }
 

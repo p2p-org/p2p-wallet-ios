@@ -24,6 +24,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     let openBankTransfer = PassthroughSubject<Void, Never>()
     let openWithdraw = PassthroughSubject<StrigaWithdrawalInfo, Never>()
     let proceedWithdraw = PassthroughSubject<Void, Never>()
+    let isViewAppeared = PassthroughSubject<Bool, Never>()
 
     @Published var actionData = WithdrawCalculatorAction.zero
     @Published var isLoading = false
@@ -55,7 +56,6 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         super.init()
-        loadRates()
         bindProperties()
         bindReachibility()
         bindAccounts()
@@ -189,6 +189,16 @@ private extension WithdrawCalculatorViewModel {
             .map { _ in WithdrawCalculatorAction(isEnabled: false, title: L10n.gettingRates) }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.actionData, on: self)
+            .store(in: &subscriptions)
+
+        isViewAppeared
+            .sink { [weak self] isAppeared in
+                if isAppeared {
+                    self?.loadRates()
+                } else {
+                    self?.cancelUpdate()
+                }
+            }
             .store(in: &subscriptions)
     }
 
