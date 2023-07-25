@@ -62,11 +62,11 @@ class HomeViewModel: ObservableObject {
         clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
         let text: String
         if nameStorage.getName() != nil {
-            text = L10n.usernameWasCopiedToClipboard
+            text = L10n.usernameCopiedToClipboard
         } else {
-            text = L10n.addressWasCopiedToClipboard
+            text = L10n.addressCopiedToClipboard
         }
-        notificationsService.showToast(title: "🖤", text: text, haptic: true)
+        notificationsService.showToast(title: "", text: text, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
 
