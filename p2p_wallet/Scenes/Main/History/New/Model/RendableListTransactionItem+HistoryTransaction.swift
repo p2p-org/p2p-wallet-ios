@@ -302,7 +302,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
         if
             let mint,
-            let urlStr: String = allTokens.first(where: { $0.address == mint })?.logoURI,
+            let urlStr: String = allTokens.first(where: { $0.mintAddress == mint })?.logoURI,
             let url = URL(string: urlStr)
         {
             return url

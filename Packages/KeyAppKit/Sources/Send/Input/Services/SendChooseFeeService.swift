@@ -22,7 +22,7 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
         let filteredWallets = wallets.filter { ($0.lamports ?? 0) > 0 }
         var feeWallets = [SolanaAccount]()
         for element in filteredWallets {
-            if element.token.address == PublicKey.wrappedSOLMint
+            if element.token.mintAddress == PublicKey.wrappedSOLMint
                 .base58EncodedString && (element.lamports ?? 0) >= feeInSOL.total
             {
                 feeWallets.append(element)
@@ -32,7 +32,7 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
                 let feeAmount = try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
                     orcaSwap: orcaSwap,
                     feeInSOL: feeInSOL,
-                    payingFeeTokenMint: try PublicKey(string: element.token.address)
+                    payingFeeTokenMint: try PublicKey(string: element.token.mintAddress)
                 )
                 if (feeAmount?.total ?? 0) <= (element.lamports ?? 0) {
                     feeWallets.append(element)

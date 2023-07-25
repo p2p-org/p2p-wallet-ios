@@ -170,13 +170,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupLoggers() {
-        var loggers: [LogManagerLogger] = [
+        let loggers: [LogManagerLogger] = [
             SentryLogger(),
             AlertLogger(),
         ]
-        if Environment.current == .debug {
-            loggers.append(LoggerSwiftLogger())
-        }
         DefaultLogManager.shared.setProviders(loggers)
     }
 

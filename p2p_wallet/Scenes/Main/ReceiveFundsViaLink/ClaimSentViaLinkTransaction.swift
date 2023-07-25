@@ -1,3 +1,4 @@
+import AnalyticsManager
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -69,7 +70,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         // do and catch error
         do {
             let feePayerAddress = try PublicKey(
-                string: try await feeRelayerAPIClient.getFeePayerPubkey()
+                string: await feeRelayerAPIClient.getFeePayerPubkey()
             )
 
             // prepare transaction, get recent blockchash
@@ -128,7 +129,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                 data: ClaimSentViaLinkAlertLoggerMessage(
                     tokenToClaim: .init(
                         name: token.name,
-                        mint: token.address,
+                        mint: token.mintAddress,
                         claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
                         currency: token.symbol
                     ),
@@ -141,6 +142,8 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     blockchainError: data.blockchainError
                 )
             )
+
+            Resolver.resolve(AnalyticsManager.self).log(title: "Link Claim iOS Error", error: error)
 
             // rethrow error
             throw error

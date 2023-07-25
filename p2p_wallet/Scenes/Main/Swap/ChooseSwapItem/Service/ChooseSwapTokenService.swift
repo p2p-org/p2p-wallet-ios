@@ -78,7 +78,7 @@ private extension ChooseSwapTokenService {
                 } else {
                     let preferTokens = Set(self.preferTokens)
                     tokens.forEach {
-                        if preferTokens.contains($0.token.address) {
+                        if preferTokens.contains($0.token.mintAddress) {
                             firstSection.append($0)
                         } else {
                             secondSection.append($0)
@@ -96,11 +96,11 @@ private extension ChooseSwapTokenService {
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(accountsService.statePublisher, swapTokens.eraseToAnyPublisher())
-            .map({ ($0.0.value, $0.1) })
+            .map { ($0.0.value, $0.1) }
             .sink { [weak self] accounts, swapTokens in
                 guard let self else { return }
                 let newSwapTokens = swapTokens.map { swapToken in
-                    if let account = accounts.first(where: { $0.mintAddress == swapToken.address }) {
+                    if let account = accounts.first(where: { $0.mintAddress == swapToken.mintAddress }) {
                         return SwapToken(token: swapToken.token, userWallet: account)
                     }
                     return SwapToken(token: swapToken.token, userWallet: nil)

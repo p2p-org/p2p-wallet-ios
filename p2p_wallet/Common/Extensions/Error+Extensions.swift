@@ -9,6 +9,12 @@ import FeeRelayerSwift
 import Foundation
 import SolanaSwift
 
+extension Error {
+    var isNetworkConnectionError: Bool {
+        (self as NSError).isNetworkConnectionError
+    }
+}
+
 extension SolanaError: LocalizedError {
     public var errorDescription: String? {
         switch self {
@@ -56,7 +62,7 @@ extension SolanaSwift.APIClientError: LocalizedError {
             return L10n.invalidURL
         case .invalidResponse:
             return L10n.responseError
-        case .responseError(let responseError):
+        case let .responseError(responseError):
             var string = L10n.responseError
             if let description = responseError.message {
                 string = description.localized()

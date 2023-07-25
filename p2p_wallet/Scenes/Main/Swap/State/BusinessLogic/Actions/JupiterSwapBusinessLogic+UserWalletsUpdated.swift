@@ -16,7 +16,7 @@ extension JupiterSwapBusinessLogic {
     ) -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in
-            if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.address }) {
+            if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.mintAddress }) {
                 return SwapToken(token: swapToken.token, userWallet: userWallet)
             }
             return SwapToken(token: swapToken.token, userWallet: nil)
@@ -27,7 +27,7 @@ extension JupiterSwapBusinessLogic {
         if let fromUserWallet = userWallets
             .first(where: {
                 $0.address == state.fromToken.userWallet?.address &&
-                    $0.mintAddress == state.fromToken.address
+                    $0.mintAddress == state.fromToken.mintAddress
             })
         {
             fromToken = SwapToken(
@@ -43,7 +43,7 @@ extension JupiterSwapBusinessLogic {
                 if let toTokenAddress = state.toToken.userWallet?.address {
                     return $0.address == toTokenAddress
                 } else {
-                    return $0.mintAddress == state.toToken.address
+                    return $0.mintAddress == state.toToken.mintAddress
                 }
 
             })

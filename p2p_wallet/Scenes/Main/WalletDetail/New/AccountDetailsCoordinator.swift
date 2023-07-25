@@ -35,7 +35,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.token.address)
+            historyListVM = .init(mint: account.token.mintAddress)
         }
 
         historyListVM.actionSubject
@@ -77,19 +77,6 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
     private func openDetailTransaction(action: NewHistoryAction) {
         switch action {
-        case let .openParsedTransaction(trx):
-            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature ?? ""))
-            let coordinator = TransactionDetailCoordinator(
-                viewModel: .init(parsedTransaction: trx),
-                presentingViewController: presentation.presentingViewController
-            )
-
-            coordinate(to: coordinator)
-                .sink { result in
-                    print(result)
-                }
-                .store(in: &subscriptions)
-
         case let .openUserAction(userAction):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(userAction: userAction),
@@ -190,7 +177,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             }
         }
 
-        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.address) {
+        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.mintAddress) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)

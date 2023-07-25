@@ -267,4 +267,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Transaction
 
     case transactionBlockchainLinkClick
+
+    // MARK: - Client Error
+
+    case clientFrontendError(errorValue: String, errorFragment: String)
+    case clientBackendError(errorValue: String, errorFragment: String)
 }

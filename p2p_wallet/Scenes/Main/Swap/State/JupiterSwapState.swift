@@ -109,8 +109,8 @@ struct JupiterSwapState: Equatable {
     /// Price info between from token and to token
     var priceInfo: SwapPriceInfo {
         SwapPriceInfo(
-            fromPrice: tokensPriceMap[fromToken.address] ?? 0,
-            toPrice: tokensPriceMap[toToken.address] ?? 0,
+            fromPrice: tokensPriceMap[fromToken.mintAddress] ?? 0,
+            toPrice: tokensPriceMap[toToken.mintAddress] ?? 0,
             relation: amountTo > 0 ? amountFrom / amountTo : 0
         )
     }
@@ -142,8 +142,8 @@ struct JupiterSwapState: Equatable {
     }
 
     var possibleToTokens: [SwapToken] {
-        let toAddresses = Set(routeMap.indexesRouteMap[fromToken.address] ?? [])
-        return swapTokens.filter { toAddresses.contains($0.token.address) }
+        let toAddresses = Set(routeMap.indexesRouteMap[fromToken.mintAddress] ?? [])
+        return swapTokens.filter { toAddresses.contains($0.token.mintAddress) }
     }
 
     /// Network fee of the transaction, can be modified by the fee relayer service
@@ -162,7 +162,7 @@ struct JupiterSwapState: Equatable {
             amount: networkFeeAmount,
             tokenSymbol: payingFeeToken.symbol,
             tokenName: payingFeeToken.name,
-            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.address],
+            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
             pct: nil,
             canBePaidByKeyApp: true
         )
@@ -183,12 +183,12 @@ struct JupiterSwapState: Equatable {
         let accountCreationFee: Double
 
         // convert to toToken
-        if let tokenPrice = tokensPriceMap[toToken.address],
+        if let tokenPrice = tokensPriceMap[toToken.mintAddress],
            tokenPrice > 0
         {
             payingFeeToken = toToken.token
             accountCreationFee =
-                ((tokensPriceMap[TokenMetadata.nativeSolana.address] / tokenPrice) * accountCreationFeeInSOL)
+            ((tokensPriceMap[TokenMetadata.nativeSolana.mintAddress] / tokenPrice) * accountCreationFeeInSOL)
                 .rounded(decimals: payingFeeToken.decimals)
         }
 
@@ -202,7 +202,7 @@ struct JupiterSwapState: Equatable {
             amount: accountCreationFee,
             tokenSymbol: payingFeeToken.symbol,
             tokenName: payingFeeToken.name,
-            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.address],
+            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
             pct: nil,
             canBePaidByKeyApp: false
         )
@@ -212,7 +212,7 @@ struct JupiterSwapState: Equatable {
         guard let route else { return [] }
         return route.marketInfos.map(\.lpFee)
             .compactMap { lqFee -> SwapFeeInfo? in
-                guard let token = swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
+                guard let token = swapTokens.map(\.token).first(where: { $0.mintAddress == lqFee.mint }),
                       let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
                 else {
                     return nil
@@ -222,7 +222,7 @@ struct JupiterSwapState: Equatable {
                     amount: amount,
                     tokenSymbol: token.symbol,
                     tokenName: token.name,
-                    tokenPriceInCurrentFiat: tokensPriceMap[token.address],
+                    tokenPriceInCurrentFiat: tokensPriceMap[token.mintAddress],
                     pct: lqFee.pct,
                     canBePaidByKeyApp: false
                 )
@@ -237,8 +237,8 @@ struct JupiterSwapState: Equatable {
         }
 
         // price from coingecko
-        else if let fromPrice = tokensPriceMap[fromToken.token.address],
-                let toPrice = tokensPriceMap[toToken.token.address],
+        else if let fromPrice = tokensPriceMap[fromToken.token.mintAddress],
+                let toPrice = tokensPriceMap[toToken.token.mintAddress],
                 fromPrice != 0
         {
             rate = toPrice / fromPrice

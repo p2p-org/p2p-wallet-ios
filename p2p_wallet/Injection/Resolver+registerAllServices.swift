@@ -16,7 +16,6 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftyUserDefaults
-import TransactionParser
 import Web3
 import Wormhole
 
@@ -183,17 +182,6 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         // History
-        register {
-            DefaultTransactionParserRepository(
-                p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
-                parser: TransactionParserServiceImpl.default(
-                    apiClient: Resolver.resolve(),
-                    tokensRepository: Resolver.resolve()
-                )
-            )
-        }
-        .implements(TransactionParsedRepository.self)
-        .scope(.application)
 
         register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
             .implements(KeyAppHistoryProvider.self)

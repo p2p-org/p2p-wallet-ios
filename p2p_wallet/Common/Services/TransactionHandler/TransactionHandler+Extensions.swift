@@ -32,7 +32,7 @@ extension TransactionHandler {
                 observe(index: index, transactionId: transactionID)
             } catch {
                 // Update status
-                if (error as NSError).isNetworkConnectionError {
+                if error.isNetworkConnectionError {
                     self.notificationsService.showConnectionErrorNotification()
                 } else {
                     self.notificationsService.showDefaultErrorNotification()

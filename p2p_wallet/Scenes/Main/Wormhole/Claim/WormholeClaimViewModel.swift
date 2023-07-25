@@ -129,7 +129,14 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
-                    DefaultLogManager.shared.log(error: Error.missingBundle)
+                    DefaultLogManager.shared.log(
+                        event: "Missing bundle error",
+                        logLevel: .error,
+                        data: "Error.missingBundle"
+                    )
+
+                    analyticsManager.log(title: "Missing bundle error", error: Error.missingBundle)
+
                     return
                 }
 
@@ -179,6 +186,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 blockchainError: nil
             )
         )
+
+        analyticsManager.log(title: "Wormhole Claim iOS Error", error: error)
     }
 
     var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }

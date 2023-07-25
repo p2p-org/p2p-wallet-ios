@@ -85,7 +85,7 @@ public enum WormholeSendInputState: Equatable {
                     fees = try await service.wormhole.getTransferFees(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         recipient: input.recipient,
-                        mint: input.solanaAccount.token.address,
+                        mint: input.solanaAccount.token.mintAddress,
                         amount: String(input.amount.value)
                     )
                 } catch {

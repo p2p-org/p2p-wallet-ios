@@ -11,42 +11,42 @@ enum JupiterSwapBusinessLogic {
         if state.status.hasError {
             return true
         }
-        
+
         // otherwise check the action
         switch action {
         case .initialize:
             return true
         case .update:
             return state.amountFrom > 0
-        case .changeAmountFrom(let amountFrom):
+        case let .changeAmountFrom(amountFrom):
             return state.amountFrom != amountFrom
-        case .changeFromToken(let fromToken):
-            return state.fromToken.address != fromToken.address
-        case .changeToToken(let toToken):
-            return state.toToken.address != toToken.address
+        case let .changeFromToken(fromToken):
+            return state.fromToken.mintAddress != fromToken.mintAddress
+        case let .changeToToken(toToken):
+            return state.toToken.mintAddress != toToken.mintAddress
         case .switchFromAndToTokens:
             return true
         case .updateUserWallets:
             return true
-        case .updateTokensPriceMap(let tokensPriceMap):
+        case let .updateTokensPriceMap(tokensPriceMap):
             return state.tokensPriceMap != tokensPriceMap
-        case .chooseRoute(let route):
+        case let .chooseRoute(route):
             return state.route?.id != route.id
-        case .changeSlippageBps(let slippageBps):
+        case let .changeSlippageBps(slippageBps):
             return state.slippageBps != slippageBps
         case .retry:
             return true
         }
     }
-    
+
     static func jupiterSwapProgressState(
         state: JupiterSwapState,
         action: JupiterSwapAction
     ) -> JupiterSwapState? {
         #if !RELEASE
-        print("JupiterSwapBusinessLogic.action: \(action.description) in progress")
+            print("JupiterSwapBusinessLogic.action: \(action.description) in progress")
         #endif
-        
+
         switch action {
         case .initialize:
             return .zero.modified { $0.status = .initializing }
@@ -131,7 +131,13 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         switch action {
-        case let .initialize(account, jupiterTokens, routeMap, preChosenFromTokenMintAddress, preChosenToTokenMintAddress):
+        case let .initialize(
+            account,
+            jupiterTokens,
+            routeMap,
+            preChosenFromTokenMintAddress,
+            preChosenToTokenMintAddress
+        ):
             return await initializeAction(
                 state: state,
                 services: services,
@@ -162,12 +168,12 @@ enum JupiterSwapBusinessLogic {
                     services: services
                 )
             }
-            
+
             // else just return current state
             return state.modified {
                 $0.status = .ready
             }
-            
+
         case .switchFromAndToTokens:
             return state.modified {
                 $0.status = .ready
@@ -198,7 +204,7 @@ enum JupiterSwapBusinessLogic {
                 state: state,
                 services: services
             )
-            
+
             // ready for creating transaction
             if state.status == .ready {
                 return state.modified {
@@ -206,9 +212,9 @@ enum JupiterSwapBusinessLogic {
                     $0.status = .creatingSwapTransaction(isSimulationOn: false)
                 }
             }
-            
+
             return state
-            
+
         case let .retry(action):
             switch action {
             case let .createTransaction(isSimulationOn):
@@ -224,7 +230,7 @@ enum JupiterSwapBusinessLogic {
             }
         }
     }
-    
+
     static func createTransaction(
         state: JupiterSwapState,
         services: JupiterSwapServices
@@ -243,14 +249,13 @@ enum JupiterSwapBusinessLogic {
             }
 
             if isSimulationOn {
-                
                 // simulate from routes and remove all failing routes
                 let (fixedRoutes, swapTransaction) = try await simulateAndRemoveFailingSwapTransaction(
                     availableRoutes: state.routes,
                     account: account,
                     services: services
                 )
-                
+
                 if let swapTransaction, let route = fixedRoutes.first {
                     return state.modified {
                         $0.route = route
@@ -267,7 +272,7 @@ enum JupiterSwapBusinessLogic {
                         $0.swapTransaction = nil
                     }
                 }
-                
+
             } else {
                 // If route is chosen by user and is not the best one, just try create transaction without simulation
                 let swapTransaction = try await services.jupiterClient.swap(
@@ -282,9 +287,8 @@ enum JupiterSwapBusinessLogic {
                     $0.swapTransaction = swapTransaction
                 }
             }
-        }
-        catch let error {
-            if (error as NSError).isNetworkConnectionError {
+        } catch {
+            if error.isNetworkConnectionError {
                 return state.error(.networkConnectionError(.createTransaction(isSimulationOn: isSimulationOn)))
             }
             return state.error(.createTransactionFailed)
@@ -300,26 +304,26 @@ enum JupiterSwapBusinessLogic {
     ) async throws -> (routes: [Route], swapTransaction: SwapTransaction?) {
         var availableRoutes = availableRoutes
         var swapTransaction: SwapTransaction?
-        
+
         var bestRouteIndex = 0
-        for i in 0..<availableRoutes.count {
+        for i in 0 ..< availableRoutes.count {
             // Try create and simulate transaction to see if it works correctly
             swapTransaction = try await createAndSimulateTransaction(
                 for: availableRoutes[i],
                 account: account,
                 services: services
             )
-            
+
             if swapTransaction != nil {
                 bestRouteIndex = i
                 // We found the best route and do not need to create and simulate transaction anymore
                 break
             }
         }
-        
+
         // Remove failing routes from the state
         availableRoutes.removeFirst(bestRouteIndex)
-        
+
         return (routes: availableRoutes, swapTransaction: swapTransaction)
     }
 
@@ -351,8 +355,8 @@ enum JupiterSwapBusinessLogic {
             } else {
                 return nil
             }
-        } catch let error {
-            if (error as NSError).isNetworkConnectionError {
+        } catch {
+            if error.isNetworkConnectionError {
                 throw error
             }
             return nil // If simulation or transaction fails, then we skip this route and return nil
@@ -370,12 +374,12 @@ enum JupiterSwapBusinessLogic {
             state: state,
             services: services
         )
-        
+
         // check if status is ready
         guard state.status == .ready else {
             return state
         }
-        
+
         // mark as creating swap transaction
         return state.modified {
             $0.status = .creatingSwapTransaction(isSimulationOn: available(.swapTransactionSimulationEnabled))

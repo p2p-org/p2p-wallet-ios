@@ -193,7 +193,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
         let matchIdx = state.value
             .firstIndex { searchedAccount in
-                searchedAccount.token.address == account.token.address
+                searchedAccount.token.mintAddress == account.token.mintAddress
             }
 
         if let matchIdx {

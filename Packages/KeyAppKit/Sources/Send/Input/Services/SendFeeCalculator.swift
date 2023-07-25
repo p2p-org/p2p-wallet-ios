@@ -44,7 +44,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             case let .solanaTokenAddress(walletAddress, _):
                 let associatedAccount = try PublicKey.associatedTokenAddress(
                     walletAddress: walletAddress,
-                    tokenMintAddress: try PublicKey(string: token.address)
+                    tokenMintAddress: try PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts
@@ -52,7 +52,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             case .solanaAddress, .username:
                 let associatedAccount = try PublicKey.associatedTokenAddress(
                     walletAddress: try PublicKey(string: recipient.address),
-                    tokenMintAddress: try PublicKey(string: token.address)
+                    tokenMintAddress: try PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts

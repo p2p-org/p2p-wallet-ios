@@ -5,8 +5,7 @@ import SolanaSwift
 struct SwapToken: Equatable {
     let token: TokenMetadata
     let userWallet: SolanaAccount?
-
-    var address: String { token.address }
+    var mintAddress: String { token.mintAddress }
 }
 
 extension SwapToken {
@@ -21,13 +20,13 @@ extension SwapToken {
         [
             "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
             "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
-            "So11111111111111111111111111111111111111112",  // SOL
+            "So11111111111111111111111111111111111111112", // SOL
             "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh", // BTC
-            "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs"  // ETH
+            "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs", // ETH
         ]
     }
 
     var isPopular: Bool {
-        Self.popularTokenMints.contains(token.address)
+        Self.popularTokenMints.contains(token.mintAddress)
     }
 }

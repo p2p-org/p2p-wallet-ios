@@ -78,7 +78,7 @@ public class SendActionServiceImpl: SendActionService {
         operationType: StatsInfo.OperationType
     ) async throws -> String {
         // get currency for logging
-        let currency = wallet.token.address
+        let currency = wallet.token.mintAddress
 
         // get paying fee token
         let payingFeeToken = try? getPayingFeeToken(feeWallet: feeWallet)
@@ -190,7 +190,7 @@ public class SendActionServiceImpl: SendActionService {
         } else {
             preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
                 account: account,
-                mintAddress: wallet.token.address,
+                mintAddress: wallet.token.mintAddress,
                 decimals: wallet.token.decimals,
                 from: sender,
                 to: receiver,
@@ -226,7 +226,7 @@ public class SendActionServiceImpl: SendActionService {
         if let feeWallet = feeWallet {
             let addressString = feeWallet.address
             guard let address = try? PublicKey(string: addressString),
-                  let mintAddress = try? PublicKey(string: feeWallet.token.address)
+                  let mintAddress = try? PublicKey(string: feeWallet.token.mintAddress)
             else {
                 throw SendError.invalidPayingFeeWallet
             }

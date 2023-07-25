@@ -1,3 +1,4 @@
+import AnalyticsManager
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -135,7 +136,7 @@ struct SendTransaction: RawTransactionType {
     // MARK: - Helpers
 
     private func sendViaLinkAlert(
-        error _: Swift.Error,
+        error: Swift.Error,
         userPubkey: String,
         platform: String,
         blockchainError: String?,
@@ -162,10 +163,12 @@ struct SendTransaction: RawTransactionType {
                 blockchainError: blockchainError
             )
         )
+
+        Resolver.resolve(AnalyticsManager.self).log(title: "Link Create iOS Error", error: error)
     }
 
     private func sendAlert(
-        error _: Swift.Error,
+        error: Swift.Error,
         userPubkey: String,
         platform: String,
         blockchainError: String?,
@@ -230,6 +233,8 @@ struct SendTransaction: RawTransactionType {
                 blockchainError: blockchainError
             )
         )
+
+        Resolver.resolve(AnalyticsManager.self).log(title: "Send iOS Error", error: error)
     }
 }
 
