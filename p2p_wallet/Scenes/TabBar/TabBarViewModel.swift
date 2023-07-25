@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Wormhole
 import Foundation
@@ -22,6 +23,8 @@ final class TabBarViewModel {
     @Injected private var userActionService: UserActionService
     @Injected private var ethereumAccountsService: EthereumAccountsService
     @Injected private var solanaAccountsService: SolanaAccountsService
+    
+    @Injected private var analyticsManager: AnalyticsManager
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
@@ -64,6 +67,26 @@ final class TabBarViewModel {
                 self?.becomeActiveSubject.send()
             })
             .store(in: &cancellables)
+    }
+    
+    func walletTapped() {
+        analyticsManager.log(event: .mainScreenMainClick)
+    }
+    
+    func cryptoTapped() {
+        analyticsManager.log(event: .mainScreenCryptoClick)
+    }
+    
+    func sendTapped() {
+        analyticsManager.log(event: .mainScreenSendClick)
+    }
+    
+    func historyTapped() {
+        analyticsManager.log(event: .mainScreenHistoryClick)
+    }
+    
+    func settingsTapped() {
+        analyticsManager.log(event: .mainScreenSettingsClick)
     }
 }
 

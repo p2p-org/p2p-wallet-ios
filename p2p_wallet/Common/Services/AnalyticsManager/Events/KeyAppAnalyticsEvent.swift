@@ -34,10 +34,35 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case mainScreenCashOutBar
 
     case mainScreenOpened(isSellEnabled: Bool)
-    case mainCopyAddress
+    case mainScreenAddressClick
+    case mainScreenAmountClick
+    case mainScreenAddMoneyClick
+    case mainScreenWithdrawClick
+    case mainScreenMainClick
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)
     case mainScreenHiddenTokens
+    
+    case mainScreenCryptoClick
+    case mainScreenSendClick
+    case mainScreenHistoryClick
+    case mainScreenSettingsClick
+    
+    case userAggregateBalanceBase(amountUsd: Double, currency: String)
+    case userHasPositiveBalanceBase(state: Bool)
+    
+    // MARK: - Crypto
+    
+    case cryptoScreenOpened
+    case cryptoAmountClick
+    case cryptoReceiveClick
+    case cryptoSwapClick
+    case cryptoTokenClick(tokenName: String)
+    case cryptoClaimTransferredViewed(claimCount: Int)
+    case cryptoClaimTransferredClick
+    
+    case userAggregateBalanceTokens(amountUsd: Double, currency: String)
+    case userHasPositiveBalanceTokens(state: Bool)
 
     // MARK: - Tokens
 

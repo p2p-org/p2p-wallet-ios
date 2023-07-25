@@ -54,10 +54,8 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
         }
-
-        analyticsManager.log(
-            event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
-        )
+        
+        analyticsManager.log(event: .cryptoScreenOpened)
     }
 }
 

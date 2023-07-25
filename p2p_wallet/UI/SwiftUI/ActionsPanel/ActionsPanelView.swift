@@ -7,7 +7,8 @@ struct ActionsPanelView: View {
     let balance: String
     let usdAmount: String
     let action: (WalletActionType) -> Void
-
+    let balanceTapAction: (() -> ())?
+    
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             if !balance.isEmpty {
@@ -16,6 +17,9 @@ struct ActionsPanelView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .padding(.top, 24)
                     .padding(.bottom, usdAmount.isEmpty ? 46 : 12)
+                    .onTapGesture {
+                        balanceTapAction?()
+                    }
             } else {
                 Rectangle()
                     .fill(Color.clear)

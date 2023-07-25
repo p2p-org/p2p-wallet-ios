@@ -15,6 +15,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Dependencies
     
+    private let analyticsManager: AnalyticsManager
     private let solanaAccountsService: SolanaAccountsService
     private let ethereumAccountsService: EthereumAccountsService
     private let userActionService: UserActionService
@@ -38,12 +39,14 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Initialization
     
     init(
+        analyticsManager: AnalyticsManager = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
         navigation: PassthroughSubject<CryptoNavigation, Never>
     ) {
+        self.analyticsManager = analyticsManager
         self.solanaAccountsService = solanaAccountsService
         self.ethereumAccountsService = ethereumAccountsService
         self.userActionService = userActionService
@@ -91,10 +94,12 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
                 homeAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
             }
             .receive(on: RunLoop.main)
-            .sink { transfer, primary, secondary in
-                self.transferAccounts = transfer
-                self.accounts = primary
-                self.hiddenAccounts = secondary
+            .sink { [weak self] transfer, primary, secondary in
+                self?.transferAccounts = transfer
+                self?.accounts = primary
+                self?.hiddenAccounts = secondary
+                
+                self?.analyticsManager.log(event: .cryptoClaimTransferredViewed(claimCount: transfer.count))
             }
             .store(in: &subscriptions)
     }
@@ -114,6 +119,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableSolanaAccount:
             switch event {
             case .tap:
+                analyticsManager.log(event: .cryptoTokenClick(tokenName: renderableAccount.account.token.symbol))
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
                 let pubkey = renderableAccount.account.address
@@ -132,7 +138,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
 
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
+            case .tap:
+                analyticsManager.log(event: .cryptoTokenClick(tokenName: renderableAccount.account.token.symbol))
             case .extraButtonTap:
+                analyticsManager.log(event: .cryptoClaimTransferredClick)
                 navigation.send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break

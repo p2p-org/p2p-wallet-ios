@@ -21,9 +21,11 @@ struct CryptoActionsPanelView: View {
             actions: viewModel.actions,
             balance: viewModel.balance,
             usdAmount: "",
-            action: { action in
-                self.viewModel.actionClicked(action)
-            }
+            action: viewModel.actionClicked,
+            balanceTapAction: viewModel.balanceTapped
         )
+        .onAppear {
+            viewModel.viewDidAppear()
+        }
     }
 }

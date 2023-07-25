@@ -67,7 +67,7 @@ class HomeViewModel: ObservableObject {
             text = L10n.addressWasCopiedToClipboard
         }
         notificationsService.showToast(title: "🖤", text: text, haptic: true)
-        analyticsManager.log(event: .mainCopyAddress)
+        analyticsManager.log(event: .mainScreenAddressClick)
     }
 
     func updateAddressIfNeeded() {

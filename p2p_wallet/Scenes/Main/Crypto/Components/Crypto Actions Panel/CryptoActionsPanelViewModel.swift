@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -12,6 +13,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
     
     @Injected var solanaAccountsService: SolanaAccountsService
+    @Injected var analyticsManager: AnalyticsManager
     
     // MARK: - Properties
     
@@ -57,10 +59,23 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
         case .receive:
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
             else { return }
+            analyticsManager.log(event: .cryptoReceiveClick)
             navigation.send(.receive(publicKey: pubkey))
         case .swap:
+            analyticsManager.log(event: .cryptoSwapClick)
             navigation.send(.swap)
         default: break
+        }
+    }
+    
+    func balanceTapped() {
+        analyticsManager.log(event: .cryptoAmountClick)
+    }
+    
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceTokens(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceTokens(state: balance > 0))
         }
     }
 }

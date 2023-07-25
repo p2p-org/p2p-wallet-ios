@@ -38,6 +38,9 @@ struct HomeAccountsView: View {
                 scrollAnimationIsEnded = false
             }
         }
+        .onAppear {
+            viewModel.viewDidAppear()
+        }
     }
 
     private var header: some View {
@@ -45,7 +48,8 @@ struct HomeAccountsView: View {
             actions: [],
             balance: viewModel.balance,
             usdAmount: viewModel.usdcAmount,
-            action: { _ in }
+            action: { _ in },
+            balanceTapAction: viewModel.balanceTapped
         )
     }
     
