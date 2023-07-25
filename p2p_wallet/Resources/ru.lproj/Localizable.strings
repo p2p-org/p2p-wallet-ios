@@ -614,7 +614,6 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nПожалуйста, войдите в систему с правильной учетной записью %@.";
 "You've used all 5 codes. Try again later. For help, contact support." = "Вы использовали все 5 кодов.  Попробуйте позже.  За помощью обращайтесь в службу поддержки.";
 "Crypto" = "Крипто";
-"My Crypto" = "Моя крипта";
 "Incoming transfer" = "Входящий перевод";
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Добро пожаловать в ваш крипто-портфель.  \nИсследуйте более 800 токенов без комиссии.";
 "Add Money" = "Добавить деньги";
@@ -624,5 +623,6 @@
 "1%% fee" = "1%% комиссия";
 "4,5%% fees" = "4,5%% комиссии";
 "withdraw" = "отзывать";
+"My crypto" = "Моя крипта";
 "Username copied to clipboard" = "Имя пользователя скопировано в буфер обмена";
 "Address copied to clipboard" = "Адрес скопирован в буфер обмена";

@@ -579,7 +579,6 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nPlease log in with the correct %@ account.";
 "You've used all 5 codes. Try again later. For help, contact support." = "You've used all 5 codes. Try again later. For help, contact support.";
 "Crypto" = "Crypto";
-"My Crypto" = "My Crypto";
 "Incoming transfer" = "Incoming transfer";
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees.";
 "Add Money" = "Add Money";
@@ -589,5 +588,6 @@
 "1%% fee" = "1%% fee";
 "4,5%% fees" = "4,5%% fees";
 "withdraw" = "withdraw";
+"My crypto" = "My crypto";
 "Username copied to clipboard" = "Username copied to clipboard";
 "Address copied to clipboard" = "Address copied to clipboard";
