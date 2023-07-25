@@ -9,27 +9,42 @@ import Web3
 extension AnalyticsManager {
     /// Handle clientFrontendError & backendError
     func log(title: String, error: Error) {
+        let event: KeyAppAnalyticsEvent
         // Frontend error
-        if error.isFrontendError {
-            log(event: .clientFrontendError(
+        switch error.errorType {
+        case .user:
+            break
+        case .frontend:
+            event = .clientFrontendError(
                 errorValue: title,
                 errorFragment: (self as? LocalizedError)?.errorDescription ?? String(reflecting: error)
-            ))
+            )
+        case .backend:
+            event = .clientBackendError(
+                errorValue: title,
+                errorFragment: (self as? LocalizedError)?.errorDescription ?? String(reflecting: error)
+            )
         }
-        // Backend error
-        else if error.isBackendError {
-            // TODO: - Logging
-        }
+
+        log(event: event)
     }
 }
 
-private extension Error {
-    var isUserError: Bool {
-        isNetworkConnectionError
-    }
+private enum ErrorType {
+    case user
+    case frontend
+    case backend
+}
 
-    var isBackendError: Bool {
-        (self is UndefinedNameServiceError) ||
+private extension Error {
+    var errorType: ErrorType {
+        // user error
+        if isNetworkConnectionError {
+            return .user
+        }
+
+        // backend
+        if (self is UndefinedNameServiceError) ||
             (self is NameServiceError) ||
             (self is GetNameError) ||
             (self is SolanaSwift.APIClientError) ||
@@ -39,9 +54,11 @@ private extension Error {
             (self is APIGatewayCooldownError) ||
             (self is UndefinedAPIGatewayError) ||
             (self is FeeRelayerSwift.HTTPClientError)
-    }
+        {
+            return .backend
+        }
 
-    var isFrontendError: Bool {
-        !isUserError && !isBackendError
+        // frontend
+        return .frontend
     }
 }

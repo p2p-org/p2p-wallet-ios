@@ -271,4 +271,5 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Client Error
 
     case clientFrontendError(errorValue: String, errorFragment: String)
+    case clientBackendError(errorValue: String, errorFragment: String)
 }
