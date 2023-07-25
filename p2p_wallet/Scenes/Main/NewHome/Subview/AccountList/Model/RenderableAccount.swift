@@ -44,7 +44,7 @@ struct AccountTags: OptionSet {
 }
 
 enum AccountExtraAction {
-    case visiable
+    case showHide
 }
 
 enum AccountDetail {

@@ -65,13 +65,13 @@ struct CryptoAccountsView: View {
             if !viewModel.transferAccounts.isEmpty {
                 wrappedList(itemsCount: viewModel.transferAccounts.count) {
                     ForEach(viewModel.transferAccounts, id: \.id) {
-                        tokenCell(rendableAccount: $0, isVisiable: true)
+                        tokenCell(rendableAccount: $0, isVisible: true)
                     }
                 }
             }
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
-                    tokenCell(rendableAccount: $0, isVisiable: true)
+                    tokenCell(rendableAccount: $0, isVisible: true)
                 }
             }
             .padding(.top, 12)
@@ -100,7 +100,7 @@ struct CryptoAccountsView: View {
                 if !isHiddenSectionDisabled {
                     wrappedList(itemsCount: viewModel.hiddenAccounts.count) {
                         ForEach(viewModel.hiddenAccounts, id: \.id) {
-                            tokenCell(rendableAccount: $0, isVisiable: false)
+                            tokenCell(rendableAccount: $0, isVisible: false)
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                     }
@@ -111,7 +111,7 @@ struct CryptoAccountsView: View {
         .background(Color(Asset.Colors.smoke.color))
     }
     
-    private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {
+    private func tokenCell(rendableAccount: any RenderableAccount, isVisible: Bool) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)
         } onButtonTap: {
@@ -119,10 +119,10 @@ struct CryptoAccountsView: View {
         }
         .do { view in
             switch rendableAccount.extraAction {
-            case .visiable:
+            case .showHide:
                 return AnyView(
                     view.swipeActions(
-                        isVisible: isVisiable,
+                        isVisible: isVisible,
                         currentUserInteractionCellID: $currentUserInteractionCellID
                     ) {
                         viewModel.invoke(for: rendableAccount, event: .visibleToggle)
