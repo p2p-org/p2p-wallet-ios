@@ -12,10 +12,14 @@ import UIKit
 final class CustomTabBar: UITabBar {
     private lazy var middleButton: UIButton! = {
         let middleButton = UIButton()
-        middleButton.frame.size = CGSize(width: 68, height: 68)
+        middleButton.frame.size = CGSize(width: 60, height: 60)
         middleButton.backgroundColor = Asset.Colors.snow.color
-        middleButton.layer.cornerRadius = 34
+        middleButton.layer.cornerRadius = 30
         middleButton.setImage(.tabBarSend, for: .normal)
+        middleButton.setImage(.tabBarSend, for: .highlighted)
+        middleButton.imageView?.contentMode = .scaleAspectFit
+        middleButton.contentHorizontalAlignment = .fill
+        middleButton.contentVerticalAlignment = .fill
         middleButton.addTarget(self, action: #selector(middleButtonAction), for: .touchUpInside)
         addSubview(middleButton)
         return middleButton
@@ -35,7 +39,14 @@ final class CustomTabBar: UITabBar {
         return items?.firstIndex(of: item)
     }
 
-    static var additionalHeight: CGFloat = 16
+    static var additionalHeight: CGFloat = 8
+    
+    private var inset: CGFloat {
+        if SafeAreaInsetsKey.defaultValue.bottom > 0 {
+            return SafeAreaInsetsKey.defaultValue.bottom - 5
+        }
+        return 14
+    }
 
     private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
     var middleButtonClicked: AnyPublisher<Void, Never> { middleButtonClickedSubject.eraseToAnyPublisher() }
@@ -45,7 +56,7 @@ final class CustomTabBar: UITabBar {
 
         middleButton.center = CGPoint(
             x: frame.width / 2,
-            y: frame.height / 2 - Self.additionalHeight - 15
+            y: frame.height / 2 - Self.additionalHeight - inset
         )
         updateSelectedViewPositionIfNeeded()
 
@@ -67,6 +78,11 @@ final class CustomTabBar: UITabBar {
         middleButtonClickedSubject.send()
     }
 
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard !clipsToBounds, !isHidden, alpha > 0 else { return nil }
+        return middleButton.frame.contains(point) ? middleButton : super.hitTest(point, with: event)
+    }
+    
     func updateSelectedViewPositionIfNeeded() {
         guard let currentIndex = currentIndex else { return }
         let buttons = subviews.compactMap { NSStringFromClass(type(of: $0)) == "UITabBarButton" ? $0 : nil }
