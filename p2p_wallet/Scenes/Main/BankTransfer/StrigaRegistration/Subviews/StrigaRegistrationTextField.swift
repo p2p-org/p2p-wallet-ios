@@ -4,6 +4,7 @@ import KeyAppUI
 struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View {
 
     let field: TextFieldType
+    let fontStyle: UIFont.Style
     let placeholder: String
     let isEnabled: Bool
     let onSubmit: () -> Void
@@ -17,6 +18,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
 
     init(
         field: TextFieldType,
+        fontStyle: UIFont.Style = .title2,
         placeholder: String,
         text: Binding<String>,
         isEnabled: Bool = true,
@@ -26,6 +28,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
         submitLabel: SubmitLabel
     ) {
         self.field = field
+        self.fontStyle = fontStyle
         self.placeholder = placeholder
         self._text = text
         self.isEnabled = isEnabled
@@ -41,7 +44,7 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
                 guard editing else { return }
                 focus = field
             })
-            .font(uiFont: .font(of: .title2))
+            .font(uiFont: .font(of: fontStyle))
             .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
             .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
             .frame(height: 58)

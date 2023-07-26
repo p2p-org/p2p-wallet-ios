@@ -57,6 +57,7 @@ struct WithdrawView: View {
             ) {
                     StrigaRegistrationTextField<WithdrawViewField>(
                         field: .IBAN,
+                        fontStyle: .text3,
                         placeholder: "",
                         text: $viewModel.IBAN,
                         showClearButton: true,
@@ -72,6 +73,7 @@ struct WithdrawView: View {
             ) {
                 StrigaRegistrationTextField<WithdrawViewField>(
                     field: .BIC,
+                    fontStyle: .text3,
                     placeholder: "",
                     text: $viewModel.BIC,
                     showClearButton: true,
@@ -87,6 +89,7 @@ struct WithdrawView: View {
                     status: .valid) {
                         StrigaRegistrationTextField<WithdrawViewField>(
                             field: .receiver,
+                            fontStyle: .text3,
                             placeholder: "",
                             text: $viewModel.receiver,
                             isEnabled: false,
