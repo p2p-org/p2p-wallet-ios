@@ -66,7 +66,7 @@ class HomeViewModel: ObservableObject {
         } else {
             text = L10n.addressCopiedToClipboard
         }
-        notificationsService.showToast(title: "🖤", text: text, haptic: true)
+        notificationsService.showToast(title: "", text: text, haptic: true)
         analyticsManager.log(event: .mainScreenAddressClick)
     }
 
