@@ -110,9 +110,9 @@ private extension Swift.Error {
         switch self {
         case let error as APIClientError:
             switch error {
-            case let .responseError(response) where
-                response.message == "Transaction simulation failed: Blockhash not found" ||
-                response.message?.hasSuffix("custom program error: 0x1786") == true:
+            case let .responseError(response) where response.message?.hasSuffix("custom program error: 0x1786") == true:
+                return true
+            case .blockhashNotFound:
                 return true
             default:
                 return false

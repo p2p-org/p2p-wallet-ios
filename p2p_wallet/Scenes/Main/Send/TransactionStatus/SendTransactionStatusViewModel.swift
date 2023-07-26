@@ -107,9 +107,9 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                    error.message == "Topping up is successfull, but the transaction failed"
                 {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
-                } else if let error = error as? SolanaError {
+                } else if let error = error as? APIClientError {
                     switch error {
-                    case let .other(message) where message == "Blockhash not found":
+                    case .blockhashNotFound:
                         params = .init(
                             title: L10n.blockhashNotFound,
                             description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
@@ -117,13 +117,13 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                                 "" // blockhash ?? ""
                             )
                         )
-                    case let .other(message) where message.contains("Instruction"):
+                    case let .responseError(response) where response.message?.contains("Instruction") == true:
                         params = .init(
                             title: L10n.errorProcessingInstruction0CustomProgramError0x1,
                             description: L10n.AnErrorOccuredWhileProcessingAnInstruction
                                 .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured
                         )
-                    case let .other(message) where message.contains("Already processed"):
+                    case let .responseError(response) where response.message?.contains("Already processed") == true:
                         params = .init(
                             title: L10n.thisTransactionHasAlreadyBeenProcessed,
                             description: L10n.TheBankHasSeenThisTransactionBefore
@@ -131,8 +131,11 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                                     "" // blockhash ?? ""
                                 )
                         )
-                    case let .other(message):
-                        params = .init(title: L10n.somethingWentWrong, description: message)
+                    case let .responseError(response):
+                        params = .init(
+                            title: L10n.somethingWentWrong,
+                            description: response.message ?? L10n.unknownError
+                        )
                     default:
                         break
                     }

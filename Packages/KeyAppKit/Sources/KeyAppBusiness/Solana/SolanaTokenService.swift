@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
@@ -142,7 +135,7 @@ enum SolanaTokensServiceError {
 private extension SolanaTokensService {
     func getOrThrow(address: String) async throws -> SolanaToken {
         guard let token = try await get(address: address) else {
-            throw SolanaTokenListSourceError.invalidTokenlistURL
+            throw APIClientError.invalidAPIURL
         }
 
         return token

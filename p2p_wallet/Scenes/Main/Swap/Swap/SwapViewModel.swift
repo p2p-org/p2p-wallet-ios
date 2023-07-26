@@ -1,12 +1,12 @@
 import AnalyticsManager
 import Combine
+import Foundation
 import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import Task_retrying
-import Foundation
 import UIKit
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
@@ -143,7 +143,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 prices: stateMachine.currentState.tokensPriceMap
                     .filter { key, _ in
                         currentState.fromToken.token.mintAddress.contains(key) ||
-                        currentState.toToken.token.mintAddress.contains(key)
+                            currentState.toToken.token.mintAddress.contains(key)
                     }
             )
 
@@ -611,6 +611,22 @@ extension SwapViewModel {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
             analyticsManager.log(event: .swapChangingTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
+        }
+    }
+}
+
+private extension Error {
+    var isSolanaBlockchainRelatedError: Bool {
+        guard let error = ((self as? APIClientError) ?? // APIClientError
+            ((self as? TaskRetryingError)?.lastError as? APIClientError)) // Retrying with last error
+        else {
+            return false
+        }
+        switch error {
+        case .responseError:
+            return true
+        default:
+            return false
         }
     }
 }

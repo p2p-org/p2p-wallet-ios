@@ -13,51 +13,15 @@ extension Error {
     var isNetworkConnectionError: Bool {
         (self as NSError).isNetworkConnectionError
     }
-}
 
-extension SolanaError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .unauthorized:
-            return L10n.unauthorized
-        case .notFound:
-            return L10n.notFound
-        case let .invalidRequest(reason):
-            var message = L10n.invalidRequest
-            if let reason = reason {
-                message = reason.localized()
-            }
-            return message
-        case let .transactionError(transactionError, _):
-            return transactionError.snakeCaseEncoded
-        // TODO: Check
-        // return transactionError.keys.first
-        case let .socket(error):
-            var string = L10n.socketReturnsAnError + ": "
-            if let error = error as? LocalizedError {
-                string += error.errorDescription ?? error.localizedDescription
-            } else {
-                string += error.localizedDescription
-            }
-            return string
-        case let .other(string):
-            return string.localized()
-        case .unknown:
-            return L10n.unknownError
-        case .assertionFailed:
-            // TODO: pick correct name
-            return L10n.error
-        default:
-            return L10n.error
-        }
+    var readableDescription: String {
+        (self as? LocalizedError)?.errorDescription ?? "\(self)"
     }
 }
 
 extension SolanaSwift.APIClientError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .cantEncodeParams:
-            return L10n.error
         case .invalidAPIURL:
             return L10n.invalidURL
         case .invalidResponse:
@@ -68,6 +32,12 @@ extension SolanaSwift.APIClientError: LocalizedError {
                 string = description.localized()
             }
             return string
+        case .transactionSimulationError:
+            return L10n.transactionFailed
+        case .couldNotRetrieveAccountInfo:
+            return L10n.accountNotFound
+        case .blockhashNotFound:
+            return L10n.blockhashNotFound
         }
     }
 }
