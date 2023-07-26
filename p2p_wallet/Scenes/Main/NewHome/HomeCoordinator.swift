@@ -27,7 +27,7 @@ enum HomeNavigation: Equatable {
     case topUp // Top up via bank transfer, bank card or crypto receive
     case bankTransfer // Only bank transfer
     case withdrawCalculator
-    case withdrawInfo(StrigaWithdrawalInfo)
+    case withdrawInfo(StrigaWithdrawalInfo, WithdrawConfirmationParameters)
     // Error
     case error(show: Bool)
 }
@@ -251,12 +251,27 @@ final class HomeCoordinator: Coordinator<Void> {
         case .withdrawCalculator:
             return coordinate(to: WithdrawCalculatorCoordinator(navigationController: navigationController))
                 .eraseToAnyPublisher()
-        case let .withdrawInfo(model):
+        case let .withdrawInfo(model, params):
             return coordinate(to: WithdrawCoordinator(
                 navigationController: navigationController,
-                strategy: .confirmation,
+                strategy: .confirmation(params),
                 withdrawalInfo: model
             ))
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case let .paymentInitiated(challengeId):
+                    self?.openBankTransferClaimCoordinator(transaction: StrigaClaimTransaction(
+                        challengeId: challengeId,
+                        token: .usdc,
+                        amount: Double(params.amount),
+                        feeAmount: .zero,
+                        fromAddress: "",
+                        receivingAddress: ""
+                    ))
+                case .canceled, .verified:
+                    break
+                }
+            })
             .map { _ in () } // TODO: Handle other actions here
             .eraseToAnyPublisher()
         case let .topUpCoin(token):
@@ -320,6 +335,12 @@ final class HomeCoordinator: Coordinator<Void> {
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
             .sink(receiveValue: {})
+            .store(in: &subscriptions)
+    }
+
+    private func openBankTransferClaimCoordinator(transaction: StrigaClaimTransaction) {
+        coordinate(to: BankTransferClaimCoordinator(navigationController: navigationController, transaction: transaction))
+            .sink { _ in }
             .store(in: &subscriptions)
     }
 }

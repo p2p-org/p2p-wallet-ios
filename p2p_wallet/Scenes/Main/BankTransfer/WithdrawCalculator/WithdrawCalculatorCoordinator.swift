@@ -45,7 +45,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
                 switch result {
                 case .verified:
                     navigationController.popViewController(animated: true)
-                case .canceled:
+                case .canceled, .paymentInitiated:
                     break
                 }
             })
@@ -53,7 +53,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
                 switch result {
                 case .verified:
                     self.navigationController.popToRootViewController(animated: true)
-                case .canceled:
+                case .canceled, .paymentInitiated:
                     break
                 }
             })
@@ -84,7 +84,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
                     )
                     return self.openDetails(pendingTransaction: pendingTransaction)
                         .map { _ in Void() }.eraseToAnyPublisher()
-                case .canceled:
+                case .canceled, .paymentInitiated:
                     return Just(()).eraseToAnyPublisher()
                 }
             }

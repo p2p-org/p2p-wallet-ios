@@ -6,12 +6,12 @@ import Resolver
 class WithdrawViewModel: BaseViewModel, ObservableObject {
     typealias FieldStatus = StrigaFormTextFieldStatus
 
-    // MARK: -
+    // MARK: - Dependencies
 
-    @Injected var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
-    @Injected var notificationService: NotificationService
+    @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+    @Injected private var notificationService: NotificationService
 
-    // MARK: -
+    // MARK: - Properties
 
     @Published var IBAN: String = ""
     @Published var BIC: String = ""
@@ -22,14 +22,22 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     @Published var isLoading = false
     @Published var actionHasBeenTapped = false
 
-    private let actionCompletedSubject = PassthroughSubject<Void, Never>()
-    public var actionCompletedPublisher: AnyPublisher<Void, Never> {
-        actionCompletedSubject.eraseToAnyPublisher()
+    private let gatheringCompletedSubject = PassthroughSubject<Void, Never>()
+    public var gatheringCompletedPublisher: AnyPublisher<Void, Never> {
+        gatheringCompletedSubject.eraseToAnyPublisher()
     }
+    private let paymentInitiatedSubject = PassthroughSubject<String, Never>()
+    public var paymentInitiatedPublisher: AnyPublisher<String, Never> {
+        paymentInitiatedSubject.eraseToAnyPublisher()
+    }
+    private let strategy: WithdrawStrategy
 
     init(
-        withdrawalInfo: StrigaWithdrawalInfo
+        withdrawalInfo: StrigaWithdrawalInfo,
+        strategy: WithdrawStrategy
+        
     ) {
+        self.strategy = strategy
         super.init()
 
         self.IBAN = withdrawalInfo.IBAN ?? ""
@@ -80,19 +88,19 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         defer {
             isLoading = false
         }
+        let info = StrigaWithdrawalInfo(IBAN: IBAN.filterIBAN(), BIC: BIC, receiver: receiver)
         // Save to local
-        do {
-            try await bankTransferService.value.saveWithdrawalInfo(info:
-                .init(
-                    IBAN: IBAN.filterIBAN(),
-                    BIC: BIC,
-                    receiver: receiver
-                )
-            )
-        } catch {
-            notificationService.showDefaultErrorNotification()
+        await save(info: info)
+
+        switch strategy {
+        case .gathering:
+            // Complete the flow
+            gatheringCompletedSubject.send()
+        case let .confirmation(params):
+            // Initiate SEPA payment
+            guard let challengeId = await initiateSEPAPayment(params: params, info: info) else { return }
+            paymentInitiatedSubject.send(challengeId)
         }
-        actionCompletedSubject.send()
     }
 
     func formatIBAN(_ iban: String) -> String {
@@ -121,6 +129,36 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         return formattedIBAN.uppercased()
     }
 
+    private func save(info: StrigaWithdrawalInfo) async {
+        do {
+            try await bankTransferService.value.saveWithdrawalInfo(info: info)
+        } catch {
+            notificationService.showDefaultErrorNotification()
+        }
+    }
+
+    private func initiateSEPAPayment(params: WithdrawConfirmationParameters, info: StrigaWithdrawalInfo) async -> String? {
+        do {
+            guard let userId = await bankTransferService.value.repository.getUserId() else {
+                throw BankTransferError.missingUserId
+            }
+            let challengeId = try await bankTransferService.value.repository.initiateSEPAPayment(
+                userId: userId,
+                accountId: params.accountId,
+                amount: params.amount,
+                iban: info.IBAN ?? "",
+                bic: info.BIC ?? ""
+            )
+            return challengeId
+        } catch let error as NSError where error.isNetworkConnectionError {
+            notificationService.showConnectionErrorNotification()
+            return nil
+        } catch {
+            notificationService.showDefaultErrorNotification()
+            return nil
+        }
+    }
+    
     private func checkIBAN(_ iban: String) -> FieldStatus {
         let filteredIBAN = iban.filterIBAN()
         if filteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
