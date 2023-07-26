@@ -40,7 +40,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
 
                 return RenderableSolanaAccount(
                     account: account,
-                    extraAction: .visiable,
+                    extraAction: .showHide,
                     tags: tags
                 )
             }
@@ -66,8 +66,8 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
                 PublicKey.usdtMint.base58EncodedString,
             ]
             for mint in prioritizedTokenMints {
-                if mint == lhs.token.address || mint == rhs.token.address {
-                    return mint == lhs.token.address
+                if mint == lhs.token.mintAddress || mint == rhs.token.mintAddress {
+                    return mint == lhs.token.mintAddress
                 }
             }
 

@@ -75,7 +75,7 @@ extension JupiterSwapBusinessLogic {
             .map { jupiterToken in
 
                 // if userWallet found
-                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
+                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.mintAddress }) {
                     return SwapToken(token: userWallet.token, userWallet: userWallet)
                 }
 
@@ -103,7 +103,7 @@ extension JupiterSwapBusinessLogic {
         // map preChosenToken
         let preChosenFromToken: SwapToken?
         if let fromTokenAddress = preChosenFromTokenMintAddress {
-            preChosenFromToken = swapTokens.first(where: { $0.address == fromTokenAddress })
+            preChosenFromToken = swapTokens.first(where: { $0.mintAddress == fromTokenAddress })
         } else {
             preChosenFromToken = nil
         }
@@ -122,7 +122,7 @@ extension JupiterSwapBusinessLogic {
         // 1. Search for preChosen toToken if it exists
         if
             let address = preChosenToTokenMintAddress,
-            let toToken = swapTokens.first(where: { $0.address == address })
+            let toToken = swapTokens.first(where: { $0.mintAddress == address })
         {
             return toToken
         }

@@ -208,15 +208,6 @@
       }
     },
     {
-      "identity" : "loggerswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bigearsenal/LoggerSwift.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "8c4ecd6f97b667800a817481e472edd0c0460687"
-      }
-    },
-    {
       "identity" : "lokalise-ios-framework",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lokalise/lokalise-ios-framework.git",
@@ -338,8 +329,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
-        "branch" : "v3.1",
-        "revision" : "74ba4558d7a7a7334391e9ecfb3db61d08eec2a8"
+        "branch" : "main",
+        "revision" : "ab9a29e291a2adb1f4dfecea09b9c516c9fba970"
       }
     },
     {

@@ -14,7 +14,7 @@ public class HTTPJSONRPCCLient {
         return decoder
     }()
 
-    public let endpoint: String
+    public var endpoint: String
     public let urlSession: URLSession
 
     public init(endpoint: String, urlSession: URLSession = URLSession.shared) {

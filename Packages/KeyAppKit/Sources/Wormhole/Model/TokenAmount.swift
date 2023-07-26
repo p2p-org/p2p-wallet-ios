@@ -54,7 +54,7 @@ public struct TokenAmount: Codable, Hashable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         amount = try container.decode(String.self, forKey: .amount)
         usdAmount = try container.decode(String.self, forKey: .usdAmount)
         chain = try container.decode(String.self, forKey: .chain)

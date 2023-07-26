@@ -44,15 +44,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        sellDataService: any SellDataService = Resolver.resolve(),
+        sellDataService _: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        self.actions = [.addMoney]
-        
+        actions = [.addMoney]
+
         super.init()
 
         // TODO: Replace with combine
@@ -102,28 +102,35 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Balance
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value
-                    .filter { $0.isUSDC }
-                    .reduce(0) {
-                        $0 + $1.amountInFiatDouble
+                let equityValue: CurrencyAmount = state.value
+                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
+                    .reduce(CurrencyAmount(usd: 0)) {
+                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                            return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                        } else {
+                            return $0 + $1.amountInFiat
+                        }
                     }
-                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2))"
+
+                let formatter = CurrencyFormatter()
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
-        
+
         // USDC amount
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                
-                let equityValue: Double = Double(state.value
-                    .filter { $0.isUSDC }
-                    .reduce(0) { $0 + $1.amount }
-                )
-                return "\(equityValue.tokenAmountFormattedString(symbol: "USDC", maximumFractionDigits: 3))"
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return ""
+                }
+
+                let cryptoFormatter = CryptoFormatter()
+                return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.usdcAmount, on: self)

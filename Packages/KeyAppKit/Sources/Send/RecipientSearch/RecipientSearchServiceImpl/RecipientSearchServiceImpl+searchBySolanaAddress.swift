@@ -70,9 +70,9 @@ extension RecipientSearchServiceImpl {
                     )
 
                     if let wallet = config.wallets
-                        .first(where: { $0.token.address == accountInfo.mint.base58EncodedString }),
+                        .first(where: { $0.token.mintAddress == accountInfo.mint.base58EncodedString }),
                         (wallet.lamports ?? 0) > 0,
-                        token.address == preChosenToken?.address ?? token.address
+                       token.mintAddress == preChosenToken?.mintAddress ?? token.mintAddress
                     {
                         // User has the same token
                         return .ok([recipient])
@@ -144,7 +144,7 @@ extension RecipientSearchServiceImpl {
 
             let balance = wallet.lamports
             guard
-                let mint = try? PublicKey(string: wallet.token.address)
+                let mint = try? PublicKey(string: wallet.token.mintAddress)
             else { continue }
 
             let result = try await swapService.calculateFeeInPayingToken(
@@ -169,7 +169,7 @@ extension RecipientSearchServiceImpl {
 
             let balance = wallet.lamports
             guard
-                let mint = try? PublicKey(string: wallet.token.address)
+                let mint = try? PublicKey(string: wallet.token.mintAddress)
             else { continue }
 
             let result = try await swapService.calculateFeeInPayingToken(

@@ -16,7 +16,7 @@ struct RenderableSolanaAccount: RenderableAccount {
         {
             return .url(url)
         } else {
-            return .random(seed: account.token.address)
+            return .random(seed: account.token.mintAddress)
         }
     }
 
@@ -30,17 +30,21 @@ struct RenderableSolanaAccount: RenderableAccount {
 
     var subtitle: String {
         if let amount = account.amount {
-            return amount.tokenAmountFormattedString(symbol: account.token.symbol)
+            return amount.tokenAmountFormattedString(symbol: account.token.symbol, roundingMode: .down)
         }
         return ""
     }
 
     var detail: AccountDetail {
-        .text(
-            account
-                .amountInFiatDouble
-                .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
-        )
+        if account.price != nil {
+            return .text(
+                account
+                    .amountInFiatDouble
+                    .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
+            )
+        } else {
+            return .text("")
+        }
     }
 
     let extraAction: AccountExtraAction?

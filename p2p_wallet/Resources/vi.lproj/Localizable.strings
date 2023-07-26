@@ -622,7 +622,6 @@
 "%@\nPlease log in with the correct %@ account." = "%@\nVui lòng đăng nhập bằng đúng tài khoản %@.";
 "You've used all 5 codes. Try again later. For help, contact support." = "Bạn đã sử dụng tất cả 5 mã.  Thử lại sau.  Để được giúp đỡ, hãy liên hệ với bộ phận hỗ trợ.";
 "Crypto" = "tiền điện tử";
-"My Crypto" = "Tiền điện tử của tôi";
 "Incoming transfer" = "chuyển đến";
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Chào mừng bạn đến với danh mục đầu tư tiền điện tử của bạn.  \nKhám phá hơn 800 mã thông báo mà không mất phí.";
 "Add Money" = "Thêm tiền";
@@ -632,3 +631,6 @@
 "1%% fee" = "phí 1%%";
 "4,5%% fees" = "4,5%% phí";
 "withdraw" = "rút";
+"My crypto" = "tiền điện tử của tôi";
+"Username copied to clipboard" = "Đã sao chép tên người dùng vào khay nhớ tạm";
+"Address copied to clipboard" = "Đã sao chép địa chỉ vào khay nhớ tạm";

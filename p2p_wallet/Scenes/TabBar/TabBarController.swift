@@ -220,11 +220,11 @@ final class TabBarController: UITabBarController {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.backgroundColor = Asset.Colors.snow.color
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: Asset.Colors.mountain.color,
         ]
         standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: Asset.Colors.night.color,
         ]
         standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color

@@ -30,7 +30,7 @@ extension Route {
         return getMints()
             .map { mint in
                 tokensList
-                    .first(where: {$0.address == mint})?
+                    .first(where: {$0.mintAddress == mint})?
                     .symbol ?? "UNKNOWN"
             }
     }

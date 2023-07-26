@@ -104,7 +104,7 @@ class RecipientSearchViewModel: ObservableObject {
         if let preChosenWallet {
             // Check token is support wormhole
             if WormholeSupportedTokens.bridges
-                .map(\.solAddress).contains(preChosenWallet.token.address)
+                .map(\.solAddress).contains(preChosenWallet.token.mintAddress)
             {
                 ethereumSearch = true
             } else {

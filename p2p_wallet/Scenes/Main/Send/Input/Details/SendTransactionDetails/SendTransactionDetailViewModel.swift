@@ -168,7 +168,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         var subtitles: [(String, String?)] = []
 
         var totalAmount: Lamports = state.amountInToken.toLamport(decimals: state.token.decimals)
-        if state.token.address == state.tokenFee.address {
+        if state.token.mintAddress == state.tokenFee.mintAddress {
             totalAmount += state.feeInToken.total
         } else {
             let fee = state.feeInToken.transaction + state.feeInToken.accountBalances

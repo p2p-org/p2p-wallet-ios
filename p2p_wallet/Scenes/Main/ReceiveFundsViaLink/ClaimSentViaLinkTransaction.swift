@@ -1,3 +1,4 @@
+import AnalyticsManager
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -6,15 +7,6 @@ import Send
 import SolanaSwift
 
 struct ClaimSentViaLinkTransaction: RawTransactionType {
-    // MARK: - Nested type
-
-    enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
-        case noError
-        case networkError
-        case otherError
-        var id: Self { self }
-    }
-
     // MARK: - Properties
 
     let claimableTokenInfo: ClaimableTokenInfo
@@ -47,7 +39,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
             case .noError:
                 break
             case .otherError:
-                throw SolanaError.unknown
+                throw FakeTransactionError.random
             case .networkError:
                 throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
             }
@@ -58,7 +50,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         // get receiver
         guard let receiver = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
         else {
-            throw SolanaError.unauthorized
+            throw SendActionError.unauthorized
         }
 
         // get services
@@ -69,7 +61,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         // do and catch error
         do {
             let feePayerAddress = try PublicKey(
-                string: try await feeRelayerAPIClient.getFeePayerPubkey()
+                string: await feeRelayerAPIClient.getFeePayerPubkey()
             )
 
             // prepare transaction, get recent blockchash
@@ -128,7 +120,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                 data: ClaimSentViaLinkAlertLoggerMessage(
                     tokenToClaim: .init(
                         name: token.name,
-                        mint: token.address,
+                        mint: token.mintAddress,
                         claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
                         currency: token.symbol
                     ),
@@ -141,6 +133,8 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     blockchainError: data.blockchainError
                 )
             )
+
+            Resolver.resolve(AnalyticsManager.self).log(title: "Link Claim iOS Error", error: error)
 
             // rethrow error
             throw error

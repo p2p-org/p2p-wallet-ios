@@ -44,8 +44,14 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value
                     .filter { !$0.isUSDC }
-                    .reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2))"
+                    .reduce(0) {
+                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                            return $0 + $1.amount
+                        } else {
+                            return $0 + $1.amountInFiatDouble
+                        }
+                    }
+                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2, roundingMode: .down))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)

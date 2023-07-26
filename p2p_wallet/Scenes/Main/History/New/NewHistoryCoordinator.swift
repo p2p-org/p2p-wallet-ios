@@ -39,18 +39,6 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         case let .openSwap(from, to):
             openSwap(wallet: from, destination: to)
 
-        case let .openParsedTransaction(trx):
-            let coordinator = TransactionDetailCoordinator(
-                viewModel: .init(parsedTransaction: trx),
-                presentingViewController: presentation.presentingViewController
-            )
-
-            coordinate(to: coordinator)
-                .sink { result in
-                    print(result)
-                }
-                .store(in: &subscriptions)
-
         case let .openHistoryTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),

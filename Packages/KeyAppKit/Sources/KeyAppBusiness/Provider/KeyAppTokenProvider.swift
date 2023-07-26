@@ -15,7 +15,7 @@ public protocol KeyAppTokenProvider {
 }
 
 public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
-    let client: HTTPJSONRPCCLient
+    public let client: HTTPJSONRPCCLient
 
     public init(client: HTTPJSONRPCCLient) {
         self.client = client

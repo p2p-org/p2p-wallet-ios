@@ -62,9 +62,9 @@ class HomeViewModel: ObservableObject {
         clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
         let text: String
         if nameStorage.getName() != nil {
-            text = L10n.usernameWasCopiedToClipboard
+            text = L10n.usernameCopiedToClipboard
         } else {
-            text = L10n.addressWasCopiedToClipboard
+            text = L10n.addressCopiedToClipboard
         }
         notificationsService.showToast(title: "🖤", text: text, haptic: true)
         analyticsManager.log(event: .mainScreenAddressClick)
@@ -169,10 +169,6 @@ private extension HomeViewModel {
                     partialResult = partialResult + account.amountInFiatDouble
                 }
 
-                let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
-                    ethereumState.value.contains(where: { account in account.balance > 0 })
-
                 // TODO: Bad place
                 self.updateAddressIfNeeded()
 
@@ -183,7 +179,7 @@ private extension HomeViewModel {
                 case .initializing:
                     self.state = .pending
                 default:
-                    self.state = hasAnyTokenWithPositiveBalance ? .withTokens : .empty
+                    self.state = .wallet
 
                     // log
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(solanaTotalBalance > 0))
@@ -208,8 +204,7 @@ private extension HomeViewModel {
 extension HomeViewModel {
     enum State {
         case pending
-        case withTokens
-        case empty
+        case wallet
     }
 }
 

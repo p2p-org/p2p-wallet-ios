@@ -7,7 +7,6 @@ import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import SolanaSwift
-import TransactionParser
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
@@ -28,7 +27,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var state: State = .loading(message: L10n.itUsuallyTakesFewSecondsForATransactionToComplete)
     @Published var closeButtonTitle: String = L10n.done
 
-    private var currentTransaction: ParsedTransaction?
+    private var currentTransactionError: Error?
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
@@ -68,15 +67,17 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     withFormat: "MMMM dd, yyyy @ HH:mm",
                     locale: Locale.base
                 ) ?? ""
+
+                self.currentTransactionError = nil
                 switch pendingTransaction?.status {
                 case .sending:
                     break
                 case let .error(error):
+                    self.currentTransactionError = error
                     self.update(error: error)
                 default:
                     self.updateCompleted()
                 }
-                self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
             })
             .store(in: &subscriptions)
 
@@ -96,8 +97,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     description: L10n.unknownError
                 )
 
-                guard let parsedTransaction = self.currentTransaction,
-                      let error = parsedTransaction.status.getError()
+                guard let error = self.currentTransactionError
                 else {
                     self.openDetails.send(params)
                     return
@@ -107,31 +107,35 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                    error.message == "Topping up is successfull, but the transaction failed"
                 {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
-                } else if let error = error as? SolanaError {
+                } else if let error = error as? APIClientError {
                     switch error {
-                    case let .other(message) where message == "Blockhash not found":
+                    case .blockhashNotFound:
                         params = .init(
                             title: L10n.blockhashNotFound,
                             description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
-                                parsedTransaction.blockhash ?? "",
-                                parsedTransaction.blockhash ?? ""
+                                "", // blockhash ?? "",
+                                "" // blockhash ?? ""
                             )
                         )
-                    case let .other(message) where message.contains("Instruction"):
+                    case let .responseError(response) where response.message?.contains("Instruction") == true:
                         params = .init(
                             title: L10n.errorProcessingInstruction0CustomProgramError0x1,
                             description: L10n.AnErrorOccuredWhileProcessingAnInstruction
                                 .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured
                         )
-                    case let .other(message) where message.contains("Already processed"):
+                    case let .responseError(response) where response.message?.contains("Already processed") == true:
                         params = .init(
                             title: L10n.thisTransactionHasAlreadyBeenProcessed,
                             description: L10n.TheBankHasSeenThisTransactionBefore
-                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
-                                    .blockhash ?? "")
+                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(
+                                    "" // blockhash ?? ""
+                                )
                         )
-                    case let .other(message):
-                        params = .init(title: L10n.somethingWentWrong, description: message)
+                    case let .responseError(response):
+                        params = .init(
+                            title: L10n.somethingWentWrong,
+                            description: response.message ?? L10n.unknownError
+                        )
                     default:
                         break
                     }

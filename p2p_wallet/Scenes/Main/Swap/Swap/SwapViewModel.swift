@@ -1,12 +1,12 @@
 import AnalyticsManager
 import Combine
+import Foundation
 import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import Task_retrying
-import Foundation
 import UIKit
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
@@ -123,7 +123,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                         pubkey: token.userWallet?.address,
                         balance: token.userWallet?.amount,
                         symbol: token.token.symbol,
-                        mint: token.token.address
+                        mint: token.token.mintAddress
                     )
                 }
 
@@ -142,8 +142,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 ),
                 prices: stateMachine.currentState.tokensPriceMap
                     .filter { key, _ in
-                        currentState.fromToken.token.address.contains(key) ||
-                            currentState.toToken.token.address.contains(key)
+                        currentState.fromToken.token.mintAddress.contains(key) ||
+                            currentState.toToken.token.mintAddress.contains(key)
                     }
             )
 
@@ -198,19 +198,19 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        walletsRepository
-            .statePublisher
-            .removeDuplicates { $0.value == $1.value }
-            .filter { [weak self] _ in
-                // update user wallets only when initializingState is success
-                self?.viewState == .success
-            }
-            .sinkAsync { [weak self] userWallets in
-                await self?.stateMachine.accept(
-                    action: .updateUserWallets(userWallets: userWallets.value)
-                )
-            }
-            .store(in: &subscriptions)
+        Publishers.CombineLatest(
+            walletsRepository.statePublisher
+                .removeDuplicates { $0.value == $1.value },
+            $viewState
+                .removeDuplicates()
+                .filter { $0 == .success }
+        )
+        .sinkAsync { [weak self] userWallets, _ in
+            await self?.stateMachine.accept(
+                action: .updateUserWallets(userWallets: userWallets.value)
+            )
+        }
+        .store(in: &subscriptions)
 
         // update fromToken only when viewState is success
         changeFromToken
@@ -222,7 +222,7 @@ private extension SwapViewModel {
                     action: .changeFromToken(token)
                 )
                 self.fromTokenInputViewModel.amount = nil // Reset previously set amount with new from token
-                Defaults.fromTokenAddress = token.address
+                Defaults.fromTokenAddress = token.mintAddress
             }
             .store(in: &subscriptions)
 
@@ -235,7 +235,7 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(
                     action: .changeToToken(token)
                 )
-                Defaults.toTokenAddress = token.address
+                Defaults.toTokenAddress = token.mintAddress
                 self.log(priceImpact: newState.priceImpact, value: newState.route?.priceImpactPct)
             }
             .store(in: &subscriptions)
@@ -369,7 +369,7 @@ private extension SwapViewModel {
                 isEnabled: false,
                 title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals)))
             )
-            if state.fromToken.address == TokenMetadata.nativeSolana.address, !wasMinToastShown {
+            if state.fromToken.mintAddress == TokenMetadata.nativeSolana.mintAddress, !wasMinToastShown {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
                 wasMinToastShown = true
             }
@@ -611,6 +611,22 @@ extension SwapViewModel {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
             analyticsManager.log(event: .swapChangingTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
+        }
+    }
+}
+
+private extension Error {
+    var isSolanaBlockchainRelatedError: Bool {
+        guard let error = ((self as? APIClientError) ?? // APIClientError
+            ((self as? TaskRetryingError)?.lastError as? APIClientError)) // Retrying with last error
+        else {
+            return false
+        }
+        switch error {
+        case .responseError:
+            return true
+        default:
+            return false
         }
     }
 }

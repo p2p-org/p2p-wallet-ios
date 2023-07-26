@@ -63,7 +63,7 @@ public extension AnyToken {
         case .solana:
             switch primaryKey {
             case .native:
-                return SolanaToken.nativeSolana.address
+                return SolanaToken.nativeSolana.mintAddress
             case let .contract(address):
                 return address
             }
