@@ -8,7 +8,7 @@ struct HomeAccountsAggregator: DataAggregator {
         input: (
             solanaAccounts: [RenderableSolanaAccount],
             ethereumAccounts: [RenderableEthereumAccount],
-            bankTransferAccounts: [BankTransferRenderableAccount]
+            bankTransferAccounts: [any RenderableAccount]
         )
     )
     -> (primary: [any RenderableAccount], secondary: [any RenderableAccount]) {

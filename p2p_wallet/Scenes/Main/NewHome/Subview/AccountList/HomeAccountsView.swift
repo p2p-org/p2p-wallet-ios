@@ -74,7 +74,11 @@ struct HomeAccountsView: View {
                 .padding(.top, 32)
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
-                    tokenCell(rendableAccount: $0, isVisiable: true)
+                    if $0 is OutgoingBankTransferRenderableAccount {
+                        bankTransferCell(rendableAccount: $0, isVisible: true)
+                    } else {
+                        tokenCell(rendableAccount: $0, isVisiable: true)
+                    }
                 }
             }
             if !viewModel.hiddenAccounts.isEmpty {
@@ -134,6 +138,19 @@ struct HomeAccountsView: View {
                 return AnyView(view)
             }
         }
+        .frame(height: 72)
+        .padding(.horizontal, 16)
+    }
+
+    private func bankTransferCell(
+        rendableAccount: any RenderableAccount,
+        isVisible: Bool
+    ) -> some View {
+        HomeBankTransferAccountView(
+            renderable: rendableAccount,
+            onTap: { viewModel.invoke(for: rendableAccount, event: .tap) },
+            onButtonTap: { viewModel.invoke(for: rendableAccount, event: .extraButtonTap) }
+        )
         .frame(height: 72)
         .padding(.horizontal, 16)
     }

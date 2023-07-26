@@ -549,7 +549,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
             endDate: Date(),
             page: 1
         )
-        debugPrint(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" }))
+
         // Assert
         XCTAssertEqual(result.transactions.isEmpty, false)
         XCTAssertEqual(result.transactions.contains(where: { $0.txType == "SEPA_PAYOUT_COMPLETED" }), false)
@@ -558,6 +558,27 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertNotNil(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" })?.bankingSenderIban)
         XCTAssertNotNil(result.transactions.first(where: { $0.txType == "SEPA_PAYIN_COMPLETED" })?.bankingSenderBic)
     }
+
+    func testInitiateSEPAPayment_SuccessfulResponse() async throws {
+        // Arrange
+        let mockData = """
+            {"challengeId":"924aa8d8-a377-4d61-8761-0b98a4f3f897","dateExpires":"2023-07-25T15:56:11.231Z","transaction":{"syncedOwnerId":"b861b16e-1070-4f54-b992-219549538526","sourceAccountId":"793815a2c66152e7de19318617860ba2","iban":"GB29NWBK60161331926819","bic":"BUKBGB22","amount":"574","status":"PENDING_2FA_CONFIRMATION","txType":"SEPA_PAYOUT_INITIATED","parentWalletId":"f4df3cc6-9c60-461a-8207-05cc8e6e7207","currency":"EUR","feeEstimate":{"totalFee":"0","networkFee":"0","ourFee":"0","theirFee":"0","feeCurrency":"EUR"}},"feeEstimate":{"totalFee":"0","networkFee":"0","ourFee":"0","theirFee":"0","feeCurrency":"EUR"}}
+        """
+        let provider = try getMockProvider(responseString: mockData, statusCode: 200)
+
+        let result = try await provider.initiateSEPAPayment(
+            userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
+            accountId: "4dc6ecb29d74198e9e507f8025cad011",
+            amount: "574",
+            iban: "GB29NWBK60161331926819",
+            bic: "BUKBGB22"
+        )
+
+        // Assert
+        XCTAssertNotNil(result.challengeId)
+        XCTAssertFalse(result.challengeId.isEmpty)
+    }
+
 
     // MARK: - Helper Methods
     

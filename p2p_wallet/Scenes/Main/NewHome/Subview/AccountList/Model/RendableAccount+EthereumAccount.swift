@@ -47,9 +47,9 @@ struct RenderableEthereumAccount: RenderableAccount {
 
     var detail: AccountDetail {
         switch status {
-        case .readyToClaim:
+        case .ready:
             return .button(label: L10n.claim, enabled: true)
-        case .isClaimming:
+        case .isProcessing:
             return .button(label: L10n.claiming, enabled: false)
         case .balanceToLow:
             if let balanceInFiat = account.balanceInFiat {
@@ -83,8 +83,8 @@ struct RenderableEthereumAccount: RenderableAccount {
 
 extension RenderableEthereumAccount {
     enum Status: Equatable {
-        case readyToClaim
-        case isClaimming
+        case ready
+        case isProcessing
         case balanceToLow
     }
 }
