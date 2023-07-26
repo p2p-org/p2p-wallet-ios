@@ -113,7 +113,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         }
                     }
 
-                let formatter = CurrencyFormatter()
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
                 return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)

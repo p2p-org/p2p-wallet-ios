@@ -16,10 +16,22 @@ public protocol CurrencyConvertible {
 public class CurrencyFormatter: Formatter {
     public let defaultValue: String
     public let hideSymbol: Bool
+    public let showSpacingAfterCurrencySymbol: Bool
+    public let showSpacingAfterCurrencyGroup: Bool
+    public let showSpacingAfterLessThanOperator: Bool
 
-    public init(defaultValue: String = "", hideSymbol: Bool = false) {
+    public init(
+        defaultValue: String = "",
+        hideSymbol: Bool = false,
+        showSpacingAfterCurrencySymbol: Bool = false,
+        showSpacingAfterCurrencyGroup: Bool = true,
+        showSpacingAfterLessThanOperator: Bool = true
+    ) {
         self.defaultValue = defaultValue
         self.hideSymbol = hideSymbol
+        self.showSpacingAfterCurrencySymbol = showSpacingAfterCurrencySymbol
+        self.showSpacingAfterCurrencyGroup = showSpacingAfterCurrencyGroup
+        self.showSpacingAfterLessThanOperator = showSpacingAfterLessThanOperator
         super.init()
     }
 
@@ -61,7 +73,8 @@ public class CurrencyFormatter: Formatter {
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "en-US")
         // HACK: by default formatter doesn't put space between symbol and amount
-        formatter.currencySymbol = formatter.currencySymbol.trimmingCharacters(in: .whitespacesAndNewlines) + " "
+        let spacing = showSpacingAfterCurrencySymbol ? " " : ""
+        formatter.currencySymbol = formatter.currencySymbol.trimmingCharacters(in: .whitespacesAndNewlines) + spacing
 
         if hideSymbol {
             formatter.currencySymbol = ""
@@ -70,7 +83,7 @@ public class CurrencyFormatter: Formatter {
         // Set style
         formatter.groupingSize = 3
         formatter.currencyDecimalSeparator = "."
-        formatter.currencyGroupingSeparator = " "
+        formatter.currencyGroupingSeparator = showSpacingAfterCurrencyGroup ? " " : ""
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 0
 
@@ -82,7 +95,8 @@ public class CurrencyFormatter: Formatter {
         }
 
         if amount.value > 0.0, amount.value < 0.01 {
-            value = "< \(formatter.string(for: 0.01) ?? "")"
+            let prefix = showSpacingAfterLessThanOperator ? "< " : "<"
+            value = prefix + (formatter.string(for: 0.01) ?? "")
         }
 
         return value

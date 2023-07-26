@@ -14,6 +14,8 @@ struct ActionsPanelView: View {
             if !balance.isEmpty {
                 Text(balance)
                     .font(uiFont: .font(of: 64, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .padding(.top, 24)
                     .padding(.bottom, usdAmount.isEmpty ? 46 : 12)

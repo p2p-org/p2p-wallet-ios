@@ -42,16 +42,22 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
     private func bind() {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value
+                let equityValue: CurrencyAmount = state.value
                     .filter { !$0.isUSDC }
-                    .reduce(0) {
+                    .reduce(CurrencyAmount(usd: 0)) {
                         if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-                            return $0 + $1.amount
+                            return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
                         } else {
-                            return $0 + $1.amountInFiatDouble
+                            return $0 + $1.amountInFiat
                         }
                     }
-                return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2, roundingMode: .down))"
+
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
