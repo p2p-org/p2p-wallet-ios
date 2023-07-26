@@ -4,15 +4,27 @@ import Foundation
 import Resolver
 import SwiftUI
 
+struct WithdrawConfirmationParameters: Equatable {
+    let accountId: String
+    let amount: String
+}
+
+enum WithdrawStrategy {
+    /// Used to collect IBAN
+    case gathering
+    /// Used to confirm withdrawal
+    case confirmation(WithdrawConfirmationParameters)
+}
+
 final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 
     let navigationController: UINavigationController
-    let strategy: Strategy
+    let strategy: WithdrawStrategy
     let withdrawalInfo: StrigaWithdrawalInfo
 
     init(
         navigationController: UINavigationController,
-        strategy: Strategy = .gathering,
+        strategy: WithdrawStrategy = .gathering,
         withdrawalInfo: StrigaWithdrawalInfo
     ) {
         self.navigationController = navigationController
@@ -22,21 +34,23 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
     }
 
     override func start() -> AnyPublisher<WithdrawCoordinator.Result, Never> {
-        let viewModel = WithdrawViewModel(withdrawalInfo: withdrawalInfo)
+        let viewModel = WithdrawViewModel(withdrawalInfo: withdrawalInfo, strategy: strategy)
         let view = WithdrawView(
             viewModel: viewModel
         )
         let viewController = UIHostingController(rootView: view)
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)
-        return Publishers.Merge(
+        return Publishers.Merge3(
             viewController.deallocatedPublisher()
                 .map { WithdrawCoordinator.Result.canceled },
-            viewModel.actionCompletedPublisher
+            viewModel.gatheringCompletedPublisher
                 .map { WithdrawCoordinator.Result.verified }
                 .handleEvents(receiveOutput: { [weak self] _ in
-                    self?.navigationController.popToRootViewController(animated: true)
-                })
+                    self?.navigationController.popToRootViewController(animated: false)
+                }),
+            viewModel.paymentInitiatedPublisher
+                .map { WithdrawCoordinator.Result.paymentInitiated(challengeId: $0) }
         )
         .prefix(1).eraseToAnyPublisher()
     }
@@ -44,14 +58,8 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 
 extension WithdrawCoordinator {
     enum Result {
+        case paymentInitiated(challengeId: String)
         case verified
         case canceled
-    }
-
-    enum Strategy {
-        /// Used to collect IBAN
-        case gathering
-        /// Used to confirm withdrawal
-        case confirmation
     }
 }
