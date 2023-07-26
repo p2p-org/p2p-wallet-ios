@@ -303,8 +303,8 @@
         "repositoryURL": "https://github.com/google/promises.git",
         "state": {
           "branch": null,
-          "revision": "c22f76b709dc4bb6d274398259e75c191e50998a",
-          "version": "2.3.0"
+          "revision": "e70e889c0196c76d22759eb50d6a0270ca9f1d9e",
+          "version": "2.3.1"
         }
       },
       {
@@ -375,7 +375,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "729e23226fc3e2286b1fb2641a8f2840638e5434",
+          "revision": "ab9a29e291a2adb1f4dfecea09b9c516c9fba970",
           "version": null
         }
       },
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "5f542894dd8efbd766d8adf73ef2f947b0cd5e21",
-          "version": "2.56.0"
+          "revision": "a2e487b77f17edbce9a65f2b7415f2f479dc8e48",
+          "version": "2.57.0"
         }
       },
       {
