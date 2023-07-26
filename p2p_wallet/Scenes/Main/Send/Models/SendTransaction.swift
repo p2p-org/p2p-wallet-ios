@@ -58,7 +58,7 @@ struct SendTransaction: RawTransactionType {
             if isFakeSendTransaction {
                 try await Task.sleep(nanoseconds: 2_000_000_000)
                 if isFakeSendTransactionError {
-                    throw SolanaError.unknown
+                    throw FakeTransactionError.random
                 }
                 if isFakeSendTransactionNetworkError {
                     throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)

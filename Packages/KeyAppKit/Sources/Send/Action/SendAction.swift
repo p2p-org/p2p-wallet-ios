@@ -117,7 +117,7 @@ public class SendActionServiceImpl: SendActionService {
 
                 // assert account
                 guard let account else {
-                    throw SolanaError.unauthorized
+                    throw SendActionError.unauthorized
                 }
 
                 // sign transaction by user
@@ -160,7 +160,7 @@ public class SendActionServiceImpl: SendActionService {
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         let sender = wallet.address
-        guard let account = account else { throw SolanaError.unauthorized }
+        guard let account = account else { throw SendActionError.unauthorized }
         guard let context = contextManager.currentContext else { throw RelayContextManagerError.invalidContext }
         // prepare fee payer
         let feePayer: PublicKey?
