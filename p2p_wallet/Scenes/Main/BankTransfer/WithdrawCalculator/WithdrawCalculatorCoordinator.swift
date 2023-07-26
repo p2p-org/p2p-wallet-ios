@@ -25,7 +25,9 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
 
         return Publishers.Merge(
             viewModel.openWithdraw
-                .flatMap { [unowned self] model in openWithdraw(model: model) }
+                .flatMap({ [unowned self] model, amount in
+                    openWithdraw(model: model, amount: amount)
+                })
                 .compactMap { $0 }
                 .map { WithdrawCalculatorCoordinator.Result.transaction($0) }
                 .eraseToAnyPublisher(),
@@ -41,7 +43,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
             .store(in: &subscriptions)
     }
 
-    private func openWithdraw(model: StrigaWithdrawalInfo) -> AnyPublisher<PendingTransaction?, Never> {
+    private func openWithdraw(model: StrigaWithdrawalInfo, amount: Double) -> AnyPublisher<PendingTransaction?, Never> {
         coordinate(to: WithdrawCoordinator(
             navigationController: navigationController,
             withdrawalInfo: model)
@@ -56,12 +58,12 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
             })
             .map({ result -> PendingTransaction? in
                 switch result {
-                case .verified:
+                case .paymentInitiated(let challangeId):
                     let transaction = StrigaWithdrawTransaction(
-                        challengeId: "1",
+                        challengeId: challangeId,
                         IBAN: model.IBAN ?? "",
                         BIC: model.BIC ?? "",
-                        amount: 120,
+                        amount: amount,
                         feeAmount: FeeAmount(
                             transaction: 0,
                             accountBalances: 0
@@ -80,7 +82,41 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         status: .sending
                     )
                     return pendingTransaction
-                case .canceled, .paymentInitiated:
+                case .verified:
+                    // Fake transaction for now
+                    let transaction = SendTransaction(
+                        isFakeSendTransaction: false,
+                        isFakeSendTransactionError: false,
+                        isFakeSendTransactionNetworkError: false,
+                        recipient: .init(
+                            address: "",
+                            category: .solanaAddress,
+                            attributes: .funds
+                        ),
+                        sendViaLinkSeed: nil,
+                        amount: amount,
+                        amountInFiat: 0.01,
+                        walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                        address: "adfasdf",
+                        payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                        feeAmount: .init(transaction: 10000, accountBalances: 2039280),
+                        currency: "USD",
+                        analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
+                    )
+
+                    // delegate work to transaction handler
+                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                        .sendTransaction(transaction)
+
+                    // return pending transaction
+                    let pendingTransaction = PendingTransaction(
+                        trxIndex: transactionIndex,
+                        sentAt: Date(),
+                        rawTransaction: transaction,
+                        status: .sending
+                    )
+                    return pendingTransaction
+                case .canceled:
                     return nil
                 }
             })
