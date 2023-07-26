@@ -71,6 +71,7 @@ extension Resolver: ResolverRegistering {
 
         register { KeyAppTokenHttpProvider(client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)) }
             .implements(KeyAppTokenProvider.self)
+            .scope(.application)
 
         register {
             DeviceShareMigrationService(

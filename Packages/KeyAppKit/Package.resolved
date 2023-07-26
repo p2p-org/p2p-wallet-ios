@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "loggerswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bigearsenal/LoggerSwift.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "8c4ecd6f97b667800a817481e472edd0c0460687"
-      }
-    },
-    {
       "identity" : "promisekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mxcl/PromiseKit.git",
