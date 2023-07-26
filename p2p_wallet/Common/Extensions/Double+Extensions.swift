@@ -113,15 +113,14 @@ extension Double {
         maximumFractionDigits: Int = 2,
         currency: Fiat = Defaults.fiat,
         roundingMode: NumberFormatter.RoundingMode? = nil,
-        customFormattForLessThan1E_2: Bool = false,
-        spacing: String = " "
+        customFormattForLessThan1E_2: Bool = false
     ) -> String {
         // amount < 0.01
         if customFormattForLessThan1E_2 && self > 0 && self < 0.01 {
             if currency == .usd {
-                return "<\(spacing)\(currency.symbol)\(spacing)0.01"
+                return "< \(currency.symbol) 0.01"
             } else {
-                return "<\(spacing)0.01\(spacing)\(currency.symbol)"
+                return "< 0.01 \(currency.symbol)"
             }
         }
 
@@ -130,9 +129,9 @@ extension Double {
             let formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
 
             if currency == .usd {
-                return "\(currency.symbol)\(spacing)\(formattedString)"
+                return "\(currency.symbol) \(formattedString)"
             } else {
-                return "\(formattedString)\(spacing)\(currency.symbol)"
+                return "\(formattedString) \(currency.symbol)"
             }
         }
     }
