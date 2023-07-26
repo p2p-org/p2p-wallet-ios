@@ -23,7 +23,7 @@ public class CurrencyFormatter: Formatter {
     public init(
         defaultValue: String = "",
         hideSymbol: Bool = false,
-        showSpacingAfterCurrencySymbol: Bool = false,
+        showSpacingAfterCurrencySymbol: Bool = true,
         showSpacingAfterCurrencyGroup: Bool = true,
         showSpacingAfterLessThanOperator: Bool = true
     ) {
