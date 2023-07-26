@@ -5,6 +5,10 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
+enum DerivableAccountError: Error {
+    case derivableTypeMissing
+}
+
 final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
     private enum FetcherState {
         case initializing
@@ -105,7 +109,7 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
     private func createDerivableAccounts() async throws -> [DerivableAccount] {
         let phrases = self.phrases
         guard let derivableType else {
-            throw SolanaError.unknown
+            throw DerivableAccountError.derivableTypeMissing
         }
         return try await withThrowingTaskGroup(of: (Int, KeyPair).self) { group in
             var accounts = [(Int, DerivableAccount)]()

@@ -48,7 +48,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             }
         }
 
-        @Published var fakeTransactionErrorType: ClaimSentViaLinkTransaction.FakeTransactionErrorType = .noError
+        @Published var fakeTransactionErrorType: FakeTransactionErrorType = .noError
     #endif
 
     // MARK: - Init
