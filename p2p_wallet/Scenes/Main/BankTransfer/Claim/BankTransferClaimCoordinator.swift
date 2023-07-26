@@ -51,8 +51,9 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
                 return coordinate(
                     to: StrigaOTPCoordinator(
-                        viewController: navigationController,
+                        navigationController: navigationController,
                         phone: phone,
+                        navigation: .nextToRoot,
                         verifyHandler: { [unowned self] otp in
                             guard let userId = await bankTransferService.value.repository.getUserId() else {
                                 throw BankTransferError.missingMetadata

@@ -13,6 +13,11 @@ enum StrigaOTPCoordinatorResult {
     case verified
 }
 
+enum StrigaOTPNavigation {
+    case `default`
+    case nextToRoot
+}
+
 final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     // MARK: - Dependencies
@@ -31,9 +36,9 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     private let resultSubject = PassthroughSubject<StrigaOTPCoordinatorResult, Never>()
 
-    private let viewController: UINavigationController
+    private let navigationController: UINavigationController
     private let phone: String
-    
+    private let navigation: StrigaOTPNavigation
     /// Injectable verify opt request
     private let verifyHandler: (String) async throws -> Void
 
@@ -43,13 +48,15 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     // MARK: - Initialization
 
     init(
-        viewController: UINavigationController,
+        navigationController: UINavigationController,
         phone: String,
+        navigation: StrigaOTPNavigation = .default,
         verifyHandler: @escaping (String) async throws -> Void,
         resendHandler: @escaping () async throws -> Void
     ) {
-        self.viewController = viewController
+        self.navigationController = navigationController
         self.phone = phone
+        self.navigation = navigation
         self.verifyHandler = verifyHandler
         self.resendHandler = resendHandler
     }
@@ -123,7 +130,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         viewModel.coordinatorIO.goBack
             .sinkAsync { [weak self, weak viewModel, unowned controller] in
                 viewModel?.isLoading = true
-                self?.viewController.showAlert(
+                self?.navigationController.showAlert(
                     title: L10n.areYouSure,
                     message: L10n.youCanConfirmThePhoneNumberAndFinishTheRegistrationLater,
                     actions: [
@@ -190,13 +197,13 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             title: title,
             subtitle: subtitle,
             onAction: { [weak self] in
-                self?.viewController.popToRootViewController(animated: true)
+                self?.navigationController.popToRootViewController(animated: true)
                 self?.resultSubject.send(.canceled)
             }, onSupport: { [weak self] in
                 self?.helpLauncher.launch()
             }).asViewController(withoutUIKitNavBar: true)
         errorController.hidesBottomBarWhenPushed = true
-        viewController.pushViewController(errorController, animated: true)
+        navigationController.pushViewController(errorController, animated: true)
     }
 
     private func handleOTPConfirmLimitError() {
@@ -206,21 +213,26 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             title: title,
             subtitle: subtitle,
             onAction: { [weak self] in
-                self?.viewController.popToRootViewController(animated: true)
+                self?.navigationController.popToRootViewController(animated: true)
                 self?.resultSubject.send(.canceled)
             }, onSupport: { [weak self] in
                 self?.helpLauncher.launch()
             }).asViewController(withoutUIKitNavBar: true)
         errorController.hidesBottomBarWhenPushed = true
-        viewController.pushViewController(errorController, animated: true)
+        navigationController.pushViewController(errorController, animated: true)
     }
 
     private func present(controller: UIViewController) {
-        viewController.pushViewController(controller, animated: true)
+        switch navigation {
+        case .default:
+            navigationController.pushViewController(controller, animated: true)
+        case .nextToRoot:
+            navigationController.setViewControllers([navigationController.viewControllers.first!, controller], animated: true)
+        }
     }
 
     private func dismiss(controller: UIViewController) {
-        viewController.popViewController(animated: true)
+        navigationController.popViewController(animated: true)
         resultSubject.send(.canceled)
     }
 

@@ -51,9 +51,6 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
                 }),
             viewModel.paymentInitiatedPublisher
                 .map { WithdrawCoordinator.Result.paymentInitiated(challengeId: $0) }
-                .handleEvents(receiveOutput: { [weak self] _ in
-                    self?.navigationController.popToRootViewController(animated: false)
-                })
         )
         .prefix(1).eraseToAnyPublisher()
     }
