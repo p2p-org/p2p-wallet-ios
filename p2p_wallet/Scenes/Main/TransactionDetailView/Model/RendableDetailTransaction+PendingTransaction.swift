@@ -379,6 +379,9 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
+            if nil != trx.rawTransaction as? StrigaWithdrawTransactionType {
+                return []
+            }
             return [.share, .explorer]
         default:
             return []

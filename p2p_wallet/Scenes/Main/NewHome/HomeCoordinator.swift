@@ -249,8 +249,25 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
                 .eraseToAnyPublisher()
         case .withdrawCalculator:
-            return coordinate(to: WithdrawCalculatorCoordinator(navigationController: navigationController))
-                .eraseToAnyPublisher()
+            return coordinate(to: WithdrawCalculatorCoordinator(
+                navigationController: navigationController)
+            )
+            .flatMap({ [unowned self] result in
+                switch result {
+                case .transaction(let transaction):
+                    let viewModel = TransactionDetailViewModel(pendingTransaction: transaction)
+
+            //        self.viewModel.logTransactionProgressOpened()
+                    return coordinate(to: TransactionDetailCoordinator(
+                        viewModel: viewModel,
+                        presentingViewController: navigationController
+                    ))
+                    .map { _ in () }
+                    .eraseToAnyPublisher()
+                case .canceled:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }).eraseToAnyPublisher()
         case let .withdrawInfo(model):
             return coordinate(to: WithdrawCoordinator(
                 navigationController: navigationController,
