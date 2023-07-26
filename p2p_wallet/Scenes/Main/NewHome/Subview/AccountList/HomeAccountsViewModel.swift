@@ -277,7 +277,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 receivingAddress: ""
             )))
         case let .requestWithdrawInfo(receiver):
-            self.navigation.send(.withdrawInfo(StrigaWithdrawalInfo(receiver: receiver)))
+            self.navigation.send(.withdrawInfo(
+                StrigaWithdrawalInfo(receiver: receiver),
+                WithdrawConfirmationParameters(accountId: action.accountId, amount: action.amount)
+            ))
         }
     }
 

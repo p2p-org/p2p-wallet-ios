@@ -92,7 +92,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         case .otp:
             return coordinate(
                 to: StrigaOTPCoordinator(
-                    viewController: viewController,
+                    navigationController: viewController,
                     phone: userData.mobileNumber ?? "",
                     verifyHandler: { otp in
                         try await Resolver.resolve((any BankTransferService).self).verify(OTP: otp)

@@ -50,7 +50,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                 switch result {
                 case .verified:
                     navigationController.popViewController(animated: true)
-                case .canceled:
+                case .canceled, .paymentInitiated:
                     break
                 }
             })
@@ -80,7 +80,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         status: .sending
                     )
                     return pendingTransaction
-                case .canceled:
+                case .canceled, .paymentInitiated:
                     return nil
                 }
             })
