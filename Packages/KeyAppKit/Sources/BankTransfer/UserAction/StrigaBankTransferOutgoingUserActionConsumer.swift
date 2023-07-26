@@ -1,39 +1,35 @@
 import Combine
-import KeyAppBusiness
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 
-public struct BankTransferClaimUserActionResult: Codable, Equatable {
-    public let fromAddress: String
-    public let challengeId: String
-    public let token: Token
+public enum OutgoingBankTransferUserActionResult: Codable, Equatable {
+    case requestWithdrawInfo(receiver: String)
+    case initiated(challengeId: String)
 }
 
-public enum BankTransferClaimUserActionEvent: UserActionEvent {
-    case track(BankTransferClaimUserAction, UserActionStatus)
-    case complete(BankTransferClaimUserAction, BankTransferClaimUserActionResult)
-    case sendFailure(BankTransferClaimUserAction, String)
+public enum OutgoingBankTransferUserActionEvent: UserActionEvent {
+    case track(OutgoingBankTransferUserAction, UserActionStatus)
+    case complete(OutgoingBankTransferUserAction, OutgoingBankTransferUserActionResult)
+    case sendFailure(OutgoingBankTransferUserAction, String)
 }
 
-public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
-    public typealias Action = BankTransferClaimUserAction
-    public typealias Event = BankTransferClaimUserActionEvent
+public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
+    public typealias Action = OutgoingBankTransferUserAction
+    public typealias Event = OutgoingBankTransferUserActionEvent
 
     public let persistence: UserActionPersistentStorage
     let database: SynchronizedDatabase<String, Action> = .init()
 
     private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
-    private let solanaAccountService: SolanaAccountsService
 
     public init(
         persistence: UserActionPersistentStorage,
-        bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>,
-        solanaAccountService: SolanaAccountsService
+        bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
     ) {
         self.persistence = persistence
         self.bankTransferService = bankTransferService
-        self.solanaAccountService = solanaAccountService
     }
 
     public var onUpdate: AnyPublisher<any UserAction, Never> {
@@ -53,41 +49,33 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
         Task { [weak self] in
             await self?.database.set(for: action.id, action)
             self?.handle(event: Event.track(action, .processing))
-            /// Checking if destination is in whitelist
+            /// Checking if all data is available
             guard
                 let service = self?.bankTransferService.value,
                 let userId = await service.repository.getUserId(),
-                let account = try await service.repository.getWallet(userId: userId)?.accounts.usdc,
-                let amount = action.amount,
-                let fromAddress = account.blockchainDepositAddress,
-                let whitelistedAddressId = try await service.repository.whitelistIdFor(account: account) else {
+                let withdrawInfo = try await service.repository.getWithdrawalInfo(userId: userId),
+                let iban = withdrawInfo.IBAN,
+                let bic = withdrawInfo.BIC
+            else {
                 Logger.log(
-                    event: "Striga Claim Action",
-                    message: "Needs to whitelist account",
+                    event: "Striga Confirm Action",
+                    message: "Absence of data",
                     logLevel: .error
                 )
-                self?.handle(event: Event.sendFailure(action, "Needs to whitelist account"))
+                let regData = try? await self?.bankTransferService.value.getRegistrationData()
+                self?.handle(event: Event.complete(action, .requestWithdrawInfo(receiver: [regData?.firstName, regData?.lastName].compactMap({ $0  }).joined(separator: " "))))
                 return
             }
 
-            
-            let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
-                account.data.token.address == PublicKey.usdcMint.base58EncodedString
-            }.count > 0)
-
             do {
-                let result = try await service.repository.initiateOnchainWithdrawal(
+                let result = try await service.repository.initiateSEPAPayment(
                     userId: userId,
-                    sourceAccountId: account.accountID,
-                    whitelistedAddressId: whitelistedAddressId,
-                    amount: amount,
-                    accountCreation: shouldMakeAccount
+                    accountId: action.accountId,
+                    amount: action.amount,
+                    iban: iban,
+                    bic: bic
                 )
-                self?.handle(event: Event.complete(action, .init(
-                    fromAddress: fromAddress,
-                    challengeId: result.challengeId,
-                    token: Token.usdc
-                )))
+                self?.handle(event: Event.complete(action, .initiated(challengeId: result)))
             } catch {
                 self?.handle(event: Event.sendFailure(action, error.localizedDescription))
             }
@@ -107,9 +95,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 let userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
-                    token: action.token,
                     amount: action.amount,
-                    receivingAddress: action.receivingAddress,
                     status: .ready
                 )
                 userAction.result = result
@@ -121,14 +107,12 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 let userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
-                    token: action.token,
                     amount: action.amount,
-                    receivingAddress: action.receivingAddress,
                     status: status
                 )
                 await self.database.set(for: userAction.id, userAction)
             }
-        case .sendFailure(let action, _):
+        case let .sendFailure(action, _):
             Task { [weak self] in
                 guard let userAction = await self?.database.get(for: action.id) else { return }
                 userAction.status = .error(UserActionError.networkFailure)
@@ -138,40 +122,34 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
     }
 }
 
-public class BankTransferClaimUserAction: UserAction {
+public class OutgoingBankTransferUserAction: UserAction {
+    public static func == (lhs: OutgoingBankTransferUserAction, rhs: OutgoingBankTransferUserAction) -> Bool {
+        lhs.id == rhs.id
+    }
+
     /// Unique internal id to track.
-    public var id: String
-    public var accountId: String
-    public let token: EthereumToken?
-    public let amount: String?
-    public let receivingAddress: String
+    public let id: String
+    public let accountId: String
+    public let amount: String // In cents
     /// Abstract status.
     public var status: UserActionStatus
     public var createdDate: Date
     public var updatedDate: Date
-    public var result: BankTransferClaimUserActionResult?
+    public var result: OutgoingBankTransferUserActionResult?
 
     public init(
         id: String,
         accountId: String,
-        token: EthereumToken?,
-        amount: String?,
-        receivingAddress: String,
+        amount: String,
         status: UserActionStatus,
         createdDate: Date = Date(),
         updatedDate: Date = Date()
     ) {
         self.id = id
         self.accountId = accountId
-        self.token = token
         self.amount = amount
-        self.receivingAddress = receivingAddress
         self.status = status
         self.createdDate = createdDate
         self.updatedDate = updatedDate
-    }
-
-    public static func == (lhs: BankTransferClaimUserAction, rhs: BankTransferClaimUserAction) -> Bool {
-        lhs.id == rhs.id
     }
 }

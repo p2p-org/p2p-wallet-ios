@@ -176,4 +176,9 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             StrigaGetAccountStatementResponse.Transaction(id: "a25e0dd1-8f4f-441d-a671-2f7d1e9738e6", txType: "SEPA_PAYIN_COMPLETED", bankingSenderBic: "BUKBGB22", bankingSenderIban: "GB29NWBK60161331926819")
         ])
     }
+
+    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> StrigaInitiateSEPAPaymentResponse {
+        fatalError()
+    }
+
 }

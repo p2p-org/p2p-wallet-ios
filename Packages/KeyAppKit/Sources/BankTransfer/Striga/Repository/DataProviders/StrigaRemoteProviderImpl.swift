@@ -268,6 +268,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = try StrigaEndpoint.getAccountStatement(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId, startDate: startDate, endDate: endDate, page: page)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAccountStatementResponse.self)
     }
+
+    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> StrigaInitiateSEPAPaymentResponse {
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.initiateSEPAPayment(baseURL: baseURL, keyPair: keyPair, userId: userId, sourceAccountId: accountId, amount: amount, iban: iban, bic: bic)
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaInitiateSEPAPaymentResponse.self)
+    }
 }
 
 // MARK: - Error response

@@ -100,4 +100,13 @@ public protocol StrigaRemoteProvider: AnyObject {
     /// - Parameter page: Page number
     /// - SeeAlso: [Get Account Statement](https://docs.striga.com/reference/get-account-statement)
     func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse
+
+    /// Initiate SEPA Payment
+    /// - Parameter userId: The Id of the user who is sending this transaction
+    /// - Parameter accountId: The Id of the account to debit
+    /// - Parameter amount: The amount denominated in the smallest divisible unit of the sending currency. For example: cents
+    /// - Parameter iban: IBAN of the recipient - MUST be in the name of the account holder
+    /// - Parameter bic: BIC of the recipient - MUST be in the name of the account holder
+    /// - SeeAlso: [Initiate SEPA Payment](https://docs.striga.com/reference/initiate-sepa-payment)
+    func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> StrigaInitiateSEPAPaymentResponse
 }

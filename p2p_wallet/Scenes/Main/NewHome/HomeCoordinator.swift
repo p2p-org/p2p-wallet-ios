@@ -20,13 +20,14 @@ enum HomeNavigation: Equatable {
     case earn
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
-    case bankTransferClaim(BankTransferClaimUserAction)
+    case bankTransferClaim(StrigaClaimTransaction)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
     case topUp // Top up via bank transfer, bank card or crypto receive
     case bankTransfer // Only bank transfer
-    case withdraw
+    case withdrawCalculator
+    case withdrawInfo(StrigaWithdrawalInfo)
     // Error
     case error(show: Bool)
 }
@@ -183,17 +184,10 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             }
-        case .bankTransferClaim(let userAction):
+        case .bankTransferClaim(let transaction):
             return coordinate(to: BankTransferClaimCoordinator(
                 navigationController: navigationController,
-                transaction: StrigaClaimTransaction(
-                    challengeId: userAction.result?.challengeId ?? "",
-                    token: userAction.result?.token ?? .usdc,
-                    amount: Double(userAction.amount ?? "") ?? 0,
-                    feeAmount: .zero,
-                    fromAddress: userAction.result?.fromAddress ?? "",
-                    receivingAddress: userAction.receivingAddress
-                )
+                transaction: transaction
             ))
             .map { _ in Void() }
             .eraseToAnyPublisher()
@@ -254,9 +248,17 @@ final class HomeCoordinator: Coordinator<Void> {
         case .bankTransfer:
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
                 .eraseToAnyPublisher()
-        case .withdraw:
+        case .withdrawCalculator:
             return coordinate(to: WithdrawCalculatorCoordinator(navigationController: navigationController))
                 .eraseToAnyPublisher()
+        case let .withdrawInfo(model):
+            return coordinate(to: WithdrawCoordinator(
+                navigationController: navigationController,
+                strategy: .confirmation,
+                withdrawalInfo: model
+            ))
+            .map { _ in () } // TODO: Handle other actions here
+            .eraseToAnyPublisher()
         case let .topUpCoin(token):
             // SOL, USDC
             if [Token.nativeSolana, .usdc].contains(token) {

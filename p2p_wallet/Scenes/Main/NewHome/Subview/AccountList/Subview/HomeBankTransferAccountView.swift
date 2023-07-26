@@ -3,7 +3,6 @@ import SwiftUI
 import KeyAppUI
 
 struct HomeBankTransferAccountView: View {
-    let iconSize: CGFloat = 50
     let renderable: any RenderableAccount
 
     let onTap: (() -> Void)?

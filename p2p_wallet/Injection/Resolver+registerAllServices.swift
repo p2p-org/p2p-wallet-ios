@@ -418,6 +418,10 @@ extension Resolver: ResolverRegistering {
                         persistence: resolve(),
                         bankTransferService: resolve(),
                         solanaAccountService: resolve()
+                    ),
+                    StrigaBankTransferOutgoingUserActionConsumer(
+                        persistence: resolve(),
+                        bankTransferService: resolve()
                     )
                 ]
             )

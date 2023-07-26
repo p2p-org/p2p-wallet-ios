@@ -303,8 +303,8 @@
         "repositoryURL": "https://github.com/google/promises.git",
         "state": {
           "branch": null,
-          "revision": "c22f76b709dc4bb6d274398259e75c191e50998a",
-          "version": "2.3.0"
+          "revision": "e70e889c0196c76d22759eb50d6a0270ca9f1d9e",
+          "version": "2.3.1"
         }
       },
       {

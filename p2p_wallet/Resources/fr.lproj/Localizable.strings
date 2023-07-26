@@ -1510,4 +1510,4 @@
 "Receiver" = "Destinataire";
 "Your bank account name must match the name registered to your Key App account" = "Le nom de votre compte bancaire doit correspondre au nom enregistré sur votre compte Key App";
 "Your IBAN" = "Votre IBAN";
-"Outgoing transfer" = "Transfert sortant";
+"Outcoming transfer" = "Transfert sortant";
