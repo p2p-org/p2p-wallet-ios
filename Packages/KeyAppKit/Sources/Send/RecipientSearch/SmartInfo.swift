@@ -36,7 +36,7 @@ extension SolanaAddressInfo: BufferLayout {
         // Unable to get parsed data, fallback to decoding base64
         let stringData = (try? container.decode([String].self).first) ?? (try? container.decode(String.self))
         guard let string = stringData else {
-            throw APIClientError.couldNotRetrieveAccountInfo
+            throw BinaryReaderError.dataMismatch
         }
 
         if string.isEmpty, !(Self.self == EmptyInfo.self) {
