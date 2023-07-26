@@ -198,19 +198,19 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        walletsRepository
-            .statePublisher
-            .removeDuplicates { $0.value == $1.value }
-            .filter { [weak self] _ in
-                // update user wallets only when initializingState is success
-                self?.viewState == .success
-            }
-            .sinkAsync { [weak self] userWallets in
-                await self?.stateMachine.accept(
-                    action: .updateUserWallets(userWallets: userWallets.value)
-                )
-            }
-            .store(in: &subscriptions)
+        Publishers.CombineLatest(
+            walletsRepository.statePublisher
+                .removeDuplicates { $0.value == $1.value },
+            $viewState
+                .removeDuplicates()
+                .filter { $0 == .success }
+        )
+        .sinkAsync { [weak self] userWallets, _ in
+            await self?.stateMachine.accept(
+                action: .updateUserWallets(userWallets: userWallets.value)
+            )
+        }
+        .store(in: &subscriptions)
 
         // update fromToken only when viewState is success
         changeFromToken
