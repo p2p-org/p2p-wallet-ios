@@ -37,14 +37,8 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
                             status = .balanceToLow
                         }
                     } else {
-                        // Compare using crypto amount.
-                        if account.balance > 0 {
-                            // Balance is not zero
-                            status = .readyToClaim
-                        } else {
-                            // Balance is to low.
-                            status = .balanceToLow
-                        }
+                        // Balance is to low.
+                        status = .balanceToLow
                     }
 
                 } else {
