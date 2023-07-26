@@ -66,8 +66,8 @@ class HomeViewModel: ObservableObject {
         } else {
             text = L10n.addressCopiedToClipboard
         }
-        notificationsService.showToast(title: "", text: text, haptic: true)
-        analyticsManager.log(event: .mainCopyAddress)
+        notificationsService.showToast(title: "🖤", text: text, haptic: true)
+        analyticsManager.log(event: .mainScreenAddressClick)
     }
 
     func updateAddressIfNeeded() {
@@ -84,7 +84,7 @@ class HomeViewModel: ObservableObject {
         }
 
         analyticsManager.log(
-            event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
+            event: .mainScreenOpened(isSellEnabled: sellDataService.isAvailable)
         )
     }
 }

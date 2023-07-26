@@ -314,13 +314,24 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
         
-        if TabItem(rawValue: selectedIndex) == .send {
-            return false
-        } else if TabItem(rawValue: selectedIndex) == .wallet,
-                  (viewController as! UINavigationController).viewControllers.count == 1,
-                  self.selectedIndex == selectedIndex
-        {
-            homeTabClickedTwicelySubject.send()
+        if let tabItem = TabItem(rawValue: selectedIndex) {
+            switch tabItem {
+            case .wallet:
+                viewModel.walletTapped()
+                
+                if (viewController as! UINavigationController).viewControllers.count == 1, self.selectedIndex == selectedIndex {
+                    homeTabClickedTwicelySubject.send()
+                }
+            case .crypto:
+                viewModel.cryptoTapped()
+            case .send:
+                viewModel.sendTapped()
+                return false
+            case .history:
+                viewModel.historyTapped()
+            case .settings:
+                viewModel.settingsTapped()
+            }
         }
         
         customTabBar.updateSelectedViewPositionIfNeeded()

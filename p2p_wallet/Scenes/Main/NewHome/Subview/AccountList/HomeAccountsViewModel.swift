@@ -179,13 +179,26 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: HomeAction) {
         switch action {
         case .addMoney:
+            analyticsManager.log(event: .mainScreenAddMoneyClick)
             navigation.send(.addMoney)
-        case .withdraw: break
+        case .withdraw:
+            analyticsManager.log(event: .mainScreenWithdrawClick)
         }
     }
 
     func scrollToTop() {
         scrollOnTheTop = true
+    }
+    
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
+        }
+    }
+    
+    func balanceTapped() {
+        analyticsManager.log(event: .mainScreenAmountClick)
     }
 
     func hiddenTokensTapped() {
