@@ -115,8 +115,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
                 let formatter = CurrencyFormatter()
                 return formatter.string(amount: equityValue)
-                // return "\(Defaults.fiat.symbol)\(equityValue.toString(maximumFractionDigits: 2, roundingMode:
-                // .down))"
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
@@ -127,11 +125,12 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // USDC amount
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return ""
+                }
 
-                let equityValue = Double(state.value
-                    .filter(\.isUSDC)
-                    .reduce(0) { $0 + $1.amount })
-                return "\(equityValue.tokenAmountFormattedString(symbol: "USDC", maximumFractionDigits: 2, roundingMode: .down))"
+                let cryptoFormatter = CryptoFormatter()
+                return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.usdcAmount, on: self)
