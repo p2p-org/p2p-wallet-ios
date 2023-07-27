@@ -80,6 +80,7 @@ struct HomeAccountView_Previews: PreviewProvider {
     static var previews: some View {
         HomeAccountView(
             rendable: RendableMockAccount(
+                id: "123",
                 icon: .image(.solanaIcon),
                 wrapped: true,
                 title: "Solana",

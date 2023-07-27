@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum UserActionStatus: Codable, Hashable {
+public enum UserActionStatus: Codable, Equatable {
     /// Action is waiting to perform.
     case pending
 
@@ -21,7 +21,7 @@ public enum UserActionStatus: Codable, Hashable {
     case error(UserActionError)
 }
 
-public protocol UserAction: Codable, Hashable {
+public protocol UserAction: Codable, Equatable {
     /// Unique internal id to track.
     var id: String { get }
 

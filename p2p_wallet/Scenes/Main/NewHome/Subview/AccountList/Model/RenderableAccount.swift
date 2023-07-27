@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-protocol RenderableAccount: SortableAccount, Identifiable, Equatable, Hashable where ID == String {
+protocol RenderableAccount: SortableAccount, Identifiable where ID == String {
     var id: String { get }
 
     var icon: AccountIcon { get }
@@ -20,10 +20,6 @@ protocol RenderableAccount: SortableAccount, Identifiable, Equatable, Hashable w
 }
 
 extension RenderableAccount {
-    var id: String {
-        String(hashValue)
-    }
-    
     var onTapEnable: Bool {
         switch detail {
         case .button:
@@ -34,7 +30,7 @@ extension RenderableAccount {
     }
 }
 
-struct AccountTags: OptionSet, Hashable {
+struct AccountTags: OptionSet {
     let rawValue: Int
 
     /// Account will be in favourite list. (Always display on top section)
@@ -47,16 +43,16 @@ struct AccountTags: OptionSet, Hashable {
     static let hidden = AccountTags(rawValue: 1 << 2)
 }
 
-enum AccountExtraAction: Hashable {
+enum AccountExtraAction {
     case showHide
 }
 
-enum AccountDetail: Hashable {
+enum AccountDetail {
     case text(String)
     case button(label: String, enabled: Bool)
 }
 
-enum AccountIcon: Hashable {
+enum AccountIcon {
     case image(UIImage)
     case url(URL)
     case random(seed: String)

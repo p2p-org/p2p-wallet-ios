@@ -9,8 +9,8 @@ struct CryptoView: View {
 
     @ObservedObject var viewModel: CryptoViewModel
     
-    @ObservedObject var actionsPanelViewModel: CryptoActionsPanelViewModel
-    @ObservedObject var accountsViewModel: CryptoAccountsViewModel
+    private let actionsPanelViewModel: CryptoActionsPanelViewModel
+    private let accountsViewModel: CryptoAccountsViewModel
     
     // MARK: - Initializer
     

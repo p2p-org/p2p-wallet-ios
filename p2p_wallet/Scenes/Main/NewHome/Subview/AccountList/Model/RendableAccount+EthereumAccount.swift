@@ -11,6 +11,15 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
     let status: Status
     let userAction: WormholeClaimUserAction?
 
+    var id: String {
+        switch account.token.contractType {
+        case .native:
+            return account.address
+        case let .erc20(contract):
+            return contract.hex(eip55: false)
+        }
+    }
+
     var icon: AccountIcon {
         if let url = account.token.logo {
             return .url(url)
@@ -81,7 +90,7 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
 }
 
 extension RenderableEthereumAccount {
-    enum Status: Hashable {
+    enum Status: Equatable {
         case readyToClaim
         case isClaiming
         case balanceToLow

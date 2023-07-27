@@ -3,7 +3,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 
 public struct WormholeClaimUserAction: UserAction {
-    public enum InternalState: Codable, Hashable {
+    public enum InternalState: Codable, Equatable {
         case pending(WormholeBundle)
         case processing
         case ready
