@@ -1,6 +1,6 @@
+import BigDecimal
 import Foundation
 import KeyAppBusiness
-import BigDecimal
 
 struct RenderableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
@@ -50,8 +50,12 @@ struct RenderableSolanaAccount: RenderableAccount {
     let extraAction: AccountExtraAction?
 
     let tags: AccountTags
-    
+
     var sortingKey: BigDecimal? {
-        return account.amountInFiat?.value
+        account.amountInFiat?.value
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.account == rhs.account
     }
 }
