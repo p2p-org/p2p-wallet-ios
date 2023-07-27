@@ -1,21 +1,22 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
-import KeyAppKitCore
-import KeyAppBusiness
+import UIKit
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: SolanaPriceService
-    
+
     // MARK: - Properties
+
     private let navigation: PassthroughSubject<HomeNavigation, Never>
-    
-    private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
+
+    private var popularCoinsTokens: [TokenMetadata] = [.usdc, .nativeSolana, /* .renBTC, */ .eth, .usdt]
     @Published var popularCoins = [PopularCoin]()
 
     // MARK: - Initializer
@@ -25,13 +26,13 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         super.init()
         updateData()
     }
-    
+
     // MARK: - Actions
 
     func reloadData() async {
         // refetch
         await HomeAccountsSynchronisationService().refresh()
-        
+
         updateData()
     }
 
@@ -41,7 +42,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
-    
+
     func buyTapped(index: Int) {
         let coin = popularCoinsTokens[index]
         analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
@@ -51,11 +52,11 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
 private extension HomeEmptyViewModel {
     private func updateData() {
+        // TODO: Should be removed
         popularCoins = popularCoinsTokens.map { token in
             PopularCoin(
-                id: token.symbol,
                 title: title(for: token),
-                amount: pricesService.fiatAmount(token: token),
+                amount: nil,
                 actionTitle: ActionType.buy.description,
                 image: image(for: token)
             )
@@ -67,20 +68,17 @@ private extension HomeEmptyViewModel {
 
 extension HomeEmptyViewModel {
     class PopularCoin {
-        let id: String
         let title: String
         let amount: String?
         @Published var actionTitle: String
         let image: ImageResource
 
         init(
-            id: String,
             title: String,
             amount: String?,
             actionTitle: String,
             image: ImageResource
         ) {
-            self.id = id
             self.title = title
             self.amount = amount
             self.actionTitle = actionTitle
@@ -104,7 +102,7 @@ extension HomeEmptyViewModel {
 }
 
 extension HomeEmptyViewModel {
-    func title(for token: Token) -> String {
+    func title(for token: TokenMetadata) -> String {
         if token == .eth {
             return "Ethereum"
         } else if token == .renBTC {
@@ -113,7 +111,7 @@ extension HomeEmptyViewModel {
         return token.name
     }
 
-    func image(for token: Token) -> ImageResource {
+    func image(for token: TokenMetadata) -> ImageResource {
         if token == .nativeSolana {
             return .solanaIcon
         }
@@ -130,13 +128,5 @@ extension HomeEmptyViewModel {
             return .bitcoinIcon
         }
         return .squircleSolanaIcon
-    }
-}
-
-private extension SolanaPriceService {
-    func fiatAmount(token: Token) -> String? {
-        guard let price = getPriceFromCache(token: token, fiat: Defaults.fiat.code)?.value
-        else { return nil }
-        return "\(Defaults.fiat.symbol) \(price.toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }

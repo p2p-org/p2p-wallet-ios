@@ -1,15 +1,22 @@
+import KeyAppKitCore
 import SolanaSwift
 import SwiftUI
 
 struct SendInputTokenView: View {
     let mainColor = Color(.night)
-    let wallet: Wallet
+    let wallet: SolanaAccount
     let amountInFiat: Double // It is separated from the wallet due to new SolanaAccount structures
     let changeAction: () -> Void
     let isChangeEnabled: Bool
     let skeleton: Bool
 
-    init(wallet: Wallet, amountInFiat: Double, isChangeEnabled: Bool, skeleton: Bool = false, changeAction: @escaping () -> Void) {
+    init(
+        wallet: SolanaAccount,
+        amountInFiat: Double,
+        isChangeEnabled: Bool,
+        skeleton: Bool = false,
+        changeAction: @escaping () -> Void
+    ) {
         self.wallet = wallet
         self.amountInFiat = amountInFiat
         self.changeAction = changeAction
@@ -41,7 +48,8 @@ struct SendInputTokenView: View {
                             .foregroundColor(Color(.mountain))
                             .frame(width: 16, height: 16)
 
-                        Text(wallet.amount?.toString(maximumFractionDigits: Int(wallet.token.decimals), roundingMode: .down) ?? "")
+                        Text(wallet.amount?
+                            .toString(maximumFractionDigits: Int(wallet.token.decimals), roundingMode: .down) ?? "")
                             .foregroundColor(Color(.mountain))
                             .apply(style: .text4)
                             .lineLimit(1)
@@ -86,8 +94,13 @@ struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(.rain)
-            SendInputTokenView(wallet: Wallet(token: .nativeSolana), amountInFiat: 1.0, isChangeEnabled: true, changeAction: {})
-                .padding(.horizontal, 16)
+            SendInputTokenView(
+                wallet: SolanaAccount(token: .nativeSolana),
+                amountInFiat: 1.0,
+                isChangeEnabled: true,
+                changeAction: {}
+            )
+            .padding(.horizontal, 16)
         }
     }
 }

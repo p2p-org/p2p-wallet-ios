@@ -1,6 +1,8 @@
 import Combine
-import SolanaSwift
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
+import SolanaSwift
 import UIKit
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
@@ -21,14 +23,14 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
-    
+
     // It's a fact of exactly changing amount
     let tokenAmountChanged = PassthroughSubject<Amount?, Never>()
 
     // MARK: - Properties
 
     // State
-    @Published var token: Wallet {
+    @Published var token: SolanaAccount {
         didSet { tokenChangedEvent.send(token) }
     }
 
@@ -55,17 +57,15 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     private let fiat: Fiat
     private var currentText: String?
-    private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
+    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(.init(token: .nativeSolana))
 
     // MARK: - Dependencies
-    private let pricesService: PricesServiceType
 
-    init(initialToken: Wallet) {
+    init(initialToken: SolanaAccount) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
         mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
-        pricesService = Resolver.resolve(PricesServiceType.self)
 
         super.init()
 
@@ -108,7 +108,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         // Do not subscribe to token publisher directly as it emits the value before changing it (willSet instead of
         // didSet)
         tokenChangedEvent
-            .sink { [weak self] token in
+            .sink { [weak self] _ in
                 guard let self = self else { return }
                 self.updateCurrencyTitles()
                 self.updateDecimalsPoint()
@@ -222,7 +222,7 @@ private extension SendInputAmountViewModel {
     }
 }
 
-private extension Wallet {
+private extension SolanaAccount {
     var decimals: Int { Int(token.decimals) }
 }
 

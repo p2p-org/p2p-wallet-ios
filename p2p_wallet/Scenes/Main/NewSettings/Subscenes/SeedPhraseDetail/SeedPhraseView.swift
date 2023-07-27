@@ -46,11 +46,6 @@ struct SeedPhraseView: View {
                 .stroke(Color(.rain), lineWidth: 1)
         )
     }
-
-    var seedPhraseOverlay: some View {
-        Color.white
-            .blur(radius: 8)
-    }
 }
 
 /// A grid view

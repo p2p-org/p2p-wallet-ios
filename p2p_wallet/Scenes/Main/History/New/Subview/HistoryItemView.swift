@@ -1,10 +1,3 @@
-//
-//  NewHistoryItemView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 02.02.2023.
-//
-
 import SwiftUI
 
 struct HistoryItemView: View {
@@ -98,7 +91,7 @@ struct HistoryItemView_Previews: PreviewProvider {
         MockedRendableListTransactionItem.unstake(),
         MockedRendableListTransactionItem.create(),
         MockedRendableListTransactionItem.close(),
-        MockedRendableListTransactionItem.unknown()
+        MockedRendableListTransactionItem.unknown(),
     ]
 
     static var previews: some View {

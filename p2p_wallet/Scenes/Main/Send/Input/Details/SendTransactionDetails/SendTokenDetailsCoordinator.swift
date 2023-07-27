@@ -1,14 +1,14 @@
 import Combine
+import KeyAppKitCore
 import Send
 import SolanaSwift
 import SwiftUI
 
 enum SendTransactionDetailsCoordinatorResult {
-    case redirectToFeePrompt(availableTokens: [Wallet])
+    case redirectToFeePrompt(availableTokens: [SolanaAccount])
 }
 
 final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
-
     private let parentController: UIViewController
     private var subject = PassthroughSubject<SendTransactionDetailsCoordinatorResult, Never>()
 
@@ -26,7 +26,7 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
         let viewController = UIBottomSheetHostingController(rootView: view, shouldIgnoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
-        
+
         var shouldSendCompletion = true
         viewModel.cancelSubject.sink(receiveValue: { [weak viewController] in
             viewController?.dismiss(animated: true)
@@ -40,16 +40,16 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
             self.subject.send(.redirectToFeePrompt(availableTokens: tokens))
         }
         .store(in: &subscriptions)
-        
+
         viewModel.$cellModels
             .receive(on: RunLoop.main)
             .sink { [weak viewController] _ in
                 viewController?.updatePresentationLayout(animated: true)
             }
             .store(in: &subscriptions)
-        
+
         viewController.deallocatedPublisher()
-            .filter {shouldSendCompletion}
+            .filter { shouldSendCompletion }
             .sink { [weak self] in
                 self?.subject.send(completion: .finished)
             }

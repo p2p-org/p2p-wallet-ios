@@ -3,9 +3,6 @@ import SwiftUI
 struct SocialSignInWaitView: View {
     @ObservedObject var viewModel: SocialSignInWaitViewModel
 
-    private let mainColor = Color(.night)
-    private let animationSize = CGSize(width: 272, height: 204)
-
     var body: some View {
         LoadingAnimationLayout(
             title: viewModel.title,

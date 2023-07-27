@@ -1,6 +1,6 @@
 extension SwapToken: ChooseItemSearchableItem {
     var id: String {
-        token.address
+        token.mintAddress
     }
 
     func matches(keyword: String) -> Bool {

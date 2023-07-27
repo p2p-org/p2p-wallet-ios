@@ -1,11 +1,11 @@
+import BEPureLayout
 import Combine
 import SwiftUI
 import UIKit
-import BEPureLayout
 
 final class PincodeViewController: BaseViewController {
     private let viewModel: PincodeViewModel
-    public var subscriptions = [AnyCancellable]()
+    var subscriptions = [AnyCancellable]()
 
     // MARK: - Subviews
 
@@ -37,19 +37,19 @@ final class PincodeViewController: BaseViewController {
                     image: UIImage(resource: .lockPincode),
                     contentMode: .scaleAspectFit
                 )
-                    .padding(.init(
-                        top: 70.adaptiveHeight,
-                        left: .zero,
-                        bottom: 33.adaptiveHeight,
-                        right: .zero
-                    ))
+                .padding(.init(
+                    top: 70.adaptiveHeight,
+                    left: .zero,
+                    bottom: 33.adaptiveHeight,
+                    right: .zero
+                ))
                 UIView.spacer
 
                 UILabel(
                     font: .font(of: .title2, weight: .regular),
                     textAlignment: .center
                 )
-                    .bind(titleLabel)
+                .bind(titleLabel)
 
                 BEVStack {
                     PinCode(correctPincode: viewModel.pincode, bottomLeftButton: self.bottomLeftButton())

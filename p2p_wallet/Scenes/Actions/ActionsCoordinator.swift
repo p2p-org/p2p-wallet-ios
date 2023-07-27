@@ -29,6 +29,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
         let viewController = view.asViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16
+        viewController.view.clipsToBounds = true
         navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
@@ -54,37 +55,9 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             .store(in: &subscriptions)
 
         view.action
-            .sink(receiveValue: { [unowned self] actionType in
-                switch actionType {
-                case .buy:
-                    analyticsManager.log(event: .actionButtonBuy)
-                    viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .buy))
-                    }
-                case .receive:
-                    analyticsManager.log(event: .actionButtonReceive)
-                    analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
-                    viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .receive))
-                    }
-                case .swap:
-                    analyticsManager.log(event: .actionButtonSwap)
-                    analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
-                    viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .swap))
-                    }
-                case .send:
-                    analyticsManager.log(event: .actionButtonSend)
-                    analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
-                    viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .send))
-                    }
-                case .cashOut:
-                    viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .cashOut))
-                    }
-
-                    analyticsManager.log(event: .sellClicked(source: "Action_Panel"))
+            .sink(receiveValue: { actionType in
+                viewController.dismiss(animated: true) {
+                    subject.send(.action(type: actionType))
                 }
             })
             .store(in: &subscriptions)
@@ -98,6 +71,6 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
 extension ActionsCoordinator {
     enum Result {
         case cancel
-        case action(type: ActionsView.Action)
+        case action(type: ActionsViewActionType)
     }
 }

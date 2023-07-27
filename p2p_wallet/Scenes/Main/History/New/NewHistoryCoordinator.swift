@@ -1,5 +1,7 @@
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Sell
 import Send
@@ -35,18 +37,6 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         switch action {
         case let .openSwap(from, to):
             openSwap(wallet: from, destination: to)
-
-        case let .openParsedTransaction(trx):
-            let coordinator = TransactionDetailCoordinator(
-                viewModel: .init(parsedTransaction: trx),
-                presentingViewController: presentation.presentingViewController
-            )
-
-            coordinate(to: coordinator)
-                .sink { result in
-                    print(result)
-                }
-                .store(in: &subscriptions)
 
         case let .openHistoryTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
@@ -155,7 +145,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             return
         }
 
-        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        let walletsRepository = Resolver.resolve(SolanaAccountsService.self)
         coordinate(to: SendCoordinator(
             rootViewController: viewController,
             preChosenWallet: walletsRepository.nativeWallet,
@@ -176,22 +166,22 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         else {
             return
         }
-        
+
         let coordinator = ReceiveCoordinator(
             network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
             presentation: SmartCoordinatorPushPresentation(nc)
         )
-        
+
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)
     }
 
-    func openSwap(wallet: Wallet?, destination: Wallet? = nil) {
+    func openSwap(wallet: SolanaAccount?, destination: SolanaAccount? = nil) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             return
         }
-        
+
         let coordinator = JupiterSwapCoordinator(
             navigationController: navigationController,
             params: .init(
@@ -231,6 +221,4 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { _ in }
             .store(in: &subscriptions)
     }
-
-    func openUserAction() {}
 }

@@ -4,7 +4,6 @@ import SwiftUI
 
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
-    @SwiftUI.Environment(\.scenePhase) var scenePhase
 
     var body: some View {
         switch viewModel.loadingState {
@@ -39,22 +38,22 @@ struct RecipientSearchView: View {
                     viewModel.qr()
                 }
                 .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
-                
+
                 // Send via link
                 if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
                     sendViaLinkView
                 }
-                
+
                 #if !RELEASE
-                // Send to totally new account (for debugging)
-                Button {
-                    viewModel.sendToTotallyNewAccount()
-                } label: {
-                    Text("Tap to send to totally new account (asset will be lost)")
-                        .apply(style: .label2)
-                        .foregroundColor(.red)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                    // Send to totally new account (for debugging)
+                    Button {
+                        viewModel.sendToTotallyNewAccount()
+                    } label: {
+                        Text("Tap to send to totally new account (asset will be lost)")
+                            .apply(style: .label2)
+                            .foregroundColor(.red)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 #endif
 
                 // Result
@@ -102,7 +101,8 @@ struct RecipientSearchView: View {
                                     disabledAndReason(
                                         recipient,
                                         reason: L10n.youCannotSendTokensToYourself,
-                                        subtitle: L10n.yourAddress("").replacingOccurrences(of: "  ", with: " ") // Empty param creates 2 spaces
+                                        subtitle: L10n.yourAddress("")
+                                            .replacingOccurrences(of: "  ", with: " ") // Empty param creates 2 spaces
                                     )
                                 }
                             case .nameServiceError:
@@ -136,22 +136,24 @@ struct RecipientSearchView: View {
             }
         }
     }
-    
+
     // MARK: - View Builder
+
     private var sendViaLinkView: some View {
         Button {
             viewModel.sendViaLink()
         } label: {
             VStack {
                 RecipientCell(
-                    image: Image(viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
+                    image: Image(viewModel.sendViaLinkState
+                        .canCreateLink ? .sendViaLinkCircle : .sendViaLinkCircleDisabled)
                         .castToAnyView(),
                     title: L10n.sendMoneyViaLink,
-                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.withoutAccountDetails: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinks.tryTomorrow,
+                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.withoutAccountDetails : L10n
+                        .YouHaveReachedTheDailyLimitOfSendingFreeLinks.tryTomorrow,
                     multilinesForSubtitle: true
                 )
             }
-            
         }
         .disabled(!viewModel.sendViaLinkState.canCreateLink)
         .padding(.horizontal, 16)
@@ -209,7 +211,9 @@ struct RecipientSearchView: View {
             Text(L10n.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
-                .accessibilityIdentifier("RecipientSearchView.tryLater.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue")
+                .accessibilityIdentifier(
+                    "RecipientSearchView.tryLater.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue"
+                )
         }
         .foregroundColor(Color(.night))
     }
@@ -310,7 +314,7 @@ struct RecipientSearchView: View {
                         .frame(height: TextButton.Size.large.height)
                         .cornerRadius(28)
                         .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.sqanQR")
-                        
+
                         TextButtonView(
                             title: L10n.paste,
                             style: .primary,
@@ -432,12 +436,22 @@ struct RecipientSearchView_Previews: PreviewProvider {
     ))
 
     static var previews: some View {
+        Group {
+            recipientView(result: okCase)
+            recipientView(result: okNoFundCase)
+            recipientView(result: missingUserTokenResult)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private static func recipientView(result: RecipientSearchResult) -> NavigationView<RecipientSearchView> {
         NavigationView {
             RecipientSearchView(
                 viewModel: .init(
                     preChosenWallet: nil,
                     flow: .send,
-                    recipientSearchService: RecipientSearchServiceMock(result: okNoFundCase),
+                    recipientSearchService: RecipientSearchServiceMock(result: result),
                     sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider())
                 )
             )

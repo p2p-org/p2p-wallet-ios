@@ -158,7 +158,7 @@ struct WormholeClaimView_Previews: PreviewProvider {
         WormholeClaimView(viewModel:
             .init(
                 model: .init(
-                    icon: URL(string: Token.eth.logoURI!)!,
+                    icon: URL(string: TokenMetadata.eth.logoURI!)!,
                     title: "0.999717252 ETH",
                     subtitle: "~ $1 219.87",
                     claimButtonTitle: "Claim 0.999717252 ETH",

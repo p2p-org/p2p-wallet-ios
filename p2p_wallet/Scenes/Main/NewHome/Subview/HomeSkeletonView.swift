@@ -51,13 +51,6 @@ struct HomeSkeletonView: View {
             .frame(maxWidth: .infinity)
             .background(Color(.smoke))
             VStack(alignment: .leading, spacing: 0) {
-                Text("")
-                    .skeleton(
-                        with: true,
-                        size: CGSize(width: 128, height: 28),
-                        animated: .default
-                    )
-                    .padding(.bottom, 12)
                 cell
                 cell
             }

@@ -7,11 +7,8 @@ import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
-import TransactionParser
 
 enum NewHistoryAction {
-    case openParsedTransaction(ParsedTransaction)
-
     case openHistoryTransaction(HistoryTransaction)
 
     case openSellTransaction(SellDataServiceTransaction)
@@ -24,7 +21,7 @@ enum NewHistoryAction {
 
     case openBuy
 
-    case openSwap(Wallet?, Wallet?)
+    case openSwap(SolanaAccount?, SolanaAccount?)
 
     case openSentViaLinkHistoryView
 }
@@ -90,7 +87,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
-        tokensRepository: TokensRepository = Resolver.resolve(),
+        tokensRepository: SolanaTokensService = Resolver.resolve(),
         pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         mint: String
@@ -148,7 +145,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         Task {
-            tokens = try await tokensRepository.getTokensList(useCache: true)
+            tokens = try await Set(tokensRepository.all().values)
         }
 
         bind()
@@ -158,7 +155,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
-        tokensRepository: TokensRepository = Resolver.resolve(),
+        tokensRepository: SolanaTokensService = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
         pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve()
@@ -211,7 +208,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         Task {
-            tokens = try await tokensRepository.getTokensList(useCache: true)
+            tokens = try await Set(tokensRepository.all().values)
         }
 
         bind()

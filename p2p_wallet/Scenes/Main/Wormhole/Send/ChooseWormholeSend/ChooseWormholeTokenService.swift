@@ -24,8 +24,8 @@ final class ChooseWormholeTokenService: ChooseItemService {
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
-            guard let wallets = section.items as? [Wallet] else { return section }
-            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdcet.symbol]))
+            guard let wallets = section.items as? [SolanaAccount] else { return section }
+            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [TokenMetadata.usdcet.symbol]))
         }
         let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems
@@ -42,14 +42,15 @@ private extension ChooseWormholeTokenService {
             .statePublisher
             .map { state in
                 state.apply { accounts in
-                    [ChooseItemListSection(
-                        items: accounts
-                            .filter {
-                                WormholeSupportedTokens.bridges.map(\.solAddress).contains($0.data.mintAddress)
-                                    && ($0.data.lamports ?? 0) > 0
-                            }
-                            .map(\.data)
-                    )]
+                    [
+                        ChooseItemListSection(
+                            items: accounts
+                                .filter {
+                                    WormholeSupportedTokens.bridges.map(\.solAddress).contains($0.mintAddress)
+                                        && $0.lamports > 0
+                                }
+                        ),
+                    ]
                 }
             }
             .sink { [weak self] state in

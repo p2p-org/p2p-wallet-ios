@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // This view is a wrapper since it is extracted in another common view SendInputAmountView. Right now it is needed
 // because it is binded to SendInputAmountViewModel. The logic of binding should be changed in order to remove this

@@ -1,19 +1,13 @@
 import AnalyticsManager
-import SwiftUI
 import Combine
 import Resolver
 import SkeletonUI
+import SwiftUI
 
 struct SellInputView: View {
     @Injected private var analyticsManager: AnalyticsManager
 
     @ObservedObject var viewModel: SellViewModel
-
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
 
     init(viewModel: SellViewModel) {
         self.viewModel = viewModel
@@ -32,10 +26,10 @@ struct SellInputView: View {
                 }
                 .frame(maxWidth: .infinity)
             }.scrollDismissesKeyboard()
-            .frame(maxWidth: .infinity)
-            .onTapGesture {
-                UIApplication.shared.keyWindow?.endEditing(true)
-            }
+                .frame(maxWidth: .infinity)
+                .onTapGesture {
+                    UIApplication.shared.keyWindow?.endEditing(true)
+                }
             Spacer()
             if !viewModel.isEnteringBaseAmount, !viewModel.isEnteringQuoteAmount {
                 poweredBy
@@ -62,8 +56,8 @@ struct SellInputView: View {
 
             HStack {
                 Text(viewModel.currentInputTypeCode)
-                   .apply(style: .largeTitle)
-                   .foregroundColor(Color(.night))
+                    .apply(style: .largeTitle)
+                    .foregroundColor(Color(.night))
 
                 Spacer()
 
@@ -75,7 +69,7 @@ struct SellInputView: View {
             }
 
             HStack {
-                Text(L10n.cashOutReceive(viewModel.baseCurrencyCode, (viewModel.quoteCurrencyCode)))
+                Text(L10n.cashOutReceive(viewModel.baseCurrencyCode, viewModel.quoteCurrencyCode))
                     .apply(style: .label1)
                     .foregroundColor(Color(.mountain))
 
@@ -111,10 +105,10 @@ struct SellInputView: View {
                     .foregroundColor(Color(.mountain))
                 Text(
                     (viewModel.maxBaseAmount ?? 0).toString(maximumFractionDigits: 2, roundingMode: .down) +
-                    " \(viewModel.baseCurrencyCode)"
+                        " \(viewModel.baseCurrencyCode)"
                 )
                 .apply(style: .label1)
-                    .foregroundColor(Color(.sky))
+                .foregroundColor(Color(.sky))
             }
         }
     }
@@ -150,21 +144,23 @@ struct SellInputView: View {
                         size: CGSize(width: 107, height: 16),
                         animated: .default
                     )
-            case .loaded(let exchangeRate):
-                Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString(maximumFractionDigits: 2)) \(viewModel.quoteCurrencyCode)")
-                    .descriptionTextStyle(color: Color(.night))
-            case .error(let error):
+            case let .loaded(exchangeRate):
+                Text(
+                    "1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString(maximumFractionDigits: 2)) \(viewModel.quoteCurrencyCode)"
+                )
+                .descriptionTextStyle(color: Color(.night))
+            case let .error(error):
                 #if !RELEASE
-                Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
-                    .descriptionTextStyle(color: Color(.rose))
+                    Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
+                        .descriptionTextStyle(color: Color(.rose))
                 #else
-                Text(L10n.errorWhenUpdatingPrices)
-                    .descriptionTextStyle(color: Color(.rose))
+                    Text(L10n.errorWhenUpdatingPrices)
+                        .descriptionTextStyle(color: Color(.rose))
                 #endif
             }
             Spacer()
         }
-            .padding(.bottom, 9)
+        .padding(.bottom, 9)
     }
 
     var feeView: some View {
@@ -180,33 +176,38 @@ struct SellInputView: View {
                         size: CGSize(width: 126, height: 16),
                         animated: .default
                     )
-            case .loaded(let fee):
-                Text(L10n.allFeesIncluded(fee.baseAmount.toString(maximumFractionDigits: 2), viewModel.baseCurrencyCode, fee.quoteAmount.toString(), viewModel.quoteCurrencyCode))
-                    .apply(style: .label1)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(.night))
-            case .error(let error):
+            case let .loaded(fee):
+                Text(L10n.allFeesIncluded(
+                    fee.baseAmount.toString(maximumFractionDigits: 2),
+                    viewModel.baseCurrencyCode,
+                    fee.quoteAmount.toString(),
+                    viewModel.quoteCurrencyCode
+                ))
+                .apply(style: .label1)
+                .multilineTextAlignment(.center)
+                .foregroundColor(Color(.night))
+            case let .error(error):
                 #if !RELEASE
-                Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
-                    .apply(style: .label1)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(.rose))
+                    Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
+                        .apply(style: .label1)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(.rose))
                 #else
-                Text(L10n.errorWhenUpdatingPrices)
-                    .apply(style: .label1)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(.rose))
+                    Text(L10n.errorWhenUpdatingPrices)
+                        .apply(style: .label1)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(.rose))
                 #endif
             }
             Spacer()
         }
-            .padding(4)
-            .padding(.top, 12)
+        .padding(4)
+        .padding(.top, 12)
     }
 
     var sellButton: some View {
         TextButtonView(
-            title:  viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.cashOut,
+            title: viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.cashOut,
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
@@ -220,16 +221,16 @@ struct SellInputView: View {
 
     func textField(value: Binding<Double?>, isFirstResponder: Binding<Bool>) -> DecimalTextField {
         DecimalTextField(
-             value: value,
-             isFirstResponder: isFirstResponder,
-             textColor: .constant(.init(resource: .night))
-         ) { textField in
-             textField.font = .font(of: .largeTitle, weight: .regular)
-             textField.keyboardType = .decimalPad
-             textField.maximumFractionDigits = 2
-             textField.decimalSeparator = "."
-             textField.textAlignment = .right
-         }
+            value: value,
+            isFirstResponder: isFirstResponder,
+            textColor: .constant(.init(resource: .night))
+        ) { textField in
+            textField.font = .font(of: .largeTitle, weight: .regular)
+            textField.keyboardType = .decimalPad
+            textField.maximumFractionDigits = 2
+            textField.decimalSeparator = "."
+            textField.textAlignment = .right
+        }
     }
 }
 
@@ -252,14 +253,12 @@ private extension View {
     }
 }
 
-
 struct SellInputView_Previews: PreviewProvider {
     static var previews: some View {
         SellInputView(viewModel:
-                .init(
-                    initialBaseAmount: 2,
-                    navigation: PassthroughSubject<SellNavigation?, Never>()
-                )
-        )
+            .init(
+                initialBaseAmount: 2,
+                navigation: PassthroughSubject<SellNavigation?, Never>()
+            ))
     }
 }

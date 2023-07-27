@@ -6,9 +6,8 @@ import Sell
 
 @MainActor
 final class SellPendingViewModel: BaseViewModel, ObservableObject {
-    
     // MARK: - Dependencies
-    
+
     @Injected private var analyticsManager: AnalyticsManager
     @Injected var sellDataService: any SellDataService
     @Injected private var clipboardManager: ClipboardManagerType
@@ -18,15 +17,13 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     private let sendSubject = PassthroughSubject<Void, Never>()
     private let transactionRemovedSubject = PassthroughSubject<Void, Never>()
-    private let backSubject = PassthroughSubject<Void, Never>()
-    
+
     @Published var isRemoving: Bool = false
-    
+
     // MARK: - Publishers
 
     var send: AnyPublisher<Void, Never> { sendSubject.eraseToAnyPublisher() }
     var transactionRemoved: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
-    var back: AnyPublisher<Void, Never> { backSubject.eraseToAnyPublisher() }
 
     let tokenAmount: String
     let fiatAmount: String
@@ -68,10 +65,6 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     func addressCopied() {
         clipboardManager.copyToClipboard(model.receiverAddress)
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
-    }
-
-    func backClicked() {
-        backSubject.send()
     }
 
     func viewDidAppear() {

@@ -72,7 +72,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
                 leftText: viewModel.selectedCountry.emoji ?? "",
                 onLeftTap: { [weak viewModel] in
                     viewModel?.selectCountryTap()
-                }, onPaste: {  [weak viewModel] in
+                }, onPaste: { [weak viewModel] in
                     viewModel?.onPaste()
                 }
             ).bind(phoneInputRef)
@@ -174,12 +174,10 @@ class PhoneTextField: BaseTextFieldView {
     }
 
     var leftViewLabelRef = BERef<UILabel>()
-    let onPaste: (() -> Void)?
 
     // MARK: -
 
     init(leftText: String, onLeftTap: (() -> Void)?, onPaste: (() -> Void)?) {
-        self.onPaste = onPaste
         super.init(leftView: nil, rightView: nil, isBig: true)
         countryEmoji = leftText
         leftView = inputLeftView()

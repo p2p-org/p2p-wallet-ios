@@ -9,18 +9,14 @@ struct BuyView: View, KeyboardVisibilityReadable {
     // MARK: - States
 
     @ObservedObject var viewModel: BuyViewModel
-    /// Bottom button view offset
-    @State var bottomOffset = CGFloat(110)
-    @State var leftInputText: String = ""
-    @State var rightInputText: String = ""
     @State private var isKeyboardVisible = false
-    
+
     // MARK: - Init
 
     init(viewModel: BuyViewModel) {
         self.viewModel = viewModel
     }
-    
+
     // MARK: - Views
 
     var body: some View {
@@ -49,7 +45,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
             }
         }
     }
-    
+
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -67,7 +63,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
             )
         }
     }
-    
+
     private var basicContent: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -98,7 +94,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                             methods
                                 .padding(.top, 22)
                         }
-                        
+
                         total
                             .padding(.top, 26)
                     }
@@ -117,12 +113,6 @@ struct BuyView: View, KeyboardVisibilityReadable {
             }
             Spacer()
             actionButtonView
-        }
-        .onAppear {
-            withAnimation {
-//                viewModel.navigationSlidingPercentage = 0
-                bottomOffset = 0
-            }
         }
         .ignoresSafeArea(.keyboard, edges: isKeyboardVisible ? .top : .bottom)
     }
@@ -215,7 +205,8 @@ struct BuyView: View, KeyboardVisibilityReadable {
                                     }
                                 } label: {
                                     methodCard(item: item)
-                                        .accessibilityIdentifier("BuyView.methods" + (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
+                                        .accessibilityIdentifier("BuyView.methods" +
+                                            (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
                                         .foregroundColor(Color(.night))
                                         .frame(width: 158)
                                 }.addBorder(
@@ -360,8 +351,8 @@ struct BuyView: View, KeyboardVisibilityReadable {
             Spacer()
         }
 //        .frame(width: 151, height: 100)
-            .background(Color(.cloud))
-            .cornerRadius(16)
+        .background(Color(.cloud))
+        .cornerRadius(16)
     }
 
     private var actionButtonView: some View {

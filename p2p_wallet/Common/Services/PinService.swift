@@ -8,7 +8,6 @@ enum PincodeServiceError: Error {
 protocol PincodeService {
     // TODO: Needs to rename it after we change the logic
     // and move it to a service from other palces
-    func pincodeSucceed()
     func pincode() -> String?
     func attemptsLeft() -> Int
     func pincodeFailed() throws
@@ -29,10 +28,6 @@ class PincodeServiceImpl: PincodeService {
             throw PincodeServiceError.maxAttemptsReached
         }
         pincodeStorage.saveAttempt(attempt + 1)
-    }
-
-    func pincodeSucceed() {
-        resetAttempts()
     }
 
     func pincode() -> String? {

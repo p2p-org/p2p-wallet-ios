@@ -1,5 +1,5 @@
-import UIKit
 import SwiftUI
+import UIKit
 
 struct ModalView<Content: View>: View {
     let content: Content
@@ -17,12 +17,12 @@ struct ModalView<Content: View>: View {
 }
 
 class BottomSheetController<Content: View>: UIHostingController<ModalView<Content>> {
-
-    @MainActor public init(title: String? = nil, showHandler: Bool = true, rootView: Content) {
+    @MainActor init(title _: String? = nil, showHandler _: Bool = true, rootView: Content) {
         super.init(rootView: ModalView { rootView })
     }
 
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    @MainActor dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -59,14 +59,14 @@ class BottomSheetController<Content: View>: UIHostingController<ModalView<Conten
         get {
             .custom
         }
-        set { }
+        set {}
     }
 
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get {
             bottomSheetTransitioningDelegate
         }
-        set { }
+        set {}
     }
 
     var preferredSheetTopInset: CGFloat = 0 {
@@ -90,18 +90,6 @@ class BottomSheetController<Content: View>: UIHostingController<ModalView<Conten
     var preferredSheetBackdropColor: UIColor = .label {
         didSet {
             bottomSheetTransitioningDelegate.preferredSheetBackdropColor = preferredSheetBackdropColor
-        }
-    }
-
-    var tapToDismissEnabled: Bool = true {
-        didSet {
-            bottomSheetTransitioningDelegate.tapToDismissEnabled = tapToDismissEnabled
-        }
-    }
-
-    var panToDismissEnabled: Bool = true {
-        didSet {
-            bottomSheetTransitioningDelegate.panToDismissEnabled = panToDismissEnabled
         }
     }
 }

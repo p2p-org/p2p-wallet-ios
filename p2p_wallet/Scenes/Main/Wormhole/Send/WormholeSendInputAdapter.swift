@@ -2,6 +2,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import Send
+import UIKit
 import Wormhole
 
 struct WormholeSendInputStateAdapter: Equatable {
@@ -40,38 +41,13 @@ struct WormholeSendInputStateAdapter: Equatable {
         input?.solanaAccount
     }
 
-    var selectedToken: SolanaToken {
-        inputAccount?.data.token ?? .nativeSolana
-    }
-
     var inputAccountSkeleton: Bool {
         inputAccount == nil
-    }
-
-    var cryptoAmount: CryptoAmount {
-        guard let input = input else {
-            return .init(amount: 0, token: SolanaToken.nativeSolana)
-        }
-
-        return input.amount
-    }
-
-    var cryptoAmountString: String {
-        cryptoFormatter.string(amount: cryptoAmount)
     }
 
     // Fiat symbol
     var fiatString: String {
         Defaults.fiat.code
-    }
-
-    var amountInFiatString: String {
-        guard
-            let price = input?.solanaAccount.price,
-            let currencyAmount = try? cryptoAmount.toFiatAmount(price: price)
-        else { return "" }
-
-        return currencyFormatter.string(amount: currencyAmount)
     }
 
     var fees: String {

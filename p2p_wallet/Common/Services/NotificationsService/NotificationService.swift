@@ -1,13 +1,12 @@
 import AnalyticsManager
+import BEPureLayout
+import Combine
 import Foundation
 import Resolver
+import SolanaSwift
 import UIKit
-import Combine
-import BEPureLayout
 
 protocol NotificationService {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
-
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
     func deleteDeviceToken(ethAddress: String?) async throws
     func showInAppNotification(_ notification: InAppNotification)
@@ -31,14 +30,16 @@ protocol NotificationService {
 
 final class NotificationServiceImpl: NSObject, NotificationService {
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var notificationRepository: NotificationRepository
 
-    private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
     private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()
-    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
+    var showNotification: AnyPublisher<NotificationType, Never> {
+        showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    }
+
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {
@@ -70,7 +71,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String? = nil) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
-        
+
         let result = try await notificationRepository.sendDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey,
@@ -81,7 +82,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 deviceModel: UIDevice.current.model
             )
         ))
-        
+
         print(result)
 
         Defaults.lastDeviceToken = deviceToken
@@ -116,7 +117,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: title ?? "😓",
                 text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow()
+            .showInKeyWindow()
         }
     }
 
@@ -126,7 +127,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: title ?? "😓",
                 text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow(autoHide: withAutoHidden)
+            .showInKeyWindow(autoHide: withAutoHidden)
         }
     }
 
@@ -155,7 +156,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 title: "😓",
                 text: L10n.SomethingWentWrong.pleaseTryAgain
             )
-                .showInKeyWindow()
+            .showInKeyWindow()
         }
     }
 

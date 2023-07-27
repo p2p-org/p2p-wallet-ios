@@ -1,11 +1,9 @@
 import AnalyticsManager
-import SwiftUI
 import Resolver
+import SwiftUI
 
 struct SendCreateLinkView: View {
-
     private let mainColor = Color(.night)
-    private let subColor = Color(.silver)
     private let animationSize = CGSize(width: 272, height: 204)
 
     var body: some View {

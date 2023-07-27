@@ -23,8 +23,8 @@ struct RecoveryKitView: View {
                         // Web3Auth user
                         L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow :
                         // Seedphrase user
-                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice.keyAppDoesnTHaveAccessToThisInformation
-                    )
+                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice
+                        .keyAppDoesnTHaveAccessToThisInformation)
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -75,8 +75,7 @@ struct RecoveryKitView: View {
 
                         Text(L10n
                             .KeyAppRespectsYourPrivacyItCanTAccessYourFundsOrPersonalDetails
-                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain 
-                        )
+                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain)
                             .apply(style: .label1)
                             .foregroundColor(Color(.mountain))
                             .padding(.leading, 16)
@@ -123,17 +122,6 @@ struct RecoveryKitView: View {
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             viewModel.onAppear()
-        }
-    }
-
-    var helpButton: some View {
-        Button {
-            viewModel.openHelp()
-        } label: {
-            Image(.helpOutline)
-                .frame(width: 30, height: 30)
-                .padding(.top, 20)
-                .padding(.trailing, 20)
         }
     }
 

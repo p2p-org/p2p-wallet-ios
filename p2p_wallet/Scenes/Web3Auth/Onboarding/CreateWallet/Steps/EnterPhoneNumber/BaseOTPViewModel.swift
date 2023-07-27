@@ -1,10 +1,12 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
+import Resolver
 
 class BaseOTPViewModel: BaseViewModel, ObservableObject {
     /// Toaster error
-    @Published public var error: String?
+    @Published var error: String?
 
     @MainActor
     internal func showError(error: Error?) {
@@ -34,5 +36,12 @@ class BaseOTPViewModel: BaseViewModel, ObservableObject {
         self.error = errorText
 
         DefaultLogManager.shared.log(event: "Enter SMS: \(error?.readableDescription ?? errorText)", logLevel: .error)
+
+        if let error {
+            Resolver.resolve(AnalyticsManager.self).log(
+                title: "OnboardingError",
+                error: error
+            )
+        }
     }
 }

@@ -12,7 +12,7 @@ extension SendInputBusinessLogic {
         amount: Double,
         services: SendInputServices
     ) async -> SendInputState {
-        guard let price = state.userWalletEnvironments.exchangeRate[state.token.symbol]?.value else {
+        guard let price = state.userWalletEnvironments.exchangeRate[state.token.symbol]?.doubleValue else {
             return await sendInputChangeAmountInToken(state: state, amount: 0, services: services)
         }
         let amountInToken = amount / price
@@ -35,7 +35,8 @@ extension SendInputBusinessLogic {
         // Limit amount with logic for SPL and SOL tokens
         if state.token.isNativeSOL {
             let maxAmount = state.maxAmountInputInToken.toLamport(decimals: state.token.decimals)
-            let maxAmountWithLeftAmount = state.maxAmountInputInSOLWithLeftAmount.toLamport(decimals: state.token.decimals)
+            let maxAmountWithLeftAmount = state.maxAmountInputInSOLWithLeftAmount
+                .toLamport(decimals: state.token.decimals)
             let minAmount = feeRelayerContext.minimumRelayAccountBalance
 
             if amountLamports > maxAmountWithLeftAmount {
@@ -43,7 +44,8 @@ extension SendInputBusinessLogic {
                     // Return availability to send the absolute max amount for SOL token
                     status = .ready
                 } else {
-                    let limit = amountLamports < maxAmount ? state.maxAmountInputInSOLWithLeftAmount : state.maxAmountInputInToken
+                    let limit = amountLamports < maxAmount ? state.maxAmountInputInSOLWithLeftAmount : state
+                        .maxAmountInputInToken
                     status = .error(reason: .inputTooHigh(limit))
                 }
             }
@@ -68,7 +70,7 @@ extension SendInputBusinessLogic {
 
         var state = state.copy(
             status: status,
-            amountInFiat: amount * (state.userWalletEnvironments.exchangeRate[state.token.symbol]?.value ?? 0),
+            amountInFiat: amount * (state.userWalletEnvironments.exchangeRate[state.token.symbol]?.doubleValue ?? 0),
             amountInToken: amount
         )
 

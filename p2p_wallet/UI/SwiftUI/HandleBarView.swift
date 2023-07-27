@@ -1,7 +1,7 @@
 import SwiftUI
 
-public struct HandleBarView: View {
-    public var body: some View {
+struct HandleBarView: View {
+    var body: some View {
         RoundedRectangle(cornerRadius: 2)
             .fill(Color(UIColor(red: 0.82, green: 0.82, blue: 0.839, alpha: 1)))
             .frame(width: 30, height: 4)

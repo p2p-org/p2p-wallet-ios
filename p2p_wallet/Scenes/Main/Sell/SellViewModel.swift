@@ -1,11 +1,11 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import Combine
+import KeyAppBusiness
 import Reachability
 import Resolver
-import SolanaSwift
 import Sell
+import SolanaSwift
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -14,11 +14,11 @@ enum SellViewModelInputError: Error, Equatable {
 
     var recomendation: String {
         switch self {
-        case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
+        case let .amountIsTooSmall(minBaseAmount, baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
-        case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
+        case let .exceedsProviderLimit(maxBaseProviderAmount, baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
-        case .notEnought(let currency):
+        case let .notEnought(currency):
             return L10n.notEnough(currency)
         }
     }
@@ -28,15 +28,14 @@ private let decimals = 2
 
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Dependencies
 
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var walletRepository: SolanaAccountsService
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
-    @Injected private var priceService: PricesService
+    @Injected private var priceService: PriceService
 
     // MARK: - Properties
 
@@ -52,6 +51,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private var initialBaseAmount: Double?
 
     // MARK: - Subjects
+
     @Published var isMoreBaseCurrencyNeeded: Bool = false
 
     @Published var minBaseAmount: Double? = 2
@@ -69,6 +69,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             isEnteringQuoteAmount = !showingBaseAmount
         }
     }
+
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
 
@@ -80,6 +81,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     var currentInputTypeCode: String {
         showingBaseAmount ? baseCurrencyCode : quoteCurrencyCode
     }
+
     @Published var quoteReceiveAmount: Double = 0
 
     // MARK: - Initializer
@@ -91,7 +93,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     ) {
         self.navigation = navigation
         self.initialBaseAmount = initialBaseAmount
-        self.baseAmount = initialBaseAmount
+        baseAmount = initialBaseAmount
         super.init()
 
         warmUp()
@@ -162,7 +164,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             self.isEnteringBaseAmount = !self.shouldNotShowKeyboard
         }
     }
-    
+
     func moonpayLicenseTap() {
         let url = URL(string: MoonpayLicenseURL)!
         navigation.send(.webPage(url: url))
@@ -189,7 +191,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.isEnteringQuoteAmount == false // when entering base amount or non of textfield chosen
             }
             .map { baseAmount, exchangeRate in
-                guard let baseAmount else {return nil}
+                guard let baseAmount else { return nil }
                 return (baseAmount * exchangeRate.value).rounded(decimals: decimals)
             }
             .assignWeak(to: \.quoteAmount, on: self)
@@ -239,14 +241,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // bind dataService.data to viewModel's data
         let dataPublisher = dataService.statusPublisher
-            .compactMap({ [weak self] status in
+            .compactMap { [weak self] status in
                 switch status {
                 case .ready:
                     return (self?.dataService.currency, self?.dataService.fiat)
                 default:
                     return nil
                 }
-            })
+            }
             .receive(on: RunLoop.main)
             .share()
 
@@ -260,7 +262,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self.minBaseAmount = currency?.minSellAmount ?? 0
                 self.baseCurrencyCode = "SOL"
                 self.checkIfMoreBaseCurrencyNeeded()
-                self.updateFeesAndExchangeRates(baseAmount: self.baseAmount, baseCurrencyCode: self.baseCurrencyCode, quoteCurrencyCode: self.quoteCurrencyCode)
+                self.updateFeesAndExchangeRates(
+                    baseAmount: self.baseAmount,
+                    baseCurrencyCode: self.baseCurrencyCode,
+                    quoteCurrencyCode: self.quoteCurrencyCode
+                )
                 self.checkError(amount: self.baseAmount ?? 0)
             })
             .store(in: &subscriptions)
@@ -279,8 +285,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // observe native wallet's changes
         checkIfMoreBaseCurrencyNeeded()
-        walletRepository.dataDidChange
-            .sink(receiveValue: { [weak self] val in
+        walletRepository
+            .statePublisher
+            .sink(receiveValue: { [weak self] _ in
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)
@@ -377,18 +384,25 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     baseCurrencyAmount: baseAmount.rounded(decimals: decimals),
                     extraFeePercentage: 0
                 )
+
+                guard let token = TokenMetadata
+                    .moonpaySellSupportedTokens
+                    .first(where: { $0.symbol == baseCurrencyCode })
+                else {
+                    return
+                }
+
+                let price = try await self.priceService.getPrice(token: token, fiat: Defaults.fiat.rawValue)
+
                 // update data
                 await MainActor.run { [weak self] in
-                    guard let self,
-                          let mint = Token.moonpaySellSupportedTokens
-                            .first(where: {$0.symbol == baseCurrencyCode})?
-                            .address
-                    else { return }
-                    let baseCurrencyPrice = max(0.00001, self.priceService.currentPrice(mint: mint)?.value ?? 0)
+                    guard let self else { return }
+
+                    let baseCurrencyPrice = max(0.00001, price?.doubleValue ?? 0)
                     let totalFeeAmount = sellQuote.feeAmount + sellQuote.extraFeeAmount
                     self.fee = .loaded(
                         Fee(
-                            baseAmount: (totalFeeAmount) / baseCurrencyPrice,
+                            baseAmount: totalFeeAmount / baseCurrencyPrice,
                             quoteAmount: totalFeeAmount
                         )
                     )

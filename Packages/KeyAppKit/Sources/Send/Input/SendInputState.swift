@@ -4,6 +4,7 @@
 
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 public enum Amount: Equatable {
@@ -35,8 +36,8 @@ public enum SendInputAction: Equatable {
 
     case changeAmountInFiat(Double)
     case changeAmountInToken(Double)
-    case changeUserToken(Token)
-    case changeFeeToken(Token)
+    case changeUserToken(TokenMetadata)
+    case changeFeeToken(TokenMetadata)
 }
 
 public struct SendInputServices {
@@ -65,7 +66,7 @@ public struct SendInputState: Equatable {
         case requiredInitialize
         case missingFeeRelayer
         case initializeFailed(NSError)
-        
+
         case unknown(NSError)
     }
 
@@ -80,11 +81,11 @@ public struct SendInputState: Equatable {
         public let walletAccount: BufferInfo<SolanaAddressInfo>?
 
         ///  Usable when recipient category is ``Recipient.Category.solanaAddress``
-        public let splAccounts: [SolanaSwift.TokenAccount<AccountInfo>]
+        public let splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
 
         public init(
             walletAccount: BufferInfo<SolanaAddressInfo>?,
-            splAccounts: [SolanaSwift.TokenAccount<AccountInfo>]
+            splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
         ) {
             self.walletAccount = walletAccount
             self.splAccounts = splAccounts
@@ -100,7 +101,7 @@ public struct SendInputState: Equatable {
 
     public let recipient: Recipient
     public let recipientAdditionalInfo: RecipientAdditionalInfo
-    public let token: Token
+    public let token: TokenMetadata
     public let userWalletEnvironments: UserWalletEnvironments
 
     public let amountInFiat: Double
@@ -110,7 +111,7 @@ public struct SendInputState: Equatable {
     public let fee: FeeAmount
 
     /// Selected fee token
-    public let tokenFee: Token
+    public let tokenFee: TokenMetadata
 
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
@@ -119,7 +120,7 @@ public struct SendInputState: Equatable {
     ///
     /// Current state for free transactions
     public let feeRelayerContext: RelayContext?
-    
+
     /// Send via link
     public let sendViaLinkSeed: String?
     public var isSendingViaLink: Bool {
@@ -130,12 +131,12 @@ public struct SendInputState: Equatable {
         status: Status,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo,
-        token: Token,
+        token: TokenMetadata,
         userWalletEnvironments: UserWalletEnvironments,
         amountInFiat: Double,
         amountInToken: Double,
         fee: FeeAmount,
-        tokenFee: Token,
+        tokenFee: TokenMetadata,
         feeInToken: FeeAmount,
         feeRelayerContext: RelayContext?,
         sendViaLinkSeed: String?
@@ -158,8 +159,8 @@ public struct SendInputState: Equatable {
         status: Status = .requiredInitialize,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo = .zero,
-        token: Token,
-        feeToken: Token,
+        token: TokenMetadata,
+        feeToken: TokenMetadata,
         userWalletState: UserWalletEnvironments,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?
@@ -184,12 +185,12 @@ public struct SendInputState: Equatable {
         status: Status? = nil,
         recipient: Recipient? = nil,
         recipientAdditionalInfo: RecipientAdditionalInfo? = nil,
-        token: Token? = nil,
+        token: TokenMetadata? = nil,
         userWalletEnvironments: UserWalletEnvironments? = nil,
         amountInFiat: Double? = nil,
         amountInToken: Double? = nil,
         fee: FeeAmount? = nil,
-        tokenFee: Token? = nil,
+        tokenFee: TokenMetadata? = nil,
         feeInToken: FeeAmount? = nil,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?? = nil
@@ -213,10 +214,11 @@ public struct SendInputState: Equatable {
 
 public extension SendInputState {
     var maxAmountInputInToken: Double {
-        var balance: Lamports = userWalletEnvironments.wallets.first(where: { $0.token.address == token.address })?
+        var balance: Lamports = userWalletEnvironments.wallets
+            .first(where: { $0.token.mintAddress == token.mintAddress })?
             .lamports ?? 0
 
-        if token.address == tokenFee.address {
+        if token.mintAddress == tokenFee.mintAddress {
             if balance >= feeInToken.total {
                 balance = balance - feeInToken.total
             } else {
@@ -239,15 +241,15 @@ public extension SendInputState {
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 
-    var sourceWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
-            wallet.token.address == token.address
+    var sourceWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
+            wallet.token.mintAddress == token.mintAddress
         }
     }
 
-    var feeWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
-            wallet.token.address == tokenFee.address
+    var feeWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
+            wallet.token.mintAddress == tokenFee.mintAddress
         }
     }
 }

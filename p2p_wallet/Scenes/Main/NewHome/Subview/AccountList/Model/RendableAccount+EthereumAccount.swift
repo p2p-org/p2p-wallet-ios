@@ -4,8 +4,9 @@ import KeyAppKitCore
 import SolanaSwift
 import Wormhole
 import UIKit
+import BigDecimal
 
-struct RenderableEthereumAccount: RenderableAccount {
+struct RenderableEthereumAccount: RenderableAccount, Equatable {
     let account: EthereumAccount
     let status: Status
     let userAction: WormholeClaimUserAction?
@@ -32,7 +33,12 @@ struct RenderableEthereumAccount: RenderableAccount {
     }
 
     var title: String {
-        account.token.name
+        switch status {
+        case .readyToClaim, .isClaiming:
+            return L10n.incomingTransfer
+        default:
+            return account.token.name
+        }
     }
 
     var subtitle: String {
@@ -49,7 +55,7 @@ struct RenderableEthereumAccount: RenderableAccount {
         switch status {
         case .readyToClaim:
             return .button(label: L10n.claim, enabled: true)
-        case .isClamming:
+        case .isClaiming:
             return .button(label: L10n.claiming, enabled: false)
         case .balanceToLow:
             if let balanceInFiat = account.balanceInFiat {
@@ -77,12 +83,16 @@ struct RenderableEthereumAccount: RenderableAccount {
 
         return tags
     }
+    
+    var sortingKey: BigDecimal? {
+        return account.balanceInFiat?.value
+    }
 }
 
 extension RenderableEthereumAccount {
     enum Status: Equatable {
         case readyToClaim
-        case isClamming
+        case isClaiming
         case balanceToLow
     }
 }

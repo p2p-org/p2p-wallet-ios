@@ -14,7 +14,6 @@ final class StartViewModel: BaseViewModel, ObservableObject {
     let privacyPolicyDidTap = PassthroughSubject<Void, Never>()
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
-    let mockButtonDidTap = PassthroughSubject<Void, Never>()
 
     init(isAnimatable: Bool) {
         self.isAnimatable = isAnimatable
@@ -53,7 +52,7 @@ final class StartViewModel: BaseViewModel, ObservableObject {
                 image: .startFour,
                 title: L10n.buyOver150Currencies,
                 subtitle: L10n.easySwapWithCreditCardOrBankTransfer
-            )
+            ),
         ]
     }
 }

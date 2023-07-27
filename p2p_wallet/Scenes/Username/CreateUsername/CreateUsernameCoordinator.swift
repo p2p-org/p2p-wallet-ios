@@ -9,8 +9,6 @@ enum NavigationOption {
 }
 
 final class CreateUsernameCoordinator: Coordinator<Void> {
-    let accessibleIdentifier = UUID()
-
     private let navigationOption: NavigationOption
     private var subject = PassthroughSubject<Void, Never>()
     private weak var viewModel: CreateUsernameViewModel?
@@ -35,7 +33,6 @@ final class CreateUsernameCoordinator: Coordinator<Void> {
         case let .settings(parent):
             controller.hidesBottomBarWhenPushed = true
             parent.pushViewController(controller, animated: true)
-
         }
 
         Publishers.Merge(viewModel.skip, viewModel.close)
@@ -61,8 +58,14 @@ private extension CreateUsernameCoordinator {
 
     func addSkipButtonIfNeeded(to vc: UIViewController) {
         guard available(.onboardingUsernameButtonSkipEnabled) else { return }
-        // We have to add button here because of KeyboardAvoidingViewController. SwiftUI view doesn't see navigationItem with custom UIViewController wrapper
-        let button = UIBarButtonItem(title: L10n.skip.uppercaseFirst, style: .plain, target: self, action: #selector(skip))
+        // We have to add button here because of KeyboardAvoidingViewController. SwiftUI view doesn't see navigationItem
+        // with custom UIViewController wrapper
+        let button = UIBarButtonItem(
+            title: L10n.skip.uppercaseFirst,
+            style: .plain,
+            target: self,
+            action: #selector(skip)
+        )
         button.tintColor = .init(resource: .night)
         vc.navigationItem.rightBarButtonItem = button
     }

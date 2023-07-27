@@ -1,6 +1,7 @@
 import Foundation
-import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
+import SolanaSwift
 import UIKit
 
 protocol RendableAccountDetails {
@@ -17,13 +18,12 @@ enum RendableAccountDetailsAction: Identifiable {
     case buy
     case receive(ReceiveParam)
     case send
-    case swap(Wallet?)
+    case swap(SolanaAccount?)
 }
 
 extension RendableAccountDetailsAction {
     enum ReceiveParam {
-        case wallet(Wallet)
-        case solanaAccount(SolanaAccountsService.Account)
+        case solanaAccount(SolanaAccount)
         case none
     }
 

@@ -1,34 +1,40 @@
 import Combine
+import KeyAppKitCore
 import SolanaSwift
 import SwiftUI
 
-final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
-    private let subject = PassthroughSubject<Wallet?, Never>()
-    private let chosenWallet: Wallet
+final class ChooseWormholeTokenCoordinator: Coordinator<SolanaAccount?> {
+    private let subject = PassthroughSubject<SolanaAccount?, Never>()
+    private let chosenWallet: SolanaAccount
     private let parentController: UIViewController
     private let navigationController: UINavigationController
 
     init(
-        chosenWallet: Wallet,
+        chosenWallet: SolanaAccount,
         parentController: UIViewController
     ) {
         self.chosenWallet = chosenWallet
         self.parentController = parentController
-        self.navigationController = UINavigationController()
+        navigationController = UINavigationController()
     }
 
-    override func start() -> AnyPublisher<Wallet?, Never> {
+    override func start() -> AnyPublisher<SolanaAccount?, Never> {
         let viewModel = ChooseItemViewModel(
             service: ChooseWormholeTokenService(),
             chosenToken: chosenWallet
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
-            TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
+            TokenCellView(item: .init(wallet: model.item as! SolanaAccount), appearance: .other)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
         controller.title = L10n.pickAToken
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: .init(resource: .close), style: .plain, target: self, action: #selector(closeButtonTapped))
+        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: .init(resource: .close),
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonTapped)
+        )
         parentController.present(navigationController, animated: true)
 
         controller.onClose = { [weak self] in
@@ -37,19 +43,19 @@ final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
         }
 
         viewModel.chooseTokenSubject
-            .sink { [weak self] value in self?.close(wallet: value as? Wallet) }
+            .sink { [weak self] value in self?.close(wallet: value as? SolanaAccount) }
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
 
-    private func close(wallet: Wallet?) {
+    private func close(wallet: SolanaAccount?) {
         navigationController.dismiss(animated: true)
         subject.send(wallet)
         subject.send(completion: .finished)
     }
 
     @objc private func closeButtonTapped() {
-        self.close(wallet: nil)
+        close(wallet: nil)
     }
 }

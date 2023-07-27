@@ -68,10 +68,10 @@ struct DetailTransactionIconView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             TransactionDetailIconView(icon: .icon(.transactionCloseAccount))
-            TransactionDetailIconView(icon: .single(URL(string: Token.nativeSolana.logoURI!)!))
+            TransactionDetailIconView(icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!))
             TransactionDetailIconView(icon: .double(
-                URL(string: Token.nativeSolana.logoURI!)!,
-                URL(string: Token.renBTC.logoURI!)!
+                URL(string: TokenMetadata.nativeSolana.logoURI!)!,
+                URL(string: TokenMetadata.renBTC.logoURI!)!
             ))
         }
     }

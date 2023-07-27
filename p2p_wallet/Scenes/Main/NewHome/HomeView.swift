@@ -4,7 +4,7 @@ struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
     @StateObject var globalAppState: GlobalAppState = .shared
 
-    let viewModelWithTokens: HomeAccountsViewModel
+    let accountsViewModel: HomeAccountsViewModel
     let emptyViewModel: HomeEmptyViewModel
 
     var body: some View {
@@ -12,13 +12,9 @@ struct HomeView: View {
             switch viewModel.state {
             case .pending:
                 HomeSkeletonView()
-            case .withTokens:
+            case .wallet:
                 navigation {
-                    HomeAccountsView(viewModel: viewModelWithTokens)
-                }
-            case .empty:
-                navigation {
-                    HomeEmptyView(viewModel: emptyViewModel)
+                    HomeAccountsView(viewModel: accountsViewModel)
                 }
             }
 
@@ -80,10 +76,4 @@ struct HomeView: View {
             viewModel.updateAddressIfNeeded()
         }
     }
-}
-
-// MARK: - AnalyticView
-
-extension HomeView: AnalyticView {
-    var analyticId: String { "Main_New" }
 }

@@ -37,18 +37,3 @@ class FavouriteAccountsDataSource: ObservableObject {
         ignores.append(key)
     }
 }
-
-extension FavouriteAccountsDataSource {
-    /// This helper method detects account, that should be in hidden section
-    static func shouldInHiddenList(pubkey: String?, hideZeroBalance: Bool, amount: UInt64, favourites: [String], ignores: [String]) -> Bool {
-        guard let pubkey = pubkey else { return false }
-        if ignores.contains(pubkey) {
-            return true
-        } else if favourites.contains(pubkey) {
-            return false
-        } else if hideZeroBalance, amount == 0 {
-            return true
-        }
-        return false
-    }
-}

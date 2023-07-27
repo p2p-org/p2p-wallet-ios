@@ -1,21 +1,29 @@
 import Combine
-import SwiftUI
-import SolanaSwift
+import KeyAppKitCore
 import Resolver
+import SolanaSwift
+import SwiftUI
 
 enum JupiterSwapSource: String {
     case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend"
 }
 
 struct JupiterSwapParameters {
-    let preChosenWallet: Wallet?
-    let destinationWallet: Wallet?
+    let preChosenWallet: SolanaAccount?
+    let destinationWallet: SolanaAccount?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
     let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, destinationWallet: Wallet? = nil, hideTabBar: Bool = false) {
+    init(
+        dismissAfterCompletion: Bool,
+        openKeyboardOnStart: Bool,
+        source: JupiterSwapSource,
+        preChosenWallet: SolanaAccount? = nil,
+        destinationWallet: SolanaAccount? = nil,
+        hideTabBar: Bool = false
+    ) {
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
         self.dismissAfterCompletion = dismissAfterCompletion
@@ -30,7 +38,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private var result = PassthroughSubject<Void, Never>()
     private let params: JupiterSwapParameters
     private var viewModel: SwapViewModel!
-    
+
     private var swapSettingBarButton: UIBarButtonItem!
 
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
@@ -49,20 +57,20 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                 relayContextManager: Resolver.resolve()
             )
         )
-        
+
         // input viewModels
         let fromTokenInputViewModel = SwapInputViewModel(
             stateMachine: stateMachine,
             isFromToken: true,
             openKeyboardOnStart: params.openKeyboardOnStart
         )
-        
+
         let toTokenInputViewModel = SwapInputViewModel(
             stateMachine: stateMachine,
             isFromToken: false,
             openKeyboardOnStart: params.openKeyboardOnStart
         )
-        
+
         // swap viewModel
         viewModel = SwapViewModel(
             stateMachine: stateMachine,
@@ -72,7 +80,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             preChosenWallet: params.preChosenWallet,
             destinationWallet: params.destinationWallet
         )
-        
+
         // view
         let view = SwapView(viewModel: viewModel)
         let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
@@ -107,15 +115,19 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                 self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)
-        
+
         return result.eraseToAnyPublisher()
     }
-    
+
     func style(controller: UIViewController) {
         controller.title = L10n.swap
         controller.navigationItem.largeTitleDisplayMode = .never
-        swapSettingBarButton = UIBarButtonItem(image: .init(resource: .receipt), style: .plain, target: self, action: #selector(receiptButtonPressed))
-        
+        swapSettingBarButton = UIBarButtonItem(
+            image: .init(resource: .receipt),
+            style: .plain,
+            target: self,
+            action: #selector(receiptButtonPressed)
+        )
         // show rightBarButtonItem only on successful loading
         viewModel.$viewState
             .map { state -> Bool in
@@ -147,7 +159,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     private func openChooseToken(fromToken: Bool) {
-        self.viewModel.continueUpdateOnDisappear = true
+        viewModel.continueUpdateOnDisappear = true
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
@@ -203,7 +215,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     private func openSwapSettings() {
-        self.viewModel.continueUpdateOnDisappear = true
+        viewModel.continueUpdateOnDisappear = true
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,

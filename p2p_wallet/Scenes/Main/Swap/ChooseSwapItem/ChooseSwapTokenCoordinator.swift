@@ -60,6 +60,6 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     }
 
     @objc private func closeButtonTapped() {
-        self.close(token: nil)
+        close(token: nil)
     }
 }

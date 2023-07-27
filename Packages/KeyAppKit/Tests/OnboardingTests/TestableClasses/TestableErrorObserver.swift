@@ -18,15 +18,11 @@ class TestableErrorObserver: ErrorObserver {
         }
     }
 
-    func handleError(_ error: Error) {
+    func handleError(_ error: Error, config _: KeyAppKitCore.ErrorObserverConfig?) {
         errors.append(error)
     }
 
     func handleError(_ error: Error, userInfo _: [String: Any]?) {
-        errors.append(error)
-    }
-    
-    func handleError(_ error: Error, config: KeyAppKitCore.ErrorObserverConfig?) {
         errors.append(error)
     }
 }

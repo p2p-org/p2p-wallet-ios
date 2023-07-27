@@ -77,10 +77,10 @@ struct HistoryIconView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             HistoryIconView(icon: .icon(.transactionCloseAccount))
-            HistoryIconView(icon: .single(URL(string: Token.nativeSolana.logoURI!)!))
+            HistoryIconView(icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!))
             HistoryIconView(icon: .double(
-                URL(string: Token.nativeSolana.logoURI!)!,
-                URL(string: Token.renBTC.logoURI!)!
+                URL(string: TokenMetadata.nativeSolana.logoURI!)!,
+                URL(string: TokenMetadata.renBTC.logoURI!)!
             ))
         }
     }

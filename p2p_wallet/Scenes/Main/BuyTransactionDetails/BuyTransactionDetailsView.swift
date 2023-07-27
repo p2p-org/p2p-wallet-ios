@@ -113,7 +113,7 @@ extension BuyTransactionDetailsView {
         let networkFee: Double
         let total: Double
         let currency: Fiat
-        let token: Token
+        let token: TokenMetadata
 
         fileprivate func convertedAmount(_ amount: Double) -> String {
             amount.fiatAmountFormattedString(maximumFractionDigits: 2, currency: currency)

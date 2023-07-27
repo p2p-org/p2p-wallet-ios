@@ -52,7 +52,7 @@ extension ChooseRestoreOptionView {
                                 viewModel?.openStart.send()
                             }
                         )
-                            .styled()
+                        .styled()
                     }
                 }
             }
@@ -76,7 +76,7 @@ private extension ChooseRestoreOptionView {
                 viewModel?.optionDidTap.send(content.option)
             }
         )
-            .styled()
+        .styled()
     }
 }
 

@@ -50,10 +50,6 @@ struct RendableAbstractUserActionTransaction: RenderableTransactionDetail {
         ""
     }
 
-    var signature: String? {
-        ""
-    }
-
     var icon: TransactionDetailIcon {
         .icon(.planet)
     }
@@ -77,7 +73,7 @@ struct RendableAbstractUserActionTransaction: RenderableTransactionDetail {
     var buttonTitle: String {
         L10n.done
     }
-    
+
     var url: String? {
         nil
     }
