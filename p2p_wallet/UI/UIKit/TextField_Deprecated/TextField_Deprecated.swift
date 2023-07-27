@@ -1,5 +1,5 @@
-import UIKit
 import BEPureLayout
+import UIKit
 
 public class TextField_Deprecated: UITextField {
     // Default padding
@@ -15,7 +15,7 @@ public class TextField_Deprecated: UITextField {
 
     // MARK: -
 
-    public override var font: UIFont? {
+    override public var font: UIFont? {
         didSet {
             placeholderRef.font = font
         }
@@ -34,15 +34,15 @@ public class TextField_Deprecated: UITextField {
         insertSubview(placeholderCoverView(), aboveSubview: place)
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     func placeholderView() -> UIView {
         UILabel(text: constantPlaceholder,
-                font: self.font,
-                textColor: UIColor(resource: .night).withAlphaComponent(0.3)
-        )
+                font: font,
+                textColor: UIColor(resource: .night).withAlphaComponent(0.3))
             .bind(placeholderRef)
     }
 
@@ -54,19 +54,19 @@ public class TextField_Deprecated: UITextField {
     }
 
     func update() {
-        guard let placeholder = constantPlaceholder, let text = self.text, let font = self.font else { return }
+        guard let placeholder = constantPlaceholder, let text = text, let font = font else { return }
         let endIndex = min(text.count, placeholder.count)
-        let placeholderSubstring = placeholder[0..<endIndex]
+        let placeholderSubstring = placeholder[0 ..< endIndex]
         coverViewRef.view?.frame = CGRect(
             x: inputLeadingInset,
             y: 12,
-            width: String(placeholderSubstring).widthOfString(usingFont: font),
+            width: placeholderSubstring.widthOfString(usingFont: font),
             height: layer.bounds.height
         )
         placeholderRef.view?.frame = placeholderRect(forBounds: bounds)
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         update()
     }
@@ -75,27 +75,42 @@ public class TextField_Deprecated: UITextField {
 
     var inputLeadingInset: CGFloat {
         let viewWidth = leftViewRect(forBounds: bounds).width
-        return viewWidth + edgePadding + (viewWidth > 0 ? edgePadding/2 : 0)
+        return viewWidth + edgePadding + (viewWidth > 0 ? edgePadding / 2 : 0)
     }
 
     var inputTrailingInset: CGFloat {
         let viewWidth = rightViewRect(forBounds: bounds).width
-        return viewWidth + edgePadding + (viewWidth > 0 ? edgePadding/2 : 0)
+        return viewWidth + edgePadding + (viewWidth > 0 ? edgePadding / 2 : 0)
     }
 
-    public override func textRect(forBounds bounds: CGRect) -> CGRect {
-        CGRect(x: inputLeadingInset, y: 0, width: bounds.width - inputLeadingInset - inputTrailingInset, height: bounds.height)
+    override public func textRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(
+            x: inputLeadingInset,
+            y: 0,
+            width: bounds.width - inputLeadingInset - inputTrailingInset,
+            height: bounds.height
+        )
     }
 
-    public override func editingRect(forBounds bounds: CGRect) -> CGRect {
-        CGRect(x: inputLeadingInset, y: 0, width: bounds.width - inputLeadingInset - inputTrailingInset, height: bounds.height)
+    override public func editingRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(
+            x: inputLeadingInset,
+            y: 0,
+            width: bounds.width - inputLeadingInset - inputTrailingInset,
+            height: bounds.height
+        )
     }
 
-    public override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
-        CGRect(x: inputLeadingInset, y: 0, width: bounds.width - inputLeadingInset - inputTrailingInset, height: bounds.height)
+    override public func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(
+            x: inputLeadingInset,
+            y: 0,
+            width: bounds.width - inputLeadingInset - inputTrailingInset,
+            height: bounds.height
+        )
     }
 
-    public override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+    override public func leftViewRect(forBounds bounds: CGRect) -> CGRect {
         let rect = super.leftViewRect(forBounds: bounds)
         return CGRect(
             x: rect.origin.x + edgePadding,
@@ -105,7 +120,7 @@ public class TextField_Deprecated: UITextField {
         )
     }
 
-    public override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+    override public func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         let rect = super.rightViewRect(forBounds: bounds)
         return CGRect(
             x: rect.origin.x - edgePadding,
@@ -115,8 +130,8 @@ public class TextField_Deprecated: UITextField {
         )
     }
 
-    public override func paste(_ sender: Any?) {
+    override public func paste(_ sender: Any?) {
         super.paste(sender)
-        self.onPaste?()
+        onPaste?()
     }
 }

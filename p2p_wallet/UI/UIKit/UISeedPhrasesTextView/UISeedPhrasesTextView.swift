@@ -511,7 +511,7 @@ extension UISeedPhrasesTextView: UITextViewDelegate {
     }
 
     private func phraseIndex(at location: Int) -> Int {
-        let textToLocation = String(text[0 ..< location])
+        let textToLocation = text[0 ..< location]
             .seedPhraseFormatted
             .components(separatedBy: " ")
             .filter { !$0.isEmpty }
