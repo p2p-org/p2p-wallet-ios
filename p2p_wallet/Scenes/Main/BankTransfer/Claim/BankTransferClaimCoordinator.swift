@@ -3,6 +3,8 @@ import UIKit
 import BankTransfer
 import Resolver
 import Combine
+import SwiftyUserDefaults
+import Onboarding
 
 /// Result for `BankTransferClaimCoordinator`
 enum BankTransferClaimCoordinatorResult {
@@ -26,6 +28,10 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     private let subject = PassthroughSubject<BankTransferClaimCoordinatorResult, Never>()
 
+    // Request otp timer properties
+    @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
+    private var resendCounter: ResendCounter?
+
     // MARK: - Initialization
 
     init(
@@ -34,6 +40,8 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     ) {
         self.navigationController = navigationController
         self.transaction = transaction
+        super.init()
+        self.increaseTimer() // We need to increase time because transaction once was called before, then resend logic will appear
     }
 
     // MARK: - Methods
@@ -138,6 +146,15 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
             viewModel: viewModel,
             presentingViewController: navigationController
         ))
+    }
+
+    // Start OTP request timer
+    private func increaseTimer() {
+        if let resendCounter {
+            self.resendCounter = resendCounter.incremented()
+        } else {
+            resendCounter = .zero()
+        }
     }
 }
 
