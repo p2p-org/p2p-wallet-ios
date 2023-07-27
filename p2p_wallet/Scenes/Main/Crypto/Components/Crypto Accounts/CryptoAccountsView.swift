@@ -69,12 +69,14 @@ struct CryptoAccountsView: View {
                     }
                 }
             }
+            
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
                     tokenCell(rendableAccount: $0, isVisible: true)
                 }
             }
             .padding(.top, 12)
+            
             if !viewModel.hiddenAccounts.isEmpty {
                 Button(
                     action: {

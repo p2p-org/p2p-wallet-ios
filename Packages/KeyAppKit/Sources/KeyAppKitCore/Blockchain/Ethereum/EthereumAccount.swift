@@ -1,7 +1,7 @@
 import BigInt
 import Foundation
 
-public struct EthereumAccount: Equatable {
+public struct EthereumAccount: Hashable {
     public let address: String
     public let token: EthereumToken
     public let balance: BigUInt

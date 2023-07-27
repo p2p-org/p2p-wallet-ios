@@ -5,10 +5,6 @@ import BigDecimal
 struct RenderableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
 
-    var id: String {
-        account.id
-    }
-
     var icon: AccountIcon {
         if
             let logoURI = account.token.logoURI,

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UserActionError: Error, Equatable, Codable {
+public struct UserActionError: Error, Hashable, Codable {
     public let domain: String
     public let code: Int
     public let reason: String
