@@ -1,4 +1,5 @@
 import Foundation
+import Resolver
 import UIKit
 
 extension Bundle {
@@ -6,20 +7,12 @@ extension Bundle {
 
     // MARK: - Localization swizzle
 
-    static func swizzleLocalization() {
-        swizzle(
-            originalSelector: #selector(localizedString(forKey:value:table:)),
-            newSelector:
-            #selector(myLocalizedString(forKey:value:table:))
-        )
-    }
-
     @objc func myLocalizedString(forKey key: String, value: String?, table: String?) -> String {
         Bundle.current.myLocalizedString(forKey: key, value: value, table: table)
     }
 
     fileprivate static func valueForCurrentBundle() -> Bundle {
-        let currentLanguage = LocalizationManager().currentLanguage()
+        let currentLanguage = Resolver.resolve(LocalizationManagerType.self).currentLanguage()
 
         return main.path(forResource: currentLanguage.code, ofType: "lproj")
             .flatMap(Bundle.init(path:)) ?? main

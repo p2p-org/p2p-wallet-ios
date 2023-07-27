@@ -1,9 +1,9 @@
-import Foundation
 import Combine
+import Foundation
 
 extension Publisher {
-
-    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is optional.
+    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the
+    /// previous element is optional.
     /// The first time the upstream publisher emits an element, the previous element will be `nil`.
     ///
     ///     let range = (1...5)
@@ -14,12 +14,13 @@ extension Publisher {
     ///
     /// - Returns: A publisher of a tuple of the previous and current elements from the upstream publisher.
     func withPrevious() -> AnyPublisher<(previous: Output?, current: Output), Failure> {
-        scan(Optional<(Output?, Output)>.none) { ($0?.1, $1) }
+        scan((Output?, Output)?.none) { ($0?.1, $1) }
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
 
-    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is not optional.
+    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the
+    /// previous element is not optional.
     /// The first time the upstream publisher emits an element, the previous element will be the `initialPreviousValue`.
     ///
     ///     let range = (1...5)
@@ -28,9 +29,10 @@ extension Publisher {
     ///         .sink { print ("(\($0.previous), \($0.current))", terminator: " ") }
     ///      // Prints: "(0, 1) (1, 2) (2, 3) (3, 4) (4, 5) ".
     ///
-    /// - Parameter initialPreviousValue: The initial value to use as the "previous" value when the upstream publisher emits for the first time.
+    /// - Parameter initialPreviousValue: The initial value to use as the "previous" value when the upstream publisher
+    /// emits for the first time.
     /// - Returns: A publisher of a tuple of the previous and current elements from the upstream publisher.
-    func withPrevious(_ initialPreviousValue: Output) -> AnyPublisher<(previous: Output, current: Output), Failure> {
-        scan((initialPreviousValue, initialPreviousValue)) { ($0.1, $1) }.eraseToAnyPublisher()
-    }
+//    func withPrevious(_ initialPreviousValue: Output) -> AnyPublisher<(previous: Output, current: Output), Failure> {
+//        scan((initialPreviousValue, initialPreviousValue)) { ($0.1, $1) }.eraseToAnyPublisher()
+//    }
 }

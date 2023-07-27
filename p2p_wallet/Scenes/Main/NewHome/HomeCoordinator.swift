@@ -21,9 +21,12 @@ enum HomeNavigation: Equatable {
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
     // HomeEmpty
-    case topUpCoin(Token)
+    case topUpCoin(TokenMetadata)
     // Error
     case error(show: Bool)
+    
+    // Actions
+    case addMoney
 }
 
 final class HomeCoordinator: Coordinator<Void> {
@@ -66,7 +69,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let viewModel = HomeViewModel()
         let homeView = HomeView(
             viewModel: viewModel,
-            viewModelWithTokens: tokensViewModel!,
+            accountsViewModel: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
@@ -150,7 +153,7 @@ final class HomeCoordinator: Coordinator<Void> {
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
-                    presentingViewController: self.navigationController
+                    presentingViewController: navigationController
                 ))
                 .map { _ in () }
                 .eraseToAnyPublisher()
@@ -218,8 +221,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
 
         case let .solanaAccount(solanaAccount):
-            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
-            
+            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.token.symbol))
+
             return coordinate(
                 to: AccountDetailsCoordinator(
                     args: .solanaAccount(solanaAccount),
@@ -233,7 +236,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
         case let .topUpCoin(token):
             // SOL, USDC
-            if [Token.nativeSolana, .usdc].contains(token) {
+            if [TokenMetadata.nativeSolana, .usdc].contains(token) {
                 let coordinator = BuyCoordinator(
                     navigationController: navigationController,
                     context: .fromHome,
@@ -244,10 +247,6 @@ final class HomeCoordinator: Coordinator<Void> {
             }
 
             // Other
-            var token = token
-            if token == .renBTC {
-                token = Token(.renBTC, customSymbol: "BTC")
-            }
             return coordinate(
                 to: HomeBuyNotificationCoordinator(
                     tokenFrom: .usdc, tokenTo: token, controller: navigationController
@@ -272,11 +271,68 @@ final class HomeCoordinator: Coordinator<Void> {
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    Task {
+                        try? await Resolver.resolve(SolanaAccountsService.self).fetch()
+                    }
                 })
             }
             return Just(())
                 .eraseToAnyPublisher()
+            
+        case .addMoney:
+            coordinate(to: ActionsCoordinator(viewController: tabBarController))
+                .sink(receiveValue: { [weak self] result in
+                    switch result {
+                    case .cancel:
+                        break
+                    case let .action(type):
+                        self?.handleAction(type)
+                    }
+                })
+                .store(in: &subscriptions)
+            return Just(())
+                .eraseToAnyPublisher()
+        }
+    }
+    
+    private func handleAction(_ action: ActionsViewActionType) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+        
+        switch action {
+        case .bankTransfer:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome,
+                defaultToken: .nativeSolana,
+                defaultPaymentType: .bank
+            )
+            coordinate(to: buyCoordinator)
+                .sink(receiveValue: {})
+                .store(in: &subscriptions)
+        case .bankCard:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome,
+                defaultToken: .nativeSolana,
+                defaultPaymentType: .card
+            )
+            coordinate(to: buyCoordinator)
+                .sink(receiveValue: {})
+                .store(in: &subscriptions)
+        case .crypto:
+            if available(.ethAddressEnabled) {
+                let coordinator =
+                    SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            } else {
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            }
         }
     }
 

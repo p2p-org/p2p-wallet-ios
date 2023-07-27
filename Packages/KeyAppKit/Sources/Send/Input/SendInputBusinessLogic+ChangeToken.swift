@@ -4,12 +4,13 @@
 
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension SendInputBusinessLogic {
     static func changeToken(
         state: SendInputState,
-        token: Token,
+        token: TokenMetadata,
         services: SendInputServices
     ) async -> SendInputState {
         guard let feeRelayerContext = state.feeRelayerContext else {
@@ -29,11 +30,11 @@ extension SendInputBusinessLogic {
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: state.tokenFee.address,
+                    payingTokenMint: state.tokenFee.mintAddress,
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
             }
-            
+
             var state = state.copy(
                 token: token,
                 fee: fee
@@ -49,13 +50,13 @@ extension SendInputBusinessLogic {
                     token: state.token,
                     services: services
                 )
-                
+
                 state = state.copy(
                     tokenFee: feeInfo.token,
                     feeInToken: fee == .zero ? .zero : feeInfo.fee
                 )
             }
-            
+
             state = await sendInputChangeAmountInToken(state: state, amount: state.amountInToken, services: services)
             state = await validateFee(state: state)
 
@@ -68,8 +69,8 @@ extension SendInputBusinessLogic {
 
     static func validateFee(state: SendInputState) async -> SendInputState {
         guard state.fee != .zero else { return state }
-        guard let wallet: Wallet = state.userWalletEnvironments.wallets
-            .first(where: { (wallet: Wallet) in wallet.token.address == state.tokenFee.address })
+        guard let wallet: SolanaAccount = state.userWalletEnvironments.wallets
+            .first(where: { (wallet: SolanaAccount) in wallet.token.mintAddress == state.tokenFee.mintAddress })
         else {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }
@@ -82,17 +83,17 @@ extension SendInputBusinessLogic {
     }
 
     static func autoSelectTokenFee(
-        userWallets: [Wallet],
+        userWallets: [SolanaAccount],
         feeInSol: FeeAmount,
-        token: Token,
+        token: TokenMetadata,
         services: SendInputServices
-    ) async -> (token: Token, fee: FeeAmount?) {
+    ) async -> (token: TokenMetadata, fee: FeeAmount?) {
         var preferOrder = ["SOL": 2]
         if !preferOrder.keys.contains(token.symbol) {
             preferOrder[token.symbol] = 1
         }
 
-        let sortedWallets = userWallets.sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+        let sortedWallets = userWallets.sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
             let lhsValue = (preferOrder[lhs.token.symbol] ?? 3)
             let rhsValue = (preferOrder[rhs.token.symbol] ?? 3)
 
@@ -112,7 +113,7 @@ extension SendInputBusinessLogic {
             do {
                 let feeInToken: FeeAmount = (try await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: feeInSol,
-                    payingFeeTokenMint: try PublicKey(string: wallet.token.address)
+                    payingFeeTokenMint: try PublicKey(string: wallet.token.mintAddress)
                 )) ?? .zero
 
                 if feeInToken.total <= (wallet.lamports ?? 0) {

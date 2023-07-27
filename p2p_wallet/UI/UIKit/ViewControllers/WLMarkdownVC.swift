@@ -1,6 +1,6 @@
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -34,7 +34,7 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
         markdownView.load()
     }
 
-    override func calculateFittingHeightForPresentedView(targetWidth _: CGFloat) -> CGFloat {
+    func calculateFittingHeightForPresentedView(targetWidth _: CGFloat) -> CGFloat {
         .greatestFiniteMagnitude
     }
 
@@ -46,14 +46,14 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
 class WLIndicatorModalVC: BaseVC {
     lazy var containerView = UIView(backgroundColor: .grayMain)
     var swipeGesture: UIGestureRecognizer?
-    
+
     // MARK: - Initializers
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         containerView.roundCorners([.topLeft, .topRight], radius: 20)
     }
-    
+
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
@@ -61,34 +61,29 @@ class WLIndicatorModalVC: BaseVC {
         view.addSubview(topGestureView)
         topGestureView.autoPinEdge(toSuperviewSafeArea: .top)
         topGestureView.autoAlignAxis(toSuperviewAxis: .vertical)
-        
+
         view.addSubview(containerView)
         containerView.autoPinEdge(.top, to: .bottom, of: topGestureView, withOffset: 8)
         containerView.autoPinEdge(toSuperviewSafeArea: .leading)
         containerView.autoPinEdge(toSuperviewSafeArea: .trailing)
         containerView.autoPinEdge(toSuperviewEdge: .bottom)
-        
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         containerView.addGestureRecognizer(tapGesture)
-        
+
         if modalPresentationStyle == .custom {
             swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidSwipe(_:)))
             view.addGestureRecognizer(swipeGesture!)
             view.isUserInteractionEnabled = true
         }
     }
-    
+
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
-    
+
     @objc func viewDidSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
         (presentationController as? ResizablePresentationController)?
             .presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
     }
-    
-    func calculateFittingHeightForPresentedView(targetWidth _: CGFloat) -> CGFloat {
-        5 + 8 // indicatorHeight + space
-    }
 }
-

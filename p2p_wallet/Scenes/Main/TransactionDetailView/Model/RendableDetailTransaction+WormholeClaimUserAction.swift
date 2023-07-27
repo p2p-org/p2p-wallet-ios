@@ -8,8 +8,6 @@ import Wormhole
 struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeClaimUserAction
 
-    var signature: String? { userAction.id }
-
     var status: TransactionDetailStatus {
         switch userAction.status {
         case .pending, .processing:
@@ -62,14 +60,14 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
 
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
-        
+
         result.append(
             .init(
                 title: L10n.receive, values: [
-                    .init(text: "Wormhole Bridge")
-            ])
+                    .init(text: "Wormhole Bridge"),
+                ]
+            )
         )
-        
 
         if userAction.compensationDeclineReason == nil {
             result.append(

@@ -13,7 +13,7 @@ protocol WormholeClaimModel {
     var claimButtonTitle: String { get }
 
     var claimButtonEnable: Bool { get }
-    
+
     var isOpenFeesVisible: Bool { get }
 
     var shouldShowBanner: Bool { get }
@@ -22,8 +22,6 @@ protocol WormholeClaimModel {
 
     var getAmount: String? { get }
 
-    var feesButtonEnable: Bool { get }
-    
     var isLoading: Bool { get }
 }
 
@@ -47,7 +45,7 @@ struct WormholeClaimMockModel: WormholeClaimModel {
     var getAmount: String?
 
     var feesButtonEnable: Bool
-    
+
     var isLoading: Bool
 }
 
@@ -116,7 +114,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
 
         guard let bundle else {
             if isNotEnoughAmount {
-                  return L10n.moreThanTheReceivedAmount
+                return L10n.moreThanTheReceivedAmount
             }
             return L10n.isUnavailable(L10n.value)
         }
@@ -135,18 +133,13 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
 
         let cryptoFormatter = CryptoFormatter()
         let currencyFormatter = CurrencyFormatter()
-        
+
         let formattedCryptoAmount = cryptoFormatter.string(amount: resultAmount)
         let formattedCurrencyAmount = currencyFormatter.string(amount: resultAmount)
-        
+
         return "\(formattedCryptoAmount) (≈ \(formattedCurrencyAmount))"
-        
     }
 
-    var feesButtonEnable: Bool {
-        bundle.value?.fees != nil
-    }
-    
     var isLoading: Bool {
         bundle.isFetching
     }

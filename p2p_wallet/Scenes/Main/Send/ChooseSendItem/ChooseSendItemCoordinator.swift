@@ -1,39 +1,45 @@
 import Combine
+import KeyAppKitCore
+import KeyAppUI
 import SolanaSwift
 import SwiftUI
-import KeyAppUI
 
 enum ChooseWalletTokenStrategy {
-    case feeToken(tokens: [Wallet], feeInFiat: Double)
+    case feeToken(tokens: [SolanaAccount], feeInFiat: Double)
     case sendToken
 }
 
-final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
+final class ChooseSendItemCoordinator: Coordinator<SolanaAccount?> {
     private let parentController: UIViewController
-    private var subject = PassthroughSubject<Wallet?, Never>()
+    private var subject = PassthroughSubject<SolanaAccount?, Never>()
     private let strategy: ChooseWalletTokenStrategy
-    private let chosenWallet: Wallet
+    private let chosenWallet: SolanaAccount
     private let navigationController: UINavigationController
 
-    init(strategy: ChooseWalletTokenStrategy, chosenWallet: Wallet, parentController: UIViewController) {
+    init(strategy: ChooseWalletTokenStrategy, chosenWallet: SolanaAccount, parentController: UIViewController) {
         self.strategy = strategy
         self.chosenWallet = chosenWallet
         self.parentController = parentController
-        self.navigationController = UINavigationController()
+        navigationController = UINavigationController()
     }
 
-    override func start() -> AnyPublisher<Wallet?, Never> {
+    override func start() -> AnyPublisher<SolanaAccount?, Never> {
         let viewModel = ChooseItemViewModel(
             service: buildService(strategy: strategy),
             chosenToken: chosenWallet
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
-            TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
+            TokenCellView(item: .init(wallet: model.item as! SolanaAccount), appearance: .other)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
         configureTitle(strategy: strategy, vc: controller)
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Asset.MaterialIcon.close.image, style: .plain, target: self, action: #selector(closeButtonTapped))
+        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: Asset.MaterialIcon.close.image,
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonTapped)
+        )
         parentController.present(navigationController, animated: true)
 
         controller.onClose = { [weak self] in
@@ -42,20 +48,20 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
         }
 
         viewModel.chooseTokenSubject
-            .sink { [weak self] value in self?.close(wallet: value as? Wallet) }
+            .sink { [weak self] value in self?.close(wallet: value as? SolanaAccount) }
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
 
-    private func close(wallet: Wallet?) {
+    private func close(wallet: SolanaAccount?) {
         navigationController.dismiss(animated: true)
         subject.send(wallet)
         subject.send(completion: .finished)
     }
 
     @objc private func closeButtonTapped() {
-        self.close(wallet: nil)
+        close(wallet: nil)
     }
 
     private func configureTitle(strategy: ChooseWalletTokenStrategy, vc: UIViewController) {
@@ -69,7 +75,7 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
 
     private func buildService(strategy: ChooseWalletTokenStrategy) -> ChooseItemService {
         switch strategy {
-        case .feeToken(let tokens, _):
+        case let .feeToken(tokens, _):
             return ChooseSendFeeTokenService(tokens: tokens)
         case .sendToken:
             return ChooseSendTokenService()

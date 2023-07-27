@@ -23,7 +23,7 @@ struct CoinLogoImageViewRepresentable: UIViewRepresentable {
     }
     
     enum Args {
-        case token(Token?)
+        case token(TokenMetadata?)
         case manual(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool)
     }
 }

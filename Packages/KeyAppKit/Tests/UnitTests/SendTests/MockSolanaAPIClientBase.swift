@@ -155,4 +155,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     func getAddressLookupTable(accountKey: SolanaSwift.PublicKey) async throws -> SolanaSwift.AddressLookupTableAccount? {
         fatalError()
     }
+    
+    func getMultipleAccounts<T>(pubkeys: [String], commitment: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?] where T : SolanaSwift.BufferLayout {
+        fatalError()
+    }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-protocol RenderableAccount: Identifiable where ID == String {
+protocol RenderableAccount: SortableAccount, Identifiable where ID == String {
     var id: String { get }
 
     var icon: AccountIcon { get }
@@ -20,10 +20,6 @@ protocol RenderableAccount: Identifiable where ID == String {
 }
 
 extension RenderableAccount {
-    var isInIgnoreList: Bool {
-        tags.contains(.ignore)
-    }
-
     var onTapEnable: Bool {
         switch detail {
         case .button:
@@ -42,13 +38,13 @@ struct AccountTags: OptionSet {
 
     /// Account will be in ignore list. (Second section)
     static let ignore = AccountTags(rawValue: 1 << 1)
-    
+
     /// Account will be hidden.
     static let hidden = AccountTags(rawValue: 1 << 2)
 }
 
 enum AccountExtraAction {
-    case visiable
+    case showHide
 }
 
 enum AccountDetail {

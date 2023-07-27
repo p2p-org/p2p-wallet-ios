@@ -10,7 +10,6 @@ import Resolver
 
 final class RecoveryKitViewModel: ObservableObject {
     private let analyticsManager: AnalyticsManager
-    private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var model: Model?
@@ -27,7 +26,6 @@ final class RecoveryKitViewModel: ObservableObject {
     ) {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
-        self.userWalletManager = userWalletManager
 
         Publishers
             .CombineLatest(
@@ -74,17 +72,12 @@ final class RecoveryKitViewModel: ObservableObject {
     func openDevices() {
         actions.send(.devices)
     }
-
-    func openHelp() {
-        actions.send(.help)
-    }
 }
 
 extension RecoveryKitViewModel {
     enum Action {
         case seedPhrase
         case deleteAccount
-        case help
         case devices
     }
 

@@ -57,31 +57,31 @@ public struct HistoryTransaction: Identifiable, Codable {
         do {
             switch type {
             case .send:
-                info = .send(try container.decode(Transfer.self, forKey: .info))
+                info = try .send(container.decode(Transfer.self, forKey: .info))
             case .receive:
-                info = .receive(try container.decode(Transfer.self, forKey: .info))
+                info = try .receive(container.decode(Transfer.self, forKey: .info))
             case .swap:
-                info = .swap(try container.decode(Swap.self, forKey: .info))
+                info = try .swap(container.decode(Swap.self, forKey: .info))
             case .stake:
-                info = .stake(try container.decode(Transfer.self, forKey: .info))
+                info = try .stake(container.decode(Transfer.self, forKey: .info))
             case .unstake:
-                info = .unstake(try container.decode(Transfer.self, forKey: .info))
+                info = try .unstake(container.decode(Transfer.self, forKey: .info))
             case .createAccount:
-                info = .createAccount(try container.decode(TokenAmount.self, forKey: .info))
+                info = try .createAccount(container.decode(TokenAmount.self, forKey: .info))
             case .closeAccount:
-                info = .closeAccount(try container.decode(TokenAmount.self, forKey: .info))
+                info = try .closeAccount(container.decode(TokenAmount.self, forKey: .info))
             case .mint:
-                info = .mint(try container.decode(TokenAmount.self, forKey: .info))
+                info = try .mint(container.decode(TokenAmount.self, forKey: .info))
             case .burn:
-                info = .burn(try container.decode(TokenAmount.self, forKey: .info))
+                info = try .burn(container.decode(TokenAmount.self, forKey: .info))
             case .wormholeSend:
-                info = .wormholeSend(try container.decode(WormholeSend.self, forKey: .info))
+                info = try .wormholeSend(container.decode(WormholeSend.self, forKey: .info))
             case .wormholeReceive:
-                info = .wormholeReceive(try container.decode(WormholeReceive.self, forKey: .info))
+                info = try .wormholeReceive(container.decode(WormholeReceive.self, forKey: .info))
             case .tryCreateAccount:
                 info = .tryCreateAccount
             case .unknown:
-                info = .unknown(try container.decode(TokenAmount.self, forKey: .info))
+                info = try .unknown(container.decode(TokenAmount.self, forKey: .info))
             }
         } catch {
             info = nil
@@ -238,7 +238,7 @@ public extension HistoryTransaction {
             name = try container.decode(String.self, forKey: .name)
             mint = try container.decode(String.self, forKey: .mint)
             logoUrl = try? container.decodeIfPresent(URL.self, forKey: .logoUrl)
-            usdRate = Double(try container.decodeIfPresent(String.self, forKey: .usdRate) ?? "") ?? 0.0
+            usdRate = try Double(container.decodeIfPresent(String.self, forKey: .usdRate) ?? "") ?? 0.0
             coingeckoId = try container.decodeIfPresent(String.self, forKey: .coingeckoId)
             decimals = try container.decode(UInt8.self, forKey: .decimals)
         }

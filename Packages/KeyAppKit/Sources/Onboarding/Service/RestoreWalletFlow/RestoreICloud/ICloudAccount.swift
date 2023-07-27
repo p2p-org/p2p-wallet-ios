@@ -23,7 +23,7 @@ public struct ICloudAccount: Codable, Hashable {
         self.phrase = phrase
         self.derivablePath = derivablePath
 
-        let account = try await Account(
+        let account = try await KeyPair(
             phrase: phrase.components(separatedBy: " "),
             network: .mainnetBeta,
             derivablePath: derivablePath

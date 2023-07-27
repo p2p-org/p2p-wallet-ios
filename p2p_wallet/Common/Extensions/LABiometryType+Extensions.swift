@@ -19,11 +19,4 @@ extension LABiometryType {
             return ""
         }
     }
-
-    static var current: LABiometryType {
-        // retrieve policy
-        let context = LAContext()
-        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return context.biometryType
-    }
 }

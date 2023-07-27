@@ -4,7 +4,7 @@ import SolanaSwift
 
 public protocol SendFeeCalculator: AnyObject {
     func getFees(
-        from token: Token,
+        from token: TokenMetadata,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -20,7 +20,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
     // MARK: - Fees calculator
 
     public func getFees(
-        from token: Token,
+        from token: TokenMetadata,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -44,7 +44,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             case let .solanaTokenAddress(walletAddress, _):
                 let associatedAccount = try PublicKey.associatedTokenAddress(
                     walletAddress: walletAddress,
-                    tokenMintAddress: try PublicKey(string: token.address)
+                    tokenMintAddress: try PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts
@@ -52,7 +52,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             case .solanaAddress, .username:
                 let associatedAccount = try PublicKey.associatedTokenAddress(
                     walletAddress: try PublicKey(string: recipient.address),
-                    tokenMintAddress: try PublicKey(string: token.address)
+                    tokenMintAddress: try PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts

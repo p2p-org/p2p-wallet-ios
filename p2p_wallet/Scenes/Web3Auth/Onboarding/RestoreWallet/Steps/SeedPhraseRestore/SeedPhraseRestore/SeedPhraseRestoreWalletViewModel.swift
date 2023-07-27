@@ -9,7 +9,6 @@ final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var notificationService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Output
 
@@ -27,7 +26,7 @@ final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         #if DEBUG
-        seed = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?.replacingOccurrences(of: "-", with: " ") ?? ""
+            seed = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?.replacingOccurrences(of: "-", with: " ") ?? ""
         #endif
         super.init()
         $seed.sink { [weak self] value in

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -19,10 +19,6 @@ let package = Package(
             name: "KeyAppKitLogger",
             targets: ["KeyAppKitLogger"]
         ),
-        .library(
-            name: "TransactionParser",
-            targets: ["TransactionParser"]
-        ),
 
         .library(
             name: "NameService",
@@ -38,12 +34,6 @@ let package = Package(
         .library(
             name: "AnalyticsManager",
             targets: ["AnalyticsManager"]
-        ),
-
-        // Price service for wallet
-        .library(
-            name: "SolanaPricesAPIs",
-            targets: ["SolanaPricesAPIs"]
         ),
 
         // JSBridge
@@ -62,12 +52,6 @@ let package = Package(
         .library(
             name: "Onboarding",
             targets: ["Onboarding"]
-        ),
-
-        // Solend
-        .library(
-            name: "Solend",
-            targets: ["Solend"]
         ),
 
         // Send
@@ -100,6 +84,17 @@ let package = Package(
             targets: ["Wormhole"]
         ),
 
+        // Library
+        .library(
+            name: "FeeRelayerSwift",
+            targets: ["FeeRelayerSwift"]
+        ),
+
+        .library(
+            name: "OrcaSwapSwift",
+            targets: ["OrcaSwapSwift"]
+        ),
+
         // KeyAppBusiness
         .library(
             name: "KeyAppBusiness",
@@ -114,17 +109,15 @@ let package = Package(
         .library(
             name: "KeyAppStateMachine",
             targets: ["KeyAppStateMachine"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
-        .package(url: "https://github.com/p2p-org/FeeRelayerSwift", branch: "master"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
-        .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
         .package(url: "https://github.com/vapor/websocket-kit", from: "2.8.0"),
     ],
     targets: [
@@ -143,21 +136,6 @@ let package = Package(
 
         // KeyAppKitLogger
         .target(name: "KeyAppKitLogger"),
-
-        // Transaction Parser
-        .target(
-            name: "TransactionParser",
-            dependencies: [
-                "Cache",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
-        ),
-        .testTarget(
-            name: "TransactionParserUnitTests",
-            dependencies: ["TransactionParser"],
-            path: "Tests/UnitTests/TransactionParserUnitTests",
-            resources: [.process("./Resource")]
-        ),
 
         // Name Service
         .target(
@@ -181,7 +159,7 @@ let package = Package(
         .testTarget(
             name: "KeyAppNetworkingTests",
             dependencies: [
-                "KeyAppNetworking"
+                "KeyAppNetworking",
             ],
             path: "Tests/UnitTests/KeyAppNetworkingTests"
         ),
@@ -197,24 +175,12 @@ let package = Package(
             path: "Tests/UnitTests/AnalyticsManagerUnitTests"
         ),
 
-        // PricesService
-        .target(
-            name: "SolanaPricesAPIs",
-            dependencies: ["Cache", .product(name: "SolanaSwift", package: "solana-swift")]
-        ),
-        .testTarget(
-            name: "SolanaPricesAPIsUnitTests",
-            dependencies: ["SolanaPricesAPIs"],
-            path: "Tests/UnitTests/SolanaPricesAPIsUnitTests"
-            //      resources: [.process("./Resource")]
-        ),
-
         // JSBridge
         .target(
             name: "JSBridge"
         ),
         .testTarget(
-            name: "JSBridgeTests", 
+            name: "JSBridgeTests",
             dependencies: ["JSBridge"],
             path: "Tests/UnitTests/JSBridgeTests"
         ),
@@ -249,44 +215,12 @@ let package = Package(
         ),
         .testTarget(name: "OnboardingTests", dependencies: ["Onboarding"]),
 
-        // Solend
-        .target(
-            name: "Solend",
-            dependencies: [
-                "P2PSwift",
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
-            ]
-        ),
-        .testTarget(
-            name: "SolendUnitTests",
-            dependencies: ["Solend"],
-            path: "Tests/UnitTests/SolendUnitTests"
-        ),
-
-        // MARK: - P2P SDK
-
-        .target(name: "P2PSwift"),
-
-        .testTarget(
-            name: "P2PTestsIntegrationTests",
-            dependencies: ["P2PSwift"],
-            path: "Tests/IntegrationTests/P2PTestsIntegrationTests"
-        ),
-
-        // TODO: Future migration
-        // .binaryTarget(
-        //     name: "p2p",
-        //     path: "Frameworks/p2p.xcframework"
-        // ),
-
         .target(
             name: "Send",
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
+                "FeeRelayerSwift",
                 "NameService",
-                "SolanaPricesAPIs",
-                "TransactionParser",
                 "History",
                 "Wormhole",
             ]
@@ -310,7 +244,7 @@ let package = Package(
         // Sell
         .target(
             name: "Sell",
-            dependencies: ["Moonpay"]
+            dependencies: ["Moonpay", "KeyAppBusiness"]
         ),
 
         // Moonpay
@@ -327,7 +261,7 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
+                "FeeRelayerSwift",
             ]
         ),
         .testTarget(
@@ -348,7 +282,6 @@ let package = Package(
             dependencies: [
                 "KeyAppKitCore",
                 "Cache",
-                "SolanaPricesAPIs",
                 "WalletCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),
@@ -359,6 +292,37 @@ let package = Package(
             name: "KeyAppBusinessTests",
             dependencies: ["KeyAppBusiness"],
             path: "Tests/UnitTests/KeyAppBusinessTests"
+        ),
+
+        // Fee relayer
+        .target(
+            name: "FeeRelayerSwift",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+                "OrcaSwapSwift",
+            ]
+        ),
+        .testTarget(
+            name: "FeeRelayerSwiftUnitTests",
+            dependencies: ["FeeRelayerSwift"]
+        ),
+
+        // Orca swap
+        .target(
+            name: "OrcaSwapSwift",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+            ]
+        ),
+        .testTarget(
+            name: "OrcaSwapUnitTests",
+            dependencies: ["OrcaSwapSwift"],
+            resources: [.process("./Tests/Resources/orcaconfigs-mainnet.json")]
+        ),
+
+        .testTarget(
+            name: "OrcaSwapIntegrationTests",
+            dependencies: ["OrcaSwapSwift"]
         ),
 
         // Core
@@ -372,7 +336,6 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "BigDecimal", package: "BigDecimal"),
-                .product(name: "LoggerSwift", package: "LoggerSwift"),
             ]
         ),
 
@@ -381,16 +344,16 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
-        
+
         // StateMachine
         .target(
             name: "KeyAppStateMachine"
         ),
-        
+
         .testTarget(
             name: "KeyAppStateMachineTests",
             dependencies: ["KeyAppStateMachine"],
             path: "Tests/UnitTests/KeyAppStateMachineTests"
-        )
+        ),
     ]
 )
