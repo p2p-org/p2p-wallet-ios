@@ -30,13 +30,13 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     
     /// Accounts for claiming transfers.
-    var transferAccounts: [any RenderableAccount] = []
+    @Published var transferAccounts: [any RenderableAccount] = []
     
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
     
     /// Secondary list accounts. Will be normally hidden and require manuall action from user to be shown.
-    var hiddenAccounts: [any RenderableAccount] = []
+    @Published var hiddenAccounts: [any RenderableAccount] = []
     
     // MARK: - Initialization
     
