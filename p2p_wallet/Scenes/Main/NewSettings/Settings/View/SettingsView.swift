@@ -27,7 +27,6 @@ struct SettingsView: View {
             Group {
                 profileSection
                 securitySection
-                appearanceSection
                 communitySection
                 appVersionSection
                 #if !RELEASE
@@ -129,16 +128,6 @@ struct SettingsView: View {
                         message: Text(viewModel.error?.readableDescription ?? "")
                     )
                 }
-            }
-        }
-    }
-
-    private var appearanceSection: some View {
-        Section(header: headerText(L10n.appearance)) {
-            cellView(image: .hideZeroBalance, title: L10n.hideZeroBalances) {
-                Toggle("", isOn: $viewModel.zeroBalancesIsHidden)
-                    .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
-                    .labelsHidden()
             }
         }
     }

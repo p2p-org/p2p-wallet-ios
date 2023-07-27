@@ -11,11 +11,10 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
         input: (
             accounts: [SolanaAccount],
             favourites: [String],
-            ignores: [String],
-            hideZeroBalance: Bool
+            ignores: [String]
         )
     ) -> [RenderableSolanaAccount] {
-        let (accounts, favourites, ignores, hideZeroBalance) = input
+        let (accounts, favourites, ignores) = input
 
         return accounts
             .filter { !$0.isNFTToken && !$0.isUSDC }
@@ -27,7 +26,7 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
                     tags.insert(.favourite)
                 } else if ignores.contains(account.address) {
                     tags.insert(.ignore)
-                } else if hideZeroBalance, account.lamports == 0 {
+                } else if account.lamports == 0 {
                     tags.insert(.ignore)
                 }
                 

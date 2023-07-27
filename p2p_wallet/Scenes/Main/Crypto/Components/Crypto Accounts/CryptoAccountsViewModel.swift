@@ -13,8 +13,6 @@ import Wormhole
 /// ViewModel of `CryptoAccounts` scene
 final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     
-    private var defaultsDisposables: [DefaultsDisposable] = []
-    
     // MARK: - Dependencies
     
     private let analyticsManager: AnalyticsManager
@@ -27,7 +25,6 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
     
     @Published private(set) var scrollOnTheTop = true
-    @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     
     /// Accounts for claiming transfers.
     @Published var transferAccounts: [any RenderableAccount] = []
@@ -57,10 +54,6 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         
         super.init()
         
-        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
-            self?.hideZeroBalance = change.newValue ?? false
-        })
-        
         self.bindAccounts()
     }
     
@@ -83,14 +76,13 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         // Solana accounts
         let solanaAggregator = CryptoSolanaAccountsAggregator()
         let solanaAccountsPublisher = Publishers
-            .CombineLatest4(
+            .CombineLatest3(
                 solanaAccountsService.statePublisher,
                 favouriteAccountsStore.$favourites,
-                favouriteAccountsStore.$ignores,
-                $hideZeroBalance
+                favouriteAccountsStore.$ignores
             )
-            .map { state, favourites, ignores, hideZeroBalance in
-                solanaAggregator.transform(input: (state.value, favourites, ignores, hideZeroBalance))
+            .map { state, favourites, ignores in
+                solanaAggregator.transform(input: (state.value, favourites, ignores))
             }
 
         let cryptoAccountsAggregator = CryptoAccountsAggregator()
