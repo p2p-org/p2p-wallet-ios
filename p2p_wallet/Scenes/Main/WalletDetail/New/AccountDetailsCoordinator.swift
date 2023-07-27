@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import KeyAppBusiness
 import Resolver
@@ -18,6 +19,8 @@ enum AccountDetailsCoordinatorResult {
 
 class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
+
     let args: AccountDetailsCoordinatorArgs
 
     init(args: AccountDetailsCoordinatorArgs, presentingViewController: UINavigationController) {
@@ -75,6 +78,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
     private func openDetailTransaction(action: NewHistoryAction) {
         switch action {
         case let .openParsedTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature ?? ""))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(parsedTransaction: trx),
                 presentingViewController: presentation.presentingViewController
@@ -97,6 +101,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 .store(in: &subscriptions)
 
         case let .openHistoryTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.signature))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),
                 presentingViewController: presentation.presentingViewController
@@ -107,9 +112,11 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 .store(in: &subscriptions)
 
         case let .openSellTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.id))
             openSell(trx)
 
         case let .openPendingTransaction(trx):
+            analyticsManager.log(event: .tokenScreenTransaction(transactionId: trx.transactionId ?? ""))
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(pendingTransaction: trx),
                 presentingViewController: presentation.presentingViewController

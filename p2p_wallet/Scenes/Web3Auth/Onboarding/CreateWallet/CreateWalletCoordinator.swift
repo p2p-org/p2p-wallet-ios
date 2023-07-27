@@ -1,6 +1,8 @@
 import Combine
 import Onboarding
 import UIKit
+import AnalyticsManager
+import Resolver
 
 enum CreateWalletResult {
     case restore(socialProvider: SocialProvider, email: String)
@@ -9,6 +11,9 @@ enum CreateWalletResult {
 }
 
 final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
+
+    @Injected private var analyticsManager: AnalyticsManager
+
     // MARK: - NavigationController
 
     private let parent: UIViewController
@@ -150,6 +155,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         case let .securitySetup(_, _, _, _, innerState):
             let vc = securitySetupDelegatedCoordinator.buildViewController(for: innerState)
             vc?.title = L10n.stepOf("3", "3")
+            logOpenSecurity(state: innerState)
             return vc
         default:
             return nil
@@ -182,6 +188,19 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                     userPubKey: data.userPubkey
                 )
             )
+        }
+    }
+}
+
+private extension CreateWalletCoordinator {
+    func logOpenSecurity(state: SecuritySetupState) {
+        switch state {
+        case .createPincode:
+            analyticsManager.log(event: .createConfirmPinScreenOpened)
+        case .confirmPincode:
+            analyticsManager.log(event: .createConfirmPinFirstClick)
+        case .finish:
+            break
         }
     }
 }

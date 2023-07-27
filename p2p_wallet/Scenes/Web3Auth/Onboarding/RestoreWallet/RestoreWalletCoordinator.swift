@@ -7,6 +7,7 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 enum RestoreWalletNavigation {
     case root(window: UIWindow)
@@ -15,6 +16,7 @@ enum RestoreWalletNavigation {
 
 final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: OnboardingNavigationController
     private let navigation: RestoreWalletNavigation
@@ -178,6 +180,7 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         case let .securitySetup(_, _, _, innerState):
             let vc = securitySetupDelegatedCoordinator.buildViewController(for: innerState)
             vc?.title = ""
+            logOpenSecurity(state: innerState)
             return vc
 
         case .finished:
@@ -244,5 +247,18 @@ private extension RestoreWalletCoordinator {
             }
         }.store(in: &subscriptions)
         return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
+    }
+}
+
+private extension RestoreWalletCoordinator {
+    func logOpenSecurity(state: SecuritySetupState) {
+        switch state {
+        case .createPincode:
+            analyticsManager.log(event: .restoreConfirmPinScreenOpened)
+        case .confirmPincode:
+            analyticsManager.log(event: .restoreConfirmPinFirstClick)
+        case .finish:
+            break
+        }
     }
 }

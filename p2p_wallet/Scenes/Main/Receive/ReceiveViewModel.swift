@@ -194,6 +194,12 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         analyticsManager.log(event: .receiveCopyAddressClickButton(network: network.analyticsName()))
     }
 
+    func qrTapped() {
+        clipboardManager.copyToClipboard(qrImage)
+        analyticsManager.log(event: .receiveQRSaved)
+        sendNotification(text: L10n.yourQRCodeWasCopied)
+    }
+
     // MARK: - Notification
 
     private var shouldShowNotification = true

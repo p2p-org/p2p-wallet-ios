@@ -4,16 +4,6 @@ excluded:
   - Pods
   - Templates
   - "*/.build"
-  - SolanaSwift
-  - BEPureLayout
-  - LazySubject
-  - BECollectionView
-  - THPinViewController
-  - FeeRelayerSwift
-  - OrcaSwapSwift
-  - RenVMSwift
-  - TransakSwift
-  - "p2p_wallet/Scenes/Main/SwapToken/SerumSwap(Unstable)"
 
 disabled_rules:
   - identifier_name
@@ -66,20 +56,10 @@ custom_rules:
     regex: 'NSLocalizedString'
     message: "Use L10n.key instead"
     severity: error
-  next_arrow:
-    name: "Next arrow"
-    regex: '(image: \.nextArrow)|(UIImageView(\.init)?\(width: 14, height: 21, image: (UIImage)?\.chevronRight\))'
-    message: "Use UIView.defaultNextArrow() instead"
-    severity: warning
   paragraph_style:
     name: "Pragraph style"
     regex: 'NSParagraphStyle\(\)'
     message: "Don't construct NSParagraphStyle directly, use withParagraphStyle() method on NSMutableAttributedString instead"
-    severity: warning
-  close_banner_button:
-    name: "Close banner button"
-    regex: 'image: (UIImage)?\.closeBannerButton'
-    message: "Use UIView.closeBannerButton instead"
     severity: warning
   clipboard_direct_api:
     name: "UIPasteboard"

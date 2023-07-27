@@ -3,12 +3,14 @@ import FeeRelayerSwift
 import Resolver
 import SolanaSwift
 import TransactionParser
+import AnalyticsManager
 import Foundation
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var priceService: PricesServiceType
+    @Injected private var analyticsManager: AnalyticsManager
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()
@@ -72,6 +74,14 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     self.updateCompleted()
                 }
                 self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
+            })
+            .store(in: &subscriptions)
+
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap { $0?.transactionId }
+            .prefix(1)
+            .sink(receiveValue: { [weak self] signature in
+                self?.logSend(event: transaction.analyticEvent, signature: signature)
             })
             .store(in: &subscriptions)
 
@@ -161,5 +171,12 @@ extension SendTransactionStatusViewModel {
         case loading(message: String)
         case succeed(message: String)
         case error(message: NSAttributedString)
+    }
+}
+
+private extension SendTransactionStatusViewModel {
+    func logSend(event: KeyAppAnalyticsEvent, signature: String) {
+        guard case let .sendNewConfirmButtonClick(sendFlow, token, max, amountToken, amountUSD, fee, fiatInput, _, pubKey) = event else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(sendFlow: sendFlow, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: pubKey))
     }
 }
