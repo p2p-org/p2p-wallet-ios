@@ -1,10 +1,3 @@
-//
-//  SupportedTokensBannerView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.03.2023.
-//
-
 import SwiftUI
 
 struct SupportedTokensBannerView: View {
@@ -26,7 +19,7 @@ struct SupportedTokensBannerView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 18)
-        .background(Color(.lightSea))
+        .background(Color(.rain))
         .cornerRadius(16)
     }
 }
