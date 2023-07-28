@@ -47,7 +47,7 @@ enum WormholeSendInputLogic {
         let nextAvailableAccounts = availableAccounts
             .filter { account in
                 // Exclude first two cases
-                account.token.mintAddress != selectedAccount.token.mintAddress || !account.token.isNativeSOL
+                account.token.mintAddress != selectedAccount.token.mintAddress || !account.token.isNative
             }
             .sorted(by: { lhs, rhs in
                 guard
@@ -68,7 +68,7 @@ enum WormholeSendInputLogic {
 
         // Try find best candidate.
         for feePayerCandidate in feePayerCandidates {
-            if feePayerCandidate.token.isNativeSOL {
+            if feePayerCandidate.token.isNative {
                 // Fee payer candidate is SOL
 
                 let neededTopUpAmount = try await feeCalculator.calculateNeededTopUpAmount(
@@ -82,7 +82,7 @@ enum WormholeSendInputLogic {
 
                 let fee = CryptoAmount(uint64: neededTopUpAmount.total, token: SolanaToken.nativeSolana)
 
-                if selectedAccount.token.isNativeSOL {
+                if selectedAccount.token.isNative {
                     // Fee payer candidate and selected account is same.
 
                     if (transferAmount + fee) == feePayerCandidate.cryptoAmount {

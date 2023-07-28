@@ -36,7 +36,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
 
         var isAssociatedTokenUnregister = false
 
-        if token.isNativeSOL {
+        if token.isNative {
             // User transfer native SOL
             isAssociatedTokenUnregister = false
         } else {

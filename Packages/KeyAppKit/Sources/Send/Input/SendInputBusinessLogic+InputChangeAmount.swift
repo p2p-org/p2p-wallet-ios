@@ -33,7 +33,7 @@ extension SendInputBusinessLogic {
         var status: SendInputState.Status = .ready
 
         // Limit amount with logic for SPL and SOL tokens
-        if state.token.isNativeSOL {
+        if state.token.isNative {
             let maxAmount = state.maxAmountInputInToken.toLamport(decimals: state.token.decimals)
             let maxAmountWithLeftAmount = state.maxAmountInputInSOLWithLeftAmount
                 .toLamport(decimals: state.token.decimals)

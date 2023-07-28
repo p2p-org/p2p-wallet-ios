@@ -28,7 +28,7 @@ struct MockTokensRepository: TokenRepository {
             let array = try! JSONDecoder().decode([TokenMetadata].self, from: string.data(using: .utf8)!)
 
             return Dictionary(uniqueKeysWithValues: array.map { token in
-                (token.address, token)
+                (token.mintAddress, token)
             })
         }
     }

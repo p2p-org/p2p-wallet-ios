@@ -233,7 +233,7 @@ public extension SendInputState {
         var maxAmountInToken = maxAmountInputInToken.toLamport(decimals: token.decimals)
 
         guard
-            let context = feeRelayerContext, token.isNativeSOL,
+            let context = feeRelayerContext, token.isNative,
             maxAmountInToken >= context.minimumRelayAccountBalance
         else { return .zero }
 

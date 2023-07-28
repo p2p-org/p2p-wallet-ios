@@ -29,7 +29,7 @@ class RecipientSearchUsernameTests: XCTestCase {
             ),
         ],
         ethereumAccount: nil,
-        tokens: Dictionary(uniqueKeysWithValues: [.nativeSolana, .usdc, .usdt].map { ($0.address, $0) }),
+        tokens: Dictionary(uniqueKeysWithValues: [.nativeSolana, .usdc, .usdt].map { ($0.mintAddress, $0) }),
         ethereumSearch: true
     )
 
