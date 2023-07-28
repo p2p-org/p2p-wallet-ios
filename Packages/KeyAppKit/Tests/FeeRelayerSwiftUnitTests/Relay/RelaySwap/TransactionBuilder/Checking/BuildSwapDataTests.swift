@@ -5,7 +5,7 @@ import SolanaSwift
 
 final class BuildSwapDataTests: XCTestCase {
     private var accountStorage: MockAccountStorage!
-    var account: SolanaSwift.Account { accountStorage.account! }
+    var account: SolanaSwift.KeyPair { accountStorage.account! }
     var swapTransactionBuilder: SwapTransactionBuilderImpl!
     
     override func setUp() async throws {

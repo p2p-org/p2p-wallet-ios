@@ -130,7 +130,7 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
     override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T : BufferLayout {
         switch account {
         case "JhhACrqV4LhpZY7ogW9Gy2MRLVanXXFxyiW548dsjBp" where testCase == 2:
-            let info = BufferInfo<AccountInfo>(
+            let info = BufferInfo<SPLTokenAccountState>(
                 lamports: 0,
                 owner: TokenProgram.id.base58EncodedString,
                 data: .init(mint: transitTokenMint, owner: SystemProgram.id, lamports: 0, delegateOption: 0, isInitialized: true, isFrozen: true, state: 0, isNativeOption: 0, rentExemptReserve: nil, isNativeRaw: 0, isNative: true, delegatedAmount: 0, closeAuthorityOption: 0),
