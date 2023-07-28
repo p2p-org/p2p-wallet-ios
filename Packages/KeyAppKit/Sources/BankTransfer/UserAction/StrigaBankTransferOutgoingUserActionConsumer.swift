@@ -120,7 +120,7 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
             }
         case let .sendFailure(action, errorModel):
             Task { [weak self] in
-                guard let userAction = await self?.database.get(for: action.id) else { return }
+                guard var userAction = await self?.database.get(for: action.id) else { return }
                 userAction.status = .error(errorModel)
                 await self?.database.set(for: action.id, userAction)
             }
