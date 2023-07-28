@@ -50,6 +50,7 @@ jobs:
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppNetworkingTests \
             -only-testing:KeyAppStateMachineTests \
+            -only-testing:AnalyticsManagerUnitTests \
             | xcbeautify
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
