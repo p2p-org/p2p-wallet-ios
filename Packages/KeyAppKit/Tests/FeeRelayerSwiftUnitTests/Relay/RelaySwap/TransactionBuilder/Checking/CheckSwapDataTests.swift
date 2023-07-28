@@ -75,7 +75,7 @@ final class CheckSwapDataTests: XCTestCase {
     func testCheckTransitiveSwapData() async throws {
         // SOL -> BTC -> ETH
         let needsCreateTransitTokenAccount = true
-        let userSource = try await Account(network: .mainnetBeta).publicKey
+        let userSource = try await KeyPair(network: .mainnetBeta).publicKey
         
         let swapData = TransitiveSwapData(
             from: .init(

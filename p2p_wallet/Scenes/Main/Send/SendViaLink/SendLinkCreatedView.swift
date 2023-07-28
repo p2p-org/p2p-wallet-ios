@@ -7,9 +7,8 @@ private extension String {
 }
 
 struct SendLinkCreatedView: View {
-    
     let viewModel: SendLinkCreatedViewModel
-    
+
     var body: some View {
         VStack {
             // Close button
@@ -25,9 +24,9 @@ struct SendLinkCreatedView: View {
                 }
                 .foregroundColor(Color(.night))
             }
-            
+
             Spacer()
-            
+
             // Header
             Text(L10n.shareYourLinkToSendMoney)
                 .apply(style: .largeTitle)
@@ -35,7 +34,7 @@ struct SendLinkCreatedView: View {
                 .foregroundColor(Color(.night))
                 .padding(.bottom, 24)
                 .accessibilityIdentifier(.accessibilityTitleLabel)
-            
+
             // Recipient
             RecipientCell(
                 image: Image(.sendViaLinkCircleCompleted)
@@ -62,7 +61,7 @@ struct SendLinkCreatedView: View {
                     .foregroundColor(Color(.snow))
             )
             .padding(.bottom, 28)
-            
+
             // Subtitle
             Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
                 .apply(style: .text3)
@@ -70,9 +69,9 @@ struct SendLinkCreatedView: View {
                 .foregroundColor(Color(.mountain))
                 .padding(.horizontal, 16)
                 .accessibilityIdentifier(.accessibilitySubtitleLabel)
-            
+
             Spacer()
-            
+
             // Button
             TextButtonView(
                 title: L10n.share,
@@ -82,8 +81,8 @@ struct SendLinkCreatedView: View {
                     viewModel.shareClicked()
                 }
             )
-                .frame(height: TextButton.Size.large.height)
-                .padding(.bottom, 32)
+            .frame(height: TextButton.Size.large.height)
+            .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
         .background(Color(.smoke).edgesIgnoringSafeArea(.vertical))

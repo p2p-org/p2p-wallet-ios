@@ -12,7 +12,7 @@ import XCTest
 final class CheckDestinationTests: XCTestCase {
     private var accountStorage: MockAccountStorage!
     var swapTransactionBuilder: SwapTransactionBuilderImpl!
-    var account: SolanaSwift.Account { accountStorage.account! }
+    var account: SolanaSwift.KeyPair { accountStorage.account! }
     
     override func setUp() async throws {
         accountStorage = try await .init()
@@ -120,7 +120,7 @@ final class CheckDestinationTests: XCTestCase {
                 from: .feePayerAddress,
                 toNewPubkey: env.destinationNewAccount!.publicKey,
                 lamports: minimumTokenAccountBalance,
-                space: AccountInfo.BUFFER_LENGTH,
+                space: SPLTokenAccountState.BUFFER_LENGTH,
                 programId: TokenProgram.id
             ),
             TokenProgram.initializeAccountInstruction(
@@ -147,7 +147,7 @@ final class CheckDestinationTests: XCTestCase {
             lamportsPerSignature: lamportsPerSignature
         )
         
-        let sourceWSOLNewAccount = try await Account(network: .mainnetBeta)
+        let sourceWSOLNewAccount = try await KeyPair(network: .mainnetBeta)
         var env = SwapTransactionBuilderOutput(
             sourceWSOLNewAccount: sourceWSOLNewAccount
         )

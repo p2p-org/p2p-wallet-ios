@@ -1,25 +1,24 @@
 import AnalyticsManager
-import SwiftUI
 import Resolver
+import SwiftUI
 
 struct SendCreateLinkErrorView: View {
-    
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     let onGoBack: () -> Void
-    
+
     var body: some View {
         VStack {
             Spacer()
-            
+
             ErrorView(
                 title: L10n.sorry,
                 subtitle: L10n.OopsSomethingWentWrong
                     .pleaseTryAgainLater
             )
-            
+
             Spacer()
-            
+
             // Button
             TextButtonView(
                 title: L10n.goBack,

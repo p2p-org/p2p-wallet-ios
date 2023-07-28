@@ -111,9 +111,9 @@ extension SendInputBusinessLogic {
 
         for wallet in sortedWallets {
             do {
-                let feeInToken: FeeAmount = (try await services.swapService.calculateFeeInPayingToken(
+                let feeInToken: FeeAmount = try (await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: feeInSol,
-                    payingFeeTokenMint: try PublicKey(string: wallet.token.mintAddress)
+                    payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
                 )) ?? .zero
 
                 if feeInToken.total <= (wallet.lamports ?? 0) {

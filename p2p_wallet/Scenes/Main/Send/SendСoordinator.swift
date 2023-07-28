@@ -7,8 +7,8 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
-import Wormhole
 import UIKit
+import Wormhole
 
 enum SendResult {
     case sent(SendTransaction)

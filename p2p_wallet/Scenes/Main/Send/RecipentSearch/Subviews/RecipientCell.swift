@@ -1,10 +1,3 @@
-//
-//  RecipientCell.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 25.11.2022.
-//
-
 import Send
 import SwiftUI
 
@@ -15,7 +8,7 @@ struct RecipientCell: View {
     let subtitle: String?
     let trailingView: AnyView?
     let multilinesForSubtitle: Bool
-    
+
     init(
         image: AnyView,
         title: String,

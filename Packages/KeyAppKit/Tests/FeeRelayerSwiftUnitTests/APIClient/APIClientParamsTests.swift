@@ -97,7 +97,7 @@ class APIClientParamsTests: XCTestCase {
     func testEncodingRelayTransactionParams() async throws {
         let phrase = "assume legend squirrel drastic immense ribbon reduce thrive page uncover vehicle cart right tank wheel whisper ride pet wall august link wheel moment enlist"
         
-        let signer = try await Account(phrase: phrase.components(separatedBy: " "), network: .mainnetBeta)
+        let signer = try await KeyPair(phrase: phrase.components(separatedBy: " "), network: .mainnetBeta)
         
         var transaction = Transaction()
         transaction.instructions = [
