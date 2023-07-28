@@ -68,11 +68,11 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         fatalError()
     }
     
-    func getTokenAccountsByDelegate(pubkey: String, mint: String?, programId: String?, configs: SolanaSwift.RequestConfiguration?) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.AccountInfo>] {
+    func getTokenAccountsByDelegate(pubkey: String, mint: String?, programId: String?, configs: SolanaSwift.RequestConfiguration?) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
         fatalError()
     }
     
-    func getTokenAccountsByOwner(pubkey: String, params: SolanaSwift.OwnerInfoParams?, configs: SolanaSwift.RequestConfiguration?) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.AccountInfo>] {
+    func getTokenAccountsByOwner(pubkey: String, params: SolanaSwift.OwnerInfoParams?, configs: SolanaSwift.RequestConfiguration?) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
         fatalError()
     }
     
@@ -140,7 +140,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         fatalError()
     }
     
-    func observeSignatureStatus(signature: String, timeout: Int, delay: Int) -> AsyncStream<SolanaSwift.TransactionStatus> {
+    func observeSignatureStatus(signature: String, timeout: Int, delay: Int) -> AsyncStream<SolanaSwift.PendingTransactionStatus> {
         fatalError()
     }
     

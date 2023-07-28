@@ -403,7 +403,7 @@ class RecipientSearchServiceImplTest: XCTestCase {
                 pubkey _: String,
                 params _: OwnerInfoParams?,
                 configs _: RequestConfiguration?
-            ) async throws -> [TokenAccount<AccountInfo>] { [] }
+            ) async throws -> [TokenAccount<SPLTokenAccountState>] { [] }
         }
 
         let service = RecipientSearchServiceImpl(
