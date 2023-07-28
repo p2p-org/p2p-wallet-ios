@@ -12,7 +12,7 @@ public enum OutgoingBankTransferUserActionResult: Codable, Equatable {
 public enum OutgoingBankTransferUserActionEvent: UserActionEvent {
     case track(OutgoingBankTransferUserAction, UserActionStatus)
     case complete(OutgoingBankTransferUserAction, OutgoingBankTransferUserActionResult)
-    case sendFailure(OutgoingBankTransferUserAction, String)
+    case sendFailure(OutgoingBankTransferUserAction, UserActionError)
 }
 
 public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
@@ -80,8 +80,10 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
                     IBAN: iban,
                     BIC: bic
                 )))
+            } catch let error as NSError where error.isNetworkConnectionError {
+                self?.handle(event: Event.sendFailure(action, .networkFailure))
             } catch {
-                self?.handle(event: Event.sendFailure(action, error.localizedDescription))
+                self?.handle(event: Event.sendFailure(action, .requestFailure(description: error.localizedDescription)))
             }
         }
     }
@@ -116,10 +118,10 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
                 )
                 await self.database.set(for: userAction.id, userAction)
             }
-        case let .sendFailure(action, _):
+        case let .sendFailure(action, errorModel):
             Task { [weak self] in
-                guard var userAction = await self?.database.get(for: action.id) else { return }
-                userAction.status = .error(UserActionError.networkFailure)
+                guard let userAction = await self?.database.get(for: action.id) else { return }
+                userAction.status = .error(errorModel)
                 await self?.database.set(for: action.id, userAction)
             }
         }
