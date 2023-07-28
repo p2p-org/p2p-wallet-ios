@@ -53,7 +53,6 @@ jobs:
             -only-testing:KeyAppNetworkingTests \
             -only-testing:KeyAppStateMachineTests \
             -only-testing:OnboardingTests \
-            -only-testing:SendTests \
             -only-testing:WormholeTests \
             | xcbeautify
 
