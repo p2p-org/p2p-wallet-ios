@@ -19,7 +19,6 @@ struct StrigaEndpoint: HTTPEndpoint {
     // MARK: - Initializer
 
     private init(
-        version: Int = 1,
         baseURL: String,
         path: String,
         method: HTTPMethod,
@@ -27,7 +26,7 @@ struct StrigaEndpoint: HTTPEndpoint {
         body: Encodable?
     ) throws {
         self.baseURL = baseURL
-        self.path = "/v\(version)" + path
+        self.path = path
         self.method = method
         self.keyPair = keyPair
         self.header = [
@@ -47,7 +46,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/kyc/\(userId)",
+            path: "/api/v1/user/kyc/\(userId)",
             method: .get,
             keyPair: keyPair,
             body: nil
@@ -62,7 +61,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/verify-mobile",
+            path: "/striga/api/v1/user/verify-mobile",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -82,7 +81,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/send/initiate/onchain/fee-estimate",
+            path: "/api/v1/wallets/send/initiate/onchain/fee-estimate",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -101,7 +100,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/\(userId)",
+            path: "/striga/api/v1/user/\(userId)",
             method: .get,
             keyPair: keyPair,
             body: nil
@@ -115,7 +114,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/create",
+            path: "/api/v1/user/create",
             method: .post,
             keyPair: keyPair,
             body: body
@@ -129,7 +128,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/resend-sms",
+            path: "/striga/api/v1/user/resend-sms",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -149,7 +148,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         return try .init(
             baseURL: baseURL,
-            path: "/wallets/send/initiate/onchain",
+            path: "/striga/api/v1/wallets/send/initiate/onchain",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -169,7 +168,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/user/kyc/start",
+            path: "/striga/api/v1/user/kyc/start",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -188,7 +187,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/get/all",
+            path: "/striga/api/v1/wallets/get/all",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -208,7 +207,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/account/enrich",
+            path: "/striga/api/v1/wallets/account/enrich",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -226,7 +225,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/transaction/resend-otp",
+            path: "/striga/api/v1/wallets/transaction/resend-otp",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -246,7 +245,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/transaction/confirm",
+            path: "/striga/api/v1/wallets/transaction/confirm",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -269,7 +268,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/whitelist-address",
+            path: "/striga/api/v1/wallets/whitelist-address",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -292,7 +291,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/wallets/get/whitelisted-addresses",
+            path: "/striga/api/v1/wallets/get/whitelisted-addresses",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -310,7 +309,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
-            path: "/trade/rates",
+            path: "/striga/api/v1/trade/rates",
             method: .post,
             keyPair: keyPair,
             body: nil
@@ -328,7 +327,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
-            path: "/wallets/send/initiate/bank",
+            path: "/striga/api/v1/wallets/send/initiate/bank",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -352,7 +351,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
-            path: "/wallets/get/account/statement",
+            path: "/striga/api/v1/wallets/get/account/statement",
             method: .post,
             keyPair: keyPair,
             body: [
