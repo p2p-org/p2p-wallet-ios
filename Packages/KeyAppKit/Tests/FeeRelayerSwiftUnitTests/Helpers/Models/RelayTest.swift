@@ -1,6 +1,7 @@
 import Foundation
 
 // MARK: - RelayTests
+
 struct RelayTestsInfo: Codable {
     let baseUrlString: String
     let topUp: RelayTopUpTest?
@@ -15,12 +16,13 @@ struct RelayTestsInfo: Codable {
 }
 
 protocol RelayTestType {
-    var endpoint: String {get}
-    var endpointAdditionalQuery: String? {get}
-    var seedPhrase: String {get}
+    var endpoint: String { get }
+    var endpointAdditionalQuery: String? { get }
+    var seedPhrase: String { get }
 }
 
 // MARK: - TopUpTest
+
 struct RelayTopUpTest: Codable, RelayTestType {
     let endpoint: String
     let endpointAdditionalQuery: String?
@@ -29,6 +31,7 @@ struct RelayTopUpTest: Codable, RelayTestType {
 }
 
 // MARK: - SplToCreatedSpl
+
 struct RelaySwapTestInfo: Codable, RelayTestType {
     let endpoint: String
     let endpointAdditionalQuery: String?

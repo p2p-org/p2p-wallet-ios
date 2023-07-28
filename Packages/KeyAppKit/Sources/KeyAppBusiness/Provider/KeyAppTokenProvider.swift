@@ -52,7 +52,7 @@ public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
         }
 
         let (data, response) = try await client.urlSession.data(for: request)
-        
+
         if
             let response = response as? HTTPURLResponse,
             response.statusCode == 304

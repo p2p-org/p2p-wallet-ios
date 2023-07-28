@@ -6,7 +6,6 @@ public enum MoonpaySellDataServiceProviderError: Error {
 }
 
 public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
-    
     // MARK: - Type aliases
 
     public typealias Currency = MoonpayCurrency
@@ -16,13 +15,13 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     // MARK: - Properties
 
     private let moonpayAPI: Moonpay.Provider
-    
+
     // MARK: - Initializer
 
     public init(moonpayAPI: Moonpay.Provider) {
         self.moonpayAPI = moonpayAPI
     }
-    
+
     // MARK: - Methods
 
     func isAvailable() async throws -> Bool {
@@ -72,8 +71,8 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     }
 }
 
-extension MoonpaySellDataServiceProvider {
-    public struct MoonpayCurrency: ProviderCurrency, Codable {
+public extension MoonpaySellDataServiceProvider {
+    struct MoonpayCurrency: ProviderCurrency, Codable {
         public var id: String
         public var name: String
         public var code: String
@@ -82,18 +81,18 @@ extension MoonpaySellDataServiceProvider {
         public var maxSellAmount: Double?
         public var isSuspended: Bool
     }
-    
-    public enum MoonpayFiat: String, ProviderFiat {
+
+    enum MoonpayFiat: String, ProviderFiat {
         public var code: String {
             rawValue.uppercased()
         }
-        
+
         case gbp
         case eur
         case usd
     }
 
-    public struct MoonpayTransaction: Codable, ProviderTransaction {
+    struct MoonpayTransaction: Codable, ProviderTransaction {
         public var id: String
         public var createdAt: String
         public var updatedAt: String
@@ -115,15 +114,15 @@ extension MoonpaySellDataServiceProvider {
     }
 }
 
-extension MoonpaySellDataServiceProvider.MoonpayTransaction {
-    public enum Status: String, Codable, Hashable {
+public extension MoonpaySellDataServiceProvider.MoonpayTransaction {
+    enum Status: String, Codable, Hashable {
         case waitingForDeposit
         case pending
         case failed
         case completed
     }
 
-    public struct DepositWallet: Codable, Equatable, Hashable {
+    struct DepositWallet: Codable, Equatable, Hashable {
         public var walletAddress: String
     }
 }

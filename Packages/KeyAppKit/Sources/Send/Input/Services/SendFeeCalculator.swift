@@ -44,15 +44,15 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             case let .solanaTokenAddress(walletAddress, _):
                 let associatedAccount = try PublicKey.associatedTokenAddress(
                     walletAddress: walletAddress,
-                    tokenMintAddress: try PublicKey(string: token.mintAddress)
+                    tokenMintAddress: PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts
                     .contains(where: { $0.pubkey == associatedAccount.base58EncodedString })
             case .solanaAddress, .username:
                 let associatedAccount = try PublicKey.associatedTokenAddress(
-                    walletAddress: try PublicKey(string: recipient.address),
-                    tokenMintAddress: try PublicKey(string: token.mintAddress)
+                    walletAddress: PublicKey(string: recipient.address),
+                    tokenMintAddress: PublicKey(string: token.mintAddress)
                 )
 
                 isAssociatedTokenUnregister = !recipientAdditionalInfo.splAccounts
@@ -62,7 +62,8 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             }
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
             // subtract the fee payer signature cost
             transactionFee -= context.lamportsPerSignature
@@ -73,11 +74,12 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             accountBalances: isAssociatedTokenUnregister ? context.minimumTokenAccountBalance : 0
         )
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
             return expectedFee
         }
-        
+
         return try await feeRelayerCalculator.calculateNeededTopUpAmount(
             context,
             expectedFee: expectedFee,

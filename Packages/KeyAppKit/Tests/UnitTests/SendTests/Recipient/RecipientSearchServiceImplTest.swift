@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import KeyAppKitCore
 import NameService
@@ -127,13 +123,13 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account: String) async throws -> BufferInfo<T>? {
                 if account == "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU" {
-                    return BufferInfo<SolanaAddressInfo>(
+                    return BufferInfo<SolanaAddressInfo>try (
                         lamports: 5000,
                         owner: SystemProgram.id.base58EncodedString,
                         data: .splAccount(
                             .init(
-                                mint: try PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
-                                owner: try PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                                mint: PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
+                                owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                                 lamports: 1579,
                                 delegateOption: 0,
                                 isInitialized: false,
@@ -190,14 +186,14 @@ class RecipientSearchServiceImplTest: XCTestCase {
                 params _: OwnerInfoParams?,
                 configs _: RequestConfiguration?
             ) async throws -> [TokenAccount<AccountInfo>] { [
-                .init(
+                try .init(
                     pubkey: "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU",
                     account: .init(
                         lamports: 0,
                         owner: TokenProgram.id.base58EncodedString,
                         data: .init(
                             mint: .usdcMint,
-                            owner: try PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                            owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                             lamports: 50000,
                             delegateOption: 0,
                             delegate: nil,
@@ -246,13 +242,13 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account: String) async throws -> BufferInfo<T>? {
                 if account == "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU" {
-                    return BufferInfo<SolanaAddressInfo>(
+                    return BufferInfo<SolanaAddressInfo>try (
                         lamports: 5000,
                         owner: SystemProgram.id.base58EncodedString,
                         data: .splAccount(
                             .init(
-                                mint: try PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
-                                owner: try PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                                mint: PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
+                                owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                                 lamports: 1579,
                                 delegateOption: 0,
                                 isInitialized: false,
@@ -320,13 +316,13 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account: String) async throws -> BufferInfo<T>? {
                 if account == "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU" {
-                    return BufferInfo<SolanaAddressInfo>(
+                    return BufferInfo<SolanaAddressInfo>try (
                         lamports: 5000,
                         owner: SystemProgram.id.base58EncodedString,
                         data: .splAccount(
                             .init(
-                                mint: try PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
-                                owner: try PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                                mint: PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
+                                owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                                 lamports: 1579,
                                 delegateOption: 0,
                                 isInitialized: false,
@@ -433,13 +429,13 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account: String) async throws -> BufferInfo<T>? {
                 if account == "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU" {
-                    return BufferInfo<SolanaAddressInfo>(
+                    return BufferInfo<SolanaAddressInfo>try (
                         lamports: 5000,
                         owner: SystemProgram.id.base58EncodedString,
                         data: .splAccount(
                             .init(
-                                mint: try PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
-                                owner: try PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                                mint: PublicKey(string: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
+                                owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                                 lamports: 1579,
                                 delegateOption: 0,
                                 isInitialized: false,

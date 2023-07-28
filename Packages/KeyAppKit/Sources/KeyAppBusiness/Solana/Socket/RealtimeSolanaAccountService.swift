@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -278,10 +274,10 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                 if Task.isCancelled { return }
 
-                let solanaAccount = SolanaAccount(
+                let solanaAccount = try SolanaAccount(
                     address: owner,
                     lamports: balance,
-                    token: try await tokensService.nativeToken
+                    token: await tokensService.nativeToken
                 )
 
                 let accounts = [solanaAccount] + resolved
@@ -348,10 +344,10 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     }
 
     func receiveNotification(notification: SolanaNotification<SolanaAccountChange>) async throws {
-        let nativeSolanaAccount = SolanaAccount(
+        let nativeSolanaAccount = try SolanaAccount(
             address: owner,
             lamports: notification.result.value.lamports,
-            token: try await tokensService.nativeToken
+            token: await tokensService.nativeToken
         )
         accountsSubject.send(nativeSolanaAccount)
     }

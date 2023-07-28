@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 14.03.2023.
-//
-
 import Foundation
 
 public enum ServiceError: Error {
@@ -20,9 +13,9 @@ public enum ConvertError: Error {
     case enormousValue
 }
 
-//public protocol KeyAppError: Error, Codable {}
+// public protocol KeyAppError: Error, Codable {}
 
-//public struct KeyAppErrorBridge: KeyAppError {
+// public struct KeyAppErrorBridge: KeyAppError {
 //    public static func == (lhs: KeyAppErrorBridge, rhs: KeyAppErrorBridge) -> Bool {
 //        lhs.errorCode == rhs.errorCode
 //    }
@@ -40,4 +33,4 @@ public enum ConvertError: Error {
 //        userInfo = objCError.userInfo
 //        localizedDescription = objCError.localizedDescription
 //    }
-//}
+// }

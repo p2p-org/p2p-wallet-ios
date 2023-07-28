@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 14.03.2023.
-//
-
 import Foundation
 
 public protocol WormholeAPI {
@@ -41,11 +34,10 @@ public protocol WormholeAPI {
         mint: String?,
         amount: String
     ) async throws -> SendFees
-    
+
     func listSolanaStatuses(userWallet: String) async throws -> [WormholeSendStatus]
-    
+
     func getSolanaTransferStatus(message: String) async throws -> WormholeSendStatus?
-    
+
     func getEthereumFreeFeeLimit() async throws -> String
 }
-

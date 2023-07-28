@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 import History
@@ -53,7 +49,9 @@ public class SendHistoryService: ObservableObject {
     public func insert(_ newRecipient: Recipient) async throws {
         var newList = recipientsSubject.value
 
-        if let index = newList.firstIndex(where: { (recipient: Recipient) -> Bool in recipient.id == newRecipient.id }) {
+        if let index = newList
+            .firstIndex(where: { (recipient: Recipient) -> Bool in recipient.id == newRecipient.id })
+        {
             newList.remove(at: index)
         }
 

@@ -1,5 +1,5 @@
-import Foundation
 import AnalyticsManager
+import Foundation
 
 extension KeyAppAnalyticsParameter {
     var name: String? {
@@ -9,11 +9,11 @@ extension KeyAppAnalyticsParameter {
     var value: Any? {
         mirror.value
     }
-    
+
     var providerIds: [AnalyticsProviderId] {
         [KeyAppAnalyticsProviderId.amplitude].map(\.rawValue)
     }
-    
+
     // MARK: - Helpers
 
     private var mirror: (label: String, value: Any?) {

@@ -1,12 +1,5 @@
-//
-//  SendLinkCreatedView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 01/03/2023.
-//
-
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 private extension String {
     static let accessibilityTitleLabel = "SendLinkCreatedView.titleLabel"
@@ -15,9 +8,8 @@ private extension String {
 }
 
 struct SendLinkCreatedView: View {
-    
     let viewModel: SendLinkCreatedViewModel
-    
+
     var body: some View {
         VStack {
             // Close button
@@ -33,9 +25,9 @@ struct SendLinkCreatedView: View {
                 }
                 .foregroundColor(Color(Asset.Colors.night.color))
             }
-            
+
             Spacer()
-            
+
             // Header
             Text(L10n.shareYourLinkToSendMoney)
                 .apply(style: .largeTitle)
@@ -43,7 +35,7 @@ struct SendLinkCreatedView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.bottom, 24)
                 .accessibilityIdentifier(.accessibilityTitleLabel)
-            
+
             // Recipient
             RecipientCell(
                 image: Image(uiImage: .sendViaLinkCircleCompleted)
@@ -70,7 +62,7 @@ struct SendLinkCreatedView: View {
                     .foregroundColor(Color(Asset.Colors.snow.color))
             )
             .padding(.bottom, 28)
-            
+
             // Subtitle
             Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
                 .apply(style: .text3)
@@ -78,9 +70,9 @@ struct SendLinkCreatedView: View {
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.horizontal, 16)
                 .accessibilityIdentifier(.accessibilitySubtitleLabel)
-            
+
             Spacer()
-            
+
             // Button
             TextButtonView(
                 title: L10n.share,
@@ -90,8 +82,8 @@ struct SendLinkCreatedView: View {
                     viewModel.shareClicked()
                 }
             )
-                .frame(height: TextButton.Size.large.height)
-                .padding(.bottom, 32)
+            .frame(height: TextButton.Size.large.height)
+            .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
         .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))

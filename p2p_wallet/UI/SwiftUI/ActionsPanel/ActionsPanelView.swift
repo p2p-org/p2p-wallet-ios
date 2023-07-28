@@ -7,8 +7,8 @@ struct ActionsPanelView: View {
     let balance: String
     let usdAmount: String
     let action: (WalletActionType) -> Void
-    let balanceTapAction: (() -> ())?
-    
+    let balanceTapAction: (() -> Void)?
+
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             if !balance.isEmpty {

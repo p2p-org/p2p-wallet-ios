@@ -1,10 +1,10 @@
+import BigDecimal
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
-import Wormhole
 import UIKit
-import BigDecimal
+import Wormhole
 
 struct RenderableEthereumAccount: RenderableAccount, Equatable {
     let account: EthereumAccount
@@ -83,9 +83,9 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
 
         return tags
     }
-    
+
     var sortingKey: BigDecimal? {
-        return account.balanceInFiat?.value
+        account.balanceInFiat?.value
     }
 }
 

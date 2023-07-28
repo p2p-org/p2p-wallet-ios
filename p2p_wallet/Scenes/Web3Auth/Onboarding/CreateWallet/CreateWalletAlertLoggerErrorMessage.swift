@@ -16,4 +16,3 @@ struct CreateWalletAlertLoggerErrorMessage: Codable {
         case userPubKey = "user_pubkey"
     }
 }
-

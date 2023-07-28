@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
@@ -47,10 +43,10 @@ extension SendInputBusinessLogic {
                 break
             }
 
-            let state = state.copy(
+            let state = try state.copy(
                 status: .ready,
                 recipientAdditionalInfo: recipientAdditionalInfo,
-                feeRelayerContext: try await params.feeRelayerContext()
+                feeRelayerContext: await params.feeRelayerContext()
             )
 
             return await changeToken(state: state, token: state.token, services: services)

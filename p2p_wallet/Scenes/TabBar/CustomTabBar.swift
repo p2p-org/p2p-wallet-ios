@@ -1,10 +1,3 @@
-//
-//  CustomTabBar.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import Combine
 import KeyAppUI
 import UIKit
@@ -40,7 +33,7 @@ final class CustomTabBar: UITabBar {
     }
 
     static var additionalHeight: CGFloat = 8
-    
+
     private var inset: CGFloat {
         if SafeAreaInsetsKey.defaultValue.bottom > 0 {
             return SafeAreaInsetsKey.defaultValue.bottom - 5
@@ -82,7 +75,7 @@ final class CustomTabBar: UITabBar {
         guard !clipsToBounds, !isHidden, alpha > 0 else { return nil }
         return middleButton.frame.contains(point) ? middleButton : super.hitTest(point, with: event)
     }
-    
+
     func updateSelectedViewPositionIfNeeded() {
         guard let currentIndex = currentIndex else { return }
         let buttons = subviews.compactMap { NSStringFromClass(type(of: $0)) == "UITabBarButton" ? $0 : nil }

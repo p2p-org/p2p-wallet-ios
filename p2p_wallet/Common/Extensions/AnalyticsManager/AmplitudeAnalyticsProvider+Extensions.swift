@@ -1,5 +1,5 @@
-import Foundation
 import Amplitude
+import Foundation
 
 extension AmplitudeAnalyticsProvider {
     func setUserId(_ id: String?) {

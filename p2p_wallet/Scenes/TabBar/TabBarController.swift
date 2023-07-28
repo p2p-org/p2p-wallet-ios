@@ -280,7 +280,7 @@ final class TabBarController: UITabBarController {
             .map { $0 == nil }
             .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
-        
+
         // Crypto alert on/off
         viewModel.transferAccountsPublisher
             .sink { [weak self] claimableTransferExist in
@@ -292,7 +292,7 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
-        
+
         // Wallet balance
         viewModel.walletBalancePublisher
             .receive(on: DispatchQueue.main)
@@ -313,13 +313,15 @@ extension TabBarController: UITabBarControllerDelegate {
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
         }
-        
+
         if let tabItem = TabItem(rawValue: selectedIndex) {
             switch tabItem {
             case .wallet:
                 viewModel.walletTapped()
-                
-                if (viewController as! UINavigationController).viewControllers.count == 1, self.selectedIndex == selectedIndex {
+
+                if (viewController as! UINavigationController).viewControllers.count == 1,
+                   self.selectedIndex == selectedIndex
+                {
                     homeTabClickedTwicelySubject.send()
                 }
             case .crypto:
@@ -333,7 +335,7 @@ extension TabBarController: UITabBarControllerDelegate {
                 viewModel.settingsTapped()
             }
         }
-        
+
         customTabBar.updateSelectedViewPositionIfNeeded()
 
         return true

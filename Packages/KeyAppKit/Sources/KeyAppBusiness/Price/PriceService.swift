@@ -1,10 +1,3 @@
-//
-//  NewPriceService.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import BigDecimal
 import Cache
 import Combine

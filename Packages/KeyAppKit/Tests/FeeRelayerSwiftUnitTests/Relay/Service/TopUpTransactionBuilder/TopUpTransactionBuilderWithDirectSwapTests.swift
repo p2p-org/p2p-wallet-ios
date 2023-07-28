@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
 @testable import FeeRelayerSwift
-@testable import SolanaSwift
 @testable import OrcaSwapSwift
+@testable import SolanaSwift
 
 final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
     var builder: TopUpTransactionBuilder?
@@ -11,22 +11,21 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
         address: .usdcAssociatedAddress,
         mint: .usdcMint
     )
-    
+
     let targetAmount: Lamports = minimumTokenAccountBalance + minimumRelayAccountBalance
-    
+
     override func setUp() async throws {
-        builder = TopUpTransactionBuilderImpl(
+        builder = try TopUpTransactionBuilderImpl(
             solanaApiClient: MockSolanaAPIClientBase(),
             orcaSwap: MockOrcaSwapBase(),
-            account: try await MockAccountStorage().account!
+            account: await MockAccountStorage().account!
         )
     }
-    
+
     override func tearDown() async throws {
         builder = nil
     }
-    
-    
+
     func testTopUpTransactionBuilderWhenFreeTransactionAvailableAndRelayAccountIsNotYetCreated() async throws {
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
@@ -34,7 +33,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 usageStatus: .init(
                     maxUsage: 100,
                     currentUsage: 0,
-                    maxAmount: 10000000,
+                    maxAmount: 10_000_000,
                     amountUsed: 0,
                     reachedLimitLinkCreation: false
                 )
@@ -44,7 +43,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 70250
         // swap data
         let swapData = transaction1?.swapData as! DirectSwapData
@@ -63,24 +62,24 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 minimumAmountOut: targetAmount
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
-        
+
         XCTAssertEqual(transaction?.instructions.count, 3)
-        
+
         // - Create relay account instruction
         let createRelayAccountInstruction = transaction!.instructions[0]
         XCTAssertEqual(createRelayAccountInstruction, .init(
             keys: [
                 .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: .relayAccount, isSigner: false)
+                .writable(publicKey: .relayAccount, isSigner: false),
             ],
             programId: SystemProgram.id,
             data: SystemProgram.Index.transfer.bytes + minimumRelayAccountBalance.bytes
         ))
-        
+
         // - Top up swap instruction
         let topUpSwapInstruction = transaction!.instructions[1]
         XCTAssertEqual(topUpSwapInstruction, .init(
@@ -101,12 +100,12 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .writable(publicKey: topUpPools[0].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[0].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.topUpWithDirectSwap] + expectedAmountIn.bytes + targetAmount.bytes
         ))
-        
+
         // - Relay transfer SOL instruction
         let relayTransferSOLInstruction = transaction!.instructions[2]
         XCTAssertEqual(relayTransferSOLInstruction, .init(
@@ -114,26 +113,27 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
         ))
-        
+
         XCTAssertEqual(
             expectedFee?.total,
             minimumRelayAccountBalance + minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenFreeTransactionAvailableAndRelayAccountIsCreated() async throws {
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
-                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance..<minimumRelayAccountBalance+1000)),
+                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance ..<
+                        minimumRelayAccountBalance + 1000)),
                 usageStatus: .init(
                     maxUsage: 100,
                     currentUsage: 0,
-                    maxAmount: 10000000,
+                    maxAmount: 10_000_000,
                     amountUsed: 0,
                     reachedLimitLinkCreation: false
                 )
@@ -143,7 +143,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 70250
         // swap data
         let swapData = transaction1?.swapData as! DirectSwapData
@@ -162,13 +162,13 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 minimumAmountOut: targetAmount
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
-        
+
         XCTAssertEqual(transaction?.instructions.count, 2)
-        
+
         // - Top up swap instruction
         let topUpSwapInstruction = transaction!.instructions[0]
         XCTAssertEqual(topUpSwapInstruction, .init(
@@ -189,12 +189,12 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .writable(publicKey: topUpPools[0].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[0].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.topUpWithDirectSwap] + expectedAmountIn.bytes + targetAmount.bytes
         ))
-        
+
         // - Relay transfer SOL instruction
         let relayTransferSOLInstruction = transaction!.instructions[1]
         XCTAssertEqual(relayTransferSOLInstruction, .init(
@@ -202,18 +202,18 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
         ))
-        
+
         XCTAssertEqual(
             expectedFee?.total,
             minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenFreeTransactionIsNotAvailableAndRelayAccountIsNotYetCreated() async throws {
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
@@ -221,7 +221,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 usageStatus: .init(
                     maxUsage: 100,
                     currentUsage: 100,
-                    maxAmount: 10000000,
+                    maxAmount: 10_000_000,
                     amountUsed: 0,
                     reachedLimitLinkCreation: true
                 )
@@ -231,7 +231,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 70250
         // swap data
         let swapData = transaction1?.swapData as! DirectSwapData
@@ -250,24 +250,24 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 minimumAmountOut: targetAmount
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
-        
+
         XCTAssertEqual(transaction?.instructions.count, 3)
-        
+
         // - Create relay account instruction
         let createRelayAccountInstruction = transaction!.instructions[0]
         XCTAssertEqual(createRelayAccountInstruction, .init(
             keys: [
                 .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: .relayAccount, isSigner: false)
+                .writable(publicKey: .relayAccount, isSigner: false),
             ],
             programId: SystemProgram.id,
             data: SystemProgram.Index.transfer.bytes + minimumRelayAccountBalance.bytes
         ))
-        
+
         // - Top up swap instruction
         let topUpSwapInstruction = transaction!.instructions[1]
         XCTAssertEqual(topUpSwapInstruction, .init(
@@ -288,12 +288,12 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .writable(publicKey: topUpPools[0].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[0].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.topUpWithDirectSwap] + expectedAmountIn.bytes + targetAmount.bytes
         ))
-        
+
         // - Relay transfer SOL instruction
         let relayTransferSOLInstruction = transaction!.instructions[2]
         XCTAssertEqual(relayTransferSOLInstruction, .init(
@@ -301,26 +301,27 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
         ))
-        
+
         XCTAssertEqual(
             expectedFee?.total,
             2 * lamportsPerSignature + minimumRelayAccountBalance + minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenFreeTransactionIsNotAvailableAndRelayAccountIsCreated() async throws {
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
-                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance..<minimumRelayAccountBalance+1000)),
+                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance ..<
+                        minimumRelayAccountBalance + 1000)),
                 usageStatus: .init(
                     maxUsage: 100,
                     currentUsage: 100,
-                    maxAmount: 10000000,
+                    maxAmount: 10_000_000,
                     amountUsed: 0,
                     reachedLimitLinkCreation: true
                 )
@@ -330,7 +331,7 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 70250
         // swap data
         let swapData = transaction1?.swapData as! DirectSwapData
@@ -349,13 +350,13 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 minimumAmountOut: targetAmount
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
-        
+
         XCTAssertEqual(transaction?.instructions.count, 2)
-        
+
         // - Top up swap instruction
         let topUpSwapInstruction = transaction!.instructions[0]
         XCTAssertEqual(topUpSwapInstruction, .init(
@@ -376,12 +377,12 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .writable(publicKey: topUpPools[0].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[0].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.topUpWithDirectSwap] + expectedAmountIn.bytes + targetAmount.bytes
         ))
-        
+
         // - Relay transfer SOL instruction
         let relayTransferSOLInstruction = transaction!.instructions[1]
         XCTAssertEqual(relayTransferSOLInstruction, .init(
@@ -389,18 +390,18 @@ final class TopUpTransactionBuilderWithDirectSwapTests: XCTestCase {
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
         ))
-        
+
         XCTAssertEqual(
             expectedFee?.total,
             2 * lamportsPerSignature + minimumTokenAccountBalance
         )
     }
-    
+
     // MARK: - Helpers
 
     private func getContext(

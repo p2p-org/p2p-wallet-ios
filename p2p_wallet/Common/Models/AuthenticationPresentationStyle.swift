@@ -1,10 +1,3 @@
-//
-//  AuthenticationPresentationStyle.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 10/01/2022.
-//
-
 import Foundation
 
 enum AuthenticationOptions {

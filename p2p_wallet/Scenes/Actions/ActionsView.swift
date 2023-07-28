@@ -1,10 +1,3 @@
-//
-//  TokenDetailActionView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 10.08.2022.
-//
-
 import Combine
 import KeyAppBusiness
 import KeyAppUI

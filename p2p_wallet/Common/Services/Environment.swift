@@ -1,10 +1,3 @@
-//
-//  Environment.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 04.07.2022.
-//
-
 import Foundation
 
 enum Environment {

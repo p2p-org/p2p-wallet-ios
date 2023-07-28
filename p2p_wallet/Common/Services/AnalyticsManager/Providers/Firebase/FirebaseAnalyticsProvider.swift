@@ -1,12 +1,12 @@
-import Foundation
-import FirebaseAnalytics
 import AnalyticsManager
+import FirebaseAnalytics
+import Foundation
 
 final class FirebaseAnalyticsProvider: AnalyticsProvider {
     var providerId: AnalyticsProviderId {
         KeyAppAnalyticsProviderId.firebaseAnalytics.rawValue
     }
-    
+
     init() {}
 
     func logEvent(_ event: AnalyticsEvent) {
@@ -16,6 +16,6 @@ final class FirebaseAnalyticsProvider: AnalyticsProvider {
             parameters: event.params
         )
     }
-    
-    func logParameter(_ parameter: AnalyticsParameter) {}
+
+    func logParameter(_: AnalyticsParameter) {}
 }

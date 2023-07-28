@@ -2,20 +2,18 @@ import Foundation
 import SolanaSwift
 
 struct MockTokensRepository: TokenRepository {
-
-    
     func get(address: String) async throws -> TokenMetadata? {
-        (try await tokensList)[address]
+        try (await tokensList)[address]
     }
 
     func get(addresses: [String]) async throws -> [String: TokenMetadata] {
-        (try await tokensList)
-            .filter { (address, _) in
+        try (await tokensList)
+            .filter { address, _ in
                 addresses.contains(address)
             }
     }
 
-    func all() async throws -> [String : SolanaSwift.TokenMetadata] {
+    func all() async throws -> [String: SolanaSwift.TokenMetadata] {
         try await tokensList
     }
 

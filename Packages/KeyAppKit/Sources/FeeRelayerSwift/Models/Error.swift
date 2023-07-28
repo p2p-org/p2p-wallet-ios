@@ -1,10 +1,3 @@
-//
-//  FeeRelayer+Error.swift
-//  FeeRelayerSwift
-//
-//  Created by Chung Tran on 30/07/2021.
-//
-
 import Foundation
 
 public protocol FeeRelayerErrorDataType: Decodable {}
@@ -90,7 +83,7 @@ public struct FeeRelayerError: Swift.Error, Decodable, Equatable {
             else if errorLog?.contains("Given pool token amount results in zero trading tokens") == true {
                 type = .givenPoolTokenAmountResultsInZeroTradingTokens
             }
-            
+
             // swap instruction exceeds desired slippage limit
             else if errorLog?.contains("Swap instruction exceeds desired slippage limit") == true {
                 type = .swapInstructionExceedsDesiredSlippageLimit
@@ -161,17 +154,21 @@ public struct FeeRelayerError: Swift.Error, Decodable, Equatable {
     }
 
     public static func topUpSuccessButTransactionThrows(logs: [String]?) -> Self {
-        .init(code: -12, message: "Topping up is successfull, but the transaction failed", data: .init(type: .clientError, data: .init(array: logs)))
+        .init(
+            code: -12,
+            message: "Topping up is successfull, but the transaction failed",
+            data: .init(type: .clientError, data: .init(array: logs))
+        )
     }
-    
+
     public static var inconsistenceRelayContext: Self {
         .init(code: -14, message: "Inconsistence relay context", data: nil)
     }
-    
+
     public static var missingBlockhash: Self {
         .init(code: -15, message: "Missing recent blockhash", data: nil)
     }
-    
+
     public static var missingRelayFeePayer: Self {
         .init(code: -16, message: "Missing relay fee payer", data: nil)
     }

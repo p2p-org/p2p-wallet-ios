@@ -1,10 +1,3 @@
-//
-//  WormholeClaimFeeAdapter.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 27.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore

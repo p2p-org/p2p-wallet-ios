@@ -11,13 +11,13 @@ struct SwapLogsInfo: Codable {
     let errorLogs: [String]?
     let fees: Fees?
     let prices: [String: Double]?
-    
+
     struct TokenInfo: Codable {
         let pubkey: String?
         let balance: Double?
         let symbol, mint: String
     }
-    
+
     struct Fees: Codable {
         let networkFee: SwapFeeInfo?
         let accountCreationFee: SwapFeeInfo?

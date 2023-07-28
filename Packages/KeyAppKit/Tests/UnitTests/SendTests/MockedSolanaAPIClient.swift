@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -188,17 +184,19 @@ class MockedSolanaAPIClient: SolanaAPIClient {
     func getRecentPerformanceSamples(
         limit _: [UInt]
     ) async throws -> [PerfomanceSamples] { fatalError("getRecentPerformanceSamples(limit:) has not been implemented") }
-    
+
     func getSlot() async throws -> UInt64 {
         fatalError()
     }
-    
-    func getAddressLookupTable(accountKey: SolanaSwift.PublicKey) async throws -> SolanaSwift.AddressLookupTableAccount? {
+
+    func getAddressLookupTable(accountKey _: SolanaSwift.PublicKey) async throws -> SolanaSwift
+    .AddressLookupTableAccount? {
         fatalError()
     }
-    
-    func getMultipleAccounts<T>(pubkeys: [String], commitment: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?] where T : SolanaSwift.BufferLayout {
+
+    func getMultipleAccounts<T>(pubkeys _: [String],
+                                commitment _: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?]
+    where T: SolanaSwift.BufferLayout {
         fatalError()
     }
-    
 }

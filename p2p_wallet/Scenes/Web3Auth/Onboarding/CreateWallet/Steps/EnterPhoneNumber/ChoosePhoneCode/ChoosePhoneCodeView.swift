@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct ChoosePhoneCodeView: View {
     @ObservedObject private var viewModel: ChoosePhoneCodeViewModel
@@ -19,7 +19,7 @@ struct ChoosePhoneCodeView: View {
                 .padding(.top, 16)
 
                 WrappedList {
-                    ForEach(viewModel.data) { item  in
+                    ForEach(viewModel.data) { item in
                         ZStack(alignment: .bottom) {
                             ChoosePhoneCodeItemView(country: item)
 
@@ -52,7 +52,7 @@ struct ChoosePhoneCodeView: View {
         .navigationTitle(L10n.countryCode)
         .navigationBarItems(
             trailing:
-                Button(L10n.done, action: viewModel.didClose.send)
+            Button(L10n.done, action: viewModel.didClose.send)
                 .foregroundColor(Color(Asset.Colors.night.color))
         )
         .onAppear {

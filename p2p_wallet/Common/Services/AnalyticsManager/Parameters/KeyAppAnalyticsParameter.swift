@@ -1,5 +1,5 @@
-import Foundation
 import AnalyticsManager
+import Foundation
 
 enum KeyAppAnalyticsParameter: AnalyticsParameter {
     case userHasPositiveBalance(Bool)
@@ -8,6 +8,6 @@ enum KeyAppAnalyticsParameter: AnalyticsParameter {
     // Onboarding
     case userRestoreMethod(String)
     case userDeviceshare(Bool)
-    
+
     case pushAllowed(Bool)
 }

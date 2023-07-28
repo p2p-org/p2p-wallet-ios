@@ -193,14 +193,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func scrollToTop() {
         scrollOnTheTop = true
     }
-    
+
     func viewDidAppear() {
         if let balance = Double(balance) {
             analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
             analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
         }
     }
-    
+
     func balanceTapped() {
         analyticsManager.log(event: .mainScreenAmountClick)
     }

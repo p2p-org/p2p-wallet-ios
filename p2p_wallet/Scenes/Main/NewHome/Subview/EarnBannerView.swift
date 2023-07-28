@@ -1,10 +1,3 @@
-//
-//  EarnBannerView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 30/09/2022.
-//
-
 import SwiftUI
 
 struct EarnBannerView: View {

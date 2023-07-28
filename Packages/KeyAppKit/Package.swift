@@ -317,7 +317,7 @@ let package = Package(
         .testTarget(
             name: "OrcaSwapUnitTests",
             dependencies: ["OrcaSwapSwift"],
-            resources: []
+            resources: [.process("./Tests/Resources/orcaconfigs-mainnet.json")]
         ),
 
         .testTarget(

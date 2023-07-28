@@ -1,17 +1,13 @@
-//
-// Created by Giang Long Tran on 15.12.21.
-//
-
 import Foundation
 
 private typealias _Error = Error
 
-extension Moonpay {
-    public enum Error: _Error {
+public extension Moonpay {
+    enum Error: _Error {
         case message(message: String)
     }
 
-    public struct BuyQuote: Codable {
+    struct BuyQuote: Codable {
         public let baseCurrencyCode: String
         public let quoteCurrencyCode: String
         public let paymentMethod: String?
@@ -23,7 +19,7 @@ extension Moonpay {
         public let quoteCurrencyAmount: Double
     }
 
-    public struct SellQuote: Codable {
+    struct SellQuote: Codable {
         public var paymentMethod: String
         public var extraFeeAmount: Double
         public var feeAmount: Double
@@ -34,8 +30,8 @@ extension Moonpay {
         public var quoteCurrency: Currency
     }
 
-    public typealias Currencies = [Currency]
-    public struct Currency: Codable {
+    typealias Currencies = [Currency]
+    struct Currency: Codable {
         public let id, createdAt, updatedAt, type: String
         public let name, code: String
         public let precision: Int?
@@ -50,12 +46,12 @@ extension Moonpay {
         public let notAllowedUSStates: [String]?
     }
 
-    public struct BankTransferAvailability: Codable {
+    struct BankTransferAvailability: Codable {
         public var gbp: Bool = false
         public var eur: Bool = false
     }
-    
-    public struct MoonpayCountry: Decodable {
+
+    struct MoonpayCountry: Decodable {
         public let code: String
         public let name: String
         public let isBuyAllowed: Bool
@@ -63,7 +59,7 @@ extension Moonpay {
         public let isNftAllowed: Bool
         public let isAllowed: Bool
         public let states: [State]?
-        
+
         enum CodingKeys: String, CodingKey {
             case code = "alpha2"
             case name
@@ -73,7 +69,7 @@ extension Moonpay {
             case isAllowed
             case states
         }
-        
+
         public struct State: Decodable {
             public let code: String
             public let name: String

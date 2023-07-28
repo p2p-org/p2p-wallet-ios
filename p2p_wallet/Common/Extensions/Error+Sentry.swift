@@ -1,10 +1,3 @@
-//
-//  Error+Sentry.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 20/04/2023.
-//
-
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift

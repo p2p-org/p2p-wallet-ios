@@ -1,13 +1,13 @@
-import XCTest
-@testable import OrcaSwapSwift
-@testable import FeeRelayerSwift
 import SolanaSwift
+import XCTest
+@testable import FeeRelayerSwift
+@testable import OrcaSwapSwift
 
 final class BuildSwapDataTests: XCTestCase {
     private var accountStorage: MockAccountStorage!
-    var account: SolanaSwift.KeyPair { accountStorage.account! }
+    var account: SolanaSwift.Account { accountStorage.account! }
     var swapTransactionBuilder: SwapTransactionBuilderImpl!
-    
+
     override func setUp() async throws {
         accountStorage = try await .init()
         swapTransactionBuilder = .init(
@@ -19,7 +19,7 @@ final class BuildSwapDataTests: XCTestCase {
             lamportsPerSignature: lamportsPerSignature
         )
     }
-    
+
     override func tearDown() async throws {
         accountStorage = nil
         swapTransactionBuilder = nil
@@ -52,15 +52,15 @@ final class BuildSwapDataTests: XCTestCase {
         )
         XCTAssertEqual(encodedSwapData, expectedEncodedSwapData)
     }
-    
+
     func testBuildTransitiveSwapData() async throws {
         // SOL -> BTC -> ETH
         let needsCreateTransitTokenAccount = Bool.random()
-        
+
         let swapData = try await swapTransactionBuilder.buildSwapData(
             userAccount: account,
             pools: [.solBTC, .btcETH],
-            inputAmount: 10000000,
+            inputAmount: 10_000_000,
             minAmountOut: nil,
             slippage: 0.01,
             transitTokenMintPubkey: .btcMint,
@@ -78,7 +78,7 @@ final class BuildSwapDataTests: XCTestCase {
                     destinationPubkey: Pool.solBTC.tokenAccountB,
                     poolTokenMintPubkey: Pool.solBTC.poolTokenMint,
                     poolFeeAccountPubkey: Pool.solBTC.feeAccount,
-                    amountIn: 10000000,
+                    amountIn: 10_000_000,
                     minimumAmountOut: 14
                 ),
                 to: .init(

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
@@ -33,9 +29,9 @@ extension SendInputBusinessLogic {
                     payingTokenMint: feeToken.mintAddress,
                     feeRelayerContext: feeRelayerContext
                 ) ?? .zero
-                feeInToken = (try? await services.swapService.calculateFeeInPayingToken(
+                feeInToken = (try? try await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: fee,
-                    payingFeeTokenMint: try PublicKey(string: feeToken.mintAddress)
+                    payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
                 )) ?? .zero
             }
 

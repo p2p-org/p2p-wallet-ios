@@ -8,14 +8,14 @@
 // See https://swift.org/LICENSE.txt for license information
 //
 //===----------------------------------------------------------------------===//
-extension Sequence {
-  /// An asynchronous sequence containing the same elements as this sequence,
-  /// but on which operations, such as `map` and `filter`, are
-  /// implemented asynchronously.
-  @inlinable
-  public var async: AsyncSyncSequence<Self> {
-    AsyncSyncSequence(self)
-  }
+public extension Sequence {
+    /// An asynchronous sequence containing the same elements as this sequence,
+    /// but on which operations, such as `map` and `filter`, are
+    /// implemented asynchronously.
+    @inlinable
+    var async: AsyncSyncSequence<Self> {
+        AsyncSyncSequence(self)
+    }
 }
 
 /// An asynchronous sequence composed from a synchronous sequence.
@@ -28,41 +28,41 @@ extension Sequence {
 /// in the iterator's `next()` method.
 @frozen
 public struct AsyncSyncSequence<Base: Sequence>: AsyncSequence {
-  public typealias Element = Base.Element
-  
-  @frozen
-  public struct Iterator: AsyncIteratorProtocol {
-    @usableFromInline
-    var iterator: Base.Iterator?
-    
-    @usableFromInline
-    init(_ iterator: Base.Iterator) {
-      self.iterator = iterator
+    public typealias Element = Base.Element
+
+    @frozen
+    public struct Iterator: AsyncIteratorProtocol {
+        @usableFromInline
+        var iterator: Base.Iterator?
+
+        @usableFromInline
+        init(_ iterator: Base.Iterator) {
+            self.iterator = iterator
+        }
+
+        @inlinable
+        public mutating func next() async -> Base.Element? {
+            if !Task.isCancelled, let value = iterator?.next() {
+                return value
+            } else {
+                iterator = nil
+                return nil
+            }
+        }
     }
-    
+
+    @usableFromInline
+    let base: Base
+
+    @usableFromInline
+    init(_ base: Base) {
+        self.base = base
+    }
+
     @inlinable
-    public mutating func next() async -> Base.Element? {
-      if !Task.isCancelled, let value = iterator?.next() {
-        return value
-      } else {
-        iterator = nil
-        return nil
-      }
+    public func makeAsyncIterator() -> Iterator {
+        Iterator(base.makeIterator())
     }
-  }
-  
-  @usableFromInline
-  let base: Base
-  
-  @usableFromInline
-  init(_ base: Base) {
-    self.base = base
-  }
-  
-  @inlinable
-  public func makeAsyncIterator() -> Iterator {
-    Iterator(base.makeIterator())
-  }
 }
 
-extension AsyncSyncSequence: Sendable where Base: Sendable { }
+extension AsyncSyncSequence: Sendable where Base: Sendable {}

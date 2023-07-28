@@ -1,7 +1,3 @@
-//
-// Created by Giang Long Tran on 09.11.21.
-//
-
 import UIKit
 
 extension UIButton {

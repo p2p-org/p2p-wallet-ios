@@ -6,18 +6,17 @@ import SwiftUI
 
 /// View of `CryptoAccounts` scene
 struct CryptoAccountsView: View {
-    
     // MARK: - Properties
-    
+
     @ObservedObject var viewModel: CryptoAccountsViewModel
     private let actionsPanelView: CryptoActionsPanelView
-    
+
     @State var isHiddenSectionDisabled: Bool = true
     @State var currentUserInteractionCellID: String?
     @State var scrollAnimationIsEnded = true
-    
+
     // MARK: - Initializer
-    
+
     init(
         viewModel: CryptoAccountsViewModel,
         actionsPanelView: CryptoActionsPanelView
@@ -25,9 +24,9 @@ struct CryptoAccountsView: View {
         self.viewModel = viewModel
         self.actionsPanelView = actionsPanelView
     }
-    
+
     // MARK: - View content
-    
+
     var body: some View {
         ScrollViewReader { reader in
             ScrollView {
@@ -110,7 +109,7 @@ struct CryptoAccountsView: View {
         .padding(.top, 8)
         .background(Color(Asset.Colors.smoke.color))
     }
-    
+
     private func tokenCell(rendableAccount: any RenderableAccount, isVisible: Bool) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)
@@ -135,7 +134,7 @@ struct CryptoAccountsView: View {
         .frame(height: 72)
         .padding(.horizontal, 16)
     }
-    
+
     @ViewBuilder
     private func wrappedList<Content: View>(
         itemsCount: Int,
@@ -156,7 +155,7 @@ struct CryptoAccountsView: View {
 private extension View {
     @ViewBuilder func swipeActions(
         isVisible: Bool,
-        currentUserInteractionCellID: Binding<String?>,
+        currentUserInteractionCellID _: Binding<String?>,
         action: @escaping () -> Void
     ) -> some View {
         swipeActions(allowsFullSwipe: true) {

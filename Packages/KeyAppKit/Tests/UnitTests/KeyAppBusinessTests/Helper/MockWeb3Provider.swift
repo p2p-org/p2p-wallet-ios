@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 12.03.2023.
-//
-
 import Foundation
 import Web3
 
@@ -63,7 +56,7 @@ private struct RPCMockResponse<Result: Codable>: Codable {
 
         /// Description
         public var localizedDescription: String {
-            return "RPC Error (\(code)) \(message)"
+            "RPC Error (\(code)) \(message)"
         }
     }
 }

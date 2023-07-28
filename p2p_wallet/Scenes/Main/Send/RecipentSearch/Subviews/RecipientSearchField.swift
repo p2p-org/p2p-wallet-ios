@@ -1,10 +1,3 @@
-//
-//  RecipientSearchView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 25.11.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -44,7 +37,7 @@ struct RecipientSearchField: View {
                                 .frame(width: 18, height: 18)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
-                        .accessibilityIdentifier("RecipientSearchField.paste")
+                            .accessibilityIdentifier("RecipientSearchField.paste")
                 } else {
                     Button { text = "" }
                         label: {
@@ -53,7 +46,7 @@ struct RecipientSearchField: View {
                                 .frame(width: 12, height: 12)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
-                        .accessibilityIdentifier("RecipientSearchField.clear")
+                            .accessibilityIdentifier("RecipientSearchField.clear")
                 }
             }
             .padding(.horizontal, 18)

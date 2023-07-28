@@ -1,34 +1,26 @@
-//
-//  ReceiveFundsViaLinkCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.03.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
-import UIKit
 import Resolver
+import UIKit
 
 final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
-    
     // Dependencies
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     // Subjects
     private let resultSubject = PassthroughSubject<Void, Never>()
-    
+
     private let presentingViewController: UIViewController
     private let url: URL
-    
+
     // MARK: - Init
-    
+
     init(presentingViewController: UIViewController, url: URL) {
         self.presentingViewController = presentingViewController
         self.url = url
     }
-    
+
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = ReceiveFundsViaLinkViewModel(url: url)
         let view = ReceiveFundsViaLinkView(viewModel: viewModel)
@@ -39,7 +31,7 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         presentingViewController.present(viewController, animated: true)
-        
+
         viewModel.close
             .sink(receiveValue: { [weak self] in
                 viewController.dismiss(animated: true)
@@ -54,26 +46,26 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        
+
         var errorPresented = false
         viewModel.linkError
             .sink(receiveValue: { [weak self] model in
                 guard let self = self else { return }
-                
+
                 errorPresented = true
                 viewController.dismiss(animated: true) { [weak self] in
                     guard let self = self else { return }
-                    
+
                     let errorView = LinkErrorView(model: model) {
                         self.presentingViewController.dismiss(animated: true)
                     }.asViewController()
-                    
+
                     errorView.deallocatedPublisher()
                         .sink(receiveValue: { [weak self] in
                             self?.resultSubject.send(())
                         })
                         .store(in: &self.subscriptions)
-                    
+
                     errorView.modalPresentationStyle = .fullScreen
                     self.presentingViewController.present(errorView, animated: true)
                 }
@@ -92,7 +84,7 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        
+
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 }

@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 14.03.2023.
-//
-
 import BigInt
 import Foundation
 import KeyAppKitCore
@@ -61,10 +54,10 @@ public extension WormholeBundle {
             let transaction = try EthereumTransaction(rlp: rlpItem)
             let signedTransaction = try keyPair.sign(transaction: transaction, chainID: 1)
 
-            return EthereumSignature(
+            return try EthereumSignature(
                 r: signedTransaction.r.hex(),
                 s: signedTransaction.s.hex(),
-                v: try UInt64(signedTransaction.v.quantity)
+                v: UInt64(signedTransaction.v.quantity)
             )
         }
     }

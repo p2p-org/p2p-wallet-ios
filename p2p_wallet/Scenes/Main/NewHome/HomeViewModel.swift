@@ -1,10 +1,3 @@
-//
-//  HomeViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 08.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -59,7 +52,8 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
+        clipboardManager
+            .copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
         let text: String
         if nameStorage.getName() != nil {
             text = L10n.usernameCopiedToClipboard

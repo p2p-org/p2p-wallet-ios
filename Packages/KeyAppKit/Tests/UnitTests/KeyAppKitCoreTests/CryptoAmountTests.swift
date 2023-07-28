@@ -1,12 +1,5 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 25.03.2023.
-//
-
-import BigInt
 import BigDecimal
+import BigInt
 import Foundation
 import XCTest
 @testable import KeyAppKitCore
