@@ -283,13 +283,13 @@ final class TabBarController: UITabBarController {
         
         // Crypto alert on/off
         viewModel.transferAccountsPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] claimableTransferExist in
-                DispatchQueue.main.async {
-                    let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
-                    let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
-                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
-                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
-                }
+                let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
+                let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
             }
             .store(in: &subscriptions)
         
