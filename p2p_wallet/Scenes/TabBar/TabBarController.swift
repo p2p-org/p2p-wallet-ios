@@ -64,17 +64,17 @@ final class TabBarController: UITabBarController {
         deviceShareMigration
             .isMigrationAvailablePublisher
             .removeDuplicates()
+            .receive(on: RunLoop.main)
             .sink { [weak self] migrationIsAvailable in
-                DispatchQueue.main.async {
-                    if migrationIsAvailable {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                            .selectedImage = .selectedTabBarSettingsWithAlert
-                    } else {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
-                    }
+                if migrationIsAvailable {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .selectedTabBarSettingsWithAlert
+                } else {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
                 }
+                
             }
             .store(in: &subscriptions)
     }
