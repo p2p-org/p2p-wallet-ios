@@ -66,7 +66,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
                 ethereumAccountsService.statePublisher,
-                userActionService.$actions.map { userActions in
+                userActionService.actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
             )
