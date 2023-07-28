@@ -24,6 +24,14 @@ public extension UserActionError {
 }
 
 public extension UserActionError {
+    private static let requestFailureDomain: String = "RequestFailure"
+
+    static func requestFailure(description: String) -> UserActionError {
+        UserActionError(domain: requestFailureDomain, code: 1, reason: description)
+    }
+}
+
+public extension UserActionError {
     private static let feeRelayDomain: String = "FeeRelay"
 
     static let topUpFailure: UserActionError = .init(

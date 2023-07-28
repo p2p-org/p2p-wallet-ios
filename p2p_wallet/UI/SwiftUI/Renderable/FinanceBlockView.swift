@@ -2,9 +2,9 @@ import SwiftUI
 import KeyAppUI
 
 struct FinanceBlockView: View {
-    @State var leadingItem: any Renderable
-    @State var centerItem: any Renderable
-    @State var trailingItem: any Renderable
+    let leadingItem: any Renderable
+    let centerItem: any Renderable
+    let trailingItem: any Renderable
 
     var leadingView: some View {
         AnyView(leadingItem.render())
