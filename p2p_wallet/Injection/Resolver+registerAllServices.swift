@@ -150,7 +150,14 @@ extension Resolver: ResolverRegistering {
 
         // AnalyticsManager
         register {
-            AmplitudeAnalyticsProvider()
+            let apiKey: String
+            #if !RELEASE
+                apiKey = .secretConfig("AMPLITUDE_API_KEY_FEATURE")!
+            #else
+                apiKey = .secretConfig("AMPLITUDE_API_KEY")!
+            #endif
+
+            return AmplitudeAnalyticsProvider(apiKey: apiKey)
         }
         .scope(.application)
 
