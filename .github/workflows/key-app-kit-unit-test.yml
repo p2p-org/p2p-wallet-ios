@@ -47,9 +47,14 @@ jobs:
             -parallel-testing-enabled YES \
             -resultBundlePath TestResults \
             -only-testing:CountriesAPIUnitTests \
+            -only-testing:FeeRelayerSwiftUnitTests \
             -only-testing:JSBridgeTests \
+            -only-testing:KeyAppKitCoreTests \
             -only-testing:KeyAppNetworkingTests \
             -only-testing:KeyAppStateMachineTests \
+            -only-testing:OnboardingTests \
+            -only-testing:SendTests \
+            -only-testing:WormholeTests \
             | xcbeautify
 
       # - uses: sersoft-gmbh/swift-coverage-action@v3.0.1

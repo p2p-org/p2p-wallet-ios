@@ -180,7 +180,7 @@ public class SendActionServiceImpl: SendActionService {
         }
 
         var preparedTransaction: PreparedTransaction
-        if wallet.token.isNativeSOL {
+        if wallet.token.isNative {
             preparedTransaction = try await blockchainClient.prepareSendingNativeSOL(
                 from: account,
                 to: receiver,

@@ -196,7 +196,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         let memo = memoPrefix + "-claim"
 
         // native sol
-        if token.mintAddress == TokenMetadata.nativeSolana.address {
+        if token.mintAddress == TokenMetadata.nativeSolana.mintAddress {
             return try await claimNativeSOLToken(
                 keypair: token.keypair,
                 receiver: receiver,
@@ -343,7 +343,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         if solBalance > 0 {
             return ClaimableTokenInfo(
                 lamports: solBalance,
-                mintAddress: TokenMetadata.nativeSolana.address,
+                mintAddress: TokenMetadata.nativeSolana.mintAddress,
                 decimals: TokenMetadata.nativeSolana.decimals,
                 account: keypair.publicKey.base58EncodedString,
                 keypair: keypair

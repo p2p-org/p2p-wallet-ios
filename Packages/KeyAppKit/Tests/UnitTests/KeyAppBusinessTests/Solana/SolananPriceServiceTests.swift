@@ -14,7 +14,7 @@ final class PriceServiceTests: XCTestCase {
             .init(
                 chainId: "solana",
                 data: [
-                    .init(address: SolanaToken.nativeSolana.address, price: ["usd": "12.0"]),
+                    .init(address: SolanaToken.nativeSolana.mintAddress, price: ["usd": "12.0"]),
                 ]
             ),
         ]
@@ -27,7 +27,7 @@ final class PriceServiceTests: XCTestCase {
             .init(
                 chainId: "solana",
                 data: [
-                    .init(address: SolanaToken.nativeSolana.address, price: ["usd": "15.0"]),
+                    .init(address: SolanaToken.nativeSolana.mintAddress, price: ["usd": "15.0"]),
                 ]
             ),
         ]
