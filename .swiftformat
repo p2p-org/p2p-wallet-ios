@@ -1,4 +1,4 @@
---exclude Templates,"p2p_wallet/Resources/Asset+Generated.swift","p2p_wallet/Resources/Strings+Generated.swift"
+--exclude Templates,"p2p_wallet/Resources/Asset+Generated.swift","p2p_wallet/Resources/Strings+Generated.swift", "Packages/KeyAppUI"
 
 --acronyms ID,URL,UUID
 --allman false
