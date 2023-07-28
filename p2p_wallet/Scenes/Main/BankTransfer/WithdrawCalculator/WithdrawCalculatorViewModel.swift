@@ -179,7 +179,7 @@ private extension WithdrawCalculatorViewModel {
                     self.notificationService.showDefaultErrorNotification()
                 } else {
                     let info = await self.getWithdrawalInfo()
-                    self.openWithdraw.send((info, fromBalance ?? 0))
+                    self.openWithdraw.send((info, fromAmount ?? 0))
                 }
             }
             .store(in: &subscriptions)
