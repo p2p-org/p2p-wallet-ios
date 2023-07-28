@@ -64,29 +64,24 @@ struct CryptoAccountsView: View {
             if !viewModel.transferAccounts.isEmpty {
                 wrappedList(items: viewModel.transferAccounts) { data in
                     ForEach(data, id: \.id) {
-                        tokenCell(rendableAccount: $0, isVisible: true)
+                        tokenCell(rendableAccount: $0)
                     }
                 }
             }
 
-            List {
-                ForEach(viewModel.accounts, id: \.id) {
-                    tokenCell(rendableAccount: $0, isVisible: true)
+            wrappedList(items: viewModel.accounts) { data in
+                ForEach(data, id: \.id) { rendableAccount in
+                    tokenCell(rendableAccount: rendableAccount)
+                        .swipeActions(
+                            isVisible: true,
+                            currentUserInteractionCellID: $currentUserInteractionCellID,
+                            action: {
+                                viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                            }
+                        )
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets())
             }
-            .listStyle(.plain)
-            .cornerRadius(16)
-            .padding(.horizontal, 16)
-            .frame(height: CGFloat(viewModel.accounts.count) * 72)
             .padding(.top, 12)
-
-//            wrappedList(items: viewModel.accounts) { data in
-//                ForEach(data, id: \.id) {
-//                    tokenCell(rendableAccount: $0, isVisible: true)
-//                }
-//            }
 
             if !viewModel.hiddenAccounts.isEmpty {
                 Button(
@@ -112,8 +107,15 @@ struct CryptoAccountsView: View {
                 )
                 if !isHiddenSectionDisabled {
                     wrappedList(items: viewModel.hiddenAccounts) { data in
-                        ForEach(data, id: \.id) {
-                            tokenCell(rendableAccount: $0, isVisible: false)
+                        ForEach(data, id: \.id) { rendableAccount in
+                            tokenCell(rendableAccount: rendableAccount)
+                                .swipeActions(
+                                    isVisible: false,
+                                    currentUserInteractionCellID: $currentUserInteractionCellID,
+                                    action: {
+                                        viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                                    }
+                                )
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                     }
@@ -124,28 +126,13 @@ struct CryptoAccountsView: View {
         .background(Color(Asset.Colors.smoke.color))
     }
 
-    private func tokenCell(rendableAccount: any RenderableAccount, isVisible: Bool) -> some View {
+    private func tokenCell(rendableAccount: any RenderableAccount) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)
         } onButtonTap: {
             viewModel.invoke(for: rendableAccount, event: .extraButtonTap)
         }
         .equatable()
-        .do { view in
-            switch rendableAccount.extraAction {
-            case .showHide:
-                return AnyView(
-                    view.swipeActions(
-                        isVisible: isVisible,
-                        currentUserInteractionCellID: $currentUserInteractionCellID
-                    ) {
-                        viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                    }
-                )
-            case .none:
-                return AnyView(view)
-            }
-        }
         .frame(height: 72)
         .padding(.horizontal, 16)
     }
