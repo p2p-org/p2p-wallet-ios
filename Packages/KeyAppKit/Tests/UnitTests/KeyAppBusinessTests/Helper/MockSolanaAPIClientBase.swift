@@ -176,7 +176,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func observeSignatureStatus(signature _: String, timeout _: Int,
-                                delay _: Int) -> AsyncStream<SolanaSwift.TransactionStatus>
+                                delay _: Int) -> AsyncStream<SolanaSwift.PendingTransactionStatus>
     {
         fatalError()
     }
