@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolanaPricesAPIs"
-               BuildableName = "SolanaPricesAPIs"
-               BlueprintName = "SolanaPricesAPIs"
+               BlueprintIdentifier = "OrcaSwapSwift"
+               BuildableName = "OrcaSwapSwift"
+               BlueprintName = "OrcaSwapSwift"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -49,9 +49,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SolanaPricesAPIs"
-            BuildableName = "SolanaPricesAPIs"
-            BlueprintName = "SolanaPricesAPIs"
+            BlueprintIdentifier = "OrcaSwapSwift"
+            BuildableName = "OrcaSwapSwift"
+            BlueprintName = "OrcaSwapSwift"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
