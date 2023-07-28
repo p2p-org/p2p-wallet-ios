@@ -211,7 +211,11 @@ extension String {
     static var fakeTransactionSignaturePrefix: String {
         "<FakeTransactionSignature>"
     }
-    
+
+    static var fakePausedTransactionSignaturePrefix: String {
+        "<FakePausedTransactionSignature>"
+    }
+
     static func fakeTransactionSignature(id: String) -> String {
         fakeTransactionSignaturePrefix + "<\(id)>"
     }

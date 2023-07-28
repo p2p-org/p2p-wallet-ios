@@ -1,10 +1,3 @@
-//
-//  PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 06/03/2022.
-//
-
 import Foundation
 import SolanaSwift
 import TransactionParser
@@ -17,6 +10,7 @@ struct PendingTransaction {
         case confirmed(_ numberOfConfirmed: Int)
         case finalized
         case error(_ error: Swift.Error)
+        case confirmationNeeded
 
         var numberOfConfirmations: Int? {
             switch self {
@@ -65,7 +59,7 @@ struct PendingTransaction {
                 }
                 // return
                 return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
-            case .finalized, .error:
+            case .finalized, .error, .confirmationNeeded:
                 return 1
             }
         }
@@ -89,6 +83,8 @@ struct PendingTransaction {
                 return "finalized"
             case .error:
                 return "error"
+            case .confirmationNeeded:
+                return "confirmationNeeded"
             }
         }
     }
@@ -120,6 +116,8 @@ extension PendingTransaction {
             status = .confirmed
         case let .error(error):
             status = .error(error.readableDescription)
+        case .confirmationNeeded:
+            status = .processing(percent: 0)
         }
 
         let signature = transactionId
@@ -175,7 +173,7 @@ extension PendingTransaction {
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
-        case let transaction as StrigaClaimTransactionType:
+        case let transaction as any StrigaClaimTransactionType:
             value = StrigaClaimInfo(
                 amount: transaction.amount,
                 token: transaction.token,
@@ -184,7 +182,7 @@ extension PendingTransaction {
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
 
-        case let transaction as StrigaWithdrawTransactionType:
+        case let transaction as any StrigaWithdrawTransactionType:
             value = StrigaWithdrawInfo(
                 amount: transaction.amount,
                 token: transaction.token,

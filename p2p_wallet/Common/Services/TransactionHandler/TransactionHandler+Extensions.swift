@@ -76,8 +76,15 @@ extension TransactionHandler {
                     return value
                 }
                 return
+            } else if transactionId.hasPrefix(.fakePausedTransactionSignaturePrefix) {
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .confirmationNeeded
+                    return value
+                }
+                return
             }
-            
+
             // for production
             var statuses: [TransactionStatus] = []
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {

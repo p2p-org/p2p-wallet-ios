@@ -72,7 +72,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
 
                     // delegate work to transaction handler
                     let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(transaction)
+                        .sendTransaction(transaction, status: .sending)
 
                     // return pending transaction
                     let pendingTransaction = PendingTransaction(
@@ -84,7 +84,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                     return pendingTransaction
                 case .verified:
                     // Fake transaction for now
-                    let transaction = SendTransaction(
+                    let sendTransaction = SendTransaction(
                         isFakeSendTransaction: false,
                         isFakeSendTransactionError: false,
                         isFakeSendTransactionNetworkError: false,
@@ -104,16 +104,27 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
                     )
 
+                    let transaction = StrigaWithdrawSendTransaction(
+                        sendTransaction: sendTransaction,
+                        IBAN: model.IBAN ?? "",
+                        BIC: model.BIC ?? "",
+                        amount: amount,
+                        feeAmount: .zero
+                    )
+
                     // delegate work to transaction handler
                     let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(transaction)
+                        .sendTransaction(
+                            transaction,
+                            status: .confirmationNeeded
+                        )
 
                     // return pending transaction
                     let pendingTransaction = PendingTransaction(
                         trxIndex: transactionIndex,
                         sentAt: Date(),
                         rawTransaction: transaction,
-                        status: .sending
+                        status: .confirmationNeeded
                     )
                     return pendingTransaction
                 case .canceled:

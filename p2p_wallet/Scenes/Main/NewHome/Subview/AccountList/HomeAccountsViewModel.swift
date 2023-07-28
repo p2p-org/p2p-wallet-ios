@@ -147,8 +147,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         userActionService.$actions
-            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction } }
+            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction }.first }
             .flatMap(\.publisher)
+            .filter { $0.status == .ready }
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
                 case .error:
@@ -157,17 +160,16 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     break
                 }
             })
-            .filter { $0.status == .ready }
-            .receive(on: RunLoop.main)
             .sink { [weak self] action in
                 guard let result = action.result else { return }
                 self?.handleClaim(result: result, in: action)
             }.store(in: &subscriptions)
 
-        userActionService.$actions
+            userActionService.$actions
             .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
             .flatMap(\.publisher)
             .filter { $0.status != .pending && $0.status != .processing }
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] action in
                 switch action.status {
@@ -265,17 +267,21 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         userActionService.execute(action: userAction)
     }
 
-    private func handleOutgoingConfirm(result: OutgoingBankTransferUserActionResult, in action: OutgoingBankTransferUserAction) {
+    private func handleOutgoingConfirm(
+        result: OutgoingBankTransferUserActionResult,
+        in action: OutgoingBankTransferUserAction
+    ) {
         switch result {
-        case let .initiated(challengeId):
-            self.navigation.send(.bankTransferClaim(StrigaClaimTransaction(
-                challengeId: challengeId,
-                token: .usdc,
-                amount: Double(action.amount) ?? 0 / 100,
-                feeAmount: .zero,
-                fromAddress: "",
-                receivingAddress: ""
-            )))
+        case let .initiated(challengeId, IBAN, BIC):
+            self.navigation.send(.bankTransferConfirm(
+                StrigaWithdrawTransaction(
+                    challengeId: challengeId,
+                    IBAN: IBAN,
+                    BIC: BIC,
+                    amount: Double(action.amount) ?? 0 / 100,
+                    feeAmount: .zero
+                )
+            ))
         case let .requestWithdrawInfo(receiver):
             self.navigation.send(.withdrawInfo(
                 StrigaWithdrawalInfo(receiver: receiver),

@@ -1475,3 +1475,5 @@
 "Your bank account name must match the name registered to your Key App account" = "Your bank account name must match the name registered to your Key App account";
 "Your IBAN" = "Your IBAN";
 "Outcoming transfer" = "Outcoming transfer";
+"We will ask you to confirm this operation within a few minutes" = "We will ask you to confirm this operation within a few minutes";
+"Transaction pending" = "Transaction pending";

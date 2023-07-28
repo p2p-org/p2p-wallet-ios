@@ -3,12 +3,12 @@ import Resolver
 import KeyAppBusiness
 import SolanaSwift
 
-protocol StrigaConfirmableTransactionType {
+protocol StrigaConfirmableTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
 }
 
 /// Striga Claim trasaction type
-protocol StrigaClaimTransactionType: RawTransactionType {
+protocol StrigaClaimTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
     var token: Token? { get }
     var amount: Double? { get }
@@ -100,3 +100,29 @@ struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmab
 }
 
 extension StrigaClaimTransaction: Equatable {}
+
+
+/// Used to wrap Send transaction into Striga Withdraw format
+struct StrigaWithdrawSendTransaction: StrigaWithdrawTransactionType, RawTransactionType {
+    var sendTransaction: SendTransaction
+    var IBAN: String
+    var BIC: String
+    var amount: Double
+    let token: Token = .usdc
+    let feeAmount: FeeAmount
+    var mainDescription: String {
+        ""
+    }
+
+    // MARK: - Methods
+
+    func createRequest() async throws -> String {
+        // get transaction from proxy api
+        
+        // sign transaction
+        
+        // TODO: - send to blockchain
+        try? await Task.sleep(seconds: 1)
+        return .fakePausedTransactionSignaturePrefix + UUID().uuidString
+    }
+}

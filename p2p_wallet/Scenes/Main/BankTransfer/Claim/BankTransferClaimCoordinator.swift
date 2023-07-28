@@ -22,7 +22,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     // MARK: - Properties
 
     private let navigationController: UINavigationController
-    private let transaction: any RawTransactionType
+    private let transaction: any StrigaConfirmableTransactionType
 
     private let subject = PassthroughSubject<BankTransferClaimCoordinatorResult, Never>()
 
@@ -30,7 +30,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     init(
         navigationController: UINavigationController,
-        transaction: any RawTransactionType
+        transaction: any StrigaConfirmableTransactionType
     ) {
         self.navigationController = navigationController
         self.transaction = transaction
@@ -44,7 +44,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
             .prefix(1)
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] state in
-                guard let phone = state.value.mobileNumber, let transaction = transaction as? any StrigaConfirmableTransactionType else {
+                guard let phone = state.value.mobileNumber else {
                     return Just(StrigaOTPCoordinatorResult.canceled)
                         .eraseToAnyPublisher()
                 }
@@ -79,11 +79,19 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                     )
                 )
             }
+            .handleEvents(receiveOutput: { [unowned self] result in
+                switch result {
+                case .verified:
+                    navigationController.popToRootViewController(animated: true)
+                case .canceled:
+                    navigationController.popViewController(animated: true)
+                }
+            })
             .map { [unowned self] result -> BankTransferClaimCoordinatorResult in
                 switch result {
                 case .verified:
                     let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(transaction)
+                        .sendTransaction(transaction, status: .sending)
                     // return pending transaction
                     let pendingTransaction = PendingTransaction(
                         trxIndex: transactionIndex,
@@ -95,7 +103,6 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                 case .canceled:
                     return BankTransferClaimCoordinatorResult.canceled
                 }
-                
             }.eraseToAnyPublisher()
     }
 }
