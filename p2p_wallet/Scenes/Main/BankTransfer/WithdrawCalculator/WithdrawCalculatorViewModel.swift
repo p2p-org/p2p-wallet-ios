@@ -22,7 +22,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     let actionPressed = PassthroughSubject<Void, Never>()
     let allButtonPressed = PassthroughSubject<Void, Never>()
     let openBankTransfer = PassthroughSubject<Void, Never>()
-    let openWithdraw = PassthroughSubject<StrigaWithdrawalInfo, Never>()
+    let openWithdraw = PassthroughSubject<(StrigaWithdrawalInfo, Double), Never>()
     let proceedWithdraw = PassthroughSubject<Void, Never>()
     let isViewAppeared = PassthroughSubject<Bool, Never>()
 
@@ -179,7 +179,7 @@ private extension WithdrawCalculatorViewModel {
                     self.notificationService.showDefaultErrorNotification()
                 } else {
                     let info = await self.getWithdrawalInfo()
-                    self.openWithdraw.send(info)
+                    self.openWithdraw.send((info, fromAmount ?? 0))
                 }
             }
             .store(in: &subscriptions)

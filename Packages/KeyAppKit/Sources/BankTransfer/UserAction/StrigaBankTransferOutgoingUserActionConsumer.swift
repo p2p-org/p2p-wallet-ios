@@ -6,7 +6,7 @@ import SolanaSwift
 
 public enum OutgoingBankTransferUserActionResult: Codable, Equatable {
     case requestWithdrawInfo(receiver: String)
-    case initiated(challengeId: String)
+    case initiated(challengeId: String, IBAN: String, BIC: String)
 }
 
 public enum OutgoingBankTransferUserActionEvent: UserActionEvent {
@@ -53,7 +53,7 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
             guard
                 let service = self?.bankTransferService.value,
                 let userId = await service.repository.getUserId(),
-                let withdrawInfo = try await service.repository.getWithdrawalInfo(userId: userId),
+                let withdrawInfo = try? await service.repository.getWithdrawalInfo(userId: userId),
                 let iban = withdrawInfo.IBAN,
                 let bic = withdrawInfo.BIC
             else {
@@ -63,7 +63,7 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
                     logLevel: .error
                 )
                 let regData = try? await self?.bankTransferService.value.getRegistrationData()
-                self?.handle(event: Event.complete(action, .requestWithdrawInfo(receiver: [regData?.firstName, regData?.lastName].compactMap({ $0  }).joined(separator: " "))))
+                self?.handle(event: Event.complete(action, .requestWithdrawInfo(receiver: [regData?.firstName, regData?.lastName].compactMap({ $0 }).joined(separator: " "))))
                 return
             }
 
@@ -75,7 +75,11 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
                     iban: iban,
                     bic: bic
                 )
-                self?.handle(event: Event.complete(action, .initiated(challengeId: result)))
+                self?.handle(event: Event.complete(action, .initiated(
+                    challengeId: result,
+                    IBAN: iban,
+                    BIC: bic
+                )))
             } catch let error as NSError where error.isNetworkConnectionError {
                 self?.handle(event: Event.sendFailure(action, .networkFailure))
             } catch {
@@ -94,7 +98,7 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
         case let .complete(action, result):
             Task { [weak self] in
                 guard let self = self else { return }
-                let userAction = Action(
+                var userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
                     amount: action.amount,
@@ -124,11 +128,7 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
     }
 }
 
-public class OutgoingBankTransferUserAction: UserAction {
-    public static func == (lhs: OutgoingBankTransferUserAction, rhs: OutgoingBankTransferUserAction) -> Bool {
-        lhs.id == rhs.id
-    }
-
+public struct OutgoingBankTransferUserAction: UserAction, Equatable {
     /// Unique internal id to track.
     public let id: String
     public let accountId: String

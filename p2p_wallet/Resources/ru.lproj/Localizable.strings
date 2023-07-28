@@ -1507,3 +1507,5 @@
 "Your bank account name must match the name registered to your Key App account" = "Имя вашего банковского счета должно совпадать с именем, зарегистрированным в вашей учетной записи Key App.";
 "Your IBAN" = "Ваш IBAN";
 "Outcoming transfer" = "Исходящий перевод";
+"We will ask you to confirm this operation within a few minutes" = "Мы попросим вас подтвердить эту операцию в течение нескольких минут";
+"Transaction pending" = "Ожидание транзакции";

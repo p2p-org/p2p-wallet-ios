@@ -4,14 +4,14 @@ import Combine
 import SolanaSwift
 import UIKit
 
-final class WithdrawCalculatorCoordinator: Coordinator<Void> {
+final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordinator.Result> {
     private let navigationController: UINavigationController
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<WithdrawCalculatorCoordinator.Result, Never> {
         let viewModel = WithdrawCalculatorViewModel()
         let view = WithdrawCalculatorView(viewModel: viewModel)
         let vc = view.asViewController(withoutUIKitNavBar: false)
@@ -23,11 +23,18 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
             .sink { [weak self] _ in self?.openBankTransfer() }
             .store(in: &subscriptions)
 
-        viewModel.openWithdraw
-            .sink { [weak self] model in self?.openWithdraw(model: model) }
-            .store(in: &subscriptions)
-
-        return vc.deallocatedPublisher().eraseToAnyPublisher()
+        return Publishers.Merge(
+            viewModel.openWithdraw
+                .flatMap({ [unowned self] model, amount in
+                    openWithdraw(model: model, amount: amount)
+                })
+                .compactMap { $0 }
+                .map { WithdrawCalculatorCoordinator.Result.transaction($0) }
+                .eraseToAnyPublisher(),
+            vc.deallocatedPublisher()
+                .map { WithdrawCalculatorCoordinator.Result.canceled }
+                .eraseToAnyPublisher()
+        ).prefix(1).eraseToAnyPublisher()
     }
 
     private func openBankTransfer() {
@@ -36,7 +43,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func openWithdraw(model: StrigaWithdrawalInfo) {
+    private func openWithdraw(model: StrigaWithdrawalInfo, amount: Double) -> AnyPublisher<PendingTransaction?, Never> {
         coordinate(to: WithdrawCoordinator(
             navigationController: navigationController,
             withdrawalInfo: model)
@@ -49,22 +56,14 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
                     break
                 }
             })
-            .handleEvents(receiveOutput: { [unowned self] result in
+            .map({ result -> PendingTransaction? in
                 switch result {
-                case .verified:
-                    self.navigationController.popToRootViewController(animated: true)
-                case .canceled, .paymentInitiated:
-                    break
-                }
-            })
-            .flatMap { [unowned self] result in
-                switch result {
-                case .verified:
+                case .paymentInitiated(let challangeId):
                     let transaction = StrigaWithdrawTransaction(
-                        challengeId: "1",
+                        challengeId: challangeId,
                         IBAN: model.IBAN ?? "",
                         BIC: model.BIC ?? "",
-                        amount: 120,
+                        amount: amount,
                         feeAmount: FeeAmount(
                             transaction: 0,
                             accountBalances: 0
@@ -73,7 +72,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
 
                     // delegate work to transaction handler
                     let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(transaction as! RawTransactionType)
+                        .sendTransaction(transaction, status: .sending)
 
                     // return pending transaction
                     let pendingTransaction = PendingTransaction(
@@ -82,23 +81,63 @@ final class WithdrawCalculatorCoordinator: Coordinator<Void> {
                         rawTransaction: transaction,
                         status: .sending
                     )
-                    return self.openDetails(pendingTransaction: pendingTransaction)
-                        .map { _ in Void() }.eraseToAnyPublisher()
-                case .canceled, .paymentInitiated:
-                    return Just(()).eraseToAnyPublisher()
+                    return pendingTransaction
+                case .verified:
+                    // Fake transaction for now
+                    let sendTransaction = SendTransaction(
+                        isFakeSendTransaction: false,
+                        isFakeSendTransactionError: false,
+                        isFakeSendTransactionNetworkError: false,
+                        recipient: .init(
+                            address: "",
+                            category: .solanaAddress,
+                            attributes: .funds
+                        ),
+                        sendViaLinkSeed: nil,
+                        amount: amount,
+                        amountInFiat: 0.01,
+                        walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                        address: "adfasdf",
+                        payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                        feeAmount: .init(transaction: 10000, accountBalances: 2039280),
+                        currency: "USD",
+                        analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
+                    )
+
+                    let transaction = StrigaWithdrawSendTransaction(
+                        sendTransaction: sendTransaction,
+                        IBAN: model.IBAN ?? "",
+                        BIC: model.BIC ?? "",
+                        amount: amount,
+                        feeAmount: .zero
+                    )
+
+                    // delegate work to transaction handler
+                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                        .sendTransaction(
+                            transaction,
+                            status: .confirmationNeeded
+                        )
+
+                    // return pending transaction
+                    let pendingTransaction = PendingTransaction(
+                        trxIndex: transactionIndex,
+                        sentAt: Date(),
+                        rawTransaction: transaction,
+                        status: .confirmationNeeded
+                    )
+                    return pendingTransaction
+                case .canceled:
+                    return nil
                 }
-            }
-            .sink { _ in }
-            .store(in: &subscriptions)
+            })
+            .eraseToAnyPublisher()
     }
+}
 
-    private func openDetails(pendingTransaction: PendingTransaction) -> AnyPublisher<TransactionDetailStatus, Never> {
-        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
-
-//        self.viewModel.logTransactionProgressOpened()
-        return coordinate(to: TransactionDetailCoordinator(
-            viewModel: viewModel,
-            presentingViewController: navigationController
-        ))
+extension WithdrawCalculatorCoordinator {
+    enum Result {
+        case transaction(PendingTransaction)
+        case canceled
     }
 }

@@ -16,7 +16,11 @@ import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
-    func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
+    func sendTransaction(
+        _ processingTransaction: RawTransactionType,
+        status: PendingTransaction.TransactionStatus
+    ) -> TransactionIndex
+
     func observeTransaction(transactionIndex: TransactionIndex) -> AnyPublisher<PendingTransaction?, Never>
     func areSomeTransactionsInProgress() -> Bool
 
@@ -51,7 +55,8 @@ class TransactionHandler: TransactionHandlerType {
     }
 
     func sendTransaction(
-        _ processingTransaction: RawTransactionType
+        _ processingTransaction: RawTransactionType,
+        status: PendingTransaction.TransactionStatus = .sending
     ) -> TransactionIndex {
         // get index to return
         let txIndex = transactionsSubject.value.count
@@ -62,7 +67,7 @@ class TransactionHandler: TransactionHandlerType {
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: processingTransaction,
-            status: .sending
+            status: status
         )
 
         var value = transactionsSubject.value
@@ -124,7 +129,7 @@ class TransactionHandler: TransactionHandlerType {
                     if transaction.destinationWallet.pubkey == account {
                         return true
                     }
-                case let transaction as StrigaClaimTransactionType:
+                case let transaction as any StrigaClaimTransactionType:
                     if transaction.receivingAddress == account {
                         return true
                     }

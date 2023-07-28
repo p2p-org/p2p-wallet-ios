@@ -21,6 +21,7 @@ enum HomeNavigation: Equatable {
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case bankTransferClaim(StrigaClaimTransaction)
+    case bankTransferConfirm(StrigaWithdrawTransaction)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -185,11 +186,11 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
             }
         case .bankTransferClaim(let transaction):
-            return coordinate(to: BankTransferClaimCoordinator(
-                navigationController: navigationController,
-                transaction: transaction
-            ))
-            .map { _ in Void() }
+            return openBankTransferClaimCoordinator(transaction: transaction)
+            .eraseToAnyPublisher()
+
+        case .bankTransferConfirm(let transaction):
+            return openBankTransferClaimCoordinator(transaction: transaction)
             .eraseToAnyPublisher()
 
         case .swap:
@@ -233,7 +234,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         case let .solanaAccount(solanaAccount):
             analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
-            
+
             return coordinate(
                 to: AccountDetailsCoordinator(
                     args: .solanaAccount(solanaAccount),
@@ -243,36 +244,47 @@ final class HomeCoordinator: Coordinator<Void> {
             .map { _ in () }
             .eraseToAnyPublisher()
         case .actions, .topUp:
-            return Just(())
-                .eraseToAnyPublisher()
+            return Just(()).eraseToAnyPublisher()
         case .bankTransfer:
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
                 .eraseToAnyPublisher()
         case .withdrawCalculator:
-            return coordinate(to: WithdrawCalculatorCoordinator(navigationController: navigationController))
-                .eraseToAnyPublisher()
+            return coordinate(to: WithdrawCalculatorCoordinator(
+                navigationController: navigationController)
+            )
+            .flatMap({ [unowned self] result in
+                switch result {
+                case .transaction(let transaction):
+                    return openPendingTransactionDetails(transaction: transaction)
+                        .eraseToAnyPublisher()
+                case .canceled:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }).eraseToAnyPublisher()
         case let .withdrawInfo(model, params):
             return coordinate(to: WithdrawCoordinator(
                 navigationController: navigationController,
                 strategy: .confirmation(params),
                 withdrawalInfo: model
             ))
-            .handleEvents(receiveOutput: { [weak self] result in
+            .compactMap({ result -> (any StrigaConfirmableTransactionType)? in
                 switch result {
                 case let .paymentInitiated(challengeId):
-                    self?.openBankTransferClaimCoordinator(transaction: StrigaClaimTransaction(
+                    return StrigaClaimTransaction(
                         challengeId: challengeId,
                         token: .usdc,
                         amount: Double(params.amount),
                         feeAmount: .zero,
                         fromAddress: "",
                         receivingAddress: ""
-                    ))
+                    )
                 case .canceled, .verified:
-                    break
+                    return nil
                 }
             })
-            .map { _ in () } // TODO: Handle other actions here
+            .flatMap({ [unowned self] transaction in
+                openBankTransferClaimCoordinator(transaction: transaction)
+            })
             .eraseToAnyPublisher()
         case let .topUpCoin(token):
             // SOL, USDC
@@ -338,9 +350,28 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func openBankTransferClaimCoordinator(transaction: StrigaClaimTransaction) {
-        coordinate(to: BankTransferClaimCoordinator(navigationController: navigationController, transaction: transaction))
-            .sink { _ in }
-            .store(in: &subscriptions)
+    private func openBankTransferClaimCoordinator(transaction: any StrigaConfirmableTransactionType) -> AnyPublisher<Void, Never> {
+        coordinate(to: BankTransferClaimCoordinator(
+            navigationController: navigationController,
+            transaction: transaction
+        ))
+            .flatMap({ [unowned self] result in
+                switch result {
+                case .completed(let transaction):
+                    return openPendingTransactionDetails(transaction: transaction)
+                        .eraseToAnyPublisher()
+                case .canceled:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }).eraseToAnyPublisher()
+    }
+
+    private func openPendingTransactionDetails(transaction: PendingTransaction) -> AnyPublisher<Void, Never> {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: TransactionDetailViewModel(pendingTransaction: transaction),
+            presentingViewController: navigationController
+        ))
+        .map { _ in () }
+        .eraseToAnyPublisher()
     }
 }

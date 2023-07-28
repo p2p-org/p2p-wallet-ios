@@ -9,8 +9,12 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
 
     let priceService: PricesService
 
+    private var hasTransactionId: Bool {
+        trx.transactionId != nil && !(trx.rawTransaction is ClaimSentViaLinkTransaction) && !(trx.rawTransaction is StrigaWithdrawSendTransaction)
+    }
+
     var status: TransactionDetailStatus {
-        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
+        if hasTransactionId {
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         }
 
@@ -24,13 +28,15 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             ), error: errorModel)
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
+        case .confirmationNeeded:
+            return .paused(message: L10n.weWillAskYouToConfirmThisOperationWithinAFewMinutes)
         default:
             return .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds)
         }
     }
 
     var title: String {
-        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
+        if hasTransactionId {
             return L10n.transactionSucceeded
         }
 
@@ -39,6 +45,8 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             return L10n.transactionFailed
         case .finalized:
             return L10n.transactionSucceeded
+        case .confirmationNeeded:
+            return L10n.transactionPending
         default:
             return L10n.transactionSubmitted
         }
@@ -98,7 +106,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 return .icon(.transactionReceive)
             }
             
-        case let transaction as StrigaClaimTransactionType:
+        case let transaction as any StrigaClaimTransactionType:
             if
                 let urlStr = transaction.token?.logoURI,
                 let url = URL(string: urlStr)
@@ -108,7 +116,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 return .icon(.transactionReceive)
             }
 
-        case let transaction as StrigaWithdrawTransactionType:
+        case let transaction as any StrigaWithdrawTransactionType:
             if
                 let urlStr = transaction.token.logoURI,
                 let url = URL(string: urlStr)
@@ -162,13 +170,13 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 return .positive("+\(amountInFiat)")
             }
             return .unchanged("")
-        case let transaction as StrigaClaimTransactionType:
+        case let transaction as any StrigaClaimTransactionType:
             if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
                 return .positive("+\(amountInFiat)")
             }
             return .unchanged("")
             
-        case let transaction as StrigaWithdrawTransactionType:
+        case let transaction as any StrigaWithdrawTransactionType:
             if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
                 return .negative("-\(amountInFiat)")
             }
@@ -218,7 +226,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
         case let transaction as ClaimSentViaLinkTransaction:
             return "\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
 
-        case let transaction as StrigaClaimTransactionType:
+        case let transaction as any StrigaClaimTransactionType:
             guard let amount = transaction.amount else { return "" }
             return "\(amount.tokenAmountFormattedString(symbol: transaction.token?.symbol ?? ""))"
             
@@ -336,7 +344,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             )
             result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
         
-        case let transaction as StrigaClaimTransactionType:
+        case let transaction as any StrigaClaimTransactionType:
             let title = L10n.receivedFrom
             result.append(
                 .init(
@@ -349,7 +357,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             )
             
-        case let transaction as StrigaWithdrawTransactionType:
+        case let transaction as any StrigaWithdrawTransactionType:
             result.append(
                 .init(
                     title: L10n.iban,
@@ -379,6 +387,9 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
+            if nil != trx.rawTransaction as? any StrigaWithdrawTransactionType {
+                return []
+            }
             return [.share, .explorer]
         default:
             return []

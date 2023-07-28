@@ -96,7 +96,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             userActionService
                 .observer(id: userAction.id)
                 .receive(on: RunLoop.main)
-                .sink { userAction in
+                .sink { [unowned self] userAction in
                     self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
                 }
                 .store(in: &subscriptions)

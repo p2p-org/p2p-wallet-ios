@@ -17,7 +17,7 @@ struct TransactionDetailStatusAppearance {
 
     init(status: TransactionDetailStatus) {
         switch status {
-        case .loading:
+        case .loading, .paused(message: _):
             image = .lightningFilled
             imageSize = CGSize(width: 24, height: 24)
             backgroundColor = Color(Asset.Colors.cloud.color)
@@ -111,6 +111,8 @@ struct TransactionDetailStatusView: View {
                             Text(L10n.LowSlippage.weRecommendToIncreaseSlippageManually(context ?? ""))
                                 .messageStyled()
                         }
+                    case .paused(message: let message):
+                        Text(message).messageStyled()
                     }
                 }
                 .padding(.leading, 2)

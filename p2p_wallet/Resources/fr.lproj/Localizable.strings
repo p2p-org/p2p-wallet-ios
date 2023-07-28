@@ -1511,3 +1511,5 @@
 "Your bank account name must match the name registered to your Key App account" = "Le nom de votre compte bancaire doit correspondre au nom enregistré sur votre compte Key App";
 "Your IBAN" = "Votre IBAN";
 "Outcoming transfer" = "Transfert sortant";
+"We will ask you to confirm this operation within a few minutes" = "Nous vous demanderons de confirmer cette opération dans quelques minutes";
+"Transaction pending" = "Transaction en attente";

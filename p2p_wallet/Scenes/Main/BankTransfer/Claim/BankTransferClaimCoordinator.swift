@@ -9,7 +9,7 @@ import Onboarding
 /// Result for `BankTransferClaimCoordinator`
 enum BankTransferClaimCoordinatorResult {
     /// Transaction has been successfully created
-    case completed
+    case completed(PendingTransaction)
     /// Transaction has been cancelled
     case canceled
 }
@@ -24,7 +24,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
     // MARK: - Properties
 
     private let navigationController: UINavigationController
-    private let transaction: any RawTransactionType
+    private let transaction: any StrigaConfirmableTransactionType
 
     private let subject = PassthroughSubject<BankTransferClaimCoordinatorResult, Never>()
 
@@ -36,7 +36,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
 
     init(
         navigationController: UINavigationController,
-        transaction: any RawTransactionType
+        transaction: any StrigaConfirmableTransactionType
     ) {
         self.navigationController = navigationController
         self.transaction = transaction
@@ -52,7 +52,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
             .prefix(1)
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] state in
-                guard let phone = state.value.mobileNumber, let transaction = transaction as? any StrigaConfirmableTransactionType else {
+                guard let phone = state.value.mobileNumber else {
                     return Just(StrigaOTPCoordinatorResult.canceled)
                         .eraseToAnyPublisher()
                 }
@@ -87,19 +87,19 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                     )
                 )
             }
-            .sink { [weak self] result in
-                // assert self
-                guard let self else { return }
-                
-                // catch result
+            .handleEvents(receiveOutput: { [unowned self] result in
                 switch result {
                 case .verified:
-                    // delegate work to transaction handler
+                    navigationController.popToRootViewController(animated: true)
+                case .canceled:
+                    navigationController.popViewController(animated: true)
+                }
+            })
+            .map { [unowned self] result -> BankTransferClaimCoordinatorResult in
+                switch result {
+                case .verified:
                     let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(
-                            transaction
-                        )
-
+                        .sendTransaction(transaction, status: .sending)
                     // return pending transaction
                     let pendingTransaction = PendingTransaction(
                         trxIndex: transactionIndex,
@@ -107,45 +107,11 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         rawTransaction: transaction,
                         status: .sending
                     )
-
-                    // open detail
-                    openDetails(pendingTransaction: pendingTransaction)
-                        .sink { [weak self] _ in
-                            // TODO: - Fix logic
-//                            guard let self else { return }
-                            //            self.viewModel.logTransactionProgressDone()
-
-                            self?.navigationController.popToRootViewController(animated: true)
-                            self?.subject.send(.completed)
-//                            self.result.send(())
-//                            if self.params.dismissAfterCompletion {
-//                                self.navigationController.popViewController(animated: true)
-//                                self.result.send(completion: .finished)
-//                            } else {
-//                                self.viewModel.reset()
-//                            }
-                        } receiveValue: { _ in
-                            // TODO: - Receive value
-                        }
-                        .store(in: &subscriptions)
-
+                    return BankTransferClaimCoordinatorResult.completed(pendingTransaction)
                 case .canceled:
-                    self.subject.send(.canceled)
+                    return BankTransferClaimCoordinatorResult.canceled
                 }
-            }
-            .store(in: &subscriptions)
-
-        return subject.prefix(1).eraseToAnyPublisher()
-    }
-
-    private func openDetails(pendingTransaction: PendingTransaction) -> AnyPublisher<TransactionDetailStatus, Never> {
-        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
-
-//        self.viewModel.logTransactionProgressOpened()
-        return coordinate(to: TransactionDetailCoordinator(
-            viewModel: viewModel,
-            presentingViewController: navigationController
-        ))
+            }.eraseToAnyPublisher()
     }
 
     // Start OTP request timer
