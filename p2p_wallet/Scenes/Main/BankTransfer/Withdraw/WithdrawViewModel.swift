@@ -22,8 +22,8 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     @Published var isLoading = false
     @Published var actionHasBeenTapped = false
 
-    private let gatheringCompletedSubject = PassthroughSubject<Void, Never>()
-    public var gatheringCompletedPublisher: AnyPublisher<Void, Never> {
+    private let gatheringCompletedSubject = PassthroughSubject<(IBAN: String, BIC: String), Never>()
+    public var gatheringCompletedPublisher: AnyPublisher<(IBAN: String, BIC: String), Never> {
         gatheringCompletedSubject.eraseToAnyPublisher()
     }
     private let paymentInitiatedSubject = PassthroughSubject<String, Never>()
@@ -95,7 +95,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         switch strategy {
         case .gathering:
             // Complete the flow
-            gatheringCompletedSubject.send()
+            gatheringCompletedSubject.send((IBAN.filterIBAN(), BIC))
         case let .confirmation(params):
             // Initiate SEPA payment
             guard let challengeId = await initiateSEPAPayment(params: params, info: info) else { return }

@@ -45,7 +45,7 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
             viewController.deallocatedPublisher()
                 .map { WithdrawCoordinator.Result.canceled },
             viewModel.gatheringCompletedPublisher
-                .map { WithdrawCoordinator.Result.verified }
+                .map { WithdrawCoordinator.Result.verified(IBAN: $0.IBAN, BIC: $0.BIC) }
                 .handleEvents(receiveOutput: { [weak self] _ in
                     self?.navigationController.popToRootViewController(animated: false)
                 }),
@@ -59,7 +59,7 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
 extension WithdrawCoordinator {
     enum Result {
         case paymentInitiated(challengeId: String)
-        case verified
+        case verified(IBAN: String, BIC: String)
         case canceled
     }
 }
