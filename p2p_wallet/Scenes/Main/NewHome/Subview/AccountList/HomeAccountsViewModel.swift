@@ -151,8 +151,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .flatMap(\.publisher)
             .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
-                case .error:
-                    self?.notificationService.showDefaultErrorNotification()
+                case .error(let concreteType):
+                    self?.handle(error: concreteType)
                 default:
                     break
                 }
@@ -174,8 +174,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 case .ready:
                     guard let result = action.result else { return }
                     self?.handleOutgoingConfirm(result: result, in: action)
-                case .error:
-                    self?.notificationService.showDefaultErrorNotification()
+                case let .error(concreteType):
+                    self?.handle(error: concreteType)
                 default:
                     break
                 }
@@ -226,6 +226,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         default:
             break
+        }
+    }
+
+    private func handle(error: UserActionError) {
+        switch error {
+        case .networkFailure:
+            self.notificationService.showConnectionErrorNotification()
+        default:
+            self.notificationService.showDefaultErrorNotification()
         }
     }
 

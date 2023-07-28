@@ -180,12 +180,16 @@ class BankTransferRenderableAccountFactory {
         }
 
         if let eur = accounts.eur, let balance = eur.availableBalance, balance > 0 {
+            let action = actions
+                .compactMap { $0 as? OutgoingBankTransferUserAction }
+                .first(where: { $0.accountId == eur.accountID })
+
             transactions.append(
                 OutgoingBankTransferRenderableAccount(
                     accountId: eur.accountID,
                     fiat: .eur,
                     rawAmount: balance,
-                    status: .ready
+                    status: action?.status == .processing ? .isProcessing : .ready
                 )
             )
         }

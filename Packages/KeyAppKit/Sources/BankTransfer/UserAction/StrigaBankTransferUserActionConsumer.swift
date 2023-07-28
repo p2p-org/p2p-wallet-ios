@@ -13,7 +13,7 @@ public struct BankTransferClaimUserActionResult: Codable, Equatable {
 public enum BankTransferClaimUserActionEvent: UserActionEvent {
     case track(BankTransferClaimUserAction, UserActionStatus)
     case complete(BankTransferClaimUserAction, BankTransferClaimUserActionResult)
-    case sendFailure(BankTransferClaimUserAction, String)
+    case sendFailure(BankTransferClaimUserAction, UserActionError)
 }
 
 public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
@@ -66,7 +66,10 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                     message: "Needs to whitelist account",
                     logLevel: .error
                 )
-                self?.handle(event: Event.sendFailure(action, "Needs to whitelist account"))
+                self?.handle(event: Event.sendFailure(
+                    action,
+                    UserActionError(domain: "Needs to whitelist account", code: 1, reason: "Needs to whitelist account")
+                ))
                 return
             }
 
@@ -88,8 +91,10 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                     challengeId: result.challengeId,
                     token: Token.usdc
                 )))
+            } catch let error as NSError where error.isNetworkConnectionError {
+                self?.handle(event: Event.sendFailure(action, .networkFailure))
             } catch {
-                self?.handle(event: Event.sendFailure(action, error.localizedDescription))
+                self?.handle(event: Event.sendFailure(action, UserActionError.requestFailure(description: error.localizedDescription)))
             }
         }
     }
@@ -128,10 +133,10 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 )
                 await self.database.set(for: userAction.id, userAction)
             }
-        case .sendFailure(let action, _):
+        case let .sendFailure(action, errorModel):
             Task { [weak self] in
                 guard let userAction = await self?.database.get(for: action.id) else { return }
-                userAction.status = .error(UserActionError.networkFailure)
+                userAction.status = .error(errorModel)
                 await self?.database.set(for: action.id, userAction)
             }
         }
