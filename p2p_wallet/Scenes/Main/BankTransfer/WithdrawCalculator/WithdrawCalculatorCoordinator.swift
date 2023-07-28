@@ -82,7 +82,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         status: .sending
                     )
                     return pendingTransaction
-                case .verified:
+                case let .verified(IBAN, BIC):
                     // Fake transaction for now
                     let sendTransaction = SendTransaction(
                         isFakeSendTransaction: false,
@@ -106,8 +106,8 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
 
                     let transaction = StrigaWithdrawSendTransaction(
                         sendTransaction: sendTransaction,
-                        IBAN: model.IBAN ?? "",
-                        BIC: model.BIC ?? "",
+                        IBAN: IBAN,
+                        BIC: BIC,
                         amount: amount,
                         feeAmount: .zero
                     )
