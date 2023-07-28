@@ -63,6 +63,7 @@ final class TabBarController: UITabBarController {
 
         deviceShareMigration
             .isMigrationAvailablePublisher
+            .removeDuplicates()
             .sink { [weak self] migrationIsAvailable in
                 DispatchQueue.main.async {
                     if migrationIsAvailable {
