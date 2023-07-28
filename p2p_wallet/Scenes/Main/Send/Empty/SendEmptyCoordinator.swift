@@ -1,10 +1,3 @@
-//
-//  SendEmptyCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 07.12.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation

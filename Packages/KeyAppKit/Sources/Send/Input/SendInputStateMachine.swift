@@ -27,7 +27,11 @@ public actor SendInputStateMachine: StateMachine {
     }
 
     public func accept(action: SendInputAction) async -> SendInputState {
-        let newState = await SendInputBusinessLogic.sendInputBusinessLogic(state: currentState, action: action, services: services)
+        let newState = await SendInputBusinessLogic.sendInputBusinessLogic(
+            state: currentState,
+            action: action,
+            services: services
+        )
         stateSubject.send(newState)
         return newState
     }

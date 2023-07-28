@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import Foundation
-import SolanaSwift
 import KeyAppKitCore
+import SolanaSwift
 
 public struct UserWalletEnvironments: Equatable {
     let wallets: [SolanaAccount]

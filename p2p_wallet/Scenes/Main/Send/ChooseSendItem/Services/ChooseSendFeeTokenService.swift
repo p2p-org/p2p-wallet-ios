@@ -1,9 +1,8 @@
-import SolanaSwift
 import Combine
 import KeyAppKitCore
+import SolanaSwift
 
 final class ChooseSendFeeTokenService: ChooseItemService {
-
     let otherTokensTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
@@ -21,13 +20,14 @@ final class ChooseSendFeeTokenService: ChooseItemService {
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [SolanaAccount] else { return section }
-            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [TokenMetadata.usdc.symbol, TokenMetadata.usdt.symbol]))
+            return ChooseItemListSection(items: wallets
+                .sorted(preferOrderSymbols: [TokenMetadata.usdc.symbol, TokenMetadata.usdt.symbol]))
         }
-        let isEmpty = newItems.flatMap({ $0.items }).isEmpty
+        let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems
     }
 
-    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+    func sortFiltered(by _: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         sort(items: items)
     }
 }
