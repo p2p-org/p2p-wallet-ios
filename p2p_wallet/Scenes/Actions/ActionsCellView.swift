@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ActionsCellView: View {
-    let icon: UIImage
+    let icon: ImageResource
     let title: String
     let subtitle: String
     let action: () -> Void
@@ -10,7 +10,7 @@ struct ActionsCellView: View {
         Button(action: action) {
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center, spacing: 0) {
-                    Image(uiImage: icon)
+                    Image(icon)
                         .resizable()
                         .frame(width: 48, height: 48)
                     VStack(alignment: .leading, spacing: 5) {

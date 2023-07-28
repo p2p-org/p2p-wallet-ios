@@ -31,7 +31,7 @@ struct ActionsView: View {
             VStack(spacing: 8) {
                 ForEach(ActionsViewActionType.allCases, id: \.title) { actionType in
                     ActionsCellView(
-                        icon: .init(resource: actionType.icon),
+                        icon: actionType.icon,
                         title: actionType.title,
                         subtitle: actionType.subtitle
                     ) {
