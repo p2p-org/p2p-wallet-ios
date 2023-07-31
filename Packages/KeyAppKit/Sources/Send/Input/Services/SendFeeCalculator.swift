@@ -74,6 +74,11 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             accountBalances: isAssociatedTokenUnregister ? context.minimumTokenAccountBalance : 0
         )
 
+        // TODO: - Remove later: Send as SendViaLink when link creation available
+        if !context.usageStatus.reachedLimitLinkCreation {
+            return .zero
+        }
+
         // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
         // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
