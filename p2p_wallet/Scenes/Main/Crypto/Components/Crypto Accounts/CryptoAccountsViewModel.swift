@@ -101,7 +101,6 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] transfer, primary, secondary in
-                print("BUILDDDDD", Date())
 
                 self?.transferAccounts = transfer
                 self?.accounts = primary
