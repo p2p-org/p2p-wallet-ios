@@ -582,6 +582,8 @@ private extension SendInputViewModel {
                 isFakeSendTransaction: isFakeSendTransaction,
                 isFakeSendTransactionError: isFakeSendTransactionError,
                 isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                isLinkCreationAvailable: stateMachine.currentState.feeRelayerContext?.usageStatus
+                    .reachedLimitLinkCreation == false,
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
