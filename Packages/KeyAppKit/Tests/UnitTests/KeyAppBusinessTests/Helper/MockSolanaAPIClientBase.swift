@@ -82,7 +82,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         mint _: String?,
         programId _: String?,
         configs _: SolanaSwift.RequestConfiguration?
-    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.AccountInfo>] {
+    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
         fatalError()
     }
 
@@ -90,7 +90,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         pubkey _: String,
         params _: SolanaSwift.OwnerInfoParams?,
         configs _: SolanaSwift.RequestConfiguration?
-    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.AccountInfo>] {
+    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
         fatalError()
     }
 
@@ -176,7 +176,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func observeSignatureStatus(signature _: String, timeout _: Int,
-                                delay _: Int) -> AsyncStream<SolanaSwift.TransactionStatus>
+                                delay _: Int) -> AsyncStream<SolanaSwift.PendingTransactionStatus>
     {
         fatalError()
     }

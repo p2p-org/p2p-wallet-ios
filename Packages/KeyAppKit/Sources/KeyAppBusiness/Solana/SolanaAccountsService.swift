@@ -209,7 +209,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 public extension [SolanaAccountsService.Account] {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
-        first(where: { $0.token.isNativeSOL })
+        first(where: { $0.token.isNative })
     }
 
     var totalAmountInCurrentFiat: Double {

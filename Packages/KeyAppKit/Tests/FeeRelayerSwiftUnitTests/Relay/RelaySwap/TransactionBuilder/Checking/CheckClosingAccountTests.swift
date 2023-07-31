@@ -28,8 +28,8 @@ final class CheckClosingAccountTests: XCTestCase {
     }
     
     func testClosingAccountWithSourceWSOL() async throws {
-        let owner = try await Account(network: .mainnetBeta)
-        let newWSOL = try await Account(network: .mainnetBeta)
+        let owner = try await KeyPair(network: .mainnetBeta)
+        let newWSOL = try await KeyPair(network: .mainnetBeta)
         var env = SwapTransactionBuilderOutput(
             sourceWSOLNewAccount: newWSOL
         )
@@ -54,8 +54,8 @@ final class CheckClosingAccountTests: XCTestCase {
     }
     
     func testSignersWithDestinationWSOL() async throws {
-        let owner = try await Account(network: .mainnetBeta)
-        let newWSOL = try await Account(network: .mainnetBeta)
+        let owner = try await KeyPair(network: .mainnetBeta)
+        let newWSOL = try await KeyPair(network: .mainnetBeta)
         var env = SwapTransactionBuilderOutput(
             destinationNewAccount: newWSOL,
             accountCreationFee: minimumTokenAccountBalance

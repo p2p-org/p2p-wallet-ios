@@ -26,8 +26,8 @@ final class CheckSignersTests: XCTestCase {
             lamportsPerSignature: lamportsPerSignature
         )
         
-        let owner = try await Account(network: .mainnetBeta)
-        let newWSOL = try await Account(network: .mainnetBeta)
+        let owner = try await KeyPair(network: .mainnetBeta)
+        let newWSOL = try await KeyPair(network: .mainnetBeta)
         var env = SwapTransactionBuilderOutput(
             sourceWSOLNewAccount: newWSOL
         )
@@ -51,8 +51,8 @@ final class CheckSignersTests: XCTestCase {
             lamportsPerSignature: lamportsPerSignature
         )
         
-        let owner = try await Account(network: .mainnetBeta)
-        let newWSOL = try await Account(network: .mainnetBeta)
+        let owner = try await KeyPair(network: .mainnetBeta)
+        let newWSOL = try await KeyPair(network: .mainnetBeta)
         var env = SwapTransactionBuilderOutput(
             destinationNewAccount: newWSOL
         )

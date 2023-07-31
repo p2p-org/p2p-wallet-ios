@@ -2,20 +2,20 @@ import Foundation
 import SolanaSwift
 
 struct MockTokensRepository: TokenRepository {
+    func setup() async throws {}
 
-    
     func get(address: String) async throws -> TokenMetadata? {
-        (try await tokensList)[address]
+        try (await tokensList)[address]
     }
 
     func get(addresses: [String]) async throws -> [String: TokenMetadata] {
-        (try await tokensList)
-            .filter { (address, _) in
+        try (await tokensList)
+            .filter { address, _ in
                 addresses.contains(address)
             }
     }
 
-    func all() async throws -> [String : SolanaSwift.TokenMetadata] {
+    func all() async throws -> [String: SolanaSwift.TokenMetadata] {
         try await tokensList
     }
 
@@ -28,7 +28,7 @@ struct MockTokensRepository: TokenRepository {
             let array = try! JSONDecoder().decode([TokenMetadata].self, from: string.data(using: .utf8)!)
 
             return Dictionary(uniqueKeysWithValues: array.map { token in
-                (token.address, token)
+                (token.mintAddress, token)
             })
         }
     }

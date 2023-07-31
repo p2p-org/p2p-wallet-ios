@@ -12,6 +12,7 @@ struct SendTransaction: RawTransactionType {
     let isFakeSendTransaction: Bool
     let isFakeSendTransactionError: Bool
     let isFakeSendTransactionNetworkError: Bool
+    let isLinkCreationAvailable: Bool
     let recipient: Recipient
     let sendViaLinkSeed: String?
     let amount: Double
@@ -84,7 +85,7 @@ struct SendTransaction: RawTransactionType {
                 receiver: address,
                 amount: amount,
                 feeWallet: payingFeeWallet,
-                ignoreTopUp: isSendingViaLink,
+                ignoreTopUp: isSendingViaLink || isLinkCreationAvailable,
                 memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
                 operationType: isSendingViaLink ? .sendViaLink : .transfer
             )

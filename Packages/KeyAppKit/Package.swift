@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.7.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -317,7 +317,7 @@ let package = Package(
         .testTarget(
             name: "OrcaSwapUnitTests",
             dependencies: ["OrcaSwapSwift"],
-            resources: [.process("./Tests/Resources/orcaconfigs-mainnet.json")]
+            resources: []
         ),
 
         .testTarget(

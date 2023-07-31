@@ -76,6 +76,6 @@ struct SendInputBusinessLogic {
 
 private extension NSError {
     var isNetworkConnectionError: Bool {
-        self.code == NSURLErrorNetworkConnectionLost || self.code == NSURLErrorNotConnectedToInternet
+        code == NSURLErrorNetworkConnectionLost || code == NSURLErrorNotConnectedToInternet
     }
 }

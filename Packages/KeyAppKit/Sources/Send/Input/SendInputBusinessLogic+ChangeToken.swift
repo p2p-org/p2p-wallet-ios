@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -111,9 +107,9 @@ extension SendInputBusinessLogic {
 
         for wallet in sortedWallets {
             do {
-                let feeInToken: FeeAmount = (try await services.swapService.calculateFeeInPayingToken(
+                let feeInToken: FeeAmount = try (await services.swapService.calculateFeeInPayingToken(
                     feeInSOL: feeInSol,
-                    payingFeeTokenMint: try PublicKey(string: wallet.token.mintAddress)
+                    payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
                 )) ?? .zero
 
                 if feeInToken.total <= (wallet.lamports ?? 0) {

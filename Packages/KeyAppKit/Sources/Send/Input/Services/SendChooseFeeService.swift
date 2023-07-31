@@ -32,7 +32,7 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
                 let feeAmount = try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
                     orcaSwap: orcaSwap,
                     feeInSOL: feeInSOL,
-                    payingFeeTokenMint: try PublicKey(string: element.token.mintAddress)
+                    payingFeeTokenMint: PublicKey(string: element.token.mintAddress)
                 )
                 if (feeAmount?.total ?? 0) <= (element.lamports ?? 0) {
                     feeWallets.append(element)

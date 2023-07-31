@@ -22,9 +22,9 @@ extension RecipientSearchServiceImpl {
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,
-                    category: wallet.token.isNativeSOL ? .solanaAddress : .solanaTokenAddress(
-                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.token.isNativeSOL)?
-                            .address)) ?? address,
+                    category: wallet.token.isNative ? .solanaAddress : .solanaTokenAddress(
+                        walletAddress: (try? PublicKey(string: config.wallets.first(where: \.token.isNative)?
+                                .address)) ?? address,
                         token: wallet.token
                     ),
                     attributes: [.funds, attributes]
@@ -57,8 +57,8 @@ extension RecipientSearchServiceImpl {
                         .unsupported(mint: accountInfo.mint.base58EncodedString, decimals: 1, symbol: "", supply: nil)
 
                     // detect category
-                    let category = Recipient.Category.solanaTokenAddress(
-                        walletAddress: try .init(string: accountInfo.owner.base58EncodedString),
+                    let category = try Recipient.Category.solanaTokenAddress(
+                        walletAddress: .init(string: accountInfo.owner.base58EncodedString),
                         token: token
                     )
 
@@ -72,7 +72,7 @@ extension RecipientSearchServiceImpl {
                     if let wallet = config.wallets
                         .first(where: { $0.token.mintAddress == accountInfo.mint.base58EncodedString }),
                         (wallet.lamports ?? 0) > 0,
-                       token.mintAddress == preChosenToken?.mintAddress ?? token.mintAddress
+                        token.mintAddress == preChosenToken?.mintAddress ?? token.mintAddress
                     {
                         // User has the same token
                         return .ok([recipient])
@@ -119,14 +119,14 @@ extension RecipientSearchServiceImpl {
     func checkBalanceForCreateAccount(env: UserWalletEnvironments) async throws -> Bool {
         let wallets = env.wallets
 
-        if wallets.contains(where: { !$0.token.isNativeSOL }) {
+        if wallets.contains(where: { !$0.token.isNative }) {
             // User has spl account
             if try await checkBalanceForCreateSPLAccount(env: env) {
                 return true
             }
         }
 
-        if wallets.contains(where: \.token.isNativeSOL) {
+        if wallets.contains(where: \.token.isNative) {
             // User has only SOL
             if try await checkBalanceForCreateNativeAccount(env: env) {
                 return true
