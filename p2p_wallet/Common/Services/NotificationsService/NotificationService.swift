@@ -1,14 +1,13 @@
 import AnalyticsManager
+import BEPureLayout
+import Combine
 import Foundation
 import KeyAppUI
 import Resolver
+import SolanaSwift
 import UIKit
-import Combine
-import BEPureLayout
 
 protocol NotificationService {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
-
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
     func deleteDeviceToken(ethAddress: String?) async throws
     func showInAppNotification(_ notification: InAppNotification)
@@ -32,14 +31,16 @@ protocol NotificationService {
 
 final class NotificationServiceImpl: NSObject, NotificationService {
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var notificationRepository: NotificationRepository
 
-    private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
     private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()
-    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
+    var showNotification: AnyPublisher<NotificationType, Never> {
+        showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    }
+
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {
@@ -71,7 +72,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String? = nil) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
-        
+
         let result = try await notificationRepository.sendDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey,
@@ -82,7 +83,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
                 deviceModel: UIDevice.current.model
             )
         ))
-        
+
         print(result)
 
         Defaults.lastDeviceToken = deviceToken
@@ -104,7 +105,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func showInAppNotification(_ notification: InAppNotification) {
         DispatchQueue.main.async {
-            UIApplication.shared.showToast(message: self.createTextFromNotification(notification))
+            SnackBar(title: notification.emoji, text: notification.message)
+                .showInKeyWindow()
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
         }
@@ -112,13 +114,21 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func showToast(title: String?, text: String?) {
         DispatchQueue.main.async {
-            UIApplication.shared.showToastError(title: title, text: text)
+            SnackBar(
+                title: title ?? "😓",
+                text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
+            )
+            .showInKeyWindow()
         }
     }
 
     func showToast(title: String? = nil, text: String? = nil, withAutoHidden: Bool) {
         DispatchQueue.main.async {
-            UIApplication.shared.showToastError(title: title, text: text, withAutoHidden: withAutoHidden)
+            SnackBar(
+                title: title ?? "😓",
+                text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
+            )
+            .showInKeyWindow(autoHide: withAutoHidden)
         }
     }
 
@@ -143,7 +153,11 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func showDefaultErrorNotification() {
         DispatchQueue.main.async {
-            UIApplication.shared.showToastError()
+            SnackBar(
+                title: "😓",
+                text: L10n.SomethingWentWrong.pleaseTryAgain
+            )
+            .showInKeyWindow()
         }
     }
 
@@ -167,15 +181,6 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func notificationWasOpened() {
         UserDefaults.standard.removeObject(forKey: openAfterPushKey)
     }
-
-    private func createTextFromNotification(_ notification: InAppNotification) -> String {
-        var array = [String]()
-        if let emoji = notification.emoji {
-            array.append(emoji)
-        }
-        array.append(notification.message)
-        return array.joined(separator: " ")
-    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -190,66 +195,12 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
     }
 }
 
-// MARK: - Show Toast
+// MARK: - Helpers
 
-private extension UIApplication {
-    func showToast(
-        message: String?,
-        backgroundColor: UIColor = .h2c2c2e,
-        alpha: CGFloat = 0.8,
-        shadowColor: UIColor = .h6d6d6d.onDarkMode(.black),
-        completion: (() -> Void)? = nil
-    ) {
-        guard let message = message else { return }
-
-        let toast = BERoundedCornerShadowView(
-            shadowColor: shadowColor,
-            radius: 16,
-            offset: .init(width: 0, height: 8),
-            opacity: 1,
-            cornerRadius: 12,
-            contentInset: .init(x: 20, y: 10)
-        )
-        toast.backgroundColor = backgroundColor
-        toast.mainView.alpha = alpha
-
-        let label = UILabel(text: message, textSize: 15, textColor: .white, numberOfLines: 0, textAlignment: .center)
-        label.tag = 1
-
-        toast.stackView.addArrangedSubview(label)
-        toast.autoSetDimension(.width, toSize: 335, relation: .lessThanOrEqual)
-
-        kWindow?.addSubview(toast)
-        toast.autoAlignAxis(toSuperviewAxis: .vertical)
-        toast.autoPinEdge(toSuperviewSafeArea: .top, withInset: -100)
-
-        kWindow?.bringSubviewToFront(toast)
-        kWindow?.layoutIfNeeded()
-        toast.constraintToSuperviewWithAttribute(.top)?.constant = 25
-
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.kWindow?.layoutIfNeeded()
-        } completion: { _ in
-            completion?()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self, weak toast] in
-                toast?.constraintToSuperviewWithAttribute(.top)?.constant = -100
-
-                UIView.animate(withDuration: 0.3) { [weak self] in
-                    self?.kWindow?.layoutIfNeeded()
-                } completion: { [weak toast] _ in
-                    toast?.removeFromSuperview()
-                }
-            }
-        }
-    }
-
-    func showToastError(title: String? = nil, text: String? = nil, withAutoHidden: Bool = true) {
-        guard let window = kWindow else { return }
-        SnackBar(
-            title: title ?? "😓",
-            text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
-        ).show(in: window, autoHide: withAutoHidden)
+private extension SnackBar {
+    func showInKeyWindow(autoHide: Bool = true) {
+        guard let window = UIApplication.shared.keyWindow else { return }
+        show(in: window, autoHide: autoHide)
     }
 }
 

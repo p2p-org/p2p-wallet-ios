@@ -1,8 +1,7 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SendTransactionStatusDetailsView: View {
-
     @ObservedObject private var viewModel: SendTransactionStatusDetailsViewModel
 
     init(viewModel: SendTransactionStatusDetailsViewModel) {
@@ -29,7 +28,7 @@ struct SendTransactionStatusDetailsView: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .foregroundColor(Color(red: 0.804, green: 0.965, blue: 0.804).opacity(0.3))
-                                )
+                            )
                     }
                 }
                 .padding(.top, 16)
@@ -52,15 +51,14 @@ struct SendTransactionStatusDetailsView: View {
 struct SendTransactionStatusDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         SendTransactionStatusDetailsView(
-            viewModel:
-                SendTransactionStatusDetailsViewModel(
-                    params: SendTransactionStatusDetailsParameters(
-                        title: "This transaction has already been processed",
-                        description: "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its `recent_blockhash`, or as a double-spend attack.",
-                        
-                        fee: nil
-                    )
+            viewModel: SendTransactionStatusDetailsViewModel(
+                params: SendTransactionStatusDetailsParameters(
+                    title: "This transaction has already been processed",
+                    description: "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its `recent_blockhash`, or as a double-spend attack.",
+
+                    fee: nil
                 )
+            )
         )
     }
 }

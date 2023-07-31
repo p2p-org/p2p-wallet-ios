@@ -1,6 +1,6 @@
 import Foundation
-import SolanaSwift
 import Moonpay
+import SolanaSwift
 
 struct MoonpayExchange: BuyExchangeService {
     let provider: Moonpay.Provider
@@ -69,25 +69,6 @@ struct MoonpayExchange: BuyExchangeService {
         return .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
     }
 
-    private func _getMinAmount(currencies: Moonpay.Currencies, for currency: BuyCurrencyType) -> Double {
-        guard let currency = currency as? MoonpayCodeMapping else { return 0.0 }
-        return currencies.first { e in e.code == currency.moonpayCode }?.minBuyAmount ?? 0.0
-    }
-
-    func getMinAmount(currency: Buy.Currency) async throws -> Double {
-        let currencies = try await provider
-            .getAllSupportedCurrencies()
-        return _getMinAmount(currencies: currencies, for: currency)
-    }
-
-    func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) async throws -> (Double, Double) {
-        let currencies = try await provider.getAllSupportedCurrencies()
-        return (
-            _getMinAmount(currencies: currencies, for: currency1),
-            _getMinAmount(currencies: currencies, for: currency2)
-        )
-    }
-
     /// Weather banks are available for this provider
     func isBankTransferEnabled() async throws -> (gbp: Bool, eur: Bool) {
         let banks = try await provider.bankTransferAvailability()
@@ -96,16 +77,12 @@ struct MoonpayExchange: BuyExchangeService {
 }
 
 extension Fiat {
-    func fiatCurrency(_ fiat: Fiat) -> Buy.FiatCurrency? {
-        Buy.FiatCurrency(rawValue: fiat.rawValue)
-    }
-
     func buyFiatCurrency() -> Buy.FiatCurrency? {
         Buy.FiatCurrency(rawValue: rawValue)
     }
 }
 
-extension Token {
+extension TokenMetadata {
     func buyCryptoCurrency() -> Buy.CryptoCurrency? {
         Buy.CryptoCurrency(rawValue: symbol.lowercased())
     }

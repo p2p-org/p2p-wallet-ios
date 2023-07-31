@@ -166,7 +166,6 @@ def notify(version, message)
     sh(
       "curl", 
       "-v", 
-      "-X", "POST", 
       "-H", "Content-Type: application/json",
       "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
       "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
@@ -229,10 +228,6 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   # Increase the number to create new tag
   build_number = number_of_released_builds + 1
   current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
-  while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
-    build_number += 1
-    current_build = build_prefix.to_s + "." + build_number.to_s
-  end
 
   # set build number
   increment_build_number(
@@ -366,7 +361,6 @@ platform :ios do
       sh(
         "curl", 
         "-v", 
-        "-X", "POST", 
         "-H", "Content-Type: application/json", 
         "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
         DISCORD_MESSAGE_API_ENDPOINT
@@ -415,7 +409,6 @@ platform :ios do
       sh(
         "curl", 
         "-v", 
-        "-X", "POST", 
         "-H", "Content-Type: application/json",
         "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
         "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",

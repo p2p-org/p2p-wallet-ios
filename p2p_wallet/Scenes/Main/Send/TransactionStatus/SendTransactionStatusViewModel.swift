@@ -1,21 +1,24 @@
+import AnalyticsManager
 import Combine
 import FeeRelayerSwift
+import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import SolanaSwift
-import TransactionParser
-import Foundation
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var transactionHandler: TransactionHandler
-    @Injected private var priceService: PricesServiceType
+    @Injected private var priceService: PriceService
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()
     let openDetails = PassthroughSubject<SendTransactionStatusDetailsParameters, Never>()
 
-    @Published var token: Token
+    @Published var token: SolanaToken
     @Published var title: String = L10n.transactionSubmitted
     @Published var subtitle: String = ""
     @Published var transactionFiatAmount: String
@@ -24,7 +27,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var state: State = .loading(message: L10n.itUsuallyTakesFewSecondsForATransactionToComplete)
     @Published var closeButtonTitle: String = L10n.done
 
-    private var currentTransaction: ParsedTransaction?
+    private var currentTransactionError: Error?
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
@@ -64,15 +67,25 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     withFormat: "MMMM dd, yyyy @ HH:mm",
                     locale: Locale.base
                 ) ?? ""
+
+                self.currentTransactionError = nil
                 switch pendingTransaction?.status {
                 case .sending:
                     break
                 case let .error(error):
+                    self.currentTransactionError = error
                     self.update(error: error)
                 default:
                     self.updateCompleted()
                 }
-                self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
+            })
+            .store(in: &subscriptions)
+
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap { $0?.transactionId }
+            .prefix(1)
+            .sink(receiveValue: { [weak self] signature in
+                self?.logSend(event: transaction.analyticEvent, signature: signature)
             })
             .store(in: &subscriptions)
 
@@ -84,40 +97,45 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     description: L10n.unknownError
                 )
 
-                guard let parsedTransaction = self.currentTransaction,
-                      let error = parsedTransaction.status.getError()
+                guard let error = self.currentTransactionError
                 else {
                     self.openDetails.send(params)
                     return
                 }
 
-                if let error = error as? FeeRelayerError, error.message == "Topping up is successfull, but the transaction failed" {
+                if let error = error as? FeeRelayerError,
+                   error.message == "Topping up is successfull, but the transaction failed"
+                {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
-                } else if let error = error as? SolanaError {
+                } else if let error = error as? APIClientError {
                     switch error {
-                    case let .other(message) where message == "Blockhash not found":
+                    case .blockhashNotFound:
                         params = .init(
                             title: L10n.blockhashNotFound,
                             description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
-                                parsedTransaction.blockhash ?? "",
-                                parsedTransaction.blockhash ?? ""
+                                "", // blockhash ?? "",
+                                "" // blockhash ?? ""
                             )
                         )
-                    case let .other(message) where message.contains("Instruction"):
+                    case let .responseError(response) where response.message?.contains("Instruction") == true:
                         params = .init(
                             title: L10n.errorProcessingInstruction0CustomProgramError0x1,
                             description: L10n.AnErrorOccuredWhileProcessingAnInstruction
                                 .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured
                         )
-                    case let .other(message) where message.contains("Already processed"):
+                    case let .responseError(response) where response.message?.contains("Already processed") == true:
                         params = .init(
                             title: L10n.thisTransactionHasAlreadyBeenProcessed,
                             description: L10n.TheBankHasSeenThisTransactionBefore
-                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
-                                    .blockhash ?? "")
+                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(
+                                    "" // blockhash ?? ""
+                                )
                         )
-                    case let .other(message):
-                        params = .init(title: L10n.somethingWentWrong, description: message)
+                    case let .responseError(response):
+                        params = .init(
+                            title: L10n.somethingWentWrong,
+                            description: response.message ?? L10n.unknownError
+                        )
                     default:
                         break
                     }
@@ -162,5 +180,32 @@ extension SendTransactionStatusViewModel {
         case loading(message: String)
         case succeed(message: String)
         case error(message: NSAttributedString)
+    }
+}
+
+private extension SendTransactionStatusViewModel {
+    func logSend(event: KeyAppAnalyticsEvent, signature: String) {
+        guard case let .sendNewConfirmButtonClick(
+            sendFlow,
+            token,
+            max,
+            amountToken,
+            amountUSD,
+            fee,
+            fiatInput,
+            _,
+            pubKey
+        ) = event else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
+            sendFlow: sendFlow,
+            token: token,
+            max: max,
+            amountToken: amountToken,
+            amountUSD: amountUSD,
+            fee: fee,
+            fiatInput: fiatInput,
+            signature: signature,
+            pubKey: pubKey
+        ))
     }
 }

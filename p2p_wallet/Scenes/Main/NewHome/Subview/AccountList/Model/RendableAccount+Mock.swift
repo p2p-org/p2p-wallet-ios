@@ -8,6 +8,8 @@
 import Foundation
 
 struct RendableMockAccount: RenderableAccount {
+    typealias SortingKey = Any
+    
     var id: String
     
     var icon: AccountIcon

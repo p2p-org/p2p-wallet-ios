@@ -1,14 +1,14 @@
-import SolanaSwift
-import Foundation
 import FeeRelayerSwift
+import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 public protocol SendActionService {
     func send(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
         operationType: StatsInfo.OperationType
@@ -16,7 +16,6 @@ public protocol SendActionService {
 }
 
 public class SendActionServiceImpl: SendActionService {
-
     private let contextManager: RelayContextManager
     private let solanaAPIClient: SolanaAPIClient
     private let blockchainClient: BlockchainClient
@@ -38,17 +37,17 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     public func send(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
         operationType: StatsInfo.OperationType
     ) async throws -> String {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { throw SendError.invalidSourceWallet }
-        
+        let sender = wallet.address
+
         // assert payingFeeWallet
         if !ignoreTopUp && feeWallet == nil {
             throw SendError.invalidPayingFeeWallet
@@ -70,18 +69,21 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     func sendToSolanaBCViaRelayMethod(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Lamports,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool = false,
         memo: String?,
         operationType: StatsInfo.OperationType
     ) async throws -> String {
-        let currency = wallet.token.address
+        // get currency for logging
+        let currency = wallet.token.mintAddress
 
+        // get paying fee token
         let payingFeeToken = try? getPayingFeeToken(feeWallet: feeWallet)
 
+        // prepare sending to Solana (returning legacy transaction)
         var (preparedTransaction, useFeeRelayer) = try await prepareForSendingToSolanaNetworkViaRelayMethod(
             from: wallet,
             receiver: receiver,
@@ -89,45 +91,47 @@ public class SendActionServiceImpl: SendActionService {
             payingFeeToken: payingFeeToken,
             memo: memo
         )
+
+        // add blockhash
         preparedTransaction.transaction.recentBlockhash = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
 
         if useFeeRelayer {
-            let feePayerSignature: String
-            
             if ignoreTopUp {
-                feePayerSignature = try await relayService.signRelayTransaction(
-                    preparedTransaction,
+                let versionedTransactions = try await relayService.signTransaction(
+                    transactions: [
+                        VersionedTransaction(
+                            message: .legacy(preparedTransaction.transaction.compileMessage())
+                        ),
+                    ],
                     config: FeeRelayerConfiguration(
                         operationType: operationType,
                         currency: currency,
                         autoPayback: false
                     )
                 )
-                
-                // get feePayerPubkey and user account
-                guard let feePayerPubKey = contextManager.currentContext?.feePayerAddress,
-                      let account
-                else {
-                    throw SolanaError.unauthorized
+
+                // assert result
+                guard var versionedTransaction = versionedTransactions.first else {
+                    throw FeeRelayerError.invalidSignature
                 }
-                
+
+                // assert account
+                guard let account else {
+                    throw SendActionError.unauthorized
+                }
+
                 // sign transaction by user
-                try preparedTransaction.transaction.sign(signers: [account])
-                
-                // add feePayer's signature
-                try preparedTransaction.transaction.addSignature(
-                    .init(
-                        signature: Data(Base58.decode(feePayerSignature)),
-                        publicKey: feePayerPubKey
-                    )
-                )
-                
+                try versionedTransaction.sign(signers: [account])
+
                 // serialize transaction
-                let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-                
+                let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
+
                 // send to solanaBlockchain
-                return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
-                
+                return try await solanaAPIClient.sendTransaction(
+                    transaction: serializedTransaction,
+                    configs: RequestConfiguration(encoding: "base64")!
+                )
+
             } else {
                 // FIXME: - SignRelayTransaction return different transaction, fall back to relay_transaction
                 return try await relayService.topUpIfNeededAndRelayTransaction(
@@ -145,7 +149,7 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     private func prepareForSendingToSolanaNetworkViaRelayMethod(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
         payingFeeToken: FeeRelayerSwift.TokenAccount?,
@@ -155,14 +159,15 @@ public class SendActionServiceImpl: SendActionService {
         memo: String?
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { throw SendError.invalidSourceWallet }
-        guard let account = account else { throw SolanaError.unauthorized }
+        let sender = wallet.address
+        guard let account = account else { throw SendActionError.unauthorized }
         guard let context = contextManager.currentContext else { throw RelayContextManagerError.invalidContext }
         // prepare fee payer
         let feePayer: PublicKey?
         let useFeeRelayer: Bool
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
+        // fee relayer)
         if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
             context,
             payingTokenMint: payingFeeToken?.mint.base58EncodedString
@@ -175,7 +180,7 @@ public class SendActionServiceImpl: SendActionService {
         }
 
         var preparedTransaction: PreparedTransaction
-        if wallet.isNativeSOL {
+        if wallet.token.isNative {
             preparedTransaction = try await blockchainClient.prepareSendingNativeSOL(
                 from: account,
                 to: receiver,
@@ -185,7 +190,7 @@ public class SendActionServiceImpl: SendActionService {
         } else {
             preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
                 account: account,
-                mintAddress: wallet.token.address,
+                mintAddress: wallet.token.mintAddress,
                 decimals: wallet.token.decimals,
                 from: sender,
                 to: receiver,
@@ -195,14 +200,14 @@ public class SendActionServiceImpl: SendActionService {
                 minRentExemption: minRentExemption
             ).preparedTransaction
         }
-        
+
         // add memo
         if let memo {
-            preparedTransaction.transaction.instructions.append(
-                try MemoProgram.createMemoInstruction(memo: memo)
+            try preparedTransaction.transaction.instructions.append(
+                MemoProgram.createMemoInstruction(memo: memo)
             )
         }
-        
+
         // send transaction
         preparedTransaction.transaction.recentBlockhash = recentBlockhash
         return (preparedTransaction: preparedTransaction, useFeeRelayer: useFeeRelayer)
@@ -217,12 +222,11 @@ public class SendActionServiceImpl: SendActionService {
             context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 
-    private func getPayingFeeToken(feeWallet: Wallet?) throws -> FeeRelayerSwift.TokenAccount? {
+    private func getPayingFeeToken(feeWallet: SolanaAccount?) throws -> FeeRelayerSwift.TokenAccount? {
         if let feeWallet = feeWallet {
-            guard
-                let addressString = feeWallet.pubkey,
-                let address = try? PublicKey(string: addressString),
-                let mintAddress = try? PublicKey(string: feeWallet.token.address)
+            let addressString = feeWallet.address
+            guard let address = try? PublicKey(string: addressString),
+                  let mintAddress = try? PublicKey(string: feeWallet.token.mintAddress)
             else {
                 throw SendError.invalidPayingFeeWallet
             }

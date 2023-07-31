@@ -63,7 +63,7 @@ class WalletMetadataServiceTests: XCTestCase {
             localMetadataProvider: localMetadataProvider,
             remoteMetadataProvider: remoteMetadataProvider
         )
-        
+
         var localMetadata = WalletMetaData(
             ethPublic: currentUserWallet.value!.ethAddress!,
             deviceName: "D1",
@@ -71,9 +71,9 @@ class WalletMetadataServiceTests: XCTestCase {
             authProvider: "A1",
             phoneNumber: "P1"
         )
-        
-        try await Task.sleep(nanoseconds: 1000)
-        
+
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+
         let remoteMetadata1 = WalletMetaData(
             ethPublic: currentUserWallet.value!.ethAddress!,
             deviceName: "D2",
@@ -81,8 +81,8 @@ class WalletMetadataServiceTests: XCTestCase {
             authProvider: "A1",
             phoneNumber: "P1"
         )
-        
-        try await Task.sleep(nanoseconds: 1000)
+
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         let remoteMetadata2 = WalletMetaData(
             ethPublic: currentUserWallet.value!.ethAddress!,
             deviceName: "D2",
@@ -90,21 +90,21 @@ class WalletMetadataServiceTests: XCTestCase {
             authProvider: "A2",
             phoneNumber: "P1"
         )
-        
+
         localMetadata.phoneNumber = "P3"
-        
+
         localMetadataProvider.loadResult = .success(localMetadata)
         localMetadataProvider.saveResult = .success(())
-        
+
         remoteMetadataProvider[0].loadResult = .success(remoteMetadata1)
         remoteMetadataProvider[0].saveResult = .success(())
-        
+
         remoteMetadataProvider[1].loadResult = .success(remoteMetadata2)
         remoteMetadataProvider[1].saveResult = .success(())
-        
+
         // Test
         await walletMetadataService.synchronize()
-        
+
         // Validate
         XCTAssertEqual(localMetadataProvider.loadCallsCount, 1)
         XCTAssertEqual(localMetadataProvider.saveCallsCount, 1)
@@ -114,7 +114,7 @@ class WalletMetadataServiceTests: XCTestCase {
         XCTAssertEqual(localMetadataProvider.saveCallMetadata?.email, "E1")
         XCTAssertEqual(localMetadataProvider.saveCallMetadata?.authProvider, "A2")
         XCTAssertEqual(localMetadataProvider.saveCallMetadata?.phoneNumber, "P3")
-        
+
         XCTAssertEqual(remoteMetadataProvider[0].loadCallsCount, 1)
         XCTAssertEqual(remoteMetadataProvider[0].saveCallsCount, 1)
         XCTAssertEqual(remoteMetadataProvider[0].acquireWriteCount, 1)
@@ -123,7 +123,7 @@ class WalletMetadataServiceTests: XCTestCase {
         XCTAssertEqual(remoteMetadataProvider[0].saveCallMetadata?.email, "E1")
         XCTAssertEqual(remoteMetadataProvider[0].saveCallMetadata?.authProvider, "A2")
         XCTAssertEqual(remoteMetadataProvider[0].saveCallMetadata?.phoneNumber, "P3")
-        
+
         XCTAssertEqual(remoteMetadataProvider[1].loadCallsCount, 1)
         XCTAssertEqual(remoteMetadataProvider[1].saveCallsCount, 1)
         XCTAssertEqual(remoteMetadataProvider[1].acquireWriteCount, 1)
@@ -132,7 +132,7 @@ class WalletMetadataServiceTests: XCTestCase {
         XCTAssertEqual(remoteMetadataProvider[1].saveCallMetadata?.email, "E1")
         XCTAssertEqual(remoteMetadataProvider[1].saveCallMetadata?.authProvider, "A2")
         XCTAssertEqual(remoteMetadataProvider[1].saveCallMetadata?.phoneNumber, "P3")
-        
+
         XCTAssertNil(walletMetadataService.metadata.error)
     }
 }

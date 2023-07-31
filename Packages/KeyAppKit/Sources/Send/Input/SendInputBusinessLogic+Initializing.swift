@@ -47,10 +47,10 @@ extension SendInputBusinessLogic {
                 break
             }
 
-            let state = state.copy(
+            let state = try state.copy(
                 status: .ready,
                 recipientAdditionalInfo: recipientAdditionalInfo,
-                feeRelayerContext: try await params.feeRelayerContext()
+                feeRelayerContext: await params.feeRelayerContext()
             )
 
             return await changeToken(state: state, token: state.token, services: services)

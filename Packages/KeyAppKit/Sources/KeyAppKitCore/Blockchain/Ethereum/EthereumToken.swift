@@ -52,12 +52,12 @@ public extension EthereumToken {
 }
 
 extension EthereumToken: AnyToken {
-    public var tokenPrimaryKey: String {
+    public var primaryKey: TokenPrimaryKey {
         switch contractType {
         case .native:
-            return "native"
+            return .native
         case let .erc20(contract):
-            return contract.hex(eip55: false)
+            return .contract(contract.hex(eip55: false))
         }
     }
 

@@ -1,7 +1,6 @@
 import SwiftUI
 
-struct OverflowScrollView<Content>: View where Content : View {
-
+struct OverflowScrollView<Content>: View where Content: View {
     @State private var axes: Axis.Set
 
     private let showsIndicator: Bool
@@ -9,18 +8,18 @@ struct OverflowScrollView<Content>: View where Content : View {
     private let content: Content
 
     init(_ axes: Axis.Set = .vertical, showsIndicators: Bool = true, @ViewBuilder content: @escaping () -> Content) {
-        self._axes = .init(wrappedValue: axes)
-        self.showsIndicator = showsIndicators
+        _axes = .init(wrappedValue: axes)
+        showsIndicator = showsIndicators
         self.content = content()
     }
 
     fileprivate init(scrollView: ScrollView<Content>) {
-        self._axes = .init(wrappedValue: scrollView.axes)
-        self.showsIndicator = scrollView.showsIndicators
-        self.content = scrollView.content
+        _axes = .init(wrappedValue: scrollView.axes)
+        showsIndicator = scrollView.showsIndicators
+        content = scrollView.content
     }
 
-    public var body: some View {
+    var body: some View {
         GeometryReader { geometry in
             ScrollView(axes, showsIndicators: showsIndicator) {
                 content
@@ -39,7 +38,6 @@ struct OverflowScrollView<Content>: View where Content : View {
 }
 
 private struct ContentSizeReader: View {
-
     var body: some View {
         GeometryReader {
             Color.clear
@@ -54,15 +52,15 @@ private struct ContentSizeReader: View {
 private struct ContentSizeKey: PreferenceKey {
     static var defaultValue: CGSize { .zero }
     static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = CGSize(width: value.width+nextValue().width,
-                       height: value.height+nextValue().height)
+        value = CGSize(width: value.width + nextValue().width,
+                       height: value.height + nextValue().height)
     }
 }
 
 // MARK: - Implementation
 
-extension ScrollView {
-    public func scrollOnlyOnOverflow() -> some View {
+public extension ScrollView {
+    func scrollOnlyOnOverflow() -> some View {
         OverflowScrollView(scrollView: self)
     }
 }

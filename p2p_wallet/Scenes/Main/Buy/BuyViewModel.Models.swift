@@ -3,19 +3,8 @@ import SolanaSwift
 import UIKit
 
 extension BuyViewModel {
-    struct TotalResult {
-        var total: String
-        var totalCurrency: Fiat
-        var token: Token
-        var fiat: Fiat
-        var tokenAmount: String
-        var fiatAmmount: String
-    }
-
-    // MARK: -
-
     struct BuyForm: Equatable {
-        var token: Token
+        var token: TokenMetadata
         var tokenAmount: Double?
         var fiat: Fiat
         var fiatAmount: Double?

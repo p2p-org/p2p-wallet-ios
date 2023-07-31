@@ -1,12 +1,5 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 25.03.2023.
-//
-
-import BigInt
 import BigDecimal
+import BigInt
 import Foundation
 import XCTest
 @testable import KeyAppKitCore
@@ -18,7 +11,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_550_000_000_000_000_000)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, 10.55)
     }
 
@@ -36,7 +29,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
@@ -46,7 +39,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
@@ -56,7 +49,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, BigUInt(stringLiteral: "123456789123456789000000000000000000"))
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "123456789123456789"))
     }
 
@@ -69,17 +62,17 @@ final class CryptoAmountTests: XCTestCase {
     }
 
     func testSuperLargeString() throws {
-        let amountInput = "123456789123456789"
+        let amountInput = "0.123456789123456789"
         let token = EthereumToken(name: "Megacoin", symbol: "MGC", decimals: 255, logo: nil, contractType: .native)
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(
             amount?.value,
             BigUInt(
-                stringLiteral: "123456789123456789000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                stringLiteral: "123456789123456789000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
             )
         )
-        XCTAssertEqual(amount?.decimals, token.decimals)
-        XCTAssertEqual(amount?.amount, 0)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
+        XCTAssertEqual(amount?.amount, try .init(fromString: "0.123456789123456789"))
     }
 }

@@ -1,10 +1,3 @@
-//
-//  TabBarController.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Intercom
@@ -20,7 +13,6 @@ final class TabBarController: UITabBarController {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
-    @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var deviceShareMigration: DeviceShareMigrationService
 
@@ -29,8 +21,6 @@ final class TabBarController: UITabBarController {
     var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
-    private let solendTutorialSubject = PassthroughSubject<Void, Never>()
-    var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
     private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
     var jupiterSwapClicked: AnyPublisher<Void, Never> { jupiterSwapClickedSubject.eraseToAnyPublisher() }
 
@@ -64,30 +54,27 @@ final class TabBarController: UITabBarController {
 
     func setupTabs() {
         TabItem.allCases.enumerated().forEach { index, item in
-            if item == .actions {
-                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
-            } else {
-                viewControllers?[index].tabBarItem = UITabBarItem(
-                    title: item.displayTitle,
-                    image: item.image,
-                    selectedImage: item.image
-                )
-            }
+            viewControllers?[index].tabBarItem = UITabBarItem(
+                title: item.displayTitle,
+                image: item.image,
+                selectedImage: item.image
+            )
         }
 
         deviceShareMigration
             .isMigrationAvailablePublisher
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
             .sink { [weak self] migrationIsAvailable in
-                DispatchQueue.main.async {
-                    if migrationIsAvailable {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                            .selectedImage = .selectedTabBarSettingsWithAlert
-                    } else {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
-                    }
+                if migrationIsAvailable {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .selectedTabBarSettingsWithAlert
+                } else {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
                 }
+                
             }
             .store(in: &subscriptions)
     }
@@ -197,11 +184,13 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
+
         pincodeViewModel.infoDidTap
             .sink(receiveValue: { [unowned self] in
                 helpLauncher.launch()
             })
             .store(in: &subscriptions)
+
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -232,11 +221,11 @@ final class TabBarController: UITabBarController {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.backgroundColor = Asset.Colors.snow.color
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: Asset.Colors.mountain.color,
         ]
         standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: Asset.Colors.night.color,
         ]
         standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
@@ -292,6 +281,26 @@ final class TabBarController: UITabBarController {
             .map { $0 == nil }
             .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
+        
+        // Crypto alert on/off
+        viewModel.transferAccountsPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] claimableTransferExist in
+                let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
+                let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
+            }
+            .store(in: &subscriptions)
+        
+        // Wallet balance
+        viewModel.walletBalancePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] balanceString in
+                self?.viewControllers?[TabItem.wallet.rawValue].tabBarItem.title = balanceString
+            }
+            .store(in: &subscriptions)
     }
 }
 
@@ -305,22 +314,28 @@ extension TabBarController: UITabBarControllerDelegate {
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
         }
-
-        customTabBar.updateSelectedViewPositionIfNeeded()
-
-        if TabItem(rawValue: selectedIndex) == .invest {
-            if !available(.investSolendFeature) {
-                jupiterSwapClickedSubject.send()
-            } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
-                solendTutorialSubject.send()
+        
+        if let tabItem = TabItem(rawValue: selectedIndex) {
+            switch tabItem {
+            case .wallet:
+                viewModel.walletTapped()
+                
+                if (viewController as! UINavigationController).viewControllers.count == 1, self.selectedIndex == selectedIndex {
+                    homeTabClickedTwicelySubject.send()
+                }
+            case .crypto:
+                viewModel.cryptoTapped()
+            case .send:
+                viewModel.sendTapped()
                 return false
+            case .history:
+                viewModel.historyTapped()
+            case .settings:
+                viewModel.settingsTapped()
             }
-        } else if TabItem(rawValue: selectedIndex) == .wallet,
-                  (viewController as! UINavigationController).viewControllers.count == 1,
-                  self.selectedIndex == selectedIndex
-        {
-            homeTabClickedTwicelySubject.send()
         }
+        
+        customTabBar.updateSelectedViewPositionIfNeeded()
 
         return true
     }
@@ -332,10 +347,10 @@ private extension TabItem {
     var image: UIImage {
         switch self {
         case .wallet:
-            return .tabBarSelectedWallet
-        case .invest:
-            return available(.investSolendFeature) ? .tabBarEarn : .tabBarSwap
-        case .actions:
+            return .tabBarWallet
+        case .crypto:
+            return .tabBarCrypto
+        case .send:
             return UIImage()
         case .history:
             return .tabBarHistory
@@ -347,15 +362,28 @@ private extension TabItem {
     var displayTitle: String {
         switch self {
         case .wallet:
-            return L10n.wallet
-        case .invest:
-            return available(.investSolendFeature) ? L10n.earn : L10n.swap
-        case .actions:
             return ""
+        case .crypto:
+            return L10n.crypto
+        case .send:
+            return L10n.send
         case .history:
             return L10n.history
         case .settings:
             return L10n.settings
+        }
+    }
+
+    var analyticsEvent: AnalyticsEvent? {
+        switch self {
+        case .wallet:
+            return KeyAppAnalyticsEvent.mainWallet
+        case .history:
+            return KeyAppAnalyticsEvent.mainHistory
+        case .settings:
+            return KeyAppAnalyticsEvent.mainSettings
+        default:
+            return nil
         }
     }
 }

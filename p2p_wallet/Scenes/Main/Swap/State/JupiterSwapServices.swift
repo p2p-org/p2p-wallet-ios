@@ -1,11 +1,11 @@
-import SolanaPricesAPIs
-import SolanaSwift
-import Jupiter
 import FeeRelayerSwift
+import Jupiter
+import KeyAppBusiness
+import SolanaSwift
 
 struct JupiterSwapServices {
     let jupiterClient: JupiterAPI
-    let pricesAPI: SolanaPricesAPI
+    let pricesAPI: PriceService
     let solanaAPIClient: SolanaAPIClient
     let relayContextManager: RelayContextManager
 }

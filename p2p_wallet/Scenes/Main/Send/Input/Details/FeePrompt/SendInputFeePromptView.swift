@@ -1,8 +1,7 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SendInputFeePromptView: View {
-
     @ObservedObject private var viewModel: SendInputFeePromptViewModel
 
     private let mainColor = Asset.Colors.night.color
