@@ -189,7 +189,7 @@ public class PriceServiceImpl: PriceService {
 
     internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
         print("PriceService", tokens.count)
-        
+
         var result: [SomeToken: TokenPrice] = [:]
 
         // Request missing token price
@@ -244,15 +244,14 @@ public class PriceServiceImpl: PriceService {
         var parsedValue = try BigDecimal(fromString: value)
 
         /// Adjust prices for stable coin (usdc, usdt) make it equal to 1 if not depegged more than 2%
-//        if
-//            case let .contract(address) = token.primaryKey,
-//            [SolanaToken.usdc.mintAddress, SolanaToken.usdt.mintAddress].contains(address),
-//            token.network == .solana,
-//            fiat.uppercased() == "USD",
-//            (abs(parsedValue - 1.0) * 100) <= 2
-//        {
-//            parsedValue = 1.0
-//        }
+        if
+            case let .contract(address) = token.primaryKey,
+            [PublicKey.usdcMint.mintAddress, PublicKey.usdtMint.base58EncodedString].contains(address),
+            token.network == .solana,
+            (abs(parsedValue - 1.0) * 100) <= 2
+        {
+            parsedValue = 1.0
+        }
 
         return TokenPrice(
             currencyCode: fiat,
