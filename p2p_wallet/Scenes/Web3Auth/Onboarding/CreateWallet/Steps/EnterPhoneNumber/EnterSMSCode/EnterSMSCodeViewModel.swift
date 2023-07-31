@@ -31,14 +31,14 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         }
     }
 
-    @Published public var phone: String
-    @Published public var code: String = ""
+    @Published var phone: String
+    @Published var code: String = ""
     /// Input error field
-    @Published public var codeError: String?
-    @Published public var isLoading: Bool = false
-    @Published public var resendEnabled: Bool = false
-    @Published public var resendText: String = ""
-    @Published public var isButtonEnabled: Bool = false
+    @Published var codeError: String?
+    @Published var isLoading: Bool = false
+    @Published var resendEnabled: Bool = false
+    @Published var resendText: String = ""
+    @Published var isButtonEnabled: Bool = false
     var phoneText: String {
         strategy == .striga ? L10n.toStartVerificationConfirmYourPhoneNumber : L10n.checkTheNumber
     }
@@ -160,11 +160,6 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             .store(in: &subscriptions)
     }
 
-    private func codeConfirmed(code: String) {
-        guard !isLoading else { return }
-        coordinatorIO.onConfirm.send(code)
-    }
-
     @MainActor
     private func showCodeError(error: Error?) {
         var errorText = error?.readableDescription
@@ -175,12 +170,6 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             }
         }
         codeError = errorText
-    }
-
-    @MainActor
-    private func setLoading(_ isLoading: Bool) {
-        self.isLoading = isLoading
-        resendEnabled = !isLoading
     }
 
     // MARK: -

@@ -76,7 +76,7 @@ struct HomeAccountView_Previews: PreviewProvider {
                 title: "Solana",
                 subtitle: "0.1747 SOL",
                 detail: .text("$ 3.67"),
-                extraAction: .visiable,
+                extraAction: .showHide,
                 tags: [],
                 isLoading: false
             )

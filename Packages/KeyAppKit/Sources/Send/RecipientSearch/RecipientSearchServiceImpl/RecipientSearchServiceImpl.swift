@@ -21,7 +21,7 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
     public func search(
         input: String,
         config: RecipientSearchConfig,
-        preChosenToken: Token?
+        preChosenToken: TokenMetadata?
     ) async -> RecipientSearchResult {
         // Assertion
         guard !input.isEmpty else {

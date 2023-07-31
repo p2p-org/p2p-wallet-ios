@@ -49,7 +49,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                 } else {
                     // Claiming is running.
-                    status = .isProcessing
+                    status = .isClaiming
                 }
 
                 return RenderableEthereumAccount(

@@ -23,35 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/krzyzanowskim/CryptoSwift.git",
       "state" : {
-        "revision" : "32f641cf24fc7abc1c591a2025e9f2f572648b0f",
-        "version" : "1.7.2"
-      }
-    },
-    {
-      "identity" : "feerelayerswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p2p-org/FeeRelayerSwift",
-      "state" : {
-        "branch" : "master",
-        "revision" : "fdbc1a8c0ab13037e01e5493a2beccb84281acb5"
-      }
-    },
-    {
-      "identity" : "loggerswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bigearsenal/LoggerSwift.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "8c4ecd6f97b667800a817481e472edd0c0460687"
-      }
-    },
-    {
-      "identity" : "orcaswapswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p2p-org/OrcaSwapSwift.git",
-      "state" : {
-        "revision" : "c15012e45f18cc8e553efaa1d24e34a57c99d274",
-        "version" : "3.0.1"
+        "revision" : "19b3c3ceed117c5cc883517c4e658548315ba70b",
+        "version" : "1.6.0"
       }
     },
     {
@@ -59,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mxcl/PromiseKit.git",
       "state" : {
-        "revision" : "8a98e31a47854d3180882c8068cc4d9381bf382d",
-        "version" : "6.22.1"
+        "revision" : "5b90042bb419e6f3b1719c973f37e1eab46ce991",
+        "version" : "6.21.0"
       }
     },
     {
@@ -78,7 +51,7 @@
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
         "branch" : "main",
-        "revision" : "729e23226fc3e2286b1fb2641a8f2840638e5434"
+        "revision" : "ab9a29e291a2adb1f4dfecea09b9c516c9fba970"
       }
     },
     {
@@ -167,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Boilertalk/Web3.swift.git",
       "state" : {
-        "revision" : "4647a88ef5a85d92963512e0f7ebc78a66b6d850",
-        "version" : "0.8.3"
+        "revision" : "3c9b29acaa01d6fa45bafc070be8302ad974d069",
+        "version" : "0.8.1"
       }
     },
     {

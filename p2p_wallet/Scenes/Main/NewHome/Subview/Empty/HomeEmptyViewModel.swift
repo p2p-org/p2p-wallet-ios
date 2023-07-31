@@ -1,26 +1,26 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
+import KeyAppUI
 import Resolver
 import SolanaSwift
-import KeyAppKitCore
-import KeyAppBusiness
-import KeyAppUI
-import BankTransfer
 import UIKit
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: SolanaPriceService
     @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
-    private let navigation: PassthroughSubject<HomeNavigation, Never>
 
-    private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
+    private let navigation: PassthroughSubject<HomeNavigation, Never>
+    private var popularCoinsTokens: [TokenMetadata] = [.usdc, .nativeSolana, /* .renBTC, */ .eth, .usdt]
+
     @Published var popularCoins = [PopularCoin]()
     @Published var banner: HomeBannerParameters
     let bannerTapped = PassthroughSubject<Void, Never>()
@@ -31,14 +31,18 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
-        self.banner = HomeBannerParameters(
+        banner = HomeBannerParameters(
             id: UUID().uuidString,
             backgroundColor: Asset.Colors.lightGrass.color,
             image: .homeBannerPerson,
             imageSize: CGSize(width: 198, height: 142),
             title: L10n.topUpYourAccountToGetStarted,
             subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-            button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: { navigation.send(.topUp) })
+            button: HomeBannerParameters.Button(
+                title: L10n.addMoney,
+                isLoading: false,
+                handler: { navigation.send(.topUp) }
+            )
         )
         super.init()
         updateData()
@@ -46,9 +50,13 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Actions
+
+    // MARK: - Actions
+
     func reloadData() async {
         // refetch
         await HomeAccountsSynchronisationService().refresh()
+
         updateData()
     }
 
@@ -60,12 +68,12 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 }
 
 private extension HomeEmptyViewModel {
-    func updateData() {
+    private func updateData() {
+        // TODO: Should be removed
         popularCoins = popularCoinsTokens.map { token in
             PopularCoin(
-                id: token.symbol,
                 title: title(for: token),
-                amount: pricesService.fiatAmount(token: token),
+                amount: nil,
                 actionTitle: ActionType.buy.description,
                 image: image(for: token)
             )
@@ -91,7 +99,7 @@ private extension HomeEmptyViewModel {
         shouldOpenBankTransfer
             .withLatestFrom(bankTransferService.state)
             .receive(on: RunLoop.main)
-            .sink{ [weak self] state in
+            .sink { [weak self] state in
                 if state.value.isIBANNotReady {
                     self?.shouldShowErrorSubject.send(true)
                 } else {
@@ -134,20 +142,17 @@ private extension HomeEmptyViewModel {
 
 extension HomeEmptyViewModel {
     class PopularCoin {
-        let id: String
         let title: String
         let amount: String?
         @Published var actionTitle: String
         let image: UIImage
 
         init(
-            id: String,
             title: String,
             amount: String?,
             actionTitle: String,
             image: UIImage
         ) {
-            self.id = id
             self.title = title
             self.amount = amount
             self.actionTitle = actionTitle
@@ -171,7 +176,7 @@ extension HomeEmptyViewModel {
 }
 
 extension HomeEmptyViewModel {
-    func title(for token: Token) -> String {
+    func title(for token: TokenMetadata) -> String {
         if token == .eth {
             return "Ethereum"
         } else if token == .renBTC {
@@ -180,7 +185,7 @@ extension HomeEmptyViewModel {
         return token.name
     }
 
-    func image(for token: Token) -> UIImage {
+    func image(for token: TokenMetadata) -> UIImage {
         if token == .nativeSolana {
             return .solanaIcon
         }
@@ -197,13 +202,5 @@ extension HomeEmptyViewModel {
             return .bitcoinIcon
         }
         return token.image ?? .squircleSolanaIcon
-    }
-}
-
-private extension SolanaPriceService {
-    func fiatAmount(token: Token) -> String? {
-        guard let price = getPriceFromCache(token: token, fiat: Defaults.fiat.code)?.value
-        else { return nil }
-        return "\(Defaults.fiat.symbol) \(price.toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }

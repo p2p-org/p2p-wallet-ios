@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -8,7 +9,6 @@ import Sell
 import Send
 import SolanaSwift
 import Wormhole
-import BankTransfer
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -21,7 +21,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationsService: NotificationService
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
@@ -57,15 +57,16 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
+        clipboardManager
+            .copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
         let text: String
         if nameStorage.getName() != nil {
-            text = L10n.usernameWasCopiedToClipboard
+            text = L10n.usernameCopiedToClipboard
         } else {
-            text = L10n.addressWasCopiedToClipboard
+            text = L10n.addressCopiedToClipboard
         }
-        notificationsService.showToast(title: "🖤", text: text, haptic: true)
-        analyticsManager.log(event: .mainCopyAddress)
+        notificationsService.showToast(title: "", text: text, haptic: true)
+        analyticsManager.log(event: .mainScreenAddressClick)
     }
 
     func updateAddressIfNeeded() {
@@ -82,7 +83,7 @@ class HomeViewModel: ObservableObject {
         }
 
         analyticsManager.log(
-            event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
+            event: .mainScreenOpened(isSellEnabled: sellDataService.isAvailable)
         )
 
         if shouldUpdateBankTransfer {
@@ -171,17 +172,12 @@ private extension HomeViewModel {
                 bankTransferServicePublisher.prepend(nil)
             )
             .receive(on: RunLoop.main)
-            .sink { [weak self] solanaState, ethereumState, bankTransferState in
+            .sink { [weak self] solanaState, ethereumState, _ in
                 guard let self else { return }
 
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
                     partialResult = partialResult + account.amountInFiatDouble
                 }
-
-                let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
-                    ethereumState.value.contains(where: { account in account.balance > 0 }) ||
-                    (bankTransferState?.availableBalance ?? 0) > 0
 
                 // TODO: Bad place
                 self.updateAddressIfNeeded()
@@ -193,7 +189,7 @@ private extension HomeViewModel {
                 case .initializing:
                     self.state = .pending
                 default:
-                    self.state = hasAnyTokenWithPositiveBalance ? .withTokens : .empty
+                    self.state = .wallet
 
                     // log
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(solanaTotalBalance > 0))
@@ -224,8 +220,7 @@ private extension HomeViewModel {
 extension HomeViewModel {
     enum State {
         case pending
-        case withTokens
-        case empty
+        case wallet
     }
 }
 

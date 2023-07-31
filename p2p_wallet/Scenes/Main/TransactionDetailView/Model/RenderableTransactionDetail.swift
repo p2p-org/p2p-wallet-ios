@@ -2,7 +2,6 @@ import Combine
 import Foundation
 import History
 import SolanaSwift
-import TransactionParser
 import UIKit
 
 protocol RenderableTransactionDetail {
@@ -11,8 +10,6 @@ protocol RenderableTransactionDetail {
     var title: String { get }
 
     var subtitle: String { get }
-
-    var signature: String? { get }
 
     var icon: TransactionDetailIcon { get }
 
@@ -25,7 +22,7 @@ protocol RenderableTransactionDetail {
     var actions: [TransactionDetailAction] { get }
 
     var buttonTitle: String { get }
-    
+
     var url: String? { get }
 }
 
@@ -54,12 +51,10 @@ struct TransactionDetailExtraInfo {
     }
 
     let title: String
-    
+
     let values: [Value]
 
     let copyableValue: String?
-    
-    let url: String? = nil
 
     init(title: String, values: [Value], copyableValue: String? = nil) {
         self.title = title

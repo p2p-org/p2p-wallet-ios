@@ -27,7 +27,6 @@ final class RestoreWalletViewModel: BaseViewModel, ObservableObject {
     let availableRestoreOptions: RestoreOption
     let stateMachine: RestoreWalletStateMachine
 
-    @Injected private var authService: AuthService
     private let config: OnboardingConfig = .shared
 
     init(provider: OnboardingStateMachineProvider = OnboardingStateMachineProviderImpl()) {

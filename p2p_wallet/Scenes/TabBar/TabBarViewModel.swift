@@ -1,29 +1,40 @@
+import AnalyticsManager
 import Combine
+import Wormhole
 import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import KeyAppBusiness
+import KeyAppKitCore
 import UIKit
 
 final class TabBarViewModel {
-    // Dependencies
-    @Injected private var pricesService: PricesServiceType
+    
+    // MARK: - Dependencies
+    
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
+    
+    @Injected private var userActionService: UserActionService
+    @Injected private var ethereumAccountsService: EthereumAccountsService
+    @Injected private var solanaAccountsService: SolanaAccountsService
+    
+    @Injected private var analyticsManager: AnalyticsManager
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
 
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
+    
+    private let ethereumAggregator = CryptoEthereumAccountsAggregator()
 
     init() {
-        pricesService.startObserving()
-
         // Name service
         Task {
             guard let account = accountStorage.account else { return }
@@ -33,29 +44,49 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
+
         listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
-        pricesService.stopObserving()
         debugPrint("\(String(describing: self)) deinited")
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
     }
-    
+
     private func listenDidBecomeActiveForDeeplinks() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.becomeActiveSubject.send()
         }
-        
+
         NotificationCenter.default
             .publisher(for: UIApplication.didBecomeActiveNotification)
             .sink(receiveValue: { [weak self] _ in
                 self?.becomeActiveSubject.send()
             })
             .store(in: &cancellables)
+    }
+    
+    func walletTapped() {
+        analyticsManager.log(event: .mainScreenMainClick)
+    }
+    
+    func cryptoTapped() {
+        analyticsManager.log(event: .mainScreenCryptoClick)
+    }
+    
+    func sendTapped() {
+        analyticsManager.log(event: .mainScreenSendClick)
+    }
+    
+    func historyTapped() {
+        analyticsManager.log(event: .mainScreenHistoryClick)
+    }
+    
+    func settingsTapped() {
+        analyticsManager.log(event: .mainScreenSettingsClick)
     }
 }
 
@@ -108,7 +139,7 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
-    
+
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
@@ -125,4 +156,38 @@ extension TabBarViewModel {
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
+    
+    var transferAccountsPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(
+            ethereumAccountsService.statePublisher,
+            userActionService.$actions.map { userActions in
+                userActions.compactMap { $0 as? WormholeClaimUserAction }
+            }
+        )
+        .map { state, actions in
+            let ethAccounts = self.ethereumAggregator.transform(input: (state.value, actions))
+            let transferAccounts = ethAccounts.filter { ethAccount in
+                switch ethAccount.status {
+                case .readyToClaim, .isClaiming:
+                    return true
+                default:
+                    return false
+                }
+            }
+            return !transferAccounts.isEmpty
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    var walletBalancePublisher: AnyPublisher<String, Never> {
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                let equityValue: Double = state.value
+                    .filter { $0.isUSDC }
+                    .reduce(0) { $0 + $1.amountInFiatDouble }
+                return "\(Defaults.fiat.symbol)\(NumberFormatter.unit(for: equityValue))"
+            }
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
 }

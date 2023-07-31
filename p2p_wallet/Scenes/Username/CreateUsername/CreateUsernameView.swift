@@ -69,8 +69,8 @@ private extension CreateUsernameView {
                     backgroundColor: Asset.Colors.night.color.withAlphaComponent(0.6),
                     foregroundColor: Asset.Colors.night.color
                 )
-                    .frame(width: 20, height: 20)
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.status == .processing)
+                .frame(width: 20, height: 20)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.status == .processing)
             }
 
             Text(viewModel.statusText)
@@ -114,9 +114,9 @@ private extension CreateUsernameView {
                     textField.returnKeyType = .done
                 }
             )
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(height: 56)
-                .padding(.leading, 16)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(height: 56)
+            .padding(.leading, 16)
 
             Text(viewModel.domain)
                 .font(.system(size: UIFont.fontSize(of: .title3)))
@@ -138,11 +138,6 @@ private extension CreateUsernameView {
                 }
         )
         .frame(height: 56)
-    }
-
-    var skipButton: some View {
-        Button(L10n.skip.uppercaseFirst, action: viewModel.skip.send)
-            .foregroundColor(mainColor)
     }
 }
 

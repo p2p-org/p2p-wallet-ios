@@ -1,8 +1,3 @@
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let sendAlertLoggerMessage = try? JSONDecoder().decode(SendAlertLoggerMessage.self, from: jsonData)
-
 import Foundation
 
 // MARK: - SendAlertLoggerMessage
@@ -15,7 +10,7 @@ struct SendAlertLoggerMessage: Codable {
     let recipientName: String?
     let platform, appVersion, timestamp: String
     let simulationError, feeRelayerError, blockchainError: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case tokenToSend = "token_to_send"
         case fees
@@ -37,7 +32,7 @@ struct SendAlertLoggerMessage: Codable {
 struct SendAlertLoggerFees: Codable {
     let transactionFeeAmount: String
     let accountCreationFee: SendAlertLoggerAccountCreationFee
-    
+
     enum CodingKeys: String, CodingKey {
         case transactionFeeAmount = "transaction_fee_amount"
         case accountCreationFee = "account_creation_fee"
@@ -49,7 +44,7 @@ struct SendAlertLoggerFees: Codable {
 struct SendAlertLoggerAccountCreationFee: Codable {
     let paymentToken: SendAlertLoggerPaymentToken
     let amount: String
-    
+
     enum CodingKeys: String, CodingKey {
         case paymentToken = "payment_token"
         case amount
@@ -73,7 +68,7 @@ struct SendAlertLoggerRelayAccountState: Codable {
 
 struct SendAlertLoggerTokenToSend: Codable {
     let name, mint, sendAmount, currency: String
-    
+
     enum CodingKeys: String, CodingKey {
         case name, mint
         case sendAmount = "send_amount"

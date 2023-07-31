@@ -1,8 +1,8 @@
-import SolanaSwift
-import Resolver
 import Combine
-import KeyAppKitCore
 import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
+import SolanaSwift
 
 final class ChooseSendTokenService: ChooseItemService {
     let chosenTitle = L10n.chosenToken
@@ -18,20 +18,22 @@ final class ChooseSendTokenService: ChooseItemService {
     private var subscriptions = [AnyCancellable]()
 
     init() {
-        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(value: []))
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>,
+            Never>(AsyncValueState(value: []))
         bind()
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
-            guard let wallets = section.items as? [Wallet] else { return section }
-            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdc.symbol, Token.usdt.symbol]))
+            guard let wallets = section.items as? [SolanaAccount] else { return section }
+            return ChooseItemListSection(items: wallets
+                .sorted(preferOrderSymbols: [TokenMetadata.usdc.symbol, TokenMetadata.usdt.symbol]))
         }
-        let isEmpty = newItems.flatMap({ $0.items }).isEmpty
+        let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems
     }
 
-    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+    func sortFiltered(by _: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         sort(items: items)
     }
 }
@@ -40,15 +42,15 @@ private extension ChooseSendTokenService {
     func bind() {
         accountsService
             .statePublisher
-            .map({ state in
+            .map { state in
                 state.apply { accounts in
-                    [ChooseItemListSection(
-                        items: accounts
-                            .filter { ($0.data.lamports ?? 0) > 0 && !$0.data.isNFTToken }
-                            .map(\.data))
+                    [
+                        ChooseItemListSection(
+                            items: accounts.filter { $0.lamports > 0 && !$0.isNFTToken }
+                        ),
                     ]
                 }
-            })
+            }
             .sink { [weak self] state in
                 self?.statePublisher.send(state)
             }

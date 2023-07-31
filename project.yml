@@ -14,15 +14,6 @@ name: p2p_wallet
 
 # 3. Remove these comment when done
 packages:
-#    Cache:
-#        url: https://github.com/hyperoslo/Cache.git
-#        from: 6.0.0
-    SolanaSwift:
-        url: https://github.com/p2p-org/solana-swift.git
-        branch: main
-    OrcaSwapSwift:
-        url: https://github.com/p2p-org/OrcaSwapSwift.git
-        branch: main
     KeyAppKit:
         path: ./Packages/KeyAppKit
     KeyAppUI:
@@ -259,21 +250,15 @@ targets:
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
-              product: TransactionParser
-            - package: KeyAppKit
               product: NameService
             - package: KeyAppKit
               product: AnalyticsManager
-            - package: KeyAppKit
-              product: SolanaPricesAPIs
             - package: KeyAppKit
               product: JSBridge
             - package: KeyAppKit
               product: CountriesAPI
             - package: KeyAppKit
               product: Onboarding
-            - package: KeyAppKit
-              product: Solend
             - package: KeyAppKit
               product: Send
             - package: KeyAppKit
@@ -292,9 +277,6 @@ targets:
               product: KeyAppNetworking
             - package: KeyAppKit
               product: BankTransfer
-
-            - package: SolanaSwift
-            - package: OrcaSwapSwift
 
             - package: KeyAppUI
             - package: BEPureLayout

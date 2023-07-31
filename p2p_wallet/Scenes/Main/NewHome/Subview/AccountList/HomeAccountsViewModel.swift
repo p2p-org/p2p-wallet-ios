@@ -17,7 +17,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
 
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
@@ -33,7 +32,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     @Published private(set) var balance: String = ""
-    @Published private(set) var actions: [WalletActionType] = []
+    @Published private(set) var usdcAmount: String = ""
+    @Published private(set) var actions: [HomeAction] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     @Published private(set) var smallBanner: HomeBannerParameters?
@@ -55,20 +55,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        sellDataService: any SellDataService = Resolver.resolve(),
+        sellDataService _: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        var actions: [WalletActionType] = [.topUp, .withdraw]
-        if sellDataService.isAvailable {
-            actions.append(.cashOut)
-        }
-        actions.append(.send)
-        self.actions = actions
+        actions = [.addMoney]
 
         super.init()
         bindTransferData()
@@ -139,8 +133,23 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Balance
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                let equityValue: CurrencyAmount = state.value
+                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
+                    .reduce(CurrencyAmount(usd: 0)) {
+                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                            return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                        } else {
+                            return $0 + $1.amountInFiat
+                        }
+                    }
+
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
@@ -185,6 +194,20 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
+
+        // USDC amount
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return ""
+                }
+
+                let cryptoFormatter = CryptoFormatter()
+                return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
+            }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.usdcAmount, on: self)
+            .store(in: &subscriptions)
     }
 
     func refresh() async {
@@ -198,7 +221,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let pubkey = renderableAccount.account.address
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {
@@ -215,7 +238,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction))
+                navigation
+                    .send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
             default:
                 break
             }
@@ -231,6 +255,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
+<<<<<<< HEAD
     private func handle(error: UserActionError) {
         switch error {
         case .networkFailure:
@@ -333,19 +358,31 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             navigation.send(.topUp)
         case .withdraw:
             navigation.send(.withdrawCalculator)
+=======
+    func actionClicked(_ action: HomeAction) {
+        switch action {
+        case .addMoney:
+            analyticsManager.log(event: .mainScreenAddMoneyClick)
+            navigation.send(.addMoney)
+        case .withdraw:
+            analyticsManager.log(event: .mainScreenWithdrawClick)
+>>>>>>> develop
         }
-    }
-
-    func earn() {
-        navigation.send(.earn)
     }
 
     func scrollToTop() {
         scrollOnTheTop = true
     }
-
-    func sellTapped() {
-        navigation.send(.cashOut)
+    
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
+        }
+    }
+    
+    func balanceTapped() {
+        analyticsManager.log(event: .mainScreenAmountClick)
     }
 
     func closeBanner(id: String) {

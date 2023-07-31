@@ -27,5 +27,6 @@ public enum RecipientSearchResult: Equatable {
 }
 
 public protocol RecipientSearchService: AnyObject {
-    func search(input: String, config: RecipientSearchConfig, preChosenToken: Token?) async -> RecipientSearchResult
+    func search(input: String, config: RecipientSearchConfig, preChosenToken: TokenMetadata?) async
+        -> RecipientSearchResult
 }

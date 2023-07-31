@@ -1,10 +1,3 @@
-//
-//  SendInputView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.11.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -45,10 +38,10 @@ struct SendInputView: View {
                 ScrollView {
                     inputView
                 }
-                    .padding(16)
-                
+                .padding(16)
+
                 Spacer()
-                
+
                 sendButton
                     .padding(.horizontal, 16)
                     .padding(.bottom, 8)
@@ -207,10 +200,10 @@ struct SendInputView: View {
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.actionButtonData,
                 showFinished: viewModel.showFinished
-           ).accessibilityIdentifier("send-slider")
+            ).accessibilityIdentifier("send-slider")
         }
     }
-    
+
     #if !RELEASE
         var debugView: some View {
             Group {

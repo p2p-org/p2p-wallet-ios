@@ -6,7 +6,6 @@
 
 | Name               | Status                                                                                                                                                                        |
 |--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Transaction Parser | [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://p2p-org.github.io/key-app-kit-swift/documentation/transactionparser) | 
 
 
 A description of this package.
