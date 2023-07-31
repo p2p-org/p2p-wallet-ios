@@ -1,8 +1,9 @@
-import Foundation
 import BankTransfer
-import Resolver
 import Combine
+import Foundation
 import IdensicMobileSDK
+import Resolver
+import UIKit
 
 enum KYCCoordinatorResult {
     case pass
@@ -14,19 +15,18 @@ enum KYCCoordinatorError: Error {
 }
 
 final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
-    
     // MARK: - Dependencies
-    
+
     @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
-    
+
     private var presentingViewController: UIViewController
     private let subject = PassthroughSubject<KYCCoordinatorResult, Never>()
     private var sdk: SNSMobileSDK!
     private var status: SNSMobileSDK.Status?
-    
+
     // MARK: - Initializer
 
     init(
@@ -34,13 +34,13 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     ) {
         self.presentingViewController = presentingViewController
     }
-    
+
     // MARK: - Methods
 
     override func start() -> AnyPublisher<KYCCoordinatorResult, Never> {
         // showloading
-//        presentingViewController.showIndetermineHud()
-        
+        presentingViewController.view.showIndetermineHud()
+
         // start sdk
         Task {
             do {
@@ -52,8 +52,12 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
             } catch BankTransferError.kycVerificationInProgress {
                 await hideHud()
                 await MainActor.run {
-                    coordinate(to: StrigaVerificationPendingSheetCoordinator(presentingViewController: presentingViewController))
-                    .map { _ in return KYCCoordinatorResult.canceled }
+                    coordinate(
+                        to: StrigaVerificationPendingSheetCoordinator(
+                            presentingViewController: presentingViewController
+                        )
+                    )
+                    .map { _ in KYCCoordinatorResult.canceled }
                     .sink { [weak self] in self?.subject.send($0) }
                     .store(in: &subscriptions)
                 }
@@ -64,7 +68,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
                 await logAlertMessage(error: error, source: "striga api")
             }
         }
-        
+
         return subject.prefix(1).eraseToAnyPublisher()
     }
 
@@ -73,18 +77,18 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     private func startSDK() async throws {
         // get token
         let accessToken = try await bankTransferService.getKYCToken()
-        
+
         // initialize sdk
         sdk = SNSMobileSDK(
             accessToken: accessToken
         )
-        
+
         // check if it is ready
         guard sdk.isReady else {
             print("Initialization failed: " + sdk.verboseStatus)
             throw KYCCoordinatorError.sdkInitializationFailed
         }
-        
+
         // handle token expiration
         sdk.setTokenExpirationHandler { onComplete in
             print("Sumsub Token has expired -- renewing...")
@@ -95,7 +99,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
                         self?.didFailToReceiveToken(error: nil)
                         return
                     }
-                    
+
                     await MainActor.run {
                         onComplete(newToken)
                     }
@@ -114,9 +118,9 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     private func presentKYC() {
         // present
         sdk.present(from: presentingViewController)
-        
+
         // handle dismissal
-        sdk.dismissHandler { [weak subject] (sdk, mainVC) in
+        sdk.dismissHandler { [weak subject] _, mainVC in
             mainVC.dismiss(animated: true, completion: nil)
             subject?.send(.canceled)
         }
@@ -129,7 +133,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
 
     private func hideHud() async {
         await MainActor.run {
-//            presentingViewController.hideHud()
+            presentingViewController.view.hideHud()
         }
     }
 
@@ -143,10 +147,10 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     }
 
     private func bindStatusChange() {
-        sdk.onStatusDidChange { [weak self] (sdk, prevStatus) in
+        sdk.onStatusDidChange { [weak self] sdk, _ in
             // assign status
             self?.status = sdk.status
-            
+
             // handle status
             switch sdk.status {
             case .initial, .incomplete, .temporarilyDeclined, .approved, .actionCompleted, .ready:
@@ -171,10 +175,10 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
             }
         }
     }
-    
+
     private func logAlertMessage(error: Error, source: String) async {
         let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-        
+
         DefaultLogManager.shared.log(
             event: "Striga Registration iOS Alarm",
             logLevel: .alert,
