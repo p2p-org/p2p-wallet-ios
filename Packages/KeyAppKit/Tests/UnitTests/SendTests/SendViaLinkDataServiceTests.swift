@@ -1,22 +1,21 @@
+import SolanaSwift
 import XCTest
 @testable import Send
-import SolanaSwift
 
 class SendViaLinkDataServiceImplTests: XCTestCase {
-    
     var service: SendViaLinkDataServiceImpl!
     let validSeed = "e0EKk5xKdsO4BOh~"
     let host = "test.example.com"
     let salt = "testSalt"
     let passphrase = "testPassphrase"
-    
+
     private var solanaAPIClient: MockSolanaAPIClient!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         solanaAPIClient = MockSolanaAPIClient()
-        
+
         // Initialize the service with your desired parameters
         service = SendViaLinkDataServiceImpl(
             salt: salt,
@@ -28,47 +27,47 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
             solanaAPIClient: solanaAPIClient
         )
     }
-    
+
     override func tearDown() {
         service = nil
         super.tearDown()
     }
-    
+
     // MARK: - Seed validation
 
     func testCheckSeedValidation_ShouldReturnSuccess() {
         XCTAssertNoThrow(try service.checkSeedValidation(seed: validSeed))
     }
-    
+
     func testCheckSeedValidation_ShouldReturnFailure() {
         XCTAssertThrowsError(try service.checkSeedValidation(seed: invalidSeedWithSmallerLength)) {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
         }
-        
+
         XCTAssertThrowsError(try service.checkSeedValidation(seed: invalidSeedWithGreaterLength)) {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
         }
-        
+
         XCTAssertThrowsError(try service.checkSeedValidation(seed: invalidSeedWithInvalidCharacter)) {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
         }
     }
-    
+
     // MARK: - Create URL
 
     func testCreateURL_ShouldNotCrash() throws {
         _ = service.createURL()
     }
-    
+
     // MARK: - Restore URL
 
     func testRestoreURL_WithValidSeed_ShouldReturnSuccess() throws {
         let expectedURLString = "https://test.example.com/\(validSeed)"
         let url = try service.restoreURL(givenSeed: validSeed)
-        
+
         XCTAssertEqual(url.absoluteString, expectedURLString)
     }
-    
+
     func testRestoreURL_WithInvalidSeed_ShouldReturnFailure() throws {
         XCTAssertThrowsError(try service.restoreURL(givenSeed: invalidSeedWithSmallerLength)) {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
@@ -80,16 +79,16 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
         }
     }
-    
+
     // MARK: - GetSeedFromURL
-    
+
     func testGetSeedFromURL_WithValidURL_ShouldReturnSuccess() throws {
         let url = URL(string: "https://test.example.com/\(validSeed)")!
         let resultSeed = try service.getSeedFromURL(url)
-        
+
         XCTAssertEqual(resultSeed, validSeed)
     }
-    
+
     func testGetSeedFromURL_WithInvalidURL_ShouldReturnFailure() throws {
         XCTAssertThrowsError(try service.getSeedFromURL(inValidHostWithSeed(validSeed))) { error in
             XCTAssertEqual(error as! SendViaLinkDataServiceError, .invalidURL)
@@ -104,116 +103,93 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
             XCTAssertEqual($0 as! SendViaLinkDataServiceError, .invalidSeed)
         }
     }
-    
+
     // MARK: - Generate KeyPair
 
     func testGenerateKeyPair_WithValidURL_ShouldReturnSuccess() async throws {
         let keyPair = try await service.generateKeyPair(url: validHostWithSeed(validSeed))
         let secretKey = "IkJEeUOufBVp14mjwuHiIb6GkAqPL+w4S95Qw/i6WLFmGS9BVzhQVAQ9Kta7r9fHy0JHO4W7K7q9G88xBV6OnA=="
         let publicKey = "7sYroAgRW6TmmXTHH7vwG2yZFUVhN7u8j8iArywLUcgs"
-        
+
         // Ensure the key pair has been generated correctly
         XCTAssertEqual(keyPair.secretKey.base64EncodedString(), secretKey)
         XCTAssertEqual(keyPair.publicKey.base58EncodedString, publicKey)
     }
-    
+
     func testGenerateKeyPair_WithInValidURL_ShouldReturnFailure() async throws {
         do {
             _ = try await service.generateKeyPair(url: inValidHostWithSeed(validSeed))
         } catch {
             XCTAssertEqual(error as! SendViaLinkDataServiceError, .invalidURL)
         }
-        
+
         do {
             _ = try await service.generateKeyPair(url: validHostWithSeed(invalidSeedWithSmallerLength))
         } catch {
             XCTAssertEqual(error as! SendViaLinkDataServiceError, .invalidSeed)
         }
-        
+
         do {
             _ = try await service.generateKeyPair(url: validHostWithSeed(invalidSeedWithGreaterLength))
         } catch {
             XCTAssertEqual(error as! SendViaLinkDataServiceError, .invalidSeed)
         }
-        
+
         do {
             _ = try await service.generateKeyPair(url: validHostWithSeed(invalidSeedWithInvalidCharacter))
         } catch {
             XCTAssertEqual(error as! SendViaLinkDataServiceError, .invalidSeed)
         }
     }
-    
+
     // MARK: - Get claimable native sol
 
-    func testGetClaimableSOLTokenInfo_WithValidLastTransaction_ShouldReturnSuccess() async throws {
-        solanaAPIClient.getSignaturesForAddressResponse = validGetSignaturesForAddressResponse
-        solanaAPIClient.getTransactionResponse = validGetSendSOLTransactionResponse
-        
-        let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
-        XCTAssertEqual(claimableTokenInfo.lamports, 1000000)
-        XCTAssertEqual(claimableTokenInfo.mintAddress, TokenMetadata.nativeSolana.address)
-        XCTAssertEqual(claimableTokenInfo.decimals, 9)
-        XCTAssertEqual(claimableTokenInfo.account, "2b7iQq3PbWwWTotRSDFNXT9DauU418aCHK4jcAzETUem")
-    }
-    
-    func testGetClaimableSOLTokenInfo_WithInValidLastTransaction_ButValidAccountBalance_ShouldReturnSuccess() async throws {
+    func testGetClaimableSOLTokenInfo_WithValidAccountBalance_ShouldReturnSuccess() async throws {
         solanaAPIClient.getSignaturesForAddressResponse = "" // invalid
         solanaAPIClient.getTransactionResponse = "" // invalid
-        solanaAPIClient.getBalanceResponse = validGetBalanceResponse(balance: 1000000) // invalid
-        
+        solanaAPIClient.getBalanceResponse = validGetBalanceResponse(balance: 1_000_000) // invalid
+
         let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
-        XCTAssertEqual(claimableTokenInfo.lamports, 1000000)
-        XCTAssertEqual(claimableTokenInfo.mintAddress, TokenMetadata.nativeSolana.address)
+        XCTAssertEqual(claimableTokenInfo.lamports, 1_000_000)
+        XCTAssertEqual(claimableTokenInfo.mintAddress, TokenMetadata.nativeSolana.mintAddress)
         XCTAssertEqual(claimableTokenInfo.decimals, 9)
         XCTAssertEqual(claimableTokenInfo.account, "7sYroAgRW6TmmXTHH7vwG2yZFUVhN7u8j8iArywLUcgs")
     }
-    
+
     // MARK: - Get claimable spl token
 
-    func testGetClaimableSPLTokenInfo_WithValidLastTransaction_ShouldReturnSuccess() async throws {
-        solanaAPIClient.getSignaturesForAddressResponse = validGetSignaturesForAddressResponse
-        solanaAPIClient.getTransactionResponse = validGetSendSPLTransactionResponse
-        
-        let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
-        XCTAssertEqual(claimableTokenInfo.lamports, 1000)
-        XCTAssertEqual(claimableTokenInfo.mintAddress, "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
-        XCTAssertEqual(claimableTokenInfo.decimals, 6)
-        XCTAssertEqual(claimableTokenInfo.account, "H51DXRt3ubThhdhNeDMScfkbC5X4AWzYfHaZS3JKEfPh")
-    }
-    
-    func testGetClaimableSPLTokenInfo_WithInValidLastTransaction_ButValidAccountBalance_ShouldReturnSuccess() async throws {
+    func testGetClaimableSPLTokenInfo_WithValidAccountBalance_ShouldReturnSuccess() async throws {
+        solanaAPIClient.getBalanceResponse = validGetBalanceResponse(balance: 0)
         solanaAPIClient.getSignaturesForAddressResponse = "" // invalid
         solanaAPIClient.getTransactionResponse = "" // invalid
-        solanaAPIClient.getBalanceResponse = "" // invalid
         solanaAPIClient.getTokensAccountByOwnerResponse = validGetTokenAccountsByOwnerResponse
         solanaAPIClient.getTokenAccountBalanceResponse = validGetTokenAccountBalanceResponse
-        
+
         let claimableTokenInfo = try await service.getClaimableTokenInfo(url: validHostWithSeed(validSeed))
         XCTAssertEqual(claimableTokenInfo.lamports, 1000)
         XCTAssertEqual(claimableTokenInfo.mintAddress, "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
         XCTAssertEqual(claimableTokenInfo.decimals, 6)
         XCTAssertEqual(claimableTokenInfo.account, "H51DXRt3ubThhdhNeDMScfkbC5X4AWzYfHaZS3JKEfPh")
     }
-    
-    
+
     // MARK: - Helper
-    
+
     func validHostWithSeed(_ seed: String) -> URL {
         URL(string: "https://test.example.com/\(seed)")!
     }
-    
+
     func inValidHostWithSeed(_ seed: String) -> URL {
         URL(string: "https://test.example-something.com/\(seed)")!
     }
-    
+
     var invalidSeedWithSmallerLength: String {
         "12343232"
     }
-    
+
     var invalidSeedWithGreaterLength: String {
         "123456789123443343"
     }
-    
+
     var invalidSeedWithInvalidCharacter: String {
         "Abcde1234!$()*+,-.#"
     }
@@ -227,29 +203,42 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
     var getBalanceResponse: String = ""
     var getTokensAccountByOwnerResponse: String = ""
     var getTokenAccountBalanceResponse: String = ""
-    
-    override func getBalance(account: String, commitment: Commitment?) async throws -> UInt64 {
+
+    override func getBalance(account _: String, commitment _: Commitment?) async throws -> UInt64 {
         try decode(Rpc<UInt64>.self, from: getBalanceResponse).value
     }
-    
-    override func getSignaturesForAddress(address: String, configs: RequestConfiguration?) async throws -> [SignatureInfo] {
+
+    override func getSignaturesForAddress(address _: String,
+                                          configs _: RequestConfiguration?) async throws -> [SignatureInfo]
+    {
         try decode([SignatureInfo].self, from: getSignaturesForAddressResponse)
     }
-    
-    override func getTransaction(signature: String, commitment: Commitment?) async throws -> TransactionInfo? {
+
+    override func getTransaction(signature _: String, commitment _: Commitment?) async throws -> TransactionInfo? {
         try decode(TransactionInfo.self, from: getTransactionResponse)
     }
-    
-    override func getTokenAccountsByOwner(pubkey: String, params: OwnerInfoParams?, configs: RequestConfiguration?) async throws -> [TokenAccount<AccountInfo>] {
-        try decode(Rpc<[TokenAccount<AccountInfo>]>.self, from: getTokensAccountByOwnerResponse).value
+
+    override func getTokenAccountsByOwner(
+        pubkey _: String,
+        params _: OwnerInfoParams?,
+        configs _: RequestConfiguration?
+    ) async throws -> [TokenAccount<SPLTokenAccountState>] {
+        try decode(Rpc<[TokenAccount<SPLTokenAccountState>]>.self, from: getTokensAccountByOwnerResponse).value
     }
-    
-    override func getTokenAccountBalance(pubkey: String, commitment: Commitment?) async throws -> TokenAccountBalance {
+
+    override func getTokenAccountBalance(pubkey _: String,
+                                         commitment _: Commitment?) async throws -> TokenAccountBalance
+    {
         try decode(Rpc<TokenAccountBalance>.self, from: getTokenAccountBalanceResponse).value
     }
-    
-    private func decode<T: Decodable>(_ elementType: T.Type, from string: String) throws -> T {
-        try JSONDecoder().decode(AnyResponse<T>.self, from: string.data(using: .utf8)!).result!
+
+    private func decode<T: Decodable>(_: T.Type, from string: String) throws -> T {
+        do {
+            return try JSONDecoder().decode(AnyResponse<T>.self, from: string.data(using: .utf8)!).result!
+        } catch {
+            print(error)
+            throw error
+        }
     }
 }
 

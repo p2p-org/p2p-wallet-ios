@@ -36,7 +36,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
 
         var isAssociatedTokenUnregister = false
 
-        if token.isNativeSOL {
+        if token.isNative {
             // User transfer native SOL
             isAssociatedTokenUnregister = false
         } else {
@@ -73,6 +73,11 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             transaction: transactionFee,
             accountBalances: isAssociatedTokenUnregister ? context.minimumTokenAccountBalance : 0
         )
+
+        // TODO: - Remove later: Send as SendViaLink when link creation available
+        if !context.usageStatus.reachedLimitLinkCreation {
+            return .zero
+        }
 
         // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
         // fee relayer)

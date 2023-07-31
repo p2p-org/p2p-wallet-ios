@@ -393,7 +393,7 @@ private class MockSolanaAPIClient: JSONRPCAPIClient {
 }
 
 private struct MockAccountStorage: SolanaAccountStorage {
-    var account: Account?
+    var account: KeyPair?
     
     init() async {
         account = try? await .init(
@@ -404,7 +404,7 @@ private struct MockAccountStorage: SolanaAccountStorage {
         )
     }
     
-    func save(_ account: Account) throws {
+    func save(_ account: KeyPair) throws {
         // do nothing
     }
 }

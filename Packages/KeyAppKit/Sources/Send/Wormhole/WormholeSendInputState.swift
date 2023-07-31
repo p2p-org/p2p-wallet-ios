@@ -112,12 +112,12 @@ public enum WormholeSendInputState: Equatable {
                 do {
                     let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
                     let mint: String? = input.solanaAccount.token.isNative ? nil : input.solanaAccount.token
-                        .address
+                        .mintAddress
 
                     transactions = try await service.wormhole.transferFromSolana(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         feePayer: feePayerAddress,
-                        from: input.solanaAccount.address ?? "",
+                        from: input.solanaAccount.address ,
                         recipient: input.recipient,
                         mint: mint,
                         amount: String(input.amount.value)

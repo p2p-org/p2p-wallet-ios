@@ -205,6 +205,7 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     isFakeSendTransaction: false,
                     isFakeSendTransactionError: false,
                     isFakeSendTransactionNetworkError: false,
+                    isLinkCreationAvailable: true,
                     recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
                     sendViaLinkSeed: nil,
                     amount: 0.01,
