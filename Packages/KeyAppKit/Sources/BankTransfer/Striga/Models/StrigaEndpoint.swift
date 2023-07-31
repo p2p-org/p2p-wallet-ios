@@ -1,21 +1,20 @@
 import Foundation
-import KeyAppNetworking
 import KeyAppKitCore
+import KeyAppNetworking
 import SolanaSwift
 import TweetNacl
 
 /// Endpoint type for striga
 struct StrigaEndpoint: HTTPEndpoint {
-
     // MARK: - Properties
 
     let baseURL: String
     let path: String
     let method: KeyAppNetworking.HTTPMethod
     let keyPair: KeyPair
-    let header: [String : String]
+    let header: [String: String]
     let body: String?
-    
+
     // MARK: - Initializer
 
     private init(
@@ -29,10 +28,10 @@ struct StrigaEndpoint: HTTPEndpoint {
         self.path = path
         self.method = method
         self.keyPair = keyPair
-        self.header = [
+        header = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         self.body = body?.encoded
     }
@@ -46,7 +45,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/api/v1/user/kyc/\(userId)",
+            path: "/striga/api/v1/user/kyc/\(userId)",
             method: .get,
             keyPair: keyPair,
             body: nil
@@ -66,7 +65,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             keyPair: keyPair,
             body: [
                 "userId": userId,
-                "verificationCode": verificationCode
+                "verificationCode": verificationCode,
             ]
         )
     }
@@ -88,7 +87,7 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "userId": userId,
                 "sourceAccountId": sourceAccountId,
                 "whitelistedAddressId": whitelistedAddressId,
-                "amount": amount
+                "amount": amount,
             ]
         )
     }
@@ -106,7 +105,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: nil
         )
     }
-    
+
     static func createUser(
         baseURL: String,
         keyPair: KeyPair,
@@ -120,7 +119,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: body
         )
     }
-    
+
     static func resendSMS(
         baseURL: String,
         keyPair: KeyPair,
@@ -132,7 +131,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             method: .post,
             keyPair: keyPair,
             body: [
-                "userId": userId
+                "userId": userId,
             ]
         )
     }
@@ -146,7 +145,7 @@ struct StrigaEndpoint: HTTPEndpoint {
         amount: String,
         accountCreation: Bool = false
     ) throws -> Self {
-        return try .init(
+        try .init(
             baseURL: baseURL,
             path: "/api/v1/wallets/send/initiate/onchain",
             method: .post,
@@ -156,7 +155,7 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "sourceAccountId": .init(sourceAccountId),
                 "whitelistedAddressId": .init(whitelistedAddressId),
                 "amount": .init(amount),
-                "accountCreation": .init(accountCreation)
+                "accountCreation": .init(accountCreation),
             ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
@@ -172,7 +171,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             method: .post,
             keyPair: keyPair,
             body: [
-                "userId": userId
+                "userId": userId,
             ]
         )
     }
@@ -194,11 +193,11 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "userId": .init(userId),
                 "startDate": .init(startDate.millisecondsSince1970),
                 "endDate": .init(endDate.millisecondsSince1970),
-                "page": .init(page)
+                "page": .init(page),
             ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
-    
+
     static func enrichAccount(
         baseURL: String,
         keyPair: KeyPair,
@@ -212,7 +211,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             keyPair: keyPair,
             body: [
                 "userId": userId,
-                "accountId": accountId
+                "accountId": accountId,
             ]
         )
     }
@@ -230,7 +229,7 @@ struct StrigaEndpoint: HTTPEndpoint {
             keyPair: keyPair,
             body: [
                 "userId": userId,
-                "challengeId": challengeId
+                "challengeId": challengeId,
             ]
         )
     }
@@ -252,7 +251,7 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "userId": userId,
                 "challengeId": challengeId,
                 "verificationCode": verificationCode,
-                "ip": ip
+                "ip": ip,
             ]
         )
     }
@@ -276,7 +275,7 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "address": address,
                 "currency": currency,
                 "network": network,
-                "label": label
+                "label": label,
             ]
         )
     }
@@ -286,8 +285,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         keyPair: KeyPair,
         userId: String,
         currency: String?,
-        label: String?,
-        page: String?
+        label _: String?,
+        page _: String?
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -359,7 +358,7 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "accountId": .init(accountId),
                 "startDate": .init(startDate.millisecondsSince1970),
                 "endDate": .init(endDate.millisecondsSince1970),
-                "page": .init(page)
+                "page": .init(page),
             ] as [String: KeyAppNetworking.AnyEncodable]
         )
     }
@@ -368,8 +367,8 @@ struct StrigaEndpoint: HTTPEndpoint {
 extension KeyPair {
     func getSignedTimestampMessage(date: NSDate = NSDate()) throws -> String {
         // get timestamp
-        let timestamp = "\(Int(date.timeIntervalSince1970) * 1_000)"
-        
+        let timestamp = "\(Int(date.timeIntervalSince1970) * 1000)"
+
         // form message
         guard
             let data = timestamp.data(using: .utf8),
@@ -392,7 +391,7 @@ private extension Encodable {
     var encoded: String? {
         encoded(strategy: .useDefaultKeys)
     }
-    
+
     func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
