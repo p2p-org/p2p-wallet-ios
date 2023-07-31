@@ -32,7 +32,7 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/kyc/userId")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/kyc/userId")
         XCTAssertEqual(endpoint.method, .get)
 
         let expectedHeader = try [
