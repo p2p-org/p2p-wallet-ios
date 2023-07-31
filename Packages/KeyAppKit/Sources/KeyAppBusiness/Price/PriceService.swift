@@ -105,9 +105,10 @@ public class PriceServiceImpl: PriceService {
         )
     }
 
-    public func getPrices(tokens: [AnyToken], fiat: String,
-                          options: PriceServiceOptions) async throws -> [SomeToken: TokenPrice]
-    {
+    public func getPrices(
+        tokens: [AnyToken], fiat: String,
+        options: PriceServiceOptions
+    ) async throws -> [SomeToken: TokenPrice] {
         let fiat = fiat.lowercased()
         var shouldSynchronise = false
 
@@ -187,6 +188,8 @@ public class PriceServiceImpl: PriceService {
     }
 
     internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+        print("PriceService", tokens.count)
+        
         var result: [SomeToken: TokenPrice] = [:]
 
         // Request missing token price
