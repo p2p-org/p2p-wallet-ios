@@ -1,15 +1,16 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Onboarding
 import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
-import BankTransfer
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -23,6 +24,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationService: NotificationService
     @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+    @Injected private var metadataService: WalletMetadataService
 
     // MARK: - Properties
 
@@ -66,6 +68,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         super.init()
         bindTransferData()
+        addWithdrawIfNeeded()
 
         // TODO: Replace with combine
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
@@ -262,6 +265,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             navigation.send(.addMoney)
         case .withdraw:
             analyticsManager.log(event: .mainScreenWithdrawClick)
+            navigation.send(.withdrawCalculator)
         }
     }
 
@@ -382,6 +386,12 @@ extension HomeAccountsViewModel {
 
 // MARK: - Private
 private extension HomeAccountsViewModel {
+    func addWithdrawIfNeeded() {
+        guard available(.bankTransfer) && metadataService.metadata.value != nil else { return }
+        // If striga is enabled and user is web3 authed
+        actions.append(.withdraw)
+    }
+
     func bindTransferData() {
         bankTransferService.value.state
             .filter { !$0.isFetching }

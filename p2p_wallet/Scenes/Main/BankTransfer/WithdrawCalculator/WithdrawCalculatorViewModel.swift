@@ -45,7 +45,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     @Published var fromBalance: Double?
     @Published var fromBalanceText = ""
 
-    @Published var fromTokenSymbol = Token.usdc.symbol.uppercased()
+    @Published var fromTokenSymbol = TokenMetadata.usdc.symbol.uppercased()
     @Published var toTokenSymbol = Constants.EUR.symbol
 
     @Published var decimalLength = Constants.decimals
