@@ -188,8 +188,6 @@ public class PriceServiceImpl: PriceService {
     }
 
     internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
-        print("PriceService", tokens.count)
-
         var result: [SomeToken: TokenPrice] = [:]
 
         // Request missing token price
