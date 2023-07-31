@@ -16,7 +16,7 @@ public protocol UserActionConsumer {
     var persistence: UserActionPersistentStorage { get }
 
     /// Update stream
-    var onUpdate: AnyPublisher<any UserAction, Never> { get }
+    var onUpdate: AnyPublisher<[any UserAction], Never> { get }
 
     /// Fire action.
     func start()

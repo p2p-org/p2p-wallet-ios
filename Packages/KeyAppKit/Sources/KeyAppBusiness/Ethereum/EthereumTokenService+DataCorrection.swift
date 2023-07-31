@@ -24,9 +24,20 @@ class EthereumTokenDataCorrection {
             default:
                 return token
             }
+        } else {
+            // Native token
+            return fixNativeToken(token: token)
         }
+    }
 
-        return token
+    private func fixNativeToken(token: EthereumToken) -> EthereumToken {
+        EthereumToken(
+            name: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            logo: URL(string: SolanaToken.eth.logoURI ?? ""),
+            contractType: token.contractType
+        )
     }
 
     private func fixUSDT(token: EthereumToken) -> EthereumToken {

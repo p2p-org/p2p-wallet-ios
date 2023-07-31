@@ -9,6 +9,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
+import BigDecimal
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -65,7 +66,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
                 ethereumAccountsService.statePublisher,
-                userActionService.$actions.map { userActions in
+                userActionService.actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
             )
@@ -106,11 +107,28 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     .filter(\.isUSDC)
                     .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
                     .reduce(CurrencyAmount(usd: 0)) {
-                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-                            return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
-                        } else {
+
+                        let usdcAmount = $1.cryptoAmount.amount
+                        let amountInFiat = $1.amountInFiat?.value ?? usdcAmount
+                        
+                        guard usdcAmount > 0, amountInFiat > 0 else {
+                            if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
                             return $0 + $1.amountInFiat
                         }
+                        
+                        let calculatedDifference = abs(100 - ((usdcAmount / amountInFiat) * 100))
+                        
+                        if let percentDifference = $1.token.keyAppExtensions.percentDifferenceToShowByPriceOnWS {
+                            if calculatedDifference > BigDecimal(exactly: percentDifference) {
+                                return $0 + $1.amountInFiat
+                            } else if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
+                        }
+
+                        return $0 + $1.amountInFiat
                     }
 
                 let formatter = CurrencyFormatter(
@@ -170,7 +188,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             switch event {
             case .extraButtonTap:
                 navigation
-                    .send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
+                    .send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }

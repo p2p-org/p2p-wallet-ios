@@ -107,7 +107,7 @@ private extension HomeViewModel {
         // Monitor user action
         let userActionService: UserActionService = Resolver.resolve()
         userActionService
-            .$actions
+            .actions
             .withPrevious()
             .sink { [weak self] prev, next in
                 for updatedUserAction in next {
