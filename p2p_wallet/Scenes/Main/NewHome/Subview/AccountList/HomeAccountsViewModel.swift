@@ -255,7 +255,42 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-<<<<<<< HEAD
+    func actionClicked(_ action: HomeAction) {
+        switch action {
+        case .addMoney:
+            analyticsManager.log(event: .mainScreenAddMoneyClick)
+            navigation.send(.addMoney)
+        case .withdraw:
+            analyticsManager.log(event: .mainScreenWithdrawClick)
+        }
+    }
+
+    func scrollToTop() {
+        scrollOnTheTop = true
+    }
+    
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
+        }
+    }
+    
+    func balanceTapped() {
+        analyticsManager.log(event: .mainScreenAmountClick)
+    }
+
+    func closeBanner(id: String) {
+        smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
+        smallBanner = nil
+        shouldCloseBanner = false
+    }
+
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
+    }
+    
+    // Bank transfer
     private func handle(error: UserActionError) {
         switch error {
         case .networkFailure:
@@ -335,65 +370,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         )))
     }
 
-    func actionClicked(_ action: WalletActionType) {
-        switch action {
-        case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
-            else { return }
-            analyticsManager.log(event: .mainScreenReceiveBar)
-            navigation.send(.receive(publicKey: pubkey))
-        case .buy:
-            analyticsManager.log(event: .mainScreenBuyBar)
-            navigation.send(.buy)
-        case .send:
-            analyticsManager.log(event: .mainScreenSendBar)
-            navigation.send(.send)
-        case .swap:
-            analyticsManager.log(event: .mainScreenSwapBar)
-            navigation.send(.swap)
-        case .cashOut:
-            analyticsManager.log(event: .mainScreenCashOutBar)
-            navigation.send(.cashOut)
-        case .topUp:
-            navigation.send(.topUp)
-        case .withdraw:
-            navigation.send(.withdrawCalculator)
-=======
-    func actionClicked(_ action: HomeAction) {
-        switch action {
-        case .addMoney:
-            analyticsManager.log(event: .mainScreenAddMoneyClick)
-            navigation.send(.addMoney)
-        case .withdraw:
-            analyticsManager.log(event: .mainScreenWithdrawClick)
->>>>>>> develop
-        }
-    }
-
-    func scrollToTop() {
-        scrollOnTheTop = true
-    }
-    
-    func viewDidAppear() {
-        if let balance = Double(balance) {
-            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
-            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
-        }
-    }
-    
-    func balanceTapped() {
-        analyticsManager.log(event: .mainScreenAmountClick)
-    }
-
-    func closeBanner(id: String) {
-        smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
-        smallBanner = nil
-        shouldCloseBanner = false
-    }
-
-    func hiddenTokensTapped() {
-        analyticsManager.log(event: .mainScreenHiddenTokens)
-    }
 }
 
 extension HomeAccountsViewModel {

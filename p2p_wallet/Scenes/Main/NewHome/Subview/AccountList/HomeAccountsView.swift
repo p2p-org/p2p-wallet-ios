@@ -61,7 +61,6 @@ struct HomeAccountsView: View {
             }
         )
     }
-<<<<<<< HEAD
 
     private func bankTransferCell(
         rendableAccount: any RenderableAccount,
@@ -75,6 +74,4 @@ struct HomeAccountsView: View {
         .frame(height: 72)
         .padding(.horizontal, 16)
     }
-=======
->>>>>>> develop
 }

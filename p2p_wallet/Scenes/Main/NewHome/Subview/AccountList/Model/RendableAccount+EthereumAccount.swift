@@ -34,7 +34,7 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
 
     var title: String {
         switch status {
-        case .readyToClaim, .isClaiming:
+        case .ready, .isProcessing:
             return L10n.incomingTransfer
         default:
             return account.token.name
@@ -55,7 +55,7 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
         switch status {
         case .ready:
             return .button(label: L10n.claim, enabled: true)
-        case .isClaiming:
+        case .isProcessing:
             return .button(label: L10n.claiming, enabled: false)
         case .balanceToLow:
             if let balanceInFiat = account.balanceInFiat {
@@ -93,8 +93,8 @@ struct RenderableEthereumAccount: RenderableAccount, Equatable {
 
 extension RenderableEthereumAccount {
     enum Status: Equatable {
-        case readyToClaim
-        case isClaiming
+        case ready
+        case isProcessing
         case balanceToLow
     }
 }

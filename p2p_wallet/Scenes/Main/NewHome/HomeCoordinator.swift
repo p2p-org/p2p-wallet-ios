@@ -335,38 +335,42 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
 
         case .addMoney:
-            coordinate(to: ActionsCoordinator(viewController: tabBarController))
-                .sink(receiveValue: { [weak self] result in
+            coordinate(to: TopupCoordinator(viewController: tabBarController))
+                .sink { [weak self] result in
                     switch result {
+                    case let .action(action):
+                        self?.handleAction(type)
                     case .cancel:
                         break
-                    case let .action(type):
-                        self?.handleAction(type)
                     }
-                })
+                }
                 .store(in: &subscriptions)
+//            coordinate(to: ActionsCoordinator(viewController: tabBarController))
+//                .sink(receiveValue: { [weak self] result in
+//                    switch result {
+//                    case .cancel:
+//                        break
+//                    case let .action(type):
+//                        self?.handleAction(type)
+//                    }
+//                })
+//                .store(in: &subscriptions)
             return Just(())
                 .eraseToAnyPublisher()
         }
     }
 
-    private func handleAction(_ action: ActionsViewActionType) {
+    private func handleAction(_ action: TopupActionsViewModel.Action) {
         guard
             let navigationController = tabBarController.selectedViewController as? UINavigationController
         else { return }
 
         switch action {
-        case .bankTransfer:
-            let buyCoordinator = BuyCoordinator(
-                navigationController: navigationController,
-                context: .fromHome,
-                defaultToken: .nativeSolana,
-                defaultPaymentType: .bank
-            )
-            coordinate(to: buyCoordinator)
-                .sink(receiveValue: {})
+        case .transfer:
+            coordinate(to: BankTransferCoordinator(viewController: navigationController))
+                .sink { _ in }
                 .store(in: &subscriptions)
-        case .bankCard:
+        case .card:
             let buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
                 context: .fromHome,

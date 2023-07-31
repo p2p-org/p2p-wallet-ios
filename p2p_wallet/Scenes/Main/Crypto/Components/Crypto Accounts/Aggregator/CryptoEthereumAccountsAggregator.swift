@@ -31,7 +31,7 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
                         // Compare using fiat.
                         if balanceInFiat >= CurrencyAmount(usd: 5) {
                             // Balance is greater than $1, user can claim.
-                            status = .readyToClaim
+                            status = .ready
                         } else {
                             // Balance is to low.
                             status = .balanceToLow
@@ -43,7 +43,7 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
 
                 } else {
                     // Claiming is running.
-                    status = .isClaiming
+                    status = .isProcessing
                 }
 
                 return RenderableEthereumAccount(
