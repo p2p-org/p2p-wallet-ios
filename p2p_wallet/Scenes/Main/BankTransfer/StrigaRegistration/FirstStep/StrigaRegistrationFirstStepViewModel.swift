@@ -32,7 +32,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var phoneNumberModel: PhoneNumber?
 
     // Other views
-    @Published var actionTitle: String = "L10n.next"
+    @Published var actionTitle: String = L10n.next
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
@@ -68,7 +68,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .store(in: &subscriptions)
 
         $isDataValid
-            .map { $0 ? "L10n.next" : L10n.checkRedFields }
+            .map { $0 ? L10n.next : L10n.checkRedFields }
             .assignWeak(to: \.actionTitle, on: self)
             .store(in: &subscriptions)
 

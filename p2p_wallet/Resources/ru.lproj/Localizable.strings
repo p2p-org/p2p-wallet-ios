@@ -731,13 +731,10 @@
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Добро пожаловать в ваш крипто-портфель.  \nИсследуйте более 800 токенов без комиссии.";
 "Bank transfer" = "банковский перевод";
 "Bank card" = "банковская карта";
-"0%% fees" = "0%% комиссии";
-"1%% fee" = "1%% комиссия";
-"4,5%% fees" = "4,5%% комиссии";
 "withdraw" = "отзывать";
 "My crypto" = "Моя крипта";
 "Username copied to clipboard" = "Имя пользователя скопировано в буфер обмена";
 "Address copied to clipboard" = "Адрес скопирован в буфер обмена";
-"1%% fees" = "1%% комиссии";
 "Top Up" = "Пополнить";
 "Next" = "Следующий";
+"Learn more" = "Узнать больше";
