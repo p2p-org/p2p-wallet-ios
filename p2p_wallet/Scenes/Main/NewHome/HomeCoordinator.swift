@@ -336,16 +336,15 @@ final class HomeCoordinator: Coordinator<Void> {
 
         case .addMoney:
             return coordinate(to: TopupCoordinator(viewController: tabBarController))
-                .map({ _ in () })
-//                .map { [weak self] result in
-//                    switch result {
-//                    case let .action(action):
-//                        self?.handleAction(type)
-//                    case .cancel:
-//                        break
-//                    }
-//                    return ()
-//                }
+                .handleEvents(receiveOutput:  { [weak self] result in
+                    switch result {
+                    case let .action(action):
+                        self?.handleAction(action)
+                    case .cancel:
+                        break
+                    }
+                })
+                .map({ _ in return () })
                 .eraseToAnyPublisher()
         }
     }
