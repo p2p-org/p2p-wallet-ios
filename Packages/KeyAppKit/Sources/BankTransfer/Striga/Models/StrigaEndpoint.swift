@@ -81,7 +81,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
-            path: "/api/v1/wallets/send/initiate/onchain/fee-estimate",
+            path: "striga/api/v1/wallets/send/initiate/onchain/fee-estimate",
             method: .post,
             keyPair: keyPair,
             body: [
@@ -148,7 +148,7 @@ struct StrigaEndpoint: HTTPEndpoint {
     ) throws -> Self {
         return try .init(
             baseURL: baseURL,
-            path: "/striga/api/v1/wallets/send/initiate/onchain",
+            path: "/api/v1/wallets/send/initiate/onchain",
             method: .post,
             keyPair: keyPair,
             body: [

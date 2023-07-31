@@ -1,98 +1,99 @@
-import XCTest
-@testable import BankTransfer
 import SolanaSwift
 import TweetNacl
+import XCTest
+@testable import BankTransfer
 
 class StrigaEndpointTests: XCTestCase {
-    let baseURL = "https://example.com/api"
-    
+    let baseURL = "https://example.com"
+
     func testGetSignedTimestampMessage() async throws {
         let keyPair = try await KeyPair(
             phrase: "miracle pizza supply useful steak border same again youth silver access hundred"
                 .components(separatedBy: " "),
             network: .mainnetBeta
         )
-        let date = NSDate(timeIntervalSince1970: 1685587890.6146898)
-        
+        let date = NSDate(timeIntervalSince1970: 1_685_587_890.6146898)
+
         let signedTimestampMessage = try keyPair.getSignedTimestampMessage(date: date)
-        
-        let expectedMessage = "1685587890000:VhqmzP3ub4pQv8WwZG4IUMVeMwDPYXPQDRAIRxSFmMVezD5MWIBRl/UN11mpu0XXYXweaFHV92joLN2c89SEDg=="
-        
+
+        let expectedMessage =
+            "1685587890000:VhqmzP3ub4pQv8WwZG4IUMVeMwDPYXPQDRAIRxSFmMVezD5MWIBRl/UN11mpu0XXYXweaFHV92joLN2c89SEDg=="
+
         XCTAssertEqual(signedTimestampMessage, expectedMessage)
     }
-    
+
     func testGetKYC() throws {
         let keyPair = try KeyPair()
         let userId = "userId"
-        
+
         let endpoint = try StrigaEndpoint.getKYC(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId
         )
-        
+
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/kyc/userId")
         XCTAssertEqual(endpoint.method, .get)
-        
-        let expectedHeader = [
+
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
         XCTAssertNil(endpoint.body)
     }
-    
+
     func testVerifyMobileNumber() throws {
         let keyPair = try KeyPair()
         let userId = "userId"
         let verificationCode = "code"
-        
+
         let endpoint = try StrigaEndpoint.verifyMobileNumber(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
             verificationCode: verificationCode
         )
-        
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/verify-mobile")
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/verify-mobile")
         XCTAssertEqual(endpoint.method, .post)
-        
-        let expectedHeader = [
+
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
-        
+
         let expectedBody = "{\"userId\":\"userId\",\"verificationCode\":\"code\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
-    
+
     func testGetUserDetails() throws {
         let keyPair = try KeyPair()
         let userId = "abdicidjdi"
-        
+
         let endpoint = try StrigaEndpoint.getUserDetails(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId
         )
-        
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/abdicidjdi")
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/abdicidjdi")
         XCTAssertEqual(endpoint.method, .get)
-        
-        let expectedHeader = [
+
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
-        
+
         XCTAssertNil(endpoint.body)
     }
-    
+
     func testCreateUser() throws {
         let keyPair = try KeyPair()
         let body = StrigaCreateUserRequest(
@@ -131,17 +132,18 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/create")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeader = [
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
-        let expectedBody = "{\"address\":{\"addressLine1\":\"Elon str, 1\",\"city\":\"New York\",\"country\":\"United States\",\"postalCode\":\"12345\",\"state\":\"NY\"},\"dateOfBirth\":{\"day\":1,\"month\":12,\"year\":1987},\"email\":\"me@starlink.com\",\"expectedIncomingTxVolumeYearly\":\"20000\",\"expectedOutgoingTxVolumeYearly\":\"20000\",\"firstName\":\"Elon\",\"ipAddress\":\"127.0.0.1\",\"lastName\":\"Musk\",\"mobile\":{\"countryCode\":\"1\",\"number\":\"123443453\"},\"occupation\":\"ACCOUNTING\",\"placeOfBirth\":\"FRA\",\"purposeOfAccount\":\"hack\",\"selfPepDeclaration\":true,\"sourceOfFunds\":\"CIVIL_CONTRACT\"}"
+        let expectedBody =
+            "{\"address\":{\"addressLine1\":\"Elon str, 1\",\"city\":\"New York\",\"country\":\"United States\",\"postalCode\":\"12345\",\"state\":\"NY\"},\"dateOfBirth\":{\"day\":1,\"month\":12,\"year\":1987},\"email\":\"me@starlink.com\",\"expectedIncomingTxVolumeYearly\":\"20000\",\"expectedOutgoingTxVolumeYearly\":\"20000\",\"firstName\":\"Elon\",\"ipAddress\":\"127.0.0.1\",\"lastName\":\"Musk\",\"mobile\":{\"countryCode\":\"1\",\"number\":\"123443453\"},\"occupation\":\"ACCOUNTING\",\"placeOfBirth\":\"FRA\",\"purposeOfAccount\":\"hack\",\"selfPepDeclaration\":true,\"sourceOfFunds\":\"CIVIL_CONTRACT\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
-    
+
     func testResendSMS() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
@@ -152,20 +154,20 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/resend-sms")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/resend-sms")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeader = [
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
         let expectedBody = "{\"userId\":\"ijivjiji-jfijdij\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
-    
+
     func testKYCGetToken() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
@@ -176,24 +178,24 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/kyc/start")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/kyc/start")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeader = [
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
         let expectedBody = "{\"userId\":\"ijivjiji-jfijdij\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
-    
+
     func testGetAllWallets() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
-        
+
         let endpoint = try StrigaEndpoint.getAllWallets(
             baseURL: baseURL,
             keyPair: keyPair,
@@ -202,44 +204,45 @@ class StrigaEndpointTests: XCTestCase {
             endDate: Date(timeIntervalSince1970: 2),
             page: 1
         )
-        
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/get/all")
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/get/all")
         XCTAssertEqual(endpoint.method, .post)
-        
-        let expectedHeader = [
+
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
-        
+
         let expectedBody = "{\"endDate\":2000,\"page\":1,\"startDate\":0,\"userId\":\"ijivjiji-jfijdij\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
-    
+
     func testEnrichAccount() throws {
         let keyPair = try KeyPair()
         let userId = "19085577-4f74-40ad-a86c-0ad28d664170"
         let accountId = "817c19ad473cd1bef869b408858156a2"
-        
+
         let endpoint = try StrigaEndpoint.enrichAccount(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
             accountId: accountId
         )
-        
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/account/enrich")
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/account/enrich")
         XCTAssertEqual(endpoint.method, .post)
-        
-        let expectedHeader = [
+
+        let expectedHeader = try [
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage(),
-            "Content-Type": "application/json"
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Content-Type": "application/json",
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
-        
-        let expectedBody = "{\"accountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\"}"
+
+        let expectedBody =
+            "{\"accountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
 
@@ -262,14 +265,15 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/send/initiate/onchain")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeaders = [
+        let expectedHeaders = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeaders)
 
-        let expectedBody = "{\"accountCreation\":false,\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
+        let expectedBody =
+            "{\"accountCreation\":false,\"amount\":\"123\",\"sourceAccountId\":\"817c19ad473cd1bef869b408858156a2\",\"userId\":\"19085577-4f74-40ad-a86c-0ad28d664170\",\"whitelistedAddressId\":\"817c19ad473cd1bef869b408858156a2\"}"
         XCTAssertEqual(endpoint.body!, expectedBody)
     }
 
@@ -285,17 +289,18 @@ class StrigaEndpointTests: XCTestCase {
             challengeId: challengeId
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/resend-otp")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/transaction/resend-otp")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeader = [
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
-        let expectedBody = "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\"}"
+        let expectedBody =
+            "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
 
@@ -313,17 +318,35 @@ class StrigaEndpointTests: XCTestCase {
             ip: "ipString"
         )
 
-        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/transaction/confirm")
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/transaction/confirm")
         XCTAssertEqual(endpoint.method, .post)
 
-        let expectedHeader = [
+        let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": try keyPair.getSignedTimestampMessage()
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
-        let expectedBody = "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"ip\":\"ipString\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\",\"verificationCode\":\"123456\"}"
+        let expectedBody =
+            "{\"challengeId\":\"f56aaf67-acc1-4397-ae6b-57b553bdc5b0\",\"ip\":\"ipString\",\"userId\":\"cecaea44-47f2-439b-99a1-a35fefaf1eb6\",\"verificationCode\":\"123456\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
+    }
+
+    func testExchangeRatesEndpoint() async throws {
+        let keyPair = try KeyPair()
+
+        let endpoint = try StrigaEndpoint.exchangeRates(baseURL: baseURL, keyPair: keyPair)
+
+        XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/trade/rates")
+        XCTAssertEqual(endpoint.method, .post)
+
+        let expectedHeader = try [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": keyPair.getSignedTimestampMessage(),
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+        XCTAssertEqual(endpoint.body, nil)
     }
 }
