@@ -10,7 +10,7 @@ protocol StrigaConfirmableTransactionType: RawTransactionType, Equatable {
 /// Striga Claim trasaction type
 protocol StrigaClaimTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
-    var token: Token? { get }
+    var token: TokenMetadata? { get }
     var amount: Double? { get }
     var feeAmount: FeeAmount { get }
     var fromAddress: String { get }
@@ -19,10 +19,11 @@ protocol StrigaClaimTransactionType: RawTransactionType, Equatable {
 
 extension StrigaClaimTransactionType {
     var amountInFiat: Double? {
-        guard let token else { return nil}
-        guard let value = Resolver.resolve(SolanaPriceService.self)
-            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return nil }
-        return value * amount
+        fatalError()
+//        guard let token else { return nil}
+//        guard let value = Resolver.resolve(SolanaPriceService.self)
+//            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return nil }
+//        return value * amount
     }
 }
 
@@ -65,9 +66,10 @@ protocol StrigaWithdrawTransactionType: RawTransactionType {
 
 extension StrigaWithdrawTransactionType {
     var amountInFiat: Double? {
-        guard let value = Resolver.resolve(SolanaPriceService.self)
-            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
-        return value * amount
+        fatalError()
+//        guard let value = Resolver.resolve(SolanaPriceService.self)
+//            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
+//        return value * amount
     }
 }
 

@@ -335,27 +335,17 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
 
         case .addMoney:
-            coordinate(to: TopupCoordinator(viewController: tabBarController))
-                .sink { [weak self] result in
-                    switch result {
-                    case let .action(action):
-                        self?.handleAction(type)
-                    case .cancel:
-                        break
-                    }
-                }
-                .store(in: &subscriptions)
-//            coordinate(to: ActionsCoordinator(viewController: tabBarController))
-//                .sink(receiveValue: { [weak self] result in
+            return coordinate(to: TopupCoordinator(viewController: tabBarController))
+                .map({ _ in () })
+//                .map { [weak self] result in
 //                    switch result {
+//                    case let .action(action):
+//                        self?.handleAction(type)
 //                    case .cancel:
 //                        break
-//                    case let .action(type):
-//                        self?.handleAction(type)
 //                    }
-//                })
-//                .store(in: &subscriptions)
-            return Just(())
+//                    return ()
+//                }
                 .eraseToAnyPublisher()
         }
     }

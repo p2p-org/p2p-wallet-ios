@@ -39,7 +39,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
 
     override func start() -> AnyPublisher<KYCCoordinatorResult, Never> {
         // showloading
-        presentingViewController.showIndetermineHud()
+//        presentingViewController.showIndetermineHud()
         
         // start sdk
         Task {
@@ -129,7 +129,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
 
     private func hideHud() async {
         await MainActor.run {
-            presentingViewController.hideHud()
+//            presentingViewController.hideHud()
         }
     }
 

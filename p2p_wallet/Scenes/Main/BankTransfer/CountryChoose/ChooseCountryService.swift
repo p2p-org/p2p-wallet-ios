@@ -23,12 +23,12 @@ final class ChooseCountryService: ChooseItemService {
 
         Task {
             do {
-                let countries = try await self.countriesService.fetchCountries().unique(keyPath: \.name)
+                let countries = try await self.countriesService.fetchCountries()//.unique(keyPath: \.name)
                 self.statePublisher.send(
                     AsyncValueState(status: .ready, value: [ChooseItemListSection(items: countries)])
                 )
             } catch {
-                DefaultLogManager.shared.log(error: error)
+                DefaultLogManager.shared.log(event: "Error", logLevel: .error, data: error.localizedDescription)
                 self.statePublisher.send(
                     AsyncValueState(status: .ready, value: [ChooseItemListSection(items: [])], error: error)
                 )

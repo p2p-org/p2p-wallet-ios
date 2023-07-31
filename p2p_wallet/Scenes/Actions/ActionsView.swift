@@ -25,7 +25,7 @@ struct ActionsView: View {
             Color(Asset.Colors.rain.color)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
-            Text(L10n.addMoney)
+            Text("")
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text1, weight: .bold))
                 .padding(.top, 8)

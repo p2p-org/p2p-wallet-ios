@@ -88,6 +88,7 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         isFakeSendTransaction: false,
                         isFakeSendTransactionError: false,
                         isFakeSendTransactionNetworkError: false,
+                        isLinkCreationAvailable: false, //TODO: Check
                         recipient: .init(
                             address: "",
                             category: .solanaAddress,

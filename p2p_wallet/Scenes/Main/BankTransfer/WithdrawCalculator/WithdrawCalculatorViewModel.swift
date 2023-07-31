@@ -204,7 +204,7 @@ private extension WithdrawCalculatorViewModel {
 
     func bindAccounts() {
         solanaAccountsService.statePublisher
-            .map { $0.value.first(where: { $0.data.mintAddress == Token.usdc.address })?.cryptoAmount.amount }
+            .map { $0.value.first(where: { $0.mintAddress == Token.usdc.address })?.cryptoAmount.amount }
             .map { value in
                 if let value {
                     return Double(exactly: value)
@@ -217,22 +217,23 @@ private extension WithdrawCalculatorViewModel {
     }
 
     func bindReachibility() {
-        reachability
-            .isReachable
-            .withPrevious()
-            .filter { prev, current in
-                prev == false && current == true // Only if value changed from false
-            }
-            .sink { [weak self] _ in self?.loadRates() }
-            .store(in: &subscriptions)
-
-        reachability
-            .isDisconnected
-            .sink { [weak self] in
-                self?.notificationService.showConnectionErrorNotification()
-                self?.commonErrorHandling()
-            }
-            .store(in: &subscriptions)
+        // TODO: change
+//        reachability
+//            .status
+//            .withPrevious()
+//            .filter { prev, current in
+//                prev == false && current == true // Only if value changed from false
+//            }
+//            .sink { [weak self] _ in self?.loadRates() }
+//            .store(in: &subscriptions)
+//
+//        reachability
+//            .isDisconnected
+//            .sink { [weak self] in
+//                self?.notificationService.showConnectionErrorNotification()
+//                self?.commonErrorHandling()
+//            }
+//            .store(in: &subscriptions)
     }
 
     func loadRates() {

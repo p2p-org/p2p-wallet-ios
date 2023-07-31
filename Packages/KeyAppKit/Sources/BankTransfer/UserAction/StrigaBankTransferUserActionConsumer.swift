@@ -75,7 +75,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
 
             
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
-                account.data.token.address == PublicKey.usdcMint.base58EncodedString
+                account.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)
 
             do {
@@ -89,7 +89,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 self?.handle(event: Event.complete(action, .init(
                     fromAddress: fromAddress,
                     challengeId: result.challengeId,
-                    token: Token.usdc
+                    token: TokenMetadata.usdc
                 )))
             } catch let error as NSError where error.isNetworkConnectionError {
                 self?.handle(event: Event.sendFailure(action, .networkFailure))

@@ -729,7 +729,6 @@
 "Crypto" = "Крипто";
 "Incoming transfer" = "Входящий перевод";
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Добро пожаловать в ваш крипто-портфель.  \nИсследуйте более 800 токенов без комиссии.";
-"Add Money" = "Добавить деньги";
 "Bank transfer" = "банковский перевод";
 "Bank card" = "банковская карта";
 "0%% fees" = "0%% комиссии";
@@ -740,3 +739,5 @@
 "Username copied to clipboard" = "Имя пользователя скопировано в буфер обмена";
 "Address copied to clipboard" = "Адрес скопирован в буфер обмена";
 "1%% fees" = "1%% комиссии";
+"Top Up" = "Пополнить";
+"Next" = "Следующий";

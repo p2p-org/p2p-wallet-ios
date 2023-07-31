@@ -282,34 +282,35 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             }
         case let transaction as SwapRawTransactionType:
-            let fees = transaction.feeAmount
-
-            if fees.total == 0 {
-                result.append(
-                    .init(
-                        title: L10n.transactionFee,
-                        values: [.init(text: L10n.freePaidByKeyApp)]
-                    )
-                )
-            }
-
-            // network fee
-            else if let payingFeeWallet = transaction.payingFeeWallet {
-                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
-                let formatedFeeAmount: String = feeAmount
-                    .tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
-
-                let feeAmountInFiat: Double = feeAmount * payingFeeWallet.price?.doubleValue
-                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
-
-                result
-                    .append(
-                        .init(
-                            title: L10n.transactionFee,
-                            values: [.init(text: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))")]
-                        )
-                    )
-            }
+            break
+//            let fees = transaction.feeAmount
+//
+//            if fees.total == 0 {
+//                result.append(
+//                    .init(
+//                        title: L10n.transactionFee,
+//                        values: [.init(text: L10n.freePaidByKeyApp)]
+//                    )
+//                )
+//            }
+//
+//            // network fee
+//            else if let payingFeeWallet = transaction.payingFeeWallet {
+//                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
+//                let formatedFeeAmount: String = feeAmount
+//                    .tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
+//
+//                let feeAmountInFiat: Double = feeAmount * payingFeeWallet.price?.doubleValue
+//                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
+//
+//                result
+//                    .append(
+//                        .init(
+//                            title: L10n.transactionFee,
+//                            values: [.init(text: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))")]
+//                        )
+//                    )
+//            }
 
         case let transaction as ClaimSentViaLinkTransaction:
             let title: String
@@ -375,7 +376,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
-            if trx.rawTransaction as? any != nil StrigaWithdrawTransactionType {
+            if trx.rawTransaction as? any StrigaWithdrawTransactionType != nil {
                 return []
             }
             return [.share, .explorer]

@@ -42,8 +42,8 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
 
     func bind() {
         let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
-//        let index = transactionHandler.sendTransaction(transaction, status: .sending)
-        let index = transactionHandler.sendTransaction(transaction)
+        let index = transactionHandler.sendTransaction(transaction, status: .sending)
+//        let index = transactionHandler.sendTransaction(transaction)
         transactionHandler.observeTransaction(transactionIndex: index)
             .compactMap { $0 }
             .filter(\.isConfirmedOrError)

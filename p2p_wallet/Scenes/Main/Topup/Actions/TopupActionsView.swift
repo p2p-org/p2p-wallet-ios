@@ -11,7 +11,7 @@ struct TopupActionsView: View {
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
-            Text(L10n.topUpYourAccount)
+            Text("L10n.addMoney")
                 .fontWeight(.semibold)
                 .apply(style: .title3)
                 .padding(.top, 22)

@@ -46,9 +46,9 @@ struct IBANDetailsView: View {
 
     private func attributedTitle() -> NSAttributedString {
         var attrString = NSMutableAttributedString()
-        attrString = attrString.text(L10n.yourMoneyIsHeldAndProtectedByLicensedBanks, size: 13, weight: .regular, color: Asset.Colors.night.color)
-        attrString.append(NSAttributedString(string: " "))
-        attrString.append(NSMutableAttributedString().text(L10n.learnMore, size: 13, weight: .regular, color: Asset.Colors.sky.color))
+//        attrString = attrString.text(L10n.yourMoneyIsHeldAndProtectedByLicensedBanks, size: 13, weight: .regular, color: Asset.Colors.night.color)
+//        attrString.append(NSAttributedString(string: " "))
+//        attrString.append(NSMutableAttributedString().text(L10n.learnMore, size: 13, weight: .regular, color: Asset.Colors.sky.color))
         return NSAttributedString(attributedString: attrString)
     }
 }
