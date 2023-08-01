@@ -30,8 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Defaults.fiat = .usd
 
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        // TODO: - Swizzle localization later
-//        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
