@@ -9,19 +9,11 @@ final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationService: NotificationService
 
     @Published var items: [any Renderable] = []
-    let openLearnMode = PassthroughSubject<URL, Never>()
-    let learnMore = PassthroughSubject<Void, Never>()
+    let warningTapped = PassthroughSubject<Void, Never>()
 
     init(eurAccount: EURUserAccount) {
         super.init()
         self.items = self.makeItems(from: eurAccount)
-
-        learnMore
-            .compactMap { return URL(string: "https://striga.com") }
-            .sink { [weak self] url in
-                self?.openLearnMode.send(url)
-            }
-            .store(in: &subscriptions)
     }
 
     private func makeItems(from account: EURUserAccount) -> [any Renderable] {

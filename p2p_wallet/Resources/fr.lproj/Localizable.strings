@@ -1471,13 +1471,10 @@
 "Updating" = "Mise à jour";
 "Follow us on Twitter" = "Suivez-nous sur Twitter";
 "Join our Discord" = "Rejoignez notre Discord";
-"Use these details to receive transfers\nfrom a Euro bank account" = "Utilisez ces informations pour recevoir des virements\nd'un compte bancaire en euros";
 "IBAN" = "IBAN";
 "BIC" = "BIC";
 "Beneficiary" = "Bénéficiaire";
-"Transfers usually take from 1 to 3 working days to appear in your KeyApp account" = "Les virements prennent généralement de 1 à 3 jours ouvrables pour apparaître dans votre compte KeyApp";
 "Euro account" = "Compte en euros";
-"Your money is held and protected by licensed banks." = "Votre argent est détenu et protégé par des banques agréées.";
 "Your KYC verification\nis pending" = "Votre vérification KYC\nest en attente";
 "We will update the status\nonce it is finished" = "Nous mettrons à jour le statut\nune fois qu'il sera terminé";
 "Security and privacy" = "Sécurité & confidentialité";
@@ -1513,3 +1510,7 @@
 "Outcoming transfer" = "Transfert sortant";
 "We will ask you to confirm this operation within a few minutes" = "Nous vous demanderons de confirmer cette opération dans quelques minutes";
 "Transaction pending" = "Transaction en attente";
+"Your bank account name must match NAME_LASTNAME" = "Le nom de votre compte bancaire doit correspondre à NAME_LASTNAME";
+"This is your personal IBAN. Use this details to make transfers through your banking app" = "Il s'agit de votre IBAN personnel.  Utilisez ces informations pour effectuer des virements via votre application bancaire";
+"We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Nous utilisons SEPA Instant pour les virements bancaires, et généralement, l'argent apparaîtra sur votre compte en moins d'une minute";
+"Use this IBAN to send money from your personal accounts" = "Utilisez cet IBAN pour envoyer de l'argent depuis vos comptes personnels";

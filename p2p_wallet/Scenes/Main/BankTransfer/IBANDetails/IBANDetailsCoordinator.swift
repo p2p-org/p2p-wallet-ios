@@ -1,5 +1,4 @@
 import SwiftUI
-import SafariServices
 import Combine
 import BankTransfer
 
@@ -20,14 +19,11 @@ final class IBANDetailsCoordinator: Coordinator<Void> {
         vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.euroAccount
 
-        viewModel.openLearnMode
-            .sink { [weak vc] url in
-                let safari = SFSafariViewController(url: url)
-                vc?.present(safari, animated: true)
-            }
-            .store(in: &subscriptions)
-
         navigationController.pushViewController(vc, animated: true)
+
+        viewModel.warningTapped
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
 
         return vc.deallocatedPublisher()
             .prefix(1)

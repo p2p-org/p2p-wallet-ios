@@ -1,22 +1,35 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct BaseInformerViewItem: Identifiable {
-    enum Title {
-        case plain(String)
-        case attributed(NSAttributedString)
-    }
-
-    var id = UUID().uuidString
+    let id = UUID().uuidString
 
     let icon: UIImage
     let iconColor: ColorAsset
-    let title: Title
+    let title: String
+    let titleColor: ColorAsset
     let backgroundColor: ColorAsset
     let iconBackgroundColor: ColorAsset
+
+    init(
+        icon: UIImage,
+        iconColor: ColorAsset,
+        title: String,
+        titleColor: ColorAsset = Asset.Colors.night,
+        backgroundColor: ColorAsset,
+        iconBackgroundColor: ColorAsset
+    ) {
+        self.icon = icon
+        self.iconColor = iconColor
+        self.title = title
+        self.titleColor = titleColor
+        self.backgroundColor = backgroundColor
+        self.iconBackgroundColor = iconBackgroundColor
+    }
 }
 
 // MARK: - Renderable
+
 extension BaseInformerViewItem: Renderable {
     func render() -> some View {
         BaseInformerView(data: self)
@@ -24,6 +37,7 @@ extension BaseInformerViewItem: Renderable {
 }
 
 // MARK: - View
+
 struct BaseInformerView: View {
     let data: BaseInformerViewItem
 
@@ -41,14 +55,9 @@ struct BaseInformerView: View {
                         .frame(width: 20, height: 20)
                 )
 
-            switch data.title {
-            case .plain(let text):
-                Text(text)
-                    .apply(style: .text4)
-                    .foregroundColor(Color(asset: Asset.Colors.night))
-            case .attributed(let text):
-                Text(text)
-            }
+            Text(data.title)
+                .apply(style: .text4)
+                .foregroundColor(Color(asset: data.titleColor))
 
             Spacer()
         }
@@ -63,7 +72,7 @@ struct BaseInfoView_Previews: PreviewProvider {
         BaseInformerView(data: BaseInformerViewItem(
             icon: .infoFill,
             iconColor: Asset.Colors.snow,
-            title: .plain(L10n.EnterYourPersonalDataToOpenAnAccount.pleaseUseYourRealCredentials),
+            title: L10n.EnterYourPersonalDataToOpenAnAccount.pleaseUseYourRealCredentials,
             backgroundColor: Asset.Colors.lightSea,
             iconBackgroundColor: Asset.Colors.sea
         ))

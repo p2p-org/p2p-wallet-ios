@@ -1467,13 +1467,10 @@
 "Updating" = "Обновление";
 "Follow us on Twitter" = "Следуйте за нами на Twitter";
 "Join our Discord" = "Присоединяйтесь к нашему дискорду";
-"Use these details to receive transfers\nfrom a Euro bank account" = "Используйте эти данные для получения переводов\nс банковского счета в евро.";
 "IBAN" = "IBAN";
 "BIC" = "БИК";
 "Beneficiary" = "Бенефициар";
-"Transfers usually take from 1 to 3 working days to appear in your KeyApp account" = "Переводы обычно занимают от 1 до 3 рабочих дней, чтобы появиться в вашей учетной записи KeyApp.";
 "Euro account" = "евро счет";
-"Your money is held and protected by licensed banks." = "Ваши деньги хранятся и защищаются лицензированными банками.";
 "Your KYC verification\nis pending" = "Ваша проверка KYC\nожидается";
 "We will update the status\nonce it is finished" = "Мы обновим статус\nкак только он будет завершен";
 "Security and privacy" = "Безопасность & конфиденциальность";
@@ -1509,3 +1506,7 @@
 "Outcoming transfer" = "Исходящий перевод";
 "We will ask you to confirm this operation within a few minutes" = "Мы попросим вас подтвердить эту операцию в течение нескольких минут";
 "Transaction pending" = "Ожидание транзакции";
+"Your bank account name must match NAME_LASTNAME" = "Название вашего банковского счета должно совпадать с NAME_LASTNAME.";
+"This is your personal IBAN. Use this details to make transfers through your banking app" = "Это ваш личный IBAN.  Используйте эти данные для осуществления переводов через банковское приложение.";
+"We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Мы используем SEPA Instant для банковских переводов, и обычно деньги поступают на ваш счет менее чем за минуту.";
+"Use this IBAN to send money from your personal accounts" = "Используйте этот IBAN для отправки денег со своих личных счетов";
