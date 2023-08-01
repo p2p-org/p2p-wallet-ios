@@ -20,6 +20,7 @@ struct HomeAccountsView: View {
                         .padding(.bottom, 16)
                         .id(0)
                     actionsView
+                    content
                     accounts
                         .padding(.top, 48)
                 }
@@ -53,7 +54,7 @@ struct HomeAccountsView: View {
             balanceTapAction: viewModel.balanceTapped
         )
     }
-    
+
     private var actionsView: some View {
         HomeActionsView(
             actions: viewModel.actions,
@@ -78,12 +79,28 @@ struct HomeAccountsView: View {
                 .padding(.horizontal, 16)
                 .frame(height: CGFloat(viewModel.accounts.count) * 72)
             }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let smallBanner = viewModel.smallBanner {
+                HomeSmallBannerView(params: smallBanner)
+                    .animation(.linear, value: smallBanner)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .onChange(of: viewModel.shouldCloseBanner) { [weak viewModel] output in
+                        guard output else { return }
+                        withAnimation { viewModel?.closeBanner(id: smallBanner.id) }
+                    }
+                    .onTapGesture(perform: viewModel.bannerTapped.send)
+            }
+            Spacer()
+
         }
     }
 
     private func bankTransferCell(
         rendableAccount: any RenderableAccount,
-        isVisible: Bool
+        isVisible _: Bool
     ) -> some View {
         HomeBankTransferAccountView(
             renderable: rendableAccount,

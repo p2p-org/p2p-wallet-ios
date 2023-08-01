@@ -32,25 +32,24 @@ typealias CryptoResult = Void
 
 /// Coordinator of `Crypto` scene
 final class CryptoCoordinator: Coordinator<CryptoResult> {
-    
     // MARK: - Dependencies
-    
+
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     // MARK: - Properties
-    
+
     /// Navigation controller that handle the navigation stack
     private let navigationController: UINavigationController
-    
+
     /// Navigation subject
     private let navigation = PassthroughSubject<CryptoNavigation, Never>()
-    
+
     // MARK: - Initializer
-    
+
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-    
+
     // MARK: - Methods
 
     override func start() -> AnyPublisher<CryptoResult, Never> {
@@ -66,7 +65,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         let cryptoVC = cryptoView.asViewController(withoutUIKitNavBar: false)
         cryptoVC.title = L10n.myCrypto
         navigationController.setViewControllers([cryptoVC], animated: false)
-        
+
         // handle navigation
         navigation
             .flatMap { [unowned self] in
@@ -74,16 +73,16 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-        
+
         // return publisher
         return cryptoVC.deallocatedPublisher()
     }
-    
+
     // MARK: - Navigation
 
     private func navigate(to scene: CryptoNavigation) -> AnyPublisher<CryptoResult, Never> {
         switch scene {
-        case .receive(_):
+        case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
                     presentation: SmartCoordinatorPushPresentation(navigationController)
@@ -122,7 +121,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             if let userAction, userAction.status == .processing {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
-                    presentingViewController: self.navigationController
+                    presentingViewController: navigationController
                 ))
                 .map { _ in () }
                 .eraseToAnyPublisher()

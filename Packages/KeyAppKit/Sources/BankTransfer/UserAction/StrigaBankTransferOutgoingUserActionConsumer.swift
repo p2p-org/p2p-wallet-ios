@@ -32,11 +32,11 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
         self.bankTransferService = bankTransferService
     }
 
-    public var onUpdate: AnyPublisher<any UserAction, Never> {
+    public var onUpdate: AnyPublisher<[any UserAction], Never> {
         database
             .onUpdate
-            .flatMap { data in
-                Publishers.Sequence(sequence: Array(data.values))
+            .map { data in
+                Array(data.values)
             }
             .eraseToAnyPublisher()
     }
@@ -63,7 +63,11 @@ public class StrigaBankTransferOutgoingUserActionConsumer: UserActionConsumer {
                     logLevel: .error
                 )
                 let regData = try? await self?.bankTransferService.value.getRegistrationData()
-                self?.handle(event: Event.complete(action, .requestWithdrawInfo(receiver: [regData?.firstName, regData?.lastName].compactMap({ $0 }).joined(separator: " "))))
+                self?.handle(event: Event.complete(
+                    action,
+                    .requestWithdrawInfo(receiver: [regData?.firstName, regData?.lastName].compactMap { $0 }
+                        .joined(separator: " "))
+                ))
                 return
             }
 

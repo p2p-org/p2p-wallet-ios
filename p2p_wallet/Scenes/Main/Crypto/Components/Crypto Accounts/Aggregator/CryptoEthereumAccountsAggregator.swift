@@ -20,6 +20,18 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
             .map { account in
                 claimBindingAggregator.transform(input: (account, claims))
             }
+            .filter { account, claiming in
+                if claiming == nil {
+                    let balanceInFiat = account.balanceInFiat
+                    if let balanceInFiat {
+                        return balanceInFiat >= CurrencyAmount(usd: 5)
+                    } else {
+                        return false
+                    }
+                } else {
+                    return true
+                }
+            }
             .map { account, claiming in
                 let status: RenderableEthereumAccount.Status
 
