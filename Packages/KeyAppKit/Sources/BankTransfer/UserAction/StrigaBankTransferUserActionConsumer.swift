@@ -7,7 +7,7 @@ import SolanaSwift
 public struct BankTransferClaimUserActionResult: Codable, Equatable {
     public let fromAddress: String
     public let challengeId: String
-    public let token: Token
+    public let token: TokenMetadata
 }
 
 public enum BankTransferClaimUserActionEvent: UserActionEvent {
@@ -73,7 +73,6 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 return
             }
 
-            
             let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
                 account.token.address == PublicKey.usdcMint.base58EncodedString
             }.count > 0)

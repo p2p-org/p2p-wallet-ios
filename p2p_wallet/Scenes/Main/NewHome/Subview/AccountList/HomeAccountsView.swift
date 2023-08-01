@@ -20,7 +20,8 @@ struct HomeAccountsView: View {
                         .padding(.bottom, 16)
                         .id(0)
                     actionsView
-                    
+                    accounts
+                        .padding(.top, 48)
                 }
             }
             .customRefreshable {
@@ -60,6 +61,24 @@ struct HomeAccountsView: View {
                 viewModel.actionClicked($0)
             }
         )
+    }
+
+    private var accounts: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if !viewModel.accounts.isEmpty {
+                List {
+                    ForEach(viewModel.accounts, id: \.id) {
+                        bankTransferCell(rendableAccount: $0, isVisible: true)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                    }
+                }
+                .listStyle(.plain)
+                .cornerRadius(16)
+                .padding(.horizontal, 16)
+                .frame(height: CGFloat(viewModel.accounts.count) * 72)
+            }
+        }
     }
 
     private func bankTransferCell(

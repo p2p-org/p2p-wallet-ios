@@ -1,4 +1,6 @@
 import BankTransfer
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Combine
 import SolanaSwift
@@ -56,7 +58,15 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                     break
                 }
             })
-            .map({ result -> PendingTransaction? in
+            .asyncMap({ result -> (WithdrawCoordinator.Result, TokenPrice?) in
+                let priceService = Resolver.resolve(PriceService.self)
+                let prices = try? await priceService.getPrice(
+                    token: SolanaToken.usdc,
+                    fiat: Defaults.fiat.rawValue
+                )
+                return (result, prices)
+            })
+            .map({ (result, prices) -> PendingTransaction? in
                 switch result {
                 case .paymentInitiated(let challangeId):
                     let transaction = StrigaWithdrawTransaction(
@@ -64,6 +74,8 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                         IBAN: model.IBAN ?? "",
                         BIC: model.BIC ?? "",
                         amount: amount,
+                        token: .usdc,
+                        tokenPrice: prices,
                         feeAmount: FeeAmount(
                             transaction: 0,
                             accountBalances: 0

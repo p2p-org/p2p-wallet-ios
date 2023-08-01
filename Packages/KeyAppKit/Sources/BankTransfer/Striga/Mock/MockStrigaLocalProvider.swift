@@ -81,7 +81,7 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     }
 
     public func save(userData: UserData) async throws {
-        fatalError()
+//        fatalError()
     }
 
     public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
