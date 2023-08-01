@@ -133,6 +133,7 @@ struct CryptoAccountsView: View {
         } onButtonTap: {
             viewModel.invoke(for: rendableAccount, event: .extraButtonTap)
         }
+        .equatable()
         .frame(height: 72)
         .padding(.horizontal, 16)
     }
