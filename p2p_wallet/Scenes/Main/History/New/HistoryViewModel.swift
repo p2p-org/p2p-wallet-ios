@@ -120,7 +120,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .CombineLatest3(
                 history.$state,
                 pendingTransactionService.observePendingTransactions(),
-                userActionService.$actions
+                userActionService.actions
             )
             .combineLatest(HistoryDebug.shared.$mockItems, $tokens)
             .map { firstStream, mocks, tokens in
@@ -182,7 +182,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .CombineLatest4(
                 history.$state,
                 pendingTransactionService.observePendingTransactions(),
-                userActionService.$actions,
+                userActionService.actions,
                 sellDataService.transactionsPublisher
             )
             .combineLatest(HistoryDebug.shared.$mockItems, $tokens)

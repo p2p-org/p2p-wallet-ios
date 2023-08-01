@@ -1,6 +1,7 @@
+import BigDecimal
 import Foundation
 import KeyAppBusiness
-import BigDecimal
+import KeyAppKitCore
 
 struct RenderableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
@@ -36,11 +37,9 @@ struct RenderableSolanaAccount: RenderableAccount {
     }
 
     var detail: AccountDetail {
-        if account.price != nil {
+        if account.price != nil, let amountInFiat = account.amountInFiat {
             return .text(
-                account
-                    .amountInFiatDouble
-                    .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
+                CurrencyFormatter().string(amount: amountInFiat)
             )
         } else {
             return .text("")
@@ -50,8 +49,12 @@ struct RenderableSolanaAccount: RenderableAccount {
     let extraAction: AccountExtraAction?
 
     let tags: AccountTags
-    
+
     var sortingKey: BigDecimal? {
-        return account.amountInFiat?.value
+        account.amountInFiat?.value
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.account == rhs.account
     }
 }

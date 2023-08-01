@@ -12,6 +12,8 @@ import Web3
 
 /// The repository for fetching token metadata and cache for later usage.
 public final class EthereumTokensRepository {
+    let dataCorrection: EthereumTokenDataCorrection = .init()
+
     /// Provider
     let provider: KeyAppTokenProvider
 
@@ -67,7 +69,7 @@ public final class EthereumTokensRepository {
         try? await database.write(for: "native", value: nativeToken)
         try? await database.flush()
 
-        return nativeToken
+        return dataCorrection.correct(token: nativeToken)
     }
 
     /// Resolve ERC-20 token by address.
@@ -90,6 +92,9 @@ public final class EthereumTokensRepository {
         // There is no missing addresses
         if missingTokenAddresses.isEmpty {
             return result
+                .mapValues { token in
+                    dataCorrection.correct(token: token)
+                }
         }
 
         // Fetch
@@ -124,6 +129,9 @@ public final class EthereumTokensRepository {
         try? await database.flush()
 
         return result
+            .mapValues { token in
+                dataCorrection.correct(token: token)
+            }
     }
 
     public func resolve(address: EthereumAddress) async throws -> EthereumToken? {

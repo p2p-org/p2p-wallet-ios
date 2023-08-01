@@ -160,7 +160,7 @@ extension TabBarViewModel {
     var transferAccountsPublisher: AnyPublisher<Bool, Never> {
         Publishers.CombineLatest(
             ethereumAccountsService.statePublisher,
-            userActionService.$actions.map { userActions in
+            userActionService.actions.map { userActions in
                 userActions.compactMap { $0 as? WormholeClaimUserAction }
             }
         )

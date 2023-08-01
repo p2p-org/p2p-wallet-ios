@@ -1,3 +1,4 @@
+import KeyAppKitCore
 import SolanaSwift
 import SwiftUI
 
@@ -49,8 +50,8 @@ struct ChooseSwapTokenItemView: View {
 
     @ViewBuilder private var rightView: some View {
         if fromToken {
-            if let amountInCurrentFiat = token.userWallet?.amountInCurrentFiat {
-                Text(amountInCurrentFiat.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
+            if let amountInFiat = token.userWallet?.amountInFiat {
+                Text(CurrencyFormatter().string(amount: amountInFiat))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(.night))
             } else {

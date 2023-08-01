@@ -1,11 +1,15 @@
 import SwiftUI
 
-struct CryptoAccountCellView: View {
+struct CryptoAccountCellView: View, Equatable {
     let iconSize: CGFloat = 50
     let rendable: any RenderableAccount
 
     let onTap: (() -> Void)?
     let onButtonTap: (() -> Void)?
+
+    static func == (lhs: CryptoAccountCellView, rhs: CryptoAccountCellView) -> Bool {
+        lhs.rendable.id == rhs.rendable.id
+    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
