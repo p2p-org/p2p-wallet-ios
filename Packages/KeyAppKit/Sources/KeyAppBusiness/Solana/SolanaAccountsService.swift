@@ -202,7 +202,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             state.value.append(account)
         }
 
-        print("Updated", matchIdx, account)
         accountsStream.send(state)
     }
 }
