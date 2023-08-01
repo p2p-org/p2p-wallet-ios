@@ -175,7 +175,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         userActionService.actions
-            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction }.first }
+            .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
             .flatMap(\.publisher)
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] val in
