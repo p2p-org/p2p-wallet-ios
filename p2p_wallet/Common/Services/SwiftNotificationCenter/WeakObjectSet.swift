@@ -57,16 +57,8 @@ struct WeakObjectSet<T: AnyObject>: Sequence {
         self.objects.insert(WeakObject(object))
     }
     
-    mutating func add(_ objects: [T]) {
-        objects.forEach { self.add($0) }
-    }
-    
     mutating func remove(_ object: T) {
         self.objects.remove(WeakObject<T>(object))
-    }
-    
-    mutating func remove(_ objects: [T]) {
-        objects.forEach { self.remove($0) }
     }
     
     func makeIterator() -> AnyIterator<T> {

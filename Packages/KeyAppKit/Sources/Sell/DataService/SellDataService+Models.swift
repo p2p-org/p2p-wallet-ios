@@ -59,7 +59,3 @@ public struct SellDataServiceTransaction: Hashable {
 public enum SellDataServiceError: Error {
     case couldNotLoadSellData
 }
-
-public protocol SellPriceProvider {
-    func getCurrentPrice(for tokenSymbol: String) -> Double?
-}

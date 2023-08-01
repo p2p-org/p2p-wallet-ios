@@ -10,7 +10,6 @@ import UIKit
 final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel, ObservableObject {
     // MARK: - Dependencies
 
-    @Injected private var biometricsProvider: BiometricsAuthProvider
     @Injected private var keychainStorage: KeychainStorage
     @Injected private var analyticsManager: AnalyticsManager
 

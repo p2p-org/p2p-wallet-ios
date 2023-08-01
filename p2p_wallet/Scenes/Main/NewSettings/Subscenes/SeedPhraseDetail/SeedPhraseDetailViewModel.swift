@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import KeyAppUI
 import Resolver
+import SolanaSwift
 import UIKit
 
 class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
@@ -13,7 +14,7 @@ class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var clipboardManger: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
 

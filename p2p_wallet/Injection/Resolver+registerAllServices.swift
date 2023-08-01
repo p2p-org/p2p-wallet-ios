@@ -10,16 +10,12 @@ import Moonpay
 import NameService
 import Onboarding
 import OrcaSwapSwift
-import P2PSwift
 import Reachability
 import Resolver
 import Sell
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
-import Solend
 import SwiftyUserDefaults
-import TransactionParser
 import Web3
 import Wormhole
 
@@ -45,6 +41,7 @@ extension Resolver: ResolverRegistering {
         register {
             WarmupManager(processes: [
                 RemoteConfigWarmupProcess(),
+                TokenServiceWarmupProcess(),
             ])
         }.scope(.application)
 
@@ -62,20 +59,18 @@ extension Resolver: ResolverRegistering {
 
         // Storages
         register { KeychainStorage() }
-            .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .implements(SolanaAccountStorage.self)
             .implements(PincodeStorageType.self)
-            .implements(AccountStorageType.self)
             .implements(PincodeSeedPhrasesStorage.self)
-            .implements((AccountStorageType & NameStorageType).self)
-            .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
-            .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
-            .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
 
         register { DeviceShareManagerImpl() }
             .implements(DeviceShareManager.self)
+            .scope(.application)
+
+        register { KeyAppTokenHttpProvider(client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)) }
+            .implements(KeyAppTokenProvider.self)
             .scope(.application)
 
         register {
@@ -143,11 +138,11 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         // Prices
-        register { SolanaPriceService(api: resolve()) }
-            .scope(.application)
-
-        register { EthereumPriceService(api: resolve()) }
-            .scope(.application)
+        register {
+            PriceServiceImpl(api: resolve(), errorObserver: resolve())
+        }
+        .implements(PriceService.self)
+        .scope(.application)
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
@@ -188,14 +183,6 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         // History
-        register {
-            DefaultTransactionParserRepository(
-                p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
-                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
-            )
-        }
-        .implements(TransactionParsedRepository.self)
-        .scope(.application)
 
         register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
             .implements(KeyAppHistoryProvider.self)
@@ -213,24 +200,20 @@ extension Resolver: ResolverRegistering {
             .implements(NotificationRepository.self)
             .scope(.application)
 
-        // PricesService
-        register { InMemoryPricesStorage() }
-            .implements(PricesStorage.self)
-            .scope(.application)
-
-        register { CoinGeckoPricesAPI() }
-            .implements(SolanaPricesAPI.self)
-            .scope(.application)
-
-        register { InMemoryTokensRepositoryCache() }
-            .implements(SolanaTokensRepositoryCache.self)
-            .scope(.application)
+        register {
+            KeyAppSolanaTokenRepository(
+                provider: resolve(),
+                errorObserver: resolve()
+            )
+        }
+        .implements(SolanaTokensService.self)
+        .scope(.application)
 
         register { CreateNameServiceImpl() }
             .implements(CreateNameService.self)
             .scope(.application)
 
-        register { EthereumTokensRepository(web3: resolve()) }
+        register { EthereumTokensRepository(provider: resolve()) }
             .scope(.application)
     }
 
@@ -269,16 +252,6 @@ extension Resolver: ResolverRegistering {
         // SolanaBlockchainClient
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
-
-        register { TokensRepository(
-            endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(
-                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
-            ),
-            cache: resolve()
-        ) }
-        .implements(SolanaTokensRepository.self)
-        .scope(.application)
 
         // QrCodeImageRender
         register { QrCodeImageRenderImpl() }
@@ -327,9 +300,6 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
 
-        register { UserSessionCache() }
-            .scope(.session)
-
         register { PincodeServiceImpl() }
             .implements(PincodeService.self)
             .scope(.session)
@@ -344,7 +314,7 @@ extension Resolver: ResolverRegistering {
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
                 relayService: Resolver.resolve(),
-                account: Resolver.resolve(AccountStorageType.self).account
+                account: Resolver.resolve(SolanaAccountStorage.self).account
             )
         }
         .implements(SendActionService.self)
@@ -453,17 +423,6 @@ extension Resolver: ResolverRegistering {
         .implements(SwapFeeRelayerCalculator.self)
         .scope(.session)
 
-        // PricesService
-        register { PricesService() }
-            .implements(PricesServiceType.self)
-            .implements(SellPriceProvider.self)
-            .scope(.session)
-
-        // WalletsViewModel
-        register { WalletsRepositoryImpl() }
-            .implements(WalletsRepository.self)
-            .scope(.session)
-
         register {
             SolanaAccountsService(
                 accountStorage: resolve(),
@@ -491,11 +450,6 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         register { FavouriteAccountsDataSource() }
-            .scope(.session)
-
-        // SwapService
-        register { SwapServiceWithRelayImpl() }
-            .implements(SwapServiceType.self)
             .scope(.session)
 
         // OrcaSwapSwift
@@ -621,41 +575,14 @@ extension Resolver: ResolverRegistering {
             RecipientSearchServiceImpl(
                 nameService: resolve(),
                 solanaClient: resolve(),
-                swapService: SwapServiceWrapper()
+                swapService: SwapServiceWrapper(
+                    orcaSwap: resolve(),
+                    relayService: resolve()
+                )
             )
         }
         .implements(RecipientSearchService.self)
         .scope(.shared)
-
-        // Solend
-        register { SolendFFIWrapper() }
-            .implements(Solend.self)
-            .scope(.application)
-        register {
-            SolendDataServiceImpl(
-                solend: resolve(),
-                owner: resolve(AccountStorageType.self).account!,
-                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
-                cache: resolve(UserSessionCache.self)
-            )
-        }
-        .implements(SolendDataService.self)
-        .scope(.session)
-
-        register {
-            SolendActionServiceImpl(
-                rpcUrl: Defaults.apiEndPoint.getURL(),
-                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
-                userAccountStorage: resolve(),
-                solend: resolve(),
-                solana: resolve(),
-                feeRelayApi: resolve(),
-                relayService: resolve(),
-                relayContextManager: resolve()
-            )
-        }
-        .implements(SolendActionService.self)
-        .scope(.session)
 
         // Solana tracker
         register {

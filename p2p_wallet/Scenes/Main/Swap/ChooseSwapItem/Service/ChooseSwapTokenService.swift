@@ -1,10 +1,9 @@
-import Resolver
 import Combine
-import KeyAppKitCore
 import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
 
 final class ChooseSwapTokenService: ChooseItemService {
-
     let otherTokensTitle = L10n.allTokens
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
@@ -22,13 +21,15 @@ final class ChooseSwapTokenService: ChooseItemService {
         self.swapTokens = CurrentValueSubject(swapTokens)
         self.fromToken = fromToken
 
+        let popularsToken = SwapToken.popularTokenMints
         if fromToken {
-            preferTokens = ["USDC", "USDT"]
+            preferTokens = Array(popularsToken.prefix(2)) // USDC, USDT only
         } else {
-            preferTokens = SwapToken.preferTokens
+            preferTokens = popularsToken
         }
 
-        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(status: .ready, value: []))
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>,
+            Never>(AsyncValueState(status: .ready, value: []))
 
         bind()
     }
@@ -47,7 +48,7 @@ final class ChooseSwapTokenService: ChooseItemService {
     func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let sections = items.map { section in
             guard var tokens = section.items as? [SwapToken] else { return section }
-            tokens = tokens.sorted(by: { lhs, rhs in
+            tokens = tokens.sorted(by: { lhs, _ in
                 // Put 'start' matches in the beginning of array, 'contains' after
                 lhs.token.name.lowercased().starts(with: keyword) || lhs.token.symbol.lowercased().starts(with: keyword)
             })
@@ -77,7 +78,7 @@ private extension ChooseSwapTokenService {
                 } else {
                     let preferTokens = Set(self.preferTokens)
                     tokens.forEach {
-                        if preferTokens.contains($0.token.symbol) {
+                        if preferTokens.contains($0.token.mintAddress) {
                             firstSection.append($0)
                         } else {
                             secondSection.append($0)
@@ -88,19 +89,19 @@ private extension ChooseSwapTokenService {
                 self.statePublisher.send(
                     AsyncValueState(status: .ready, value: [
                         ChooseItemListSection(items: firstSection),
-                        ChooseItemListSection(items: secondSection)
+                        ChooseItemListSection(items: secondSection),
                     ])
                 )
             }
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(accountsService.statePublisher, swapTokens.eraseToAnyPublisher())
-            .map({ ($0.0.value, $0.1) })
+            .map { ($0.0.value, $0.1) }
             .sink { [weak self] accounts, swapTokens in
                 guard let self else { return }
                 let newSwapTokens = swapTokens.map { swapToken in
-                    if let account = accounts.first(where: { $0.data.mintAddress == swapToken.address }) {
-                        return SwapToken(token: swapToken.token, userWallet: account.data)
+                    if let account = accounts.first(where: { $0.mintAddress == swapToken.mintAddress }) {
+                        return SwapToken(token: swapToken.token, userWallet: account)
                     }
                     return SwapToken(token: swapToken.token, userWallet: nil)
                 }
@@ -110,7 +111,7 @@ private extension ChooseSwapTokenService {
     }
 
     func validateEmpty(sections: [ChooseItemListSection]) -> [ChooseItemListSection] {
-        let isEmpty = sections.flatMap { $0.items }.isEmpty
+        let isEmpty = sections.flatMap(\.items).isEmpty
         return isEmpty ? [] : sections
     }
 }

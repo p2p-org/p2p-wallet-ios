@@ -1,10 +1,3 @@
-//
-//  SendTransactionDetails.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.11.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
@@ -94,7 +87,8 @@ struct SendTransactionDetailView: View {
                             ForEach(model.subtitle, id: \.0) { subtitle in
                                 HStack {
                                     Text(subtitle.0)
-                                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
+                                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors
+                                                .night.color))
                                         .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
                                         .fixedSize(horizontal: false, vertical: true)
                                     if let additionalText = subtitle.1 {

@@ -2,12 +2,13 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppUI
+import Moonpay
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
-import Moonpay
 
 let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
 
@@ -16,9 +17,6 @@ private extension String {
 }
 
 final class BuyViewModel: ObservableObject {
-    
-    typealias IpInfo = Moonpay.Provider.IpAddressResponse
-    
     var coordinatorIO = CoordinatorIO()
 
     // MARK: - To View
@@ -26,7 +24,7 @@ final class BuyViewModel: ObservableObject {
     @Published var state: State = .usual
     @Published var flag = String.neutralFlag
     @Published var availableMethods = [PaymentTypeItem]()
-    @Published var token: Token
+    @Published var token: TokenMetadata
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
@@ -37,7 +35,6 @@ final class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = false
     @Published var exchangeOutput: Buy.ExchangeOutput?
-    @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
     @Published var buttonItem: ButtonItem = .init(
         title: L10n.buy + " \(defaultToken.symbol)",
@@ -56,9 +53,9 @@ final class BuyViewModel: ObservableObject {
     // Dependencies
     @Injected private var moonpayProvider: Moonpay.Provider
     @Injected var exchangeService: BuyExchangeService
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: PriceService
 
     // Defaults
 //    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -72,14 +69,14 @@ final class BuyViewModel: ObservableObject {
     // Defaults
     private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
-    private static let tokens: [Token] = [.usdc, .nativeSolana]
+    private static let tokens: [TokenMetadata] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = [.eur, .gbp, .usd]
-    private static let defaultToken = Token.usdc
-    
+    private static let defaultToken = TokenMetadata.usdc
+
     // MARK: - Init
 
     init(
-        defaultToken: Token? = nil,
+        defaultToken: TokenMetadata? = nil,
         targetSymbol: String? = nil
     ) {
         self.targetSymbol = targetSymbol
@@ -91,7 +88,7 @@ final class BuyViewModel: ObservableObject {
         }
 
         fiatAmount = String(
-            buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
+            buyMinPrices[Fiat.usd.rawValue]?[TokenMetadata.nativeSolana.symbol] ??
                 BuyViewModel.defaultMinAmount
         )
 
@@ -132,10 +129,6 @@ final class BuyViewModel: ObservableObject {
                 initFiatWasSelected = true
             }
             .store(in: &subscriptions)
-
-        coordinatorIO.navigationSlidingPercentage.sink { percentage in
-            self.navigationSlidingPercentage = percentage * 110 * 2
-        }.store(in: &subscriptions)
 
         totalPublisher
             .receive(on: DispatchQueue.main)
@@ -190,12 +183,15 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] =
-                    try await pricesService.getCurrentPrices(
+                self.tokenPrices[fiat] = try Dictionary(
+                    await pricesService.getPrices(
                         tokens: BuyViewModel.tokens,
-                        toFiat: fiat
+                        fiat: fiat.rawValue
                     )
-                    .mapValues { $0.value }
+                    .map { token, price in
+                        (token.address, price.doubleValue)
+                    }
+                ) { lhs, _ in lhs }
             }
 
             let banks = try await exchangeService.isBankTransferEnabled()
@@ -207,7 +203,7 @@ final class BuyViewModel: ObservableObject {
             self.buyMinPrices = [:]
 //    var minPrices = [String: [String: Double]]()
 //    for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
-//        for aToken in [Token.nativeSolana, Token.usdc] {
+//        for aToken in [TokenMetadata.nativeSolana, TokenMetadata.usdc] {
 //            guard
 //                let from = aFiat.buyFiatCurrency(),
 //                let to = aToken.buyCryptoCurrency() else { continue }
@@ -245,10 +241,10 @@ final class BuyViewModel: ObservableObject {
                 self.areMethodsLoading = false
             }
         }
-        
+
         getBuyAvailability()
     }
-    
+
     private func getBuyAvailability() {
         Task {
             let ipInfo = try await moonpayProvider.ipAddresses()
@@ -261,14 +257,14 @@ final class BuyViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func setNewCountryInfo(flag: String, title: String, isBuyAllowed: Bool) {
         guard !title.isEmpty else {
             state = .usual
             self.flag = .neutralFlag
             return
         }
-        
+
         if isBuyAllowed {
             state = .usual
         } else {
@@ -283,15 +279,15 @@ final class BuyViewModel: ObservableObject {
             analyticsManager.log(event: .buyBlockedScreenOpen)
         }
         self.flag = flag
-        self.countryTitle = title
+        countryTitle = title
     }
-    
+
     // MARK: - From View
-    
+
     func goBackClicked() {
         coordinatorIO.close.send()
     }
-    
+
     func changeTheRegionClicked() {
         coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
             flag: flag,
@@ -299,7 +295,7 @@ final class BuyViewModel: ObservableObject {
         ))
         analyticsManager.log(event: .buyBlockedRegionClick)
     }
-    
+
     func flagClicked() {
         coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
             flag: flag,
@@ -307,7 +303,7 @@ final class BuyViewModel: ObservableObject {
         ))
         analyticsManager.log(event: .buyChangeCountryClick)
     }
-    
+
     // MARK: -
 
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
@@ -367,7 +363,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[token.address] ?? 0,
+                    amount: tokenPrices[fiat]?[token.mintAddress] ?? 0,
                     fiat: fiat
                 )
             }
@@ -570,27 +566,26 @@ final class BuyViewModel: ObservableObject {
             return true
         }
     }
-    
+
     func countrySelected(_ country: SelectCountryViewModel.Model, buyAllowed: Bool) {
         setNewCountryInfo(flag: country.flag, title: country.title, isBuyAllowed: buyAllowed)
     }
 
     struct CoordinatorIO {
-        
         // To Coordinator
         let showDetail = PassthroughSubject<(
             Buy.ExchangeOutput,
             exchangeRate: Double,
             fiat: Fiat,
-            token: Token
+            token: TokenMetadata
         ), Never>()
         let showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
         let showFiatSelect = PassthroughSubject<[Fiat], Never>()
         let navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         let chooseCountry = PassthroughSubject<SelectCountryViewModel.Model, Never>()
-        
+
         // From Coordinator
-        let tokenSelected = CurrentValueSubject<Token?, Never>(nil)
+        let tokenSelected = CurrentValueSubject<TokenMetadata?, Never>(nil)
         let fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         let buy = PassthroughSubject<URL, Never>()
         let license = PassthroughSubject<URL, Never>()
