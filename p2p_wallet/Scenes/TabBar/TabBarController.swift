@@ -54,11 +54,36 @@ final class TabBarController: UITabBarController {
 
     func setupTabs() {
         TabItem.allCases.enumerated().forEach { index, item in
-            viewControllers?[index].tabBarItem = UITabBarItem(
+            let item = UITabBarItem(
                 title: item.displayTitle,
                 image: item.image,
                 selectedImage: item.image
             )
+            
+            let normalAttributes: [NSAttributedString.Key: NSObject] = [
+                .font: UIFont.font(of: .label1, weight: .regular),
+                .foregroundColor: Asset.Colors.mountain.color,
+            ]
+            let selectedAttributes: [NSAttributedString.Key: NSObject] = [
+                .font: UIFont.font(of: .label1, weight: .regular),
+                .foregroundColor: Asset.Colors.night.color,
+            ]
+            
+            item.setTitleTextAttributes(normalAttributes, for: .normal)
+            item.setTitleTextAttributes(selectedAttributes, for: .selected)
+            viewControllers?[index].tabBarItem = item
+            
+            
+            //        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            //            .font: UIFont.font(of: .label1, weight: .regular),
+            //            .foregroundColor: Asset.Colors.mountain.color,
+            //        ]
+            //        standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            //            .font: UIFont.font(of: .label1, weight: .regular),
+            //            .foregroundColor: Asset.Colors.night.color,
+            //        ]
+            //        standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
+            //        standardAppearance.stackedLayoutAppearance.selected.iconColor = Asset.Colors.night.color
         }
 
         deviceShareMigration
@@ -219,7 +244,6 @@ final class TabBarController: UITabBarController {
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
-        standardAppearance.backgroundColor = Asset.Colors.snow.color
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: Asset.Colors.mountain.color,
@@ -231,10 +255,11 @@ final class TabBarController: UITabBarController {
         standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
         standardAppearance.stackedLayoutAppearance.selected.iconColor = Asset.Colors.night.color
         standardAppearance.stackedItemPositioning = .automatic
-        standardAppearance.shadowImage = nil
-        standardAppearance.shadowColor = nil
         UITabBar.appearance().standardAppearance = standardAppearance
         UITabBar.appearance().scrollEdgeAppearance = standardAppearance
+        
+        tabBar.isTranslucent = true
+        tabBar.backgroundColor = .clear
     }
 
     private var viewWillAppearTriggered = false
