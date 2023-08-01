@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-protocol RenderableAccount: SortableAccount, Identifiable where ID == String {
+protocol RenderableAccount: SortableAccount, Identifiable, Equatable where ID == String {
     var id: String { get }
 
     var icon: AccountIcon { get }
@@ -45,16 +45,16 @@ struct AccountTags: OptionSet {
     static let hidden = AccountTags(rawValue: 1 << 2)
 }
 
-enum AccountExtraAction {
+enum AccountExtraAction: Equatable {
     case showHide
 }
 
-enum AccountDetail {
+enum AccountDetail: Equatable {
     case text(String)
     case button(label: String, enabled: Bool)
 }
 
-enum AccountIcon {
+enum AccountIcon: Equatable {
     case image(UIImage)
     case url(URL)
     case random(seed: String)

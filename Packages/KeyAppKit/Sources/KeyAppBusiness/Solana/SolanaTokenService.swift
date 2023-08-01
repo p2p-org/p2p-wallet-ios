@@ -75,7 +75,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
     }
 
     public func setupStaticToken(data: [String: TokenMetadata]) {
-        TokenMetadata.nativeSolana = data["native"] ?? TokenMetadata.nativeSolana
+        TokenMetadata.nativeSolana = data["native"]?.fixedForNativeSOL ?? TokenMetadata.nativeSolana
         TokenMetadata.usdc = data[PublicKey.usdcMint.base58EncodedString] ?? TokenMetadata.usdc
         TokenMetadata.usdt = data[PublicKey.usdtMint.base58EncodedString] ?? TokenMetadata.usdt
         TokenMetadata.eth = data[TokenMetadata.eth.mintAddress] ?? TokenMetadata.eth
@@ -97,17 +97,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
 
             // Special case handling for native token
             if let nativeToken = result["native"] {
-                result["native"] = SolanaToken(
-                    _tags: [],
-                    chainId: nativeToken.chainId,
-                    mintAddress: "So11111111111111111111111111111111111111112",
-                    symbol: nativeToken.symbol,
-                    name: nativeToken.name,
-                    decimals: nativeToken.decimals,
-                    logoURI: nativeToken.logoURI,
-                    extensions: nativeToken.extensions,
-                    isNative: true
-                )
+                result["native"] = nativeToken.fixedForNativeSOL
             }
         }
 
@@ -177,5 +167,32 @@ public extension SolanaTokensService {
         get async throws {
             try await getOrThrow(address: "native")
         }
+    }
+}
+
+private extension TokenMetadata {
+    var fixedForNativeSOL: Self {
+        let wrongMintReturnedFromBackend = "native"
+        let fixedMint = "So11111111111111111111111111111111111111112"
+
+        // assert native sol, otherwise don't touch it
+        guard mintAddress == wrongMintReturnedFromBackend ||
+            mintAddress == fixedMint
+        else {
+            return self
+        }
+
+        // fix the mint
+        return SolanaToken(
+            _tags: [],
+            chainId: chainId,
+            mintAddress: "So11111111111111111111111111111111111111112",
+            symbol: symbol,
+            name: name,
+            decimals: decimals,
+            logoURI: logoURI,
+            extensions: extensions,
+            isNative: true
+        )
     }
 }

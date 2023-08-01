@@ -1,29 +1,28 @@
 import AnalyticsManager
 import Combine
-import Wormhole
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import NameService
 import Resolver
 import SolanaSwift
-import KeyAppBusiness
-import KeyAppKitCore
 import UIKit
+import Wormhole
 
 final class TabBarViewModel {
-    
     // MARK: - Dependencies
-    
+
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
     @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
-    
+
     @Injected private var userActionService: UserActionService
     @Injected private var ethereumAccountsService: EthereumAccountsService
     @Injected private var solanaAccountsService: SolanaAccountsService
-    
+
     @Injected private var analyticsManager: AnalyticsManager
 
     // Input
@@ -31,7 +30,7 @@ final class TabBarViewModel {
 
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
-    
+
     private let ethereumAggregator = CryptoEthereumAccountsAggregator()
 
     init() {
@@ -68,23 +67,23 @@ final class TabBarViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     func walletTapped() {
         analyticsManager.log(event: .mainScreenMainClick)
     }
-    
+
     func cryptoTapped() {
         analyticsManager.log(event: .mainScreenCryptoClick)
     }
-    
+
     func sendTapped() {
         analyticsManager.log(event: .mainScreenSendClick)
     }
-    
+
     func historyTapped() {
         analyticsManager.log(event: .mainScreenHistoryClick)
     }
-    
+
     func settingsTapped() {
         analyticsManager.log(event: .mainScreenSettingsClick)
     }
@@ -156,11 +155,11 @@ extension TabBarViewModel {
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
-    
+
     var transferAccountsPublisher: AnyPublisher<Bool, Never> {
         Publishers.CombineLatest(
             ethereumAccountsService.statePublisher,
-            userActionService.$actions.map { userActions in
+            userActionService.actions.map { userActions in
                 userActions.compactMap { $0 as? WormholeClaimUserAction }
             }
         )
@@ -178,12 +177,12 @@ extension TabBarViewModel {
         }
         .eraseToAnyPublisher()
     }
-    
+
     var walletBalancePublisher: AnyPublisher<String, Never> {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value
-                    .filter { $0.isUSDC }
+                    .filter(\.isUSDC)
                     .reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol)\(NumberFormatter.unit(for: equityValue))"
             }

@@ -1,10 +1,3 @@
-//
-//  NewPriceService.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import BigDecimal
 import Cache
 import Combine
@@ -12,16 +5,51 @@ import Foundation
 import KeyAppKitCore
 import SolanaSwift
 
+public struct PriceServiceOptions: OptionSet {
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    public static let actualPrice = PriceServiceOptions(rawValue: 1 << 0)
+}
+
 /// Abstract class for getting exchange rate between token and fiat for any token.
 public protocol PriceService: AnyObject {
-    func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice?
-    func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice]
+    func getPrice(
+        token: AnyToken,
+        fiat: String,
+        options: PriceServiceOptions
+    ) async throws -> TokenPrice?
+
+    func getPrices(
+        tokens: [AnyToken],
+        fiat: String,
+        options: PriceServiceOptions
+    ) async throws -> [SomeToken: TokenPrice]
 
     /// Emit request event to fetch new price.
     var onChangePublisher: AnyPublisher<Void, Never> { get }
 
     /// Clear cache.
     func clear() async throws
+}
+
+public extension PriceService {
+    func getPrice(
+        token: AnyToken,
+        fiat: String
+    ) async throws -> TokenPrice? {
+        try await getPrice(token: token, fiat: fiat, options: [])
+    }
+
+    func getPrices(
+        tokens: [AnyToken],
+        fiat: String
+    ) async throws -> [SomeToken: TokenPrice] {
+        try await getPrices(tokens: tokens, fiat: fiat, options: [])
+    }
 }
 
 /// This class service allow client to get exchange rate between token and fiat.
@@ -70,7 +98,10 @@ public class PriceServiceImpl: PriceService {
         )
     }
 
-    public func getPrices(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+    public func getPrices(
+        tokens: [AnyToken], fiat: String,
+        options: PriceServiceOptions
+    ) async throws -> [SomeToken: TokenPrice] {
         let fiat = fiat.lowercased()
         var shouldSynchronise = false
 
@@ -96,8 +127,14 @@ public class PriceServiceImpl: PriceService {
         for token in tokens {
             let token = token.asSomeToken
 
-            if result[token] == nil {
+            if options.contains(.actualPrice) {
+                // Fetch all prices when actual price is requested.
                 missingPriceTokenMints.append(token)
+            } else {
+                // Fetch only price, that does not exists in cache.
+                if result[token] == nil {
+                    missingPriceTokenMints.append(token)
+                }
             }
         }
 
@@ -138,8 +175,8 @@ public class PriceServiceImpl: PriceService {
             }
     }
 
-    public func getPrice(token: AnyToken, fiat: String) async throws -> TokenPrice? {
-        let result = try await getPrices(tokens: [token], fiat: fiat)
+    public func getPrice(token: AnyToken, fiat: String, options: PriceServiceOptions) async throws -> TokenPrice? {
+        let result = try await getPrices(tokens: [token], fiat: fiat, options: options)
         return result.values.first ?? nil
     }
 
@@ -200,9 +237,8 @@ public class PriceServiceImpl: PriceService {
         /// Adjust prices for stable coin (usdc, usdt) make it equal to 1 if not depegged more than 2%
         if
             case let .contract(address) = token.primaryKey,
-            [SolanaToken.usdc.mintAddress, SolanaToken.usdt.mintAddress].contains(address),
+            [PublicKey.usdcMint.base58EncodedString, PublicKey.usdtMint.base58EncodedString].contains(address),
             token.network == .solana,
-            fiat.uppercased() == "USD",
             (abs(parsedValue - 1.0) * 100) <= 2
         {
             parsedValue = 1.0

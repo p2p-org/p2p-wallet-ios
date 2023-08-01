@@ -12,34 +12,33 @@ import Wormhole
 
 /// ViewModel of `CryptoAccounts` scene
 final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
-    
     private var defaultsDisposables: [DefaultsDisposable] = []
-    
+
     // MARK: - Dependencies
-    
+
     private let analyticsManager: AnalyticsManager
     private let solanaAccountsService: SolanaAccountsService
     private let ethereumAccountsService: EthereumAccountsService
     private let userActionService: UserActionService
     private let favouriteAccountsStore: FavouriteAccountsDataSource
     private let navigation: PassthroughSubject<CryptoNavigation, Never>
-    
+
     // MARK: - Properties
-    
+
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
-    
+
     /// Accounts for claiming transfers.
-    var transferAccounts: [any RenderableAccount] = []
-    
+    @Published var transferAccounts: [any RenderableAccount] = []
+
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
-    
+
     /// Secondary list accounts. Will be normally hidden and require manuall action from user to be shown.
-    var hiddenAccounts: [any RenderableAccount] = []
-    
+    @Published var hiddenAccounts: [any RenderableAccount] = []
+
     // MARK: - Initialization
-    
+
     init(
         analyticsManager: AnalyticsManager = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
@@ -54,25 +53,25 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         self.userActionService = userActionService
         self.favouriteAccountsStore = favouriteAccountsStore
         self.navigation = navigation
-        
+
         super.init()
-        
+
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
             self?.hideZeroBalance = change.newValue ?? false
         })
-        
-        self.bindAccounts()
+
+        bindAccounts()
     }
-    
+
     // MARK: - Binding
-    
+
     private func bindAccounts() {
         // Ethereum accounts
         let ethereumAggregator = CryptoEthereumAccountsAggregator()
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
                 ethereumAccountsService.statePublisher,
-                userActionService.$actions.map { userActions in
+                userActionService.actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
             )
@@ -94,6 +93,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             }
 
         let cryptoAccountsAggregator = CryptoAccountsAggregator()
+
         Publishers
             .CombineLatest(solanaAccountsPublisher, ethereumAccountsPublisher)
             .map { solanaAccounts, ethereumAccounts in
@@ -101,25 +101,26 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] transfer, primary, secondary in
+
                 self?.transferAccounts = transfer
                 self?.accounts = primary
                 self?.hiddenAccounts = secondary
-                
+
                 self?.analyticsManager.log(event: .cryptoClaimTransferredViewed(claimCount: transfer.count))
             }
             .store(in: &subscriptions)
     }
-    
+
     // MARK: - Actions
-    
+
     func refresh() async {
         await HomeAccountsSynchronisationService().refresh()
     }
-    
+
     func scrollToTop() {
         scrollOnTheTop = true
     }
-    
+
     func invoke(for account: any RenderableAccount, event: Event) {
         switch account {
         case let renderableAccount as RenderableSolanaAccount:

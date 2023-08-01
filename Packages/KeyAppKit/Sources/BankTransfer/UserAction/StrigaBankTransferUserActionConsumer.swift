@@ -1,13 +1,13 @@
 import Combine
-import KeyAppBusiness
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 
 public struct BankTransferClaimUserActionResult: Codable, Equatable {
     public let fromAddress: String
     public let challengeId: String
-    public let token: Token
+    public let token: TokenMetadata
 }
 
 public enum BankTransferClaimUserActionEvent: UserActionEvent {
@@ -36,11 +36,11 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
         self.solanaAccountService = solanaAccountService
     }
 
-    public var onUpdate: AnyPublisher<any UserAction, Never> {
+    public var onUpdate: AnyPublisher<[any UserAction], Never> {
         database
             .onUpdate
-            .flatMap { data in
-                Publishers.Sequence(sequence: Array(data.values))
+            .map { data in
+                Array(data.values)
             }
             .eraseToAnyPublisher()
     }
@@ -60,7 +60,8 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 let account = try await service.repository.getWallet(userId: userId)?.accounts.usdc,
                 let amount = action.amount,
                 let fromAddress = account.blockchainDepositAddress,
-                let whitelistedAddressId = try await service.repository.whitelistIdFor(account: account) else {
+                let whitelistedAddressId = try await service.repository.whitelistIdFor(account: account)
+            else {
                 Logger.log(
                     event: "Striga Claim Action",
                     message: "Needs to whitelist account",
@@ -73,10 +74,9 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
                 return
             }
 
-            
-            let shouldMakeAccount = !(solanaAccountService.state.value.filter { account in
+            let shouldMakeAccount = !(!solanaAccountService.state.value.filter { account in
                 account.token.address == PublicKey.usdcMint.base58EncodedString
-            }.count > 0)
+            }.isEmpty)
 
             do {
                 let result = try await service.repository.initiateOnchainWithdrawal(
@@ -94,7 +94,10 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             } catch let error as NSError where error.isNetworkConnectionError {
                 self?.handle(event: Event.sendFailure(action, .networkFailure))
             } catch {
-                self?.handle(event: Event.sendFailure(action, UserActionError.requestFailure(description: error.localizedDescription)))
+                self?.handle(event: Event.sendFailure(
+                    action,
+                    UserActionError.requestFailure(description: error.localizedDescription)
+                ))
             }
         }
     }

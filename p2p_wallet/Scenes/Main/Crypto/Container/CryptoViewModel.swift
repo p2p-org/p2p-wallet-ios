@@ -9,12 +9,10 @@ import Send
 import SolanaSwift
 import Wormhole
 
-
 /// ViewModel of `Crypto` scene
 final class CryptoViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Dependencies
-    
+
     @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var ethereumAccountsService: EthereumAccountsService
     @Injected private var analyticsManager: AnalyticsManager
@@ -24,26 +22,26 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
-    
+
     let navigation: PassthroughSubject<CryptoNavigation, Never>
-    
+
     // MARK: - Properties
-    
+
     @Published var state = State.pending
-    
+
     // MARK: - Initializers
-    
+
     init(navigation: PassthroughSubject<CryptoNavigation, Never>) {
         self.navigation = navigation
         super.init()
-        
+
         // bind
         bind()
 
         // reload
         Task { await reload() }
     }
-    
+
     // MARK: - Methods
 
     func reload() async {
@@ -54,7 +52,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
         }
-        
+
         analyticsManager.log(event: .cryptoScreenOpened)
     }
 }
@@ -77,7 +75,7 @@ private extension CryptoViewModel {
         // Monitor user action
         let userActionService: UserActionService = Resolver.resolve()
         userActionService
-            .$actions
+            .actions
             .withPrevious()
             .sink { [weak self] prev, next in
                 for updatedUserAction in next {
