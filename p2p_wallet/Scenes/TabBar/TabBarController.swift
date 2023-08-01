@@ -63,17 +63,18 @@ final class TabBarController: UITabBarController {
 
         deviceShareMigration
             .isMigrationAvailablePublisher
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
             .sink { [weak self] migrationIsAvailable in
-                DispatchQueue.main.async {
-                    if migrationIsAvailable {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                            .selectedImage = .selectedTabBarSettingsWithAlert
-                    } else {
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                        self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
-                    }
+                if migrationIsAvailable {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .selectedTabBarSettingsWithAlert
+                } else {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
                 }
+                
             }
             .store(in: &subscriptions)
     }
@@ -283,13 +284,13 @@ final class TabBarController: UITabBarController {
         
         // Crypto alert on/off
         viewModel.transferAccountsPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] claimableTransferExist in
-                DispatchQueue.main.async {
-                    let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
-                    let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
-                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
-                    self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
-                }
+                let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
+                let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
             }
             .store(in: &subscriptions)
         
