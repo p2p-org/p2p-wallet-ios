@@ -15,6 +15,7 @@ class HomeAccountsSynchronisationService {
         // Update wormhole
         userActionService.handle(event: WormholeClaimUserActionEvent.refresh)
         async let _ = (
+            try? await priceService.clear(),
             try? await solanaAccountsService.fetch(),
             try? await ethereumAccountsService.fetch(),
             try? await loadEthereumAccountsService()
