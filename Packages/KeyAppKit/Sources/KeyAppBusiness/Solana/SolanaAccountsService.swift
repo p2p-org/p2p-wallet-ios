@@ -32,7 +32,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     // MARK: - Output
 
-    public var outputSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+    private var outputSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { outputSubject.eraseToAnyPublisher() }
 
@@ -202,6 +202,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             state.value.append(account)
         }
 
+        print("Updated", matchIdx, account)
         accountsStream.send(state)
     }
 }

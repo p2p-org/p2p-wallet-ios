@@ -126,13 +126,13 @@ struct CryptoAccountsView: View {
         .background(Color(Asset.Colors.smoke.color))
     }
 
+    @ViewBuilder
     private func tokenCell(rendableAccount: any RenderableAccount) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)
         } onButtonTap: {
             viewModel.invoke(for: rendableAccount, event: .extraButtonTap)
         }
-        .equatable()
         .frame(height: 72)
         .padding(.horizontal, 16)
     }
