@@ -1,11 +1,13 @@
-import SwiftUI
-import SafariServices
-import Combine
 import BankTransfer
+import Combine
+import SwiftUI
 
 final class IBANDetailsCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private let eurAccount: EURUserAccount
+
+    @SwiftyUserDefault(keyPath: \.strigaIBANInfoDoNotShow, options: .cached)
+    private var strigaIBANInfoDoNotShow: Bool
 
     init(navigationController: UINavigationController, eurAccount: EURUserAccount) {
         self.navigationController = navigationController
@@ -20,23 +22,29 @@ final class IBANDetailsCoordinator: Coordinator<Void> {
         vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.euroAccount
 
-        viewModel.openLearnMode
-            .sink { [weak vc] url in
-                let safari = SFSafariViewController(url: url)
-                vc?.present(safari, animated: true)
-            }
-            .store(in: &subscriptions)
+        navigationController.pushViewController(vc, animated: true) { [weak self] in
+            guard let self, self.strigaIBANInfoDoNotShow == false else { return }
+            self.openInfo()
+        }
 
-        navigationController.pushViewController(vc, animated: true)
+        viewModel.warningTapped
+            .sink { [weak self] in self?.openInfo() }
+            .store(in: &subscriptions)
 
         return vc.deallocatedPublisher()
             .prefix(1)
             .eraseToAnyPublisher()
     }
+
+    private func openInfo() {
+        coordinate(to: IBANDetailsInfoCoordinator(navigationController: navigationController))
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
 }
 
 extension UserData {
     var isIBANNotReady: Bool {
-        self.kycStatus == .approved && self.wallet?.accounts.eur?.enriched == false
+        kycStatus == .approved && wallet?.accounts.eur?.enriched == false
     }
 }

@@ -653,13 +653,10 @@
 "Updating" = "Updating";
 "Follow us on Twitter" = "Follow us on Twitter";
 "Join our Discord" = "Join our Discord";
-"Use these details to receive transfers\nfrom a Euro bank account" = "Use these details to receive transfers\nfrom a Euro bank account";
 "IBAN" = "IBAN";
 "BIC" = "BIC";
 "Beneficiary" = "Beneficiary";
-"Transfers usually take from 1 to 3 working days to appear in your KeyApp account" = "Transfers usually take from 1 to 3 working days to appear in your KeyApp account";
 "Euro account" = "Euro account";
-"Your money is held and protected by licensed banks." = "Your money is held and protected by licensed banks.";
 "Your KYC verification\nis pending" = "Your KYC verification\nis pending";
 "We will update the status\nonce it is finished" = "We will update the status\nonce it is finished";
 "Security and privacy" = "Security & privacy";
@@ -691,6 +688,12 @@
 "Outcoming transfer" = "Outcoming transfer";
 "We will ask you to confirm this operation within a few minutes" = "We will ask you to confirm this operation within a few minutes";
 "Transaction pending" = "Transaction pending";
+"Your bank account name must match NAME_LASTNAME" = "Your bank account name must match NAME_LASTNAME";
+"This is your personal IBAN. Use this details to make transfers through your banking app" = "This is your personal IBAN. Use this details to make transfers through your banking app";
+"We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute";
+"Use this IBAN to send money from your personal accounts" = "Use this IBAN to send money from your personal accounts";
+"Your bank account name must match the name of your Key App account" = "Your bank account name must match the name of your Key App account";
+"Important notes" = "Important notes";
 "Crypto" = "Crypto";
 "Incoming transfer" = "Incoming transfer";
 "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees." = "Welcome to your crypto portfolio. \nExplore over 800 tokens with zero fees.";
