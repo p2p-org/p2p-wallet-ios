@@ -175,10 +175,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         userActionService.actions
-            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction }.first }
+            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction } }
             .flatMap(\.publisher)
-            .filter { $0.status == .ready }
-            .removeDuplicates()
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
@@ -188,10 +186,17 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     break
                 }
             })
-            .sink { [weak self] action in
+            .filter { $0.status == .ready }
+            .removeDuplicates()
+            .sinkAsync(receiveValue: { [weak self] action in
+                let priceService = Resolver.resolve(PriceService.self)
+                let price = try? await priceService.getPrice(
+                    token: SolanaToken.usdc,
+                    fiat: Defaults.fiat.rawValue
+                )
                 guard let result = action.result else { return }
-                self?.handleClaim(result: result, in: action)
-            }.store(in: &subscriptions)
+                self?.handleClaim(result: result, in: action, tokenPrice: price)
+            }).store(in: &subscriptions)
 
         userActionService.actions
             .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
@@ -199,18 +204,26 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .filter { $0.status != .pending && $0.status != .processing }
             .removeDuplicates()
             .receive(on: RunLoop.main)
-            .sink { [weak self] action in
+            .sinkAsync(receiveValue: { [weak self] action in
+                let priceService = Resolver.resolve(PriceService.self)
+                let price = try? await priceService.getPrice(
+                    token: SolanaToken.usdc,
+                    fiat: Defaults.fiat.rawValue
+                )
                 switch action.status {
                 case .ready:
                     guard let result = action.result else { return }
-                    self?.handleOutgoingConfirm(result: result, in: action)
+                    self?.handleOutgoingConfirm(
+                        result: result,
+                        in: action,
+                        price: price
+                    )
                 case let .error(concreteType):
                     self?.handle(error: concreteType)
                 default:
                     break
                 }
-            }
-            .store(in: &subscriptions)
+            }).store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
 
@@ -358,7 +371,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     private func handleOutgoingConfirm(
         result: OutgoingBankTransferUserActionResult,
-        in action: OutgoingBankTransferUserAction
+        in action: OutgoingBankTransferUserAction,
+        price: TokenPrice?
     ) {
         switch result {
         case let .initiated(challengeId, IBAN, BIC):
@@ -368,6 +382,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     IBAN: IBAN,
                     BIC: BIC,
                     amount: Double(action.amount) ?? 0 / 100,
+                    token: .usdc,
+                    tokenPrice: price,
                     feeAmount: .zero
                 )
             ))
@@ -379,10 +395,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func handleClaim(result _: BankTransferClaimUserActionResult, in action: BankTransferClaimUserAction) {
+    private func handleClaim(
+        result: BankTransferClaimUserActionResult,
+        in action: BankTransferClaimUserAction,
+        tokenPrice: TokenPrice?
+    ) {
         navigation.send(.bankTransferClaim(StrigaClaimTransaction(
             challengeId: action.result?.challengeId ?? "",
             token: action.result?.token ?? .usdc,
+            tokenPrice: tokenPrice,
             amount: Double(action.amount ?? "") ?? 0,
             feeAmount: .zero,
             fromAddress: action.result?.fromAddress ?? "",

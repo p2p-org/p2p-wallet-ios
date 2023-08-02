@@ -21,7 +21,8 @@ struct HomeBankTransferAccountView: View {
             ),
             trailingItem: FinancialBlockTrailingItem(
                 isLoading: renderable.isLoading,
-                detail: renderable.detail
+                detail: renderable.detail,
+                onButtonTap: onButtonTap
             )
         )
         .onTapGesture {

@@ -118,7 +118,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
 
         case let transaction as any StrigaWithdrawTransactionType:
             if
-                let urlStr = transaction.token.logoURI,
+                let urlStr = transaction.token?.logoURI,
                 let url = URL(string: urlStr)
             {
                 return .single(url)

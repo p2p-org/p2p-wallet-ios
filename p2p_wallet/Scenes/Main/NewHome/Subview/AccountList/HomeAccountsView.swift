@@ -62,6 +62,18 @@ struct HomeAccountsView: View {
         )
     }
 
+    private var accounts: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach(viewModel.accounts, id: \.id) { acc in
+                bankTransferCell(rendableAccount: acc, isVisible: true)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 16)
+                    .frame(height: 72)
+                
+            }
+        }
+    }
+
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let smallBanner = viewModel.smallBanner {
@@ -75,7 +87,12 @@ struct HomeAccountsView: View {
                     }
                     .onTapGesture(perform: viewModel.bannerTapped.send)
             }
+            if !viewModel.accounts.isEmpty {
+                accounts
+                    .padding(.top, 48)
+            }
             Spacer()
+
         }
     }
 
@@ -88,7 +105,5 @@ struct HomeAccountsView: View {
             onTap: { viewModel.invoke(for: rendableAccount, event: .tap) },
             onButtonTap: { viewModel.invoke(for: rendableAccount, event: .extraButtonTap) }
         )
-        .frame(height: 72)
-        .padding(.horizontal, 16)
     }
 }
