@@ -60,6 +60,18 @@ jobs:
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
+      - name: Change SourcePackages directory
+        run: |
+          mkdir -p SourcePackages/checkouts
+          sed -i '' 's/\${BUILD_DIR%Build\/\*}SourcePackages/\${PWD}\/SourcePackages/g' project.yml
+        shell: bash
+
+      - uses: actions/cache@v3
+        id: spm-cache
+        with:
+          path: SourcePackages/checkouts
+          key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+
       - name: Install project
         env:
           IS_CI: 'true'
@@ -100,6 +112,7 @@ jobs:
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
+          SPM_CACHE_HIT: '${{ steps.spm-cache.outputs.cache-hit }}'
           DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
           DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
           DISCORD_MESSAGE_API_BEARER_TOKEN: '${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}'

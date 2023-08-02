@@ -39,6 +39,8 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+SPM_CACHE_HIT = ENV["SPM_CACHE_HIT"] == 'true'
+
 DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
 
 DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
@@ -117,18 +119,36 @@ def create_release_build(match_type, configuration)
     force_for_new_devices: true
   )
 
-  gym(
-    scheme: 'p2p_wallet',
-    configuration: configuration,
-    export_method: match_type,
-    export_xcargs: '-allowProvisioningUpdates',
-    silent: true,
-    export_options: {
-      provisioningProfiles: {
-        appId => profileSpecifier
+  if IS_CI
+    gym(
+      scheme: 'p2p_wallet',
+      configuration: configuration,
+      export_method: match_type,
+      export_xcargs: '-allowProvisioningUpdates',
+      silent: false,
+      export_options: {
+        provisioningProfiles: {
+          appId => profileSpecifier
+        }
+      },
+      cloned_source_packages_path: "SourcePackages", # the difference
+      skip_package_dependencies_resolution: SPM_CACHE_HIT, # the difference
+      disable_package_automatic_updates: SPM_CACHE_HIT, # the difference
+    )
+  else
+    gym(
+      scheme: 'p2p_wallet',
+      configuration: configuration,
+      export_method: match_type,
+      export_xcargs: '-allowProvisioningUpdates',
+      silent: false,
+      export_options: {
+        provisioningProfiles: {
+          appId => profileSpecifier
+        }
       }
-    }
-  )
+    )
+  end
 end
 
 def upload_build(configuration, browserstack_username, browserstack_access_key, custom_id)
