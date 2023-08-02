@@ -345,15 +345,21 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                     copyableValue: transaction.fromAddress
                 )
             )
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
+                )
+            )
 
         case let transaction as any StrigaWithdrawTransactionType:
             result.append(
                 .init(
                     title: L10n.iban,
                     values: [
-                        .init(text: transaction.IBAN),
+                        .init(text: transaction.IBAN.formatIBAN()),
                     ],
-                    copyableValue: transaction.IBAN
+                    copyableValue: nil
                 )
             )
             result.append(
@@ -362,7 +368,13 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                     values: [
                         .init(text: transaction.BIC),
                     ],
-                    copyableValue: transaction.BIC
+                    copyableValue: nil
+                )
+            )
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
                 )
             )
 
@@ -376,7 +388,8 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
-            if trx.rawTransaction as? any StrigaWithdrawTransactionType != nil {
+            if trx.rawTransaction as? any StrigaWithdrawTransactionType != nil ||
+               trx.rawTransaction as? any StrigaClaimTransactionType != nil {
                 return []
             }
             return [.share, .explorer]

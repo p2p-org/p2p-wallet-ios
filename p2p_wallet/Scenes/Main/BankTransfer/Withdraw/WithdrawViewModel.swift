@@ -66,7 +66,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         $IBAN
             .debounce(for: 0.0, scheduler: DispatchQueue.main)
             .removeDuplicates()
-            .map { self.formatIBAN($0) }
+            .map { $0.formatIBAN() }
             .assignWeak(to: \.IBAN, on: self)
             .store(in: &subscriptions)
 
@@ -101,32 +101,6 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             guard let challengeId = await initiateSEPAPayment(params: params, info: info) else { return }
             paymentInitiatedSubject.send(challengeId)
         }
-    }
-
-    func formatIBAN(_ iban: String) -> String {
-        // Remove any spaces or special characters from the input string
-        let cleanedIBAN = iban.components(separatedBy: CharacterSet.alphanumerics.inverted).joined()
-
-        // Check if the IBAN is empty or not valid (less than 4 characters)
-        guard cleanedIBAN.count >= 4 else {
-            return cleanedIBAN
-        }
-
-        // Create a formatted IBAN by grouping characters in blocks of four
-        var formattedIBAN = ""
-        var index = cleanedIBAN.startIndex
-
-        while index < cleanedIBAN.endIndex {
-            let nextIndex = cleanedIBAN.index(index, offsetBy: 4, limitedBy: cleanedIBAN.endIndex) ?? cleanedIBAN.endIndex
-            let block = cleanedIBAN[index..<nextIndex]
-            formattedIBAN += String(block)
-            if nextIndex != cleanedIBAN.endIndex {
-                formattedIBAN += " "
-            }
-            index = nextIndex
-        }
-
-        return formattedIBAN.uppercased()
     }
 
     private func save(info: StrigaWithdrawalInfo) async {
