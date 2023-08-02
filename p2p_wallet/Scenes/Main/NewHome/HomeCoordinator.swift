@@ -420,10 +420,10 @@ final class HomeCoordinator: Coordinator<Void> {
         // We need this delay to handle pop animation
         Just(()).delay(for: 0.8, scheduler: RunLoop.main)
             .flatMap { [unowned self] in
-            coordinate(to: TransactionDetailCoordinator(
-                viewModel: TransactionDetailViewModel(pendingTransaction: transaction),
-                presentingViewController: navigationController
-            ))
+                coordinate(to: TransactionDetailCoordinator(
+                    viewModel: TransactionDetailViewModel(pendingTransaction: transaction),
+                    presentingViewController: navigationController
+                ))
         }
         .map { _ in () }
         .eraseToAnyPublisher()
