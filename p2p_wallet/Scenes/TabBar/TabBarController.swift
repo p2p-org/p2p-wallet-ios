@@ -218,7 +218,6 @@ final class TabBarController: UITabBarController {
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
-        standardAppearance.backgroundColor = .init(resource: .snow)
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .font: UIFont.font(of: .label1, weight: .regular),
             .foregroundColor: UIColor(resource: .mountain),
@@ -230,10 +229,11 @@ final class TabBarController: UITabBarController {
         standardAppearance.stackedLayoutAppearance.normal.iconColor = .init(resource: .mountain)
         standardAppearance.stackedLayoutAppearance.selected.iconColor = .init(resource: .night)
         standardAppearance.stackedItemPositioning = .automatic
-        standardAppearance.shadowImage = nil
-        standardAppearance.shadowColor = nil
         UITabBar.appearance().standardAppearance = standardAppearance
         UITabBar.appearance().scrollEdgeAppearance = standardAppearance
+        
+        tabBar.isTranslucent = true
+        tabBar.backgroundColor = .clear
     }
 
     private var viewWillAppearTriggered = false

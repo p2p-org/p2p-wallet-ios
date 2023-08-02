@@ -125,6 +125,7 @@ struct CryptoAccountsView: View {
         .background(Color(.smoke))
     }
 
+    @ViewBuilder
     private func tokenCell(rendableAccount: any RenderableAccount) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)

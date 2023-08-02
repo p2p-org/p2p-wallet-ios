@@ -32,7 +32,7 @@ extension String {
         String(prefix(1))
     }
 
-    public var uppercaseFirst: String {
+    var uppercaseFirst: String {
         firstCharacter.uppercased() + String(dropFirst())
     }
 
@@ -99,22 +99,6 @@ extension String {
         String(stride(from: 0, to: Array(self).count, by: every).map {
             Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
         }.joined(separator: separator))
-    }
-}
-
-extension String {
-    var snakeAndFirstUppercased: String? {
-        guard let snakeCase = snakeCased() else { return nil }
-        return snakeCase.prefix(1).uppercased() + snakeCase.dropFirst()
-    }
-
-    func snakeCased() -> String? {
-        let pattern = "([a-z0-9])([A-Z])"
-
-        let regex = try? NSRegularExpression(pattern: pattern, options: [])
-        let range = NSRange(location: 0, length: count)
-        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2")
-            .uppercaseFirst
     }
 }
 
