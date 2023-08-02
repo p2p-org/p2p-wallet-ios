@@ -1,7 +1,7 @@
 import AnalyticsManager
 import Foundation
 
-enum KeyAppAnalyticsEvent: AnalyticsEvent {
+public enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Create wallet
 
     case createPhoneClickButton

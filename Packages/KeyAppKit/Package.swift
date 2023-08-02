@@ -125,6 +125,9 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
         .package(url: "https://github.com/vapor/websocket-kit", from: "2.8.0"),
+        .package(url: "https://github.com/amplitude/Amplitude-iOS.git", from: "8.15.0"),
+        .package(url: "https://github.com/AppsFlyerSDK/AppsFlyerFramework", from: "6.12.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.7.0"),
     ],
     targets: [
         .binaryTarget(
@@ -173,7 +176,11 @@ let package = Package(
         // AnalyticsManager
         .target(
             name: "AnalyticsManager",
-            dependencies: []
+            dependencies: [
+                .product(name: "Amplitude", package: "Amplitude-iOS"),
+                .product(name: "AppsFlyerLib", package: "AppsFlyerFramework"),
+                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+            ]
         ),
         .testTarget(
             name: "AnalyticsManagerUnitTests",

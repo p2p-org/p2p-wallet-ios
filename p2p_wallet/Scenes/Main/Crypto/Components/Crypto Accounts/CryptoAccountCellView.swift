@@ -2,15 +2,20 @@ import KeyAppUI
 import SwiftUI
 
 struct CryptoAccountCellView: View, Equatable {
+    
+    static func == (lhs: CryptoAccountCellView, rhs: CryptoAccountCellView) -> Bool {
+        lhs.rendable.id == rhs.rendable.id &&
+        lhs.rendable.detail == rhs.rendable.detail &&
+        lhs.rendable.title == rhs.rendable.title &&
+        lhs.rendable.subtitle == rhs.rendable.subtitle &&
+        rhs.rendable.tags == rhs.rendable.tags
+    }
+    
     let iconSize: CGFloat = 50
     let rendable: any RenderableAccount
 
     let onTap: (() -> Void)?
     let onButtonTap: (() -> Void)?
-
-    static func == (lhs: CryptoAccountCellView, rhs: CryptoAccountCellView) -> Bool {
-        lhs.rendable.id == rhs.rendable.id
-    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {

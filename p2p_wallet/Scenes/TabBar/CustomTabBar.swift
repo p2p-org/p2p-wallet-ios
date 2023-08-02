@@ -47,7 +47,13 @@ final class CustomTabBar: UITabBar {
         }
         return 14
     }
-
+    
+    override var clipsToBounds: Bool {
+        didSet {
+            middleButton.clipsToBounds = false
+        }
+    }
+    
     private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
     var middleButtonClicked: AnyPublisher<Void, Never> { middleButtonClickedSubject.eraseToAnyPublisher() }
 
@@ -61,8 +67,8 @@ final class CustomTabBar: UITabBar {
         updateSelectedViewPositionIfNeeded()
 
         layer.shadowColor = UIColor(red: 0.043, green: 0.122, blue: 0.208, alpha: 0.1).cgColor
-        layer.shadowOffset = CGSize(width: 9, height: 22)
-        layer.shadowRadius = 128
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 6
         layer.shadowOpacity = 1
     }
 
@@ -70,6 +76,19 @@ final class CustomTabBar: UITabBar {
         var size = super.sizeThatFits(size)
         size.height += Self.additionalHeight
         return size
+    }
+    
+    override func draw(_ rect: CGRect) {
+        // Create a rounded rect path
+        let path = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: 16, height: 16)
+        )
+        
+        // Set the fill color
+        Asset.Colors.snow.color.setFill()
+        path.fill()
     }
 
     // MARK: - Actions
