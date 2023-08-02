@@ -1,14 +1,6 @@
-//
-//  SolanaAccountsManager.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
-import SolanaPricesAPIs
 import SolanaSwift
 
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating
@@ -18,26 +10,29 @@ import SolanaSwift
 public final class SolanaAccountsService: NSObject, AccountsService {
     public typealias Account = SolanaAccount
 
-    // MARK: - Properties
+    // MARK: - Service
+
+    let priceService: PriceService
+
+    let errorObservable: ErrorObserver
 
     public let realtimeService: RealtimeSolanaAccountService?
+
+    // MARK: - Properties
 
     var subscriptions = [AnyCancellable]()
 
     // MARK: - Source
 
     /// The stream of account by rpc call to node.
-    let originStream: AsyncValue<[Account]>
+    let fetchedAccountsByRpc: AsyncValue<[Account]>
 
     /// The final stream origin base on additional updating through socket.
-    let realtimeStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
-
-    /// Requested token price base on final stream.
-    let priceStream: CurrentValueSubject<[Token: CurrentPrice?], Never> = .init([:])
+    let accountsStream: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     // MARK: - Output
 
-    public var outputSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+    private var outputSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { outputSubject.eraseToAnyPublisher() }
 
@@ -57,57 +52,44 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     public init(
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
-        tokensService: SolanaTokensRepository,
-        priceService: SolanaPriceService,
+        realtimeSolanaAccountService: RealtimeSolanaAccountService? = nil,
+        tokensService: SolanaTokensService,
+        priceService: PriceService,
         fiat: String,
         proxyConfiguration: ProxyConfiguration?,
         errorObservable: any ErrorObserver
     ) {
+        self.priceService = priceService
+        self.errorObservable = errorObservable
+
         // Setup async value
-        originStream = .init(initialItem: []) {
-            guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
-                return (nil, Error.authorityError)
-            }
-
-            var newAccounts: [Account] = []
-
-            do {
-                // Updating native account balance and get spl tokens
-                let (balance, splAccounts) = try await(
-                    // TODO: Check commitment value! Previously was ``recent``
-                    solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
-                    solanaAPIClient.getTokenWallets(
-                        account: accountAddress,
-                        tokensRepository: tokensService,
-                        commitment: "confirmed"
-                    )
-                )
-
-                let solanaAccount = Account(
-                    data: Wallet.nativeSolana(
-                        pubkey: accountAddress,
-                        lamport: balance
-                    )
-                )
-
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
-
-                return (newAccounts, nil)
-            } catch {
-                return (nil, error)
-            }
-        }
+        fetchedAccountsByRpc = SolanaAccountAsyncValue(
+            initialItem: [],
+            accountStorage: accountStorage,
+            solanaAPIClient: solanaAPIClient,
+            tokensService: tokensService,
+            errorObservable: errorObservable
+        )
 
         // Emit origin stream to final stream
-        originStream
-            .statePublisher
-            .sink { [weak realtimeStream] state in
-                realtimeStream?.send(state)
+        fetchedAccountsByRpc.statePublisher
+            .sink { [weak accountsStream] state in
+                accountsStream?.value.status = state.status
+                accountsStream?.value.error = state.error
+            }
+            .store(in: &subscriptions)
+
+        fetchedAccountsByRpc.statePublisher.map(\.value)
+            .removeDuplicates()
+            .sink { [weak accountsStream] accounts in
+                accountsStream?.value.value = accounts
             }
             .store(in: &subscriptions)
 
         // Setup realtime service
-        if let owner = accountStorage.account?.publicKey.base58EncodedString {
+        if let realtimeSolanaAccountService {
+            realtimeService = realtimeSolanaAccountService
+        } else if let owner = accountStorage.account?.publicKey.base58EncodedString {
             realtimeService = RealtimeSolanaAccountServiceImpl(
                 owner: owner,
                 apiClient: solanaAPIClient,
@@ -123,65 +105,31 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
         super.init()
 
-        // Listen realtime service
+        // Subscribe solana realtime service for listening balance changing.
         realtimeService?
             .update
             .sink { [weak self] account in
-                guard let self else { return }
-
-                var state = self.realtimeStream.value
-
-                let matchIdx = state.value
-                    .firstIndex {
-                        $0.data.token.address == account.data.token.address
-                    }
-
-                if let matchIdx {
-                    state.value[matchIdx] = account
-                } else {
-                    state.value.append(account)
-                }
-
-                self.realtimeStream.send(state)
+                self?.onUpdateAccount(account: account)
             }
             .store(in: &subscriptions)
 
-        /// Parallel price updating. We will show price later.
-        realtimeStream
-            .filter { $0.status == .initializing || $0.status == .ready }
-            .debounce(for: .seconds(0.05), scheduler: RunLoop.main)
-            .asyncMap { state in
-                do {
-                    return try await priceService.getPrices(
-                        tokens: state.value.map(\.data.token),
-                        fiat: fiat
-                    )
-                } catch {
-                    errorObservable.handleError(error)
-                    return [:]
-                }
+        /// Update price in case there are new accounts or changing in price from price service.
+        accountsStream
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .map { [weak self] state in
+                self?.fetchPrice(for: state, fiat: fiat)
             }
-            .sink { [weak self] price in
-                self?.priceStream.send(price)
-            }
-            .store(in: &subscriptions)
-
-        // Report error
-        errorObservable
-            .handleAsyncValue(originStream)
-            .store(in: &subscriptions)
-
-        // Emit data to output
-        let accountsAggregator = SolanaAccountsAggregator()
-        Publishers
-            .CombineLatest(realtimeStream, priceStream)
-            .map { state, prices in
-                var state = state
-                state.value = accountsAggregator.transform(input: (state.value, fiat, prices))
-                return state
-            }
+            .compactMap { $0 }
+            .switchToLatest()
             .sink { [weak outputSubject] state in
                 outputSubject?.send(state)
+            }
+            .store(in: &subscriptions)
+
+        priceService
+            .onChangePublisher
+            .sink { [weak accountsStream] in
+                accountsStream?.value.status = .ready
             }
             .store(in: &subscriptions)
 
@@ -195,14 +143,73 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     /// Fetch new data from blockchain.
     public func fetch() async throws {
-        try await originStream.fetch()?.value
+        try await fetchedAccountsByRpc.fetch()?.value
+    }
+
+    internal func fetchPrice(
+        for state: AsyncValueState<[Account]>,
+        fiat: String
+    ) -> Future<AsyncValueState<[Account]>, Never> {
+        Future<AsyncValueState<[Account]>, Never> { [weak priceService, errorObservable] promise in
+            Task { [weak priceService, errorObservable] in
+                // Price service is unavailable
+                guard let priceService else {
+                    promise(.success(state))
+                    return
+                }
+
+                var prices: [SomeToken: TokenPrice] = [:]
+                var caughtError: Error?
+
+                // Fetch price
+                do {
+                    prices = try await priceService.getPrices(
+                        tokens: state.value.map(\.token),
+                        fiat: fiat
+                    )
+                } catch {
+                    errorObservable.handleError(error)
+                    caughtError = error
+                }
+
+                // Aggregate data
+                let accountsAggregator = SolanaAccountsAggregator()
+                var state = state
+                state.value = accountsAggregator.transform(input: (state.value, prices))
+
+                // Assign error in case there is no previously error
+                if state.error == nil {
+                    state.error = caughtError
+                }
+
+                promise(Result.success(state))
+            }
+        }
+    }
+
+    /// Update single accounts.
+    internal func onUpdateAccount(account: SolanaAccount) {
+        var state = accountsStream.value
+
+        let matchIdx = state.value
+            .firstIndex { searchedAccount in
+                searchedAccount.token.mintAddress == account.token.mintAddress
+            }
+
+        if let matchIdx {
+            state.value[matchIdx] = account
+        } else {
+            state.value.append(account)
+        }
+
+        accountsStream.send(state)
     }
 }
 
-public extension Array where Element == SolanaAccountsService.Account {
+public extension [SolanaAccountsService.Account] {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
-        first(where: { $0.data.isNativeSOL })
+        first(where: { $0.token.isNative })
     }
 
     var totalAmountInCurrentFiat: Double {
@@ -215,7 +222,72 @@ public extension Array where Element == SolanaAccountsService.Account {
 }
 
 public extension SolanaAccountsService {
+    @available(*, deprecated, message: "Legacy code")
+    var nativeWallet: SolanaAccount? {
+        state.value.nativeWallet
+    }
+
+    @available(*, deprecated, message: "Legacy code")
+    func getWallets() -> [SolanaAccount] {
+        state.value
+    }
+}
+
+internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
     enum Error: Swift.Error {
         case authorityError
+    }
+
+    init(
+        initialItem: [SolanaAccount],
+        accountStorage: SolanaAccountStorage,
+        solanaAPIClient: SolanaAPIClient,
+        tokensService: SolanaTokensService,
+        errorObservable: any ErrorObserver
+    ) {
+        super.init(initialItem: initialItem) { () async -> ([SolanaAccount]?, Swift.Error?) in
+            guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
+                return (nil, Error.authorityError)
+            }
+
+            var newAccounts: [SolanaAccount] = []
+
+            do {
+                // Updating native account balance and get spl tokens
+                let (balance, (resolved, _)) = try await (
+                    solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
+                    solanaAPIClient.getAccountBalances(
+                        for: accountAddress,
+                        tokensRepository: tokensService,
+                        commitment: "confirmed"
+                    )
+                )
+
+                let solanaAccount = SolanaAccount(
+                    address: accountAddress,
+                    lamports: balance,
+                    token: try await tokensService.nativeToken
+                )
+
+                newAccounts = [solanaAccount] + resolved
+                    .map { accountBalance -> SolanaAccount? in
+                        guard let pubkey = accountBalance.pubkey else {
+                            return nil
+                        }
+
+                        return SolanaAccount(
+                            address: pubkey,
+                            lamports: accountBalance.lamports ?? 0,
+                            token: accountBalance.token
+                        )
+                    }
+                    .compactMap { $0 }
+
+                return (newAccounts, nil)
+            } catch {
+                errorObservable.handleError(error)
+                return (nil, error)
+            }
+        }
     }
 }

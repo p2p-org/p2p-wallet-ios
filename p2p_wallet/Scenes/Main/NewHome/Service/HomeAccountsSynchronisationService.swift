@@ -13,6 +13,7 @@ import Wormhole
 class HomeAccountsSynchronisationService {
     @Injected var solanaAccountsService: SolanaAccountsService
     @Injected var ethereumAccountsService: EthereumAccountsService
+    @Injected var priceService: PriceService
     @Injected var userActionService: UserActionService
 
     func refresh() async {
@@ -21,6 +22,11 @@ class HomeAccountsSynchronisationService {
 
         do {
             try await withThrowingTaskGroup(of: Void.self) { group in
+                // Clear price cache
+                group.addTask { [weak self] in
+                    try await self?.priceService.clear()
+                }
+
                 // solana
                 group.addTask { [weak self] in
                     guard let self else { return }

@@ -18,8 +18,6 @@ class DeviceShareMigrationViewModel: BaseViewModel, ObservableObject {
 
     let facade: TKeyFacade
 
-    @Published var title: String = "Updating your authorization device"
-
     let action = PassthroughSubject<Action, Never>()
 
     init(facade: TKeyFacade) {

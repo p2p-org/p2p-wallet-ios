@@ -56,7 +56,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     private var wasMaxUsed: Bool = false
 
     // ActionButton
-    @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
 
@@ -73,7 +72,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
-        preChosenWallet: Wallet? = nil
+        preChosenWallet: SolanaAccount? = nil
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
@@ -91,7 +90,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
         let chosenAccount = availableBridgeAccounts
-            .first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
+            .first(where: { $0.mintAddress == preChosenWallet?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
@@ -115,7 +114,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 keyPair: wallet.account,
                 solanaAccount: initialSolanaAccount,
                 availableAccounts: solanaAccountsService.state.value,
-                amount: .init(token: initialSolanaAccount.data.token),
+                amount: .init(token: initialSolanaAccount.token),
                 recipient: recipient.address
             )
         )
@@ -187,7 +186,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
                     case .crypto:
                         if
-                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.data.token),
+                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.token),
                             let price = account.price,
                             let fiatAmount = try? cryptoAmount.toFiatAmount(price: price)
                         {
@@ -200,7 +199,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     await self.stateMachine.accept(action: .updateInput(amount: newAmount))
                 }
                 self.analyticsManager
-                    .log(event: .sendClickChangeTokenValue(source: SendSource.none.rawValue, sendFlow: "Bridge"))
+                    .log(event: .sendClickChangeTokenValue(sendFlow: SendFlow.bridge.rawValue))
             }
             .store(in: &subscriptions)
 
@@ -296,7 +295,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 guard let self, let account = self.adapter.inputAccount else { return }
                 switch newMode {
                 case .crypto:
-                    self.countAfterDecimalPoint = Int(account.data.token.decimals)
+                    self.countAfterDecimalPoint = Int(account.token.decimals)
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
@@ -321,17 +320,17 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         analyticsManager.log(event: .sendBridgesScreenOpen)
     }
 
-    func selectSolanaAccount(wallet: Wallet) {
+    func selectSolanaAccount(wallet: SolanaAccount) {
         let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
         let selectedAccount = accounts.first { account in
-            account.data.mintAddress == wallet.mintAddress
+            account.mintAddress == wallet.mintAddress
         }
 
         guard let selectedAccount else { return }
 
         Task { _ = await stateMachine.accept(action: .updateSolanaAccount(account: selectedAccount)) }
-        analyticsManager.log(event: .sendClickChangeTokenChosen(source: SendSource.none.rawValue, sendFlow: "Bridge"))
+        analyticsManager.log(event: .sendClickChangeTokenChosen(sendFlow: SendFlow.bridge.rawValue))
     }
 
     func send() async {
@@ -353,7 +352,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Initialise user action
         let userAction = WormholeSendUserAction(
-            sourceToken: input.solanaAccount.data.token,
+            sourceToken: input.solanaAccount.token,
             recipient: input.recipient,
             amount: input.amount,
             currencyAmount: try? input.amount.toFiatAmountIfPresent(price: input.solanaAccount.price),
@@ -365,14 +364,17 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         userActionService.execute(action: userAction)
 
         action.send(.send(userAction))
-        analyticsManager.log(event: .sendBridgesConfirmButtonClick(
-            tokenName: input.solanaAccount.data.token.symbol,
-            tokenValue: Double(input.amount.amount.description) ?? 0,
-            valueFiat: input.solanaAccount
-                .price != nil ?
-                (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 :
-                0.0,
-            fee: .zero
+
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
+            sendFlow: SendFlow.bridge.rawValue,
+            token: input.solanaAccount.token.symbol,
+            max: wasMaxUsed,
+            amountToken: Double(input.amount.amount.description) ?? 0,
+            amountUSD: input.solanaAccount.price != nil ? (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 : 0.0,
+            fee: false,
+            fiatInput: inputMode == .fiat,
+            signature: transactions.transaction,
+            pubKey: nil
         ))
     }
 }
@@ -384,10 +386,10 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            if account.data.isNativeSOL {
+            if account.token.isNativeSOL {
                 return false
             } else {
-                return supportedToken.contains(account.data.token.address)
+                return supportedToken.contains(account.token.mintAddress)
             }
         }
 
@@ -397,14 +399,20 @@ extension WormholeSendInputViewModel {
         availableBridgeAccounts
             .sort { lhs, rhs in
                 // First pick USDCET
-                if lhs.data.token.symbol == Token.usdcet.symbol {
+                if lhs.token.symbol == TokenMetadata.usdcet.symbol {
                     return true
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
             }
 
         if availableBridgeAccounts.isEmpty {
-            availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
+            availableBridgeAccounts.append(
+                SolanaAccount(
+                    address: "",
+                    lamports: 0,
+                    token: .usdcet
+                )
+            )
         }
 
         return availableBridgeAccounts
@@ -414,6 +422,6 @@ extension WormholeSendInputViewModel {
 extension WormholeSendInputViewModel {
     func logChooseTokenClick() {
         analyticsManager
-            .log(event: .sendnewTokenInputClick(tokenName: "", source: SendSource.none.rawValue, sendFlow: "Bridge"))
+            .log(event: .sendnewTokenInputClick(tokenName: "", sendFlow: SendFlow.bridge.rawValue))
     }
 }

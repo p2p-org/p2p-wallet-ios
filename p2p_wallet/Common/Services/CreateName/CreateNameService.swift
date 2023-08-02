@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import NameService
 import Resolver
@@ -17,7 +18,7 @@ final class CreateNameServiceImpl: CreateNameService {
     @Injected private var nameCache: NameServiceCacheType
     @Injected private var nameStorage: NameStorageType
     @Injected private var nameService: NameService
-    @Injected private var storage: AccountStorageType
+    @Injected private var storage: SolanaAccountStorage
 
     private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 
@@ -55,6 +56,8 @@ final class CreateNameServiceImpl: CreateNameService {
                         userPubKey: data.userPubkey
                     )
                 )
+
+                Resolver.resolve(AnalyticsManager.self).log(title: "Name Create iOS Error", error: error)
             }
         }
     }

@@ -147,6 +147,10 @@
 	<string>$(SWAP_ERROR_LOGGER_ENDPOINT)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
+	<key>TOKEN_SERVICE_DEV</key>
+	<string>$(TOKEN_SERVICE_DEV)</string>
+	<key>TOKEN_SERVICE_PROD</key>
+	<string>$(TOKEN_SERVICE_PROD)</string>
 	<key>TORUS_APPLE_VERIFIER_DEV</key>
 	<string>$(TORUS_APPLE_VERIFIER_DEV)</string>
 	<key>TORUS_APPLE_VERIFIER_PROD</key>

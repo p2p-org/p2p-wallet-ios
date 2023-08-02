@@ -9,6 +9,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
+import BigDecimal
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -16,7 +17,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
 
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
@@ -27,7 +27,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     let navigation: PassthroughSubject<HomeNavigation, Never>
 
     @Published private(set) var balance: String = ""
-    @Published private(set) var actions: [WalletActionType] = []
+    @Published private(set) var usdcAmount: String = ""
+    @Published private(set) var actions: [HomeAction] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
@@ -44,19 +45,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        sellDataService: any SellDataService = Resolver.resolve(),
+        sellDataService _: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        if sellDataService.isAvailable {
-            actions = [.buy, .receive, .send, .cashOut]
-        } else {
-            actions = [.buy, .receive, .send]
-        }
+        actions = [.addMoney]
 
         super.init()
 
@@ -70,7 +66,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
                 ethereumAccountsService.statePublisher,
-                userActionService.$actions.map { userActions in
+                userActionService.actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
             )
@@ -107,14 +103,60 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Balance
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                let equityValue: CurrencyAmount = state.value
+                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
+                    .reduce(CurrencyAmount(usd: 0)) {
+
+                        let usdcAmount = $1.cryptoAmount.amount
+                        let amountInFiat = $1.amountInFiat?.value ?? usdcAmount
+                        
+                        guard usdcAmount > 0, amountInFiat > 0 else {
+                            if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
+                            return $0 + $1.amountInFiat
+                        }
+                        
+                        let calculatedDifference = abs(100 - ((usdcAmount / amountInFiat) * 100))
+                        
+                        if let percentDifference = $1.token.keyAppExtensions.percentDifferenceToShowByPriceOnWS {
+                            if calculatedDifference > BigDecimal(exactly: percentDifference) {
+                                return $0 + $1.amountInFiat
+                            } else if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
+                        }
+
+                        return $0 + $1.amountInFiat
+                    }
+
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
+
+        // USDC amount
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return ""
+                }
+
+                let cryptoFormatter = CryptoFormatter()
+                return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
+            }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.usdcAmount, on: self)
+            .store(in: &subscriptions)
     }
 
     func refresh() async {
@@ -128,7 +170,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let pubkey = renderableAccount.account.address
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {
@@ -145,7 +187,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
+                navigation
+                    .send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }
@@ -155,33 +198,33 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    func actionClicked(_ action: WalletActionType) {
+    func actionClicked(_ action: HomeAction) {
         switch action {
-        case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
-            else { return }
-            navigation.send(.receive(publicKey: pubkey))
-        case .buy:
-            navigation.send(.buy)
-        case .send:
-            navigation.send(.send)
-        case .swap:
-            navigation.send(.swap)
-        case .cashOut:
-            navigation.send(.cashOut)
+        case .addMoney:
+            analyticsManager.log(event: .mainScreenAddMoneyClick)
+            navigation.send(.addMoney)
+        case .withdraw:
+            analyticsManager.log(event: .mainScreenWithdrawClick)
         }
-    }
-
-    func earn() {
-        navigation.send(.earn)
     }
 
     func scrollToTop() {
         scrollOnTheTop = true
     }
+    
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
+        }
+    }
+    
+    func balanceTapped() {
+        analyticsManager.log(event: .mainScreenAmountClick)
+    }
 
-    func sellTapped() {
-        navigation.send(.cashOut)
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 

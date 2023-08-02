@@ -34,10 +34,10 @@ struct EthereumTokenBalances: Codable {
 }
 
 struct EthereumTokenMetadata: Codable {
-    let name: String?
-    let symbol: String?
-    let decimals: UInt8?
-    let logo: URL?
+    let name: String
+    let symbol: String
+    let decimals: UInt8
+    let logo: URL
 }
 
 extension Web3.Eth {

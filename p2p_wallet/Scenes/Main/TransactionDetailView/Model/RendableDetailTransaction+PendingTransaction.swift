@@ -1,20 +1,11 @@
-//
-//  RendableDetailTransaction+PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
-import SolanaPricesAPIs
 import Wormhole
 
 struct RendableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
-
-    let priceService: PricesService
 
     var status: TransactionDetailStatus {
         if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
@@ -114,7 +105,7 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
 //
 //        case let transaction as WormholeSendTransaction:
 //            if
-//                let urlStr = transaction.account.data.token.logoURI,
+//                let urlStr = transaction.account.token.logoURI,
 //                let url = URL(string: urlStr)
 //            {
 //                return .single(url)
@@ -138,7 +129,7 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
             }
 
         case let transaction as SwapRawTransactionType:
-            if let price = priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value {
+            if let price = transaction.sourceWallet.price?.doubleValue {
                 let amountInFiat: Double = transaction.fromAmount * price
                 return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
             } else {
@@ -149,17 +140,6 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 return .positive("+\(amountInFiat)")
             }
             return .unchanged("")
-
-//        case let transaction as WormholeClaimTransaction:
-//            if let value = CurrencyFormatter().string(for: transaction.bundle.resultAmount) {
-//                return .positive("+\(value)")
-//            } else {
-//                return .unchanged("")
-//            }
-//
-//        case let transaction as WormholeSendTransaction:
-//            let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
-//            return .negative(value)
 
         default:
             return .unchanged("")
@@ -274,8 +254,7 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 let formatedFeeAmount: String = feeAmount
                     .tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
 
-                let feeAmountInFiat: Double = feeAmount * priceService
-                    .currentPrice(mint: payingFeeWallet.token.address)?.value
+                let feeAmountInFiat: Double = feeAmount * payingFeeWallet.price?.doubleValue
                 let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
 
                 result
@@ -341,7 +320,7 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
             return L10n.done
         }
     }
-    
+
     var url: String? {
         "https://explorer.solana.com/tx/\(signature ?? "")"
     }

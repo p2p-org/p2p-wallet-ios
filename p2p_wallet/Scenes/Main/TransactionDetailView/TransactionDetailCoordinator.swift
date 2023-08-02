@@ -1,7 +1,6 @@
 import Foundation
 import History
 import SafariServices
-import TransactionParser
 
 class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
     let viewModel: TransactionDetailViewModel

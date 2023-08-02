@@ -3,10 +3,11 @@ import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
+import OrcaSwapSwift
 import Resolver
 import Send
-import SolanaPricesAPIs
 import SolanaSwift
 import UIKit
 
@@ -31,7 +32,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var sourceWallet: Wallet
+    @Published var sourceWallet: SolanaAccount
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
@@ -73,7 +74,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
-    let changeFeeToken = PassthroughSubject<Wallet, Never>()
+    let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
@@ -84,42 +85,39 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Private
 
-    private let source: SendSource
+    private let flow: SendFlow
     private var wasMaxWarningToastShown: Bool = false
     private let preChosenAmount: Double?
     private let allowSwitchingMainAmountType: Bool
 
     // MARK: - Dependencies
 
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
         recipient: Recipient,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
-        source: SendSource,
+        flow: SendFlow,
         allowSwitchingMainAmountType: Bool,
         sendViaLinkSeed: String?
     ) {
-        self.source = source
+        self.flow = flow
         self.preChosenAmount = preChosenAmount
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
-        let repository = Resolver.resolve(WalletsRepository.self)
-        walletsRepository = repository
+        let repository = Resolver.resolve(SolanaAccountsService.self)
         let wallets = repository.getWallets()
 
-        let pricesService = Resolver.resolve(PricesService.self)
-        self.pricesService = pricesService
+        let pricesService = Resolver.resolve(PriceService.self)
 
         // Setup source token
-        let tokenInWallet: Wallet
+        let tokenInWallet: SolanaAccount
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
-                .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
+                .first(where: { $0.token.mintAddress == token.mintAddress }) ??
+                SolanaAccount(token: TokenMetadata.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -127,23 +125,24 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
                     .filter(\.isSendable)
-                    .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+                    .sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
                             return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: TokenMetadata.nativeSolana)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+            .first(where: { $0.token.mintAddress == TokenMetadata.usdc.mintAddress }) ??
+            SolanaAccount(token: TokenMetadata.usdc)
 
-        var exchangeRate = [String: CurrentPrice]()
-        var tokens = Set<Token>()
+        var exchangeRate = [String: TokenPrice]()
+        var tokens = Set<TokenMetadata>()
         wallets.forEach {
             exchangeRate[$0.token.symbol] = $0.price
             tokens.insert($0.token)
@@ -239,7 +238,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            try await Resolver.resolve(OrcaSwapType.self).load()
+            try await Resolver.resolve(RelayContextManager.self).update()
             loadingState = .loaded
         } catch {
             loadingState = .error(error.readableDescription)
@@ -275,8 +275,7 @@ private extension SendInputViewModel {
                 guard let self, self.status != .initializing else { return }
                 self.logAmountChanged(
                     symbol: self.currentState.token.symbol,
-                    amount: value?.inToken ?? 0,
-                    isSendingViaLink: self.currentState.isSendingViaLink
+                    amount: value?.inToken ?? 0
                 )
             })
             .store(in: &subscriptions)
@@ -290,8 +289,7 @@ private extension SendInputViewModel {
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                     self.logAmountChanged(
                         symbol: self.currentState.token.symbol,
-                        amount: value.amount.inToken,
-                        isSendingViaLink: self.currentState.isSendingViaLink
+                        amount: value.amount.inToken
                     )
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
@@ -305,10 +303,7 @@ private extension SendInputViewModel {
                 guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
                 if self.status != .initializing {
-                    self.logTokenChosen(
-                        symbol: value.token.symbol,
-                        isSendingViaLink: self.currentState.isSendingViaLink
-                    )
+                    self.logTokenChosen(symbol: value.token.symbol)
                 }
                 _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
@@ -337,7 +332,7 @@ private extension SendInputViewModel {
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
                 {
-                    self.logEnjoyFeeTransaction(isSendingViaLink: self.currentState.isSendingViaLink)
+                    self.logEnjoyFeeTransaction()
                 }
             }
             .store(in: &subscriptions)
@@ -346,7 +341,7 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress && self.currentState
+                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress, self.currentState
                     .fee != .zero
                 {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
@@ -382,8 +377,7 @@ private extension SendInputViewModel {
             .sink { [weak self] in
                 guard let self = self else { return }
                 self.logChooseTokenClick(
-                    tokenName: self.currentState.token.symbol,
-                    isSendingViaLink: self.currentState.isSendingViaLink
+                    tokenName: self.currentState.token.symbol
                 )
             }
             .store(in: &subscriptions)
@@ -402,24 +396,21 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
-            pricesService.isPricesAvailablePublisher,
-            $sourceWallet.eraseToAnyPublisher()
-        )
-        .sink { [weak self] isPriceAvailable, currentWallet in
-            guard let self else { return }
-            if !isPriceAvailable || currentWallet.price == nil {
-                self.turnOffInputSwitch()
-            } else if
-                let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
-            {
-                self.turnOffInputSwitch()
-            } else {
-                self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+        $sourceWallet.eraseToAnyPublisher()
+            .sink { [weak self] currentWallet in
+                guard let self else { return }
+                if currentWallet.price == nil {
+                    self.turnOffInputSwitch()
+                } else if
+                    let amount = currentWallet.amount,
+                    currentWallet.isUsdcOrUsdt, abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                {
+                    self.turnOffInputSwitch()
+                } else {
+                    self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
+                }
             }
-        }
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
     }
 }
 
@@ -537,14 +528,6 @@ private extension SendInputViewModel {
         handleError(text: L10n.youHaveNoInternetConnection)
     }
 
-    func handleInitializingError() {
-        handleError(text: L10n.initializingError)
-    }
-
-    func handleUnknownError() {
-        handleError(text: L10n.somethingWentWrong)
-    }
-
     func handleError(text: String) {
         snackbar.send(SnackBar(title: "🥺", text: text, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
     }
@@ -568,7 +551,6 @@ private extension SendInputViewModel {
         default:
             address = currentState.recipient.address
         }
-        logConfirmButtonClick()
 
         await MainActor.run {
             showFinished = true
@@ -592,7 +574,7 @@ private extension SendInputViewModel {
         let amountInFiat = currentState.amountInFiat
 
         if isSendingViaLink {
-            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: address)
         }
 
         await MainActor.run {
@@ -600,6 +582,8 @@ private extension SendInputViewModel {
                 isFakeSendTransaction: isFakeSendTransaction,
                 isFakeSendTransactionError: isFakeSendTransactionError,
                 isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                isLinkCreationAvailable: stateMachine.currentState.feeRelayerContext?.usageStatus
+                    .reachedLimitLinkCreation == false,
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
@@ -608,7 +592,19 @@ private extension SendInputViewModel {
                 address: address,
                 payingFeeWallet: feeWallet,
                 feeAmount: currentState.feeInToken,
-                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol
+                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol : sourceWallet.token
+                    .symbol,
+                analyticEvent: .sendNewConfirmButtonClick(
+                    sendFlow: flow.rawValue,
+                    token: currentState.token.symbol,
+                    max: inputAmountViewModel.wasMaxUsed,
+                    amountToken: currentState.amountInToken,
+                    amountUSD: currentState.amountInFiat,
+                    fee: currentState.fee.total > 0,
+                    fiatInput: inputAmountViewModel.mainAmountType == .fiat,
+                    signature: "",
+                    pubKey: nil
+                )
             )
             self.transaction.send(transaction)
         }
@@ -619,66 +615,55 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func logOpen() {
-        analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewInputScreen(sendFlow: flow.rawValue))
     }
 
-    func logEnjoyFeeTransaction(isSendingViaLink: Bool) {
-        analyticsManager.log(event: .sendnewFreeTransactionClick(
-            source: source.rawValue,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
-        ))
+    func logEnjoyFeeTransaction() {
+        analyticsManager.log(event: .sendnewFreeTransactionClick(sendFlow: flow.rawValue))
     }
 
-    func logChooseTokenClick(tokenName: String, isSendingViaLink: Bool) {
+    func logChooseTokenClick(tokenName: String) {
         analyticsManager.log(event: .sendnewTokenInputClick(
             tokenName: tokenName,
-            source: source.rawValue,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
-    func logTokenChosen(symbol: String, isSendingViaLink: Bool) {
+    func logTokenChosen(symbol: String) {
         analyticsManager.log(event: .sendClickChangeTokenChosen(
             tokenName: symbol,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
-        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: flow.rawValue))
     }
 
-    func logAmountChanged(symbol: String, amount: Double, isSendingViaLink: Bool) {
+    func logAmountChanged(symbol: String, amount: Double) {
         analyticsManager.log(event: .sendClickChangeTokenValue(
             tokenName: symbol,
             tokenValue: amount,
-            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+            sendFlow: flow.rawValue
         ))
     }
 
     func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
-        analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
-    }
-
-    func logConfirmButtonClick() {
-        analyticsManager.log(event: .sendNewConfirmButtonClick(
-            source: source.rawValue,
-            token: currentState.token.symbol,
-            max: inputAmountViewModel.wasMaxUsed,
-            amountToken: currentState.amountInToken,
-            amountUSD: currentState.amountInFiat,
-            fee: currentState.fee.total > 0,
-            fiatInput: inputAmountViewModel.mainAmountType == .fiat
+        analyticsManager.log(event: .sendClickCreateLink(
+            sendFlow: flow.rawValue,
+            tokenName: symbol,
+            tokenValue: amount,
+            pubkey: pubkey
         ))
     }
 }
 
-private extension Wallet {
+private extension SolanaAccount {
     var isSendable: Bool {
         lamports ?? 0 > 0 && !isNFTToken
     }
 
     var isUsdcOrUsdt: Bool {
-        [Token.usdc.address, Token.usdt.address].contains(mintAddress)
+        [TokenMetadata.usdc.mintAddress, TokenMetadata.usdt.mintAddress].contains(token.mintAddress)
     }
 }

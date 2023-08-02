@@ -13,7 +13,6 @@ import SolanaSwift
 
 final class NetworkViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     private let dismissSubject = PassthroughSubject<Void, Never>()
     var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }

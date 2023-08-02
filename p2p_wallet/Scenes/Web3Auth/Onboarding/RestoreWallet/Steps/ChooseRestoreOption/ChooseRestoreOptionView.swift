@@ -53,7 +53,7 @@ extension ChooseRestoreOptionView {
                                 viewModel?.openStart.send()
                             }
                         )
-                            .styled()
+                        .styled()
                     }
                 }
             }
@@ -77,20 +77,11 @@ private extension ChooseRestoreOptionView {
                 viewModel?.optionDidTap.send(content.option)
             }
         )
-            .styled()
+        .styled()
     }
 }
 
 // MARK: - Style Helpers
-
-private extension Text {
-    func styled(color: ColorAsset, font: UIFont.Style) -> some View {
-        foregroundColor(Color(color.color))
-            .font(.system(size: UIFont.fontSize(of: font)))
-            .lineLimit(.none)
-            .multilineTextAlignment(.center)
-    }
-}
 
 private extension TextButtonView {
     func styled() -> some View {

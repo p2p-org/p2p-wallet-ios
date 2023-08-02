@@ -1,100 +1,101 @@
 import AnalyticsManager
 import Combine
-import Foundation
-import SolanaSwift
-import Send
-import Resolver
 import FeeRelayerSwift
+import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
+import Send
+import SolanaSwift
 import UIKit
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
-    
     // Dependencies
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
-    @Injected private var tokensRepository: SolanaTokensRepository
-    @Injected private var walletsRepository: WalletsRepository
-    
+    @Injected private var tokensRepository: SolanaTokensService
+
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
     private let sizeChangedSubject = PassthroughSubject<CGFloat, Never>()
     private let linkErrorSubject = PassthroughSubject<LinkErrorView.Model, Never>()
-    
+
     // Properties
     private let url: URL
     private var claimableToken: ClaimableTokenInfo?
-    private var token: Token?
-    
+    private var token: TokenMetadata?
+
     // MARK: - To Coordinator
-    
+
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
     var sizeChanged: AnyPublisher<CGFloat, Never> { sizeChangedSubject.eraseToAnyPublisher() }
     var linkError: AnyPublisher<LinkErrorView.Model, Never> { linkErrorSubject.eraseToAnyPublisher() }
-    
+
     // MARK: - To View
-    
+
     @Published var state: State = .pending
     @Published var processingState: TransactionProcessView.Status = .loading(message: "")
     @Published var processingVisible = false
     @Published var isReloading = false
-    
+
     // Debugging
     #if !RELEASE
-    @Published var isFakeSendingTransaction: Bool = false {
-        didSet {
-            if isFakeSendingTransaction {
-                fakeTransactionErrorType = .noError
+        @Published var isFakeSendingTransaction: Bool = false {
+            didSet {
+                if isFakeSendingTransaction {
+                    fakeTransactionErrorType = .noError
+                }
             }
         }
-    }
-    @Published var fakeTransactionErrorType: ClaimSentViaLinkTransaction.FakeTransactionErrorType = .noError
+
+        @Published var fakeTransactionErrorType: FakeTransactionErrorType = .noError
     #endif
-    
+
     // MARK: - Init
-    
+
     init(url: URL) {
         self.url = url
         super.init()
         loadTokenInfo()
     }
-    
+
     // MARK: - From View
-    
+
     func closeClicked() {
         closeSubject.send()
     }
-    
+
     func confirmClicked() {
         // Get needed params
         guard let claimableToken = claimableToken, let token = token else { return }
-        
+
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
-        
+
         analyticsManager.log(event: .claimClickConfirmed(
             pubkey: claimableToken.keypair.publicKey.base58EncodedString,
             tokenName: token.symbol,
             tokenValue: cryptoAmount
         ))
-        
+
         #if !RELEASE
-        let isFakeSendingTransaction = isFakeSendingTransaction
-        let fakeTransactionErrorType = fakeTransactionErrorType
+            let isFakeSendingTransaction = isFakeSendingTransaction
+            let fakeTransactionErrorType = fakeTransactionErrorType
         #else
-        let isFakeSendingTransaction = false
-        let fakeTransactionErrorType = ClaimSentViaLinkTransaction.FakeTransactionErrorType.noError
+            let isFakeSendingTransaction = false
+            let fakeTransactionErrorType = FakeTransactionErrorType.noError
         #endif
 
         // Notify loading
         sizeChangedSubject.send(522)
         processingState = .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds)
         processingVisible = true
-        
+
         // Form raw transaction
         let transaction = ClaimSentViaLinkTransaction(
             claimableTokenInfo: claimableToken,
             token: token,
-            destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
+            destinationWallet: SolanaAccount(pubkey: claimableToken.account, token: token),
             tokenAmount: cryptoAmount,
             isFakeTransaction: isFakeSendingTransaction,
             fakeTransactionErrorType: fakeTransactionErrorType
@@ -106,10 +107,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
-            .compactMap {$0}
+            .compactMap { $0 }
 //            .filter { $0.isConfirmedOrError } // numberOfConfirmation is greater than 0
             .filter {
-                $0.status.isSent // numberOfConfirmation is greater than OR EQUAL 0, increase the speed by returning success status right after it is sent
+                $0.status
+                    .isSent // numberOfConfirmation is greater than OR EQUAL 0, increase the speed by returning success
+                // status right after it is sent
             }
             .prefix(1)
             .receive(on: RunLoop.main)
@@ -117,7 +120,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 guard let self else { return }
                 if let error = tx.status.error {
                     self.analyticsManager.log(event: .claimErrorDefaultReject)
-                    if (error as NSError).isNetworkConnectionError {
+                    if error.isNetworkConnectionError {
                         self.processingState = .error(message: NSAttributedString(
                             string: L10n.TheTransactionWasRejectedAfterFailedInternetConnection.openYourLinkAgain
                         ))
@@ -138,41 +141,47 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
+
     func reloadClicked() {
         guard !isReloading else { return }
         isReloading = true
         loadTokenInfo()
     }
-    
+
     func gotItClicked() {
         analyticsManager.log(event: .claimClickEnd)
         closeSubject.send()
     }
-    
+
     // MARK: - Private
-    
+
     private func loadTokenInfo() {
         Task {
             do {
                 let claimableToken = try await self.sendViaLinkDataService.getClaimableTokenInfo(url: self.url)
-                
+
                 // Native solana token
-                let token: Token
+                let token: TokenMetadata
                 if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
                     token = .nativeSolana
                 }
-                
+
                 // Other spl tokens
                 else {
-                    token = try await self.tokensRepository.getTokensList(useCache: true)
-                        .first { $0.address == claimableToken.mintAddress } ??
-                        .unsupported(mint: claimableToken.mintAddress, decimals: claimableToken.decimals)
+                    token = try await self.tokensRepository.get(
+                        address: claimableToken.mintAddress
+                    ) ??
+                        .unsupported(
+                            mint: claimableToken.mintAddress,
+                            decimals: claimableToken.decimals,
+                            symbol: "",
+                            supply: nil
+                        )
                 }
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
-                
+
                 if cryptoAmount == 0 {
                     showLinkWasClaimedError()
                     return
@@ -180,7 +189,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
                 let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
                 let model = Model(token: token, cryptoAmount: cryptoAmountStr)
-                
+
                 self.claimableToken = claimableToken
                 self.token = token
                 self.analyticsManager.log(event: .claimStartScreenOpen)
@@ -211,13 +220,13 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
-    
+
     private func showFullLinkError(title: String, subtitle: String, image: UIImage) {
         linkErrorSubject.send(LinkErrorView.Model(title: title, subtitle: subtitle, image: image))
     }
-    
+
     private func showError(_ error: Error) {
-        if (error as NSError).isNetworkConnectionError {
+        if error.isNetworkConnectionError {
             showConnectionError()
         } else {
             state = .failure(
@@ -229,7 +238,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         }
         isReloading = false
     }
-    
+
     private func showConnectionError() {
         state = .failure(
             title: L10n.youHaveNoInternetConnection,
@@ -238,7 +247,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         )
         sizeChangedSubject.send(534)
     }
-    
+
     private func showLinkWasClaimedError() {
         analyticsManager.log(event: .claimErrorAlreadyClaimed)
         showFullLinkError(
@@ -258,9 +267,9 @@ extension ReceiveFundsViaLinkViewModel {
         case confirmed(cryptoAmount: String)
         case failure(title: String, subtitle: String?, image: UIImage)
     }
-    
+
     struct Model {
-        let token: Token
+        let token: TokenMetadata
         let cryptoAmount: String
     }
 }

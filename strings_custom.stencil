@@ -34,7 +34,7 @@ import Foundation
 {% macro recursiveBlock table item %}
   {% for string in item.strings %}
   {% if not param.noComments %}
-  /// {{string.translation}}
+  /// {{string.key}}
   {% endif %}
   {% if string.types %}
   {{accessModifier}} static func {{string.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% call parametersBlock string.types %}) -> String {

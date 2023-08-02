@@ -53,7 +53,6 @@ public extension Publishers {
         private let upstream: Upstream
         private let second: Other
         private let resultSelector: ResultSelector
-        private var latestValue: Other.Output?
 
         init(upstream: Upstream,
              second: Other,
