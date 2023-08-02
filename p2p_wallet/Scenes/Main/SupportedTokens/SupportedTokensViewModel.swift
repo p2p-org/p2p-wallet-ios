@@ -170,7 +170,7 @@ enum SupportedTokensBusinnes {
                 icon: .url(
                     URL(string: "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912")!
                 ),
-                name: "Polygon", symbol: "MATIC", availableNetwork: [.ethereum, .solana]
+                name: "Polygon", symbol: "MATIC", availableNetwork: [.solana]
             ),
             SupportedTokenItem(
                 icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484")!),

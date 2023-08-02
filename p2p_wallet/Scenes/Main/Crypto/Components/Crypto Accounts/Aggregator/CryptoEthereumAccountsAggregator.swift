@@ -24,12 +24,12 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
                 if claiming == nil {
                     let balanceInFiat = account.balanceInFiat
                     if let balanceInFiat {
-                        return balanceInFiat >= CurrencyAmount(usd: 5)
+                        return balanceInFiat >= CurrencyAmount(usd: 5) && account.token.symbol != "MATIC"
                     } else {
                         return false
                     }
                 } else {
-                    return true
+                    return account.token.symbol != "MATIC"
                 }
             }
             .map { account, claiming in
