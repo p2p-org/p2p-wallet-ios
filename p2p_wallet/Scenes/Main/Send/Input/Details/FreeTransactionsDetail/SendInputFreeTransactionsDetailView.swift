@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SendInputFreeTransactionsDetailView: View {
     let isFreeTransactionsLimited: Bool
@@ -30,17 +30,17 @@ struct SendInputFreeTransactionsDetailView: View {
                         .foregroundColor(Color(Asset.Colors.night.color))
                     Text(
                         isFreeTransactionsLimited ?
-                        L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp
-                        :
-                        L10n.withKeyAppAllTransactionsYouMakeOnTheSolanaNetworkAreFree
+                            L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp
+                            :
+                            L10n.withKeyAppAllTransactionsYouMakeOnTheSolanaNetworkAreFree
                     )
-                        .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.night.color))
                 }
             }
 
             TextButtonView(
-                title: "\(isFreeTransactionsLimited ? L10n.awesome: L10n.gotIt) 👍",
+                title: "\(isFreeTransactionsLimited ? L10n.awesome : L10n.gotIt) 👍",
                 style: .primaryWhite,
                 size: .large,
                 onPressed: actionButtonPressed

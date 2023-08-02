@@ -1,10 +1,3 @@
-//
-//  TransactionHandler+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 06/03/2022.
-//
-
 import Foundation
 import SolanaSwift
 
@@ -32,7 +25,7 @@ extension TransactionHandler {
                 observe(index: index, transactionId: transactionID)
             } catch {
                 // Update status
-                if (error as NSError).isNetworkConnectionError {
+                if error.isNetworkConnectionError {
                     self.notificationsService.showConnectionErrorNotification()
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
@@ -62,10 +55,10 @@ extension TransactionHandler {
                     value.status = .confirmed(3)
                     return value
                 }
-                
+
                 // wait for 2 secs
                 try await Task.sleep(nanoseconds: 20_000_000_000)
-                
+
                 // mark as finalized
                 await MainActor.run { [weak self] in
                     self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
@@ -86,7 +79,7 @@ extension TransactionHandler {
             }
 
             // for production
-            var statuses: [TransactionStatus] = []
+            var statuses: [PendingTransactionStatus] = []
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
                 statuses.append(status)
                 let txStatus: PendingTransaction.TransactionStatus
@@ -94,14 +87,11 @@ extension TransactionHandler {
                 switch status {
                 case .sending:
                     continue
-                case .confirmed(let numberOfConfirmations, let sl):
+                case let .confirmed(numberOfConfirmations, sl):
                     slot = sl
                     txStatus = .confirmed(Int(numberOfConfirmations))
                 case .finalized:
                     txStatus = .finalized
-                case .error(let error):
-                    print(error ?? "")
-                    txStatus = .error(SolanaError.other(error ?? ""))
                 }
 
                 _ = await self.updateTransactionAtIndex(index) { currentValue in
@@ -113,7 +103,7 @@ extension TransactionHandler {
                     return value
                 }
             }
-            
+
             // TODO: - Transaction was sent successfuly but we could not retrieve the status.
             // Mark as finalized anyway or throw an error?
             if statuses.isEmpty {
@@ -139,7 +129,7 @@ extension TransactionHandler {
         if let currentValue = value[safe: index] {
             var newValue = update(currentValue)
 
-           // update
+            // update
             value[index] = newValue
             transactionsSubject.send(value)
             return true

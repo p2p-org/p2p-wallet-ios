@@ -1,6 +1,6 @@
-import SwiftUI
 import KeyAppUI
 import SolanaSwift
+import SwiftUI
 
 /// In case of successful experiment make a base Renderable protocol
 protocol ChooseItemRenderable<ViewType>: Identifiable where ID == String {
@@ -55,7 +55,9 @@ struct ChooseItemView<Content: View>: View {
         }
     }
 
-    private func state(for item: any ChooseItemSearchableItem, in section: ChooseItemListSection) -> ChooseItemSearchableItemViewState {
+    private func state(for item: any ChooseItemSearchableItem,
+                       in section: ChooseItemListSection) -> ChooseItemSearchableItemViewState
+    {
         if section.items.count == 1 {
             return .single
         } else if section.items.first?.id == item.id {
@@ -69,6 +71,7 @@ struct ChooseItemView<Content: View>: View {
 }
 
 // MARK: - Subviews
+
 private extension ChooseItemView {
     private var emptyView: some View {
         Group {
@@ -105,7 +108,7 @@ private extension ChooseItemView {
                 .sectionStyle()
 
             ForEach(viewModel.sections) { section in
-                ForEach(section.items.map({Container(wrapped: $0)})) { singleWallet  in
+                ForEach(section.items.map { Container(wrapped: $0) }) { singleWallet in
                     ChooseItemSearchableItemView(
                         content: content,
                         state: state(for: singleWallet.wrapped, in: section),
@@ -134,7 +137,7 @@ private extension ChooseItemView {
 
 private extension Text {
     func sectionStyle() -> some View {
-        return self.apply(style: .text4)
+        apply(style: .text4)
             .foregroundColor(Color(Asset.Colors.mountain.color))
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
             .listRowBackground(Color(Asset.Colors.smoke.color))

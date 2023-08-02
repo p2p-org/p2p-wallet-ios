@@ -76,8 +76,8 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
                 )
             @unknown default:
                 DefaultLogManager.shared.log(
-                    event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
-                    logLevel: .error
+                    event: "AppsFlyerLib ATTrackingManager Unknown authorization status",
+                    logLevel: .debug
                 )
             }
         }

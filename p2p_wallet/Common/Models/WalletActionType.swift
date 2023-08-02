@@ -33,13 +33,13 @@ enum WalletActionType {
         case .topUp, .withdraw:
             return .homeBuy
         case .receive:
-            return .homeReceive
+            return .actionReceive
         case .buy:
             return .homeBuy
         case .send:
             return .homeSend
         case .swap:
-            return .homeSwap
+            return .actionSwap
         case .cashOut:
             return .cashOut
         }

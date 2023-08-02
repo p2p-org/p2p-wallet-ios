@@ -16,14 +16,14 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     @Published var actions: [ActionItem] = [
         ActionItem(
             id: .card,
-            icon: .bankTransferCardIcon,
+            icon: .addMoneyBankCard,
             title: L10n.bankCard,
             subtitle: L10n.instant·Fees("4.5%"),
             isLoading: false
         ),
         ActionItem(
             id: .crypto,
-            icon: .bankTransferCryptoIcon,
+            icon: .addMoneyCrypto,
             title: L10n.crypto,
             subtitle: L10n.upTo1Hour·Fees("%0"),
             isLoading: false
@@ -69,7 +69,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: .bankTransferBankIcon,
+                    icon: .addMoneyBankTransfer,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
                     isLoading: false

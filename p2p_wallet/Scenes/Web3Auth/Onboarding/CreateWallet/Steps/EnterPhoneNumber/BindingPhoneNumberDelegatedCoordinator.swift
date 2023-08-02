@@ -122,7 +122,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .block(until, reason, _, _):
             let title: String
             let subtitle: (_ value: Any) -> String
-            
+
             switch reason {
             case .blockEnterOTP:
                 title = L10n.confirmationCodeLimitHit
@@ -153,7 +153,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         }
     }
 
-    public func openTermsOfService() {
+    func openTermsOfService() {
         let vc = WLMarkdownVC(
             title: L10n.termsOfService,
             bundledMarkdownTxtFileName: "Terms_of_service"
@@ -169,7 +169,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         rootViewController?.present(viewController, animated: true)
     }
 
-    public func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
+    func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
         let coordinator = ChoosePhoneCodeCoordinator(
             selectedDialCode: selectedDialCode,

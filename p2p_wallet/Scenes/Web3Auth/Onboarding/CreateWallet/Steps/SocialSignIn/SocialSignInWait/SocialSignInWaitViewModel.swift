@@ -4,7 +4,6 @@ import Resolver
 import UIKit
 
 final class SocialSignInWaitViewModel: BaseViewModel, ObservableObject {
-
     enum Strategy {
         case create
         case restore
@@ -30,10 +29,8 @@ final class SocialSignInWaitViewModel: BaseViewModel, ObservableObject {
 
     private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     private var isProcessSent: Bool = false
-    private let strategy: Strategy
 
     init(strategy: Strategy) {
-        self.strategy = strategy
         super.init()
 
         $state

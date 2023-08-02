@@ -1,13 +1,9 @@
 import Combine
+import Foundation
 import Onboarding
 import Resolver
-import Foundation
 
 final class ICloudRestoreViewModel: BaseICloudRestoreViewModel, ObservableObject {
-    // MARK: - Declarations
-
-    typealias SeedPhrase = String
-
     // MARK: - Output events
 
     let back: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()

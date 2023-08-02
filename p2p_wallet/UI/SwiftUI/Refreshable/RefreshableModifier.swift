@@ -9,10 +9,6 @@ import SwiftUI
 
 struct RefreshAction {
     let action: () async -> Void
-
-    func callAsFunction() async {
-        await action()
-    }
 }
 
 struct RefreshActionKey: EnvironmentKey {

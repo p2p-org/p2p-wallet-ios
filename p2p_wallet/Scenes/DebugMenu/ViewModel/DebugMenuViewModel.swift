@@ -13,13 +13,10 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
     @Published var feeRelayerEndpoints: [String]
-    @Published var moonpayEnvironments: [DefaultsKeys.MoonpayEnvironment] = [.production, .sandbox]
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
     @Published var strigaEndpoints: [String]
-
-    @Injected private var accountsService: SolanaAccountsService
 
     override init() {
         features = Menu.allCases
@@ -86,7 +83,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
                 primaryFetcher: DebugMenuFeaturesProvider.shared,
                 secondaryFetcher: MergingFlagsFetcher(
                     primaryFetcher: RemoteConfig.remoteConfig(),
-                    secondaryFetcher: defaultFlags
+                    secondaryFetcher: StaticFlagsFetcher(featureFlags: [])
                 )
             )
         )
@@ -180,19 +177,4 @@ extension DebugMenuViewModel {
 
 extension APIEndPoint: Identifiable {
     public var id: String { address }
-}
-
-private extension RealtimeSolanaAccountState {
-    var rawString: String {
-        switch self {
-        case .initialising:
-            return "Initialising 🛠️"
-        case .connecting:
-            return "Connecting 🌐"
-        case .running:
-            return "Running ✅"
-        case let .stop(error):
-            return "Stopped ❌ with error :\(error?.localizedDescription ?? "")"
-        }
-    }
 }

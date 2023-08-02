@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Cache
 import Foundation
 import KeyAppKitCore
@@ -12,51 +5,164 @@ import Web3
 
 /// The repository for fetching token metadata and cache for later usage.
 public final class EthereumTokensRepository {
-    /// Provider
-    let web3: Web3
-
-    /// In memory cache to quickly return token. Token metadata doesn't change frequently.
-    let cache: Cache<EthereumAddress, EthereumToken> = .init()
-
-    /// Some tokens contains low quality image and bad name. This class apply some changes to token metadata.
     let dataCorrection: EthereumTokenDataCorrection = .init()
 
-    public init(web3: Web3) {
-        self.web3 = web3
+    /// Provider
+    let provider: KeyAppTokenProvider
+
+    /// In memory cache to quickly return token. Token metadata doesn't change frequently.
+    let database: LifetimeDatabase<String, EthereumToken>
+
+    public init(provider: KeyAppTokenProvider) {
+        self.provider = provider
+        database = .init(
+            filePath: "ethereum-token",
+            storage: ApplicationFileStorage(),
+            defaultLifetime: 60 * 60 * 24 * 7
+        )
+    }
+
+    /// Resolve native token
+    public func resolveNativeToken() async throws -> EthereumToken {
+        // Load from cache
+        if let nativeToken = try await database.read(for: "native") {
+            return nativeToken
+        }
+
+        // Fetch
+        let response = try await provider.getTokensInfo(
+            .init(
+                query: [
+                    .init(chainId: "ethereum", addresses: ["native"]),
+                ]
+            )
+        )
+
+        guard let tokenData = response.first?.data.first else {
+            throw Error.nativeTokenCanNotBeResolved
+        }
+
+        // Parse and store
+        // Logo
+        let logo: URL?
+        if let logoUrl = tokenData.logoUrl {
+            logo = URL(string: logoUrl)
+        } else {
+            logo = nil
+        }
+
+        let nativeToken = EthereumToken(
+            name: tokenData.name,
+            symbol: tokenData.symbol,
+            decimals: tokenData.decimals,
+            logo: logo,
+            contractType: .native
+        )
+
+        try? await database.write(for: "native", value: nativeToken)
+        try? await database.flush()
+
+        return dataCorrection.correct(token: nativeToken)
     }
 
     /// Resolve ERC-20 token by address.
-    public func resolve(address: String) async throws -> EthereumToken {
-        let ethereumAddress = try EthereumAddress(hex: address, eip55: false)
+    public func resolve(addresses: [EthereumAddress]) async throws -> [EthereumAddress: EthereumToken] {
+        var result: [EthereumAddress: EthereumToken] = [:]
 
-        if let value = await cache.value(forKey: ethereumAddress) {
-            return value
+        // Locale storage
+        for address in addresses {
+            result[address] = try? await database.read(for: address.hex(eip55: false))
         }
 
-        let metadata: EthereumTokenMetadata = try await web3.eth.getTokenMetadata(address: ethereumAddress)
+        // Build missing list
+        var missingTokenAddresses: [String] = []
+        for address in addresses {
+            if result[address] == nil {
+                missingTokenAddresses.append(address.hex(eip55: false))
+            }
+        }
 
-        var token = EthereumToken(address: ethereumAddress, metadata: metadata)
-        token = dataCorrection.correct(token: token)
-        
-        await cache.insert(token, forKey: ethereumAddress)
+        // There is no missing addresses
+        if missingTokenAddresses.isEmpty {
+            return result
+                .mapValues { token in
+                    dataCorrection.correct(token: token)
+                }
+        }
 
-        return token
+        // Fetch
+        let response = try await provider.getTokensInfo(
+            .init(
+                query: [
+                    .init(chainId: "ethereum", addresses: missingTokenAddresses),
+                ]
+            )
+        )
+
+        // Parse
+        let tokens: [EthereumToken] = response.first?.data.compactMap { tokenData in
+            do {
+                return try parseToken(tokenData: tokenData)
+            } catch {
+                return nil
+            }
+        } ?? []
+
+        // Store and fill result
+        for token in tokens {
+            switch token.contractType {
+            case let .erc20(contract):
+                result[contract] = token
+                try? await database.write(for: contract.hex(eip55: false), value: token)
+            default:
+                continue
+            }
+        }
+
+        try? await database.flush()
+
+        return result
+            .mapValues { token in
+                dataCorrection.correct(token: token)
+            }
+    }
+
+    public func resolve(address: EthereumAddress) async throws -> EthereumToken? {
+        try await resolve(addresses: [address]).values.first
+    }
+
+    internal func parseToken(tokenData: KeyAppTokenProviderData.Token) throws -> EthereumToken {
+        // Logo
+        let logo: URL?
+        if let logoUrl = tokenData.logoUrl {
+            logo = URL(string: logoUrl)
+        } else {
+            logo = nil
+        }
+
+        // Parse
+        return try EthereumToken(
+            name: tokenData.name,
+            symbol: tokenData.symbol,
+            decimals: tokenData.decimals,
+            logo: logo,
+            contractType: .erc20(contract: EthereumAddress(hex: tokenData.address, eip55: false))
+        )
+    }
+
+    public func clear() async throws {
+        try await database.clear()
     }
 }
 
-extension EthereumTokensRepository {
-    enum Error: Swift.Error {}
-}
+public extension EthereumTokensRepository {
+    var nativeToken: EthereumToken {
+        get async throws {
+            try await resolveNativeToken()
+        }
+    }
 
-extension EthereumToken {
-    /// Erc-20 Token
-    init(address: EthereumAddress, metadata: EthereumTokenMetadata) {
-        self.init(
-            name: metadata.name ?? "",
-            symbol: metadata.symbol ?? "",
-            decimals: metadata.decimals ?? 1,
-            logo: metadata.logo,
-            contractType: .erc20(contract: address)
-        )
+    enum Error: Swift.Error {
+        case nativeTokenCanNotBeResolved
     }
 }

@@ -2,6 +2,8 @@ import Foundation
 import Resolver
 import KeyAppBusiness
 import SolanaSwift
+import SolanaSwift
+import KeyAppKitCore
 
 protocol StrigaConfirmableTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
@@ -10,7 +12,8 @@ protocol StrigaConfirmableTransactionType: RawTransactionType, Equatable {
 /// Striga Claim trasaction type
 protocol StrigaClaimTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
-    var token: Token? { get }
+    var token: TokenMetadata? { get }
+    var tokenPrice: TokenPrice? { get }
     var amount: Double? { get }
     var feeAmount: FeeAmount { get }
     var fromAddress: String { get }
@@ -19,10 +22,8 @@ protocol StrigaClaimTransactionType: RawTransactionType, Equatable {
 
 extension StrigaClaimTransactionType {
     var amountInFiat: Double? {
-        guard let token else { return nil}
-        guard let value = Resolver.resolve(SolanaPriceService.self)
-            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return nil }
-        return value * amount
+        guard let tokenPrice = tokenPrice?.doubleValue else { return nil }
+        return (amount ?? 0) * tokenPrice
     }
 }
 
@@ -32,7 +33,8 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTran
     // MARK: - Properties
 
     let challengeId: String
-    let token: Token?
+    let token: TokenMetadata?
+    var tokenPrice: TokenPrice?
     let amount: Double?
     let feeAmount: FeeAmount
     let fromAddress: String
@@ -56,7 +58,8 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTran
 }
 
 protocol StrigaWithdrawTransactionType: RawTransactionType {
-    var token: Token { get }
+    var token: TokenMetadata? { get }
+    var tokenPrice: TokenPrice? { get }
     var IBAN: String { get }
     var BIC: String { get }
     var feeAmount: FeeAmount { get }
@@ -65,9 +68,10 @@ protocol StrigaWithdrawTransactionType: RawTransactionType {
 
 extension StrigaWithdrawTransactionType {
     var amountInFiat: Double? {
-        guard let value = Resolver.resolve(SolanaPriceService.self)
-            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
-        return value * amount
+        fatalError()
+//        guard let value = Resolver.resolve(SolanaPriceService.self)
+//            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
+//        return value * amount
     }
 }
 
@@ -80,7 +84,8 @@ struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmab
     var IBAN: String
     var BIC: String
     var amount: Double
-    let token: Token = .usdc
+    let token: TokenMetadata?
+    let tokenPrice: TokenPrice?
     let feeAmount: FeeAmount
     var mainDescription: String {
         ""
@@ -108,7 +113,8 @@ struct StrigaWithdrawSendTransaction: StrigaWithdrawTransactionType, RawTransact
     var IBAN: String
     var BIC: String
     var amount: Double
-    let token: Token = .usdc
+    var token: TokenMetadata? = .usdc
+    var tokenPrice: TokenPrice?
     let feeAmount: FeeAmount
     var mainDescription: String {
         ""

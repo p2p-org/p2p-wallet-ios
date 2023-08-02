@@ -17,11 +17,6 @@ enum DeviceShareMigrationCoordinatorResult {
 }
 
 final class DeviceShareMigrationCoordinator: Coordinator<DeviceShareMigrationCoordinatorResult> {
-    enum Result {
-        case finish
-        case error(Error)
-    }
-
     let result = PassthroughSubject<DeviceShareMigrationCoordinatorResult, Never>()
     let navigationController: UINavigationController
 

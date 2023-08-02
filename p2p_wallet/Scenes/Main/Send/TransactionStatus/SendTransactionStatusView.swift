@@ -206,16 +206,27 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     isFakeSendTransaction: false,
                     isFakeSendTransactionError: false,
                     isFakeSendTransactionNetworkError: false,
+                    isLinkCreationAvailable: true,
                     recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
                     sendViaLinkSeed: nil,
                     amount: 0.01,
                     amountInFiat: 0.01,
-                    walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                    walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200_000_000),
                     address: "adfasdf",
-                    payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
-                    feeAmount: .init(transaction: 10000, accountBalances: 2039280),
+                    payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200_000_000),
+                    feeAmount: .init(transaction: 10000, accountBalances: 2_039_280),
                     currency: "USD",
-                    analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
+                    analyticEvent: .sendNewConfirmButtonClick(
+                        sendFlow: "",
+                        token: "",
+                        max: false,
+                        amountToken: 0,
+                        amountUSD: 0,
+                        fee: false,
+                        fiatInput: false,
+                        signature: "",
+                        pubKey: nil
+                    )
                 )
             )
         )

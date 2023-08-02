@@ -9,15 +9,21 @@ public class UserActionService {
 
     /// Thread safe array update
     let accessQueue = DispatchQueue(label: "UserActionUpdateQueue", attributes: .concurrent)
-    #warning("REFACTOR: Remove @Published from non-observable class")
-    @Published public var actions: [any UserAction] = []
+
+    private let actionsSubject: CurrentValueSubject<[String: any UserAction], Never> = .init([:])
+
+    public var actions: AnyPublisher<[any UserAction], Never> {
+        actionsSubject
+            .map { Array($0.values) }
+            .eraseToAnyPublisher()
+    }
 
     public init(consumers: [any UserActionConsumer]) {
         self.consumers = consumers
 
         for consumer in consumers {
-            consumer.onUpdate.sink { [weak self] userAction in
-                self?.update(action: userAction)
+            consumer.onUpdate.sink { [weak self] userActions in
+                self?.update(actions: userActions)
             }
             .store(in: &subscriptions)
 
@@ -39,24 +45,24 @@ public class UserActionService {
     }
 
     /// Internal method for updating action. The consumer will emits value and pass to this method.
-    func update(action: any UserAction) {
+    func update(actions: [any UserAction]) {
         accessQueue.async(flags: .barrier) { [weak self] in
             guard let self else { return }
 
-            let idx = self.actions.firstIndex { $0.id == action.id }
-            if let idx {
-                self.actions[idx] = action
-            } else {
-                self.actions.append(action)
+            var value = self.actionsSubject.value
+            for action in actions {
+                value[action.id] = action
             }
+
+            self.actionsSubject.value = value
         }
     }
 
     /// Observer user action.
     public func observer<Action: UserAction>(action: Action) -> AnyPublisher<Action, Never> {
-        $actions
+        actionsSubject
             .map { actions -> Action? in
-                let action = actions.first { $0.id == action.id }
+                let action = actions[action.id]
                 guard let action = action as? Action else { return nil }
                 return action
             }
@@ -66,11 +72,9 @@ public class UserActionService {
     }
 
     public func observer(id: String) -> AnyPublisher<any UserAction, Never> {
-        $actions
+        actionsSubject
             .map { actions -> (any UserAction)? in
-                let action = actions.first { $0.id == id }
-                guard let action else { return nil }
-                return action
+                actions[id]
             }
             .compactMap { $0 }
             .eraseToAnyPublisher()
@@ -80,7 +84,7 @@ public class UserActionService {
     public func getActions() async -> [any UserAction] {
         await withCheckedContinuation { continuation in
             accessQueue.sync {
-                continuation.resume(returning: actions)
+                continuation.resume(returning: Array(actionsSubject.value.values))
             }
         }
     }

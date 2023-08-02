@@ -6,17 +6,17 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
-        userWallets: [Wallet],
-        services: JupiterSwapServices
+        userWallets: [SolanaAccount]
     ) -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in
-            if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.address }) {
+            if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.mintAddress }) {
                 return SwapToken(token: swapToken.token, userWallet: userWallet)
             }
             return SwapToken(token: swapToken.token, userWallet: nil)
@@ -26,9 +26,13 @@ extension JupiterSwapBusinessLogic {
         // update from Token only if it is from userWallets
         if let fromUserWallet = userWallets
             .first(where: {
-                $0.pubkey == state.fromToken.userWallet?.pubkey &&
-                $0.mintAddress == state.fromToken.address
-            }) {
+                if let fromTokenAddress = state.fromToken.userWallet?.address {
+                    return $0.address == fromTokenAddress
+                } else {
+                    return $0.mintAddress == state.fromToken.mintAddress
+                }
+            })
+        {
             fromToken = SwapToken(
                 token: fromUserWallet.token,
                 userWallet: fromUserWallet
@@ -37,10 +41,14 @@ extension JupiterSwapBusinessLogic {
 
         // update toToken only if it is from userWallets
         var toToken: SwapToken?
-        if let toUserWallet: Wallet = userWallets
+        if let toUserWallet: SolanaAccount = userWallets
             .first(where: {
-                $0.pubkey == state.toToken.userWallet?.pubkey &&
-                $0.mintAddress == state.toToken.address
+                if let toTokenAddress = state.toToken.userWallet?.address {
+                    return $0.address == toTokenAddress
+                } else {
+                    return $0.mintAddress == state.toToken.mintAddress
+                }
+
             })
         {
             toToken = SwapToken(

@@ -3,15 +3,15 @@ import KeyAppKitCore
 
 public enum SupportedToken {
     public static let usdt: SolanaToken = .init(
-            _tags: nil,
-            chainId: 101,
-            address: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
-            symbol: "USDTet",
-            name: "Tether USD (Portal from Ethereum)",
-            decimals: 6,
-            logoURI: "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
-            extensions: .init(coingeckoId: "tether")
-        )
+        _tags: nil,
+        chainId: 101,
+        mintAddress: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
+        symbol: "USDTet",
+        name: "Tether USD (Portal from Ethereum)",
+        decimals: 6,
+        logoURI: "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        extensions: ["coingeckoId": .string("tether")]
+    )
 
     public enum ERC20: String, CaseIterable {
         case sol = "0xd31a59c85ae9d8edefec411d448f90841571b89c"

@@ -75,6 +75,9 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
             {
                 // Try merge data if they are difference
                 let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
+                
+                print(localMetadata)
+                print(remoteMetadata)
 
                 // Push updated data to local storage
                 try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)

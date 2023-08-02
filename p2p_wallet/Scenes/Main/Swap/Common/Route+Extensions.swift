@@ -19,7 +19,7 @@ extension Route {
         
     }
     
-    func toSymbols(tokensList: [Token]) -> [String]? {
+    func toSymbols(tokensList: [TokenMetadata]) -> [String]? {
         // get marketInfos
         guard !marketInfos.isEmpty
         else {
@@ -30,12 +30,12 @@ extension Route {
         return getMints()
             .map { mint in
                 tokensList
-                    .first(where: {$0.address == mint})?
+                    .first(where: {$0.mintAddress == mint})?
                     .symbol ?? "UNKNOWN"
             }
     }
     
-    func chainDescription(tokensList: [Token]) -> String {
+    func chainDescription(tokensList: [TokenMetadata]) -> String {
         toSymbols(tokensList: tokensList)?.compactMap {$0}.joined(separator: " -> ") ?? ""
     }
     

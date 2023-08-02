@@ -10,18 +10,19 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
         case hidden
         case visible
     }
-    
-    private let rootView: Content
+
     private let hostingController: UIHostingController<Content>
     private let navigationBarVisibility: NavigationBarVisibility
-    
+
     private var originalIsNavigationBarHidden: Bool?
 
     private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
-    public var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
+    var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
     
-    init(rootView: Content, ignoresKeyboard: Bool = false, navigationBarVisibility: NavigationBarVisibility = .default) {
-        self.rootView = rootView
+
+    init(rootView: Content, ignoresKeyboard: Bool = false,
+         navigationBarVisibility: NavigationBarVisibility = .default)
+    {
         self.navigationBarVisibility = navigationBarVisibility
         hostingController = UIHostingController(rootView: rootView, ignoresKeyboard: ignoresKeyboard)
 
@@ -48,7 +49,7 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         openKeyboard()
-        
+
         originalIsNavigationBarHidden = navigationController?.isNavigationBarHidden
         switch navigationBarVisibility {
         case .default:
@@ -59,17 +60,17 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
             navigationController?.setNavigationBarHidden(true, animated: false)
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         viewWillAppearSubject.send(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hideKeyboard()
-        
+
         switch navigationBarVisibility {
         case .default:
             break

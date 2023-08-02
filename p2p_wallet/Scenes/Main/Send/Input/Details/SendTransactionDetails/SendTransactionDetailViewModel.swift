@@ -1,11 +1,6 @@
-//
-//  SendTransactionDetails.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.11.2022.
-//
-
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Resolver
 import Send
@@ -14,12 +9,11 @@ import SwiftUI
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
-    let feePrompt = PassthroughSubject<[Wallet], Never>()
+    let feePrompt = PassthroughSubject<[SolanaAccount], Never>()
     let longTapped = PassthroughSubject<CellModel, Never>()
 
     private let stateMachine: SendInputStateMachine
-    @Injected private var pricesService: PricesServiceType
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: SolanaAccountsService
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 
@@ -105,7 +99,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         default:
             mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
 
-            if let price = pricesService.currentPrice(mint: state.tokenFee.address)?.value {
+            if let price = state.feeWallet?.price?.doubleValue {
                 let amountFeeInFiat: Double = amountFeeInToken * price
                 secondaryText = amountFeeInFiat.fiatAmountFormattedString(
                     roundingMode: .down,
@@ -127,7 +121,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private func extractAccountCreationFeeCellModel(
         state: SendInputState, isLoading: Bool,
-        feeTokens: [Wallet]?
+        feeTokens: [SolanaAccount]?
     ) -> CellModel? {
         guard state.fee.accountBalances > 0
         else {
@@ -137,7 +131,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         let amountFeeInToken = Double(state.feeInToken.accountBalances) / pow(10, Double(state.tokenFee.decimals))
 
         let amountFeeInFiat: Double?
-        if let price = pricesService.currentPrice(mint: state.tokenFee.address)?.value {
+        if let price = state.feeWallet?.price?.doubleValue {
             amountFeeInFiat = amountFeeInToken * price
         } else {
             amountFeeInFiat = nil
@@ -167,16 +161,16 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         var subtitles: [(String, String?)] = []
 
         var totalAmount: Lamports = state.amountInToken.toLamport(decimals: state.token.decimals)
-        if state.token.address == state.tokenFee.address {
+        if state.token.mintAddress == state.tokenFee.mintAddress {
             totalAmount += state.feeInToken.total
         } else {
             let fee = state.feeInToken.transaction + state.feeInToken.accountBalances
             if fee > 0 {
-                subtitles.append(convert(fee, state.tokenFee))
+                subtitles.append(convert(fee, state.tokenFee, state.feeWallet?.price))
             }
         }
 
-        subtitles.insert(convert(totalAmount, state.token), at: 0)
+        subtitles.insert(convert(totalAmount, state.token, state.sourceWallet?.price), at: 0)
 
         return CellModel(
             type: .total,
@@ -186,11 +180,11 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    private func convert(_ input: Lamports, _ token: Token) -> (String, String?) {
+    private func convert(_ input: Lamports, _ token: TokenMetadata, _ price: TokenPrice?) -> (String, String?) {
         let amountInToken: Double = input.convertToBalance(decimals: token.decimals)
 
         let amountInFiat: Double?
-        if let price = pricesService.currentPrice(mint: token.address)?.value {
+        if let price = price?.doubleValue {
             amountInFiat = amountInToken * price
         } else {
             amountInFiat = nil
@@ -217,7 +211,11 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             CellModel(
                 type: .recipientGets,
                 title: L10n.recipientGets,
-                subtitle: [convert(state.amountInToken.toLamport(decimals: state.token.decimals), state.token)],
+                subtitle: [convert(
+                    state.amountInToken.toLamport(decimals: state.token.decimals),
+                    state.token,
+                    state.sourceWallet?.price
+                )],
                 image: .recipientGet
             ),
             extractTransactionFeeCellModel(state: state),

@@ -42,20 +42,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "KeyAppKit_TransactionParserUnitTests"
-               BuildableName = "KeyAppKit_TransactionParserUnitTests"
-               BlueprintName = "KeyAppKit_TransactionParserUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "AnalyticsManager"
                BuildableName = "AnalyticsManager"
                BlueprintName = "AnalyticsManager"
@@ -87,6 +73,20 @@
                BlueprintIdentifier = "CountriesAPI"
                BuildableName = "CountriesAPI"
                BlueprintName = "CountriesAPI"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeeRelayerSwift"
+               BuildableName = "FeeRelayerSwift"
+               BlueprintName = "FeeRelayerSwift"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -238,6 +238,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapSwift"
+               BuildableName = "OrcaSwapSwift"
+               BlueprintName = "OrcaSwapSwift"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "Sell"
                BuildableName = "Sell"
                BlueprintName = "Sell"
@@ -255,48 +269,6 @@
                BlueprintIdentifier = "Send"
                BuildableName = "Send"
                BlueprintName = "Send"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolanaPricesAPIs"
-               BuildableName = "SolanaPricesAPIs"
-               BlueprintName = "SolanaPricesAPIs"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "Solend"
-               BuildableName = "Solend"
-               BlueprintName = "Solend"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TransactionParser"
-               BuildableName = "TransactionParser"
-               BlueprintName = "TransactionParser"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -331,20 +303,6 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "P2PSwift"
-               BuildableName = "P2PSwift"
-               BlueprintName = "P2PSwift"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "YES">
@@ -367,6 +325,20 @@
                BlueprintIdentifier = "CountriesAPIUnitTests"
                BuildableName = "CountriesAPIUnitTests"
                BlueprintName = "CountriesAPIUnitTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeeRelayerSwiftUnitTests"
+               BuildableName = "FeeRelayerSwiftUnitTests"
+               BlueprintName = "FeeRelayerSwiftUnitTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -476,9 +448,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "P2PTestsIntegrationTests"
-               BuildableName = "P2PTestsIntegrationTests"
-               BlueprintName = "P2PTestsIntegrationTests"
+               BlueprintIdentifier = "OrcaSwapIntegrationTests"
+               BuildableName = "OrcaSwapIntegrationTests"
+               BlueprintName = "OrcaSwapIntegrationTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapUnitTests"
+               BuildableName = "OrcaSwapUnitTests"
+               BlueprintName = "OrcaSwapUnitTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -504,51 +490,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolanaPricesAPIsUnitTests"
-               BuildableName = "SolanaPricesAPIsUnitTests"
-               BlueprintName = "SolanaPricesAPIsUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolendUnitTests"
-               BuildableName = "SolendUnitTests"
-               BlueprintName = "SolendUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TransactionParserUnitTests"
-               BuildableName = "TransactionParserUnitTests"
-               BlueprintName = "TransactionParserUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WormholeTests"
                BuildableName = "WormholeTests"
                BlueprintName = "WormholeTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BankTransfer"
+               BuildableName = "BankTransfer"
+               BlueprintName = "BankTransfer"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -585,6 +543,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeeRelayerSwiftUnitTests"
+               BuildableName = "FeeRelayerSwiftUnitTests"
+               BlueprintName = "FeeRelayerSwiftUnitTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "JSBridgeTests"
                BuildableName = "JSBridgeTests"
                BlueprintName = "JSBridgeTests"
@@ -655,9 +623,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "P2PTestsIntegrationTests"
-               BuildableName = "P2PTestsIntegrationTests"
-               BlueprintName = "P2PTestsIntegrationTests"
+               BlueprintIdentifier = "OrcaSwapIntegrationTests"
+               BuildableName = "OrcaSwapIntegrationTests"
+               BlueprintName = "OrcaSwapIntegrationTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OrcaSwapUnitTests"
+               BuildableName = "OrcaSwapUnitTests"
+               BlueprintName = "OrcaSwapUnitTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -675,39 +653,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolanaPricesAPIsUnitTests"
-               BuildableName = "SolanaPricesAPIsUnitTests"
-               BlueprintName = "SolanaPricesAPIsUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SolendUnitTests"
-               BuildableName = "SolendUnitTests"
-               BlueprintName = "SolendUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TransactionParserUnitTests"
-               BuildableName = "TransactionParserUnitTests"
-               BlueprintName = "TransactionParserUnitTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WormholeTests"
                BuildableName = "WormholeTests"
                BlueprintName = "WormholeTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BankTransferTests"
+               BuildableName = "BankTransferTests"
+               BlueprintName = "BankTransferTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

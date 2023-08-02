@@ -1,76 +1,69 @@
-import Foundation
-import SolanaSwift
-import Send
-import Resolver
+import AnalyticsManager
 import FeeRelayerSwift
+import Foundation
+import KeyAppKitCore
+import Resolver
+import Send
+import SolanaSwift
 
 struct ClaimSentViaLinkTransaction: RawTransactionType {
-    // MARK: - Nested type
-    
-    enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
-        case noError
-        case networkError
-        case otherError
-        var id: Self { self }
-    }
-    
     // MARK: - Properties
 
     let claimableTokenInfo: ClaimableTokenInfo
-    let token: Token
-    let destinationWallet: Wallet
+    let token: TokenMetadata
+    let destinationWallet: SolanaAccount
     let tokenAmount: Double
-    
-    let payingFeeWallet: Wallet? = nil
+
+    let payingFeeWallet: SolanaAccount? = nil
     let feeAmount: FeeAmount = .zero
     let isFakeTransaction: Bool
     let fakeTransactionErrorType: FakeTransactionErrorType
-    
+
     var mainDescription: String {
         "Claim-sent-via-link"
     }
-    
+
     var amountInFiat: Double? {
-        guard let value = Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value else { return nil }
+        guard let value = destinationWallet.price?.doubleValue else { return nil }
         return value * tokenAmount
     }
-    
+
     func createRequest() async throws -> String {
         // fake transaction for debugging
         if isFakeTransaction {
             // fake delay api call 1s
             try await Task.sleep(nanoseconds: 1_000_000_000)
-            
+
             // simulate error if needed
             switch fakeTransactionErrorType {
             case .noError:
                 break
             case .otherError:
-                throw SolanaError.unknown
+                throw FakeTransactionError.random
             case .networkError:
                 throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
             }
-            
+
             return .fakeTransactionSignature(id: UUID().uuidString)
         }
-        
+
         // get receiver
         guard let receiver = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
         else {
-            throw SolanaError.unauthorized
+            throw SendActionError.unauthorized
         }
-        
+
         // get services
         let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
         let feeRelayerAPIClient = Resolver.resolve(FeeRelayerAPIClient.self)
         let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
-        
+
         // do and catch error
         do {
             let feePayerAddress = try PublicKey(
-                string: try await feeRelayerAPIClient.getFeePayerPubkey()
+                string: await feeRelayerAPIClient.getFeePayerPubkey()
             )
-            
+
             // prepare transaction, get recent blockchash
             var (preparedTransaction, recentBlockhash) = try await(
                 sendViaLinkDataService.claim(
@@ -80,9 +73,9 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                 ),
                 solanaAPIClient.getRecentBlockhash()
             )
-            
+
             preparedTransaction.transaction.recentBlockhash = recentBlockhash
-            
+
             // get feePayer's signature
             let feePayerSignature = try await Resolver.resolve(RelayService.self)
                 .signRelayTransaction(
@@ -93,10 +86,10 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                         autoPayback: false
                     )
                 )
-            
+
             // sign transaction by user
             try preparedTransaction.transaction.sign(signers: [claimableTokenInfo.keypair])
-            
+
             // add feePayer's signature
             try preparedTransaction.transaction.addSignature(
                 .init(
@@ -104,10 +97,10 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     publicKey: feePayerAddress
                 )
             )
-            
+
             // serialize transaction
             let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-            
+
             // send to solanaBlockchain
             return try await solanaAPIClient.sendTransaction(
                 transaction: serializedTransaction,
@@ -119,7 +112,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         } catch {
             // Prepare params
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-            
+
             // alert
             DefaultLogManager.shared.log(
                 event: "Link Claim iOS Alarm",
@@ -127,7 +120,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                 data: ClaimSentViaLinkAlertLoggerMessage(
                     tokenToClaim: .init(
                         name: token.name,
-                        mint: token.address,
+                        mint: token.mintAddress,
                         claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
                         currency: token.symbol
                     ),
@@ -140,7 +133,9 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     blockchainError: data.blockchainError
                 )
             )
-            
+
+            Resolver.resolve(AnalyticsManager.self).log(title: "Link Claim iOS Error", error: error)
+
             // rethrow error
             throw error
         }

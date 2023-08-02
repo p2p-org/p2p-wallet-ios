@@ -45,11 +45,18 @@ struct IBANDetailsView: View {
     }
 
     private func attributedTitle() -> NSAttributedString {
-        var attrString = NSMutableAttributedString()
-        attrString = attrString.text(L10n.yourMoneyIsHeldAndProtectedByLicensedBanks, size: 13, weight: .regular, color: Asset.Colors.night.color)
-        attrString.append(NSAttributedString(string: " "))
-        attrString.append(NSMutableAttributedString().text(L10n.learnMore, size: 13, weight: .regular, color: Asset.Colors.sky.color))
-        return NSAttributedString(attributedString: attrString)
+        let font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        let firstAttributes = [
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.foregroundColor: Asset.Colors.night.color
+        ]
+        let firstString = NSMutableAttributedString(string: L10n.yourMoneyIsHeldAndProtectedByLicensedBanks, attributes: firstAttributes)
+        let secondAttributes = [
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.foregroundColor: Asset.Colors.sky.color
+        ]
+        let secondString = NSMutableAttributedString(string: " \(L10n.learnMore)", attributes: secondAttributes)
+        return NSAttributedString(attributedString: firstString.appending(secondString))
     }
 }
 
