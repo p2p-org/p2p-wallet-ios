@@ -171,6 +171,10 @@ extension DefaultsKeys {
     var homeBannerVisibility: DefaultsKey<HomeBannerVisibility?> {
         .init(#function, defaultValue: nil)
     }
+
+    var strigaIBANInfoDoNotShow: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
 }
 
 // MARK: - Moonpay Environment

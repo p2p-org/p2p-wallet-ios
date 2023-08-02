@@ -1478,3 +1478,5 @@
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "This is your personal IBAN. Use this details to make transfers through your banking app";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute";
 "Use this IBAN to send money from your personal accounts" = "Use this IBAN to send money from your personal accounts";
+"Your bank account name must match the name of your Key App account" = "Your bank account name must match the name of your Key App account";
+"Important notes" = "Important notes";

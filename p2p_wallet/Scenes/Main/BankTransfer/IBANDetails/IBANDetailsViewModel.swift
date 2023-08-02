@@ -1,11 +1,11 @@
-import Combine
-import Resolver
-import KeyAppUI
-import SwiftUI
 import BankTransfer
+import Combine
+import KeyAppUI
+import Resolver
+import SwiftUI
+import SwiftyUserDefaults
 
 final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
-
     @Injected private var notificationService: NotificationService
 
     @Published var items: [any Renderable] = []
@@ -13,11 +13,11 @@ final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
 
     init(eurAccount: EURUserAccount) {
         super.init()
-        self.items = self.makeItems(from: eurAccount)
+        items = makeItems(from: eurAccount)
     }
 
     private func makeItems(from account: EURUserAccount) -> [any Renderable] {
-        return [
+        [
             IBANDetailsCellViewItem(title: L10n.iban, subtitle: account.iban ?? "") { [weak self] in
                 self?.copy(value: account.iban)
             },
@@ -26,9 +26,11 @@ final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
             IBANDetailsCellViewItem(title: L10n.bic, subtitle: account.bic ?? "") { [weak self] in
                 self?.copy(value: account.bic)
             },
-            IBANDetailsCellViewItem(title: L10n.beneficiary, subtitle: account.bankAccountHolderName ?? "") { [weak self] in
+            IBANDetailsCellViewItem(title: L10n.beneficiary,
+                                    subtitle: account.bankAccountHolderName ?? "")
+            { [weak self] in
                 self?.copy(value: account.bankAccountHolderName)
-            }
+            },
         ]
     }
 

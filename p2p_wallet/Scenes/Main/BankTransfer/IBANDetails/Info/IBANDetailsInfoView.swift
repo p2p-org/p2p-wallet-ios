@@ -12,10 +12,10 @@ struct IBANDetailsInfoView: View {
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
 
-            Text("Important notes")
+            Text(L10n.importantNotes)
                 .fontWeight(.semibold)
                 .apply(style: .title3)
-                .padding(.top, 22)
+                .padding(.top, 12)
                 .padding(.bottom, 20)
 
             VStack(spacing: 0) {
@@ -23,18 +23,30 @@ struct IBANDetailsInfoView: View {
                     text: L10n.useThisIBANToSendMoneyFromYourPersonalAccounts,
                     icon: .user
                 )
-                Spacer()
+                Rectangle()
                     .frame(height: 1)
                     .padding(.leading, 20)
+                    .foregroundColor(Color(asset: Asset.Colors.rain))
                 infoItem(
-                    text: "Your bank account name must match the name of your Key App account",
+                    text: L10n.yourBankAccountNameMustMatchTheNameOfYourKeyAppAccount,
                     icon: .buyBank
                 )
             }
 
-            CheckboxView(isChecked: $viewModel.isChecked)
+            HStack(spacing: 12) {
+                CheckboxView(isChecked: $viewModel.isChecked)
 
-            Spacer()
+                Text(L10n.donTShowMeAgain)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(asset: Asset.Colors.night))
+
+                Spacer()
+            }
+            .padding(.top, 24)
+            .padding(.horizontal, 32)
+            .padding(.bottom, 40)
+
+            NewTextButton(title: L10n.gotIt, style: .second, expandable: true, action: viewModel.close.send)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 100)
@@ -56,8 +68,9 @@ struct IBANDetailsInfoView: View {
 
             Spacer()
         }
+        .padding(.vertical, 12)
         .padding(.horizontal, 28)
-        .frame(height: 64)
+        .frame(minHeight: 64)
     }
 }
 

@@ -1516,3 +1516,5 @@
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "Đây là IBAN cá nhân của bạn.  Sử dụng chi tiết này để thực hiện chuyển khoản qua ứng dụng ngân hàng của bạn";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Chúng tôi sử dụng SEPA Instant để chuyển khoản ngân hàng và thông thường, tiền sẽ xuất hiện trong tài khoản của bạn sau chưa đầy một phút";
 "Use this IBAN to send money from your personal accounts" = "Sử dụng IBAN này để gửi tiền từ tài khoản cá nhân của bạn";
+"Your bank account name must match the name of your Key App account" = "Tên tài khoản ngân hàng của bạn phải khớp với tên tài khoản Ứng dụng chính của bạn";
+"Important notes" = "Ghi chú quan trọng";
