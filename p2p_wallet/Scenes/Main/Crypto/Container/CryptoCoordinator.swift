@@ -57,7 +57,10 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         // create viewmodel, view, uihostingcontroller
         let viewModel = CryptoViewModel(navigation: navigation)
         let actionsPanelViewModel = CryptoActionsPanelViewModel(navigation: navigation)
-        let accountsViewModel = CryptoAccountsViewModel(navigation: navigation)
+        let accountsViewModel = CryptoAccountsViewModel(
+            interactor: CryptoAccountsInteractor(),
+            navigation: navigation
+        )
         let cryptoView = CryptoView(
             viewModel: viewModel,
             actionsPanelViewModel: actionsPanelViewModel,
