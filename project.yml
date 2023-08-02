@@ -21,9 +21,6 @@ packages:
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
-    Amplitude:
-        url: https://github.com/amplitude/Amplitude-iOS.git
-        from: 8.15.0
     Lokalise:
         url: https://github.com/lokalise/lokalise-ios-framework.git
         from: 0.10.2
@@ -63,9 +60,6 @@ packages:
     GoogleSignIn:
         url: https://github.com/google/GoogleSignIn-iOS
         from: 6.2.4
-    AppsFlyerLib:
-        url: https://github.com/AppsFlyerSDK/AppsFlyerFramework
-        exactVersion: 6.12.0
     Sentry:
         url: https://github.com/getsentry/sentry-cocoa
         exactVersion: 7.31.5
@@ -273,7 +267,6 @@ targets:
             - package: KeyAppUI
             - package: BEPureLayout
 
-            - package: Amplitude
             - package: Lokalise
 
             - package: ReachabilitySwift
@@ -299,17 +292,11 @@ targets:
             - package: GoogleSignIn
               product: GTMSessionFetcher
 
-            - package: AppsFlyerLib
-
-
             - package: Sentry
 
             - package: Task_retrying
 
             - package: JazziconSwift
-
-            - package: Firebase
-              product: FirebaseAnalytics
 
             - package: Firebase
               product: FirebaseCrashlytics
