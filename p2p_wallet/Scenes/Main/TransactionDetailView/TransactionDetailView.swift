@@ -1,10 +1,3 @@
-//
-//  DetailTransactionView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.02.2023.
-//
-
 import KeyAppUI
 import Resolver
 import SwiftUI
@@ -31,6 +24,9 @@ struct DetailTransactionView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
         }
+        .background(Color(Asset.Colors.smoke.color))
+        .cornerRadius(radius: 20, corners: .topLeft)
+        .cornerRadius(radius: 20, corners: .topRight)
         .navigationBarHidden(true)
     }
 
@@ -105,7 +101,6 @@ struct DetailTransactionView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.smoke.color))
     }
 
     var info: some View {
