@@ -1,15 +1,17 @@
 import AnalyticsManager
+import BankTransfer
+import BigDecimal
 import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Onboarding
 import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
-import BankTransfer
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -17,13 +19,13 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
 
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationService: NotificationService
     @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
+    @Injected private var metadataService: WalletMetadataService
 
     // MARK: - Properties
 
@@ -33,7 +35,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     @Published private(set) var balance: String = ""
-    @Published private(set) var actions: [WalletActionType] = []
+    @Published private(set) var usdcAmount: String = ""
+    @Published private(set) var actions: [HomeAction] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
     @Published private(set) var smallBanner: HomeBannerParameters?
@@ -55,23 +58,18 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        sellDataService: any SellDataService = Resolver.resolve(),
+        sellDataService _: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        var actions: [WalletActionType] = [.topUp, .withdraw]
-        if sellDataService.isAvailable {
-            actions.append(.cashOut)
-        }
-        actions.append(.send)
-        self.actions = actions
+        actions = [.addMoney]
 
         super.init()
         bindTransferData()
+        addWithdrawIfNeeded()
 
         // TODO: Replace with combine
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
@@ -83,7 +81,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
                 ethereumAccountsService.statePublisher,
-                userActionService.$actions.map { userActions in
+                userActionService.actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
             )
@@ -108,15 +106,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let bankTransferServicePublisher = Publishers.CombineLatest(
             bankTransferService.value.state
                 .compactMap { $0.value.wallet?.accounts },
-            userActionService.$actions
-
+            userActionService.actions
         )
-            .compactMap { (account, actions) -> [any RenderableAccount] in
-                BankTransferRenderableAccountFactory.renderableAccount(
-                    accounts: account,
-                    actions: actions
-                )
-            }
+        .compactMap { account, actions -> [any RenderableAccount] in
+            BankTransferRenderableAccountFactory.renderableAccount(
+                accounts: account,
+                actions: actions
+            )
+        }
 
         let homeAccountsAggregator = HomeAccountsAggregator()
         Publishers
@@ -139,52 +136,110 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Balance
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                let equityValue: CurrencyAmount = state.value
+                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
+                    .reduce(CurrencyAmount(usd: 0)) {
+                        let usdcAmount = $1.cryptoAmount.amount
+                        let amountInFiat = $1.amountInFiat?.value ?? usdcAmount
+
+                        guard usdcAmount > 0, amountInFiat > 0 else {
+                            if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
+                            return $0 + $1.amountInFiat
+                        }
+
+                        let calculatedDifference = abs(100 - ((usdcAmount / amountInFiat) * 100))
+
+                        if let percentDifference = $1.token.keyAppExtensions.percentDifferenceToShowByPriceOnWS {
+                            if calculatedDifference > BigDecimal(exactly: percentDifference) {
+                                return $0 + $1.amountInFiat
+                            } else if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
+                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
+                            }
+                        }
+
+                        return $0 + $1.amountInFiat
+                    }
+
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
 
-        userActionService.$actions
-            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction }.first }
+        userActionService.actions
+            .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction } }
             .flatMap(\.publisher)
-            .filter { $0.status == .ready }
-            .removeDuplicates()
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
-                case .error(let concreteType):
-                    self?.handle(error: concreteType)
-                default:
-                    break
-                }
-            })
-            .sink { [weak self] action in
-                guard let result = action.result else { return }
-                self?.handleClaim(result: result, in: action)
-            }.store(in: &subscriptions)
-
-            userActionService.$actions
-            .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
-            .flatMap(\.publisher)
-            .filter { $0.status != .pending && $0.status != .processing }
-            .removeDuplicates()
-            .receive(on: RunLoop.main)
-            .sink { [weak self] action in
-                switch action.status {
-                case .ready:
-                    guard let result = action.result else { return }
-                    self?.handleOutgoingConfirm(result: result, in: action)
                 case let .error(concreteType):
                     self?.handle(error: concreteType)
                 default:
                     break
                 }
-            }
-            .store(in: &subscriptions)
+            })
+            .filter { $0.status == .ready }
+            .removeDuplicates()
+            .sinkAsync(receiveValue: { [weak self] action in
+                let priceService = Resolver.resolve(PriceService.self)
+                let price = try? await priceService.getPrice(
+                    token: SolanaToken.usdc,
+                    fiat: Defaults.fiat.rawValue
+                )
+                guard let result = action.result else { return }
+                self?.handleClaim(result: result, in: action, tokenPrice: price)
+            }).store(in: &subscriptions)
+
+        userActionService.actions
+            .compactMap { $0.compactMap { $0 as? OutgoingBankTransferUserAction } }
+            .flatMap(\.publisher)
+            .filter { $0.status != .pending && $0.status != .processing }
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sinkAsync(receiveValue: { [weak self] action in
+                let priceService = Resolver.resolve(PriceService.self)
+                let price = try? await priceService.getPrice(
+                    token: SolanaToken.usdc,
+                    fiat: Defaults.fiat.rawValue
+                )
+                switch action.status {
+                case .ready:
+                    guard let result = action.result else { return }
+                    self?.handleOutgoingConfirm(
+                        result: result,
+                        in: action,
+                        price: price
+                    )
+                case let .error(concreteType):
+                    self?.handle(error: concreteType)
+                default:
+                    break
+                }
+            }).store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
+
+        // USDC amount
+        solanaAccountsService.statePublisher
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return ""
+                }
+
+                let cryptoFormatter = CryptoFormatter()
+                return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
+            }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.usdcAmount, on: self)
+            .store(in: &subscriptions)
     }
 
     func refresh() async {
@@ -198,7 +253,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                let pubkey = renderableAccount.account.address
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {
@@ -215,7 +270,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction))
+                navigation
+                    .send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }
@@ -231,12 +287,49 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
+    func actionClicked(_ action: HomeAction) {
+        switch action {
+        case .addMoney:
+            analyticsManager.log(event: .mainScreenAddMoneyClick)
+            navigation.send(.addMoney)
+        case .withdraw:
+            analyticsManager.log(event: .mainScreenWithdrawClick)
+            navigation.send(.withdrawCalculator)
+        }
+    }
+
+    func scrollToTop() {
+        scrollOnTheTop = true
+    }
+
+    func viewDidAppear() {
+        if let balance = Double(balance) {
+            analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
+            analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
+        }
+    }
+
+    func balanceTapped() {
+        analyticsManager.log(event: .mainScreenAmountClick)
+    }
+
+    func closeBanner(id: String) {
+        smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
+        smallBanner = nil
+        shouldCloseBanner = false
+    }
+
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
+    }
+
+    // Bank transfer
     private func handle(error: UserActionError) {
         switch error {
         case .networkFailure:
-            self.notificationService.showConnectionErrorNotification()
+            notificationService.showConnectionErrorNotification()
         default:
-            self.notificationService.showDefaultErrorNotification()
+            notificationService.showDefaultErrorNotification()
         }
     }
 
@@ -278,84 +371,44 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     private func handleOutgoingConfirm(
         result: OutgoingBankTransferUserActionResult,
-        in action: OutgoingBankTransferUserAction
+        in action: OutgoingBankTransferUserAction,
+        price: TokenPrice?
     ) {
         switch result {
         case let .initiated(challengeId, IBAN, BIC):
-            self.navigation.send(.bankTransferConfirm(
+            navigation.send(.bankTransferConfirm(
                 StrigaWithdrawTransaction(
                     challengeId: challengeId,
                     IBAN: IBAN,
                     BIC: BIC,
                     amount: Double(action.amount) ?? 0 / 100,
+                    token: .usdc,
+                    tokenPrice: price,
                     feeAmount: .zero
                 )
             ))
         case let .requestWithdrawInfo(receiver):
-            self.navigation.send(.withdrawInfo(
+            navigation.send(.withdrawInfo(
                 StrigaWithdrawalInfo(receiver: receiver),
                 WithdrawConfirmationParameters(accountId: action.accountId, amount: action.amount)
             ))
         }
     }
 
-    private func handleClaim(result: BankTransferClaimUserActionResult, in action: BankTransferClaimUserAction) {
-        self.navigation.send(.bankTransferClaim(StrigaClaimTransaction(
+    private func handleClaim(
+        result: BankTransferClaimUserActionResult,
+        in action: BankTransferClaimUserAction,
+        tokenPrice: TokenPrice?
+    ) {
+        navigation.send(.bankTransferClaim(StrigaClaimTransaction(
             challengeId: action.result?.challengeId ?? "",
             token: action.result?.token ?? .usdc,
+            tokenPrice: tokenPrice,
             amount: Double(action.amount ?? "") ?? 0,
             feeAmount: .zero,
             fromAddress: action.result?.fromAddress ?? "",
             receivingAddress: action.receivingAddress
         )))
-    }
-
-    func actionClicked(_ action: WalletActionType) {
-        switch action {
-        case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
-            else { return }
-            analyticsManager.log(event: .mainScreenReceiveBar)
-            navigation.send(.receive(publicKey: pubkey))
-        case .buy:
-            analyticsManager.log(event: .mainScreenBuyBar)
-            navigation.send(.buy)
-        case .send:
-            analyticsManager.log(event: .mainScreenSendBar)
-            navigation.send(.send)
-        case .swap:
-            analyticsManager.log(event: .mainScreenSwapBar)
-            navigation.send(.swap)
-        case .cashOut:
-            analyticsManager.log(event: .mainScreenCashOutBar)
-            navigation.send(.cashOut)
-        case .topUp:
-            navigation.send(.topUp)
-        case .withdraw:
-            navigation.send(.withdrawCalculator)
-        }
-    }
-
-    func earn() {
-        navigation.send(.earn)
-    }
-
-    func scrollToTop() {
-        scrollOnTheTop = true
-    }
-
-    func sellTapped() {
-        navigation.send(.cashOut)
-    }
-
-    func closeBanner(id: String) {
-        smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
-        smallBanner = nil
-        shouldCloseBanner = false
-    }
-
-    func hiddenTokensTapped() {
-        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 
@@ -368,7 +421,14 @@ extension HomeAccountsViewModel {
 }
 
 // MARK: - Private
+
 private extension HomeAccountsViewModel {
+    func addWithdrawIfNeeded() {
+        guard available(.bankTransfer), metadataService.metadata.value != nil else { return }
+        // If striga is enabled and user is web3 authed
+        actions.append(.withdraw)
+    }
+
     func bindTransferData() {
         bankTransferService.value.state
             .filter { !$0.isFetching }
@@ -392,7 +452,7 @@ private extension HomeAccountsViewModel {
         shouldOpenBankTransfer
             .withLatestFrom(bankTransferService.value.state)
             .receive(on: RunLoop.main)
-            .sink{ [weak self] state in
+            .sink { [weak self] state in
                 if state.value.isIBANNotReady {
                     self?.shouldShowErrorSubject.send(true)
                 } else {
@@ -438,7 +498,7 @@ private extension HomeAccountsViewModel {
         case .approved:
             shouldCloseBanner = data.isIBANNotReady == false
         default:
-             shouldCloseBanner = true
+            shouldCloseBanner = true
         }
     }
 }

@@ -7,7 +7,6 @@ import Foundation
 import History
 import NameService
 import SolanaSwift
-import TransactionParser
 
 public protocol SendHistoryProvider {
     func getRecipients() async throws -> [Recipient]?
@@ -54,7 +53,9 @@ public class SendHistoryService: ObservableObject {
     public func insert(_ newRecipient: Recipient) async throws {
         var newList = recipientsSubject.value
 
-        if let index = newList.firstIndex(where: { (recipient: Recipient) -> Bool in recipient.id == newRecipient.id }) {
+        if let index = newList
+            .firstIndex(where: { (recipient: Recipient) -> Bool in recipient.id == newRecipient.id })
+        {
             newList.remove(at: index)
         }
 

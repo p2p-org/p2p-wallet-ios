@@ -1,7 +1,7 @@
+import FeeRelayerSwift
 import Foundation
 import Resolver
 import SolanaSwift
-import FeeRelayerSwift
 import UIKit
 
 enum AlertLoggerDataBuilder {
@@ -14,20 +14,21 @@ enum AlertLoggerDataBuilder {
         let appVersion: String
         let timestamp: String
     }
-    
+
     static func buildLoggerData(
         error: Error
     ) async -> AlertLoggerData {
         let platform = "iOS \(await UIDevice.current.systemVersion)"
         let userPubkey = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? ""
-        
+
         var blockchainError: String?
         var feeRelayerError: String?
         var otherError: String?
         switch error {
         case let error as APIClientError:
             blockchainError = error.blockchainErrorDescription
-        case let error as FeeRelayerError where error.message == "Topping up is successfull, but the transaction failed":
+        case let error as FeeRelayerError
+            where error.message == "Topping up is successfull, but the transaction failed":
             feeRelayerError = APIClientError.responseError(
                 .init(
                     code: error.code,
@@ -35,7 +36,7 @@ enum AlertLoggerDataBuilder {
                     data: .init(logs: error.data?.data?.array)
                 )
             )
-                .blockchainErrorDescription
+            .blockchainErrorDescription
         default:
             // if error is encodable, log the json
             if let encodableError = error as? Encodable {
@@ -46,10 +47,10 @@ enum AlertLoggerDataBuilder {
                 otherError = String(reflecting: error)
             }
         }
-        
+
         let appVersion = AppInfo.appVersionDetail
         let timestamp = "\(Int64(Date().timeIntervalSince1970 * 1000))"
-        
+
         return .init(
             platform: platform,
             userPubkey: userPubkey,
@@ -65,19 +66,23 @@ enum AlertLoggerDataBuilder {
 private extension APIClientError {
     var blockchainErrorDescription: String {
         switch self {
-        case .cantEncodeParams:
-            return "cantEncodeParams"
         case .invalidAPIURL:
-            return "invalidAPIURL"
+            return readableDescription
         case .invalidResponse:
             return "emptyResponse"
-        case .responseError(let responseError):
+        case let .responseError(responseError):
             guard let data = try? JSONEncoder().encode(responseError),
                   let string = String(data: data, encoding: .utf8)
             else {
                 return "unknownResponseError"
             }
             return string
+        case .transactionSimulationError:
+            return readableDescription
+        case .couldNotRetrieveAccountInfo:
+            return readableDescription
+        case .blockhashNotFound:
+            return readableDescription
         }
     }
 }

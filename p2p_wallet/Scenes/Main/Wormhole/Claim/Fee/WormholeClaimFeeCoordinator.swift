@@ -3,15 +3,13 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import KeychainSwift
-import Wormhole
 import UIKit
+import Wormhole
 
 class WormholeClaimFeeCoordinator: SmartCoordinator<Void> {
-    let account: EthereumAccount
     let bundle: AsyncValue<WormholeBundle?>
 
-    init(account: EthereumAccount, bundle: AsyncValue<WormholeBundle?>, presentation: SmartCoordinatorPresentation) {
-        self.account = account
+    init(account _: EthereumAccount, bundle: AsyncValue<WormholeBundle?>, presentation: SmartCoordinatorPresentation) {
         self.bundle = bundle
         super.init(presentation: presentation)
     }

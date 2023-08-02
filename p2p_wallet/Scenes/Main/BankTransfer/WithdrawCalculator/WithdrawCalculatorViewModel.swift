@@ -45,7 +45,7 @@ final class WithdrawCalculatorViewModel: BaseViewModel, ObservableObject {
     @Published var fromBalance: Double?
     @Published var fromBalanceText = ""
 
-    @Published var fromTokenSymbol = Token.usdc.symbol.uppercased()
+    @Published var fromTokenSymbol = TokenMetadata.usdc.symbol.uppercased()
     @Published var toTokenSymbol = Constants.EUR.symbol
 
     @Published var decimalLength = Constants.decimals
@@ -204,7 +204,7 @@ private extension WithdrawCalculatorViewModel {
 
     func bindAccounts() {
         solanaAccountsService.statePublisher
-            .map { $0.value.first(where: { $0.data.mintAddress == Token.usdc.address })?.cryptoAmount.amount }
+            .map { $0.value.first(where: { $0.mintAddress == TokenMetadata.usdc.mintAddress })?.cryptoAmount.amount }
             .map { value in
                 if let value {
                     return Double(exactly: value)
@@ -217,18 +217,17 @@ private extension WithdrawCalculatorViewModel {
     }
 
     func bindReachibility() {
-        reachability
-            .isReachable
+        reachability.status
             .withPrevious()
             .filter { prev, current in
-                prev == false && current == true // Only if value changed from false
+                prev == .unavailable && prev != current // Only if value changed from unavailable
             }
             .sink { [weak self] _ in self?.loadRates() }
             .store(in: &subscriptions)
 
-        reachability
-            .isDisconnected
-            .sink { [weak self] in
+        reachability.status
+            .filter { $0 == .unavailable }
+            .sink { [weak self] _ in
                 self?.notificationService.showConnectionErrorNotification()
                 self?.commonErrorHandling()
             }
@@ -297,11 +296,11 @@ private extension WithdrawCalculatorViewModel {
     }
 
     func getWithdrawalInfo() async -> StrigaWithdrawalInfo {
-        self.isLoading = true
-        let info = try? await self.bankTransferService.value.getWithdrawalInfo()
-        let regData = try? await self.bankTransferService.value.getRegistrationData()
+        isLoading = true
+        let info = try? await bankTransferService.value.getWithdrawalInfo()
+        let regData = try? await bankTransferService.value.getRegistrationData()
         let receiver = [regData?.firstName, regData?.lastName].compactMap { $0 }.joined(separator: " ")
-        self.isLoading = false
+        isLoading = false
         return info ?? StrigaWithdrawalInfo(receiver: receiver)
     }
 }

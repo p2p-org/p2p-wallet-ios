@@ -66,7 +66,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 do {
                     self.currentCountry = try await countriesService.currentCountryName()
                 } catch {
-                    DefaultLogManager.shared.log(error: error)
+                    DefaultLogManager.shared.log(event: "Error", logLevel: .error, data: error.localizedDescription)
                 }
             }
         }

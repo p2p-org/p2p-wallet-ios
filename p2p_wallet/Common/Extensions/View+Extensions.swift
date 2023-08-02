@@ -8,8 +8,8 @@ extension View {
             : UIHostingController(rootView: self, ignoresKeyboard: ignoresKeyboard)
     }
 
-    func uiView() -> UIView {
-        asViewController().view
+    func castToAnyView() -> AnyView {
+        AnyView(self)
     }
 }
 

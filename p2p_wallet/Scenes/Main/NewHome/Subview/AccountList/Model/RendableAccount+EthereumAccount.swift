@@ -1,11 +1,13 @@
+import BigDecimal
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
-import Wormhole
 import UIKit
+import Wormhole
+import BigDecimal
 
-struct RenderableEthereumAccount: RenderableAccount {
+struct RenderableEthereumAccount: RenderableAccount, Equatable {
     let account: EthereumAccount
     let status: Status
     let userAction: WormholeClaimUserAction?
@@ -32,7 +34,12 @@ struct RenderableEthereumAccount: RenderableAccount {
     }
 
     var title: String {
-        account.token.name
+        switch status {
+        case .ready, .isProcessing:
+            return L10n.incomingTransfer
+        default:
+            return account.token.name
+        }
     }
 
     var subtitle: String {
@@ -79,6 +86,10 @@ struct RenderableEthereumAccount: RenderableAccount {
     }
 
     var isLoading: Bool { false }
+
+    var sortingKey: BigDecimal? {
+        account.balanceInFiat?.value
+    }
 }
 
 extension RenderableEthereumAccount {

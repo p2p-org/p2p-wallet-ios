@@ -24,10 +24,13 @@ struct FinanceBlockView: View {
                 leadingView
                 centerView
             }
+            .padding(.leading, 16)
             Spacer()
             trailingView
+                .padding(.trailing, 16)
         }
         .padding(.vertical, 12)
+        .background(.white)
     }
 }
 

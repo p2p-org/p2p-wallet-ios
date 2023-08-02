@@ -12,11 +12,7 @@ struct IBANDetailsInfoView: View {
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
 
-            Text(L10n.importantNotes)
-                .fontWeight(.semibold)
-                .apply(style: .title3)
-                .padding(.top, 12)
-                .padding(.bottom, 20)
+            title
 
             VStack(spacing: 0) {
                 infoItem(
@@ -33,23 +29,17 @@ struct IBANDetailsInfoView: View {
                 )
             }
 
-            HStack(spacing: 12) {
-                CheckboxView(isChecked: $viewModel.isChecked)
+            checkbox
 
-                Text(L10n.donTShowMeAgain)
-                    .apply(style: .text3)
-                    .foregroundColor(Color(asset: Asset.Colors.night))
-
-                Spacer()
-            }
-            .padding(.top, 24)
-            .padding(.horizontal, 32)
-            .padding(.bottom, 40)
-
-            NewTextButton(title: L10n.gotIt, style: .second, expandable: true, action: viewModel.close.send)
+            NewTextButton(
+                title: L10n.gotIt,
+                style: .second,
+                expandable: true,
+                action: viewModel.close.send
+            )
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 100)
+        .padding(.bottom, 12)
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
     }
@@ -65,12 +55,41 @@ struct IBANDetailsInfoView: View {
             Text(text)
                 .apply(style: .text3)
                 .foregroundColor(Color(asset: Asset.Colors.night))
+                .fixedSize(horizontal: false, vertical: true)
 
             Spacer()
         }
         .padding(.vertical, 12)
-        .padding(.horizontal, 28)
-        .frame(minHeight: 64)
+        .padding(.horizontal, 12)
+        .frame(height: 64)
+    }
+}
+
+private extension IBANDetailsInfoView {
+    var title: some View {
+        Text(L10n.importantNotes)
+            .fontWeight(.semibold)
+            .apply(style: .title3)
+            .padding(.top, 12)
+            .padding(.bottom, 20)
+    }
+
+    var checkbox: some View {
+        HStack(spacing: 12) {
+            CheckboxView(isChecked: $viewModel.isChecked)
+
+            Text(L10n.donTShowMeAgain)
+                .apply(style: .text3)
+                .foregroundColor(Color(asset: Asset.Colors.night))
+
+            Spacer()
+        }
+        .padding(.top, 24)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 40)
+        .onTapGesture { [weak viewModel] in
+            viewModel?.isChecked.toggle()
+        }
     }
 }
 

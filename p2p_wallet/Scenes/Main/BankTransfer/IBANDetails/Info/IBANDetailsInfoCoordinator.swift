@@ -1,6 +1,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -16,7 +17,7 @@ final class IBANDetailsInfoCoordinator: Coordinator<Void> {
         let controller = BottomSheetController(
             rootView: IBANDetailsInfoView(viewModel: viewModel)
         )
-
+        controller.view.backgroundColor = Asset.Colors.smoke.color
         viewModel.close
             .sink { [weak controller] _ in
                 controller?.dismiss(animated: true)
@@ -25,12 +26,9 @@ final class IBANDetailsInfoCoordinator: Coordinator<Void> {
 
         navigationController.present(controller, animated: true)
 
-        return Publishers.Merge(
-            controller.deallocatedPublisher()
-                .eraseToAnyPublisher(),
-            viewModel.close
-                .eraseToAnyPublisher()
-        )
-        .prefix(1).eraseToAnyPublisher()
+        return controller
+            .deallocatedPublisher()
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }
