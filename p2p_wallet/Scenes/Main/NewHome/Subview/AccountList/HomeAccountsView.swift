@@ -21,10 +21,6 @@ struct HomeAccountsView: View {
                         .id(0)
                     actionsView
                     content
-                    if !viewModel.accounts.isEmpty {
-                        accounts
-                            .padding(.top, 48)
-                    }
                 }
             }
             .customRefreshable {
@@ -90,6 +86,10 @@ struct HomeAccountsView: View {
                         withAnimation { viewModel?.closeBanner(id: smallBanner.id) }
                     }
                     .onTapGesture(perform: viewModel.bannerTapped.send)
+            }
+            if !viewModel.accounts.isEmpty {
+                accounts
+                    .padding(.top, 48)
             }
             Spacer()
 

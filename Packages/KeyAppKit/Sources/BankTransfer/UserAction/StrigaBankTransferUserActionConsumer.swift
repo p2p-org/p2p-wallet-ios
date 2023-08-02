@@ -112,7 +112,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
         case let .complete(action, result):
             Task { [weak self] in
                 guard let self = self else { return }
-                let userAction = Action(
+                var userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
                     token: action.token,
@@ -126,7 +126,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
         case let .track(action, status):
             Task { [weak self] in
                 guard let self = self else { return }
-                let userAction = Action(
+                var userAction = Action(
                     id: action.id,
                     accountId: action.accountId,
                     token: action.token,
@@ -138,7 +138,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
             }
         case let .sendFailure(action, errorModel):
             Task { [weak self] in
-                guard let userAction = await self?.database.get(for: action.id) else { return }
+                guard var userAction = await self?.database.get(for: action.id) else { return }
                 userAction.status = .error(errorModel)
                 await self?.database.set(for: action.id, userAction)
             }
@@ -146,7 +146,7 @@ public class StrigaBankTransferUserActionConsumer: UserActionConsumer {
     }
 }
 
-public class BankTransferClaimUserAction: UserAction {
+public struct BankTransferClaimUserAction: UserAction {
     /// Unique internal id to track.
     public var id: String
     public var accountId: String
@@ -177,9 +177,5 @@ public class BankTransferClaimUserAction: UserAction {
         self.status = status
         self.createdDate = createdDate
         self.updatedDate = updatedDate
-    }
-
-    public static func == (lhs: BankTransferClaimUserAction, rhs: BankTransferClaimUserAction) -> Bool {
-        lhs.id == rhs.id
     }
 }
