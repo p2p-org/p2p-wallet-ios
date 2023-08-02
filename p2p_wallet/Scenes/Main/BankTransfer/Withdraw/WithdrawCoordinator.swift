@@ -45,10 +45,7 @@ final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
             viewController.deallocatedPublisher()
                 .map { WithdrawCoordinator.Result.canceled },
             viewModel.gatheringCompletedPublisher
-                .map { WithdrawCoordinator.Result.verified(IBAN: $0.IBAN, BIC: $0.BIC) }
-                .handleEvents(receiveOutput: { [weak self] _ in
-                    self?.navigationController.popToRootViewController(animated: false)
-                }),
+                .map { WithdrawCoordinator.Result.verified(IBAN: $0.IBAN, BIC: $0.BIC) },
             viewModel.paymentInitiatedPublisher
                 .map { WithdrawCoordinator.Result.paymentInitiated(challengeId: $0) }
         )

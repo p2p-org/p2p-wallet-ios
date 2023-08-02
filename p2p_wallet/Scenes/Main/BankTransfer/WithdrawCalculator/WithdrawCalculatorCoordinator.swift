@@ -30,6 +30,11 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                 .flatMap({ [unowned self] model, amount in
                     openWithdraw(model: model, amount: amount)
                 })
+                .handleEvents(receiveOutput: { [unowned self] tx in
+                    if let tx {
+                        navigationController.popViewController(animated: true)
+                    }
+                })
                 .compactMap { $0 }
                 .map { WithdrawCalculatorCoordinator.Result.transaction($0) }
                 .eraseToAnyPublisher(),
@@ -50,14 +55,6 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
             navigationController: navigationController,
             withdrawalInfo: model)
         )
-            .handleEvents(receiveOutput: { [unowned self] result in
-                switch result {
-                case .verified:
-                    navigationController.popViewController(animated: true)
-                case .canceled, .paymentInitiated:
-                    break
-                }
-            })
             .asyncMap({ result -> (WithdrawCoordinator.Result, TokenPrice?) in
                 let priceService = Resolver.resolve(PriceService.self)
                 let prices = try? await priceService.getPrice(
@@ -65,6 +62,15 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
                     fiat: Defaults.fiat.rawValue
                 )
                 return (result, prices)
+            })
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveOutput: { [unowned self] (result, _) in
+                switch result {
+                case .verified:
+                    navigationController.popToRootViewController(animated: true)
+                case .canceled, .paymentInitiated:
+                    break
+                }
             })
             .map({ (result, prices) -> PendingTransaction? in
                 switch result {
