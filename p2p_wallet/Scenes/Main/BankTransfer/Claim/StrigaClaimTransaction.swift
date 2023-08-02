@@ -68,10 +68,8 @@ protocol StrigaWithdrawTransactionType: RawTransactionType {
 
 extension StrigaWithdrawTransactionType {
     var amountInFiat: Double? {
-        fatalError()
-//        guard let value = Resolver.resolve(SolanaPriceService.self)
-//            .getPriceFromCache(token: token, fiat: Defaults.fiat.rawValue)?.value else { return amount }
-//        return value * amount
+        guard let tokenPrice = tokenPrice?.doubleValue else { return nil }
+        return (amount ?? 0) * tokenPrice
     }
 }
 
