@@ -321,7 +321,6 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
 
         $isViewAppeared
-            .filter { [weak self] _ in self?.viewState == .success }
             .sink { [weak self] isAppeared in
                 guard let self else { return }
                 if isAppeared {
