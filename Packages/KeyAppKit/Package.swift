@@ -274,6 +274,7 @@ let package = Package(
                 "KeyAppKitCore",
                 "KeyAppBusiness",
                 "KeyAppKitLogger",
+                "CountriesAPI"
             ]
         ),
 

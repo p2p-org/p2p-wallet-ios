@@ -22,4 +22,7 @@ public protocol BankTransferUserDataRepository {
 
     func getWithdrawalInfo(userId: String) async throws -> WithdrawalInfo?
     func save(_ info: WithdrawalInfo) async throws
+
+    /// Available alpha codes
+    func availableRegions() -> [String]
 }

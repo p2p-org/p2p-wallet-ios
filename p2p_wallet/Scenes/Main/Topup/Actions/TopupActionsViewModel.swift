@@ -1,4 +1,5 @@
 import BankTransfer
+import CountriesAPI
 import Combine
 import Foundation
 import Resolver
@@ -19,14 +20,16 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             icon: .addMoneyBankCard,
             title: L10n.bankCard,
             subtitle: L10n.instant·Fees("4.5%"),
-            isLoading: false
+            isLoading: false,
+            isDisabled: false
         ),
         ActionItem(
             id: .crypto,
             icon: .addMoneyCrypto,
             title: L10n.crypto,
             subtitle: L10n.upTo1Hour·Fees("%0"),
-            isLoading: false
+            isLoading: false,
+            isDisabled: false
         )
     ]
 
@@ -65,14 +68,16 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     override init() {
         super.init()
 
-        if shouldShowBankTransfer {
+        if shouldShowBankTransfer, let country = Defaults.bankTransferLastCountry {
+            let isAvailable = bankTransferService.isAvailableForRegion(country: country)
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: .addMoneyBankTransfer,
+                    icon: isAvailable ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled ,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
-                    isLoading: false
+                    isLoading: false,
+                    isDisabled: !isAvailable
                 ),
                 at: 0
             )
@@ -124,10 +129,10 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func setTransferLoadingState(isLoading: Bool) {
-        guard let idx = self.actions.firstIndex(where: { act in
+        guard let idx = actions.firstIndex(where: { act in
             act.id == .transfer
         }) else { return }
-        self.actions[idx].isLoading = isLoading
+        actions[idx].isLoading = isLoading
     }
 
 }
@@ -145,5 +150,6 @@ extension TopupActionsViewModel {
         var title: String
         var subtitle: String
         var isLoading: Bool
+        var isDisabled: Bool
     }
 }

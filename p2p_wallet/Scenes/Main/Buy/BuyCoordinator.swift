@@ -16,7 +16,6 @@ final class BuyCoordinator: Coordinator<Void> {
     private let defaultPaymentType: PaymentType?
     private let targetTokenSymbol: String?
 
-    private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -56,7 +55,6 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         } else {
             if shouldPush {
-                navigationController?.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
                 navigationController?.pushViewController(viewController, animated: true)
             } else {
                 let navigation = UINavigationController(rootViewController: viewController)
@@ -182,30 +180,6 @@ final class BuyCoordinator: Coordinator<Void> {
 //            .store(in: &subscriptions)
 
         return result.prefix(1).eraseToAnyPublisher()
-    }
-
-    // MARK: - Gesture
-
-    private var currentTransitionCoordinator: UIViewControllerTransitionCoordinator?
-
-    @objc private func onGesture(sender: UIGestureRecognizer) {
-        switch sender.state {
-        case .began, .changed:
-            if let ct = navigationController.transitionCoordinator {
-                currentTransitionCoordinator = ct
-            }
-        case .cancelled, .ended:
-            //            currentTransitionCoordinator = nil
-            break
-        case .possible, .failed:
-            break
-        @unknown default:
-            break
-        }
-//        if let currentTransitionCoordinator = currentTransitionCoordinator {
-//            vcPresentedPercentage.send(currentTransitionCoordinator.percentComplete)
-//        }
-        vcPresentedPercentage.send(navigationController.transitionCoordinator?.percentComplete ?? 1)
     }
 }
 

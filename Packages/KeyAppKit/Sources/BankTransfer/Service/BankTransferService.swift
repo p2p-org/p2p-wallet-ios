@@ -1,4 +1,5 @@
 import Combine
+import CountriesAPI
 import KeyAppKitCore
 
 public protocol BankTransferService<Provider> where Provider: BankTransferUserDataRepository {
@@ -26,6 +27,8 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
 
     func getWithdrawalInfo() async throws -> WithdrawalInfo?
     func saveWithdrawalInfo(info: WithdrawalInfo) async throws
+
+    func isAvailableForRegion(country: Country) -> Bool
 }
 
 public class AnyBankTransferService<Provider: BankTransferUserDataRepository> {

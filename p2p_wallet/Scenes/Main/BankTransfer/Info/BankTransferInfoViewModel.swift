@@ -108,6 +108,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     private func submitCountry() {
+        Defaults.bankTransferLastCountry = currentCountry
         submitCountrySubject.send(currentCountry)
     }
 }

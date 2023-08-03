@@ -1,9 +1,11 @@
 import Combine
+import CountriesAPI
 import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
 public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: BankTransferService {
+
     public typealias Provider = T
     
     /// Repository that handle CRUD action for UserData
@@ -176,5 +178,9 @@ extension BankTransferServiceImpl {
 
     public func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {
         try await repository.save(info)
+    }
+
+    public func isAvailableForRegion(country: Country) -> Bool {
+        repository.availableRegions().contains(country.code)
     }
 }

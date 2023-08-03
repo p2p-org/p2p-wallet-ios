@@ -22,6 +22,7 @@ struct TopupActionsView: View {
                 } label: {
                     cell(item: item)
                 }
+                .disabled(item.isDisabled)
                 .frame(minHeight: 73)
             }
             Spacer()
@@ -30,6 +31,10 @@ struct TopupActionsView: View {
         .padding(.bottom, 100)
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
+    }
+    
+    private func foregroundColor(item: TopupActionsViewModel.ActionItem) -> Color {
+        item.isDisabled ? Color(Asset.Colors.mountain.color) : Color(Asset.Colors.night.color)
     }
 
     private func cell(item: TopupActionsViewModel.ActionItem) -> some View {
@@ -40,12 +45,12 @@ struct TopupActionsView: View {
                 Text(item.title)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(foregroundColor(item: item))
 
                 Text(item.subtitle)
                     .fontWeight(.regular)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(foregroundColor(item: item))
             }
             Spacer()
             if item.isLoading {
