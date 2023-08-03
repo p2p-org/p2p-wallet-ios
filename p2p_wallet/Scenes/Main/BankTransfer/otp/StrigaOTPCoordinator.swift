@@ -79,7 +79,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         )
         // Create viewController
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
-        controller.title = L10n.stepOf(3, 3)
         controller.hidesBottomBarWhenPushed = true
         controller.navigationItem.largeTitleDisplayMode = .never
 

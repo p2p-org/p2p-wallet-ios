@@ -40,7 +40,10 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Published var resendText: String = ""
     @Published var isButtonEnabled: Bool = false
     var phoneText: String {
-        strategy == .striga ? L10n.toStartVerificationConfirmYourPhoneNumber : L10n.checkTheNumber
+        strategy == .striga ? L10n.weHaveSentACodeTo : L10n.checkTheNumber
+    }
+    var title: String {
+        strategy == .striga ? L10n.enterConfirmationCode : L10n.theCodeFromSMS
     }
 
     func buttonTaped() {
@@ -193,7 +196,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     private func setResendCountdown() {
         let secs = countdown <= 0 ? "" : " \(countdown) sec"
-        resendText = " Tap to resend\(secs)"
+        resendText = secs.isEmpty ? L10n.tapToResend : L10n.resendSMS(secs)
         updateResendEnabled()
     }
 

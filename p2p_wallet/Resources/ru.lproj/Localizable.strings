@@ -746,3 +746,7 @@
 "Selected" = "Выбрано";
 "Nothing was found" = "Ничего не найдено";
 "Verify your identity" = "Подтвердите вашу личность";
+"Enter confirmation code" = "Введите код подтверждения";
+"We have sent a code\nto" = "Мы отправили код\nна";
+"Resend SMS %@" = "Отправить SMS повторно %@";
+"Tap to resend" = "Нажмите, чтобы отправить повторно";

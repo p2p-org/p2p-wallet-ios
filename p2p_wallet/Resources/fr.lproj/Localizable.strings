@@ -750,3 +750,7 @@
 "Selected" = "Choisi";
 "Nothing was found" = "Rien n'a été trouvé";
 "Verify your identity" = "Vérifiez Votre Identité";
+"Enter confirmation code" = "Entrez le code de confirmation";
+"We have sent a code\nto" = "Nous avons envoyé un code\nà";
+"Resend SMS %@" = "Renvoyer le SMS %@";
+"Tap to resend" = "Appuyez pour renvoyer";
