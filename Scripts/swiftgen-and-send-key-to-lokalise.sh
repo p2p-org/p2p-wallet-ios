@@ -3,6 +3,9 @@
 # move to working folder
 cd "${PROJECT_DIR}"
 
+# Read the MARKETING_VERSION from project.yml and extract only the number
+marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
+
 # Run swiftgen first
 echo "==> Run swiftgen"
 /opt/homebrew/bin/swiftgen config run --config swiftgen.yml
@@ -26,7 +29,7 @@ while IFS= read -r line; do
         exit 1
     fi
 
-    last_key="\"key_name\":$key_name,\"platforms\":[\"ios\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"
+    last_key="\"key_name\":$key_name,\"platforms\":[\"ios\"],\"tags\":[\"$marketing_version\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"
 done <<< "$new_lines"
 json_payload+="{$last_key}]}"
 
