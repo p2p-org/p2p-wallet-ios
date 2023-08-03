@@ -1,7 +1,5 @@
 import Firebase
-import Intercom
 import KeyAppUI
-import Lokalise
 import Resolver
 import Sentry
 @_exported import SwiftyUserDefaults
@@ -49,20 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         #endif
 
-        Lokalise.shared.setProjectID(
-            String.secretConfig("LOKALISE_PROJECT_ID")!,
-            token: String.secretConfig("LOKALISE_TOKEN")!
-        )
-        Lokalise.shared.swizzleMainBundle()
-
-        #if !RELEASE
-            Lokalise.shared.localizationType = .prerelease
-        #else
-            Lokalise.shared.localizationType = .release
-        #endif
-
-        Lokalise.shared.checkForUpdates()
-
         // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
@@ -85,10 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let userWalletManager: UserWalletManager = Resolver.resolve()
             let ethAddress = available(.ethAddressEnabled) ? userWalletManager.wallet?.ethAddress : nil
             try await notificationService.sendRegisteredDeviceToken(deviceToken, ethAddress: ethAddress)
-        }
-        Intercom.setDeviceToken(deviceToken) { error in
-            guard let error else { return }
-            print("Intercom.setDeviceToken error: ", error)
         }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
         Defaults.apnsDeviceToken = deviceToken
