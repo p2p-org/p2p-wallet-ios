@@ -21,7 +21,6 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var isLoading = false
 
     // Fields
-    @Published var email: String = ""
     @Published var firstName: String = ""
     @Published var surname: String = ""
     @Published var dateOfBirth: String = ""
@@ -128,7 +127,6 @@ private extension StrigaRegistrationFirstStepViewModel {
                     // save data
                     self.data = data
                     isLoading = false
-                    email = data.email
                     firstName = data.firstName
                     surname = data.lastName
                     dateOfBirthModel = data.dateOfBirth
@@ -245,7 +243,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func bindToFieldValues() {
-        let contacts = Publishers.CombineLatest3($email, $selectedPhoneCountryCode, $phoneNumber)
+        let contacts = Publishers.CombineLatest($selectedPhoneCountryCode, $phoneNumber)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
         Publishers.CombineLatest3(contacts, credentials, dateOfBirth)
@@ -254,8 +252,8 @@ private extension StrigaRegistrationFirstStepViewModel {
                 guard let self else { return }
 
                 let mobile = StrigaUserDetailsResponse.Mobile(
-                    countryCode: contacts.1?.dialCode ?? "",
-                    number: contacts.2.replacingOccurrences(of: " ", with: "")
+                    countryCode: contacts.0?.dialCode ?? "",
+                    number: contacts.1.replacingOccurrences(of: " ", with: "")
                 )
 
                 let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty

@@ -72,7 +72,7 @@ struct BaseInfoView_Previews: PreviewProvider {
         BaseInformerView(data: BaseInformerViewItem(
             icon: .infoFill,
             iconColor: Asset.Colors.snow,
-            title: L10n.EnterYourPersonalDataToOpenAnAccount.pleaseUseYourRealCredentials,
+            title: L10n.weUseSEPAInstantForBankTransfersAndTypicallyMoneyWillAppearInYourAccountInLessThanAMinute,
             backgroundColor: Asset.Colors.lightSea,
             iconBackgroundColor: Asset.Colors.sea
         ))
