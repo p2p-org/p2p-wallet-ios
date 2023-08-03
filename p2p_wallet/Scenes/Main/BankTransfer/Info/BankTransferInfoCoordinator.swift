@@ -1,46 +1,24 @@
-import BankTransfer
 import Combine
 import CountriesAPI
 import Foundation
 import Resolver
-import SafariServices
+import SwiftUI
 
-enum BankTransferInfoCoordinatorResult {
-    case canceled
-    case completed
-}
-
-final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinatorResult> {
+final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator.Result> {
 
     // MARK: -
 
     private var viewController: UINavigationController
 
-    // MARK: -
-
-    @Injected private var bankTransferService: any BankTransferService
-
-    init(
-        viewController: UINavigationController
-    ) {
+    init(viewController: UINavigationController) {
         self.viewController = viewController
     }
 
-    override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
+    override func start() -> AnyPublisher<BankTransferInfoCoordinator.Result, Never> {
         let viewModel = BankTransferInfoViewModel()
-        let controller = UIBottomSheetHostingController(
-            rootView: BankTransferInfoView(viewModel: viewModel),
-            ignoresKeyboard: true
+        let controller = UIHostingController(
+            rootView: BankTransferInfoView(viewModel: viewModel)
         )
-
-        viewModel.objectWillChange
-            .delay(for: 0.01, scheduler: RunLoop.main)
-            .sink { [weak controller] _ in
-                DispatchQueue.main.async {
-                    controller?.updatePresentationLayout(animated: true)
-                }
-            }
-            .store(in: &subscriptions)
 
         viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
             self.coordinate(to: ChooseItemCoordinator<Country>(
@@ -58,55 +36,27 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
             }
         }.store(in: &subscriptions)
 
-        viewModel.openProviderInfo.flatMap { [weak controller] url in
-            let safari = SFSafariViewController(url: url)
-            controller?.show(safari, sender: nil)
-            return safari.deallocatedPublisher()
-        }.sink {}.store(in: &subscriptions)
-
-        controller.view.layer.cornerRadius = 20
-        viewController.present(controller, interactiveDismissalType: .standard)
+        controller.hidesBottomBarWhenPushed = true
+        viewController.pushViewController(controller, animated: true)
 
         return Publishers.Merge(
-            // Ignore deallocation event if open registration triggered
-            Publishers.Merge(
-                controller.deallocatedPublisher().map { true },
-                viewModel.openRegistration.map { _ in false }
-            )
-                .prefix(1)
-                .filter { $0 }
-                .map { _ in BankTransferInfoCoordinatorResult.canceled }
-                .eraseToAnyPublisher(),
-            viewModel.openRegistration
-                .handleEvents(receiveOutput: { [weak controller] _ in
-                    controller?.dismiss(animated: true)
-                })
-                .flatMap({ [unowned self] in
-                    self.coordinate(
-                        to: StrigaRegistrationFirstStepCoordinator(
-                            navigationController: self.viewController
-                        )
-                    )
-                })
-                .handleEvents(receiveOutput: { [weak self] result in
-                    guard let self else { return }
-                    switch result {
-                    case .completed:
-                        self.viewController.setViewControllers([self.viewController.viewControllers.first!], animated: false)
-                    case .canceled:
-                        break
-                    }
-                })
-                .map { result in
-                    switch result {
-                    case .completed:
-                        return BankTransferInfoCoordinatorResult.completed
-                    case .canceled:
-                        return BankTransferInfoCoordinatorResult.canceled
-                    }
+            controller.deallocatedPublisher().map { BankTransferInfoCoordinator.Result.cancelled },
+            viewModel.countrySubmitted.map { country in
+                if let country {
+                    return BankTransferInfoCoordinator.Result.selected(country)
                 }
+                return BankTransferInfoCoordinator.Result.cancelled
+            }
         )
             .prefix(1)
             .eraseToAnyPublisher()
     }
+}
+
+extension BankTransferInfoCoordinator {
+    enum Result {
+        case cancelled
+        case selected(Country)
+    }
+
 }

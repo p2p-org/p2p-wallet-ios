@@ -14,18 +14,13 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         showCountriesSubject.eraseToAnyPublisher()
     }
 
-    var openRegistration: AnyPublisher<Void, Never> {
-        openRegistrationSubject.eraseToAnyPublisher()
-    }
-
-    var openProviderInfo: AnyPublisher<URL, Never> {
-        openProviderInfoSubject.eraseToAnyPublisher()
+    var countrySubmitted: AnyPublisher<Country?, Never> {
+        submitCountrySubject.eraseToAnyPublisher()
     }
 
     // MARK: - Dependencies
 
     @Injected private var countriesService: CountriesAPI
-    @Injected private var helpLauncher: HelpCenterLauncher
 
     // MARK: -
 
@@ -34,17 +29,11 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: -
 
     private let showCountriesSubject = PassthroughSubject<Country?, Never>()
-    private let openProviderInfoSubject = PassthroughSubject<URL, Never>()
-    private let openRegistrationSubject = PassthroughSubject<Void, Never>()
+    private let submitCountrySubject = PassthroughSubject<Country?, Never>()
 
-    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
-    private var lastChosenCountry: Country?
     private var currentCountry: Country? {
         didSet {
-            if lastChosenCountry != currentCountry {
-                lastChosenCountry = currentCountry
-            }
-            self.items = self.makeItems()
+            items = makeItems()
         }
     }
 
@@ -55,12 +44,13 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     func setCountry(_ country: Country) {
-        self.currentCountry = country
+        currentCountry = country
+        Defaults.bankTransferLastCountry = country
     }
 
     func bind() {
-        if nil != lastChosenCountry {
-            currentCountry = lastChosenCountry
+        if nil != Defaults.bankTransferLastCountry {
+            currentCountry = Defaults.bankTransferLastCountry
         } else {
             Task {
                 do {
@@ -74,68 +64,40 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     private func makeItems() -> [any Renderable] {
         let countryCell = BankTransferCountryCellViewItem(
-            name: self.currentCountry?.name ?? "",
-            flag: self.currentCountry?.emoji ?? "🏴"
+            name: currentCountry?.name ?? "",
+            flag: currentCountry?.emoji ?? "🏴"
         )
-        if isAvailable() {
-            return [
-                BankTransferInfoImageCellViewItem(image: .bankTransferInfoAvailableIcon),
-                ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
-                BankTransferTitleCellViewItem(title: L10n.openIBANAccountForInternationalTransfersWithZeroFees),
-                ListSpacerCellViewItem(height: 16, backgroundColor: .clear),
-                countryCell,
-                ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
-                CenterTextCellViewItem(
-                    id: CellItemIdentidier.poweredByStriga.rawValue,
-                    text: L10n.poweredByStriga,
-                    style: .text3,
-                    color: Color(Asset.Colors.sky.color)
-                ),
-                ListSpacerCellViewItem(height: 40, backgroundColor: .clear),
-                ButtonListCellItem(
-                    leadingImage: nil,
-                    title: L10n.continue,
-                    action: { [weak self] in
-                        self?.submitCountry()
-                    },
-                    style: .primary,
-                    trailingImage: Asset.MaterialIcon.arrowForward.image.withTintColor(Asset.Colors.lime.color)
-                ),
-                ListSpacerCellViewItem(height: 2, backgroundColor: .clear)
-            ]
-        } else {
-            return [
-                BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
-                ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferTitleCellViewItem(title: L10n.thisServiceIsAvailableOnlyForEuropeanEconomicAreaCountries),
-                ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferInfoCountriesTextCellViewItem(),
-                ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
-                countryCell,
-                ListSpacerCellViewItem(height: 56, backgroundColor: .clear),
-                ButtonListCellItem(
-                    leadingImage: nil,
-                    title: L10n.changeCountry,
-                    action: { [weak self] in
-                        self?.openCountries()
-                    },
-                    style: .primary,
-                    trailingImage: nil
-                ),
-                ListSpacerCellViewItem(height: 2, backgroundColor: .clear)
-            ]
-        }
+        return [
+            BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
+            ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
+            BankTransferTitleCellViewItem(title: L10n.selectYourCountryOfResidence),
+            ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
+            CenterTextCellViewItem(
+                text: L10n.weSuggestPaymentOptionsBasedOnYourChoice,
+                style: .text3,
+                color: Color(Asset.Colors.night.color)
+            ),
+            ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
+            countryCell,
+            ListSpacerCellViewItem(height: 92 + 16, backgroundColor: .clear),
+            ButtonListCellItem(
+                leadingImage: nil,
+                title: L10n.next,
+                action: { [weak self] in
+                    self?.submitCountry()
+                },
+                style: .primaryWhite,
+                trailingImage: Asset.MaterialIcon.arrowForward.image
+            ),
+            ListSpacerCellViewItem(height: 48, backgroundColor: .clear)
+        ]
     }
 
     // MARK: -
 
     func itemTapped(item: any Identifiable) {
-        if nil != item as? BankTransferInfoCountriesTextCellViewItem {
-            helpLauncher.launch()
-        } else if nil != item as? BankTransferCountryCellViewItem {
+        if nil != item as? BankTransferCountryCellViewItem {
             openCountries()
-        } else if let item = item as? CenterTextCellViewItem, item.id == CellItemIdentidier.poweredByStriga.rawValue {
-            openProviderInfoSubject.send(URL(string: "https://striga.com")!)
         }
     }
 
@@ -146,15 +108,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     private func submitCountry() {
-        openRegistrationSubject.send()
-    }
-
-    private func isAvailable() -> Bool {
-        ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "gr", "es", "nl", "is", "li", "lt", "lu", "lv", "mt", "de", "no", "pl", "pt", "ro", "sk", "si", "se", "hu", "it", "ch", "gb"].contains(self.currentCountry?.code ?? "")
-    }
-
-    enum CellItemIdentidier: String {
-        case poweredByStriga
+        submitCountrySubject.send(currentCountry)
     }
 }
 

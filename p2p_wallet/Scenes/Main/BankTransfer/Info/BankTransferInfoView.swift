@@ -10,10 +10,10 @@ struct BankTransferInfoView: View {
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
-                list
-                    .padding(.top, 20)
-                Spacer()
-            
+            Spacer()
+            list
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
         }
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)

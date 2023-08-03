@@ -287,6 +287,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
+    var shouldShowCountrySelect = true
     func actionClicked(_ action: HomeAction) {
         switch action {
         case .addMoney:

@@ -1,10 +1,12 @@
 import AnalyticsManager
+import CountriesAPI
 import Combine
 import Foundation
 import LocalAuthentication
 import Onboarding
 import Resolver
 import SolanaSwift
+import SwiftyUserDefaults
 import UIKit
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
@@ -30,6 +32,9 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             toggleBiometryEnabling()
         }
     }
+
+    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
+    var country: Country?
 
     private var isBiometryCheckGoing: Bool = false
 
@@ -133,6 +138,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 guard let userAddress = solanaStorage.account?.publicKey.base58EncodedString else { return }
                 openActionSubject.send(.reserveUsername(userAddress: userAddress))
             }
+        case .country:
+            openActionSubject.send(.country)
         default:
             openActionSubject.send(type)
         }
@@ -183,7 +190,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             UIApplication.shared.open(url)
         }
     }
-    
+
     func openDiscord() {
         if let url = URL(string: "https://discord.gg/SpW3GmEYgU") {
             UIApplication.shared.open(url)
@@ -196,6 +203,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 extension SettingsViewModel {
     enum OpenAction {
         case username
+        case country
         case support
         case reserveUsername(userAddress: String)
         case recoveryKit

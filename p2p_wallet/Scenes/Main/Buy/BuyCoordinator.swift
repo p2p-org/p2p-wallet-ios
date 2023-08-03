@@ -134,12 +134,6 @@ final class BuyCoordinator: Coordinator<Void> {
         .assignWeak(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
         .store(in: &subscriptions)
 
-        vcPresentedPercentage.eraseToAnyPublisher()
-            .sink(receiveValue: { val in
-                viewModel.coordinatorIO.navigationSlidingPercentage.send(val)
-            })
-            .store(in: &subscriptions)
-
         viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
@@ -157,33 +151,35 @@ final class BuyCoordinator: Coordinator<Void> {
                 viewController.present(vc, animated: true)
             })
             .store(in: &subscriptions)
+
         viewModel.coordinatorIO.close
             .sink(receiveValue: { [unowned self] in
                 navigationController.popViewController(animated: true)
             })
             .store(in: &subscriptions)
-        viewModel.coordinatorIO.chooseCountry
-            .sink(receiveValue: { [weak self] selectedCountry in
-                guard let self else { return }
 
-                let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
-                let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
-                    .asViewController(withoutUIKitNavBar: false)
-                viewController.navigationController?.pushViewController(selectCountryViewController, animated: true)
-
-                selectCountryViewModel.selectCountry
-                    .sink(receiveValue: { item in
-                        viewModel.countrySelected(item.0, buyAllowed: item.buyAllowed)
-                        viewController.navigationController?.popViewController(animated: true)
-                    })
-                    .store(in: &self.subscriptions)
-                selectCountryViewModel.currentSelected
-                    .sink(receiveValue: {
-                        viewController.navigationController?.popViewController(animated: true)
-                    })
-                    .store(in: &self.subscriptions)
-            })
-            .store(in: &subscriptions)
+//        viewModel.coordinatorIO.chooseCountry
+//            .sink(receiveValue: { [weak self] selectedCountry in
+//                guard let self else { return }
+//
+//                let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
+//                let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
+//                    .asViewController(withoutUIKitNavBar: false)
+//                viewController.navigationController?.pushViewController(selectCountryViewController, animated: true)
+//
+//                selectCountryViewModel.selectCountry
+//                    .sink(receiveValue: { item in
+//                        viewModel.countrySelected(item.0, buyAllowed: item.buyAllowed)
+//                        viewController.navigationController?.popViewController(animated: true)
+//                    })
+//                    .store(in: &self.subscriptions)
+//                selectCountryViewModel.currentSelected
+//                    .sink(receiveValue: {
+//                        viewController.navigationController?.popViewController(animated: true)
+//                    })
+//                    .store(in: &self.subscriptions)
+//            })
+//            .store(in: &subscriptions)
 
         return result.prefix(1).eraseToAnyPublisher()
     }

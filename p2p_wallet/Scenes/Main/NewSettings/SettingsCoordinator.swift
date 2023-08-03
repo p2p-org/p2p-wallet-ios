@@ -56,6 +56,10 @@ final class SettingsCoordinator: Coordinator<Void> {
                     coordinate(to: coordinator)
                         .sink(receiveValue: {})
                         .store(in: &subscriptions)
+                case .country:
+                    coordinate(to: BankTransferInfoCoordinator(viewController: navigationController))
+                        .sink(receiveValue: { _ in })
+                        .store(in: &subscriptions)
                 }
             })
             .store(in: &subscriptions)

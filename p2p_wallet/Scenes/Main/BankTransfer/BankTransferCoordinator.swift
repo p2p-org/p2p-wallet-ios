@@ -49,12 +49,12 @@ final class BankTransferCoordinator: Coordinator<Void> {
         guard userData.userId != nil else {
             return .registration
         }
-        
+
         // mobile verification
         guard userData.mobileVerified else {
             return .otp
         }
-        
+
         // kyc
         switch userData.kycStatus {
         case .approved:
@@ -71,7 +71,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         switch step {
         case .registration:
             return coordinate(
-                to: BankTransferInfoCoordinator(viewController: viewController)
+                to: StrigaRegistrationFirstStepCoordinator(navigationController: viewController)
             ).handleEvents(receiveOutput: { [weak self] result in
                 guard let self else { return }
                 switch result {
