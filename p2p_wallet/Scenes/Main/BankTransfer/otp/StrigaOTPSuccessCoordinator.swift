@@ -15,8 +15,8 @@ final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = StrigaOTPCompletedView(
-            image: .thumbsupImage,
-            title: L10n.thankYou,
+            image: .catSuccess,
+            title: L10n.verifyYourIdentity,
             subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
             actionTitle: L10n.continue,
             onAction:  { [weak self] in
