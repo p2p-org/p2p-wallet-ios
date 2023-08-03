@@ -40,7 +40,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published var isButtonEnabled: Bool = false
     @Published var isLoading: Bool = false
     @Published var inputError: String?
-    @Published var selectedCountry: Country = EnterPhoneNumberViewModel.defaultCountry
+    @Published var selectedCountry = EnterPhoneNumberViewModel.defaultCountry
     @Published var subtitle: String = L10n.addAPhoneNumberToProtectYourAccount
 
     let isBackAvailable: Bool
@@ -62,7 +62,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        coordinatorIO.selectCode.send((selectedCountry.dialCode, selectedCountry.code))
+        coordinatorIO.selectCode.send(selectedCountry)
     }
 
     func onPaste() {
@@ -96,7 +96,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
-        var selectCode: PassthroughSubject<(String?, String?), Never> = .init()
+        var selectCode: PassthroughSubject<Country?, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
         let helpClicked = PassthroughSubject<Void, Never>()
         let back: PassthroughSubject<Void, Never> = .init()

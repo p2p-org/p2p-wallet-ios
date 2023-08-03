@@ -71,14 +71,17 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         rootViewController?.present(viewController, animated: true)
     }
 
-    private func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
+    private func selectCountry(chosen: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
-        let coordinator = ChoosePhoneCodeCoordinator(
-            selectedDialCode: selectedDialCode,
-            selectedCountryCode: selectedCountryCode,
-            presentingViewController: rootViewController
-        )
-        return try await coordinator.start().async()
+        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(title: L10n.selectYourCountry, controller: rootViewController, service: ChoosePhoneCodeService(), chosen: PhoneCodeItem(country: chosen))
+        let result = try await coordinator.start().async()
+        switch result {
+        case .item(let item):
+            guard let item = item as? PhoneCodeItem? else { return nil }
+            return item?.country
+        case .cancel:
+            return nil
+        }
     }
 
     private func weCanTSMSYouContent(phone: String, code: Int) -> OnboardingContentData {
@@ -104,11 +107,8 @@ private extension RestoreCustomDelegatedCoordinator {
         viewModel.subtitle = L10n.addAPhoneNumberToRestoreYourAccount
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
-        viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] dialCode, countryCode in
-            guard let result = try await self?.selectCountry(
-                selectedDialCode: dialCode,
-                selectedCountryCode: countryCode
-            ) else { return }
+        viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] country in
+            guard let result = try await self?.selectCountry(chosen: country) else { return }
             viewModel.coordinatorIO.countrySelected.send(result)
         }.store(in: &subscriptions)
 
