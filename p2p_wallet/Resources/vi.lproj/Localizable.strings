@@ -603,13 +603,10 @@
 "Up to 3 days · %@ fees" = "Tối đa 3 ngày · %@ phí";
 "Up to 1 hour · %@ fees" = "Tối đa 1 giờ · %@ phí";
 "bank card, bank transfer or crypto" = "thẻ ngân hàng, chuyển khoản ngân hàng hoặc tiền điện tử";
-"Enter your personal data to open an account. Please, use your real credentials." = "Nhập dữ liệu cá nhân của bạn để mở một tài khoản.  Xin vui lòng, sử dụng thông tin xác thực của bạn.";
 "Contacts" = "Liên lạc";
 "Email" = "E-mail";
 "Phone number" = "Số điện thoại";
-"Credentials" = "thông tin xác thực";
 "First name" = "Tên đầu tiên";
-"Surname" = "Họ";
 "Enter" = "Đi vào";
 "DD.MM.YYYY" = "DD.MM.YYYY";
 "Date of Birth" = "Ngày sinh";
@@ -630,7 +627,6 @@
 "Incorrect day" = "ngày không chính xác";
 "Incorrect month" = "tháng không chính xác";
 "Source of funds" = "Nguồn quỹ";
-"Occupation industry" = "ngành nghề";
 "Current address" = "Địa chỉ hiện tại";
 "City" = "Thành phố";
 "Full city name" = "tên thành phố đầy đủ";
@@ -639,7 +635,6 @@
 "Postal code" = "mã bưu điện";
 "Recommended" = "Khuyến khích";
 "State or region" = "Tiểu bang hoặc khu vực";
-"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Sau khi nhấp vào “Сtiếp tục”, bạn xác nhận rằng bạn không phải là Người tiếp xúc với chính trị";
 "Country" = "Quốc gia";
 "Chosen" = "được chọn";
 "All industries" = "Tất cả các ngành công nghiệp";
@@ -749,3 +744,10 @@
 "Next" = "Kế tiếp";
 "Learn more" = "Tìm hiểu thêm";
 "Withdraw" = "Rút";
+"Personal information" = "Thông tin cá nhân";
+"Full legal first and middle names" = "Tên và tên đệm hợp pháp đầy đủ";
+"Full legal last name(s)" = "Họ tên pháp lý đầy đủ";
+"Spell your name exactly as it's shown on your passport or ID card." = "Đánh vần tên của bạn chính xác như được hiển thị trên hộ chiếu hoặc thẻ căn cước của bạn.";
+"Jobs industry" = "Việc làm ngành";
+"Employment industry" = "ngành việc làm";
+"Last name" = "Họ";

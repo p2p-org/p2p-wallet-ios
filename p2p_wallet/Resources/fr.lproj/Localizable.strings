@@ -599,13 +599,10 @@
 "Up to 3 days · %@ fees" = "Jusqu'à 3 jours · Frais %@";
 "Up to 1 hour · %@ fees" = "Jusqu'à 1 heure · Frais %@";
 "bank card, bank transfer or crypto" = "carte bancaire, virement bancaire ou crypto";
-"Enter your personal data to open an account. Please, use your real credentials." = "Entrez vos données personnelles pour ouvrir un compte.  S'il vous plaît, utilisez vos vraies informations d'identification.";
 "Contacts" = "Contacts";
 "Email" = "E-mail";
 "Phone number" = "Numéro de téléphone";
-"Credentials" = "Crédits";
 "First name" = "Prénom";
-"Surname" = "Nom de famille";
 "Enter" = "Entrer";
 "DD.MM.YYYY" = "JJ.MM.AAAA";
 "Date of Birth" = "Date de naissance";
@@ -626,7 +623,6 @@
 "Incorrect day" = "Jour incorrect";
 "Incorrect month" = "Mois incorrect";
 "Source of funds" = "Source de fonds";
-"Occupation industry" = "Industrie professionnelle";
 "Current address" = "Adresse actuelle";
 "City" = "Ville";
 "Full city name" = "Nom complet de la ville";
@@ -635,7 +631,6 @@
 "Postal code" = "Code Postal";
 "Recommended" = "Recommandé";
 "State or region" = "État ou région";
-"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Après avoir cliqué sur "Continuer", vous confirmez que vous n'êtes pas une personne politiquement exposée";
 "Country" = "Pays";
 "Chosen" = "Choisi";
 "All industries" = "Tous les secteurs";
@@ -745,3 +740,10 @@
 "Next" = "Suivant";
 "Learn more" = "Apprendre encore plus";
 "Withdraw" = "Retirer";
+"Personal information" = "Informations personnelles";
+"Full legal first and middle names" = "Prénoms et deuxièmes prénoms légaux complets";
+"Full legal last name(s)" = "Nom(s) de famille complet(s)";
+"Spell your name exactly as it's shown on your passport or ID card." = "Épelez votre nom exactement tel qu'il apparaît sur votre passeport ou votre carte d'identité.";
+"Jobs industry" = "Emplois industrie";
+"Employment industry" = "Secteur de l'emploi";
+"Last name" = "Nom de famille";

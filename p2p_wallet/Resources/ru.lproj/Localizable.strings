@@ -595,13 +595,10 @@
 "Up to 3 days · %@ fees" = "До 3 дней · Плата %@";
 "Up to 1 hour · %@ fees" = "До 1 часа · Плата %@";
 "bank card, bank transfer or crypto" = "банковская карта, банковский перевод или криптовалюта";
-"Enter your personal data to open an account. Please, use your real credentials." = "Введите свои личные данные, чтобы открыть счет.  Пожалуйста, используйте свои настоящие учетные данные.";
 "Contacts" = "Контакты";
 "Email" = "Электронная почта";
 "Phone number" = "Номер телефона";
-"Credentials" = "Реквизиты для входа";
 "First name" = "Имя";
-"Surname" = "Фамилия";
 "Enter" = "Входить";
 "DD.MM.YYYY" = "ДД.ММ.ГГГГ";
 "Date of Birth" = "Дата рождения";
@@ -622,7 +619,6 @@
 "Incorrect day" = "Неверный день";
 "Incorrect month" = "Неверный месяц";
 "Source of funds" = "Источник средств";
-"Occupation industry" = "оккупация промышленности";
 "Current address" = "Текущий адрес";
 "City" = "Город";
 "Full city name" = "Полное название города";
@@ -631,7 +627,6 @@
 "Postal code" = "Почтовый индекс";
 "Recommended" = "рекомендуемые";
 "State or region" = "Штат или регион";
-"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Нажав кнопку «Продолжить», вы подтверждаете, что не являетесь политически значимым лицом.";
 "Country" = "Страна";
 "Chosen" = "Выбранный";
 "All industries" = "Все отрасли";
@@ -741,3 +736,10 @@
 "Next" = "Следующий";
 "Learn more" = "Узнать больше";
 "Withdraw" = "Отзывать";
+"Personal information" = "Персональная информация";
+"Full legal first and middle names" = "Полные официальные имена и отчества";
+"Full legal last name(s)" = "Полная юридическая фамилия (и)";
+"Spell your name exactly as it's shown on your passport or ID card." = "Напишите свое имя точно так, как оно указано в вашем паспорте или удостоверении личности.";
+"Jobs industry" = "Отрасль вакансий";
+"Employment industry" = "Отрасль занятости";
+"Last name" = "Фамилия";

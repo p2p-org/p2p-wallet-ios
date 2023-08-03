@@ -17,14 +17,9 @@ struct StrigaRegistrationSecondStepView: View {
         ColoredBackground {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    BaseInformerView(data: StrigaRegistrationInfoViewModel.credentials)
-                        .padding(.top, 22)
                     sourceOfFundsSection
                     ListSpacerCellView(height: 10, backgroundColor: .clear)
-                    VStack(spacing: 32) {
-                        addressSection
-                        BaseInformerView(data: StrigaRegistrationInfoViewModel.confirm)
-                    }
+                    addressSection
                     ListSpacerCellView(height: 12, backgroundColor: .clear)
                     NewTextButton(
                         title: viewModel.actionTitle.uppercaseFirst,
@@ -48,7 +43,7 @@ struct StrigaRegistrationSecondStepView: View {
                 .padding(.horizontal, 9)
             VStack(spacing: 23) {
                 Cell(
-                    title: L10n.occupationIndustry,
+                    title: L10n.jobsIndustry,
                     status: viewModel.fieldsStatuses[.occupationIndustry]
                 ) {
                     DetailedButton(value: $viewModel.occupationIndustry, action: {
@@ -57,7 +52,7 @@ struct StrigaRegistrationSecondStepView: View {
                 }
 
                 Cell(
-                    title: L10n.sourceOfFunds,
+                    title: L10n.employmentIndustry,
                     status: viewModel.fieldsStatuses[.sourceOfFunds]
                 ) {
                     DetailedButton(value: $viewModel.sourceOfFunds, action: {
