@@ -47,15 +47,27 @@ public protocol AnyToken {
     var decimals: UInt8 { get }
 
     /// Token address
+    ///
+    /// Use this property with attention. For example native token doesn't have mint address, the address of wrapped sol
+    /// will be used.
     @available(*, deprecated, message: "Legacy code")
     var address: String { get }
+
+    var keyAppExtension: KeyAppTokenExtension { get }
 }
 
 public extension AnyToken {
     var id: String { "\(network)-\(primaryKey.id)" }
 
     var asSomeToken: SomeToken {
-        SomeToken(tokenPrimaryKey: primaryKey, symbol: symbol, name: name, decimals: decimals, network: network)
+        SomeToken(
+            tokenPrimaryKey: primaryKey,
+            symbol: symbol,
+            name: name,
+            decimals: decimals,
+            network: network,
+            keyAppExtension: keyAppExtension
+        )
     }
 
     var address: String {
@@ -90,17 +102,21 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let network: TokenNetwork
 
+    public var keyAppExtension: KeyAppTokenExtension
+
     public init(
         tokenPrimaryKey: TokenPrimaryKey,
         symbol: String,
         name: String,
         decimals: UInt8,
-        network: TokenNetwork
+        network: TokenNetwork,
+        keyAppExtension: KeyAppTokenExtension
     ) {
         primaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name
         self.decimals = decimals
         self.network = network
+        self.keyAppExtension = keyAppExtension
     }
 }

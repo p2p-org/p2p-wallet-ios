@@ -45,11 +45,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
                 let equityValue: CurrencyAmount = state.value
                     .filter { !$0.isUSDC }
                     .reduce(CurrencyAmount(usd: 0)) {
-                        if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-                            return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
-                        } else {
-                            return $0 + $1.amountInFiat
-                        }
+                        return $0 + $1.amountInFiat
                     }
 
                 let formatter = CurrencyFormatter(
