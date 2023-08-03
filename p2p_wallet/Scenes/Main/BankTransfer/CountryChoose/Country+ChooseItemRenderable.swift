@@ -2,6 +2,6 @@ import CountriesAPI
 
 extension Country: ChooseItemRenderable {
     func render() -> EmojiTitleCellView {
-        EmojiTitleCellView(emoji: emoji ?? "", name: name)
+        EmojiTitleCellView(emoji: emoji ?? "", name: name, subtitle: nil)
     }
 }

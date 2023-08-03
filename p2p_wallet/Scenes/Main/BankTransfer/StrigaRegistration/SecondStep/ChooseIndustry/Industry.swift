@@ -19,6 +19,6 @@ extension Industry: ChooseItemSearchableItem {
 
 extension Industry: ChooseItemRenderable {
     func render() -> EmojiTitleCellView {
-        EmojiTitleCellView(emoji: emoji, name: title)
+        EmojiTitleCellView(emoji: emoji, name: title, subtitle: nil)
     }
 }

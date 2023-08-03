@@ -45,14 +45,15 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
 
         viewModel.choosePhoneCountryCode
             .flatMap { [unowned self] in
-                self.coordinate(to: ChoosePhoneCodeCoordinator(
-                    selectedDialCode: $0?.dialCode,
-                    selectedCountryCode: $0?.code,
-                    presentingViewController: vc
-                ))
+                self.coordinate(to: ChooseItemCoordinator<PhoneCodeItem>(title: L10n.selectYourCountry, controller: navigationController, service: ChoosePhoneCodeService(), chosen: PhoneCodeItem(country: $0)))
             }
-            .sink { [weak viewModel] country in
-                viewModel?.selectedPhoneCountryCode = country
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    guard let item = item as? PhoneCodeItem else { return }
+                    viewModel?.selectedPhoneCountryCode = item.country
+                case .cancel: break
+                }
             }
             .store(in: &subscriptions)
 
