@@ -25,7 +25,8 @@ final class LokaliseAppDelegateService: NSObject, AppDelegateService {
 
     func applicationDidBecomeActive(_: UIApplication) {
         Lokalise.shared.checkForUpdates { updated, error in
-            print(updated, error)
+            if let error { print(error) }
+            print(updated)
         }
     }
 }
