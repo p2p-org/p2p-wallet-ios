@@ -1,5 +1,4 @@
 import Amplitude
-import AnalyticsManager
 import Foundation
 
 public final class AmplitudeAnalyticsProvider: AnalyticsProvider {
@@ -8,7 +7,7 @@ public final class AmplitudeAnalyticsProvider: AnalyticsProvider {
     }
 
     public init(apiKey: String) {
-        Amplitude.instance().trackingSessionEvents = true
+        Amplitude.instance().defaultTracking.sessions = true
         Amplitude.instance().initializeApiKey(apiKey)
     }
 

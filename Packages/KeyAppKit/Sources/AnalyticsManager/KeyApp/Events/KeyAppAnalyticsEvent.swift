@@ -1,4 +1,3 @@
-import AnalyticsManager
 import Foundation
 
 public enum KeyAppAnalyticsEvent: AnalyticsEvent {
