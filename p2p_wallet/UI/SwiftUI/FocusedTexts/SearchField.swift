@@ -21,7 +21,6 @@ struct SearchField: View {
                 .onSubmit {
                     isFocused = false
                 }
-                .autocorrectionDisabled()
 
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {
