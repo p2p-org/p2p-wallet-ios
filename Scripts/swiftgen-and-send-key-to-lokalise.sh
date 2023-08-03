@@ -18,7 +18,7 @@ json_payload="{\"keys\": ["
 last_key=""
 while IFS= read -r line; do
     value=$(echo "$line" | awk -F '=' '{gsub(/^[ \t]+|[ \t]+$/, "", $2); gsub(/^[ \t]+|[ \t]+$/, "", $1); print $1}')
-    key_name=$(echo "$value" | sed 's/[[:space:]]//g')
+    key_name=$(echo "$value")
     
     # Check if key_name or value is empty
     if [ -z "$key_name" ] || [ -z "$value" ]; then
