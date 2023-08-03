@@ -1,6 +1,6 @@
 {
   "automation": {
-    "script": "/opt/homebrew/bin/swiftgen config run --config ${PROJECT_DIR}/swiftgen.yml",
+    "script": "PROJECT_DIR=${PROJECT_DIR} ${PROJECT_DIR}/Scripts/swiftgen-and-send-key-to-lokalise.sh",
     "pathType": "absolute"
   }
 }
