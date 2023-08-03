@@ -26,8 +26,13 @@ json_payload+="{$last_key}]}"
 # Log the JSON payload
 echo "$json_payload"
 
+# Read the API token and project ID from Config.xcconfig
+lokalise_api_token=$(grep "LOKALISE_API_TOKEN" p2p_wallet/Config.xcconfig | cut -d '=' -f 2 | tr -d ' ')
+project_id=$(grep "LOKALISE_PROJECT_ID" p2p_wallet/Config.xcconfig | cut -d '=' -f 2 | tr -d ' ')
+
 # Send the keys and values to Lokalise API
-# curl -X POST "https://api.lokalise.com/api2/projects/$project_id/keys" \
-#      -H "Content-Type: application/json" \
-#      -H "x-api-token: $lokalise_api_token" \
-#      -d "$json_payload"
+curl "https://api.lokalise.com/api2/projects/$project_id/keys" \
+     -H "X-Api-Token: $lokalise_api_token" \
+     -H "accept: application/json" \
+     -H "Content-Type: application/json" \
+     -d "$json_payload"
