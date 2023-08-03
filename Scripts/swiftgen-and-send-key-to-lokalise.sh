@@ -19,6 +19,13 @@ last_key=""
 while IFS= read -r line; do
     value=$(echo "$line" | awk -F '=' '{gsub(/^[ \t]+|[ \t]+$/, "", $2); gsub(/^[ \t]+|[ \t]+$/, "", $1); print $1}')
     key_name=$(echo "$value" | sed 's/[[:space:]]//g')
+    
+    # Check if key_name or value is empty
+    if [ -z "$key_name" ] || [ -z "$value" ]; then
+        echo "Error: key_name or value is empty."
+        exit 1
+    fi
+
     last_key="\"key_name\":$key_name,\"platforms\":[\"ios\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"
 done <<< "$new_lines"
 json_payload+="{$last_key}]}"
