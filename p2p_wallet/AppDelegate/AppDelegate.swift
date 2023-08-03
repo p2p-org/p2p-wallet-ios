@@ -61,6 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Lokalise.shared.localizationType = .release
         #endif
 
+        Lokalise.shared.checkForUpdates()
+
         // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
