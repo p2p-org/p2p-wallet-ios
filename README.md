@@ -51,9 +51,15 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 // MARK: - NameService
 NAME_SERVICE_ENDPOINT = name_service.org
 ```
+
+- Allow all scripts in Scripts
+```shell
+find Scripts -type d -exec chmod u+x {} \;
+```
+
 - Run install.sh
 ```shell
-chmod u+x Scripts/install.sh && Scripts/install.sh
+Scripts/install.sh
 ```
 
 - Select target `p2p_wallet` (if `Detect Unused Code` is selected by default after xcodegen)
