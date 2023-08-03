@@ -51,20 +51,19 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 // MARK: - NameService
 NAME_SERVICE_ENDPOINT = name_service.org
 ```
-
-- Allow all scripts in Scripts
-```shell
-find Scripts -type d -exec chmod u+x {} \;
-```
-
 - Run install.sh
 ```shell
-Scripts/install.sh
+chmod u+x Scripts/install.sh && Scripts/install.sh
 ```
 
 - Select target `p2p_wallet` (if `Detect Unused Code` is selected by default after xcodegen)
 
 ## Localization
+
+- Allow swiftgen-and-send-key-to-lokalise.sh to be executed
+```shell
+chmod u+x Scripts/swiftgen-and-send-key-to-lokalise.sh
+```
 
 - Download [LocalizationHelper app](https://github.com/bigearsenal/XCodeLocalizationHelper/raw/main/release/LocalizationHelper.zip)
 - Copy `LocalizationHelper` to `Applications`
