@@ -55,6 +55,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
         Lokalise.shared.swizzleMainBundle()
 
+        #if !RELEASE
+            Lokalise.shared.localizationType = .prerelease
+        #else
+            Lokalise.shared.localizationType = .release
+        #endif
+
         // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
