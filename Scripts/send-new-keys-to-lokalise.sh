@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Read the MARKETING_VERSION from project.yml and extract only the number
-marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
-
 # Get the new lines from Localizable.strings using git diff with the previous commit
 changes=$(git diff $TAG_NAME -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
 new_lines=$(echo "$changes" | grep "^[+]" | grep -v "^+++" | cut -c2-)
+
+# Read the MARKETING_VERSION from project.yml and extract only the number
+marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
 
 # Parse values from the new lines and build the JSON payload
 json_payload="{\"keys\": ["
@@ -26,7 +26,7 @@ json_payload=${json_payload%,}"]}"
 # Log the JSON payload
 echo "$json_payload"
 
-# Read the API token and project ID from Config.xcconfig
+# Read the API token and project ID from secret
 lokalise_api_token=$LOKALISE_API_TOKEN
 project_id=$LOKALISE_PROJECT_ID
 

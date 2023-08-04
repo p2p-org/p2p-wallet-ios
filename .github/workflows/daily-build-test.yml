@@ -24,7 +24,7 @@ jobs:
   add_new_keys_to_lokalise:
     runs-on: ubuntu-latest
     env:
-      SCRIPT_DIR: "Scripts/swiftgen-and-send-key-to-lokalise.sh"
+      SCRIPT_DIR: "Scripts/send-new-keys-to-lokalise.sh"
       TAG_NAME: "lokalise/synced"
     steps:
       - name: Check out code
