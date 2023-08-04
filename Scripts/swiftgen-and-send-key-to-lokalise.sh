@@ -51,8 +51,8 @@ echo -e ""
 echo -e ""
 if [ "$response_status" -eq 200 ]; then
     echo -e "Request to Lokalise API successful. Tagging '$TAG_NAME' and pushing..."
-    # git tag -f $TAG_NAME
-    # git push -f origin $TAG_NAME
+    git tag -f $TAG_NAME
+    git push -f origin $TAG_NAME
 else
     echo -e "Error: Request to Lokalise API failed with status code $response_status."
     exit 1
