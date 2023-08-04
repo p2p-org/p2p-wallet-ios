@@ -64,8 +64,6 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
-        Defaults.region = nil
-
         // Home with tokens
         tokensViewModel = HomeAccountsViewModel(navigation: navigation)
 
