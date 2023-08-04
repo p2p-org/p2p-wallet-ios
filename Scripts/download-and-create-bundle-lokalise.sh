@@ -29,19 +29,32 @@ download_json_files() {
   local date_param="$1"
   local supported_languages="${SUPPORTED_LANGUAGUES}"
 
-  # Download JSON files
+  echo "Download strings for supported languagues: $supported_languages"
+
+  # JSON data to be sent in the request
+  json_data='{
+    "format": "strings",
+    "export_empty_as": "base",
+    "all_platforms": false,
+    "filter_langs": '"$supported_languages"',
+    "replace_breaks": true,
+    "escape_percent": true,
+    "include_tags": ["'"$marketing_version"'"]
+  }'
+
+  # Print the JSON data being sent in the request
+  echo "Request JSON Data:"
+  echo "$json_data"
+
+  # Get JSON response
   response=$(curl -X "POST" "https://api.lokalise.com/api2/projects/${LOKALISE_PROJECT_ID}/files/download" \
        -H "X-Api-Token: ${LOKALISE_API_TOKEN}" \
        -H "Content-Type: application/json" \
-       -d $'{
-              "format": "strings",
-              "export_empty_as": "base",
-              "all_platforms": false,
-              "filter_lang": "'"$supported_languages"'",
-              "replace_breaks": true,
-              "escape_percent": true,
-              "include_tags": ["'"$marketing_version"'"]
-            }')
+       -d "$json_data")
+
+  # Print the JSON response
+  echo "Response JSON Data:"
+  echo "$response"
 
   # Extract the bundle_url from the JSON response
   bundle_url=$(echo "$response" | jq -r '.bundle_url')
