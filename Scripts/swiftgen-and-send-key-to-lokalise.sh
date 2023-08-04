@@ -36,19 +36,30 @@ echo "$json_payload"
 lokalise_api_token=$LOKALISE_API_TOKEN
 project_id=$LOKALISE_PROJECT_ID
 
-# Send the keys and values to Lokalise API
-response=$(curl -s -o /dev/null -w "%{http_code}" "https://api.lokalise.com/api2/projects/$project_id/keys" \
+# Send the keys and values to Lokalise API and capture the response and status code
+response=$(curl -s -o response.json -w "%{http_code}" "https://api.lokalise.com/api2/projects/$project_id/keys" \
      -H "X-Api-Token: $lokalise_api_token" \
      -H "accept: application/json" \
      -H "Content-Type: application/json" \
      -d "$json_payload")
 
+# Print the JSON response
+echo -e ""
+echo -e "Response from Lokalise"
+cat response.json
+rm response.json
+
+# Extract the status code from the response
+response_status=$(tail -n 1 <<< "$response")
+
 # Check if the request was successful (HTTP status code 200)
-if [ "$response" -eq 200 ]; then
+echo -e ""
+echo -e ""
+if [ "$response_status" -eq 200 ]; then
     echo -e "Request to Lokalise API successful. Tagging 'lokalise/synced' and pushing..."
-    git tag -f lokalise/synced
-    git push -f origin lokalise/synced
+    # git tag -f lokalise/synced
+    # git push -f origin lokalise/synced
 else
-    echo -e "Error: Request to Lokalise API failed with status code $response."
+    echo -e "Error: Request to Lokalise API failed with status code $response_status."
     exit 1
 fi
