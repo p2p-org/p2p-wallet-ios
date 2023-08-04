@@ -1,8 +1,8 @@
 import SwiftUI
 import KeyAppUI
 
-struct BankTransferInfoView: View {
-    @ObservedObject var viewModel: BankTransferInfoViewModel
+struct SelectRegionView: View {
+    @ObservedObject var viewModel: SelectRegionViewModel
 
     var body: some View {
         VStack(spacing: 8) {
@@ -32,8 +32,8 @@ struct BankTransferInfoView: View {
     }
 }
 
-struct BankTransferInfoView_Previews: PreviewProvider {
+struct SelectRegionView_Previews: PreviewProvider {
     static var previews: some View {
-        BankTransferInfoView(viewModel: .init())
+        SelectRegionView(viewModel: .init())
     }
 }

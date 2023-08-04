@@ -99,7 +99,7 @@ final class HomeCoordinator: Coordinator<Void> {
         // handle navigation
         navigation.flatMap({ [unowned self] action in
             if regionSelectionReqired.contains(action), Defaults.region == nil {
-                return coordinate(to: BankTransferInfoCoordinator(viewController: navigationController))
+                return coordinate(to: SelectRegionCoordinator(viewController: navigationController))
                     .handleEvents(receiveOutput: { [unowned self] _ in
                         navigationController.popViewController(animated: true)
                     })

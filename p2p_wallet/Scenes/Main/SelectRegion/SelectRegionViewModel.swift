@@ -6,7 +6,7 @@ import SwiftyUserDefaults
 import Resolver
 import KeyAppUI
 
-final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
+final class SelectRegionViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Navigation
 

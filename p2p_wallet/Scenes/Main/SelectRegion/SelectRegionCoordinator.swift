@@ -4,7 +4,7 @@ import Foundation
 import Resolver
 import SwiftUI
 
-final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator.Result> {
+final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result> {
 
     // MARK: -
 
@@ -14,10 +14,10 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         self.viewController = viewController
     }
 
-    override func start() -> AnyPublisher<BankTransferInfoCoordinator.Result, Never> {
-        let viewModel = BankTransferInfoViewModel()
+    override func start() -> AnyPublisher<SelectRegionCoordinator.Result, Never> {
+        let viewModel = SelectRegionViewModel()
         let controller = UIHostingController(
-            rootView: BankTransferInfoView(viewModel: viewModel)
+            rootView: SelectRegionView(viewModel: viewModel)
         )
 
         viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
@@ -40,12 +40,12 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         viewController.pushViewController(controller, animated: true)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher().map { BankTransferInfoCoordinator.Result.cancelled },
+            controller.deallocatedPublisher().map { SelectRegionCoordinator.Result.cancelled },
             viewModel.countrySubmitted.map { country in
                 if let country {
-                    return BankTransferInfoCoordinator.Result.selected(country)
+                    return SelectRegionCoordinator.Result.selected(country)
                 }
-                return BankTransferInfoCoordinator.Result.cancelled
+                return SelectRegionCoordinator.Result.cancelled
             }
         )
             .prefix(1)
@@ -53,7 +53,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
     }
 }
 
-extension BankTransferInfoCoordinator {
+extension SelectRegionCoordinator {
     enum Result {
         case cancelled
         case selected(Region)
