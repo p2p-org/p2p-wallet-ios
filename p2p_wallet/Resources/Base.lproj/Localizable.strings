@@ -716,3 +716,7 @@
 "We have sent a code\nto" = "We have sent a code\nto";
 "Resend SMS %@" = "Resend SMS %@";
 "Tap to resend" = "Tap to resend";
+"Open account for instant international transfers" = "Open account for instant international transfers";
+"This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money." = "This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money.";
+"By pressing the button below you agree" = "By pressing the button below you agree";
+"Terms" = "Terms";

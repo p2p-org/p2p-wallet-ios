@@ -758,3 +758,7 @@
 "We have sent a code\nto" = "Chúng tôi đã gửi một mã\nđến";
 "Resend SMS %@" = "Gửi lại SMS %@";
 "Tap to resend" = "Nhấn để gửi lại";
+"Open account for instant international transfers" = "Mở tài khoản để chuyển tiền quốc tế ngay lập tức";
+"This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money." = "Tài khoản này đóng vai trò trung gian giữa Key App và đối tác ngân hàng của chúng tôi, nhà cung cấp dịch vụ thanh toán Striga, hoạt động bằng tiền định danh của bạn.";
+"By pressing the button below you agree" = "Bằng cách nhấn nút bên dưới, bạn đồng ý";
+"Terms" = "Điều kiện";

@@ -1,161 +1,78 @@
 import BankTransfer
-import CountriesAPI
 import Combine
+import KeyAppUI
+import Resolver
 import SwiftUI
 import SwiftyUserDefaults
-import Resolver
-import KeyAppUI
 
 final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
-
-    // MARK: - Navigation
-
-    var showCountries: AnyPublisher<Country?, Never> {
-        showCountriesSubject.eraseToAnyPublisher()
-    }
-
-    var openRegistration: AnyPublisher<Void, Never> {
-        openRegistrationSubject.eraseToAnyPublisher()
-    }
-
-    var openProviderInfo: AnyPublisher<URL, Never> {
-        openProviderInfoSubject.eraseToAnyPublisher()
-    }
-
     // MARK: - Dependencies
 
-    @Injected private var countriesService: CountriesAPI
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var notificationService: NotificationService
 
-    // MARK: -
+    // MARK: - Properties
 
     @Published var items: [any Renderable] = []
+    @Published var isLoading = false
 
-    // MARK: -
+    // MARK: - Actions
 
-    private let showCountriesSubject = PassthroughSubject<Country?, Never>()
-    private let openProviderInfoSubject = PassthroughSubject<URL, Never>()
-    private let openRegistrationSubject = PassthroughSubject<Void, Never>()
+    let openHelp = PassthroughSubject<Void, Never>()
+    let openRegistration = PassthroughSubject<Void, Never>()
+    let openBrowser = PassthroughSubject<URL, Never>()
 
-    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
-    private var lastChosenCountry: Country?
-    private var currentCountry: Country? {
-        didSet {
-            if lastChosenCountry != currentCountry {
-                lastChosenCountry = currentCountry
-            }
-            self.items = self.makeItems()
-        }
-    }
+    let requestContinue = PassthroughSubject<Void, Never>()
+    let requestOpenTerms = PassthroughSubject<Void, Never>()
+    let requestOpenPrivacyPolicy = PassthroughSubject<Void, Never>()
 
     override init() {
         super.init()
-
         bind()
+        items = makeItems()
     }
 
-    func setCountry(_ country: Country) {
-        self.currentCountry = country
-    }
+    private func bind() {
+        openHelp
+            .sink { [weak self] in self?.helpLauncher.launch() }
+            .store(in: &subscriptions)
 
-    func bind() {
-        if nil != lastChosenCountry {
-            currentCountry = lastChosenCountry
-        } else {
-            Task {
-                do {
-                    self.currentCountry = try await countriesService.currentCountryName()
-                } catch {
-                    DefaultLogManager.shared.log(event: "Error", logLevel: .error, data: error.localizedDescription)
-                }
+        requestContinue
+            .sinkAsync { [weak self] in
+                self?.isLoading = true
+                try? await Task.sleep(seconds: 3)
+                self?.openRegistration.send(())
+                self?.isLoading = false
             }
-        }
+            .store(in: &subscriptions)
+
+        requestOpenPrivacyPolicy
+            .sink { [weak self] in
+                self?.notificationService.showToast(title: "👹", text: "No URL YET")
+//                self?.openBrowser.send(URL(string: "")) //TODO: Add URL
+            }
+            .store(in: &subscriptions)
+
+        requestOpenTerms
+            .sink { [weak self] in
+                self?.notificationService.showToast(title: "👹", text: "No URL YET")
+//                self?.openBrowser.send(URL(string: "")) //TODO: Add URL
+            }
+            .store(in: &subscriptions)
     }
 
     private func makeItems() -> [any Renderable] {
-        let countryCell = BankTransferCountryCellViewItem(
-            name: self.currentCountry?.name ?? "",
-            flag: self.currentCountry?.emoji ?? "🏴"
-        )
-        if isAvailable() {
-            return [
-                BankTransferInfoImageCellViewItem(image: .bankTransferInfoAvailableIcon),
-                ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
-                BankTransferTitleCellViewItem(title: L10n.openIBANAccountForInternationalTransfersWithZeroFees),
-                ListSpacerCellViewItem(height: 16, backgroundColor: .clear),
-                countryCell,
-                ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
-                CenterTextCellViewItem(
-                    id: CellItemIdentidier.poweredByStriga.rawValue,
-                    text: L10n.poweredByStriga,
-                    style: .text3,
-                    color: Color(Asset.Colors.sky.color)
-                ),
-                ListSpacerCellViewItem(height: 40, backgroundColor: .clear),
-                ButtonListCellItem(
-                    leadingImage: nil,
-                    title: L10n.continue,
-                    action: { [weak self] in
-                        self?.submitCountry()
-                    },
-                    style: .primary,
-                    trailingImage: Asset.MaterialIcon.arrowForward.image.withTintColor(Asset.Colors.lime.color)
-                ),
-                ListSpacerCellViewItem(height: 2, backgroundColor: .clear)
-            ]
-        } else {
-            return [
-                BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
-                ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferTitleCellViewItem(title: L10n.thisServiceIsAvailableOnlyForEuropeanEconomicAreaCountries),
-                ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferInfoCountriesTextCellViewItem(),
-                ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
-                countryCell,
-                ListSpacerCellViewItem(height: 56, backgroundColor: .clear),
-                ButtonListCellItem(
-                    leadingImage: nil,
-                    title: L10n.changeCountry,
-                    action: { [weak self] in
-                        self?.openCountries()
-                    },
-                    style: .primary,
-                    trailingImage: nil
-                ),
-                ListSpacerCellViewItem(height: 2, backgroundColor: .clear)
-            ]
-        }
-    }
-
-    // MARK: -
-
-    func itemTapped(item: any Identifiable) {
-        if nil != item as? BankTransferInfoCountriesTextCellViewItem {
-            helpLauncher.launch()
-        } else if nil != item as? BankTransferCountryCellViewItem {
-            openCountries()
-        } else if let item = item as? CenterTextCellViewItem, item.id == CellItemIdentidier.poweredByStriga.rawValue {
-            openProviderInfoSubject.send(URL(string: "https://striga.com")!)
-        }
-    }
-
-    // MARK: - actions
-
-    private func openCountries() {
-        showCountriesSubject.send(currentCountry)
-    }
-
-    private func submitCountry() {
-        openRegistrationSubject.send()
-    }
-
-    private func isAvailable() -> Bool {
-        ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "gr", "es", "nl", "is", "li", "lt", "lu", "lv", "mt", "de", "no", "pl", "pt", "ro", "sk", "si", "se", "hu", "it", "ch", "gb"].contains(self.currentCountry?.code ?? "")
-    }
-
-    enum CellItemIdentidier: String {
-        case poweredByStriga
+        [
+            BankTransferInfoImageCellViewItem(image: .walletFound),
+            ListSpacerCellViewItem(height: 16, backgroundColor: .clear),
+            BankTransferTitleCellViewItem(title: L10n.openAccountForInstantInternationalTransfers),
+            ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
+            CenterTextCellViewItem(
+                text: L10n
+                    .thisAccountActsAsAnIntermediaryBetweenKeyAppAndOurBankingPartnerStrigaPaymentProviderWhichOperatesWithYourFiatMoney,
+                style: .text3,
+                color: Color(Asset.Colors.night.color)
+            ),
+        ]
     }
 }
-
-extension Country: DefaultsSerializable {}
