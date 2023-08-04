@@ -1,24 +1,14 @@
 #!/bin/bash
 
-# move to working folder
-cd "${PROJECT_DIR}"
-
 # Read the MARKETING_VERSION from project.yml and extract only the number
 marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
 
-# Run swiftgen first
-echo "==> Run swiftgen"
-/opt/homebrew/bin/swiftgen config run --config swiftgen.yml
-
 # Get the new lines from Localizable.strings using git diff
-changes=$(git diff HEAD -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
-
-# Extract new lines from the git diff
+changes=$(git diff origin/develop -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
 new_lines=$(echo "$changes" | grep "^[+]" | grep -v "^+++" | cut -c2-)
 
-# Parse values from the new lines and build the JSON payload for the last key-value pair
+# Parse values from the new lines and build the JSON payload
 json_payload="{\"keys\": ["
-last_key=""
 while IFS= read -r line; do
     value=$(echo "$line" | awk -F '=' '{gsub(/^[ \t]+|[ \t]+$/, "", $2); gsub(/^[ \t]+|[ \t]+$/, "", $1); print $1}')
     key_name=$(echo "$value")
@@ -29,9 +19,9 @@ while IFS= read -r line; do
         exit 1
     fi
 
-    last_key="\"key_name\":$key_name,\"platforms\":[\"ios\"],\"tags\":[\"$marketing_version\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"
+    json_payload+="{"\"key_name\":$key_name,\"platforms\":[\"ios\"],\"tags\":[\"$marketing_version\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"},"
 done <<< "$new_lines"
-json_payload+="{$last_key}]}"
+json_payload=${json_payload%,}"]}"
 
 # Log the JSON payload
 echo "$json_payload"
