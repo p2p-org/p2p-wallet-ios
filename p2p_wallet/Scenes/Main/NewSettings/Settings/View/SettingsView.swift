@@ -58,7 +58,7 @@ struct SettingsView: View {
                             if let country = viewModel.region {
                                 Text(country.name)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
-                                    .font(uiFont: .font(of: .label1))
+                                    .apply(style: .label1)
                             }
                             Image(uiImage: .cellArrow)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))

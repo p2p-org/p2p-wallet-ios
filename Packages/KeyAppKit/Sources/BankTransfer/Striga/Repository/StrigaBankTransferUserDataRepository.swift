@@ -368,10 +368,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try await remoteProvider.initiateSEPAPayment(userId: userId, accountId: accountId, amount: amount, iban: iban, bic: bic).challengeId
     }
 
-    public func availableRegions() -> [String] {
-        ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "gr", "es", "nl", "is", "li", "lt", "lu", "lv", "mt", "de", "no", "pl", "pt", "ro", "sk", "si", "se", "hu", "it", "ch", "gb"]
-    }
-
     // MARK: - Private
     private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)

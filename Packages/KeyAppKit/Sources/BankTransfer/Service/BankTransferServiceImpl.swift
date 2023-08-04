@@ -179,8 +179,4 @@ extension BankTransferServiceImpl {
     public func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {
         try await repository.save(info)
     }
-
-    public func isAvailableForRegion(country: Region) -> Bool {
-        repository.availableRegions().contains(country.alpha2.lowercased())
-    }
 }
