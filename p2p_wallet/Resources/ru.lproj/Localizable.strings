@@ -745,3 +745,12 @@
 "Last name" = "Фамилия";
 "Selected" = "Выбрано";
 "Nothing was found" = "Ничего не найдено";
+"Verify your identity" = "Подтвердите вашу личность";
+"Enter confirmation code" = "Введите код подтверждения";
+"We have sent a code\nto" = "Мы отправили код\nна";
+"Resend SMS %@" = "Отправить SMS повторно %@";
+"Tap to resend" = "Нажмите, чтобы отправить повторно";
+"Open account for instant international transfers" = "Открыть счет для мгновенных международных переводов";
+"This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money." = "Эта учетная запись выступает в качестве посредника между Key App и нашим банковским партнером, поставщиком платежных услуг Striga, который работает с вашими фиатными деньгами.";
+"By pressing the button below you agree" = "Нажимая кнопку ниже, вы соглашаетесь";
+"Terms" = "Условия";

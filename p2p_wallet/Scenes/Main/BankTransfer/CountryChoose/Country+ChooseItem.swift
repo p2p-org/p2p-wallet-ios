@@ -9,3 +9,5 @@ extension Country: ChooseItemSearchableItem {
         name.lowercased().hasPrefix(keyword.lowercased())
     }
 }
+
+extension Country: DefaultsSerializable {}

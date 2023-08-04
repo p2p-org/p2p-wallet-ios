@@ -749,3 +749,12 @@
 "Last name" = "Nom de famille";
 "Selected" = "Choisi";
 "Nothing was found" = "Rien n'a été trouvé";
+"Verify your identity" = "Vérifiez Votre Identité";
+"Enter confirmation code" = "Entrez le code de confirmation";
+"We have sent a code\nto" = "Nous avons envoyé un code\nà";
+"Resend SMS %@" = "Renvoyer le SMS %@";
+"Tap to resend" = "Appuyez pour renvoyer";
+"Open account for instant international transfers" = "Ouvrir un compte pour des virements internationaux instantanés";
+"This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money." = "Ce compte sert d'intermédiaire entre Key App et notre partenaire bancaire, le prestataire de paiement Striga, qui opère avec votre monnaie fiduciaire.";
+"By pressing the button below you agree" = "En appuyant sur le bouton ci-dessous, vous acceptez";
+"Terms" = "Conditions";

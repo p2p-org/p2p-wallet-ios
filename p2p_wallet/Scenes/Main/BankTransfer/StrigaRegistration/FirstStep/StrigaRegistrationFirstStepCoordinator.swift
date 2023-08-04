@@ -57,7 +57,10 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             }
             .store(in: &subscriptions)
 
-        navigationController.pushViewController(vc, animated: true)
+        // We know we have come from BankTransferInfoCoordinator. We need to remove in from hierarchy
+        var newVCs = Array(navigationController.viewControllers.dropLast())
+        newVCs.append(vc)
+        navigationController.setViewControllers(newVCs, animated: true)
 
         return Publishers.Merge(
             vc.deallocatedPublisher()

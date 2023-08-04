@@ -71,7 +71,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         switch step {
         case .registration:
             return coordinate(
-                to: BankTransferInfoCoordinator(viewController: viewController)
+                to: BankTransferInfoCoordinator(navigationController: viewController)
             ).handleEvents(receiveOutput: { [weak self] result in
                 guard let self else { return }
                 switch result {
