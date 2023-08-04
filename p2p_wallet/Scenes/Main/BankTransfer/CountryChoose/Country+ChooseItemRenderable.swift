@@ -9,6 +9,6 @@ extension Country: ChooseItemRenderable {
 
 extension Region: ChooseItemRenderable {
     func render() -> EmojiTitleCellView {
-        EmojiTitleCellView(emoji: (flagEmoji ?? "").decodeHTMLEntities() ?? "", name: alpha3)
+        EmojiTitleCellView(emoji: (flagEmoji ?? "").decodeHTMLEntities() ?? "", name: name)
     }
 }

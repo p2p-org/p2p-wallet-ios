@@ -21,6 +21,7 @@ enum HomeNavigation: Equatable {
     // HomeEmpty
     case topUpCoin(TokenMetadata)
     case topUp // Top up via bank transfer, bank card or crypto receive
+    case withdrawActions // Withdraw actions My bank account / somone else
     case bankTransfer // Only bank transfer
     case withdrawCalculator
     case withdrawInfo(StrigaWithdrawalInfo, WithdrawConfirmationParameters)
@@ -45,7 +46,7 @@ final class HomeCoordinator: Coordinator<Void> {
     var tokensViewModel: HomeAccountsViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
     /// A list of actions required to check if country is selected
-    private let regionSelectionReqired = [HomeNavigation.withdrawCalculator, .addMoney]
+    private let regionSelectionReqired = [HomeNavigation.withdrawActions, .addMoney]
 
     // MARK: - Initializers
 
@@ -217,6 +218,22 @@ final class HomeCoordinator: Coordinator<Void> {
         case .bankTransfer:
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
                 .eraseToAnyPublisher()
+        case .withdrawActions:
+            return coordinate(to: WithdrawActionsCoordinator(viewController: navigationController))
+                .flatMap { [unowned self] result in
+                    switch result {
+                    case .action(let action):
+                        switch action {
+                        case .transfer:
+                            return self.navigate(to: .withdrawCalculator, homeView: homeView)
+                        case .user, .wallet:
+                            return coordinate(to: SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, allowSwitchingMainAmountType: true))
+                                .map {_ in }.eraseToAnyPublisher()
+                        }
+                    case .cancel:
+                        return Just(()).eraseToAnyPublisher()
+                    }
+                }.eraseToAnyPublisher()
         case .withdrawCalculator:
             return coordinate(to: WithdrawCalculatorCoordinator(
                 navigationController: navigationController

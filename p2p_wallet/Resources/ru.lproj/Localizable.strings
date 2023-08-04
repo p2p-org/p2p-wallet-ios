@@ -743,3 +743,7 @@
 "Withdraw" = "Отзывать";
 "Select your country of residence" = "Выберите страну проживания";
 "We suggest payment options based on your choice" = "Мы предлагаем варианты оплаты на ваш выбор";
+"My bank account" = "мой банковский счет";
+"KeyApp user" = "Пользователь Key App";
+"Crypto exchange or wallet" = "Криптобиржа или кошелек";
+"%@ fee" = "%@ плата";

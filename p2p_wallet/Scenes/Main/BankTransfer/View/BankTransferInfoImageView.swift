@@ -75,9 +75,9 @@ struct BankTransferCountryCellView: View {
     let isLoading: Bool
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             flagView
-                .padding(.leading, 14)
+                .padding(.leading, 16)
             VStack(alignment: .leading, spacing: 6) {
                 Text(name)
                     .fontWeight(.semibold)
@@ -99,18 +99,24 @@ struct BankTransferCountryCellView: View {
         }
         .padding(.vertical, 10)
         .background(Color(Asset.Colors.snow.color))
-        .cornerRadius(radius: 12, corners: .allCorners)
+        .cornerRadius(radius: 16, corners: .allCorners)
     }
 
     var flagView: some View {
-        Text(flag)
-            .fontWeight(.bold)
-            .apply(style: .title1)
-            .skeleton(
-                with: isLoading,
-                size: CGSize(width: 32, height: 32),
-                animated: .default
-            )
+        Rectangle()
+            .fill(Color(Asset.Colors.smoke.color))
+            .cornerRadius(radius: 24, corners: .allCorners)
+            .frame(width: 48, height: 48)
+            .overlay {
+                Text(flag)
+                    .fontWeight(.bold)
+                    .apply(style: .title1)
+                    .skeleton(
+                        with: isLoading,
+                        size: CGSize(width: 32, height: 32),
+                        animated: .default
+                    )
+            }
     }
 }
 

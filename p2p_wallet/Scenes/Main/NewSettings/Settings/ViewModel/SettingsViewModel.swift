@@ -33,8 +33,11 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @SwiftyUserDefault(keyPath: \.region, options: .cached)
-    var region: Region?
+    @Published var region = Defaults.region {
+        didSet {
+            Defaults.region = region
+        }
+    }
 
     private var isBiometryCheckGoing: Bool = false
 

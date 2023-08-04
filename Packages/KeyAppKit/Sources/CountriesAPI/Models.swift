@@ -32,9 +32,7 @@ public struct Country: Codable, Hashable {
 }
 
 public struct Region: Codable, Equatable, Hashable {
-    public var name: String {
-        alpha3
-    }
+    public var name: String
     public let alpha2: String
     public let alpha3: String
     public let flagEmoji: String?

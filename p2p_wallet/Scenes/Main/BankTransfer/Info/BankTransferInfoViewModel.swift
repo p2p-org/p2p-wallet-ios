@@ -82,7 +82,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
             BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
             ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
             BankTransferTitleCellViewItem(title: L10n.selectYourCountryOfResidence),
-            ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
+            ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
             CenterTextCellViewItem(
                 text: L10n.weSuggestPaymentOptionsBasedOnYourChoice,
                 style: .text3,

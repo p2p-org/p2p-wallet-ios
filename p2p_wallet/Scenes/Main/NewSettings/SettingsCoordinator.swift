@@ -53,7 +53,7 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .country:
                     coordinate(to: ChooseItemCoordinator<Region>(
                         title: L10n.selectYourCountry,
-                        controller: navigationController,
+                        controller: settingsVC,
                         service: ChooseCountryService(),
                         chosen: Defaults.region,
                         showDoneButton: true
@@ -62,7 +62,7 @@ final class SettingsCoordinator: Coordinator<Void> {
                         switch result {
                             case .item(let item):
                             if let region = item as? Region {
-                                Defaults.region = region
+                                viewModel.region = region
                             } else {
                                 assert(true)
                             }

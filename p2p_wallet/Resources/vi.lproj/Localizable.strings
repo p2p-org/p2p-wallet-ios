@@ -751,3 +751,7 @@
 "Withdraw" = "Rút";
 "Select your country of residence" = "Chọn quốc gia cư trú của bạn";
 "We suggest payment options based on your choice" = "Chúng tôi đề xuất các tùy chọn thanh toán dựa trên sự lựa chọn của bạn";
+"My bank account" = "Tài khoản ngân hàng của tôi";
+"KeyApp user" = "người dùng Key App";
+"Crypto exchange or wallet" = "Trao đổi tiền điện tử hoặc ví";
+"%@ fee" = "%@phí";

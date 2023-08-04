@@ -28,7 +28,6 @@ struct BankTransferInfoView: View {
                         viewModel.itemTapped(item: item)
                     }
             }
-            .padding(.horizontal, 20)
         }
     }
 }

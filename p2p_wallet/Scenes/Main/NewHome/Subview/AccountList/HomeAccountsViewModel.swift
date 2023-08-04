@@ -287,7 +287,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    var shouldShowCountrySelect = true
     func actionClicked(_ action: HomeAction) {
         switch action {
         case .addMoney:
@@ -295,7 +294,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             navigation.send(.addMoney)
         case .withdraw:
             analyticsManager.log(event: .mainScreenWithdrawClick)
-            navigation.send(.withdrawCalculator)
+            navigation.send(.withdrawActions)
+//            navigation.send(.withdrawCalculator)
         }
     }
 

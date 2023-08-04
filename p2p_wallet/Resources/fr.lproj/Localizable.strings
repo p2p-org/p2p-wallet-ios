@@ -747,3 +747,7 @@
 "Withdraw" = "Retirer";
 "Select your country of residence" = "Sélectionnez votre pays de résidence";
 "We suggest payment options based on your choice" = "Nous proposons des options de paiement en fonction de votre choix";
+"My bank account" = "Mon compte banquaire";
+"KeyApp user" = "Utilisateur Key App";
+"Crypto exchange or wallet" = "Échange de crypto ou portefeuille";
+"%@ fee" = "%@ frais";
