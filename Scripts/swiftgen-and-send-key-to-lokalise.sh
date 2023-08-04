@@ -5,10 +5,6 @@ marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr 
 
 # Check if 'origin/lokalise/synced' tag exists
 git fetch origin refs/tags/lokalise/synced
-if ! git show-ref --tags | grep -q "refs/tags/lokalise/synced"; then
-  echo "Error: 'origin/lokalise/synced' tag does not exist."
-  exit 1
-fi
 
 # Get the new lines from Localizable.strings using git diff with the previous commit
 changes=$(git diff lokalise/synced -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
