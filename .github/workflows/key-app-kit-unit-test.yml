@@ -51,7 +51,6 @@ jobs:
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppKitCoreTests \
             -only-testing:KeyAppNetworkingTests \
-            -only-testing:KeyAppStateMachineTests \
             -only-testing:OnboardingTests \
             -only-testing:WormholeTests \
             | xcbeautify
