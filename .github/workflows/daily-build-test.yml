@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'develop'
-      - 'feature/pwn-9468-localise' # remove later
+      - 'pwn-9468-localise' # remove later
   # schedule:
   #   - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
 
