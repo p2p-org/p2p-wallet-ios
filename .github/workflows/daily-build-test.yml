@@ -33,7 +33,7 @@ jobs:
       - name: Fetch tag lokalise
         shell: bash
         run: |
-          git fetch origin refs/tags/${{ env.XCODE_VERSION }}
+          git fetch origin refs/tags/${{ env.TAG_NAME }}
 
       - name: Run script and sync with Lokalise
         env:
