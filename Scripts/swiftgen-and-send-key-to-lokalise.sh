@@ -4,6 +4,7 @@
 marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
 
 # Check if 'origin/lokalise/synced' tag exists
+git fetch origin refs/tags/lokalise/synced
 if ! git show-ref --tags | grep -q "refs/tags/lokalise/synced"; then
   echo "Error: 'origin/lokalise/synced' tag does not exist."
   exit 1
