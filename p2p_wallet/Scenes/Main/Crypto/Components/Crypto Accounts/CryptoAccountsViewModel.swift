@@ -1,26 +1,14 @@
 import AnalyticsManager
 import Combine
-import Foundation
-import KeyAppBusiness
-import KeyAppKitCore
 import Resolver
-import Sell
-import SolanaSwift
-import SwiftyUserDefaults
-import Web3
-import Wormhole
 
 /// ViewModel of `CryptoAccounts` scene
 final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
-    private var defaultsDisposables: [DefaultsDisposable] = []
-
+    
     // MARK: - Dependencies
 
-    private let analyticsManager: AnalyticsManager
-    private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
-    private let userActionService: UserActionService
-    private let favouriteAccountsStore: FavouriteAccountsDataSource
+    @Injected private var analyticsManager: AnalyticsManager
+    private let interactor: CryptoAccountsInteractorProtocol
     private let navigation: PassthroughSubject<CryptoNavigation, Never>
 
     // MARK: - Properties
@@ -28,93 +16,45 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
-    /// Accounts for claiming transfers.
     @Published var transferAccounts: [any RenderableAccount] = []
-
-    /// Primary list accounts.
-    @Published var accounts: [any RenderableAccount] = []
-
-    /// Secondary list accounts. Will be normally hidden and require manuall action from user to be shown.
+    @Published var primaryAccounts: [any RenderableAccount] = []
     @Published var hiddenAccounts: [any RenderableAccount] = []
 
     // MARK: - Initialization
 
     init(
-        analyticsManager: AnalyticsManager = Resolver.resolve(),
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
-        userActionService: UserActionService = Resolver.resolve(),
-        favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
+        interactor: CryptoAccountsInteractorProtocol,
         navigation: PassthroughSubject<CryptoNavigation, Never>
     ) {
-        self.analyticsManager = analyticsManager
-        self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
-        self.userActionService = userActionService
-        self.favouriteAccountsStore = favouriteAccountsStore
+        self.interactor = interactor
         self.navigation = navigation
 
         super.init()
-
-        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
-            self?.hideZeroBalance = change.newValue ?? false
-        })
-
-        bindAccounts()
+        
+        bindToInteractor()
     }
 
     // MARK: - Binding
-
-    private func bindAccounts() {
-        // Ethereum accounts
-        let ethereumAggregator = CryptoEthereumAccountsAggregator()
-        let ethereumAccountsPublisher = Publishers
-            .CombineLatest(
-                ethereumAccountsService.statePublisher,
-                userActionService.actions.map { userActions in
-                    userActions.compactMap { $0 as? WormholeClaimUserAction }
-                }
-            )
-            .map { state, actions in
-                ethereumAggregator.transform(input: (state.value, actions))
-            }
-
-        // Solana accounts
-        let solanaAggregator = CryptoSolanaAccountsAggregator()
-        let solanaAccountsPublisher = Publishers
-            .CombineLatest4(
-                solanaAccountsService.statePublisher,
-                favouriteAccountsStore.$favourites,
-                favouriteAccountsStore.$ignores,
-                $hideZeroBalance
-            )
-            .map { state, favourites, ignores, hideZeroBalance in
-                solanaAggregator.transform(input: (state.value, favourites, ignores, hideZeroBalance))
-            }
-
-        let cryptoAccountsAggregator = CryptoAccountsAggregator()
-        
-        Publishers
-            .CombineLatest(solanaAccountsPublisher, ethereumAccountsPublisher)
-            .map { solanaAccounts, ethereumAccounts in
-                cryptoAccountsAggregator.transform(input: (solanaAccounts, ethereumAccounts))
-            }
-            .receive(on: RunLoop.main)
-            .sink { [weak self] transfer, primary, secondary in
-
-                self?.transferAccounts = transfer
-                self?.accounts = primary
-                self?.hiddenAccounts = secondary
-
-                self?.analyticsManager.log(event: .cryptoClaimTransferredViewed(claimCount: transfer.count))
-            }
+    
+    private func bindToInteractor() {
+        interactor.transferAccountsPublisher
+            .assignWeak(to: \.transferAccounts, on: self)
+            .store(in: &subscriptions)
+        interactor.primaryAccountsPublisher
+            .assignWeak(to: \.primaryAccounts, on: self)
+            .store(in: &subscriptions)
+        interactor.hiddenAccountsPublisher
+            .assignWeak(to: \.hiddenAccounts, on: self)
+            .store(in: &subscriptions)
+        interactor.zeroBalanceTogglePublisher
+            .assignWeak(to: \.hideZeroBalance, on: self)
             .store(in: &subscriptions)
     }
 
     // MARK: - Actions
 
     func refresh() async {
-        await HomeAccountsSynchronisationService().refresh()
+        await interactor.refreshServices()
     }
 
     func scrollToTop() {
@@ -129,16 +69,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
                 analyticsManager.log(event: .cryptoTokenClick(tokenName: renderableAccount.account.token.symbol))
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                let pubkey = renderableAccount.account.address
-                let tags = renderableAccount.tags
-
-                if tags.contains(.ignore) {
-                    favouriteAccountsStore.markAsFavourite(key: pubkey)
-                } else if tags.contains(.favourite) {
-                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-                } else {
-                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-                }
+                interactor.updateFavorites(renderableAccount: renderableAccount)
             default:
                 break
             }

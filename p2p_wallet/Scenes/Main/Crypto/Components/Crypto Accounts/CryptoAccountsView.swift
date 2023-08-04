@@ -6,6 +6,7 @@ import SwiftUI
 
 /// View of `CryptoAccounts` scene
 struct CryptoAccountsView: View {
+    
     // MARK: - Properties
 
     @ObservedObject var viewModel: CryptoAccountsViewModel
@@ -62,70 +63,96 @@ struct CryptoAccountsView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             if !viewModel.transferAccounts.isEmpty {
-                wrappedList(items: viewModel.transferAccounts) { data in
-                    ForEach(data, id: \.id) {
-                        tokenCell(rendableAccount: $0)
-                    }
-                }
+                transfersList
             }
-
-            wrappedList(items: viewModel.accounts) { data in
-                ForEach(data, id: \.id) { rendableAccount in
-                    tokenCell(rendableAccount: rendableAccount)
-                        .swipeActions(
-                            isVisible: true,
-                            currentUserInteractionCellID: $currentUserInteractionCellID,
-                            action: {
-                                viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                            }
-                        )
-                }
-            }
-            .padding(.top, 12)
+            
+            primaryList
+                .padding(.top, 12)
 
             if !viewModel.hiddenAccounts.isEmpty {
-                Button(
-                    action: {
-                        let generator = UIImpactFeedbackGenerator(style: .light)
-                        generator.impactOccurred()
-                        withAnimation {
-                            isHiddenSectionDisabled.toggle()
-                        }
-                    },
-                    label: {
-                        HStack(spacing: 8) {
-                            Image(uiImage: isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
-                            Text(L10n.hiddenTokens)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .font(.system(size: 16))
-                                .padding(.vertical, 12)
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 16)
-                    }
-                )
+                showHideTokensButton
                 if !isHiddenSectionDisabled {
-                    wrappedList(items: viewModel.hiddenAccounts) { data in
-                        ForEach(data, id: \.id) { rendableAccount in
-                            tokenCell(rendableAccount: rendableAccount)
-                                .swipeActions(
-                                    isVisible: false,
-                                    currentUserInteractionCellID: $currentUserInteractionCellID,
-                                    action: {
-                                        viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                                    }
-                                )
-                        }
-                        .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
-                    }
+                    hiddenAccountsList
                 }
             }
         }
         .padding(.top, 8)
         .background(Color(Asset.Colors.smoke.color))
     }
+    
+    // MARK: - Transfer Accounts
+    
+    private var transfersList: some View {
+        wrappedList(items: viewModel.transferAccounts) { data in
+            ForEach(data, id: \.id) {
+                tokenCell(rendableAccount: $0)
+            }
+        }
+    }
+    
+    // MARK: - Primary Accounts
+    
+    private var primaryList: some View {
+        wrappedList(items: viewModel.primaryAccounts) { data in
+            ForEach(data, id: \.id) { rendableAccount in
+                tokenCell(rendableAccount: rendableAccount)
+                    .swipeActions(
+                        isVisible: true,
+                        currentUserInteractionCellID: $currentUserInteractionCellID,
+                        action: {
+                            viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                        }
+                    )
+            }
+        }
+    }
+    
+    // MARK: - Show/Hide Tokens Button
+    
+    private var showHideTokensButton: some View {
+        Button(
+            action: {
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
+                withAnimation {
+                    isHiddenSectionDisabled.toggle()
+                }
+            },
+            label: {
+                HStack(spacing: 8) {
+                    Image(uiImage: isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
+                    Text(L10n.hiddenTokens)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .font(.system(size: 16))
+                        .padding(.vertical, 12)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+            }
+        )
+    }
+    
+    // MARK: - Hidden Accounts
+    
+    private var hiddenAccountsList: some View {
+        wrappedList(items: viewModel.hiddenAccounts) { data in
+            ForEach(data, id: \.id) { rendableAccount in
+                tokenCell(rendableAccount: rendableAccount)
+                    .swipeActions(
+                        isVisible: false,
+                        currentUserInteractionCellID: $currentUserInteractionCellID,
+                        action: {
+                            viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                        }
+                    )
+            }
+            .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
+        }
+    }
 
+    // MARK: - Helpers
+    
     @ViewBuilder
     private func tokenCell(rendableAccount: any RenderableAccount) -> some View {
         CryptoAccountCellView(rendable: rendableAccount) {
