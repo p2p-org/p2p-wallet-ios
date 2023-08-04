@@ -110,6 +110,7 @@ class UserWalletManager: ObservableObject {
         Defaults.toTokenAddress = nil
         Defaults.region = nil
         Defaults.homeBannerVisibility = nil
+        Defaults.strigaIBANInfoDoNotShow = false
 
         walletSettings.reset()
 

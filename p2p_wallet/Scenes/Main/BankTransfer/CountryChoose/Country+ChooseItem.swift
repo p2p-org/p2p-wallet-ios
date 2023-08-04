@@ -17,3 +17,5 @@ extension Region: ChooseItemSearchableItem {
         name.lowercased().hasPrefix(keyword.lowercased())
     }
 }
+
+extension Country: DefaultsSerializable {}

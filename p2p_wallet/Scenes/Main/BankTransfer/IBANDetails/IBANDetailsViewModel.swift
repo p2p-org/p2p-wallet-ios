@@ -8,17 +8,19 @@ import SwiftyUserDefaults
 final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationService: NotificationService
 
+    @Published var informerName: String
     @Published var items: [any Renderable] = []
     let warningTapped = PassthroughSubject<Void, Never>()
 
     init(eurAccount: EURUserAccount) {
+        informerName = eurAccount.bankAccountHolderName ?? ""
         super.init()
         items = makeItems(from: eurAccount)
     }
 
     private func makeItems(from account: EURUserAccount) -> [any Renderable] {
         [
-            IBANDetailsCellViewItem(title: L10n.iban, subtitle: account.iban ?? "") { [weak self] in
+            IBANDetailsCellViewItem(title: L10n.iban, subtitle: account.iban?.formatIBAN() ?? "") { [weak self] in
                 self?.copy(value: account.iban)
             },
             ListSpacerCellViewItem(height: 1.0, backgroundColor: Color(asset: Asset.Colors.rain), leadingPadding: 20.0),

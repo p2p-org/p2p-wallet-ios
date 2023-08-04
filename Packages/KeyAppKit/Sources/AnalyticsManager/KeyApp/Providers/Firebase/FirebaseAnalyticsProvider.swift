@@ -1,4 +1,3 @@
-import AnalyticsManager
 import FirebaseAnalytics
 import Foundation
 

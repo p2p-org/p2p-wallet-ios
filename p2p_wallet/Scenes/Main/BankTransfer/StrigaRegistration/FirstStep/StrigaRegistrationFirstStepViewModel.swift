@@ -1,13 +1,12 @@
-import Combine
 import BankTransfer
-import Resolver
+import Combine
 import CountriesAPI
-import PhoneNumberKit
 import Foundation
 import Onboarding
+import PhoneNumberKit
+import Resolver
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
-
     // Dependencies
     @Injected private var service: any BankTransferService
     @Injected private var countriesService: CountriesAPI
@@ -16,12 +15,11 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Data
     private var data: StrigaUserDetailsResponse?
-    
+
     // Loading state
     @Published var isLoading = false
 
     // Fields
-    @Published var email: String = ""
     @Published var firstName: String = ""
     @Published var surname: String = ""
     @Published var dateOfBirth: String = ""
@@ -45,13 +43,9 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var selectedCountryOfBirth: Country?
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
 
-    private lazy var birthMaxYear: Int = {
-        Date().year - Constants.maxYearGap
-    }()
+    private lazy var birthMaxYear: Int = Date().year - Constants.maxYearGap
 
-    private lazy var birthMinYear: Int = {
-        Date().year - Constants.minYearGap
-    }()
+    private lazy var birthMinYear: Int = Date().year - Constants.minYearGap
 
     override init() {
         super.init()
@@ -76,7 +70,11 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { $0.split(separator: ".").map { String($0) } }
             .map { components in
                 if components.count == Constants.dateFormat.split(separator: ".").count {
-                    return StrigaUserDetailsResponse.DateOfBirth(year: components[2], month: components[1], day: components[0])
+                    return StrigaUserDetailsResponse.DateOfBirth(
+                        year: components[2],
+                        month: components[1],
+                        day: components[0]
+                    )
                 }
                 return nil
             }
@@ -86,7 +84,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
         $selectedCountryOfBirth
             .map { model in
                 if let model {
-                    return [model.emoji, model.name].compactMap { $0 } .joined(separator: " ")
+                    return [model.emoji, model.name].compactMap { $0 }.joined(separator: " ")
                 } else {
                     return ""
                 }
@@ -120,7 +118,8 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
 
                 if let countries = try? await self.countriesService.fetchCountries() {
-                    selectedCountryOfBirth = countries.first(where: { $0.alpha3Code.lowercased() == data.placeOfBirth?.lowercased() })
+                    selectedCountryOfBirth = countries
+                        .first(where: { $0.alpha3Code.lowercased() == data.placeOfBirth?.lowercased() })
                     await fetchPhoneNumber(data: data, countries: countries)
                 }
 
@@ -128,13 +127,12 @@ private extension StrigaRegistrationFirstStepViewModel {
                     // save data
                     self.data = data
                     isLoading = false
-                    email = data.email
                     firstName = data.firstName
                     surname = data.lastName
                     dateOfBirthModel = data.dateOfBirth
                     dateOfBirth = [data.dateOfBirth?.day, data.dateOfBirth?.month, data.dateOfBirth?.year]
                         .compactMap { $0 }
-                        .filter({ $0 != "0" })
+                        .filter { $0 != "0" }
                         .map {
                             if $0.count == 1 {
                                 return "0\($0)"
@@ -159,7 +157,7 @@ private extension StrigaRegistrationFirstStepViewModel {
         // Use a phone from the local state if we have one
         if !data.mobile.isEmpty, let dataMobileNumber = data.mobileNumber {
             metaPhoneNumber = dataMobileNumber
-        } else if data.mobile.isEmpty, let strigaPhoneNumber = await self.strigaMetadata.getStrigaMetadata()?.phoneNumber {
+        } else if data.mobile.isEmpty, let strigaPhoneNumber = await strigaMetadata.getStrigaMetadata()?.phoneNumber {
             metaPhoneNumber = strigaPhoneNumber
         }
         await MainActor.run {
@@ -245,7 +243,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func bindToFieldValues() {
-        let contacts = Publishers.CombineLatest3($email, $selectedPhoneCountryCode, $phoneNumber)
+        let contacts = Publishers.CombineLatest($selectedPhoneCountryCode, $phoneNumber)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
         Publishers.CombineLatest3(contacts, credentials, dateOfBirth)
@@ -254,11 +252,12 @@ private extension StrigaRegistrationFirstStepViewModel {
                 guard let self else { return }
 
                 let mobile = StrigaUserDetailsResponse.Mobile(
-                    countryCode: contacts.1?.dialCode ?? "",
-                    number: contacts.2.replacingOccurrences(of: " ", with: "")
+                    countryCode: contacts.0?.dialCode ?? "",
+                    number: contacts.1.replacingOccurrences(of: " ", with: "")
                 )
 
-                let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
+                let currentData: StrigaUserDetailsResponse = (try? await service
+                    .getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
                 let newData = currentData.updated(
                     firstName: credentials.0.trimmed(),
                     lastName: credentials.1.trimmed(),
@@ -289,12 +288,12 @@ private extension StrigaRegistrationFirstStepViewModel {
 
 private extension Date {
     var year: Int {
-        (Calendar.current.dateComponents([.year], from: self).year ?? 0)
+        Calendar.current.dateComponents([.year], from: self).year ?? 0
     }
 }
 
 private extension String {
     func trimmed() -> String {
-        self.trimmingCharacters(in: .whitespacesAndNewlines)
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

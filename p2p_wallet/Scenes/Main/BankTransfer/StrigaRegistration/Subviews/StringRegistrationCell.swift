@@ -9,15 +9,18 @@ enum StrigaFormTextFieldStatus: Equatable {
 struct StrigaFormCell<Content: View>: View {
     let title: String
     let status: StrigaFormTextFieldStatus
+    let hint: String?
     @ViewBuilder private var content: () -> Content
 
     init(
         title: String,
         status: StrigaFormTextFieldStatus? = .valid,
+        hint: String? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
         self.status = status ?? .valid
+        self.hint = hint
         self.content = content
     }
 
@@ -43,6 +46,11 @@ struct StrigaFormCell<Content: View>: View {
                 Text(error)
                     .apply(style: .label1)
                     .foregroundColor(Color(asset: Asset.Colors.rose))
+                    .padding(.leading, 8)
+            } else if let hint {
+                Text(hint)
+                    .apply(style: .label1)
+                    .foregroundColor(Color(asset: Asset.Colors.mountain))
                     .padding(.leading, 8)
             }
         }

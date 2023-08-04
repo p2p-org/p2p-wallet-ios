@@ -425,9 +425,14 @@ extension HomeAccountsViewModel {
 
 private extension HomeAccountsViewModel {
     func addWithdrawIfNeeded() {
-        guard available(.bankTransfer), metadataService.metadata.value != nil else { return }
         // If striga is enabled and user is web3 authed
-        actions.append(.withdraw)
+        metadataService.metadataPublisher
+            .filter { [weak self] _ in self?.actions.contains(.withdraw) == false }
+            .filter { $0.value != nil && available(.bankTransfer) }
+            .sink { [weak self] _ in
+                self?.actions.append(.withdraw)
+            }
+            .store(in: &subscriptions)
     }
 
     func bindTransferData() {

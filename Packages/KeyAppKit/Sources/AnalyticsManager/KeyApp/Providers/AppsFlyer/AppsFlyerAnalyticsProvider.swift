@@ -1,4 +1,3 @@
-import AnalyticsManager
 import AppsFlyerLib
 import Foundation
 

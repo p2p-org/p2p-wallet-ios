@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SelectRegionView: View {
     @ObservedObject var viewModel: SelectRegionViewModel
