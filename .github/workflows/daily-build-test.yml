@@ -29,8 +29,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
+
+      - name: Fetch tag lokalise
+        shell: bash
+        run: |
+          git fetch origin refs/tags/${{ env.TAG_NAME }}
 
       - name: Run script and sync with Lokalise
         env:
