@@ -25,9 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCRIPT_DIR: "Scripts/swiftgen-and-send-key-to-lokalise.sh"
+      TAG_NAME: "lokalise/synced"
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+
+      - name: Fetch tag lokalise
+        shell: bash
+        run: |
+          git fetch origin refs/tags/${{ env.XCODE_VERSION }}
 
       - name: Run script and sync with Lokalise
         env:

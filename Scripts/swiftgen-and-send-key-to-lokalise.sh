@@ -3,11 +3,8 @@
 # Read the MARKETING_VERSION from project.yml and extract only the number
 marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
 
-# Check if 'origin/lokalise/synced' tag exists
-git fetch origin refs/tags/lokalise/synced
-
 # Get the new lines from Localizable.strings using git diff with the previous commit
-changes=$(git diff lokalise/synced -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
+changes=$(git diff $TAG_NAME -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
 new_lines=$(echo "$changes" | grep "^[+]" | grep -v "^+++" | cut -c2-)
 
 # Parse values from the new lines and build the JSON payload
@@ -53,9 +50,9 @@ response_status=$(tail -n 1 <<< "$response")
 echo -e ""
 echo -e ""
 if [ "$response_status" -eq 200 ]; then
-    echo -e "Request to Lokalise API successful. Tagging 'lokalise/synced' and pushing..."
-    # git tag -f lokalise/synced
-    # git push -f origin lokalise/synced
+    echo -e "Request to Lokalise API successful. Tagging '$TAG_NAME' and pushing..."
+    # git tag -f $TAG_NAME
+    # git push -f origin $TAG_NAME
 else
     echo -e "Error: Request to Lokalise API failed with status code $response_status."
     exit 1
