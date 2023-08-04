@@ -8,10 +8,12 @@ import SwiftyUserDefaults
 final class IBANDetailsViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationService: NotificationService
 
+    @Published var informerName: String
     @Published var items: [any Renderable] = []
     let warningTapped = PassthroughSubject<Void, Never>()
 
     init(eurAccount: EURUserAccount) {
+        informerName = eurAccount.bankAccountHolderName ?? ""
         super.init()
         items = makeItems(from: eurAccount)
     }

@@ -12,7 +12,7 @@ struct IBANDetailsView: View {
                     BaseInformerView(data: BaseInformerViewItem(
                         icon: .sellPendingWarning,
                         iconColor: Asset.Colors.night,
-                        title: L10n.yourBankAccountNameMustMatchNAMELASTNAME,
+                        title: L10n.yourBankAccountNameMustMatch(viewModel.informerName),
                         titleColor: Asset.Colors.cloud,
                         backgroundColor: Asset.Colors.night,
                         iconBackgroundColor: Asset.Colors.smoke

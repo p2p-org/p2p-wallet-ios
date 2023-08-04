@@ -683,7 +683,7 @@
 "Outcoming transfer" = "Outcoming transfer";
 "We will ask you to confirm this operation within a few minutes" = "We will ask you to confirm this operation within a few minutes";
 "Transaction pending" = "Transaction pending";
-"Your bank account name must match NAME_LASTNAME" = "Your bank account name must match NAME_LASTNAME";
+"Your bank account name must match %@" = "Your bank account name must match %@";
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "This is your personal IBAN. Use this details to make transfers through your banking app";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute";
 "Use this IBAN to send money from your personal accounts" = "Use this IBAN to send money from your personal accounts";
