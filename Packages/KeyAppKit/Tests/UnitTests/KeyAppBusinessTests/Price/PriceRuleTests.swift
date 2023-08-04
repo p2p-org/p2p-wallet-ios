@@ -42,15 +42,15 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(newPrice?.value, 1.0, "The new price value should be 1.0")
             XCTAssertEqual(newPrice?.currencyCode, "USD", "The new price currency code should match the input")
             XCTAssertTrue(
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
 
@@ -75,7 +75,7 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(
                 newPrice?.value,
                 0.99,
@@ -90,14 +90,14 @@ final class PriceRuleTests: XCTestCase {
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
 
-    func testDeNoisePriceRuleCase1() {
+    func testDepeggingPriceRuleCase1() {
         // Given
-        let rule = DeNoisePriceRule()
+        let rule = DepeggingPriceRule()
         let token = SomeToken(
             tokenPrimaryKey: .contract(PublicKey.usdcMint.base58EncodedString),
             symbol: "USDC",
@@ -118,7 +118,7 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(
                 newPrice?.value,
                 1,
@@ -133,14 +133,14 @@ final class PriceRuleTests: XCTestCase {
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
     
-    func testDeNoisePriceRuleCase2() {
+    func testDepeggingPriceRuleCase2() {
         // Given
-        let rule = DeNoisePriceRule()
+        let rule = DepeggingPriceRule()
         let token = SomeToken(
             tokenPrimaryKey: .contract(PublicKey.usdcMint.base58EncodedString),
             symbol: "USDC",
@@ -161,7 +161,7 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(
                 newPrice?.value,
                 1,
@@ -176,14 +176,14 @@ final class PriceRuleTests: XCTestCase {
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
     
-    func testDeNoisePriceRuleCase3() {
+    func testDepeggingPriceRuleCase3() {
         // Given
-        let rule = DeNoisePriceRule()
+        let rule = DepeggingPriceRule()
         let token = SomeToken(
             tokenPrimaryKey: .contract(PublicKey.usdcMint.base58EncodedString),
             symbol: "USDC",
@@ -204,7 +204,7 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(
                 newPrice?.value,
                 0.98,
@@ -219,14 +219,14 @@ final class PriceRuleTests: XCTestCase {
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
     
-    func testDeNoisePriceRuleCase4() {
+    func testDepeggingPriceRuleCase4() {
         // Given
-        let rule = DeNoisePriceRule()
+        let rule = DepeggingPriceRule()
         let token = SomeToken(
             tokenPrimaryKey: .contract(PublicKey.usdcMint.base58EncodedString),
             symbol: "USDC",
@@ -247,7 +247,7 @@ final class PriceRuleTests: XCTestCase {
 
         // Then
         switch result {
-        case let .next(newPrice):
+        case let .continue(newPrice):
             XCTAssertEqual(
                 newPrice?.value,
                 0.97,
@@ -262,8 +262,8 @@ final class PriceRuleTests: XCTestCase {
                 newPrice?.token == token,
                 "The new price token should be the same instance as the input token"
             )
-        case .stop:
-            XCTFail("Unexpected PriceRuleHandler.stop result")
+        case .break:
+            XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
 }

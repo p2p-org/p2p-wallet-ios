@@ -50,7 +50,7 @@ public class PriceServiceImpl: PriceService {
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
 
-    let rules: [PriceRule] = [OneToOnePriceRule(), DeNoisePriceRule()]
+    let rules: [PriceRule] = [OneToOnePriceRule(), DepeggingPriceRule()]
 
     // MARK: - Event stream
 
@@ -245,9 +245,9 @@ public class PriceServiceImpl: PriceService {
             let result = rule.adjustValue(token: token, price: price, fiat: fiat)
 
             switch result {
-            case let .next(newPrice):
+            case let .continue(newPrice):
                 adjustedPrice = newPrice
-            case let .stop(newPrice):
+            case let .break(newPrice):
                 adjustedPrice = newPrice
                 break loop
             }

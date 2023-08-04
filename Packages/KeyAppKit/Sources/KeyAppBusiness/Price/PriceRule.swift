@@ -3,8 +3,8 @@ import Foundation
 import KeyAppKitCore
 
 internal enum PriceRuleHandler {
-    case next(TokenPrice?)
-    case stop(TokenPrice?)
+    case `continue`(TokenPrice?)
+    case `break`(TokenPrice?)
 }
 
 internal protocol PriceRule {
@@ -15,15 +15,15 @@ internal protocol PriceRule {
 internal class OneToOnePriceRule: PriceRule {
     func adjustValue(token: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
         if token.keyAppExtension.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-            return .next(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
+            return .continue(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
         }
 
-        return .next(price)
+        return .continue(price)
     }
 }
 
-// De-noise price by measure percentage difference. If the difference is in allowed range, the value
-internal class DeNoisePriceRule: PriceRule {
+// Depegging price by measure percentage difference.
+internal class DepeggingPriceRule: PriceRule {
     func adjustValue(token: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
         if let allowPercentageDifferenceValue = token.keyAppExtension.percentDifferenceToShowByPriceOnWS {
             let percentageDifferenceValue = 100 - (1 / price.value) * 100
@@ -31,10 +31,10 @@ internal class DeNoisePriceRule: PriceRule {
             print(percentageDifferenceValue, allowPercentageDifferenceValue)
 
             if abs(percentageDifferenceValue) <= BigDecimal(floatLiteral: allowPercentageDifferenceValue) {
-                return .next(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
+                return .continue(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
             }
         }
 
-        return .next(price)
+        return .continue(price)
     }
 }
