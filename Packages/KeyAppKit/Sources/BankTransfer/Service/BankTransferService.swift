@@ -1,5 +1,4 @@
 import Combine
-import CountriesAPI
 import KeyAppKitCore
 
 public protocol BankTransferService<Provider> where Provider: BankTransferUserDataRepository {

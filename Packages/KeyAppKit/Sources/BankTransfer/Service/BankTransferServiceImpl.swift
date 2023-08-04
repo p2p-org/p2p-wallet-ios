@@ -1,11 +1,9 @@
 import Combine
-import CountriesAPI
 import Foundation
 import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
 public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: BankTransferService {
-
     public typealias Provider = T
     
     /// Repository that handle CRUD action for UserData
