@@ -3,8 +3,8 @@
 # Read the MARKETING_VERSION from project.yml and extract only the number
 marketing_version=$(grep "MARKETING_VERSION" project.yml | cut -d ':' -f 2 | tr -d '[:space:]' | tr -d '"')
 
-# Get the new lines from Localizable.strings using git diff
-changes=$(git diff origin/develop -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
+# Get the new lines from Localizable.strings using git diff with the previous commit
+changes=$(git diff HEAD^ -- p2p_wallet/Resources/Base.lproj/Localizable.strings)
 new_lines=$(echo "$changes" | grep "^[+]" | grep -v "^+++" | cut -c2-)
 
 # Parse values from the new lines and build the JSON payload
