@@ -136,6 +136,7 @@ targets:
           excludes:
             - "**/*.a"
             - "**/GoogleService-Info.plist"
+            - "Resources/Base.lproj/*"
         - path: README.MD
         preBuildScripts:
           - script: |
