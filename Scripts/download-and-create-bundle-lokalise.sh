@@ -29,13 +29,12 @@ download_json_files() {
        -H "X-Api-Token: ${LOKALISE_API_TOKEN}" \
        -H "Content-Type: application/json" \
        -d $'{
-    "format": "strings",
-    "original_filenames": false,
-    "export_empty_as": "base",
-    "filter_data": {
-      "created_after": "'"$date_param"'"
-    }
-  }')
+              "format": "strings",
+              "export_empty_as": "base",
+              "filter_data": {
+                "created_after": "'"$date_param"'"
+              }
+            }')
 
   # Extract the bundle_url from the JSON response
   bundle_url=$(echo "$response" | jq -r '.bundle_url')
