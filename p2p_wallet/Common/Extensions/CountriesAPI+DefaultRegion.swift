@@ -8,9 +8,9 @@ extension CountriesAPI {
         return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 
-    func currentCountryName() async throws -> Country? {
-        return try await self.fetchCountries().first { country in
-            country.code == defaultRegionCode()
+    func currentCountryName() async throws -> Region? {
+        return try await self.fetchRegions().first { country in
+            country.alpha2.lowercased() == defaultRegionCode()
         }
     }
 }

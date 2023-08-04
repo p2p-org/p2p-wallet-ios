@@ -76,13 +76,6 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .assignWeak(to: \.country, on: self)
             .store(in: &subscriptions)
 
-        $selectedCountry
-            .compactMap { $0 }
-            .sink(receiveValue: { country in
-                Defaults.bankTransferLastCountry = country
-            })
-            .store(in: &subscriptions)
-
         $selectedIndustry
             .map { $0?.wholeName ?? "" }
             .assignWeak(to: \.occupationIndustry, on: self)

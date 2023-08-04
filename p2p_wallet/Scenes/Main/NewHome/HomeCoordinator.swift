@@ -45,7 +45,7 @@ final class HomeCoordinator: Coordinator<Void> {
     var tokensViewModel: HomeAccountsViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
     /// A list of actions required to check if country is selected
-    private let countrySelectionReqired = [HomeNavigation.withdrawCalculator, .addMoney]
+    private let regionSelectionReqired = [HomeNavigation.withdrawCalculator, .addMoney]
 
     // MARK: - Initializers
 
@@ -63,7 +63,7 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
-        Defaults.bankTransferLastCountry = nil
+        Defaults.region = nil
 
         // Home with tokens
         tokensViewModel = HomeAccountsViewModel(navigation: navigation)
@@ -97,7 +97,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         // handle navigation
         navigation.flatMap({ [unowned self] action in
-            if countrySelectionReqired.contains(action), Defaults.bankTransferLastCountry == nil {
+            if regionSelectionReqired.contains(action), Defaults.region == nil {
                 return coordinate(to: BankTransferInfoCoordinator(viewController: navigationController))
                     .handleEvents(receiveOutput: { [unowned self] _ in
                         navigationController.popViewController(animated: true)

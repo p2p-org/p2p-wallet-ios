@@ -180,7 +180,7 @@ extension BankTransferServiceImpl {
         try await repository.save(info)
     }
 
-    public func isAvailableForRegion(country: Country) -> Bool {
-        repository.availableRegions().contains(country.code)
+    public func isAvailableForRegion(country: Region) -> Bool {
+        repository.availableRegions().contains(country.alpha2.lowercased())
     }
 }

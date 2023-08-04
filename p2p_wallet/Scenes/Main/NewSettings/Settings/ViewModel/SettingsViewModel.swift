@@ -33,8 +33,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
-    var country: Country?
+    @SwiftyUserDefault(keyPath: \.region, options: .cached)
+    var region: Region?
 
     private var isBiometryCheckGoing: Bool = false
 

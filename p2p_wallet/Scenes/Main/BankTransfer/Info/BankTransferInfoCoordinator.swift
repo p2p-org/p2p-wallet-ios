@@ -21,7 +21,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         )
 
         viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
-            self.coordinate(to: ChooseItemCoordinator<Country>(
+            self.coordinate(to: ChooseItemCoordinator<Region>(
                 title: L10n.selectYourCountry,
                 controller: controller,
                 service: ChooseCountryService(),
@@ -31,7 +31,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         }.sink { [weak viewModel] result in
             switch result {
             case .item(let item):
-                viewModel?.setCountry(item as! Country)
+                viewModel?.setRegion(item as! Region)
             case .cancel: break
             }
         }.store(in: &subscriptions)
@@ -56,7 +56,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
 extension BankTransferInfoCoordinator {
     enum Result {
         case cancelled
-        case selected(Country)
+        case selected(Region)
     }
 
 }

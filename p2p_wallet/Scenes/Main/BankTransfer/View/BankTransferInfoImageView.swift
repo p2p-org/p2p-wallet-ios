@@ -1,5 +1,6 @@
 import SwiftUI
 import KeyAppUI
+import SkeletonUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
@@ -59,17 +60,19 @@ struct BankTransferCountryCellViewItem: Identifiable {
     var id: String { name + flag }
     var name: String
     var flag: String
+    var isLoading: Bool
 }
 
 extension BankTransferCountryCellViewItem: Renderable {
     func render() -> some View {
-        BankTransferCountryCellView(name: name, flag: flag)
+        BankTransferCountryCellView(name: name, flag: flag, isLoading: isLoading)
     }
 }
 
 struct BankTransferCountryCellView: View {
     let name: String
     let flag: String
+    let isLoading: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -80,6 +83,11 @@ struct BankTransferCountryCellView: View {
                     .fontWeight(.semibold)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.night.color))
+                    .skeleton(
+                        with: isLoading,
+                        size: CGSize(width: 150, height: 20),
+                        animated: .default
+                    )
                 Text(L10n.yourCountry)
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -98,6 +106,11 @@ struct BankTransferCountryCellView: View {
         Text(flag)
             .fontWeight(.bold)
             .apply(style: .title1)
+            .skeleton(
+                with: isLoading,
+                size: CGSize(width: 32, height: 32),
+                animated: .default
+            )
     }
 }
 

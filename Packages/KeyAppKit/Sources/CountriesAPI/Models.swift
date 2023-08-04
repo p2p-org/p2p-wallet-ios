@@ -31,4 +31,15 @@ public struct Country: Codable, Hashable {
     }
 }
 
+public struct Region: Codable, Equatable, Hashable {
+    public var name: String {
+        alpha3
+    }
+    public let alpha2: String
+    public let alpha3: String
+    public let flagEmoji: String?
+    public var isStrigaAllowed: Bool
+    public var isMoonpayAllowed: Bool
+}
+
 public typealias Countries = [Country]

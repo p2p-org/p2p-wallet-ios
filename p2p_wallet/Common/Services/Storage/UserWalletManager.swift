@@ -108,7 +108,7 @@ class UserWalletManager: ObservableObject {
         Defaults.isTokenInputTypeChosen = false
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
-        Defaults.bankTransferLastCountry = nil
+        Defaults.region = nil
         Defaults.homeBannerVisibility = nil
 
         walletSettings.reset()

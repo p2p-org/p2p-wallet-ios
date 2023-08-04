@@ -9,3 +9,11 @@ extension Country: ChooseItemSearchableItem {
         name.lowercased().hasPrefix(keyword.lowercased())
     }
 }
+
+extension Region: ChooseItemSearchableItem {
+    public var id: String { alpha2 }
+
+    func matches(keyword: String) -> Bool {
+        alpha3.lowercased().hasPrefix(keyword.lowercased())
+    }
+}

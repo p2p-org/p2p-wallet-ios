@@ -28,7 +28,7 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
     func getWithdrawalInfo() async throws -> WithdrawalInfo?
     func saveWithdrawalInfo(info: WithdrawalInfo) async throws
 
-    func isAvailableForRegion(country: Country) -> Bool
+    func isAvailableForRegion(country: Region) -> Bool
 }
 
 public class AnyBankTransferService<Provider: BankTransferUserDataRepository> {

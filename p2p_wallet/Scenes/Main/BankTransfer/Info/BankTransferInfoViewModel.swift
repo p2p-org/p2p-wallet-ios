@@ -10,11 +10,11 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Navigation
 
-    var showCountries: AnyPublisher<Country?, Never> {
+    var showCountries: AnyPublisher<Region?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
 
-    var countrySubmitted: AnyPublisher<Country?, Never> {
+    var countrySubmitted: AnyPublisher<Region?, Never> {
         submitCountrySubject.eraseToAnyPublisher()
     }
 
@@ -25,13 +25,18 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: -
 
     @Published var items: [any Renderable] = []
+    @Published var isLoading = false {
+       didSet {
+           items = makeItems()
+       }
+   }
 
     // MARK: -
 
-    private let showCountriesSubject = PassthroughSubject<Country?, Never>()
-    private let submitCountrySubject = PassthroughSubject<Country?, Never>()
+    private let showCountriesSubject = PassthroughSubject<Region?, Never>()
+    private let submitCountrySubject = PassthroughSubject<Region?, Never>()
 
-    private var currentCountry: Country? {
+    private var currentRegion: Region? {
         didSet {
             items = makeItems()
         }
@@ -43,18 +48,23 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         bind()
     }
 
-    func setCountry(_ country: Country) {
-        currentCountry = country
-        Defaults.bankTransferLastCountry = country
+    func setRegion(_ country: Region) {
+        currentRegion = country
+        Defaults.region = country
     }
 
     func bind() {
-        if nil != Defaults.bankTransferLastCountry {
-            currentCountry = Defaults.bankTransferLastCountry
+        if nil != Defaults.region {
+            currentRegion = Defaults.region
         } else {
             Task {
+                defer {
+                    self.isLoading = false
+                }
+
+                self.isLoading = true
                 do {
-                    self.currentCountry = try await countriesService.currentCountryName()
+                    self.currentRegion = try await countriesService.currentCountryName()
                 } catch {
                     DefaultLogManager.shared.log(event: "Error", logLevel: .error, data: error.localizedDescription)
                 }
@@ -64,8 +74,9 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     private func makeItems() -> [any Renderable] {
         let countryCell = BankTransferCountryCellViewItem(
-            name: currentCountry?.name ?? "",
-            flag: currentCountry?.emoji ?? "🏴"
+            name: currentRegion?.name ?? "",
+            flag: currentRegion?.flagEmoji?.decodeHTMLEntities() ?? "🏴",
+            isLoading: isLoading
         )
         return [
             BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
@@ -104,13 +115,11 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: - actions
 
     private func openCountries() {
-        showCountriesSubject.send(currentCountry)
+        showCountriesSubject.send(currentRegion)
     }
 
     private func submitCountry() {
-        Defaults.bankTransferLastCountry = currentCountry
-        submitCountrySubject.send(currentCountry)
+        Defaults.region = currentRegion
+        submitCountrySubject.send(currentRegion)
     }
 }
-
-extension Country: DefaultsSerializable {}

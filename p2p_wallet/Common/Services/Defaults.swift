@@ -138,7 +138,7 @@ extension DefaultsKeys {
         .init(#function, defaultValue: nil)
     }
 
-    var bankTransferLastCountry: DefaultsKey<Country?> {
+    var region: DefaultsKey<Region?> {
         .init(#function, defaultValue: nil)
     }
 
@@ -159,3 +159,5 @@ extension DefaultsKeys {
         case sandbox
     }
 }
+
+extension Region: DefaultsSerializable {}

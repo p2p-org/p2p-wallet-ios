@@ -23,7 +23,7 @@ final class ChooseCountryService: ChooseItemService {
 
         Task {
             do {
-                let countries = try await self.countriesService.fetchCountries()//.unique(keyPath: \.name)
+                let countries = try await self.countriesService.fetchRegions()//.unique(keyPath: \.name)
                 self.statePublisher.send(
                     AsyncValueState(status: .ready, value: [ChooseItemListSection(items: countries)])
                 )

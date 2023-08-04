@@ -1,11 +1,5 @@
-//
-//  SettingsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 30.08.2022.
-//
-
 import Combine
+import CountriesAPI
 import Resolver
 import UIKit
 
@@ -57,17 +51,30 @@ final class SettingsCoordinator: Coordinator<Void> {
                         .sink(receiveValue: {})
                         .store(in: &subscriptions)
                 case .country:
-                    coordinate(to: BankTransferInfoCoordinator(viewController: navigationController))
-                        .sink(receiveValue: { _ in })
-                        .store(in: &subscriptions)
+                    coordinate(to: ChooseItemCoordinator<Region>(
+                        title: L10n.selectYourCountry,
+                        controller: navigationController,
+                        service: ChooseCountryService(),
+                        chosen: Defaults.region,
+                        showDoneButton: true
+                    ))
+                    .sink { result in
+                        switch result {
+                            case .item(let item):
+                            if let region = item as? Region {
+                                Defaults.region = region
+                            } else {
+                                assert(true)
+                            }
+                            case .cancel: break
+                        }
+                    }.store(in: &subscriptions)
                 }
             })
             .store(in: &subscriptions)
 
-        let closeSubject = PassthroughSubject<Void, Never>()
-        settingsVC.onClose = {
-            closeSubject.send()
-        }
-        return closeSubject.prefix(1).eraseToAnyPublisher()
+        return settingsVC.deallocatedPublisher()
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }
