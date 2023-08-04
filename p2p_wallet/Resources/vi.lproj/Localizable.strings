@@ -726,7 +726,7 @@
 "Outcoming transfer" = "chuyển khoản đi";
 "We will ask you to confirm this operation within a few minutes" = "Chúng tôi sẽ yêu cầu bạn xác nhận thao tác này trong vòng vài phút";
 "Transaction pending" = "Giao dịch đang chờ xử lý";
-"Your bank account name must match NAME_LASTNAME" = "Tên tài khoản ngân hàng của bạn phải khớp với NAME_LASTNAME";
+"Your bank account name must match %@" = "Tên tài khoản ngân hàng của bạn phải khớp với %@";
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "Đây là IBAN cá nhân của bạn.  Sử dụng chi tiết này để thực hiện chuyển khoản qua ứng dụng ngân hàng của bạn";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Chúng tôi sử dụng SEPA Instant để chuyển khoản ngân hàng và thông thường, tiền sẽ xuất hiện trong tài khoản của bạn sau chưa đầy một phút";
 "Use this IBAN to send money from your personal accounts" = "Sử dụng IBAN này để gửi tiền từ tài khoản cá nhân của bạn";

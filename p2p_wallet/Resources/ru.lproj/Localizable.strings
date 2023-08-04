@@ -718,7 +718,7 @@
 "Outcoming transfer" = "Исходящий перевод";
 "We will ask you to confirm this operation within a few minutes" = "Мы попросим вас подтвердить эту операцию в течение нескольких минут";
 "Transaction pending" = "Ожидание транзакции";
-"Your bank account name must match NAME_LASTNAME" = "Название вашего банковского счета должно совпадать с NAME_LASTNAME.";
+"Your bank account name must match %@" = "Название вашего банковского счета должно совпадать с %@.";
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "Это ваш личный IBAN.  Используйте эти данные для осуществления переводов через банковское приложение.";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Мы используем SEPA Instant для банковских переводов, и обычно деньги поступают на ваш счет менее чем за минуту.";
 "Use this IBAN to send money from your personal accounts" = "Используйте этот IBAN для отправки денег со своих личных счетов";

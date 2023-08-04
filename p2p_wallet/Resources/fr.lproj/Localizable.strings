@@ -722,7 +722,7 @@
 "Outcoming transfer" = "Transfert sortant";
 "We will ask you to confirm this operation within a few minutes" = "Nous vous demanderons de confirmer cette opération dans quelques minutes";
 "Transaction pending" = "Transaction en attente";
-"Your bank account name must match NAME_LASTNAME" = "Le nom de votre compte bancaire doit correspondre à NAME_LASTNAME";
+"Your bank account name must match %@" = "Le nom de votre compte bancaire doit correspondre à %@";
 "This is your personal IBAN. Use this details to make transfers through your banking app" = "Il s'agit de votre IBAN personnel.  Utilisez ces informations pour effectuer des virements via votre application bancaire";
 "We use SEPA Instant for bank transfers, and typically, money will appear in your account in less than a minute" = "Nous utilisons SEPA Instant pour les virements bancaires, et généralement, l'argent apparaîtra sur votre compte en moins d'une minute";
 "Use this IBAN to send money from your personal accounts" = "Utilisez cet IBAN pour envoyer de l'argent depuis vos comptes personnels";
