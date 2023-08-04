@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'develop'
-      - 'pwn-9468-localise' # remove later
   # schedule:
   #   - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
 
@@ -13,14 +12,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # update-daily-test-build-from-develop:
-  #   uses: ./.github/workflows/build-test.yml
-  #   with:
-  #     with_high_priority: false
-  #     move_to_rft: false
-  #     lane: "daily_test"
-  #     branch: "develop"
-  #   secrets: inherit
+  update-daily-test-build-from-develop:
+    uses: ./.github/workflows/build-test.yml
+    with:
+      with_high_priority: false
+      move_to_rft: false
+      lane: "daily_test"
+      branch: "develop"
+    secrets: inherit
+
   add_new_keys_to_lokalise:
     runs-on: ubuntu-latest
     env:

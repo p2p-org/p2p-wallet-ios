@@ -60,11 +60,6 @@ chmod u+x Scripts/install.sh && Scripts/install.sh
 
 ## Localization
 
-- Allow swiftgen-and-send-key-to-lokalise.sh to be executed
-```shell
-chmod u+x Scripts/swiftgen-and-send-key-to-lokalise.sh
-```
-
 - Download [LocalizationHelper app](https://github.com/bigearsenal/XCodeLocalizationHelper/raw/main/release/LocalizationHelper.zip)
 - Copy `LocalizationHelper` to `Applications`
 - After xcodegen, the LocalizationHelper stopped working, so here is the solution:
@@ -115,6 +110,8 @@ APPLE_KEY_CONTENT=""
 GIT_AUTHORIZATION=""
 MATCH_PASSWORD=""
 IS_CI=false
+
+XCCONFIG_URL=""
 
 ```
 
