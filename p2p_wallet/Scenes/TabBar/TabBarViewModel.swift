@@ -182,10 +182,18 @@ extension TabBarViewModel {
     var walletBalancePublisher: AnyPublisher<String, Never> {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: Double = state.value
-                    .filter { $0.isUSDC }
-                    .reduce(0) { $0 + $1.amountInFiatDouble }
-                return "\(Defaults.fiat.symbol)\(NumberFormatter.unit(for: equityValue))"
+                let equityValue: CurrencyAmount = state.value
+                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
+                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
+                    .reduce(CurrencyAmount(usd: 0)) {
+                        $0 + $1.amountInFiat
+                    }
+                let formatter = CurrencyFormatter(
+                    showSpacingAfterCurrencySymbol: false,
+                    showSpacingAfterCurrencyGroup: false,
+                    showSpacingAfterLessThanOperator: false
+                )
+                return formatter.string(amount: equityValue)
             }
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
