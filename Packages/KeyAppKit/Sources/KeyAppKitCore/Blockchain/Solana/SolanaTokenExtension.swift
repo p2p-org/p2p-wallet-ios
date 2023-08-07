@@ -10,7 +10,7 @@ public extension SolanaToken {
 public struct KeyAppTokenExtension: Codable, Equatable {
     public let ruleOfProcessingTokenPriceWS: RuleOfProcessingTokenPriceWS?
     public let isPositionOnWS: Bool?
-    public let isTokenCellVisibleOnWS: Bool?
+    public let isTokenCellVisibleOnWS: Bool
     public let percentDifferenceToShowByPriceOnWS: Int?
     public let calculationOfFinalBalanceOnWS: Bool?
     public let ruleOfFractionalPartOnWS: RuleOfFractionalPartOnWS?
@@ -26,7 +26,7 @@ public struct KeyAppTokenExtension: Codable, Equatable {
 
     init(data: [String: TokenExtensionValue]) {
         isPositionOnWS = data["isPositionOnWS"]?.boolValue
-        isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue
+        isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue ?? true
         calculationOfFinalBalanceOnWS = data["calculationOfFinalBalanceOnWS"]?.boolValue
         percentDifferenceToShowByPriceOnWS = data["percentDifferenceToShowByPriceOnWS"]?.intValue
         canBeHidden = data["canBeHidden"]?.boolValue

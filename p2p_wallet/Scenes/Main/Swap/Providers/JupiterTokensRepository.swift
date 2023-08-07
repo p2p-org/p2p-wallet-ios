@@ -81,7 +81,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 localProvider.clear()
 
                 // get new data
-                (jupiterTokens, routeMap) = try await(
+                (jupiterTokens, routeMap) = try await (
                     jupiterClient.getTokens(),
                     jupiterClient.routeMap()
                 )
@@ -91,11 +91,11 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             }
 
             // get solana cached token list
-            let solanaTokens = try (await tokensService.all()).values
+            let solanaTokens = try await tokensService.all()
 
             // map solanaTokens to jupiter token
             jupiterTokens = jupiterTokens.map { jupiterToken in
-                if let token = solanaTokens.first(where: { $0.mintAddress == jupiterToken.mintAddress }) {
+                if let token = solanaTokens[jupiterToken.mintAddress] {
                     return token
                 }
                 return jupiterToken
