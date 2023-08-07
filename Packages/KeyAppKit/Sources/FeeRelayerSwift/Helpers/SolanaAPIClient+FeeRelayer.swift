@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -34,7 +30,7 @@ extension SolanaAPIClient {
         }
         return try PublicKey.associatedTokenAddress(walletAddress: address, tokenMintAddress: mint)
     }
-    
+
     internal func isAccountExists(_ address: PublicKey) async throws -> Bool {
         let account: BufferInfo<EmptyInfo>? = try await getAccountInfo(account: address.base58EncodedString)
         return account != nil

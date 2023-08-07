@@ -1,13 +1,12 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct HomeActionsView: View {
-    
     let actions: [HomeAction]
     let action: (HomeAction) -> Void
-    
+
     var body: some View {
-        HStack() {
+        HStack {
             Spacer()
             ForEach(actions, id: \.text) { actionType in
                 actionView(title: actionType.text, image: actionType.image) {
@@ -18,7 +17,7 @@ struct HomeActionsView: View {
         }
         .padding(.horizontal, 12)
     }
-    
+
     private func actionView(
         title: String,
         image: UIImage,

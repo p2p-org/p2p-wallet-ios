@@ -9,7 +9,7 @@ struct SwapAlertLoggerMessage: Codable {
     let platform, appVersion, timestamp, blockchainError: String
     let diffRoutesTime: String
     let diffTxTime: String
-    
+
     enum CodingKeys: String, CodingKey {
         case tokenA = "token_a"
         case tokenB = "token_b"
@@ -24,7 +24,7 @@ struct SwapAlertLoggerMessage: Codable {
         case diffRoutesTime = "diff_routes_time"
         case diffTxTime = "diff_tx_time"
     }
-    
+
     init(
         tokenA: SwapAlertLoggerMessageTokenA,
         tokenB: SwapAlertLoggerMessageTokenB,
@@ -55,15 +55,16 @@ struct SwapAlertLoggerMessage: Codable {
 }
 
 // MARK: - TokenA
+
 struct SwapAlertLoggerMessageTokenA: Codable {
     let name, mint, sendAmount, balance: String
-    
+
     enum CodingKeys: String, CodingKey {
         case name, mint
         case sendAmount = "send_amount"
         case balance
     }
-    
+
     init(name: String, mint: String, sendAmount: String, balance: String) {
         self.name = name
         self.mint = mint
@@ -73,15 +74,16 @@ struct SwapAlertLoggerMessageTokenA: Codable {
 }
 
 // MARK: - TokenB
+
 struct SwapAlertLoggerMessageTokenB: Codable {
     let name, mint, expectedAmount, balance: String
-    
+
     enum CodingKeys: String, CodingKey {
         case name, mint
         case expectedAmount = "expected_amount"
         case balance
     }
-    
+
     init(name: String, mint: String, expectedAmount: String, balance: String) {
         self.name = name
         self.mint = mint

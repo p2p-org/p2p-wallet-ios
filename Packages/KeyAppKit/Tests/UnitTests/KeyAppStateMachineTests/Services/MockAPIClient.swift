@@ -5,9 +5,8 @@ protocol APIClient {
 }
 
 class MockAPIClient: APIClient {
-    
     var delayInMilliseconds: UInt64
-    
+
     init(delayInMilliseconds: UInt64) {
         self.delayInMilliseconds = delayInMilliseconds
     }

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import OrcaSwapSwift
 import SolanaSwift
@@ -79,7 +75,7 @@ public class RelayServiceImpl: RelayService {
         config configuration: FeeRelayerConfiguration
     ) async throws -> String {
         try await feeRelayerAPIClient.sendTransaction(.relayTransaction(
-            try .init(
+            .init(
                 preparedTransaction: preparedTransaction,
                 statsInfo: .init(
                     operationType: configuration.operationType,
@@ -102,7 +98,7 @@ public class RelayServiceImpl: RelayService {
         config configuration: FeeRelayerConfiguration
     ) async throws -> String {
         try await feeRelayerAPIClient.sendTransaction(.signRelayTransaction(
-            try .init(
+            .init(
                 preparedTransaction: preparedTransaction,
                 statsInfo: .init(
                     operationType: configuration.operationType,
@@ -199,7 +195,7 @@ public class RelayServiceImpl: RelayService {
 
                 if getSignatureOnly {
                     signature = try await feeRelayerAPIClient.sendTransaction(.signRelayTransaction(
-                        try .init(
+                        .init(
                             preparedTransaction: preparedRelayTransaction,
                             statsInfo: .init(
                                 operationType: config.operationType,
@@ -212,7 +208,7 @@ public class RelayServiceImpl: RelayService {
                     ))
                 } else {
                     signature = try await feeRelayerAPIClient.sendTransaction(.relayTransaction(
-                        try .init(
+                        .init(
                             preparedTransaction: preparedRelayTransaction,
                             statsInfo: .init(
                                 operationType: config.operationType,
@@ -243,7 +239,7 @@ public class RelayServiceImpl: RelayService {
             if toppedUp {
                 let responseError: SolanaSwift.ResponseError?
                 switch error {
-                case SolanaSwift.APIClientError.responseError(let detail):
+                case let SolanaSwift.APIClientError.responseError(detail):
                     responseError = detail
                 default:
                     responseError = nil
@@ -296,7 +292,7 @@ public class RelayServiceImpl: RelayService {
         }
 
         var transactions = transactions
-        
+
         for (idx, transaction) in transactions.enumerated() {
             /// Sign transaction
             let signature = try await feeRelayerAPIClient
@@ -323,7 +319,7 @@ public class RelayServiceImpl: RelayService {
 
             transactions[idx] = transaction
         }
-        
+
         return transactions
     }
 }

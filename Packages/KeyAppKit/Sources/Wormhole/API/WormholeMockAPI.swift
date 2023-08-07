@@ -1,14 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Giang Long Tran on 22.03.2023.
-//
-
 import Foundation
 
-//public class WormholeMockAPI: WormholeAPI {
-//    public func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8) async throws -> WormholeBundle {
+// public class WormholeMockAPI: WormholeAPI {
+//    public func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage:
+//    UInt8) async throws -> WormholeBundle {
 //        .init(
 //            bundleId: "",
 //            userWallet: <#T##String#>,
@@ -35,7 +29,8 @@ import Foundation
 //        )
 //    }
 //
-//    public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> ClaimFees {
+//    public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws ->
+//    ClaimFees {
 //        try await self.client.call(
 //            method: "get_ethereum_fees",
 //            params: [
@@ -86,7 +81,8 @@ import Foundation
 //        )
 //    }
 //
-//    public func getTransferFees(userWallet: String, recipient: String, mint: String?, amount: String) async throws -> SendFees {
+//    public func getTransferFees(userWallet: String, recipient: String, mint: String?, amount: String) async throws ->
+//    SendFees {
 //        try await self.client.call(
 //            method: "get_send_fees",
 //            params: [
@@ -97,4 +93,4 @@ import Foundation
 //            ]
 //        )
 //    }
-//}
+// }

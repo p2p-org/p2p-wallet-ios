@@ -1,10 +1,3 @@
-//
-//  NetworkView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -87,17 +80,17 @@ struct NetworkView: View {
                 }
             }
         )
-            .alert(isPresented: $alertPresented) {
-                Alert(
-                    title: Text(L10n.switchNetwork),
-                    message: Text(
-                        L10n.doYouReallyWantToSwitchTo + " \"" + viewModel.endPoints[lastClickedIndex].address + "\""
-                    ),
-                    primaryButton: .cancel(Text(L10n.ok)) {
-                        viewModel.setEndPoint(viewModel.endPoints[lastClickedIndex])
-                    },
-                    secondaryButton: .default(Text(L10n.cancel))
-                )
-            }
+        .alert(isPresented: $alertPresented) {
+            Alert(
+                title: Text(L10n.switchNetwork),
+                message: Text(
+                    L10n.doYouReallyWantToSwitchTo + " \"" + viewModel.endPoints[lastClickedIndex].address + "\""
+                ),
+                primaryButton: .cancel(Text(L10n.ok)) {
+                    viewModel.setEndPoint(viewModel.endPoints[lastClickedIndex])
+                },
+                secondaryButton: .default(Text(L10n.cancel))
+            )
+        }
     }
 }

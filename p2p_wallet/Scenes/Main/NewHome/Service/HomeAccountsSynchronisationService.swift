@@ -1,10 +1,3 @@
-//
-//  HomeAccountsSynchornisationService.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.04.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import Resolver

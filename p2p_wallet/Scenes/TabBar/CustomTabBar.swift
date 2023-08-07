@@ -1,10 +1,3 @@
-//
-//  CustomTabBar.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import Combine
 import KeyAppUI
 import UIKit
@@ -40,20 +33,20 @@ final class CustomTabBar: UITabBar {
     }
 
     static var additionalHeight: CGFloat = 8
-    
+
     private var inset: CGFloat {
         if SafeAreaInsetsKey.defaultValue.bottom > 0 {
             return SafeAreaInsetsKey.defaultValue.bottom - 5
         }
         return 14
     }
-    
+
     override var clipsToBounds: Bool {
         didSet {
             middleButton.clipsToBounds = false
         }
     }
-    
+
     private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
     var middleButtonClicked: AnyPublisher<Void, Never> { middleButtonClickedSubject.eraseToAnyPublisher() }
 
@@ -77,15 +70,15 @@ final class CustomTabBar: UITabBar {
         size.height += Self.additionalHeight
         return size
     }
-    
-    override func draw(_ rect: CGRect) {
+
+    override func draw(_: CGRect) {
         // Create a rounded rect path
         let path = UIBezierPath(
             roundedRect: bounds,
             byRoundingCorners: [.topLeft, .topRight],
             cornerRadii: CGSize(width: 16, height: 16)
         )
-        
+
         // Set the fill color
         Asset.Colors.snow.color.setFill()
         path.fill()
@@ -101,7 +94,7 @@ final class CustomTabBar: UITabBar {
         guard !clipsToBounds, !isHidden, alpha > 0 else { return nil }
         return middleButton.frame.contains(point) ? middleButton : super.hitTest(point, with: event)
     }
-    
+
     func updateSelectedViewPositionIfNeeded() {
         guard let currentIndex = currentIndex else { return }
         let buttons = subviews.compactMap { NSStringFromClass(type(of: $0)) == "UITabBarButton" ? $0 : nil }

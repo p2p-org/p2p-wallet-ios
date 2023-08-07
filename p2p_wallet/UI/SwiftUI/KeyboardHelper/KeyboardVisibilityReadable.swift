@@ -12,7 +12,7 @@ extension KeyboardVisibilityReadable {
             NotificationCenter.default
                 .publisher(for: UIResponder.keyboardWillShowNotification)
                 .map { _ in true },
-            
+
             NotificationCenter.default
                 .publisher(for: UIResponder.keyboardWillHideNotification)
                 .map { _ in false }

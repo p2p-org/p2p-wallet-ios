@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -17,7 +13,7 @@ public enum RestoreSeedEvent {
     case restoreWithSeed(phrase: [String], path: DerivablePath)
 }
 
-public struct RestoreSeedContainer { }
+public struct RestoreSeedContainer {}
 
 public enum RestoreSeedState: Codable, State, Equatable {
     public typealias Event = RestoreSeedEvent
@@ -32,9 +28,8 @@ public enum RestoreSeedState: Codable, State, Equatable {
     public func accept(
         currentState: RestoreSeedState,
         event: RestoreSeedEvent,
-        provider: RestoreSeedContainer
+        provider _: RestoreSeedContainer
     ) async throws -> RestoreSeedState {
-
         switch currentState {
         case .signInSeed:
             switch event {

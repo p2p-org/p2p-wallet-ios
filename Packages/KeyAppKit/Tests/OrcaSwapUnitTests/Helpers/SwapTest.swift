@@ -1,6 +1,7 @@
 import Foundation
 
 // MARK: - SwapTest
+
 struct SwapTest: Codable {
     let comment: String?
     let endpoint: String

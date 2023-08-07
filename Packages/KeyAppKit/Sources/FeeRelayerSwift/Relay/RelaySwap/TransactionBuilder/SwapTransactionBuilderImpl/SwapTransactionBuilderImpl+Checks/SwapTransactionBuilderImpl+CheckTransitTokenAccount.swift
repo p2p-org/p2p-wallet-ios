@@ -1,24 +1,17 @@
-//
-//  File.swift
-//  
-//
-//  Created by Chung Tran on 06/11/2022.
-//
-
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension SwapTransactionBuilderImpl {
     func checkTransitTokenAccount(
-        owner: PublicKey,
+        owner _: PublicKey,
         poolsPair: PoolsPair,
         output: inout SwapTransactionBuilderOutput
     ) async throws {
         let transitToken = try? transitTokenAccountManager.getTransitToken(
             pools: poolsPair
         )
-        
+
         let needsCreateTransitTokenAccount = try await transitTokenAccountManager
             .checkIfNeedsCreateTransitTokenAccount(
                 transitToken: transitToken

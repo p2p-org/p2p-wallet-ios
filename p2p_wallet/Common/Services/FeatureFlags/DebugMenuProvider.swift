@@ -1,10 +1,3 @@
-//
-//  DebugMenuProvider.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.06.2022.
-//
-
 import Foundation
 
 private protocol FeaturesStorage: AnyObject {

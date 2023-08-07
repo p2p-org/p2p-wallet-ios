@@ -1,8 +1,8 @@
 import SolanaSwift
 @testable import OrcaSwapSwift
 
-let minimumTokenAccountBalance: UInt64 = 2039280
-let minimumRelayAccountBalance: UInt64 = 890880
+let minimumTokenAccountBalance: UInt64 = 2_039_280
+let minimumRelayAccountBalance: UInt64 = 890_880
 let lamportsPerSignature: UInt64 = 5000
 let blockhash: String = "CSymwgTNX1j3E4qhKfJAUE41nBWEwXufoYryPbkde5RR"
 
@@ -10,23 +10,23 @@ extension PublicKey {
     static var owner: PublicKey {
         "3h1zGmCwsRJnVk5BuRNMLsPaQu1y2aqXqXDWYCgrp5UG"
     }
-    
+
     static var feePayerAddress: PublicKey {
         "FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"
     }
-    
+
     static var usdcAssociatedAddress: PublicKey {
         "3uetDDizgTtadDHZzyy9BqxrjQcozMEkxzbKhfZF4tG3"
     }
-    
+
     static var usdtMint: PublicKey {
         "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
     }
-    
+
     static var btcMint: PublicKey {
         "9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E"
     }
-    
+
     static var btcAssociatedAddress: PublicKey {
         "4Vfs3NZ1Bo8agrfBJhMFdesso8tBWyUZAPBGMoWHuNRU"
     }
@@ -34,6 +34,7 @@ extension PublicKey {
     static var ethMint: PublicKey {
         "2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk"
     }
+
     static var ethAssociatedAddress: PublicKey {
         "4Tz8MH5APRfA4rjUNxhRruqGGMNvrgji3KhWYKf54dc7"
     }
@@ -41,19 +42,19 @@ extension PublicKey {
     static var btcTransitTokenAccountAddress: PublicKey {
         "8eYZfAwWoEfsNMmXhCPUAiTpG8EzMgzW8nzr7km3sL2s"
     }
-    
+
     static var swapProgramId: PublicKey {
         "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP"
     }
-    
+
     static var deprecatedSwapProgramId: PublicKey {
         "DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1"
     }
-    
+
     static var relayAccount: PublicKey {
         "CgbNQZHjhRWf2VQ96YfVLTsL9abwEuFuTM63G8Yu4KYo"
     }
-    
+
     static var relayTemporaryWSOLAccount: PublicKey {
         "6VfQe3pQpE6mDDsjeertA5USua5hJx2d9c86UymQaJjr"
     }
@@ -119,7 +120,7 @@ extension Pool {
             isStable: nil
         )
     }
-    
+
     static var ethSOL: Pool {
         .init(
             account: "4vWJYxLx9F7WPQeeYzg9cxhDeaPjwruZXCffaSknWFxy",
@@ -149,7 +150,7 @@ extension Pool {
             isStable: nil
         )
     }
-    
+
     static var solUSDC: Pool {
         .init(
             account: "6fTRDD7sYxCN7oyoSQaN1AWC3P2m8A6gVZzGrpej9DvL",
@@ -179,7 +180,7 @@ extension Pool {
             isStable: nil
         )
     }
-    
+
     static var usdcUSDT: Pool {
         .init(
             account: "8KZjKCNTshjwapD4TjWQonXBdi1Jm4Eks5rgrViK9UCx",
@@ -209,7 +210,7 @@ extension Pool {
             isStable: nil
         )
     }
-    
+
     static var solUSDT: Pool {
         .init(
             account: "4bS6bkBdJ4B1Bt4ft3oGF8La7eKpCqz8xnu1AMpMxWSP",

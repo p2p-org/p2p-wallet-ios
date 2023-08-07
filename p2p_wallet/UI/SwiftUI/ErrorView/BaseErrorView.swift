@@ -1,8 +1,7 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct BaseErrorView: View {
-
     struct Appearance {
         let actionButtonHorizontalOffset: CGFloat
         let imageTextPadding: CGFloat

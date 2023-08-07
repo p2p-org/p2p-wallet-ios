@@ -1,10 +1,3 @@
-//
-//  SellTransactionDetailsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness

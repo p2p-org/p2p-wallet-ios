@@ -1,25 +1,17 @@
-//
-//  SelectCountryView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.04.2023.
-//
-
-import SwiftUI
-import SkeletonUI
 import KeyAppUI
+import SkeletonUI
+import SwiftUI
 
 struct SelectCountryView: View {
-    
     @ObservedObject var viewModel: SelectCountryViewModel
-    
+
     var body: some View {
         WrapperForSearchingView(searching: $viewModel.isSearching) {
             searchableContent
         }
         .searchable(text: $viewModel.searchText)
     }
-    
+
     private var searchableContent: some View {
         Group {
             switch viewModel.state {
@@ -41,7 +33,7 @@ struct SelectCountryView: View {
             viewModel.onAppear()
         }
     }
-    
+
     @ViewBuilder
     private var content: some View {
         List {
@@ -70,11 +62,11 @@ struct SelectCountryView: View {
             Section(header: Text(L10n.allCountries)) {
                 switch viewModel.state {
                 case .skeleton:
-                    ForEach(0..<10) { _ in
+                    ForEach(0 ..< 10) { _ in
                         countrySkeleton
                     }
                 case let .loaded(countries):
-                    ForEach(0..<countries.count, id: \.self) { index in
+                    ForEach(0 ..< countries.count, id: \.self) { index in
                         Button(
                             action: {
                                 viewModel.countrySelected(model: countries[index])
@@ -91,7 +83,7 @@ struct SelectCountryView: View {
         }
         .listStyle(.insetGrouped)
     }
-    
+
     private func countryView(flag: String, title: String) -> some View {
         HStack(spacing: 10) {
             Text(flag)
@@ -102,7 +94,7 @@ struct SelectCountryView: View {
         }
         .padding(.vertical, 6)
     }
-    
+
     private var countrySkeleton: some View {
         HStack(spacing: 12) {
             Text("")

@@ -16,29 +16,28 @@ extension Route {
             mints.append(info.outputMint)
         }
         return mints
-        
     }
-    
+
     func toSymbols(tokensList: [TokenMetadata]) -> [String]? {
         // get marketInfos
         guard !marketInfos.isEmpty
         else {
             return nil
         }
-        
+
         // transform mints to symbol
         return getMints()
             .map { mint in
                 tokensList
-                    .first(where: {$0.mintAddress == mint})?
+                    .first(where: { $0.mintAddress == mint })?
                     .symbol ?? "UNKNOWN"
             }
     }
-    
+
     func chainDescription(tokensList: [TokenMetadata]) -> String {
-        toSymbols(tokensList: tokensList)?.compactMap {$0}.joined(separator: " -> ") ?? ""
+        toSymbols(tokensList: tokensList)?.compactMap { $0 }.joined(separator: " -> ") ?? ""
     }
-    
+
     func priceDescription(
         bestOutAmount: UInt64,
         toTokenDecimals: Decimals,
@@ -48,7 +47,7 @@ extension Route {
         if myOutAmount >= bestOutAmount {
             return L10n.bestPrice
         } else {
-            return "-" + (bestOutAmount-myOutAmount)
+            return "-" + (bestOutAmount - myOutAmount)
                 .convertToBalance(decimals: toTokenDecimals)
                 .tokenAmountFormattedString(symbol: toTokenSymbol)
         }
@@ -59,7 +58,7 @@ extension Route {
     public var id: String {
         marketInfos.map(\.id).joined()
     }
-    
+
     var name: String {
         marketInfos.map(\.label).joined(separator: " x ")
     }

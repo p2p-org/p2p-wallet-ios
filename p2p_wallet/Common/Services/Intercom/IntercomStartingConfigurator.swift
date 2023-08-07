@@ -1,10 +1,3 @@
-//
-//  IntercomStartingConfigurator.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 08.02.2022.
-//
-
 import Intercom
 
 final class IntercomStartingConfigurator {

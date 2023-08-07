@@ -17,7 +17,7 @@ final class ReceiveCoordinator: SmartCoordinator<Void> {
         self.wrapIntoNavigation = wrapIntoNavigation
         super.init(presentation: presentation)
     }
-    
+
     init(
         network: ReceiveNetwork,
         navigationController: UINavigationController

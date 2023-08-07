@@ -10,11 +10,11 @@ extension UIWindow {
 
 extension UIWindow {
     #if !RELEASE
-    override open func motionEnded(_ motion: UIEvent.EventSubtype, with _: UIEvent?) {
-        if motion == .motionShake {
-            let vc = UIHostingController(rootView: DebugMenuView(viewModel: .init()))
-            UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+        override open func motionEnded(_ motion: UIEvent.EventSubtype, with _: UIEvent?) {
+            if motion == .motionShake {
+                let vc = UIHostingController(rootView: DebugMenuView(viewModel: .init()))
+                UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+            }
         }
-    }
     #endif
 }
