@@ -2,7 +2,7 @@ import Combine
 import KeyAppStateMachine
 import XCTest
 
-private let fakeNetworkDelayInMilliseconds: Int = 300
+private let fakeNetworkDelayInMilliseconds: Int = 500
 
 final class StateMachineTests: XCTestCase {
     var apiClient: APIClient = MockAPIClient(delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds))
@@ -22,7 +22,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptAnAction_ShouldReturnExpectedState() async throws {
         // accept action(s)
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
         }
 
@@ -49,7 +49,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptAnAction_WaitForItToFinish_AcceptSecondAction_ShouldReturnFirstStateThenSecondState() async throws {
         // accept action(s)
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             // wait for first action to complete
             try await Task.sleep(nanoseconds: UInt64(3 * fakeNetworkDelayInMilliseconds * 1_000_000))
@@ -90,7 +90,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptNewAction_WaitForPreviousActionToComplete_ShouldReturnBothStates() async throws {
         // accept action(s)
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
@@ -127,7 +127,7 @@ final class StateMachineTests: XCTestCase {
     func testAccept3Actions_WaitForEachPreviousActionToComplete_ShouldReturnAllStates() async throws {
         // accept actions
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Third"))
@@ -173,7 +173,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptNewAction_CancelingPreviousActionImmediately_ShouldReturnSecondState() async throws {
         // accept an action
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
 
             self.dispatcher.newActionShouldCancelPreviousAction = true
@@ -208,7 +208,7 @@ final class StateMachineTests: XCTestCase {
     func testAcceptNewActions_CancelingPreviousActionOrWaiting_ShouldPerformActionsCorrectly() async throws {
         // Accept an action and then immediately accept multiple new actions
         Task.detached {
-            try await Task.sleep(nanoseconds: 300_000_000)
+            try await Task.sleep(nanoseconds: 500_000_000)
             // first action
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
 
