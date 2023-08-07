@@ -1,22 +1,14 @@
-//
-//  SendViaLinkClaimErrorView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.03.2023.
-//
-
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SendViaLinkClaimErrorView: View {
-    
     let title: String
     let subtitle: String?
     let image: UIImage
     @Binding var isLoading: Bool
     let reloadClicked: () -> Void
     let cancelClicked: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 39) {
             if let subtitle {

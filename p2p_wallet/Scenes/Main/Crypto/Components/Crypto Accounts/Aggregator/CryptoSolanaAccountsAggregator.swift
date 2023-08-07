@@ -18,7 +18,8 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
         let (accounts, favourites, ignores, hideZeroBalance) = input
 
         return accounts
-            .filter { !$0.isNFTToken && !$0.isUSDC }
+            .filter { !$0.isNFTToken }
+            .filter { !($0.token.keyAppExtensions.isPositionOnWS ?? false) }
             .sorted(by: Self.defaultSorter)
             .map { account in
                 var tags: AccountTags = []
@@ -30,7 +31,7 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
                 } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
                 }
-                
+
                 let canBeHidden = account.token.keyAppExtensions.canBeHidden ?? true
                 let extraAction: AccountExtraAction? = canBeHidden ? .showHide : nil
 

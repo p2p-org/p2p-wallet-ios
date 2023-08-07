@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 31.03.2023.
-//
-
 import BigInt
 import FeeRelayerSwift
 import Foundation

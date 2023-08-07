@@ -1,10 +1,3 @@
-//
-//  IntercomUserAttributesService.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 03.02.2022.
-//
-
 import Intercom
 import Resolver
 import SolanaSwift

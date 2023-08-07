@@ -1,13 +1,13 @@
-import Foundation
 import Combine
+import Foundation
 
-/// A machine that consists of a set of states, actions, and a dispatcher that controls transition rules and define how the system transitions from one state to another based on the inputs it receives.
+/// A machine that consists of a set of states, actions, and a dispatcher that controls transition rules and define how
+/// the system transitions from one state to another based on the inputs it receives.
 public actor StateMachine<
     State: KeyAppStateMachine.State,
     Action: KeyAppStateMachine.Action,
     Dispatcher: KeyAppStateMachine.Dispatcher<State, Action>
 > {
-
     // MARK: - Dependencies
 
     /// Dispatcher that controls dispatching actions
@@ -28,21 +28,21 @@ public actor StateMachine<
     private var currentTask: Task<Void, Never>?
 
     // MARK: - Public properties
-    
+
     /// Publisher that emit a stream of current state to listener
     public nonisolated var statePublisher: AnyPublisher<State, Never> {
         stateSubject
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
-    
+
     /// The current state of the machine
     public nonisolated var currentState: State {
         stateSubject.value
     }
 
     // MARK: - Initialization
-    
+
     /// `StateMachine`'s initialization
     /// - Parameter dispatcher: Dispatcher that controls dispatching actions
     /// - Parameter verbose: Define if if logging available
@@ -52,18 +52,18 @@ public actor StateMachine<
     }
 
     // MARK: - Public methods
-    
+
     /// Accept a new action
     /// - Parameter action: new action
     public func accept(action: Action) async {
         // Log
         logIfVerbose(message: "📲 Action accepted: \(action)")
-        
+
         // If there is any performing action, task
         if let currentTask, let currentAction, currentTask.isCancelled == false {
             // Log
             logIfVerbose(message: "🚧 [AnotherInProgress] Another action in progress: \(currentAction)")
-            
+
             // Check if action should be dispatched
             guard dispatcher.shouldBeginDispatching(
                 currentAction: currentAction,
@@ -73,7 +73,7 @@ public actor StateMachine<
                 logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action refused: \(action)")
                 return
             }
-            
+
             // Check if new action should cancel current action
             if dispatcher.shouldCancelCurrentAction(
                 currentAction: currentAction,
@@ -86,7 +86,7 @@ public actor StateMachine<
                 // Log
                 logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action is marked as cancelled: \(currentAction)")
             }
-            
+
             // Wait for current action to be completed
             else {
                 // Log
@@ -96,13 +96,13 @@ public actor StateMachine<
                 await currentTask.value
             }
         }
-        
+
         // Dispatch action
         saveCurrentAction(action)
         saveCurrentTask(.init { [unowned self] in
             // perform task
             await performAction(action: action)
-            
+
             // remove current task / action
             saveCurrentAction(nil)
             saveCurrentTask(nil)
@@ -116,7 +116,7 @@ public actor StateMachine<
         guard verbose else { return }
         print("[StateMachine] \(message)")
     }
-    
+
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
         // Log
@@ -135,10 +135,10 @@ public actor StateMachine<
             logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
-        
+
         // Log
         logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
-        
+
         // dispatch action
         stateSubject.send(
             await dispatcher.dispatch(
@@ -146,13 +146,13 @@ public actor StateMachine<
                 currentState: currentState
             )
         )
-        
+
         // check cancellation
         guard !Task.isCancelled else {
             logIfVerbose(message: "❌ Action cancelled: \(action)")
             return
         }
-        
+
         // Log
         logIfVerbose(message: "✅ Action did end dispatching: \(action)")
 
@@ -164,7 +164,7 @@ public actor StateMachine<
             stateSubject.send(endState)
         }
     }
-    
+
     /// Save current action
     private func saveCurrentAction(_ action: Action?) {
         currentAction = action

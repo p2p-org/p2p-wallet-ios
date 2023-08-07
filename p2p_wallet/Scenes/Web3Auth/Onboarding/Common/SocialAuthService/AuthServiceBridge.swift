@@ -1,6 +1,6 @@
+import Foundation
 import Onboarding
 import Resolver
-import Foundation
 
 private enum Contants {
     static let tokenLifeTime = TimeInterval(60)

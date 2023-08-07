@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 struct APIGatewayGetMetadataParams: Codable {
@@ -9,7 +5,7 @@ struct APIGatewayGetMetadataParams: Codable {
     let ethereumAddress: String
     let signature: String
     let timestampDevice: String
-    
+
     enum CodingKeys: String, CodingKey {
         case solanaPublicKey = "solana_pubkey"
         case ethereumAddress = "ethereum_id"
@@ -24,7 +20,7 @@ struct APIGatewayUpdateMetadataParams: Codable {
     let signature: String
     let metadata: String
     let timestampDevice: String
-    
+
     enum CodingKeys: String, CodingKey {
         case solanaPublicKey = "solana_pubkey"
         case ethereumAddress = "ethereum_id"
@@ -116,11 +112,10 @@ struct APIGatewayClientResult: Codable {
 
 struct APIGatewayClientGetMetadataResult: Codable {
     let encryptedMetadata: String
-    
+
     enum CodingKeys: String, CodingKey {
         case encryptedMetadata = "metadata"
     }
-    
 }
 
 struct APIGatewayClientConfirmRestoreWalletResult: Codable {

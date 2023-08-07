@@ -3,7 +3,7 @@ import Foundation
 /// Configuration for fee relayer
 public struct FeeRelayerConfiguration {
     let additionalPaybackFee: UInt64
-    
+
     let operationType: StatsInfo.OperationType
     let currency: String?
 

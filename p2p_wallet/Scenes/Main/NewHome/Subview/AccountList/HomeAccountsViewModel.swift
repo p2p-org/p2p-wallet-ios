@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BigDecimal
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -9,7 +10,6 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
-import BigDecimal
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -104,10 +104,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: CurrencyAmount = state.value
-                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
                     .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
                     .reduce(CurrencyAmount(usd: 0)) {
-                        return $0 + $1.amountInFiat
+                        $0 + $1.amountInFiat
                     }
 
                 let formatter = CurrencyFormatter(
@@ -126,7 +126,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // USDC amount
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                guard let usdcAccount = state.value.first(where: {
+                    $0.isUSDC && ($0.token.keyAppExtensions.isPositionOnWS ?? false)
+                }) else {
                     return ""
                 }
 
@@ -190,14 +192,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func scrollToTop() {
         scrollOnTheTop = true
     }
-    
+
     func viewDidAppear() {
         if let balance = Double(balance) {
             analyticsManager.log(event: .userAggregateBalanceBase(amountUsd: balance, currency: Defaults.fiat.code))
             analyticsManager.log(event: .userHasPositiveBalanceBase(state: balance > 0))
         }
     }
-    
+
     func balanceTapped() {
         analyticsManager.log(event: .mainScreenAmountClick)
     }

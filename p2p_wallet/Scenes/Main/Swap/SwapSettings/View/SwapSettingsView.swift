@@ -1,10 +1,3 @@
-//
-//  SwapSettingsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.02.2023.
-//
-
 import Combine
 import KeyAppUI
 import SkeletonUI

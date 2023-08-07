@@ -93,7 +93,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             }
 
         let cryptoAccountsAggregator = CryptoAccountsAggregator()
-        
+
         Publishers
             .CombineLatest(solanaAccountsPublisher, ethereumAccountsPublisher)
             .map { solanaAccounts, ethereumAccounts in

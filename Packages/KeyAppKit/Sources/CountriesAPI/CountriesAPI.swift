@@ -11,9 +11,9 @@ public final class CountriesAPIImpl: CountriesAPI {
         try await Task {
             let b: Bundle
             #if SWIFT_PACKAGE
-            b = Bundle.module
+                b = Bundle.module
             #else
-            b = Bundle(for: Self.self)
+                b = Bundle(for: Self.self)
             #endif
             // Country list source https://github.com/Sonatrix/country-list
             let url = b.url(forResource: "countries", withExtension: "json")!

@@ -1,10 +1,3 @@
-//
-//  Spinner.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 04.10.2022.
-//
-
 import SwiftUI
 
 struct Spinner: View {

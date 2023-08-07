@@ -1,10 +1,3 @@
-//
-//  Available.swift
-//  FeatureFlags
-//
-//  Created by Babich Ivan on 10.06.2022.
-//
-
 import Foundation
 
 /// Checks feature availability

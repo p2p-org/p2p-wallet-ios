@@ -1,10 +1,3 @@
-//
-//  SupportedTokensCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.03.2023.
-//
-
 import Foundation
 import SwiftUI
 
@@ -35,7 +28,7 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
     func openReceive(item: SupportedTokenItem) {
         // Coordinate to receive
         func _openReceive(network: ReceiveNetwork) {
-            self.coordinate(to: ReceiveCoordinator(network: network, presentation: self.presentation))
+            coordinate(to: ReceiveCoordinator(network: network, presentation: presentation))
                 .sink {}
                 .store(in: &subscriptions)
         }
@@ -52,8 +45,11 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
             }
         } else {
             // Token supports many networks.
-            let coordinator = SupportedTokenNetworksCoordinator(supportedToken: item, viewController: self.presentation.presentingViewController)
-            self.coordinate(to: coordinator)
+            let coordinator = SupportedTokenNetworksCoordinator(
+                supportedToken: item,
+                viewController: presentation.presentingViewController
+            )
+            coordinate(to: coordinator)
                 .sink { selectedNetwork in
                     guard let selectedNetwork else { return }
                     switch selectedNetwork {

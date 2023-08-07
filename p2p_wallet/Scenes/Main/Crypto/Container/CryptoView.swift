@@ -1,19 +1,18 @@
+import Combine
 import KeyAppUI
 import SwiftUI
-import Combine
 
 /// View of `Crypto` scene
 struct CryptoView: View {
-    
     // MARK: - Properties
 
     @ObservedObject var viewModel: CryptoViewModel
-    
+
     private let actionsPanelViewModel: CryptoActionsPanelViewModel
     private let accountsViewModel: CryptoAccountsViewModel
-    
+
     // MARK: - Initializer
-    
+
     init(
         viewModel: CryptoViewModel,
         actionsPanelViewModel: CryptoActionsPanelViewModel,
@@ -23,7 +22,7 @@ struct CryptoView: View {
         self.actionsPanelViewModel = actionsPanelViewModel
         self.accountsViewModel = accountsViewModel
     }
-    
+
     // MARK: - View content
 
     private var actionsPanelView: CryptoActionsPanelView {

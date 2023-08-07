@@ -1,5 +1,5 @@
-import UIKit
 import KeyAppUI
+import UIKit
 
 struct CreateUsernameParameters {
     let backgroundColor: UIColor

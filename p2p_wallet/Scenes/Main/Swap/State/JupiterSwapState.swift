@@ -188,7 +188,7 @@ struct JupiterSwapState: Equatable {
         {
             payingFeeToken = toToken.token
             accountCreationFee =
-            ((tokensPriceMap[TokenMetadata.nativeSolana.mintAddress] / tokenPrice) * accountCreationFeeInSOL)
+                ((tokensPriceMap[TokenMetadata.nativeSolana.mintAddress] / tokenPrice) * accountCreationFeeInSOL)
                 .rounded(decimals: payingFeeToken.decimals)
         }
 

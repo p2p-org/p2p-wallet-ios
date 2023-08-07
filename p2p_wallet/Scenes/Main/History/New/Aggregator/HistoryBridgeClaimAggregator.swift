@@ -1,10 +1,3 @@
-//
-//  HistoryBridgeClaimAggregator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.05.2023.
-//
-
 import Combine
 import Foundation
 import History

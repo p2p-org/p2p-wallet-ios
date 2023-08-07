@@ -7,7 +7,7 @@ public protocol Storage {
 
 public class ApplicationFileStorage: Storage {
     public init() {}
-    
+
     public func save(for key: String, data: Data) async throws {
         guard let filePath = append(toPath: documentDirectory(), withPathComponent: key) else {
             return

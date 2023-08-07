@@ -1,10 +1,3 @@
-//
-//  TransactionDetailsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Resolver

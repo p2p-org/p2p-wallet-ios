@@ -1,10 +1,3 @@
-//
-//  GlobalAppState.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 26.10.2022.
-//
-
 import Foundation
 import NameService
 import Resolver

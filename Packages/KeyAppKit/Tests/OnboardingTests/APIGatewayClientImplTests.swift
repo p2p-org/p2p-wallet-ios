@@ -1,10 +1,6 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import KeyAppKitCore
-@testable import Onboarding
 import XCTest
+@testable import Onboarding
 
 class APIGatewayClientImplTests: XCTestCase {
     // func testGetMetadata() async throws {
@@ -60,7 +56,7 @@ class APIGatewayClientImplTests: XCTestCase {
 
             return try JSONEncoder().encode(response)
         }
-        
+
         let privateKey = "52y2jQVwqQXkNW9R9MsKMcv9ZnJnDwzJqLX4d8noB4LEpuezFQLvAb2rioKsLCChte9ELNYwN29GzVjVVUmvfQ4v"
         let solanaSecretKey = Data(Base58.decode(privateKey))
         let client = APIGatewayClientImpl(endpoint: "localhost", networkManager: network)

@@ -1,23 +1,19 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension SwapTransactionBuilderImpl {
-     func checkSwapData(
+    func checkSwapData(
         owner: PublicKey,
         poolsPair: PoolsPair,
         env: inout SwapTransactionBuilderOutput,
         swapData: SwapData
-     ) throws {
+    ) throws {
         let userTransferAuthority = swapData.transferAuthorityAccount?.publicKey
         switch swapData.swapData {
         case let swap as DirectSwapData:
-            guard let pool = poolsPair.first else {throw FeeRelayerError.swapPoolsNotFound}
-            
+            guard let pool = poolsPair.first else { throw FeeRelayerError.swapPoolsNotFound }
+
             // approve
             if let userTransferAuthority = userTransferAuthority {
                 env.instructions.append(
@@ -30,10 +26,10 @@ extension SwapTransactionBuilderImpl {
                     )
                 )
             }
-            
+
             // swap
-            env.instructions.append(
-                try pool.createSwapInstruction(
+            try env.instructions.append(
+                pool.createSwapInstruction(
                     userTransferAuthorityPubkey: userTransferAuthority ?? owner,
                     sourceTokenAddress: env.userSource!,
                     destinationTokenAddress: env.userDestinationTokenAccountAddress!,
@@ -54,7 +50,7 @@ extension SwapTransactionBuilderImpl {
                     )
                 )
             }
-            
+
             // get transit token info
             let transitTokenMint = try PublicKey(string: swap.transitTokenMintPubkey)
             let transitTokenAccountAddress = try RelayProgram.getTransitTokenAccountAddress(
@@ -62,11 +58,11 @@ extension SwapTransactionBuilderImpl {
                 transitTokenMint: transitTokenMint,
                 network: network
             )
-            
+
             // create transit token account if needed
             if env.needsCreateTransitTokenAccount == true {
-                env.instructions.append(
-                    try RelayProgram.createTransitTokenAccountInstruction(
+                try env.instructions.append(
+                    RelayProgram.createTransitTokenAccountInstruction(
                         feePayer: feePayerAddress,
                         userAuthority: owner,
                         transitTokenAccount: transitTokenAccountAddress,
@@ -75,10 +71,10 @@ extension SwapTransactionBuilderImpl {
                     )
                 )
             }
-            
+
             // relay swap
-            env.instructions.append(
-                try RelayProgram.createRelaySwapInstruction(
+            try env.instructions.append(
+                RelayProgram.createRelaySwapInstruction(
                     transitiveSwap: swap,
                     userAuthorityAddressPubkey: owner,
                     sourceAddressPubkey: env.userSource!,

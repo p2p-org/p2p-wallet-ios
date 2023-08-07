@@ -1,10 +1,3 @@
-//
-//  SupportedTokenItemView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import KeyAppUI
 import Kingfisher
 import SwiftUI
@@ -69,7 +62,7 @@ struct SupportedTokenItemView: View {
                         .background(
                             Circle()
                                 .fill(.white)
-                                .frame(width: networkSize+1, height: networkSize+1)
+                                .frame(width: networkSize + 1, height: networkSize + 1)
                         )
                         .offset(x: -10)
                 }
