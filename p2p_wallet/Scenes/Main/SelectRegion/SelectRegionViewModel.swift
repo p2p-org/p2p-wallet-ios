@@ -1,7 +1,6 @@
 import BankTransfer
 import CountriesAPI
 import Combine
-import SwiftUI
 import SwiftyUserDefaults
 import Resolver
 import KeyAppUI
