@@ -71,7 +71,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 text: L10n
                     .thisAccountActsAsAnIntermediaryBetweenKeyAppAndOurBankingPartnerStrigaPaymentProviderWhichOperatesWithYourFiatMoney,
                 style: .text3,
-                color: Color(Asset.Colors.night.color)
+                color: Asset.Colors.night.color
             ),
         ]
     }

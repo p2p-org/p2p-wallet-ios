@@ -85,7 +85,7 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
             CenterTextCellViewItem(
                 text: L10n.weSuggestPaymentOptionsBasedOnYourChoice,
                 style: .text3,
-                color: Color(Asset.Colors.night.color)
+                color: Asset.Colors.night.color
             ),
             ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
             countryCell,

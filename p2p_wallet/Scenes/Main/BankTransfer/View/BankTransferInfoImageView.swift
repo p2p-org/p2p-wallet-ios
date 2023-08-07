@@ -148,12 +148,12 @@ struct CenterTextCellViewItem: Identifiable {
     var id: String = UUID().uuidString
     let text: String
     let style: UIFont.Style
-    let color: Color
+    let color: UIColor
 }
 
 extension CenterTextCellViewItem: Renderable {
     func render() -> some View {
-        CenterTextCellItemView(text: text, style: style, color: color)
+        CenterTextCellItemView(text: text, style: style, color: Color(color))
     }
 }
 
