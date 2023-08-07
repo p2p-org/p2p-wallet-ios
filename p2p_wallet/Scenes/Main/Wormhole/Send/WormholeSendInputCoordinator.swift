@@ -1,4 +1,5 @@
 import Foundation
+import KeyAppKitCore
 import Send
 import SolanaSwift
 import SwiftUI
@@ -9,9 +10,9 @@ enum WormholeSendInputCoordinatorResult {
 
 final class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinatorResult> {
     private let recipient: Recipient
-    private let preChosenWallet: Wallet?
+    private let preChosenWallet: SolanaAccount?
 
-    init(recipient: Recipient, from: UINavigationController, preChosenWallet: Wallet? = nil) {
+    init(recipient: Recipient, from: UINavigationController, preChosenWallet: SolanaAccount? = nil) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
         super.init(presentation: SmartCoordinatorPushPresentation(from))
@@ -50,7 +51,7 @@ final class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoor
 
     private func openChooseWormholeToken(from vc: UIViewController, viewModel: WormholeSendInputViewModel) {
         coordinate(to: ChooseWormholeTokenCoordinator(
-            chosenWallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
+            chosenWallet: viewModel.adapter.inputAccount ?? SolanaAccount(token: .eth),
             parentController: vc
         ))
         .sink { walletToken in

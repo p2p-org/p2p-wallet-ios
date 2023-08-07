@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
@@ -53,79 +53,6 @@ struct BankTransferTitleCellView: View {
     }
 }
 
-// MARK: - Country
-
-struct BankTransferCountryCellViewItem: Identifiable {
-    var id: String { name + flag }
-    var name: String
-    var flag: String
-}
-
-extension BankTransferCountryCellViewItem: Renderable {
-    func render() -> some View {
-        BankTransferCountryCellView(name: name, flag: flag)
-    }
-}
-
-struct BankTransferCountryCellView: View {
-    let name: String
-    let flag: String
-
-    var body: some View {
-        HStack(spacing: 10) {
-            flagView
-                .padding(.leading, 14)
-            VStack(alignment: .leading, spacing: 6) {
-                Text(name)
-                    .fontWeight(.semibold)
-                    .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                Text(L10n.yourCountry)
-                    .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-            }
-            Spacer()
-            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
-                .padding(.trailing, 19)
-        }
-        .padding(.vertical, 10)
-        .background(Color(Asset.Colors.snow.color))
-        .cornerRadius(radius: 12, corners: .allCorners)
-    }
-
-    var flagView: some View {
-        Text(flag)
-            .fontWeight(.bold)
-            .apply(style: .title1)
-    }
-}
-
-// MARK: -
-
-struct BankTransferInfoCountriesTextCellViewItem: Identifiable {
-    var id: String = UUID().uuidString
-}
-
-extension BankTransferInfoCountriesTextCellViewItem: Renderable {
-    func render() -> some View {
-        BankTransferInfoCountriesTextCellView()
-    }
-}
-
-struct BankTransferInfoCountriesTextCellView: View {
-    var body: some View {
-        HStack(spacing: 0) {
-            Text(L10n.checkTheListOfCountries + " ")
-                .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.night.color))
-            Text(L10n.here)
-                .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.sky.color))
-        }
-    }
-}
-
 // MARK: - Check list of countries
 
 struct CenterTextCellViewItem: Identifiable {
@@ -153,4 +80,3 @@ struct CenterTextCellItemView: View {
             .foregroundColor(color)
     }
 }
-

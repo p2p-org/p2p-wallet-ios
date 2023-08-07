@@ -1,10 +1,3 @@
-//
-//  RendableDetailTransaction+Mock.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
 import SolanaSwift
@@ -13,7 +6,6 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
     var status: TransactionDetailStatus
     var title: String
     var subtitle: String
-    var signature: String?
     var icon: TransactionDetailIcon
     var amountInFiat: TransactionDetailChange
     var amountInToken: String
@@ -26,7 +18,6 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
         status: TransactionDetailStatus,
         title: String,
         subtitle: String,
-        signature: String? = nil,
         icon: TransactionDetailIcon,
         amountInFiat: TransactionDetailChange,
         amountInToken: String,
@@ -37,7 +28,6 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
         self.status = status
         self.title = title
         self.subtitle = subtitle
-        self.signature = signature
         self.icon = icon
         self.amountInFiat = amountInFiat
         self.amountInToken = amountInToken
@@ -46,15 +36,12 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
         self.buttonTitle = buttonTitle
     }
 
-    static let items: [MockedRendableDetailTransaction] = [.send()]
-
     static func send() -> Self {
         .init(
             status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
-            signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!),
             amountInFiat: .negative("-$122.12"),
             amountInToken: "5.21 SOL",
             extra: [

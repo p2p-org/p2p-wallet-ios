@@ -1,10 +1,9 @@
-import SwiftUI
+import CountriesAPI
 import KeyAppUI
 import PhoneNumberKit
-import CountriesAPI
+import SwiftUI
 
 struct StrigaRegistrationPhoneTextField: View {
-
     private let field = StrigaRegistrationField.phoneNumber
 
     @Binding private var trackedText: String
@@ -28,14 +27,14 @@ struct StrigaRegistrationPhoneTextField: View {
         countryTapped: @escaping () -> Void,
         focus: Binding<StrigaRegistrationField?>
     ) {
-        self._focus = focus
+        _focus = focus
         _trackedText = text
         underlyingString = text.wrappedValue
         _phoneNumber = phoneNumber
         _country = country
         let numberKit = PhoneNumberKit()
-        self.phoneNumberKit = numberKit
-        self.partialFormatter = PartialFormatter(phoneNumberKit: numberKit, withPrefix: true)
+        phoneNumberKit = numberKit
+        partialFormatter = PartialFormatter(phoneNumberKit: numberKit, withPrefix: true)
         self.countryTapped = countryTapped
     }
 
@@ -102,7 +101,7 @@ struct StrigaRegistrationPhoneTextField: View {
 
     private func updateUndelyingString(newEnteredString: String) {
         var newText = newEnteredString
-        if let code = country?.dialCode, let examplePhoneNumber = self.exampleNumberWith(
+        if let code = country?.dialCode, let examplePhoneNumber = exampleNumberWith(
             phone: "+\(code)\(text.replacingOccurrences(of: " ", with: ""))"
         ) {
             let formattedExample = phoneNumberKit.format(examplePhoneNumber, toType: .international, withPrefix: false)
@@ -110,12 +109,12 @@ struct StrigaRegistrationPhoneTextField: View {
                 .replacingOccurrences(of: "-", with: " ")
                 .appending("XXXXX")
             newText = format(with: formattedExample, phone: newEnteredString)
-            self.phoneNumber = try? phoneNumberKit.parse("+\(code)\(text.replacingOccurrences(of: " ", with: ""))")
+            phoneNumber = try? phoneNumberKit.parse("+\(code)\(text.replacingOccurrences(of: " ", with: ""))")
         } else {
-            self.phoneNumber = nil
+            phoneNumber = nil
         }
-        self.text = newText
-        trackedText = self.text
+        text = newText
+        trackedText = text
     }
 
     private func updateUnderlyingValue() {

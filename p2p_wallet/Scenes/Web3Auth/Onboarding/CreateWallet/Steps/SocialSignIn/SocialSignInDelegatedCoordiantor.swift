@@ -1,13 +1,9 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
-import AnalyticsManager
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -38,7 +34,11 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             viewModel.initiated
                 .sinkAsync { [stateMachine] process in
                     process.start {
-                        try await stateMachine <- .signInTorus(tokenID: tokenID, email: email, socialProvider: socialProvider)
+                        try await stateMachine <- .signInTorus(
+                            tokenID: tokenID,
+                            email: email,
+                            socialProvider: socialProvider
+                        )
                     }
                 }
                 .store(in: &subscriptions)
@@ -50,8 +50,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             return UIHostingController(rootView: view)
         case let .socialSignInAccountWasUsed(provider, usedEmail):
             let vm = SocialSignInAccountHasBeenUsedViewModel(
-                email: usedEmail,
-                signInProvider: provider
+                email: usedEmail
             )
 
             vm.coordinator.useAnotherAccount.sink { [stateMachine] process in
@@ -69,7 +68,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             let vc = SocialSignInAccountHasBeenUsedView(viewModel: vm)
             return UIHostingController(rootView: vc)
         case let .socialSignInTryAgain(socialProvider, _):
-            let vm = SocialSignInTryAgainViewModel(signInProvider: socialProvider)
+            let vm = SocialSignInTryAgainViewModel()
 
             vm.coordinator.startScreen.sinkAsync { [weak vm, stateMachine] in
                 if vm?.input.isLoading.value ?? false { return }
@@ -100,7 +99,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
         }
     }
 
-    public func openInfo() {
+    func openInfo() {
         helpLauncher.launch()
     }
 

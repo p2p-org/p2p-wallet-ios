@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
@@ -76,6 +72,6 @@ struct SendInputBusinessLogic {
 
 private extension NSError {
     var isNetworkConnectionError: Bool {
-        self.code == NSURLErrorNetworkConnectionLost || self.code == NSURLErrorNotConnectedToInternet
+        code == NSURLErrorNetworkConnectionLost || code == NSURLErrorNotConnectedToInternet
     }
 }

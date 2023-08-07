@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import KeychainSwift
 import Resolver
@@ -17,9 +13,6 @@ class KeychainStorage: StorageType {
     let walletIndexKey: String
     let nameKey: String
     let ethAddressKey: String
-
-    let deviceShareKey: String = "deviceShareKey"
-
     let iCloudAccountsKey = "Keychain.Accounts"
     private let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
 
@@ -154,7 +147,6 @@ class KeychainStorage: StorageType {
         localKeychain.delete(pincodeAttemptsKey)
 
         removeAccountCache()
-        Resolver.resolve(UserSessionCache.self).clear()
     }
 
     private func removeAccountCache() {

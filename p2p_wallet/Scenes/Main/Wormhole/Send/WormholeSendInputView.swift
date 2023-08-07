@@ -1,10 +1,3 @@
-//
-//  WormholeSendView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 15.03.2023.
-//
-
 import KeyAppKitCore
 import KeyAppUI
 import Kingfisher
@@ -14,9 +7,6 @@ import SwiftUI
 
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
-
-    let inputFount = UIFont.font(of: .title2, weight: .bold)
-    @State private var switchAreaOpacity: Double = 1
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -35,7 +25,7 @@ struct WormholeSendInputView: View {
             VStack {
                 // Account view
                 SendInputTokenView(
-                    wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
+                    wallet: viewModel.adapter.inputAccount ?? SolanaAccount(token: .eth),
                     amountInFiat: viewModel.adapter.inputAccount?.amountInFiatDouble ?? 0.0,
                     isChangeEnabled: true,
                     skeleton: viewModel.adapter.inputAccountSkeleton
@@ -52,11 +42,11 @@ struct WormholeSendInputView: View {
                     isFirstResponder: $viewModel.isFirstResponder,
                     amountTextColor: viewModel.adapter.inputColor,
                     countAfterDecimalPoint: viewModel.countAfterDecimalPoint,
-                    mainTokenText: viewModel.inputMode == .crypto ? account.data.token.symbol : viewModel.adapter
+                    mainTokenText: viewModel.inputMode == .crypto ? account.token.symbol : viewModel.adapter
                         .fiatString,
                     secondaryAmountText: viewModel.secondaryAmountString,
-                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.data
-                        .token.symbol,
+                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.token
+                        .symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
                     isMaxButtonVisible: viewModel.isMaxButtonVisible,
@@ -141,11 +131,6 @@ struct WormholeSendInputView: View {
                 .edgesIgnoringSafeArea(.all)
         )
     }
-
-    func textWidth(font: UIFont, text: String) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        return (text as NSString).size(withAttributes: fontAttributes).width
-    }
 }
 
 struct WormholeSendInputView_Previews: PreviewProvider {
@@ -159,11 +144,5 @@ struct WormholeSendInputView_Previews: PreviewProvider {
                 )
             )
         )
-    }
-}
-
-private extension Text {
-    func secondaryStyle() -> some View {
-        foregroundColor(Color(Asset.Colors.mountain.color)).apply(style: .text4).lineLimit(1)
     }
 }

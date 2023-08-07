@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 import Onboarding
@@ -19,16 +15,13 @@ class SocialSignInAccountHasBeenUsedViewModel: BaseViewModel, ObservableObject {
     let coordinator: Coordinator = .init()
 
     @Published var emailAddress: String
-    @Published var signInProvider: SocialProvider
     @Published var loading: Bool = false
 
-    @Injected var authService: AuthService
     @Injected var notificationService: NotificationService
     @Injected var reachability: Reachability
 
-    init(email: String, signInProvider: SocialProvider) {
+    init(email: String) {
         emailAddress = email
-        self.signInProvider = signInProvider
 
         super.init()
     }
@@ -64,10 +57,5 @@ class SocialSignInAccountHasBeenUsedViewModel: BaseViewModel, ObservableObject {
 
             self?.loading = false
         }
-    }
-
-    func handleError(error: Error) {
-        notificationService.showDefaultErrorNotification()
-        DefaultLogManager.shared.log(event: error.readableDescription, logLevel: .error)
     }
 }

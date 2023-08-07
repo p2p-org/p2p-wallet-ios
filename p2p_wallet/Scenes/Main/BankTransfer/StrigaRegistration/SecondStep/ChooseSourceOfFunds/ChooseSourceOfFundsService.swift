@@ -1,6 +1,6 @@
+import BankTransfer
 import Combine
 import KeyAppKitCore
-import BankTransfer
 
 final class ChooseSourceOfFundsService: ChooseItemService {
     let chosenTitle = L10n.chosen
@@ -20,11 +20,11 @@ final class ChooseSourceOfFundsService: ChooseItemService {
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
-        let isEmpty = items.flatMap({ $0.items }).isEmpty
+        let isEmpty = items.flatMap(\.items).isEmpty
         return isEmpty ? [] : items
     }
 
-    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+    func sortFiltered(by _: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         sort(items: items)
     }
 }

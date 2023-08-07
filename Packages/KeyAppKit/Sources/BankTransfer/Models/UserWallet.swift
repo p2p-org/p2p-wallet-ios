@@ -49,6 +49,6 @@ public struct USDCUserAccount: Codable {
     public var totalBalance: Int // Total balnce without Fee
 
     mutating func setAvailableBalance(_ amount: Int) {
-        self.availableBalance = amount
+        availableBalance = amount
     }
 }

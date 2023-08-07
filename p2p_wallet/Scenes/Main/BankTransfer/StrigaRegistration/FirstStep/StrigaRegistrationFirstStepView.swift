@@ -1,13 +1,12 @@
-import SwiftUI
-import KeyAppUI
 import CountriesAPI
+import KeyAppUI
+import SwiftUI
 
-fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias Cell = StrigaFormCell
-fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
+private typealias TextField = StrigaRegistrationTextField
+private typealias Cell = StrigaFormCell
+private typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationFirstStepView: View {
-
     @ObservedObject private var viewModel: StrigaRegistrationFirstStepViewModel
 
     @State private var focus: StrigaRegistrationField?
@@ -23,15 +22,8 @@ struct StrigaRegistrationFirstStepView: View {
             ColoredBackground {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        BaseInformerView(data: StrigaRegistrationInfoViewModel.credentials)
-                            .padding(.top, 22)
-
-                        contactsSection
+                        fields
                         ListSpacerCellView(height: 10, backgroundColor: .clear)
-                        credentialsSection
-                        ListSpacerCellView(height: 10, backgroundColor: .clear)
-                        dateOfBirthSection
-                        ListSpacerCellView(height: 28, backgroundColor: .clear)
 
                         NewTextButton(
                             title: viewModel.actionTitle.uppercaseFirst,
@@ -55,22 +47,37 @@ struct StrigaRegistrationFirstStepView: View {
         }
     }
 
-    var contactsSection: some View {
+    var fields: some View {
         VStack(alignment: .leading, spacing: 14) {
-            StrigaRegistrationSectionView(title: L10n.contacts)
+            StrigaRegistrationSectionView(title: L10n.personalInformation)
                 .padding(.horizontal, 9)
             VStack(spacing: 23) {
                 Cell(
-                    title: L10n.email,
-                    status: viewModel.fieldsStatuses[.email]
+                    title: L10n.fullLegalFirstAndMiddleNames,
+                    status: viewModel.fieldsStatuses[.firstName],
+                    hint: L10n.spellYourNameExactlyAsItSShownOnYourPassportOrIDCard
                 ) {
                     TextField(
-                        field: .email,
-                        placeholder: L10n.enter,
-                        text: $viewModel.email,
-                        isEnabled: false,
+                        field: .firstName,
+                        placeholder: L10n.firstName,
+                        text: $viewModel.firstName,
                         focus: $focus,
-                        onSubmit: { },
+                        onSubmit: { focus = .surname },
+                        submitLabel: .next
+                    )
+                }
+
+                Cell(
+                    title: L10n.fullLegalLastNameS,
+                    status: viewModel.fieldsStatuses[.surname],
+                    hint: L10n.spellYourNameExactlyAsItSShownOnYourPassportOrIDCard
+                ) {
+                    TextField(
+                        field: .surname,
+                        placeholder: L10n.lastName,
+                        text: $viewModel.surname,
+                        focus: $focus,
+                        onSubmit: { focus = .phoneNumber },
                         submitLabel: .next
                     )
                 }
@@ -91,51 +98,7 @@ struct StrigaRegistrationFirstStepView: View {
                         focus: $focus
                     )
                 }
-            }
-        }
-    }
 
-    var credentialsSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            StrigaRegistrationSectionView(title: L10n.credentials)
-                .padding(.horizontal, 9)
-            VStack(spacing: 23) {
-                Cell(
-                    title: L10n.firstName,
-                    status: viewModel.fieldsStatuses[.firstName]
-                ) {
-                    TextField(
-                        field: .firstName,
-                        placeholder: L10n.enter,
-                        text: $viewModel.firstName,
-                        focus: $focus,
-                        onSubmit: { focus = .surname },
-                        submitLabel: .next
-                    )
-                }
-
-                Cell(
-                    title: L10n.surname,
-                    status: viewModel.fieldsStatuses[.surname]
-                ) {
-                    TextField(
-                        field: .surname,
-                        placeholder: L10n.enter,
-                        text: $viewModel.surname,
-                        focus: $focus,
-                        onSubmit: { focus = .dateOfBirth },
-                        submitLabel: .next
-                    )
-                }
-            }
-        }
-    }
-
-    var dateOfBirthSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            StrigaRegistrationSectionView(title: L10n.dateOfBirth)
-                .padding(.horizontal, 9)
-            VStack(spacing: 23) {
                 Cell(
                     title: L10n.dateOfBirth,
                     status: viewModel.fieldsStatuses[.dateOfBirth]
@@ -163,7 +126,8 @@ struct StrigaRegistrationFirstStepView: View {
         }
     }
 
-    // When screen disappear via some action, you should called this method twice for some reason: on action and on disappear function
+    // When screen disappear via some action, you should called this method twice for some reason: on action and on
+    // disappear function
     // Seems like a UI bug of iOS https://stackoverflow.com/a/74124962
     private func resignFirstResponder() {
         UIApplication.shared.sendAction(

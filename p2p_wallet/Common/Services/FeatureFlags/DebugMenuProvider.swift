@@ -1,18 +1,11 @@
-//
-//  DebugMenuProvider.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.06.2022.
-//
-
 import Foundation
 
 private protocol FeaturesStorage: AnyObject {
     var storagedFeatures: [FeatureFlag] { get set }
 }
 
-public final class DebugMenuFeaturesProvider: FetchesFeatureFlags {
-    public static let shared = DebugMenuFeaturesProvider()
+final class DebugMenuFeaturesProvider: FetchesFeatureFlags {
+    static let shared = DebugMenuFeaturesProvider()
 
     private var featureFlags = [FeatureFlag]()
     private let storage: FeaturesStorage
@@ -21,12 +14,12 @@ public final class DebugMenuFeaturesProvider: FetchesFeatureFlags {
         self.storage = storage
     }
 
-    public func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
+    func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
         featureFlags = storage.storagedFeatures
         completion(featureFlags)
     }
 
-    public func updateFlag(for feature: Feature, with value: Bool) {
+    func updateFlag(for feature: Feature, with value: Bool) {
         featureFlags = featureFlags.filter { $0.feature != feature }
         featureFlags.append(FeatureFlag(feature: feature, enabled: value))
         storage.storagedFeatures = featureFlags

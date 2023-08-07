@@ -1,8 +1,8 @@
-import SwiftUI
+import BankTransfer
 import Combine
 import CountriesAPI
-import BankTransfer
 import Resolver
+import SwiftUI
 
 enum StrigaRegistrationSecondStepCoordinatorResult {
     case canceled
@@ -38,7 +38,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             }
             .sink { [weak viewModel] result in
                 switch result {
-                case .item(let item):
+                case let .item(item):
                     viewModel?.selectedIndustry = item as? Industry
                 case .cancel: break
                 }
@@ -57,7 +57,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             }
             .sink { [weak viewModel] result in
                 switch result {
-                case .item(let item):
+                case let .item(item):
                     viewModel?.selectedSourceOfFunds = item as? StrigaSourceOfFunds
                 case .cancel: break
                 }
@@ -73,7 +73,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             ))
         }.sink { [weak viewModel] result in
             switch result {
-            case .item(let item):
+            case let .item(item):
                 viewModel?.selectedCountry = item as? Country
             case .cancel: break
             }

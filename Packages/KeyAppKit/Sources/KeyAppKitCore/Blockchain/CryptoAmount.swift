@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import BigDecimal
 import BigInt
 import Foundation
@@ -93,7 +86,7 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
     }
 
     public func toFiatAmount(price: TokenPrice) throws -> CurrencyAmount {
-        guard price.token.tokenPrimaryKey == token.tokenPrimaryKey else {
+        guard price.token.primaryKey == token.primaryKey else {
             throw ConvertError.invalidPriceForToken(expected: token.symbol, actual: price.token.symbol)
         }
 
@@ -101,7 +94,7 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
     }
 
     public func unsafeToFiatAmount(price: TokenPrice) -> CurrencyAmount {
-        guard price.token.tokenPrimaryKey == token.tokenPrimaryKey else {
+        guard price.token.primaryKey == token.primaryKey else {
             return .init(value: 0, currencyCode: price.currencyCode)
         }
 
@@ -115,7 +108,7 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
 
 extension CryptoAmount: Comparable {
     public static func < (lhs: CryptoAmount, rhs: CryptoAmount) -> Bool {
-        guard lhs.token.tokenPrimaryKey == rhs.token.tokenPrimaryKey else {
+        guard lhs.token.primaryKey == rhs.token.primaryKey else {
             return false
         }
 

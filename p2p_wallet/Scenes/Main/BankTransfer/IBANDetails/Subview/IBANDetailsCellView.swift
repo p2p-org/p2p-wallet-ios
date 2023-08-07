@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct IBANDetailsCellViewItem: Identifiable {
     let title: String

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -11,8 +7,8 @@ public enum SwapMode: String {
 }
 
 public protocol JupiterAPI {
-    func getTokens() async throws -> [Token]
-    
+    func getTokens() async throws -> [TokenMetadata]
+
     func quote(
         inputMint: String,
         outputMint: String,
@@ -34,12 +30,12 @@ public protocol JupiterAPI {
         computeUnitPriceMicroLamports: Int?,
         destinationWallet: String?
     ) async throws -> SwapTransaction
-    
+
     func routeMap() async throws -> RouteMap
 }
 
-extension JupiterAPI {
-    public func swap(
+public extension JupiterAPI {
+    func swap(
         route: Route,
         userPublicKey: String,
         wrapUnwrapSol: Bool,

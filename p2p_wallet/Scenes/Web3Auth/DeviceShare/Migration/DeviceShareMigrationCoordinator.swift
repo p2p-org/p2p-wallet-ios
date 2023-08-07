@@ -1,10 +1,3 @@
-//
-//  DeviceShareMigrationCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Combine
 import Foundation
 import Onboarding
@@ -17,11 +10,6 @@ enum DeviceShareMigrationCoordinatorResult {
 }
 
 final class DeviceShareMigrationCoordinator: Coordinator<DeviceShareMigrationCoordinatorResult> {
-    enum Result {
-        case finish
-        case error(Error)
-    }
-
     let result = PassthroughSubject<DeviceShareMigrationCoordinatorResult, Never>()
     let navigationController: UINavigationController
 

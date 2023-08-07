@@ -1,22 +1,12 @@
-//
-//  SellTransactionDetailsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
 import Combine
 import Foundation
-import UIKit
+import KeyAppBusiness
 import Resolver
-import Sell
 import SafariServices
-
-private typealias Result = SellTransactionDetailsCoorditor.Result
+import Sell
+import UIKit
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
-    @Injected private var walletsRepository: WalletsRepository
-    
     private let viewController: UIViewController
     private let strategy: Strategy
     private let transaction: SellDataServiceTransaction

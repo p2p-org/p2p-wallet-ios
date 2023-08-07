@@ -11,61 +11,27 @@ enum BankTransferInfoCoordinatorResult {
 }
 
 final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinatorResult> {
+    private let navigationController: UINavigationController
 
-    // MARK: -
-
-    private var viewController: UINavigationController
-
-    // MARK: -
-
-    @Injected private var bankTransferService: any BankTransferService
-
-    init(
-        viewController: UINavigationController
-    ) {
-        self.viewController = viewController
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
         let viewModel = BankTransferInfoViewModel()
-        let controller = UIBottomSheetHostingController(
-            rootView: BankTransferInfoView(viewModel: viewModel),
+        let controller = BankTransferInfoView(viewModel: viewModel).asViewController(
+            withoutUIKitNavBar: false,
             ignoresKeyboard: true
         )
+        controller.hidesBottomBarWhenPushed = true
 
-        viewModel.objectWillChange
-            .delay(for: 0.01, scheduler: RunLoop.main)
-            .sink { [weak controller] _ in
-                DispatchQueue.main.async {
-                    controller?.updatePresentationLayout(animated: true)
-                }
-            }
-            .store(in: &subscriptions)
-
-        viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
-            self.coordinate(to: ChooseItemCoordinator<Country>(
-                title: L10n.selectYourCountry,
-                controller: controller,
-                service: ChooseCountryService(),
-                chosen: val,
-                showDoneButton: true
-            ))
-        }.sink { [weak viewModel] result in
-            switch result {
-            case .item(let item):
-                viewModel?.setCountry(item as! Country)
-            case .cancel: break
-            }
-        }.store(in: &subscriptions)
-
-        viewModel.openProviderInfo.flatMap { [weak controller] url in
+        viewModel.openBrowser.flatMap { [weak controller] url in
             let safari = SFSafariViewController(url: url)
             controller?.show(safari, sender: nil)
             return safari.deallocatedPublisher()
         }.sink {}.store(in: &subscriptions)
 
-        controller.view.layer.cornerRadius = 20
-        viewController.present(controller, interactiveDismissalType: .standard)
+        navigationController.pushViewController(controller, animated: true)
 
         return Publishers.Merge(
             // Ignore deallocation event if open registration triggered
@@ -73,26 +39,26 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                 controller.deallocatedPublisher().map { true },
                 viewModel.openRegistration.map { _ in false }
             )
-                .prefix(1)
-                .filter { $0 }
-                .map { _ in BankTransferInfoCoordinatorResult.canceled }
-                .eraseToAnyPublisher(),
+            .prefix(1)
+            .filter { $0 }
+            .map { _ in BankTransferInfoCoordinatorResult.canceled }
+            .eraseToAnyPublisher(),
             viewModel.openRegistration
-                .handleEvents(receiveOutput: { [weak controller] _ in
-                    controller?.dismiss(animated: true)
-                })
-                .flatMap({ [unowned self] in
+                .flatMap { [unowned self] in
                     self.coordinate(
                         to: StrigaRegistrationFirstStepCoordinator(
-                            navigationController: self.viewController
+                            navigationController: self.navigationController
                         )
                     )
-                })
+                }
                 .handleEvents(receiveOutput: { [weak self] result in
                     guard let self else { return }
                     switch result {
                     case .completed:
-                        self.viewController.setViewControllers([self.viewController.viewControllers.first!], animated: false)
+                        self.navigationController.setViewControllers(
+                            [self.navigationController.viewControllers.first!],
+                            animated: false
+                        )
                     case .canceled:
                         break
                     }
@@ -106,7 +72,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                     }
                 }
         )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        .prefix(1)
+        .eraseToAnyPublisher()
     }
 }

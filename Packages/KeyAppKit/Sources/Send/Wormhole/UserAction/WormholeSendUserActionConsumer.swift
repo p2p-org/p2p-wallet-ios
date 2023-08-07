@@ -33,11 +33,11 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
     public let persistence: UserActionPersistentStorage
 
-    public var onUpdate: AnyPublisher<any UserAction, Never> {
+    public var onUpdate: AnyPublisher<[any UserAction], Never> {
         database
             .onUpdate
-            .flatMap { data in
-                Publishers.Sequence(sequence: Array(data.values))
+            .map { data in
+                Array(data.values)
             }
             .eraseToAnyPublisher()
     }
@@ -92,7 +92,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         switch event {
         case let .track(sendStatus):
             Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
 
                 let userAction = try? await WormholeSendUserAction(
                     sendStatus: sendStatus,

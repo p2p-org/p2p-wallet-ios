@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 21.03.2023.
-//
-
 import BigInt
 import FeeRelayerSwift
 import Foundation
@@ -50,13 +43,13 @@ public enum WormholeSendInputState: Equatable {
             case let .updateInput(newInput):
                 var input = input
                 input
-                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
-                    CryptoAmount(token: input.solanaAccount.data.token)
+                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.token) ??
+                    CryptoAmount(token: input.solanaAccount.token)
                 return .calculating(newInput: input)
             case let .updateSolanaAccount(account):
                 var input = input
                 input.solanaAccount = account
-                input.amount = .init(amount: input.amount.value, token: account.data.token)
+                input.amount = .init(amount: input.amount.value, token: account.token)
                 return .calculating(newInput: input)
             case let .calculate:
                 return .calculating(newInput: input)
@@ -85,7 +78,7 @@ public enum WormholeSendInputState: Equatable {
                     fees = try await service.wormhole.getTransferFees(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
+                        mint: input.solanaAccount.token.mintAddress,
                         amount: String(input.amount.value)
                     )
                 } catch {
@@ -111,13 +104,13 @@ public enum WormholeSendInputState: Equatable {
                 let transactions: SendTransaction
                 do {
                     let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
-                    let mint: String? = input.solanaAccount.data.token.isNative ? nil : input.solanaAccount.data.token
-                        .address
+                    let mint: String? = input.solanaAccount.token.isNative ? nil : input.solanaAccount.token
+                        .mintAddress
 
                     transactions = try await service.wormhole.transferFromSolana(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         feePayer: feePayerAddress,
-                        from: input.solanaAccount.data.pubkey ?? "",
+                        from: input.solanaAccount.address,
                         recipient: input.recipient,
                         mint: mint,
                         amount: String(input.amount.value)
@@ -149,9 +142,9 @@ public enum WormholeSendInputState: Equatable {
 
                 input.amount = CryptoAmount(
                     floatString: newInput,
-                    token: input.solanaAccount.data.token
+                    token: input.solanaAccount.token
                 ) ?? CryptoAmount(
-                    token: input.solanaAccount.data.token
+                    token: input.solanaAccount.token
                 )
 
                 return .calculating(newInput: input)
@@ -159,7 +152,7 @@ public enum WormholeSendInputState: Equatable {
             case let .updateSolanaAccount(account):
                 var input = input
                 input.solanaAccount = account
-                input.amount = .init(amount: input.amount.value, token: account.data.token)
+                input.amount = .init(amount: input.amount.value, token: account.token)
                 return .calculating(newInput: input)
             }
 
@@ -168,13 +161,13 @@ public enum WormholeSendInputState: Equatable {
             case let .updateInput(newInput):
                 var input = input
                 input
-                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
-                    CryptoAmount(token: input.solanaAccount.data.token)
+                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.token) ??
+                    CryptoAmount(token: input.solanaAccount.token)
                 return .calculating(newInput: input)
             case let .updateSolanaAccount(account):
                 var input = input
                 input.solanaAccount = account
-                input.amount = .init(amount: input.amount.value, token: account.data.token)
+                input.amount = .init(amount: input.amount.value, token: account.token)
                 return .calculating(newInput: input)
             case .calculate:
                 return .calculating(newInput: input)

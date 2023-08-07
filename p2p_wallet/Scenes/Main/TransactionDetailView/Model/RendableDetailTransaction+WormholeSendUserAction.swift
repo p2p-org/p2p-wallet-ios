@@ -1,10 +1,3 @@
-//
-//  RendableDetailTransaction+PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -14,8 +7,6 @@ import Wormhole
 
 struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeSendUserAction
-
-    var signature: String? { userAction.id }
 
     var status: TransactionDetailStatus {
         switch userAction.status {

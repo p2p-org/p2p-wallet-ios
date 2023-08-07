@@ -4,21 +4,21 @@ import UIKit
 
 struct MockedRendableListTransactionItem: RendableListTransactionItem {
     var id: String
-    
+
     var date: Date
-    
+
     var status: RendableListTransactionItemStatus
-    
+
     var icon: RendableListTransactionItemIcon
-    
+
     var title: String
-    
+
     var subtitle: String
-    
+
     var detail: (RendableListTransactionItemChange, String)
-    
+
     var subdetail: String
-    
+
     var onTap: (() -> Void)? = nil
 }
 
@@ -28,62 +28,62 @@ extension MockedRendableListTransactionItem {
             id: UUID().uuidString,
             date: Date(),
             status: .pending,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!),
             title: "Sending...",
             subtitle: "To mad.p2p.sol",
             detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func send() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!),
             title: "Send",
             subtitle: "To mad.p2p.sol",
             detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func failedSend() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .failed,
-            
-            icon: .single(URL(string: Token.usdc.logoURI!)!),
+
+            icon: .single(URL(string: TokenMetadata.usdc.logoURI!)!),
             title: "Send",
             subtitle: "To mad.p2p.sol",
             detail: (.negative, "–$34.36"),
             subdetail: "–34.36 USDC"
         )
     }
-    
+
     static func receive() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.renBTC.logoURI!)!),
             title: "Receive",
             subtitle: "From ...S39N",
             detail: (.unchanged, ""),
             subdetail: "+0.3271523 renBTC"
         )
     }
-    
+
     static func swap() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
             icon: .double(
-                URL(string: Token.nativeSolana.logoURI!)!,
-                URL(string: Token.eth.logoURI!)!
+                URL(string: TokenMetadata.nativeSolana.logoURI!)!,
+                URL(string: TokenMetadata.eth.logoURI!)!
             ),
             title: "Swap",
             subtitle: "SOL to ETH",
@@ -91,60 +91,60 @@ extension MockedRendableListTransactionItem {
             subdetail: "-120 SOL"
         )
     }
-    
+
     static func burn() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
+
+            icon: .single(URL(string: TokenMetadata.renBTC.logoURI!)!),
             title: "Burn",
             subtitle: "Signature: ...Hs7s",
             detail: (.negative, "–$5 268.65"),
             subdetail: "–0.3271523 renBTC"
         )
     }
-    
+
     static func mint() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.renBTC.logoURI!)!),
             title: "Mint",
             subtitle: "Signature: ...Hs7s",
             detail: (.positive, "$5 268.65"),
             subdetail: "0.3271523 renBTC"
         )
     }
-    
+
     static func stake() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!),
             title: "Stake",
             subtitle: "Vote account: ....S39N",
             detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func unstake() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
+            icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!),
             title: "Unstake",
             subtitle: "Vote account: ....S39N",
             detail: (.positive, "+$122.12"),
             subdetail: "+5.21 SOL"
         )
     }
-    
+
     static func create() -> Self {
         .init(
             id: UUID().uuidString,
@@ -157,7 +157,7 @@ extension MockedRendableListTransactionItem {
             subdetail: ""
         )
     }
-    
+
     static func close() -> Self {
         .init(
             id: UUID().uuidString,
@@ -170,7 +170,7 @@ extension MockedRendableListTransactionItem {
             subdetail: ""
         )
     }
-    
+
     static func unknown() -> Self {
         .init(
             id: UUID().uuidString,

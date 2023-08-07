@@ -1,9 +1,8 @@
-import SwiftUI
 import BankTransfer
 import KeyAppUI
+import SwiftUI
 
 struct HomeBannerView: View {
-
     let params: HomeBannerParameters
 
     var body: some View {
@@ -66,14 +65,16 @@ struct HomeBannerView_Previews: PreviewProvider {
                     imageSize: CGSize(width: 198, height: 142),
                     title: L10n.topUpYourAccountToGetStarted,
                     subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                    button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: { })
+                    button: HomeBannerParameters.Button(title: L10n.addMoney, isLoading: false, handler: {})
                 )
             )
 
             ForEach(
-                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue
+                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal],
+                id: \.rawValue
             ) { element in
-                HomeBannerView(params: HomeBannerParameters(status: element, action: { }, isLoading: false, isSmallBanner: false))
+                HomeBannerView(params: HomeBannerParameters(status: element, action: {}, isLoading: false,
+                                                            isSmallBanner: false))
             }
         }
         .listStyle(.plain)

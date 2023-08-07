@@ -1,6 +1,6 @@
+import BankTransfer
 import KeyAppUI
 import SwiftUI
-import BankTransfer
 
 struct IBANDetailsView: View {
     @ObservedObject var viewModel: IBANDetailsViewModel
@@ -9,8 +9,15 @@ struct IBANDetailsView: View {
         ColoredBackground {
             ScrollView {
                 VStack(spacing: 20) {
-                    Text(L10n.useTheseDetailsToReceiveTransfersFromAEuroBankAccount)
-                        .subtitleStyle()
+                    BaseInformerView(data: BaseInformerViewItem(
+                        icon: .sellPendingWarning,
+                        iconColor: Asset.Colors.night,
+                        title: L10n.yourBankAccountNameMustMatch(viewModel.informerName),
+                        titleColor: Asset.Colors.cloud,
+                        backgroundColor: Asset.Colors.night,
+                        iconBackgroundColor: Asset.Colors.smoke
+                    ))
+                    .onTapGesture(perform: viewModel.warningTapped.send)
 
                     VStack(spacing: 0) {
                         ForEach(viewModel.items, id: \.id) { item in
@@ -20,36 +27,31 @@ struct IBANDetailsView: View {
                     .backgroundStyle(asset: Asset.Colors.snow)
 
                     VStack(spacing: 0) {
-                        buildInformerView(title: .plain(L10n.transfersUsuallyTakeFrom1To3WorkingDaysToAppearInYourKeyAppAccount))
+                        buildSecondaryInformerView(title: L10n.ThisIsYourPersonalIBAN
+                            .useThisDetailsToMakeTransfersThroughYourBankingApp, icon: .user)
 
-                        buildInformerView(title: .attributed(attributedTitle()))
-                            .onTapGesture(perform: viewModel.learnMore.send)
+                        buildSecondaryInformerView(title: L10n
+                            .weUseSEPAInstantForBankTransfersAndTypicallyMoneyWillAppearInYourAccountInLessThanAMinute,
+                            icon: .historyFilled)
                     }
                     .backgroundStyle(asset: Asset.Colors.rain)
                 }
+                .padding(.vertical, 28)
                 .padding(.horizontal, 16)
             }
         }
     }
 
-    private func buildInformerView(title: BaseInformerViewItem.Title) -> BaseInformerView {
+    private func buildSecondaryInformerView(title: String, icon: UIImage) -> BaseInformerView {
         BaseInformerView(
             data: BaseInformerViewItem(
-                icon: .historyFilled,
+                icon: icon,
                 iconColor: Asset.Colors.night,
                 title: title,
                 backgroundColor: Asset.Colors.rain,
                 iconBackgroundColor: Asset.Colors.smoke
             )
         )
-    }
-
-    private func attributedTitle() -> NSAttributedString {
-        var attrString = NSMutableAttributedString()
-        attrString = attrString.text(L10n.yourMoneyIsHeldAndProtectedByLicensedBanks, size: 13, weight: .regular, color: Asset.Colors.night.color)
-        attrString.append(NSAttributedString(string: " "))
-        attrString.append(NSMutableAttributedString().text(L10n.learnMore, size: 13, weight: .regular, color: Asset.Colors.sky.color))
-        return NSAttributedString(attributedString: attrString)
     }
 }
 
@@ -78,20 +80,11 @@ struct IBANDetailsView_Previews: PreviewProvider {
 
 // MARK: - Helpers
 
-private extension Text {
-    func subtitleStyle() -> some View {
-        self.apply(style: .text4)
-        .foregroundColor(Color(asset: Asset.Colors.mountain))
-        .multilineTextAlignment(.center)
-    }
-}
-
 private extension VStack {
     func backgroundStyle(asset: ColorAsset) -> some View {
-        self.background(
+        background(
             RoundedRectangle(cornerRadius: 16)
                 .foregroundColor(Color(asset: asset))
         )
     }
 }
-

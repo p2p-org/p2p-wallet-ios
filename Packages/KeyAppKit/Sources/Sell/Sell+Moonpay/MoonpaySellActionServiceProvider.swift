@@ -5,7 +5,7 @@ public class MoonpaySellActionServiceProvider: SellActionServiceProvider {
     public typealias Quote = Moonpay.SellQuote
 
     private var moonpayAPI: Moonpay.Provider
-    
+
     public init(moonpayAPI: Moonpay.Provider) {
         self.moonpayAPI = moonpayAPI
     }
@@ -16,11 +16,11 @@ public class MoonpaySellActionServiceProvider: SellActionServiceProvider {
         baseCurrencyAmount: Double,
         extraFeePercentage: Double = 0
     ) async throws -> Quote {
-         try await moonpayAPI.getSellQuote(
+        try await moonpayAPI.getSellQuote(
             baseCurrencyCode: baseCurrencyCode,
             quoteCurrencyCode: quoteCurrencyCode,
             baseCurrencyAmount: baseCurrencyAmount,
             extraFeePercentage: extraFeePercentage
-         )
+        )
     }
 }

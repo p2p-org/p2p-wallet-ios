@@ -1,10 +1,9 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct StrigaRegistrationDateTextField: View {
-
     private let field = StrigaRegistrationField.dateOfBirth
-    private let charLimit : Int = 10
+    private let charLimit: Int = 10
 
     @State private var text: String = ""
     @Binding private var underlyingString: String
@@ -17,7 +16,7 @@ struct StrigaRegistrationDateTextField: View {
         focus: Binding<StrigaRegistrationField?>
     ) {
         _underlyingString = text
-        self._focus = focus
+        _focus = focus
     }
 
     var body: some View {
@@ -50,19 +49,19 @@ struct StrigaRegistrationDateTextField: View {
 
     func updateUndelyingString(newEnteredString: String) {
         if newEnteredString.count > charLimit {
-            self.text = String(newEnteredString.prefix(charLimit))
+            text = String(newEnteredString.prefix(charLimit))
         } else if newEnteredString.count < underlyingString.count {
             if newEnteredString.count == 2 || newEnteredString.count == 5 {
-                self.text = String(newEnteredString.dropLast(1))
+                text = String(newEnteredString.dropLast(1))
             } else {
-                self.text = newEnteredString
+                text = newEnteredString
             }
         } else if newEnteredString.count == 2 {
-            self.text = newEnteredString.appending(".")
+            text = newEnteredString.appending(".")
         } else if newEnteredString.count == 5 {
-            self.text = newEnteredString.appending(".")
+            text = newEnteredString.appending(".")
         }
-        underlyingString = self.text
+        underlyingString = text
     }
 
     func updateUnderlyingValue() {

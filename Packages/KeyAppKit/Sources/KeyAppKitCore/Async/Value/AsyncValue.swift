@@ -1,10 +1,3 @@
-//
-//  AsyncItem.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Combine
 import Foundation
 
@@ -81,13 +74,20 @@ public extension AsyncValueState where T: Sequence {
     }
 }
 
-public class AsyncValue<T> {
+open class AsyncValue<T> {
     public typealias Request = () async -> (T?, Error?)
     public typealias ThrowableRequest = () async throws -> T
 
     let stateSubject: CurrentValueSubject<AsyncValueState<T>, Never>
 
-    public var state: AsyncValueState<T> { stateSubject.value }
+    public var state: AsyncValueState<T> {
+        get {
+            stateSubject.value
+        }
+        set {
+            stateSubject.value = newValue
+        }
+    }
 
     public var statePublisher: AnyPublisher<AsyncValueState<T>, Never> { stateSubject.eraseToAnyPublisher() }
 
@@ -100,7 +100,7 @@ public class AsyncValue<T> {
         stateSubject = .init(.init(status: .initializing, value: initialItem))
         request = {
             do {
-                return (try await throwableRequest(), nil)
+                return try (await throwableRequest(), nil)
             } catch {
                 return (nil, error)
             }

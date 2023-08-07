@@ -1,6 +1,6 @@
 import Foundation
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct HomeBankTransferAccountView: View {
     let renderable: any RenderableAccount
@@ -21,7 +21,8 @@ struct HomeBankTransferAccountView: View {
             ),
             trailingItem: FinancialBlockTrailingItem(
                 isLoading: renderable.isLoading,
-                detail: renderable.detail
+                detail: renderable.detail,
+                onButtonTap: onButtonTap
             )
         )
         .onTapGesture {

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -27,5 +23,6 @@ public enum RecipientSearchResult: Equatable {
 }
 
 public protocol RecipientSearchService: AnyObject {
-    func search(input: String, config: RecipientSearchConfig, preChosenToken: Token?) async -> RecipientSearchResult
+    func search(input: String, config: RecipientSearchConfig, preChosenToken: TokenMetadata?) async
+        -> RecipientSearchResult
 }

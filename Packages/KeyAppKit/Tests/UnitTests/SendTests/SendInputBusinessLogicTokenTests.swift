@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FeeRelayerSwift
 import Foundation
 import NameService
@@ -9,7 +5,7 @@ import SolanaSwift
 import XCTest
 @testable import Send
 
-//class SendInputBusinessLogicTokenTests: XCTestCase {
+// class SendInputBusinessLogicTokenTests: XCTestCase {
 //    let defaultUserWalletState: UserWalletEnvironments = .init(
 //        wallets: [
 //            .nativeSolana(pubkey: "5bYReP8iw5UuLVS5wmnXfEfrYCKdiQ1FFAZQao8JqY7V", lamport: 30_000_000),
@@ -166,7 +162,7 @@ import XCTest
 //                            lamports: 100_000,
 //                            owner: TokenProgram.id.base58EncodedString,
 //                            data: AccountInfo(
-//                                mint: try PublicKey(string: Token.usdc.address),
+//                                mint: try PublicKey(string: TokenMetadata.usdc.address),
 //                                owner: try PublicKey(string: "5bYReP8iw5UuLVS5wmnXfEfrYCKdiQ1FFAZQao8JqY7V"),
 //                                lamports: 50_000_000,
 //                                delegateOption: 0,
@@ -240,4 +236,4 @@ import XCTest
 //        XCTAssertEqual(nextState.amountInFiat, 1.1)
 //        XCTAssertEqual(nextState.status, .ready)
 //    }
-//}
+// }

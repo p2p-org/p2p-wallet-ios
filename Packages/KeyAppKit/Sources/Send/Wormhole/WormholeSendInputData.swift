@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 30.03.2023.
-//
-
 import BigInt
 import FeeRelayerSwift
 import Foundation
@@ -59,7 +52,7 @@ public struct WormholeSendOutputBase: Equatable {
     }
 
     public func calculateMaxInput(input: WormholeSendInputBase) -> CryptoAmount? {
-        if input.solanaAccount.data.token.isNative {
+        if input.solanaAccount.token.isNative {
             // Transfer SOL
             let minAmount = CryptoAmount(
                 uint64: relayContext.minimumRelayAccountBalance,

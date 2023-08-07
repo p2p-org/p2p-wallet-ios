@@ -1,11 +1,11 @@
 import Foundation
-import Wormhole
 import SolanaSwift
+import Wormhole
 
 class WormholeSupportedTokens {
     static var bridges: [SupportedToken.WormholeBridge] {
         SupportedToken.bridges.filter { bridge in
-            return bridge.solAddress == Token.nativeSolana.address ? available(.solanaEthAddressEnabled) : true
+            bridge.solAddress == TokenMetadata.nativeSolana.mintAddress ? available(.solanaEthAddressEnabled) : true
         }
     }
 }

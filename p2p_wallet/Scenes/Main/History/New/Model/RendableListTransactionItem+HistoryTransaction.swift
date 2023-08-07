@@ -7,9 +7,9 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     let trx: HistoryTransaction
 
     // Use to map history token to solana token. They are identical but we need to extract png images.
-    private let allTokens: Set<SolanaSwift.Token>
+    private let allTokens: Set<SolanaSwift.TokenMetadata>
 
-    init(trx: HistoryTransaction, allTokens: Set<SolanaSwift.Token>, onTap: (() -> Void)? = nil) {
+    init(trx: HistoryTransaction, allTokens: Set<SolanaSwift.TokenMetadata>, onTap: (() -> Void)? = nil) {
         self.trx = trx
         self.allTokens = allTokens
         self.onTap = onTap
@@ -302,7 +302,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
         if
             let mint,
-            let urlStr: String = allTokens.first(where: { $0.address == mint })?.logoURI,
+            let urlStr: String = allTokens.first(where: { $0.mintAddress == mint })?.logoURI,
             let url = URL(string: urlStr)
         {
             return url

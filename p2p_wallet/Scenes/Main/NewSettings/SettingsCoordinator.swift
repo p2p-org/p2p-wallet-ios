@@ -1,16 +1,8 @@
-//
-//  SettingsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 30.08.2022.
-//
-
 import Combine
 import Resolver
 import UIKit
 
 final class SettingsCoordinator: Coordinator<Void> {
-    @Injected private var pinStorage: PincodeStorageType
     @Injected private var helpLauncher: HelpCenterLauncher
 
     private let navigationController: UINavigationController

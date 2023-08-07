@@ -1,10 +1,3 @@
-//
-//  RefreshModifier.swift
-//  SwiftUI_Pull_to_Refresh
-//
-//  Created by Geri Borbás on 14/03/2022.
-//
-
 import Introspect
 import SwiftUI
 

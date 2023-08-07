@@ -1,7 +1,7 @@
+import BEPureLayout
 import Foundation
 import KeyAppUI
 import UIKit
-import BEPureLayout
 
 extension UIView {
     @discardableResult

@@ -27,7 +27,7 @@ class SocialSignInTryAgainViewController: BaseViewController {
                             font: UIFont.font(of: .largeTitle, weight: .bold),
                             textAlignment: .center
                         )
-                            .padding(.init(only: .top, inset: 10))
+                        .padding(.init(only: .top, inset: 10))
                         UILabel(
                             text: L10n.YouVeFindASeldonPage.ItSLikeAUnicornButCrush.weReAlreadyFixingIt,
                             font: UIFont.font(of: .title3, weight: .regular),

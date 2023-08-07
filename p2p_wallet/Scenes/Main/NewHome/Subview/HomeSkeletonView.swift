@@ -1,10 +1,3 @@
-//
-//  HomeSkeletonView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.10.2022.
-//
-
 import KeyAppUI
 import SkeletonUI
 import SwiftUI
@@ -52,13 +45,6 @@ struct HomeSkeletonView: View {
             .frame(maxWidth: .infinity)
             .background(Color(Asset.Colors.smoke.color))
             VStack(alignment: .leading, spacing: 0) {
-                Text("")
-                    .skeleton(
-                        with: true,
-                        size: CGSize(width: 128, height: 28),
-                        animated: .default
-                    )
-                    .padding(.bottom, 12)
                 cell
                 cell
             }

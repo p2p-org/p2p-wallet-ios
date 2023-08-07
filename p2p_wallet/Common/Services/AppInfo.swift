@@ -1,10 +1,3 @@
-//
-//  AppInfo.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 09/05/2023.
-//
-
 import Foundation
 
 enum AppInfo {

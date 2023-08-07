@@ -9,17 +9,9 @@ protocol AppEventHandlerType {
 }
 
 final class AppEventHandler: AppEventHandlerType {
-    // MARK: - Dependencies
-
-    private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    private let notificationsService: NotificationService = Resolver.resolve()
-
     // MARK: - Properties
 
     weak var delegate: AppEventHandlerDelegate?
-
-    @available(*, deprecated, message: "Will be removed")
-    private var resolvedName: String?
 
     init() {
         disableDevnetTestnetIfDebug()
@@ -67,19 +59,4 @@ extension AppEventHandler: ChangeThemeResponder {
         Defaults.appearance = style
         delegate?.userDidChangeTheme(to: style)
     }
-}
-
-// MARK: - Helpers
-
-private func errorToString(_ error: Error?) -> String? {
-    var error = error?.localizedDescription ?? L10n.unknownError
-    switch error {
-    case "Passcode not set.":
-        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
-    case "Canceled by user.":
-        return nil
-    default:
-        break
-    }
-    return error
 }

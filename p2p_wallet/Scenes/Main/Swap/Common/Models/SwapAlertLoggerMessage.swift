@@ -2,14 +2,14 @@ import Foundation
 
 // MARK: - Message
 
-public struct SwapAlertLoggerMessage: Codable {
-    public let tokenA: SwapAlertLoggerMessageTokenA
-    public let tokenB: SwapAlertLoggerMessageTokenB
-    public let route, userPubkey, slippage, feeRelayerTransaction: String
-    public let platform, appVersion, timestamp, blockchainError: String
-    public let diffRoutesTime: String
-    public let diffTxTime: String
-    
+struct SwapAlertLoggerMessage: Codable {
+    let tokenA: SwapAlertLoggerMessageTokenA
+    let tokenB: SwapAlertLoggerMessageTokenB
+    let route, userPubkey, slippage, feeRelayerTransaction: String
+    let platform, appVersion, timestamp, blockchainError: String
+    let diffRoutesTime: String
+    let diffTxTime: String
+
     enum CodingKeys: String, CodingKey {
         case tokenA = "token_a"
         case tokenB = "token_b"
@@ -24,8 +24,8 @@ public struct SwapAlertLoggerMessage: Codable {
         case diffRoutesTime = "diff_routes_time"
         case diffTxTime = "diff_tx_time"
     }
-    
-    public init(
+
+    init(
         tokenA: SwapAlertLoggerMessageTokenA,
         tokenB: SwapAlertLoggerMessageTokenB,
         route: String,
@@ -55,16 +55,17 @@ public struct SwapAlertLoggerMessage: Codable {
 }
 
 // MARK: - TokenA
-public struct SwapAlertLoggerMessageTokenA: Codable {
-    public let name, mint, sendAmount, balance: String
-    
+
+struct SwapAlertLoggerMessageTokenA: Codable {
+    let name, mint, sendAmount, balance: String
+
     enum CodingKeys: String, CodingKey {
         case name, mint
         case sendAmount = "send_amount"
         case balance
     }
-    
-    public init(name: String, mint: String, sendAmount: String, balance: String) {
+
+    init(name: String, mint: String, sendAmount: String, balance: String) {
         self.name = name
         self.mint = mint
         self.sendAmount = sendAmount
@@ -73,16 +74,17 @@ public struct SwapAlertLoggerMessageTokenA: Codable {
 }
 
 // MARK: - TokenB
-public struct SwapAlertLoggerMessageTokenB: Codable {
-    public let name, mint, expectedAmount, balance: String
-    
+
+struct SwapAlertLoggerMessageTokenB: Codable {
+    let name, mint, expectedAmount, balance: String
+
     enum CodingKeys: String, CodingKey {
         case name, mint
         case expectedAmount = "expected_amount"
         case balance
     }
-    
-    public init(name: String, mint: String, expectedAmount: String, balance: String) {
+
+    init(name: String, mint: String, expectedAmount: String, balance: String) {
         self.name = name
         self.mint = mint
         self.expectedAmount = expectedAmount

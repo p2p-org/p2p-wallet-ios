@@ -1,6 +1,6 @@
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 extension UIView {
     @discardableResult
@@ -30,9 +30,9 @@ class ConnectionErrorView: BEView {
         textColor: .h5887ff,
         label: L10n.refresh
     )
-        .onTap { [unowned self] in
-            refreshAction?()
-        }
+    .onTap { [unowned self] in
+        refreshAction?()
+    }
 
     private lazy var contentView: UIView = {
         let view = UIView(backgroundColor: .white)
@@ -73,7 +73,7 @@ class ConnectionErrorView: BEView {
     }()
 
     var refreshAction: (() -> Void)?
-    
+
     // MARK: - Methods
 
     override func commonInit() {
@@ -111,7 +111,7 @@ class WLButton: UIButton {
                 return .white
             }
         }
-        
+
         var disabledColor: UIColor? {
             switch self {
             case .blue:
@@ -120,7 +120,7 @@ class WLButton: UIButton {
                 return nil
             }
         }
-        
+
         var textColor: UIColor {
             switch self {
             case .gray:
@@ -132,7 +132,7 @@ class WLButton: UIButton {
             }
         }
     }
-    
+
     static func stepButton(
         type: StepButtonType,
         label: String?,
@@ -153,7 +153,7 @@ class WLButton: UIButton {
         button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
-    
+
     static func stepButton(enabledColor: UIColor, disabledColor: UIColor? = nil, textColor: UIColor,
                            label: String?) -> WLButton
     {
@@ -166,16 +166,16 @@ class WLButton: UIButton {
         )
         button.enabledColor = enabledColor
         button.disabledColor = disabledColor
-        
+
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.titleLabel?.textAlignment = .center
         button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
-    
+
     var enabledColor: UIColor?
     var disabledColor: UIColor?
-    
+
     override var isEnabled: Bool {
         didSet {
             if let enabledColor = enabledColor, let disabledColor = disabledColor {

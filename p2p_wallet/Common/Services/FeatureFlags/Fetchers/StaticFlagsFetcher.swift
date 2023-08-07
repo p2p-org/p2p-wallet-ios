@@ -1,20 +1,13 @@
-//
-//  StaticFlagsFetcher.swift
-//  FeatureFlags
-//
-//  Created by Babich Ivan on 10.06.2022.
-//
-
 import Foundation
 
-public struct StaticFlagsFetcher: FetchesFeatureFlags, ExpressibleByDictionaryLiteral {
+struct StaticFlagsFetcher: FetchesFeatureFlags, ExpressibleByDictionaryLiteral {
     private let featureFlags: [FeatureFlag]
 
-    public init(featureFlags: [FeatureFlag]) {
+    init(featureFlags: [FeatureFlag]) {
         self.featureFlags = featureFlags
     }
 
-    public init(dictionaryLiteral elements: (Feature, Bool)...) {
+    init(dictionaryLiteral elements: (Feature, Bool)...) {
         featureFlags = .init(
             elements.map {
                 FeatureFlag(
@@ -25,7 +18,7 @@ public struct StaticFlagsFetcher: FetchesFeatureFlags, ExpressibleByDictionaryLi
         )
     }
 
-    public func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
+    func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
         completion(featureFlags)
     }
 }

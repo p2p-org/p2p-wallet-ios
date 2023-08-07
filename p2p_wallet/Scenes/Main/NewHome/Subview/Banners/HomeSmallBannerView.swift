@@ -1,9 +1,8 @@
+import BankTransfer
 import KeyAppUI
 import SwiftUI
-import BankTransfer
 
 struct HomeSmallBannerView: View {
-
     let params: HomeBannerParameters
 
     var body: some View {
@@ -55,12 +54,13 @@ struct HomeSmallBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             ForEach(
-                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue
+                [StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal],
+                id: \.rawValue
             ) { element in
                 HomeSmallBannerView(
                     params: HomeBannerParameters(
                         status: element,
-                        action: { },
+                        action: {},
                         isLoading: true,
                         isSmallBanner: true
                     )

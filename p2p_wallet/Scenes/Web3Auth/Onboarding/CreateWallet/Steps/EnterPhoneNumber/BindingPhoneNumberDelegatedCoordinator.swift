@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import AnalyticsManager
 import Combine
 import CountriesAPI
@@ -27,11 +23,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
 
-            mv.coordinatorIO.selectCode.sinkAsync { [weak self] dialCode, countryCode in
-                guard let result = try await self?.selectCountry(
-                    selectedDialCode: dialCode,
-                    selectedCountryCode: countryCode
-                )
+            mv.coordinatorIO.selectCode.sinkAsync { [weak self] country in
+                guard let result = try await self?.selectCountry(chosen: country)
                 else { return }
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
@@ -122,7 +115,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .block(until, reason, _, _):
             let title: String
             let subtitle: (_ value: Any) -> String
-            
+
             switch reason {
             case .blockEnterOTP:
                 title = L10n.confirmationCodeLimitHit
@@ -153,7 +146,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         }
     }
 
-    public func openTermsOfService() {
+    func openTermsOfService() {
         let vc = WLMarkdownVC(
             title: L10n.termsOfService,
             bundledMarkdownTxtFileName: "Terms_of_service"
@@ -169,14 +162,22 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         rootViewController?.present(viewController, animated: true)
     }
 
-    public func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
+    func selectCountry(chosen: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
-        let coordinator = ChoosePhoneCodeCoordinator(
-            selectedDialCode: selectedDialCode,
-            selectedCountryCode: selectedCountryCode,
-            presentingViewController: rootViewController
+        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(
+            title: L10n.selectYourCountry,
+            controller: rootViewController,
+            service: ChoosePhoneCodeService(),
+            chosen: PhoneCodeItem(country: chosen)
         )
-        return try await coordinator.start().async()
+        let result = try await coordinator.start().async()
+        switch result {
+        case let .item(item):
+            guard let item = item as? PhoneCodeItem? else { return nil }
+            return item?.country
+        case .cancel:
+            return nil
+        }
     }
 
     private func openHelp() {

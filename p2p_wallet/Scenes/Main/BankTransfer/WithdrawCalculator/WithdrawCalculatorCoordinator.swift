@@ -1,6 +1,8 @@
 import BankTransfer
-import Resolver
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
 import SolanaSwift
 import UIKit
 
@@ -25,8 +27,13 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
 
         return Publishers.Merge(
             viewModel.openWithdraw
-                .flatMap({ [unowned self] model, amount in
+                .flatMap { [unowned self] model, amount in
                     openWithdraw(model: model, amount: amount)
+                }
+                .handleEvents(receiveOutput: { [unowned self] tx in
+                    if let tx {
+                        navigationController.popViewController(animated: true)
+                    }
                 })
                 .compactMap { $0 }
                 .map { WithdrawCalculatorCoordinator.Result.transaction($0) }
@@ -46,92 +53,114 @@ final class WithdrawCalculatorCoordinator: Coordinator<WithdrawCalculatorCoordin
     private func openWithdraw(model: StrigaWithdrawalInfo, amount: Double) -> AnyPublisher<PendingTransaction?, Never> {
         coordinate(to: WithdrawCoordinator(
             navigationController: navigationController,
-            withdrawalInfo: model)
-        )
-            .handleEvents(receiveOutput: { [unowned self] result in
-                switch result {
-                case .verified:
-                    navigationController.popViewController(animated: true)
-                case .canceled, .paymentInitiated:
-                    break
-                }
-            })
-            .map({ result -> PendingTransaction? in
-                switch result {
-                case .paymentInitiated(let challangeId):
-                    let transaction = StrigaWithdrawTransaction(
-                        challengeId: challangeId,
-                        IBAN: model.IBAN ?? "",
-                        BIC: model.BIC ?? "",
-                        amount: amount,
-                        feeAmount: FeeAmount(
-                            transaction: 0,
-                            accountBalances: 0
-                        )
+            withdrawalInfo: model
+        ))
+        .asyncMap { result -> (WithdrawCoordinator.Result, TokenPrice?) in
+            let priceService = Resolver.resolve(PriceService.self)
+            let prices = try? await priceService.getPrice(
+                token: SolanaToken.usdc,
+                fiat: Defaults.fiat.rawValue
+            )
+            return (result, prices)
+        }
+        .receive(on: DispatchQueue.main)
+        .handleEvents(receiveOutput: { [unowned self] result, _ in
+            switch result {
+            case .verified:
+                navigationController.popToRootViewController(animated: true)
+            case .canceled, .paymentInitiated:
+                break
+            }
+        })
+        .map { result, prices -> PendingTransaction? in
+            switch result {
+            case let .paymentInitiated(challangeId):
+                let transaction = StrigaWithdrawTransaction(
+                    challengeId: challangeId,
+                    IBAN: model.IBAN ?? "",
+                    BIC: model.BIC ?? "",
+                    amount: amount,
+                    token: .usdc,
+                    tokenPrice: prices,
+                    feeAmount: FeeAmount(
+                        transaction: 0,
+                        accountBalances: 0
                     )
+                )
 
-                    // delegate work to transaction handler
-                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(transaction, status: .sending)
+                // delegate work to transaction handler
+                let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                    .sendTransaction(transaction, status: .sending)
 
-                    // return pending transaction
-                    let pendingTransaction = PendingTransaction(
-                        trxIndex: transactionIndex,
-                        sentAt: Date(),
-                        rawTransaction: transaction,
-                        status: .sending
+                // return pending transaction
+                let pendingTransaction = PendingTransaction(
+                    trxIndex: transactionIndex,
+                    sentAt: Date(),
+                    rawTransaction: transaction,
+                    status: .sending
+                )
+                return pendingTransaction
+            case let .verified(IBAN, BIC):
+                // Fake transaction for now
+                let sendTransaction = SendTransaction(
+                    isFakeSendTransaction: false,
+                    isFakeSendTransactionError: false,
+                    isFakeSendTransactionNetworkError: false,
+                    isLinkCreationAvailable: false, // TODO: Check
+                    recipient: .init(
+                        address: "",
+                        category: .solanaAddress,
+                        attributes: .funds
+                    ),
+                    sendViaLinkSeed: nil,
+                    amount: amount,
+                    amountInFiat: 0.01,
+                    walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200_000_000),
+                    address: "adfasdf",
+                    payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200_000_000),
+                    feeAmount: .init(transaction: 10000, accountBalances: 2_039_280),
+                    currency: "USD",
+                    analyticEvent: .sendNewConfirmButtonClick(
+                        sendFlow: "",
+                        token: "",
+                        max: false,
+                        amountToken: 0,
+                        amountUSD: 0,
+                        fee: false,
+                        fiatInput: false,
+                        signature: "",
+                        pubKey: nil
                     )
-                    return pendingTransaction
-                case let .verified(IBAN, BIC):
-                    // Fake transaction for now
-                    let sendTransaction = SendTransaction(
-                        isFakeSendTransaction: false,
-                        isFakeSendTransactionError: false,
-                        isFakeSendTransactionNetworkError: false,
-                        recipient: .init(
-                            address: "",
-                            category: .solanaAddress,
-                            attributes: .funds
-                        ),
-                        sendViaLinkSeed: nil,
-                        amount: amount,
-                        amountInFiat: 0.01,
-                        walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
-                        address: "adfasdf",
-                        payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
-                        feeAmount: .init(transaction: 10000, accountBalances: 2039280),
-                        currency: "USD",
-                        analyticEvent: .sendNewConfirmButtonClick(sendFlow: "", token: "", max: false, amountToken: 0, amountUSD: 0, fee: false, fiatInput: false, signature: "", pubKey: nil)
-                    )
+                )
 
-                    let transaction = StrigaWithdrawSendTransaction(
-                        sendTransaction: sendTransaction,
-                        IBAN: IBAN,
-                        BIC: BIC,
-                        amount: amount,
-                        feeAmount: .zero
-                    )
+                let transaction = StrigaWithdrawSendTransaction(
+                    sendTransaction: sendTransaction,
+                    IBAN: IBAN,
+                    BIC: BIC,
+                    amount: amount,
+                    feeAmount: .zero
+                )
 
-                    // delegate work to transaction handler
-                    let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
-                        .sendTransaction(
-                            transaction,
-                            status: .confirmationNeeded
-                        )
-
-                    // return pending transaction
-                    let pendingTransaction = PendingTransaction(
-                        trxIndex: transactionIndex,
-                        sentAt: Date(),
-                        rawTransaction: transaction,
+                // delegate work to transaction handler
+                let transactionIndex = Resolver.resolve(TransactionHandlerType.self)
+                    .sendTransaction(
+                        transaction,
                         status: .confirmationNeeded
                     )
-                    return pendingTransaction
-                case .canceled:
-                    return nil
-                }
-            })
-            .eraseToAnyPublisher()
+
+                // return pending transaction
+                let pendingTransaction = PendingTransaction(
+                    trxIndex: transactionIndex,
+                    sentAt: Date(),
+                    rawTransaction: transaction,
+                    status: .confirmationNeeded
+                )
+                return pendingTransaction
+            case .canceled:
+                return nil
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }
 

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -13,10 +9,10 @@ public class JupiterRestClientAPI: JupiterAPI {
         self.host = host + "/" + version.rawValue
         self.tokensHost = tokensHost
     }
-    
-    public func getTokens() async throws -> [Token] {
+
+    public func getTokens() async throws -> [TokenMetadata] {
         let (data, _) = try await URLSession.shared.data(from: URL(string: "\(tokensHost ?? host)/tokens")!)
-        return try JSONDecoder().decode([Token].self, from: data)
+        return try JSONDecoder().decode([TokenMetadata].self, from: data)
     }
 
     public func quote(
@@ -105,8 +101,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         print(request.cURL())
         let (data, _) = try await URLSession.shared.data(for: request)
         print(String(data: data, encoding: .utf8) ?? "")
-        if let swapTransaction = try JSONDecoder().decode(ResponseData.self, from: data).swapTransaction
-        {
+        if let swapTransaction = try JSONDecoder().decode(ResponseData.self, from: data).swapTransaction {
             return SwapTransaction(
                 stringValue: swapTransaction,
                 receivedAt: Date()
@@ -147,7 +142,6 @@ public class JupiterRestClientAPI: JupiterAPI {
         )
     }
 }
-
 
 public extension JupiterRestClientAPI {
     enum Version: String {

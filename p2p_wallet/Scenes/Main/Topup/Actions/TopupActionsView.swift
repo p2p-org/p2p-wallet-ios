@@ -11,7 +11,7 @@ struct TopupActionsView: View {
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
-            Text(L10n.topUpYourAccount)
+            Text(L10n.addMoney)
                 .fontWeight(.semibold)
                 .apply(style: .title3)
                 .padding(.top, 22)
@@ -22,14 +22,14 @@ struct TopupActionsView: View {
                 } label: {
                     cell(item: item)
                 }
-                    .frame(minHeight: 73)
+                .frame(minHeight: 73)
             }
             Spacer()
         }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 100)
-            .background(Color(Asset.Colors.smoke.color))
-            .cornerRadius(20)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 100)
+        .background(Color(Asset.Colors.smoke.color))
+        .cornerRadius(20)
     }
 
     private func cell(item: TopupActionsViewModel.ActionItem) -> some View {
@@ -53,17 +53,16 @@ struct TopupActionsView: View {
                     color: Color(Asset.Colors.night.color).opacity(0.6),
                     activePartColor: Color(Asset.Colors.night.color)
                 )
-                    .frame(width: 24, height: 24)
+                .frame(width: 24, height: 24)
             } else {
                 Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
         }
-            .padding(.all, 16)
-            .background(Color(Asset.Colors.snow.color))
-            .cornerRadius(16)
+        .padding(.all, 16)
+        .background(Color(Asset.Colors.snow.color))
+        .cornerRadius(16)
     }
-
 }
 
 struct TopupActions_Previews: PreviewProvider {

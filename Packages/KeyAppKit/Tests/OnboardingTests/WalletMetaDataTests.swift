@@ -1,18 +1,11 @@
-//
-//  WalletMetaDataTests.swift
-//
-//
-//  Created by Giang Long Tran on 29.05.2023.
-//
-
 import XCTest
 @testable import Onboarding
 
 final class WalletMetaDataTests: XCTestCase {
     func testMerge1() throws {
-        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
-        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
-        let current = UInt64(Date().timeIntervalSince1970)
+        let current: UInt64 = 1000
+        let past5SecondsAgo = current - 5
+        let past15SecondsAgo = current - 15
 
         let local = WalletMetaData(
             ethPublic: "123",
@@ -47,15 +40,15 @@ final class WalletMetaDataTests: XCTestCase {
         let mergeEmailResult = WalletMetaData.merge(local, remote, \.email, \.emailTimestamp)
         XCTAssertEqual(mergeEmailResult.0, "1@gmail.com")
         XCTAssertEqual(mergeEmailResult.1, past15SecondsAgo)
-        
+
         let merged = try WalletMetaData.merge(lhs: local, rhs: remote)
         XCTAssertEqual(remote, merged)
     }
-    
+
     func testMerge2() throws {
-        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
-        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
-        let current = UInt64(Date().timeIntervalSince1970)
+        let current: UInt64 = 1000
+        let past5SecondsAgo = current - 5
+        let past15SecondsAgo = current - 15
 
         let local = WalletMetaData(
             ethPublic: "123",
@@ -67,7 +60,7 @@ final class WalletMetaDataTests: XCTestCase {
             authProviderTimestamp: past15SecondsAgo,
             phoneNumber: "7890",
             phoneNumberTimestamp: past5SecondsAgo,
-            striga: .init(userId: "1",userIdTimestamp: past5SecondsAgo)
+            striga: .init(userId: "1", userIdTimestamp: past5SecondsAgo)
         )
 
         let remote = WalletMetaData(
@@ -86,21 +79,21 @@ final class WalletMetaDataTests: XCTestCase {
         let merged = try WalletMetaData.merge(lhs: local, rhs: remote)
         XCTAssertEqual(merged.deviceName, "iPhone2")
         XCTAssertEqual(merged.deviceNameTimestamp, current)
-        
+
         XCTAssertEqual(merged.phoneNumber, "7890")
         XCTAssertEqual(merged.phoneNumberTimestamp, past5SecondsAgo)
-        
+
         XCTAssertEqual(merged.email, "1@gmail.com")
         XCTAssertEqual(merged.emailTimestamp, past15SecondsAgo)
-        
+
         XCTAssertEqual(merged.authProvider, "google")
         XCTAssertEqual(merged.authProviderTimestamp, past15SecondsAgo)
     }
-    
+
     func testMergeTwoDifferentMetadata() throws {
-        let past5SecondsAgo = UInt64(Date().timeIntervalSince1970) - 5
-        let past15SecondsAgo = UInt64(Date().timeIntervalSince1970) - 15
-        let current = UInt64(Date().timeIntervalSince1970)
+        let current: UInt64 = 1000
+        let past5SecondsAgo = current - 5
+        let past15SecondsAgo = current - 15
 
         let local = WalletMetaData(
             ethPublic: "123",
@@ -128,7 +121,6 @@ final class WalletMetaDataTests: XCTestCase {
             striga: .init(userIdTimestamp: past15SecondsAgo)
         )
 
-        
         XCTAssertThrowsError(try WalletMetaData.merge(lhs: local, rhs: remote))
     }
 }

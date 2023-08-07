@@ -27,6 +27,11 @@ public extension UIFont {
         UIFont.monospacedSystemFont(ofSize: fontSize(of: style), weight: weight)
     }
     
+    /// Font by custom font size and weight
+    static func font(of fontSize: CGFloat, weight: Weight = .regular) -> UIFont {
+        UIFont.systemFont(ofSize: fontSize, weight: weight)
+    }
+    
     /// Attributed string of selected style and weight
     static func text(_ text: String, of style: Style, weight: Weight = .regular) -> NSAttributedString {
         NSAttributedString.attributedString(with: text, of: style, weight: weight)

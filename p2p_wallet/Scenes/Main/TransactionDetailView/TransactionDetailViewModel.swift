@@ -3,9 +3,9 @@ import Combine
 import Foundation
 import History
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
-import TransactionParser
 
 enum TransactionDetailStyle {
     case active
@@ -19,7 +19,6 @@ enum TransactionDetailViewModelOutput {
 }
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
-    @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var rendableTransaction: any RenderableTransactionDetail
@@ -37,11 +36,6 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         rendableTransaction = rendableDetailTransaction
     }
 
-    init(parsedTransaction: ParsedTransaction) {
-        style = .passive
-        rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
-    }
-
     init(historyTransaction: HistoryTransaction) {
         style = .passive
         rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
@@ -49,21 +43,20 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         Task {
-            let tokenRepository: TokensRepository = Resolver.resolve()
+            let tokenRepository: SolanaTokensService = Resolver.resolve()
             self.rendableTransaction = try await RendableDetailHistoryTransaction(
                 trx: historyTransaction,
-                allTokens: tokenRepository.getTokensList(useCache: true)
+                allTokens: Set(tokenRepository.all().values)
             )
         }
     }
 
     init(pendingTransaction: PendingTransaction, statusContext: String? = nil) {
         let pendingService: TransactionHandlerType = Resolver.resolve()
-        let priceService: PricesService = Resolver.resolve()
 
         style = .active
         self.statusContext = statusContext
-        rendableTransaction = RenderableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+        rendableTransaction = RenderableDetailPendingTransaction(trx: pendingTransaction)
 
         super.init()
 
@@ -71,7 +64,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
-                self.rendableTransaction = RenderableDetailPendingTransaction(trx: trx, priceService: priceService)
+                self.rendableTransaction = RenderableDetailPendingTransaction(trx: trx)
             }
             .store(in: &subscriptions)
     }

@@ -1,17 +1,12 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.04.2023.
-//
-
 import Combine
 import Foundation
 
-public actor SynchronizedDatabase<Key: Hashable & Codable, Value: Codable> {
+public actor SynchronizedDatabase<Key: Hashable & Codable, Value: Codable & Equatable> {
     private var data: [Key: Value] = [:] {
         didSet {
-            onUpdate.send(data)
+            if oldValue != data {
+                onUpdate.send(data)
+            }
         }
     }
 

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Onboarding
 import Resolver
@@ -36,12 +32,12 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         case .finish:
             return nil
         case let .signInProgress(tokenID, email, deviceShare, customResult, _):
-             return handleInProgress(
+            return handleInProgress(
                 tokenID: tokenID,
                 email: email,
                 deviceShare: deviceShare,
                 customResult: customResult
-             )
+            )
         }
     }
 
@@ -100,7 +96,7 @@ private extension RestoreSocialDelegatedCoordinator {
                 }
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
         }
@@ -140,13 +136,23 @@ private extension RestoreSocialDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func handleInProgress(tokenID: TokenID, email: String, deviceShare: String?, customResult: APIGatewayRestoreWalletResult?) -> UIViewController {
+    func handleInProgress(
+        tokenID: TokenID,
+        email: String,
+        deviceShare: String?,
+        customResult: APIGatewayRestoreWalletResult?
+    ) -> UIViewController {
         let viewModel = SocialSignInWaitViewModel(strategy: .restore)
         let view = SocialSignInWaitView(viewModel: viewModel)
         viewModel.initiated
             .sinkAsync { [stateMachine] process in
                 process.start {
-                    try await stateMachine <- .signInTorus(tokenID: tokenID, email: email, deviceShare: deviceShare, customResult: customResult)
+                    try await stateMachine <- .signInTorus(
+                        tokenID: tokenID,
+                        email: email,
+                        deviceShare: deviceShare,
+                        customResult: customResult
+                    )
                 }
             }
             .store(in: &subscriptions)

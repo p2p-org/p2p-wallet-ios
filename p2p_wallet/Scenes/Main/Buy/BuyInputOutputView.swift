@@ -1,10 +1,3 @@
-//
-//  BuyInputOutputView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 05.09.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -40,8 +33,8 @@ struct BuyInputOutputView: View {
                         font: fontSynchorinze.font,
                         side: .left
                     )
-                        .padding(.leading, 8)
-                        .accessibilityIdentifier("BuyInputOutputView.leftInput")
+                    .padding(.leading, 8)
+                    .accessibilityIdentifier("BuyInputOutputView.leftInput")
 
                     currency(value: leftSubtitle) { onTap(.left) }
                         .lineLimit(1)
@@ -62,8 +55,8 @@ struct BuyInputOutputView: View {
                         side: .right,
                         isFocued: false
                     )
-                        .padding(.leading, 8)
-                        .accessibilityIdentifier("BuyInputOutputView.rightInput")
+                    .padding(.leading, 8)
+                    .accessibilityIdentifier("BuyInputOutputView.rightInput")
 
                     currency(value: rightSubtitle) { onTap(.right) }
                         .lineLimit(1)
@@ -117,7 +110,7 @@ struct BuyInputOutputView: View {
 }
 
 private class FontSynchorinze: ObservableObject {
-    static let defaultFont: UIFont = UIFont.font(of: .title2)
+    static let defaultFont: UIFont = .font(of: .title2)
     static let maxFontSize: CGFloat = 28
     static let minFontSize: CGFloat = 10
 
@@ -244,13 +237,13 @@ private struct TextfieldView: UIViewRepresentable {
             // adjustFont(textField)
         }
 
-        func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        func textFieldShouldBeginEditing(_: UITextField) -> Bool {
             // uncomment if you'd like to put cursor to the end of the field
 //            DispatchQueue.main.async {
 //                let endPosition = textField.endOfDocument
 //                textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
 //            }
-            return true
+            true
         }
 
         func textFieldDidBeginEditing(_: UITextField) {

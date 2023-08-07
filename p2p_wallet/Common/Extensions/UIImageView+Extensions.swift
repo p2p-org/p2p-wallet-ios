@@ -6,11 +6,6 @@ import UIKit
 extension UIImageView {
     static let qrCodeCache = NSCache<NSString, UIImage>()
 
-    func cancelPreviousTask() {
-        kf.cancelDownloadTask() // first, cancel currenct download task
-        kf.setImage(with: URL(string: "")) // second, prevent kingfisher from setting previous image
-    }
-
     func setImage(
         urlString: String?,
         placeholder: UIImage? = nil,

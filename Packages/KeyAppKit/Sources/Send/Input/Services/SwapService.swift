@@ -1,10 +1,6 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
-import SolanaSwift
 import FeeRelayerSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 public protocol SwapService {
     func calculateFeeInPayingToken(feeInSOL: FeeAmount, payingFeeTokenMint: PublicKey) async throws -> FeeAmount?
@@ -33,7 +29,13 @@ public class SwapServiceImpl: SwapService {
         self.orcaSwap = orcaSwap
     }
 
-    public func calculateFeeInPayingToken(feeInSOL: FeeAmount, payingFeeTokenMint: PublicKey) async throws -> FeeAmount? {
-        try await feeRelayerCalculator.calculateFeeInPayingToken(orcaSwap: orcaSwap, feeInSOL: feeInSOL, payingFeeTokenMint: payingFeeTokenMint)
+    public func calculateFeeInPayingToken(feeInSOL: FeeAmount,
+                                          payingFeeTokenMint: PublicKey) async throws -> FeeAmount?
+    {
+        try await feeRelayerCalculator.calculateFeeInPayingToken(
+            orcaSwap: orcaSwap,
+            feeInSOL: feeInSOL,
+            payingFeeTokenMint: payingFeeTokenMint
+        )
     }
 }

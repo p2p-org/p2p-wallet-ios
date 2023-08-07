@@ -1,12 +1,6 @@
-//
-//  SocketDebugView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.05.2023.
-//
-
 import Combine
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SwiftUI
 

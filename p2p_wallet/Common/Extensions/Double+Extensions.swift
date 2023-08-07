@@ -1,18 +1,4 @@
-//
-//  Double+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 16/11/2020.
-//
-
 import Foundation
-
-// MARK: - Constants
-
-extension Double {
-    /// Maximum slippage value allowed
-    static var maxSlippage: Self { 0.5 }
-}
 
 // MARK: - Optional operations
 
@@ -50,10 +36,6 @@ extension Optional where Wrapped == Double {
         if right == 0 { return 0 }
         return left.orZero / right
     }
-
-    var isNilOrZero: Bool {
-        orZero == 0
-    }
 }
 
 // MARK: - Rounding
@@ -74,7 +56,6 @@ extension Double {
 // MARK: - Format
 
 extension Double {
-    
     /// Convert double value to string
     public func toString(
         minimumFractionDigits: Int = 0,
@@ -121,27 +102,6 @@ extension Double {
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
-    public func fixedDecimal(_ maxDecimal: Int, minDecimal: Int = 0) -> String {
-        if maxDecimal <= 0 { return "\(maxDecimal)" }
-        if self == 0.0 {
-            var r = "0."
-            for _ in 0 ..< maxDecimal { r += "0" }
-            return r
-        }
-
-        let formatter = NumberFormatter()
-        formatter.numberStyle = NumberFormatter.Style.decimal
-        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
-        formatter.decimalSeparator = "."
-        formatter.minimumFractionDigits = minDecimal
-        formatter.maximumFractionDigits = maxDecimal
-
-        return formatter.string(for: self) ?? toString(
-            minimumFractionDigits: minDecimal,
-            maximumFractionDigits: maxDecimal
-        )
-    }
-
     func fiatAmountFormattedString(
         maximumFractionDigits: Int = 2,
         currency: Fiat = Defaults.fiat,
@@ -155,13 +115,12 @@ extension Double {
             } else {
                 return "< 0.01 \(currency.symbol)"
             }
-            
         }
-        
+
         // amount >= 0.01
         else {
             let formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
-            
+
             if currency == .usd {
                 return "\(currency.symbol) \(formattedString)"
             } else {
@@ -183,10 +142,6 @@ extension Double {
         currency: Fiat = .usd,
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
-        return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
-    }
-
-    func percentFormat(maximumFractionDigits: Int = 2) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits))%"
+        "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 }

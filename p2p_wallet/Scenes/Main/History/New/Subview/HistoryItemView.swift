@@ -1,23 +1,9 @@
-//
-//  NewHistoryItemView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 02.02.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
 struct HistoryItemView: View {
     let item: any RendableListTransactionItem
     let onTap: () -> Void
-
-    var titleColor: Color {
-        switch item.status {
-        case .success, .pending: return Color(Asset.Colors.night.color)
-        case .failed: return Color(Asset.Colors.rose.color)
-        }
-    }
 
     var detailColor: Color {
         switch item.status {
@@ -106,7 +92,7 @@ struct HistoryItemView_Previews: PreviewProvider {
         MockedRendableListTransactionItem.unstake(),
         MockedRendableListTransactionItem.create(),
         MockedRendableListTransactionItem.close(),
-        MockedRendableListTransactionItem.unknown()
+        MockedRendableListTransactionItem.unknown(),
     ]
 
     static var previews: some View {

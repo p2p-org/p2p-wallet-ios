@@ -1,27 +1,26 @@
+import Foundation
 import Jupiter
 import SolanaSwift
-import Foundation
 
 protocol JupiterTokensProvider {
     func getCachedData() -> JupiterTokensCache?
-    func save(tokens: [Token], routeMap: RouteMap) throws
+    func save(tokens: [TokenMetadata], routeMap: RouteMap) throws
     func clear()
 }
 
 struct JupiterTokensCache: Codable {
-    let tokens: [Token]
+    let tokens: [TokenMetadata]
     let routeMap: RouteMap
     let created: Date
 
-    init(tokens: [Token], routeMap: RouteMap) {
+    init(tokens: [TokenMetadata], routeMap: RouteMap) {
         self.tokens = tokens
         self.routeMap = routeMap
-        self.created = Date()
+        created = Date()
     }
 }
 
 final class JupiterTokensLocalProvider: JupiterTokensProvider {
-
     private let cacheFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
@@ -39,7 +38,7 @@ final class JupiterTokensLocalProvider: JupiterTokensProvider {
         }
     }
 
-    func save(tokens: [Token], routeMap: RouteMap) throws {
+    func save(tokens: [TokenMetadata], routeMap: RouteMap) throws {
         let data = try JSONEncoder().encode(JupiterTokensCache(tokens: tokens, routeMap: routeMap))
         try data.write(to: cacheFile)
     }

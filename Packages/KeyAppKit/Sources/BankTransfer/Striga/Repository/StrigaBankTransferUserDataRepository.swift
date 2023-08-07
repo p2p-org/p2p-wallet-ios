@@ -1,13 +1,14 @@
-import Foundation
-import KeyAppNetworking
 import Combine
-import SolanaSwift
-import TweetNacl
+import Foundation
 import KeyAppKitCore
 import KeyAppKitLogger
+import KeyAppNetworking
+import SolanaSwift
+import TweetNacl
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
     public typealias WithdrawalInfo = StrigaWithdrawalInfo
+
     // MARK: - Properties
 
     private let localProvider: StrigaLocalProvider
@@ -33,13 +34,13 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         self.commonInfoProvider = commonInfoProvider
         self.solanaKeyPair = solanaKeyPair
     }
-    
+
     // MARK: - Methods
 
     public func getUserId() async -> String? {
         await metadataProvider.getStrigaMetadata()?.userId
     }
-    
+
     public func getKYCStatus() async throws -> StrigaKYC {
         guard let userId = await getUserId() else {
             throw BankTransferError.missingUserId
@@ -47,12 +48,13 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         return try await remoteProvider.getKYCStatus(userId: userId)
     }
 
-    public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
+    public func createUser(registrationData data: BankTransferRegistrationData) async throws
+    -> StrigaCreateUserResponse {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
-        
+
         // create model
         let model = StrigaCreateUserRequest(
             firstName: data.firstName,
@@ -86,13 +88,13 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         )
         // send createUser
         let response = try await remoteProvider.createUser(model: model)
-        
+
         // save registration data
         try await localProvider.save(registrationData: data)
-        
+
         // save userId
         await metadataProvider.updateMetadata(withUserId: response.userId)
-        
+
         // return
         return response
     }
@@ -110,7 +112,11 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             firstName: data.firstName,
             lastName: data.lastName,
             placeOfBirth: data.placeOfBirth,
-            dateOfBirth: DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day)
+            dateOfBirth: DateOfBirth(
+                year: data.dateOfBirth?.year,
+                month: data.dateOfBirth?.month,
+                day: data.dateOfBirth?.day
+            )
         )
         try? await commonInfoProvider.save(commonInfo: commonInfo)
     }
@@ -122,33 +128,34 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func verifyMobileNumber(userId: String, verificationCode code: String) async throws {
         try await remoteProvider.verifyMobileNumber(userId: userId, verificationCode: code)
     }
-    
+
     public func resendSMS(userId: String) async throws {
         try await remoteProvider.resendSMS(userId: userId)
     }
-    
+
     public func getKYCToken(userId: String) async throws -> String {
         try await remoteProvider.getKYCToken(userId: userId)
     }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         // get cached data from local provider
-        if let cachedData = await localProvider.getCachedRegistrationData()
-        {
+        if let cachedData = await localProvider.getCachedRegistrationData() {
             if let userId = await getUserId(),
                cachedData.mobileNumber == nil,
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 // save to local provider
                 try await localProvider.save(registrationData: response)
-                
+
                 // return
                 return response
             }
-            
+
             // if not response cached data
             return cachedData
-        } else if let userId = await getUserId(), let response = try? await remoteProvider.getUserDetails(userId: userId) {
+        } else if let userId = await getUserId(),
+                  let response = try? await remoteProvider.getUserDetails(userId: userId)
+        {
             // Make request for userDetails if there is a userId and no cached data
             try await localProvider.save(registrationData: response)
             return response
@@ -159,7 +166,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         else {
             throw BankTransferError.missingMetadata
         }
-        
+
         // return empty data
         return StrigaUserDetailsResponse(
             firstName: "",
@@ -184,9 +191,9 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func getWallet(userId: String) async throws -> UserWallet? {
         var wallet: UserWallet? = await localProvider.getCachedUserData()?.wallet
         do {
-             var userWallet = try await remoteProvider.getAllWalletsByUser(
+            var userWallet = try await remoteProvider.getAllWalletsByUser(
                 userId: userId,
-                startDate: Date(timeIntervalSince1970: 1687564800),
+                startDate: Date(timeIntervalSince1970: 1_687_564_800),
                 endDate: Date(),
                 page: 1
             ).wallets.map {
@@ -292,20 +299,25 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         return wallet
     }
 
-    public func claimVerify(userId: String, challengeId: String, ip: String, verificationCode code: String) async throws {
+    public func claimVerify(
+        userId: String,
+        challengeId: String,
+        ip: String,
+        verificationCode code: String
+    ) async throws {
         _ = try await remoteProvider.transactionConfirmOTP(userId: userId, challengeId: challengeId, code: code, ip: ip)
     }
-    
+
     public func claimResendSMS(userId: String, challengeId: String) async throws {
         _ = try await remoteProvider.transactionResendOTP(userId: userId, challengeId: challengeId)
     }
 
     public func whitelistIdFor(account: USDCUserAccount) async throws -> String? {
-        return try await localProvider.getWhitelistedUserDestinations()
-            .filter({ response in
+        try await localProvider.getWhitelistedUserDestinations()
+            .filter { response in
                 response.address == solanaKeyPair?.publicKey.base58EncodedString
-                && response.currency == account.currency
-            })
+                    && response.currency == account.currency
+            }
             .first?.id
     }
 
@@ -324,7 +336,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 network: "SOL",
                 label: "SOL"
             )
-        } catch HTTPClientError.invalidResponse(_, let data) {
+        } catch let HTTPClientError.invalidResponse(_, data) {
             let res = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
             if StrigaWhitelistAddressError(rawValue: res?.errorCode ?? "") != .alreadyWhitelisted {
                 throw BankTransferError.missingMetadata
@@ -364,11 +376,20 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         throw StrigaProviderError.invalidRateTokens
     }
 
-    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> String {
-        try await remoteProvider.initiateSEPAPayment(userId: userId, accountId: accountId, amount: amount, iban: iban, bic: bic).challengeId
+    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String,
+                                    bic: String) async throws -> String
+    {
+        try await remoteProvider.initiateSEPAPayment(
+            userId: userId,
+            accountId: accountId,
+            amount: amount,
+            iban: iban,
+            bic: bic
+        ).challengeId
     }
 
     // MARK: - Private
+
     private func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         try await remoteProvider.enrichAccount(userId: userId, accountId: accountId)
     }
@@ -422,8 +443,8 @@ private extension UserWallet {
                 totalBalance: Int(usdcAccount.availableBalance.amount) ?? 0
             )
         }
-        self.walletId = wallet.walletID
-        self.accounts = UserAccounts(eur: eur, usdc: usdc)
+        walletId = wallet.walletID
+        accounts = UserAccounts(eur: eur, usdc: usdc)
     }
 }
 
@@ -457,7 +478,7 @@ public extension StrigaBankTransferUserDataRepository {
                 BIC: initialTransaction?.bankingSenderBic,
                 receiver: [regData?.firstName, regData?.lastName].compactMap { $0 }.joined(separator: " ")
             )
-            if info.IBAN != nil && info.BIC != nil {
+            if info.IBAN != nil, info.BIC != nil {
                 try? await save(info)
             }
             return info
@@ -476,7 +497,7 @@ public extension StrigaBankTransferUserDataRepository {
 }
 
 private enum Constants {
-    static let startDate = Date(timeIntervalSince1970: 1687564800) // 24.06.2023
+    static let startDate = Date(timeIntervalSince1970: 1_687_564_800) // 24.06.2023
     static let sepaPayoutCompleted = "SEPA_PAYOUT_COMPLETED"
     static let sepaPayoutInitiated = "SEPA_PAYOUT_INITIATED"
     static let sepaPayinCompleted = "SEPA_PAYIN_COMPLETED"

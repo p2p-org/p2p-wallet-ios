@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import KeyAppKitCore
 import KeyAppUI
 import Onboarding
@@ -28,8 +24,8 @@ struct RecoveryKitView: View {
                         // Web3Auth user
                         L10n.toAccessYourAccountFromAnotherDeviceYouNeedToUseAny2FactorsFromTheListBelow :
                         // Seedphrase user
-                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice.keyAppDoesnTHaveAccessToThisInformation
-                    )
+                        L10n.SeedPhraseIsTheOnlyWayToAccessYourFundsOnAnotherDevice
+                        .keyAppDoesnTHaveAccessToThisInformation)
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -80,8 +76,7 @@ struct RecoveryKitView: View {
 
                         Text(L10n
                             .KeyAppRespectsYourPrivacyItCanTAccessYourFundsOrPersonalDetails
-                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain 
-                        )
+                            .yourInformationStaysSecurelyStoredOnYourDeviceAndInTheBlockchain)
                             .apply(style: .label1)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .padding(.leading, 16)
@@ -128,17 +123,6 @@ struct RecoveryKitView: View {
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             viewModel.onAppear()
-        }
-    }
-
-    var helpButton: some View {
-        Button {
-            viewModel.openHelp()
-        } label: {
-            Image(uiImage: Asset.MaterialIcon.helpOutline.image)
-                .frame(width: 30, height: 30)
-                .padding(.top, 20)
-                .padding(.trailing, 20)
         }
     }
 

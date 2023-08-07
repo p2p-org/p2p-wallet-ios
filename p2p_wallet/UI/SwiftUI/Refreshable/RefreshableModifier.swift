@@ -1,18 +1,7 @@
-//
-//  RefreshableModifier.swift
-//  SwiftUI_Pull_to_Refresh
-//
-//  Created by Geri Borbás on 15/03/2022.
-//
-
 import SwiftUI
 
 struct RefreshAction {
     let action: () async -> Void
-
-    func callAsFunction() async {
-        await action()
-    }
 }
 
 struct RefreshActionKey: EnvironmentKey {

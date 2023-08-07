@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
@@ -37,7 +30,7 @@ public struct WormholeSendUserAction: UserAction {
     public let createdDate: Date
 
     public var updatedDate: Date
-    
+
     public var solanaTransaction: String?
 
     public init(
@@ -77,7 +70,6 @@ public struct WormholeSendUserAction: UserAction {
         updatedDate = sendStatus.modified
 
         // Extract sending token
-        let tokens = try await solanaTokensService.getTokensList()
         let token: SolanaToken
 
         switch sendStatus.amount.token {
@@ -85,9 +77,7 @@ public struct WormholeSendUserAction: UserAction {
             throw WormholeSendUserActionError.parseError
         case let .solana(mint):
             if let mint {
-                let matchedToken = tokens.first { token in
-                    token.address == mint
-                }
+                let matchedToken = try await solanaTokensService.get(address: mint)
 
                 guard let matchedToken else {
                     throw WormholeSendUserActionError.parseError
@@ -115,7 +105,6 @@ public struct WormholeSendUserAction: UserAction {
             currencyAmount = sendStatus.amount.asCurrencyAmount
         }
 
-        
         fees = sendStatus.fees
         transaction = nil
     }

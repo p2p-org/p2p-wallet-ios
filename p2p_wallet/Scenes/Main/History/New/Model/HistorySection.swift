@@ -1,10 +1,3 @@
-//
-//  NewHistorySection.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 
 struct HistorySection: Identifiable, Equatable {
@@ -21,7 +14,7 @@ struct HistorySection: Identifiable, Equatable {
 enum NewHistoryItem: Identifiable, Equatable {
     case rendableTransaction(any RendableListTransactionItem)
     case rendableOffram(any RendableListOfframItem)
-    
+
     case button(id: String, title: String, action: () -> Void)
     case placeHolder(id: String)
     case fetch(id: String)
@@ -34,17 +27,6 @@ enum NewHistoryItem: Identifiable, Equatable {
             return item.id
         case let .button(id, _, _), let .placeHolder(id), let .fetch(id):
             return id
-        }
-    }
-
-    var date: Date {
-        switch self {
-        case let .rendableTransaction(item):
-            return item.date
-        case let .rendableOffram(item):
-            return item.date
-        default:
-            return Date()
         }
     }
 

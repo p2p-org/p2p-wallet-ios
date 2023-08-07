@@ -4,7 +4,6 @@ import Resolver
 import UIKit
 
 final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
-
     @Injected private var helpLauncher: HelpCenterLauncher
 
     private let navigationController: UINavigationController
@@ -15,22 +14,24 @@ final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = StrigaOTPCompletedView(
-            image: .thumbsupImage,
-            title: L10n.thankYou,
-            subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
+            image: .catSuccess,
+            title: L10n.verifyYourIdentity,
+            subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification
+                .thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
             actionTitle: L10n.continue,
-            onAction:  { [weak self] in
+            onAction: { [weak self] in
                 self?.navigationController.popToRootViewController(animated: true)
-            }) { [weak self] in
-                self?.helpLauncher.launch()
             }
+        ) { [weak self] in
+            self?.helpLauncher.launch()
+        }
 
         let controller = view.asViewController(withoutUIKitNavBar: false)
         controller.navigationItem.hidesBackButton = true
         controller.hidesBottomBarWhenPushed = true
         navigationController.setViewControllers([
             navigationController.viewControllers.first,
-            controller
+            controller,
         ].compactMap { $0 }, animated: true)
 
         return controller

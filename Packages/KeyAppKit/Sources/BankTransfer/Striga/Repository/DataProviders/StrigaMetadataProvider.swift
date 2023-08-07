@@ -9,7 +9,7 @@ public struct StrigaMetadata {
     public let userId: String?
     public let email: String
     public let phoneNumber: String
-    
+
     public init(
         userId: String? = nil,
         email: String,

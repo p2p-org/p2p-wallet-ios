@@ -1,10 +1,3 @@
-//
-//  SeedPhraseView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 01.09.2022.
-//
-
 import CarPlay
 import KeyAppUI
 import SwiftUI
@@ -53,11 +46,6 @@ struct SeedPhraseView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
         )
-    }
-
-    var seedPhraseOverlay: some View {
-        Color.white
-            .blur(radius: 8)
     }
 }
 

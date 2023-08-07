@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -23,7 +19,7 @@ public struct ICloudAccount: Codable, Hashable {
         self.phrase = phrase
         self.derivablePath = derivablePath
 
-        let account = try await Account(
+        let account = try await KeyPair(
             phrase: phrase.components(separatedBy: " "),
             network: .mainnetBeta,
             derivablePath: derivablePath

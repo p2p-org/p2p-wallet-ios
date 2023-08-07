@@ -1,14 +1,7 @@
-//
-//  NewHistoryItemIcon.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 02.02.2023.
-//
-
-import SwiftUI
-import Kingfisher
 import KeyAppUI
+import Kingfisher
 import SolanaSwift
+import SwiftUI
 
 struct HistoryIconView: View {
     private let largeSize: CGFloat = 46
@@ -31,7 +24,7 @@ struct HistoryIconView: View {
                 KFImage
                     .url(url)
                     .setProcessor(
-                        DownsamplingImageProcessor(size: .init(width: largeSize*2, height: largeSize*2))
+                        DownsamplingImageProcessor(size: .init(width: largeSize * 2, height: largeSize * 2))
                             |> RoundCornerImageProcessor(cornerRadius: largeSize)
                     )
                     .resizable()
@@ -44,7 +37,7 @@ struct HistoryIconView: View {
                         KFImage
                             .url(from)
                             .setProcessor(
-                                DownsamplingImageProcessor(size: .init(width: smallSize*2, height: smallSize*2))
+                                DownsamplingImageProcessor(size: .init(width: smallSize * 2, height: smallSize * 2))
                                     |> RoundCornerImageProcessor(cornerRadius: smallSize)
                             )
                             .resizable()
@@ -58,7 +51,7 @@ struct HistoryIconView: View {
                         KFImage
                             .url(to)
                             .setProcessor(
-                                DownsamplingImageProcessor(size: .init(width: smallSize*2, height: smallSize*2))
+                                DownsamplingImageProcessor(size: .init(width: smallSize * 2, height: smallSize * 2))
                                     |> RoundCornerImageProcessor(cornerRadius: smallSize)
                             )
                             .resizable()
@@ -78,10 +71,10 @@ struct HistoryIconView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             HistoryIconView(icon: .icon(.transactionCloseAccount))
-            HistoryIconView(icon: .single(URL(string: Token.nativeSolana.logoURI!)!))
+            HistoryIconView(icon: .single(URL(string: TokenMetadata.nativeSolana.logoURI!)!))
             HistoryIconView(icon: .double(
-                URL(string: Token.nativeSolana.logoURI!)!,
-                URL(string: Token.renBTC.logoURI!)!
+                URL(string: TokenMetadata.nativeSolana.logoURI!)!,
+                URL(string: TokenMetadata.renBTC.logoURI!)!
             ))
         }
     }

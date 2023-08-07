@@ -6,10 +6,10 @@ public struct StrigaCreateUserResponse: Decodable {
     let KYC: KYC
 }
 
-extension StrigaCreateUserResponse {
-    public struct KYC: Codable {
+public extension StrigaCreateUserResponse {
+    struct KYC: Codable {
         public let status: StrigaKYCStatus
-        
+
         public init(status: StrigaKYCStatus) {
             self.status = status
         }

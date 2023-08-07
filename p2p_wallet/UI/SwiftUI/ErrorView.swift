@@ -2,12 +2,12 @@
 import KeyAppUI
 import SwiftUI
 
-public struct ErrorView: View {
-    public let title: String?
-    public let subtitle: String
-    public let onTryAgain: (() -> Void)?
-    
-    public init(
+struct ErrorView: View {
+    let title: String?
+    let subtitle: String
+    let onTryAgain: (() -> Void)?
+
+    init(
         title: String? = nil,
         subtitle: String? = nil,
         onTryAgain: (() -> Void)? = nil
@@ -16,19 +16,19 @@ public struct ErrorView: View {
         self.subtitle = subtitle ?? L10n.oopsSomethingHappened
         self.onTryAgain = onTryAgain
     }
-    
-    public var body: some View {
+
+    var body: some View {
         VStack(spacing: 0) {
             Image(uiImage: .catFail)
                 .padding(.top, 24)
-                .padding(.bottom, title == nil ? 32: 20)
+                .padding(.bottom, title == nil ? 32 : 20)
 
             if let title {
                 Text(title)
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                     .padding(.bottom, 8)
             }
-            
+
             Text(subtitle)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 24)

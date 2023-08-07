@@ -1,8 +1,5 @@
-//
-// Created by Giang Long Tran on 21.10.21.
-//
-
 import Foundation
+import KeyAppBusiness
 
 protocol BuyProcessingServiceType {
     func getUrl() -> String
@@ -10,14 +7,7 @@ protocol BuyProcessingServiceType {
 
 protocol BuyProcessingFactory {
     func create(
-        walletRepository: WalletsRepository,
-        crypto: Buy.CryptoCurrency,
-        initialAmount: Double,
-        currency: Buy.FiatCurrency
-    ) throws -> BuyProcessingServiceType
-
-    func create(
-        walletRepository: WalletsRepository,
+        walletRepository: SolanaAccountsService,
         fromCurrency: BuyCurrencyType,
         amount: Double,
         toCurrency: BuyCurrencyType,
@@ -28,27 +18,7 @@ protocol BuyProcessingFactory {
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
         func create(
-            walletRepository: WalletsRepository,
-            crypto: CryptoCurrency,
-            initialAmount: Double,
-            currency: FiatCurrency
-        ) throws -> BuyProcessingServiceType {
-            MoonpayBuyProcessing(
-                environment: Defaults.apiEndPoint.network == .mainnetBeta ?
-                    .production :
-                    .staging,
-                apiKey: Defaults.apiEndPoint.network == .mainnetBeta ?
-                    .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
-                    .secretConfig("MOONPAY_STAGING_API_KEY")!,
-                currencyCode: crypto.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
-                baseCurrencyCode: currency.moonpayCode,
-                baseCurrencyAmount: initialAmount
-            )
-        }
-
-        func create(
-            walletRepository: WalletsRepository,
+            walletRepository: SolanaAccountsService,
             fromCurrency: BuyCurrencyType,
             amount: Double,
             toCurrency: BuyCurrencyType,
@@ -69,7 +39,7 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: to.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
+                walletAddress: walletRepository.nativeWallet?.address,
                 baseCurrencyCode: from.moonpayCode,
                 baseCurrencyAmount: amount,
                 paymentMethod: paymentMethod == "card" ? .creditDebitCard :

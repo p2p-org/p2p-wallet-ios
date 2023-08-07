@@ -1,12 +1,12 @@
 import BankTransfer
 import Combine
 import Foundation
+import KeyAppKitCore
 import Onboarding
+import Reachability
 import Resolver
 import SwiftyUserDefaults
-import KeyAppKitCore
 import UIKit
-import Reachability
 
 enum StrigaOTPCoordinatorResult {
     case canceled
@@ -19,7 +19,6 @@ enum StrigaOTPNavigation {
 }
 
 final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
-
     // MARK: - Dependencies
 
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -66,8 +65,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     override func start() -> AnyPublisher<StrigaOTPCoordinatorResult, Never> {
         // Initialize timer
         var timerHasJustInitialized = false
-        if self.resendCounter == nil {
-            self.resendCounter = .zero()
+        if resendCounter == nil {
+            resendCounter = .zero()
             timerHasJustInitialized = true
         }
 
@@ -79,7 +78,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         )
         // Create viewController
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
-        controller.title = L10n.stepOf(3, 3)
         controller.hidesBottomBarWhenPushed = true
         controller.navigationItem.largeTitleDisplayMode = .never
 
@@ -134,15 +132,17 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                     title: L10n.areYouSure,
                     message: L10n.youCanConfirmThePhoneNumberAndFinishTheRegistrationLater,
                     actions: [
-                    .init(
-                        title: L10n.yesLeftThePage,
-                        style: .default,
-                        handler: { [weak controller] action in
-                            guard let controller else { return }
-                            self?.dismiss(controller: controller)
-                        }),
-                    .init(title: L10n.noContinue, style: .cancel)
-                ])
+                        .init(
+                            title: L10n.yesLeftThePage,
+                            style: .default,
+                            handler: { [weak controller] _ in
+                                guard let controller else { return }
+                                self?.dismiss(controller: controller)
+                            }
+                        ),
+                        .init(title: L10n.noContinue, style: .cancel),
+                    ]
+                )
                 viewModel?.isLoading = false
             }
             .store(in: &subscriptions)
@@ -172,19 +172,19 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         }
 
         do {
-            try await self.resendHandler()
+            try await resendHandler()
         } catch BankTransferError.otpExceededDailyLimit {
-            self.handleOTPExceededDailyLimitError()
-            self.lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
-            await self.logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
+            handleOTPExceededDailyLimitError()
+            lastResendErrorDate = Date().addingTimeInterval(60 * 60 * 24)
+            await logAlertMessage(error: BankTransferError.otpExceededDailyLimit)
         } catch {
             viewModel.coordinatorIO.error.send(error)
-            await self.logAlertMessage(error: error)
+            await logAlertMessage(error: error)
         }
     }
 
     private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
-        self.resendCounter = resendCounter?.incremented()
+        resendCounter = resendCounter?.incremented()
         if let resendCounter {
             viewModel.attemptCounter = Wrapper(resendCounter)
         }
@@ -201,7 +201,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 self?.resultSubject.send(.canceled)
             }, onSupport: { [weak self] in
                 self?.helpLauncher.launch()
-            }).asViewController(withoutUIKitNavBar: true)
+            }
+        ).asViewController(withoutUIKitNavBar: true)
         errorController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(errorController, animated: true)
     }
@@ -217,7 +218,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 self?.resultSubject.send(.canceled)
             }, onSupport: { [weak self] in
                 self?.helpLauncher.launch()
-            }).asViewController(withoutUIKitNavBar: true)
+            }
+        ).asViewController(withoutUIKitNavBar: true)
         errorController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(errorController, animated: true)
     }
@@ -227,18 +229,21 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         case .default:
             navigationController.pushViewController(controller, animated: true)
         case .nextToRoot:
-            navigationController.setViewControllers([navigationController.viewControllers.first!, controller], animated: true)
+            navigationController.setViewControllers(
+                [navigationController.viewControllers.first!, controller],
+                animated: true
+            )
         }
     }
 
-    private func dismiss(controller: UIViewController) {
+    private func dismiss(controller _: UIViewController) {
         navigationController.popViewController(animated: true)
         resultSubject.send(.canceled)
     }
 
     private func logAlertMessage(error: Error) async {
         let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-        
+
         DefaultLogManager.shared.log(
             event: "Striga Registration iOS Alarm",
             logLevel: .alert,

@@ -1,7 +1,7 @@
-import SwiftUI
 import BankTransfer
 import Combine
 import CountriesAPI
+import SwiftUI
 
 enum StrigaRegistrationFirstStepCoordinatorResult {
     case completed
@@ -31,11 +31,14 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
 
         viewModel.chooseCountry
             .flatMap { [unowned self] in
-                self.coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: $0))
+                self
+                    .coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry,
+                                                                   controller: navigationController,
+                                                                   service: ChooseCountryService(), chosen: $0))
             }
             .sink { [weak viewModel] result in
                 switch result {
-                case .item(let item):
+                case let .item(item):
                     guard let item = item as? Country else { return }
                     viewModel?.selectedCountryOfBirth = item
                 case .cancel: break
@@ -45,28 +48,37 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
 
         viewModel.choosePhoneCountryCode
             .flatMap { [unowned self] in
-                self.coordinate(to: ChoosePhoneCodeCoordinator(
-                    selectedDialCode: $0?.dialCode,
-                    selectedCountryCode: $0?.code,
-                    presentingViewController: vc
+                self.coordinate(to: ChooseItemCoordinator<PhoneCodeItem>(
+                    title: L10n.selectYourCountry,
+                    controller: navigationController,
+                    service: ChoosePhoneCodeService(),
+                    chosen: PhoneCodeItem(country: $0)
                 ))
             }
-            .sink { [weak viewModel] country in
-                viewModel?.selectedPhoneCountryCode = country
+            .sink { [weak viewModel] result in
+                switch result {
+                case let .item(item):
+                    guard let item = item as? PhoneCodeItem else { return }
+                    viewModel?.selectedPhoneCountryCode = item.country
+                case .cancel: break
+                }
             }
             .store(in: &subscriptions)
 
-        navigationController.pushViewController(vc, animated: true)
+        // We know we have come from BankTransferInfoCoordinator. We need to remove in from hierarchy
+        var newVCs = Array(navigationController.viewControllers.dropLast())
+        newVCs.append(vc)
+        navigationController.setViewControllers(newVCs, animated: true)
 
         return Publishers.Merge(
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationFirstStepCoordinatorResult.canceled },
             viewModel.openNextStep.eraseToAnyPublisher()
-                .flatMap({ [unowned self] response in
+                .flatMap { [unowned self] response in
                     self.coordinateToNextStep(response: response)
-                    // ignoring cancel events, to not pass this event out of Coordinator
-                        .filter { $0 != .canceled }
-                })
+                        // ignoring cancel events, to not pass this event out of Coordinator
+                            .filter { $0 != .canceled }
+                }
                 .map { result in
                     switch result {
                     case .completed:
@@ -80,11 +92,13 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
         .eraseToAnyPublisher()
     }
 
-    private func coordinateToNextStep(response: StrigaUserDetailsResponse) -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {
-        self.coordinate(
+    private func coordinateToNextStep(response: StrigaUserDetailsResponse)
+    -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {
+        coordinate(
             to: StrigaRegistrationSecondStepCoordinator(
-                navigationController: self.navigationController,
+                navigationController: navigationController,
                 data: response
-            ))
+            )
+        )
     }
 }

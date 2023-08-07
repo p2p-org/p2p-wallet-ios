@@ -1,10 +1,3 @@
-//
-//  HistoryBridgeClaimAggregator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.05.2023.
-//
-
 import Combine
 import Foundation
 import History
@@ -43,7 +36,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
 
         if let mint {
             userActionSends = userActionSends.filter { action in
-                action.sourceToken.address == mint
+                action.sourceToken.mintAddress == mint
             }
         }
 
@@ -68,10 +61,14 @@ class HistoryBridgeSendAggregator: DataAggregator {
 
         // Build pending and finish (not older 5 minute) claims.
         let filteredClaims = userActionSends.filter { send in
+            // Filter by given mint address
             if let mint {
-                if send.amount.token.tokenPrimaryKey != mint {
+                if
+                    case let .contract(address) = send.amount.token.primaryKey,
+                    address != mint
+                {
                     return false
-                } else if send.amount.token.tokenPrimaryKey == "native", mint != SolanaToken.nativeSolana.address {
+                } else if send.amount.token.primaryKey == .native, mint != SolanaToken.nativeSolana.mintAddress {
                     return false
                 }
             }

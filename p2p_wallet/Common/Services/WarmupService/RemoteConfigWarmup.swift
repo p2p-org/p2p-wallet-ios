@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import FirebaseRemoteConfig
 import Foundation
 import Resolver
@@ -36,6 +32,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
         }
 
         let currentEndpoints = APIEndPoint.definedEndpoints
+        let defaultFlags = StaticFlagsFetcher(featureFlags: [])
         #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
@@ -73,7 +70,6 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                 }
             }
         #endif
-
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {

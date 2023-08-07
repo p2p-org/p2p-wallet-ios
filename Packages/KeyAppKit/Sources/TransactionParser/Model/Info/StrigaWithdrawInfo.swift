@@ -20,7 +20,7 @@ extension StrigaWithdrawInfo: Info {
     public var symbol: String? {
         token?.symbol
     }
-    
+
     public var mintAddress: String? {
         token?.address
     }

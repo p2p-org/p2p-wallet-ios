@@ -1,10 +1,3 @@
-//
-//  SettingsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 30.08.2022.
-//
-
 import KeyAppUI
 import SolanaSwift
 import SwiftUI

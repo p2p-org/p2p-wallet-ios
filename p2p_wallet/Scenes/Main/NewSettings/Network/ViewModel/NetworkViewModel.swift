@@ -1,10 +1,3 @@
-//
-//  NetworkViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -13,7 +6,6 @@ import SolanaSwift
 
 final class NetworkViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     private let dismissSubject = PassthroughSubject<Void, Never>()
     var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }

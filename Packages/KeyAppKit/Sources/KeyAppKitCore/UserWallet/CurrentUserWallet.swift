@@ -30,7 +30,7 @@ public class MockCurrentUserWallet: CurrentUserWallet {
 
         let account = KeyPair(phrase: mnemonic.phrase, publicKey: newKey, secretKey: keyPair.secretKey)
         let ethereumKeyPair = try! EthereumKeyPair(phrase: account.phrase.joined(separator: " "))
-        
+
         // Some random address
         let ethAddress: String?
         if web3AuthUser {

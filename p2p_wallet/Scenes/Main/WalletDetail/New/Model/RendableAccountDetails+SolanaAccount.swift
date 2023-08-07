@@ -1,24 +1,17 @@
-//
-//  RendableAccountDetails+SolanaWallet.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 
 struct RendableNewSolanaAccountDetails: RendableAccountDetails {
-    let account: SolanaAccountsService.Account
-    
+    let account: SolanaAccount
+
     let isSwapAvailable: Bool
 
     var title: String {
-        account.data.token.name
+        account.token.name
     }
 
     var amountInToken: String {
-        account.data.amount?.tokenAmountFormattedString(symbol: account.data.token.symbol) ?? ""
+        account.amount?.tokenAmountFormattedString(symbol: account.token.symbol) ?? ""
     }
 
     var amountInFiat: String {
@@ -26,12 +19,10 @@ struct RendableNewSolanaAccountDetails: RendableAccountDetails {
     }
 
     var actions: [RendableAccountDetailsAction] {
-        var walletActions: [RendableAccountDetailsAction]
-        if account.data.isNativeSOL || account.data.token.symbol == "USDC" {
-            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
-            return [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
+        if account.token.isNativeSOL || account.token.symbol == "USDC" {
+            return [.buy, .receive(.solanaAccount(account)), .send, .swap(account)]
         } else {
-            return [.receive(.solanaAccount(account)), .send, .swap(account.data)]
+            return [.receive(.solanaAccount(account)), .send, .swap(account)]
         }
     }
 

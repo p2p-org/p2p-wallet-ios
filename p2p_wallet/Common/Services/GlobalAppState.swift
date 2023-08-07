@@ -1,10 +1,3 @@
-//
-//  GlobalAppState.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 26.10.2022.
-//
-
 import Foundation
 import NameService
 import Resolver
@@ -44,7 +37,7 @@ class GlobalAppState: ObservableObject {
             ResolverScope.session.reset()
         }
     }
-    
+
     // New striga endpoint
     @Published var strigaEndpoint: String {
         didSet {
@@ -52,7 +45,7 @@ class GlobalAppState: ObservableObject {
             ResolverScope.session.reset()
         }
     }
-    
+
     // Striga mocking
     @Published var strigaMockingEnabled: Bool = false {
         didSet {
@@ -76,7 +69,7 @@ class GlobalAppState: ObservableObject {
         } else {
             newSwapEndpoint = "https://swap.key.app"
         }
-        
+
         if let forcedValue = Defaults.forcedStrigaEndpoint {
             strigaEndpoint = forcedValue
         } else {
@@ -92,4 +85,8 @@ class GlobalAppState: ObservableObject {
     @Published var bridgeEndpoint: String = (Environment.current == .release) ?
         String.secretConfig("BRIDGE_PROD")! :
         String.secretConfig("BRIDGE_DEV")!
+
+    @Published var tokenEndpoint: String = (Environment.current == .release) ?
+        String.secretConfig("TOKEN_SERVICE_PROD")! :
+        String.secretConfig("TOKEN_SERVICE_DEV")!
 }

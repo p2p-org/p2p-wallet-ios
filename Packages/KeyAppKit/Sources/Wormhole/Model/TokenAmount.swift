@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 21.03.2023.
-//
-
 import BigDecimal
 import Foundation
 import KeyAppKitCore
@@ -54,7 +47,7 @@ public struct TokenAmount: Codable, Hashable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         amount = try container.decode(String.self, forKey: .amount)
         usdAmount = try container.decode(String.self, forKey: .usdAmount)
         chain = try container.decode(String.self, forKey: .chain)
@@ -106,7 +99,7 @@ extension TokenAmount: CryptoAmountConvertible {
                 token = SolanaToken(
                     _tags: nil,
                     chainId: 0,
-                    address: mint,
+                    mintAddress: mint,
                     symbol: symbol,
                     name: name,
                     decimals: decimals,

@@ -1,14 +1,7 @@
-//
-//  FeatureFlagProvider.swift
-//  FeatureFlags
-//
-//  Created by Babich Ivan on 10.06.2022.
-//
-
 import Foundation
 
-public final class FeatureFlagProvider {
-    public static let shared = FeatureFlagProvider()
+final class FeatureFlagProvider {
+    static let shared = FeatureFlagProvider()
 
     var featureFlags: [FeatureFlag] {
         didSet {
@@ -20,7 +13,7 @@ public final class FeatureFlagProvider {
         featureFlags = UserDefaults.standard.storagedFeatures
     }
 
-    public func fetchFeatureFlags(
+    func fetchFeatureFlags(
         mainFetcher: FetchesFeatureFlags,
         fallbackFetcher: FetchesFeatureFlags? = nil,
         completion: (([FeatureFlag]) -> Void)? = nil
@@ -36,7 +29,7 @@ public final class FeatureFlagProvider {
         }
     }
 
-    public func isEnabled(_ feature: Feature) -> Bool {
+    func isEnabled(_ feature: Feature) -> Bool {
         featureFlags.first(where: { $0.feature == feature })?.isEnabled ?? false
     }
 }

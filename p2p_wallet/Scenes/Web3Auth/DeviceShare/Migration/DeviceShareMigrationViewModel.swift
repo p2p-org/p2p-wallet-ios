@@ -1,10 +1,3 @@
-//
-//  DeviceShareMigrationViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Combine
 import Foundation
 import Onboarding
@@ -17,8 +10,6 @@ class DeviceShareMigrationViewModel: BaseViewModel, ObservableObject {
     @Injected var migrationService: DeviceShareMigrationService
 
     let facade: TKeyFacade
-
-    @Published var title: String = "Updating your authorization device"
 
     let action = PassthroughSubject<Action, Never>()
 

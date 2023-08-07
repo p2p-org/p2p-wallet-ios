@@ -1,10 +1,3 @@
-//
-//  SupportedTokensBannerView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 08.03.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -27,7 +20,7 @@ struct SupportedTokensBannerView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 18)
-        .background(Color(Asset.Colors.lightSea.color))
+        .background(Color(Asset.Colors.rain.color))
         .cornerRadius(16)
     }
 }

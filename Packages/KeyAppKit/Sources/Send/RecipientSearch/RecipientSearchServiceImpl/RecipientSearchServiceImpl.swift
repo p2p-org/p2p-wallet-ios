@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import NameService
 import SolanaSwift
@@ -21,7 +17,7 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
     public func search(
         input: String,
         config: RecipientSearchConfig,
-        preChosenToken: Token?
+        preChosenToken: TokenMetadata?
     ) async -> RecipientSearchResult {
         // Assertion
         guard !input.isEmpty else {

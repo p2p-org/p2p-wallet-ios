@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -43,8 +39,8 @@ public enum RestoreICloudState: Codable, State, Equatable {
                 let rawAccounts = try await provider.icloudAccountProvider.getAll()
                 var accounts: [ICloudAccount] = []
                 for rawAccount in rawAccounts {
-                    accounts
-                        .append(try await .init(
+                    try accounts
+                        .append(await .init(
                             name: rawAccount.name,
                             phrase: rawAccount.phrase,
                             derivablePath: rawAccount.derivablePath
@@ -76,8 +72,8 @@ public enum RestoreICloudState: Codable, State, Equatable {
         }
     }
 
-    private func account(from icloudAccount: ICloudAccount) async throws -> Account {
-        let account = try await Account(
+    private func account(from icloudAccount: ICloudAccount) async throws -> KeyPair {
+        let account = try await KeyPair(
             phrase: icloudAccount.phrase.components(separatedBy: " "),
             network: .mainnetBeta,
             derivablePath: icloudAccount.derivablePath

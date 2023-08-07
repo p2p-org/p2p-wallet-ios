@@ -4,9 +4,7 @@ import SwiftUI
 struct SwapView: View {
     @ObservedObject var viewModel: SwapViewModel
 
-    @State private var animatedFinish: Bool = false
-
-    var body : some View {
+    var body: some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
                 .onTapGesture { UIApplication.shared.endEditing() }
@@ -74,15 +72,15 @@ private extension SwapView {
             .padding(.top, 36)
 
             #if !RELEASE
-            // Route (for debugging)
-            Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
-                .apply(style: .label2)
-                .foregroundColor(.red)
-            
-            // Slippage (for debugging)
-            Text("Slippage: \(Double(viewModel.stateMachine.currentState.slippageBps) / 100)%")
-                .apply(style: .label2)
-                .foregroundColor(.red)
+                // Route (for debugging)
+                Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+
+                // Slippage (for debugging)
+                Text("Slippage: \(Double(viewModel.stateMachine.currentState.slippageBps) / 100)%")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
             #endif
 
             // Disclaimer
@@ -103,32 +101,32 @@ private extension SwapView {
             Spacer()
 
             #if !RELEASE
-            // Logs (for debugging)
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Logs (tap to copy and clear):")
-                    .apply(style: .label2)
-                if let swapTransaction = viewModel.currentState.swapTransaction {
-                    Text("Transaction:")
+                // Logs (for debugging)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Logs (tap to copy and clear):")
                         .apply(style: .label2)
-                    Text(swapTransaction.stringValue)
-                        .apply(style: .label2)
-                }
-                
-                if let errorLogs = viewModel.errorLogs {
-                    Text("ERROR:")
-                        .apply(style: .label2)
-                    VStack(alignment: .leading) {
-                        ForEach(errorLogs, id: \.self) { log in
-                            Text(log)
-                                .apply(style: .label2)
+                    if let swapTransaction = viewModel.currentState.swapTransaction {
+                        Text("Transaction:")
+                            .apply(style: .label2)
+                        Text(swapTransaction.stringValue)
+                            .apply(style: .label2)
+                    }
+
+                    if let errorLogs = viewModel.errorLogs {
+                        Text("ERROR:")
+                            .apply(style: .label2)
+                        VStack(alignment: .leading) {
+                            ForEach(errorLogs, id: \.self) { log in
+                                Text(log)
+                                    .apply(style: .label2)
+                            }
                         }
                     }
                 }
-            }
-            .foregroundColor(.red)
-            .onTapGesture {
-                viewModel.copyAndClearLogs()
-            }
+                .foregroundColor(.red)
+                .onTapGesture {
+                    viewModel.copyAndClearLogs()
+                }
             #endif
         }
         .onTapGesture { UIApplication.shared.endEditing() }

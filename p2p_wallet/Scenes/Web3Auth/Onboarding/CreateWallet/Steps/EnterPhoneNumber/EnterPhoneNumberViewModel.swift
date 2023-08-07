@@ -6,7 +6,6 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
-import Foundation
 import UIKit
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
@@ -40,7 +39,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published var isButtonEnabled: Bool = false
     @Published var isLoading: Bool = false
     @Published var inputError: String?
-    @Published var selectedCountry: Country = EnterPhoneNumberViewModel.defaultCountry
+    @Published var selectedCountry = EnterPhoneNumberViewModel.defaultCountry
     @Published var subtitle: String = L10n.addAPhoneNumberToProtectYourAccount
 
     let isBackAvailable: Bool
@@ -62,7 +61,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        coordinatorIO.selectCode.send((selectedCountry.dialCode, selectedCountry.code))
+        coordinatorIO.selectCode.send(selectedCountry)
     }
 
     func onPaste() {
@@ -72,7 +71,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             if
                 let parsedPhone = try? self.phoneNumberKit.parse(newPhone),
                 let country = countries?
-                    .first(where: { $0.dialCode.clearedPhoneString == "+\(parsedPhone.countryCode)" }) {
+                    .first(where: { $0.dialCode.clearedPhoneString == "+\(parsedPhone.countryCode)" })
+            {
                 // Change country only if dial code has changed
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                     if self.selectedCountry.dialCode != country.dialCode {
@@ -96,7 +96,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
-        var selectCode: PassthroughSubject<(String?, String?), Never> = .init()
+        var selectCode: PassthroughSubject<Country?, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
         let helpClicked = PassthroughSubject<Void, Never>()
         let back: PassthroughSubject<Void, Never> = .init()
@@ -190,8 +190,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 }
                 .eraseToAnyPublisher()
         )
-            .assignWeak(to: \.phone, on: self)
-            .store(in: &cancellable)
+        .assignWeak(to: \.phone, on: self)
+        .store(in: &cancellable)
 
         $selectedCountry
             .compactMap(\.emoji)
@@ -280,12 +280,12 @@ extension EnterPhoneNumberViewModel {
 
 private extension EnterPhoneNumberViewModel {
     func defaultRegionCode() -> String {
-        return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
+        Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 }
 
 private extension String {
     var clearedPhoneString: String {
-        self.filter("0123456789+".contains)
+        filter("0123456789+".contains)
     }
 }

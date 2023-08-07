@@ -1,12 +1,11 @@
 import BankTransfer
 import Combine
 import Foundation
+import Onboarding
 import Resolver
 import UIKit
-import Onboarding
 
 final class TopupActionsViewModel: BaseViewModel, ObservableObject {
-
     @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
     @Injected private var metadataService: WalletMetadataService
@@ -16,18 +15,18 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     @Published var actions: [ActionItem] = [
         ActionItem(
             id: .card,
-            icon: .bankTransferCardIcon,
+            icon: .addMoneyBankCard,
             title: L10n.bankCard,
             subtitle: L10n.instant·Fees("4.5%"),
             isLoading: false
         ),
         ActionItem(
             id: .crypto,
-            icon: .bankTransferCryptoIcon,
+            icon: .addMoneyCrypto,
             title: L10n.crypto,
             subtitle: L10n.upTo1Hour·Fees("%0"),
             isLoading: false
-        )
+        ),
     ]
 
     var tappedItem: AnyPublisher<Action, Never> {
@@ -39,7 +38,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             // If it's transfer we need to check if the service is ready
             case .transfer:
                 return self.bankTransferService.state.filter { state in
-                    return !state.hasError && !state.isFetching && !state.value.isIBANNotReady
+                    !state.hasError && !state.isFetching && !state.value.isIBANNotReady
                 }.map { _ in Action.transfer }.eraseToAnyPublisher()
             default:
                 // Otherwise just pass action
@@ -69,7 +68,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: .bankTransferBankIcon,
+                    icon: .addMoneyBankTransfer,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
                     isLoading: false
@@ -83,7 +82,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     private func bindBankTransfer() {
         shouldCheckBankTransfer
             .withLatestFrom(bankTransferService.state)
-            .filter({ !$0.isFetching })
+            .filter { !$0.isFetching }
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 self?.setTransferLoadingState(isLoading: false)
@@ -95,11 +94,11 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         tappedItemSubject
-            .filter({ $0 == .transfer })
-            .withLatestFrom(bankTransferService.state).filter({ state in
+            .filter { $0 == .transfer }
+            .withLatestFrom(bankTransferService.state).filter { state in
                 state.hasError || state.value.isIBANNotReady
-            })
-            .sinkAsync { [weak self] state in
+            }
+            .sinkAsync { [weak self] _ in
                 guard let self else { return }
                 await MainActor.run {
                     self.setTransferLoadingState(isLoading: true)
@@ -110,26 +109,25 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        shouldShowErrorSubject.filter { $0 }.sinkAsync { [weak self] value in
+        shouldShowErrorSubject.filter { $0 }.sinkAsync { [weak self] _ in
             await MainActor.run {
                 self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
             }
         }.store(in: &subscriptions)
 
-        bankTransferService.state.filter({ state in
+        bankTransferService.state.filter { state in
             state.status == .initializing
-        }).sinkAsync { [weak self] state in
+        }.sinkAsync { [weak self] _ in
             await self?.bankTransferService.reload()
         }.store(in: &subscriptions)
     }
 
     private func setTransferLoadingState(isLoading: Bool) {
-        guard let idx = self.actions.firstIndex(where: { act in
+        guard let idx = actions.firstIndex(where: { act in
             act.id == .transfer
         }) else { return }
-        self.actions[idx].isLoading = isLoading
+        actions[idx].isLoading = isLoading
     }
-
 }
 
 extension TopupActionsViewModel {

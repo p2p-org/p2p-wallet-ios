@@ -1,7 +1,6 @@
 import Foundation
 import History
 import SafariServices
-import TransactionParser
 
 class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
     let viewModel: TransactionDetailViewModel
@@ -55,7 +54,7 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
             }
 
         }.store(in: &subscriptions)
-        
+
         // observe data to change bottomsheet's height
         viewModel.$rendableTransaction
             .sink { _ in
@@ -67,7 +66,7 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
 
         return vc
     }
-    
+
     private func handleResult() {
         result.send(viewModel.rendableTransaction.status)
         result.send(completion: .finished)

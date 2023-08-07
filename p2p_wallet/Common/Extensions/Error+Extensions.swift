@@ -1,67 +1,36 @@
-//
-//  Error+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 10/29/20.
-//
-
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
 
-extension SolanaError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .unauthorized:
-            return L10n.unauthorized
-        case .notFound:
-            return L10n.notFound
-        case let .invalidRequest(reason):
-            var message = L10n.invalidRequest
-            if let reason = reason {
-                message = reason.localized()
-            }
-            return message
-        case let .transactionError(transactionError, _):
-            return transactionError.snakeCaseEncoded
-        // TODO: Check
-        // return transactionError.keys.first
-        case let .socket(error):
-            var string = L10n.socketReturnsAnError + ": "
-            if let error = error as? LocalizedError {
-                string += error.errorDescription ?? error.localizedDescription
-            } else {
-                string += error.localizedDescription
-            }
-            return string
-        case let .other(string):
-            return string.localized()
-        case .unknown:
-            return L10n.unknownError
-        case .assertionFailed:
-            // TODO: pick correct name
-            return L10n.error
-        default:
-            return L10n.error
-        }
+extension Error {
+    var isNetworkConnectionError: Bool {
+        (self as NSError).isNetworkConnectionError
+    }
+
+    var readableDescription: String {
+        (self as? LocalizedError)?.errorDescription ?? "\(self)"
     }
 }
 
 extension SolanaSwift.APIClientError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .cantEncodeParams:
-            return L10n.error
         case .invalidAPIURL:
             return L10n.invalidURL
         case .invalidResponse:
             return L10n.responseError
-        case .responseError(let responseError):
+        case let .responseError(responseError):
             var string = L10n.responseError
             if let description = responseError.message {
                 string = description.localized()
             }
             return string
+        case .transactionSimulationError:
+            return L10n.transactionFailed
+        case .couldNotRetrieveAccountInfo:
+            return L10n.accountNotFound
+        case .blockhashNotFound:
+            return L10n.blockhashNotFound
         }
     }
 }

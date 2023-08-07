@@ -7,7 +7,7 @@ public struct StrigaTransactionConfirmOTPResponse: Codable {
     let invoice: String
     let payeeNode: String
     let network: Network
-    
+
     struct Network: Codable {
         let bech32: String
         let pubKeyHash: Int

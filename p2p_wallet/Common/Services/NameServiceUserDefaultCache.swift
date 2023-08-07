@@ -1,11 +1,5 @@
-//
-//  NameServiceUserDefaultCache.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 07/06/2022.
-//
-
 import Foundation
+import KeyAppBusiness
 import NameService
 import Resolver
 
@@ -25,9 +19,9 @@ class NameServiceUserDefaultCache: NameServiceCacheType {
     }
 
     func getName(for owner: String) -> NameServiceSearchResult? {
-        let walletsRepository: WalletsRepository = Resolver.resolve()
-        
-        if walletsRepository.getWallets().contains(where: { $0.pubkey == owner }),
+        let walletsRepository: SolanaAccountsService = Resolver.resolve()
+
+        if walletsRepository.getWallets().contains(where: { $0.address == owner }),
            let name = nameStorage.getName()
         {
             return .registered(name)

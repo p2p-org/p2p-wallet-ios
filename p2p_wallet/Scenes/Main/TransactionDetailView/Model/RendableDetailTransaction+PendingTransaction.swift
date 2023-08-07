@@ -1,16 +1,16 @@
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
-import SolanaPricesAPIs
 import Wormhole
 
 struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
 
-    let priceService: PricesService
-
     private var hasTransactionId: Bool {
-        trx.transactionId != nil && !(trx.rawTransaction is ClaimSentViaLinkTransaction) && !(trx.rawTransaction is StrigaWithdrawSendTransaction)
+        trx
+            .transactionId != nil && !(trx.rawTransaction is ClaimSentViaLinkTransaction) &&
+            !(trx.rawTransaction is StrigaWithdrawSendTransaction)
     }
 
     var status: TransactionDetailStatus {
@@ -105,7 +105,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             } else {
                 return .icon(.transactionReceive)
             }
-            
+
         case let transaction as any StrigaClaimTransactionType:
             if
                 let urlStr = transaction.token?.logoURI,
@@ -118,7 +118,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
 
         case let transaction as any StrigaWithdrawTransactionType:
             if
-                let urlStr = transaction.token.logoURI,
+                let urlStr = transaction.token?.logoURI,
                 let url = URL(string: urlStr)
             {
                 return .single(url)
@@ -135,7 +135,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
 //
 //        case let transaction as WormholeSendTransaction:
 //            if
-//                let urlStr = transaction.account.data.token.logoURI,
+//                let urlStr = transaction.account.token.logoURI,
 //                let url = URL(string: urlStr)
 //            {
 //                return .single(url)
@@ -159,7 +159,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             }
 
         case let transaction as SwapRawTransactionType:
-            if let price = priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value {
+            if let price = transaction.sourceWallet.price?.doubleValue {
                 let amountInFiat: Double = transaction.fromAmount * price
                 return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
             } else {
@@ -175,23 +175,12 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 return .positive("+\(amountInFiat)")
             }
             return .unchanged("")
-            
+
         case let transaction as any StrigaWithdrawTransactionType:
             if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
                 return .negative("-\(amountInFiat)")
             }
             return .unchanged("")
-
-//        case let transaction as WormholeClaimTransaction:
-//            if let value = CurrencyFormatter().string(for: transaction.bundle.resultAmount) {
-//                return .positive("+\(value)")
-//            } else {
-//                return .unchanged("")
-//            }
-//
-//        case let transaction as WormholeSendTransaction:
-//            let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
-//            return .negative(value)
 
         default:
             return .unchanged("")
@@ -229,7 +218,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
         case let transaction as any StrigaClaimTransactionType:
             guard let amount = transaction.amount else { return "" }
             return "\(amount.tokenAmountFormattedString(symbol: transaction.token?.symbol ?? ""))"
-            
+
         default:
             return ""
         }
@@ -293,35 +282,35 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             }
         case let transaction as SwapRawTransactionType:
-            let fees = transaction.feeAmount
-
-            if fees.total == 0 {
-                result.append(
-                    .init(
-                        title: L10n.transactionFee,
-                        values: [.init(text: L10n.freePaidByKeyApp)]
-                    )
-                )
-            }
-
-            // network fee
-            else if let payingFeeWallet = transaction.payingFeeWallet {
-                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
-                let formatedFeeAmount: String = feeAmount
-                    .tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
-
-                let feeAmountInFiat: Double = feeAmount * priceService
-                    .currentPrice(mint: payingFeeWallet.token.address)?.value
-                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
-
-                result
-                    .append(
-                        .init(
-                            title: L10n.transactionFee,
-                            values: [.init(text: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))")]
-                        )
-                    )
-            }
+            break
+//            let fees = transaction.feeAmount
+//
+//            if fees.total == 0 {
+//                result.append(
+//                    .init(
+//                        title: L10n.transactionFee,
+//                        values: [.init(text: L10n.freePaidByKeyApp)]
+//                    )
+//                )
+//            }
+//
+//            // network fee
+//            else if let payingFeeWallet = transaction.payingFeeWallet {
+//                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
+//                let formatedFeeAmount: String = feeAmount
+//                    .tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
+//
+//                let feeAmountInFiat: Double = feeAmount * payingFeeWallet.price?.doubleValue
+//                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
+//
+//                result
+//                    .append(
+//                        .init(
+//                            title: L10n.transactionFee,
+//                            values: [.init(text: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))")]
+//                        )
+//                    )
+//            }
 
         case let transaction as ClaimSentViaLinkTransaction:
             let title: String
@@ -343,7 +332,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                 )
             )
             result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
-        
+
         case let transaction as any StrigaClaimTransactionType:
             let title = L10n.receivedFrom
             result.append(
@@ -356,15 +345,21 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                     copyableValue: transaction.fromAddress
                 )
             )
-            
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
+                )
+            )
+
         case let transaction as any StrigaWithdrawTransactionType:
             result.append(
                 .init(
                     title: L10n.iban,
                     values: [
-                        .init(text: transaction.IBAN),
+                        .init(text: transaction.IBAN.formatIBAN()),
                     ],
-                    copyableValue: transaction.IBAN
+                    copyableValue: nil
                 )
             )
             result.append(
@@ -373,7 +368,13 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
                     values: [
                         .init(text: transaction.BIC),
                     ],
-                    copyableValue: transaction.BIC
+                    copyableValue: nil
+                )
+            )
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
                 )
             )
 
@@ -387,7 +388,9 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
     var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
-            if nil != trx.rawTransaction as? any StrigaWithdrawTransactionType {
+            if trx.rawTransaction as? any StrigaWithdrawTransactionType != nil ||
+                trx.rawTransaction as? any StrigaClaimTransactionType != nil
+            {
                 return []
             }
             return [.share, .explorer]
@@ -414,7 +417,7 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
             return L10n.done
         }
     }
-    
+
     var url: String? {
         "https://explorer.solana.com/tx/\(signature ?? "")"
     }

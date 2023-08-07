@@ -11,7 +11,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     private var smsInputRef = BERef<BaseTextFieldView>()
     private var resendButtonRef = BERef<UIButton>()
     private var continueButtonRef = BERef<TextButton>()
-    
+
     private var disableRightButton: Bool
 
     var store = Set<AnyCancellable>()
@@ -54,7 +54,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             BEContainer {
                 UILabel(numberOfLines: 0).withAttributedText(
                     .attributedString(
-                        with: L10n.theCodeFromSMS,
+                        with: viewModel.title,
                         of: .title1,
                         weight: .bold,
                         alignment: .center
@@ -75,7 +75,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                     .bind(smsInputRef)
                     .setup { input in
                         input.textField?.keyboardType = .numberPad
-                        input.constantPlaceholder = "••• •••"
+                        input.constantPlaceholder = "000 000"
                         input.textField?.textContentType = .oneTimeCode
                     }
                     .frame(width: 180)

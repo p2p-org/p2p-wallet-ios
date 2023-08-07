@@ -5,7 +5,7 @@ public enum SellDataServiceStatus {
     case updating
     case ready
     case error(Error)
-    
+
     public var isReady: Bool {
         switch self {
         case .ready:
@@ -47,7 +47,7 @@ public struct SellDataServiceTransaction: Hashable {
     public var gbpRate: Double
     public var depositWallet: String
     public var fauilureReason: String?
-    
+
     public enum Status: String {
         case waitingForDeposit
         case pending
@@ -58,8 +58,4 @@ public struct SellDataServiceTransaction: Hashable {
 
 public enum SellDataServiceError: Error {
     case couldNotLoadSellData
-}
-
-public protocol SellPriceProvider {
-    func getCurrentPrice(for tokenSymbol: String) -> Double?
 }

@@ -177,14 +177,14 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
-    public func openTwitter() {
+
+    func openTwitter() {
         if let url = URL(string: "https://twitter.com/KeyApp_") {
             UIApplication.shared.open(url)
         }
     }
-    
-    public func openDiscord() {
+
+    func openDiscord() {
         if let url = URL(string: "https://discord.gg/SpW3GmEYgU") {
             UIApplication.shared.open(url)
         }

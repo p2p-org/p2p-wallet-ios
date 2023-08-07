@@ -32,7 +32,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
             .statePublisher
             .assignWeak(to: \.freeFeeLimit, on: self)
             .store(in: &subscriptions)
-        
+
         analyticsManager.log(event: .claimBridgesFeeClick)
     }
 

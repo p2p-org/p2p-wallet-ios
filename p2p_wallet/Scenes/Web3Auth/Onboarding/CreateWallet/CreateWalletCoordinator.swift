@@ -1,13 +1,9 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
+import AnalyticsManager
 import Combine
 import KeyAppUI
 import Onboarding
-import UIKit
-import AnalyticsManager
 import Resolver
+import UIKit
 
 enum CreateWalletResult {
     case restore(socialProvider: SocialProvider, email: String)
@@ -16,7 +12,6 @@ enum CreateWalletResult {
 }
 
 final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
-
     @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - NavigationController
@@ -124,7 +119,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                 self.result.send(.success(onboardingWallet))
             case .breakProcess:
                 self.result.send(.breakProcess)
-                self.navigationController.dismiss(animated: true)
+                navigationController.dismiss(animated: true)
             }
             self.result.send(completion: .finished)
 
@@ -177,9 +172,9 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
     private static func log(error: Error) {
         switch error {
-            case SocialServiceError.cancelled:
-                return
-            default:
+        case SocialServiceError.cancelled:
+            return
+        default:
             break
         }
 
@@ -193,6 +188,8 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                     userPubKey: data.userPubkey
                 )
             )
+
+            Resolver.resolve(AnalyticsManager.self).log(title: "Web3 Registration iOS Error", error: error)
         }
     }
 }

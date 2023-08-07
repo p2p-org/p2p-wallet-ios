@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import Foundation
 
 public struct WormholeBundleStatus: Codable, Hashable, Equatable {
@@ -20,7 +13,7 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
 
     // Bridge service key
     public let claimKey: String?
-    
+
     /// Solana transaction signature
     public let signature: String?
 

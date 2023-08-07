@@ -1,10 +1,3 @@
-//
-//  CustomShareDelegatedCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Foundation
 import Onboarding
 import Resolver
@@ -55,7 +48,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
         case let .block(until, phoneNumber, solPrivateKey, reason):
             let title: String
             let subtitle: (_ value: Any) -> String
-            
+
             switch reason {
             case .blockEnterOTP:
                 title = L10n.confirmationCodeLimitHit
@@ -90,7 +83,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
         }
     }
 
-    public func openTermsOfService() {
+    func openTermsOfService() {
         let vc = WLMarkdownVC(
             title: L10n.termsOfService,
             bundledMarkdownTxtFileName: "Terms_of_service"

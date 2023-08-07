@@ -1,0 +1,23 @@
+import Foundation
+
+public typealias Route = [String]
+public typealias Routes = [String: [Route]]
+
+//    "FTT/RAY": [
+//            [
+//                "FTT/SOL",
+//                "RAY/SOL"
+//            ],
+//            [
+//                "FTT/SOL",
+//                "RAY/SOL[aquafarm]"
+//            ],
+//            [
+//                "FTT/SOL[aquafarm]",
+//                "RAY/SOL"
+//            ],
+//            [
+//                "FTT/SOL[aquafarm]",
+//                "RAY/SOL[aquafarm]"
+//            ]
+//        ]

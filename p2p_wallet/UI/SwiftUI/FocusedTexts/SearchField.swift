@@ -33,7 +33,7 @@ struct SearchField: View {
             }
         }
         .padding(.horizontal, 8)
-        .background(Color(UIColor._767680))
+        .background(Color(UIColor.h767680))
         .cornerRadius(10)
     }
 }

@@ -10,14 +10,14 @@ enum TopupCoordinatorResult {
 }
 
 final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
-    private var navigationController: UINavigationController!
+    private var viewController: UIViewController!
 
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
-        navigationController: UINavigationController? = nil
+        viewController: UIViewController? = nil
     ) {
-        self.navigationController = navigationController
+        self.viewController = viewController
     }
 
     override func start() -> AnyPublisher<TopupCoordinatorResult, Never> {
@@ -25,7 +25,7 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
         let controller = BottomSheetController(
             rootView: TopupActionsView(viewModel: viewModel)
         )
-        navigationController?.present(controller, animated: true)
+        viewController?.present(controller, animated: true)
 
         return Publishers.Merge(
             // Cancel event
@@ -40,6 +40,6 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
                 })
                 .eraseToAnyPublisher()
         )
-            .prefix(1).eraseToAnyPublisher()
+        .prefix(1).eraseToAnyPublisher()
     }
 }

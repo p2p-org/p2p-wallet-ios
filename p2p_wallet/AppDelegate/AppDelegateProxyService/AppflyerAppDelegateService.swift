@@ -1,47 +1,52 @@
-import Foundation
 import AppsFlyerLib
 import AppTrackingTransparency
+import Foundation
 import UIKit
 
 final class AppflyerAppDelegateService: NSObject, AppDelegateService {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
+    func application(_: UIApplication,
+                     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
+    {
         // Set isDebug to true to see AppsFlyer debug logs
         #if DEBUG
-        AppsFlyerLib.shared().isDebug = true
+            AppsFlyerLib.shared().isDebug = true
         #endif
-        
+
         // Set app id
         let appsFlyerAppId: String
         #if !RELEASE
-        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID_FEATURE")!
+            appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID_FEATURE")!
         #else
-        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID")!
+            appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID")!
         #endif
         AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
         AppsFlyerLib.shared().appleAppID = appsFlyerAppId
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        
+
         return true
     }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         AppsFlyerLib.shared().registerUninstall(deviceToken)
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+
+    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         AppsFlyerLib.shared().handleOpen(url, options: options)
-        return true // TODO
+        return true // TODO:
     }
-    
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
+    func application(
+        _: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
-        return true // TODO
+        return true // TODO:
     }
-    
+
     // MARK: - Life cycle
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
+    func applicationDidBecomeActive(_: UIApplication) {
         AppsFlyerLib.shared().start(completionHandler: { dictionary, error in
             if error != nil {
                 print(error ?? "")
@@ -51,7 +56,7 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
                 return
             }
         })
-        
+
         ATTrackingManager.requestTrackingAuthorization { status in
             switch status {
             case .denied:
@@ -76,8 +81,8 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
                 )
             @unknown default:
                 DefaultLogManager.shared.log(
-                    event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
-                    logLevel: .error
+                    event: "AppsFlyerLib ATTrackingManager Unknown authorization status",
+                    logLevel: .debug
                 )
             }
         }

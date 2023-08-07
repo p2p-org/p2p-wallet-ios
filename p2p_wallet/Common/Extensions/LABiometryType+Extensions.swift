@@ -1,10 +1,3 @@
-//
-//  LABiometryType+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 26/11/2020.
-//
-
 import Foundation
 import LocalAuthentication
 
@@ -18,12 +11,5 @@ extension LABiometryType {
         default:
             return ""
         }
-    }
-
-    static var current: LABiometryType {
-        // retrieve policy
-        let context = LAContext()
-        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return context.biometryType
     }
 }

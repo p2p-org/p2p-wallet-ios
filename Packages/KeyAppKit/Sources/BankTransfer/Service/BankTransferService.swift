@@ -6,9 +6,9 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
     typealias WithdrawalInfo = Provider.WithdrawalInfo
 
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
-    
+
     func reload() async
-    
+
     // MARK: - Registration: Local actions
 
     func updateLocally(data: BankTransferRegistrationData) async throws
@@ -21,7 +21,7 @@ public protocol BankTransferService<Provider> where Provider: BankTransferUserDa
 
     func verify(OTP: String) async throws
     func resendSMS() async throws
-    
+
     func getKYCToken() async throws -> String
 
     func getWithdrawalInfo() async throws -> WithdrawalInfo?

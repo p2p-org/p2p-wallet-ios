@@ -1,6 +1,6 @@
-import UIKit
-import SwiftUI
 import KeyAppUI
+import SwiftUI
+import UIKit
 
 struct ModalView<Content: View>: View {
     let showHandler: Bool
@@ -31,17 +31,17 @@ struct ModalView<Content: View>: View {
             content
             Spacer()
         }
-            .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
 class BottomSheetController<Content: View>: UIHostingController<ModalView<Content>> {
-
-    @MainActor public init(title: String? = nil, showHandler: Bool = false, rootView: Content) {
+    @MainActor init(title: String? = nil, showHandler: Bool = false, rootView: Content) {
         super.init(rootView: ModalView(title: title, showHandler: showHandler) { rootView })
     }
 
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    @MainActor dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -78,14 +78,14 @@ class BottomSheetController<Content: View>: UIHostingController<ModalView<Conten
         get {
             .custom
         }
-        set { }
+        set {}
     }
 
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get {
             bottomSheetTransitioningDelegate
         }
-        set { }
+        set {}
     }
 
     var preferredSheetTopInset: CGFloat = 0 {
@@ -109,18 +109,6 @@ class BottomSheetController<Content: View>: UIHostingController<ModalView<Conten
     var preferredSheetBackdropColor: UIColor = .label {
         didSet {
             bottomSheetTransitioningDelegate.preferredSheetBackdropColor = preferredSheetBackdropColor
-        }
-    }
-
-    var tapToDismissEnabled: Bool = true {
-        didSet {
-            bottomSheetTransitioningDelegate.tapToDismissEnabled = tapToDismissEnabled
-        }
-    }
-
-    var panToDismissEnabled: Bool = true {
-        didSet {
-            bottomSheetTransitioningDelegate.panToDismissEnabled = panToDismissEnabled
         }
     }
 }

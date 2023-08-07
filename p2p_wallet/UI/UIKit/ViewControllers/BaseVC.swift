@@ -1,9 +1,8 @@
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 class BaseVC: BEViewController {
-
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }

@@ -1,19 +1,14 @@
-import Combine
-import Resolver
 import AnalyticsManager
-import Jupiter
+import Combine
 import Foundation
-
-protocol SwapSettingsViewModelIO: AnyObject {
-    var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> { get }
-}
+import Jupiter
+import Resolver
 
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
-    
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     // MARK: - Published properties
 
     @Published var currentState: JupiterSwapState
@@ -23,36 +18,35 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
             log(slippage: selectedSlippage)
         }
     }
-    
 
     // MARK: - Properties
 
     private let stateMachine: JupiterSwapStateMachine
     private let rowTappedSubject = PassthroughSubject<SwapSettingsView.RowIdentifier, Never>()
-    
+
     var info: JupiterSwapStateInfo {
         currentState.info
     }
-    
+
     var isLoading: Bool {
         currentState.isSettingsLoading
     }
-    
+
     var isLoadingOrRouteNotNil: Bool {
         isLoading || (currentState.route != nil)
     }
-    
+
     // MARK: - Initializer
-    
+
     init(stateMachine: JupiterSwapStateMachine) {
         // capture state machine
         self.stateMachine = stateMachine
         // copy current state
-        self.currentState = stateMachine.currentState
+        currentState = stateMachine.currentState
         // copy selected slippage
-        self.selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
+        selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
             .rounded(decimals: 2)
-        
+
         super.init()
         bind()
     }
@@ -69,16 +63,14 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Actions
-    
+
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
         rowTappedSubject.send(identifier)
         log(fee: identifier)
     }
 }
 
-// MARK: - SwapSettingsViewModelIO
-
-extension SwapSettingsViewModel: SwapSettingsViewModelIO {
+extension SwapSettingsViewModel {
     var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> {
         rowTappedSubject.eraseToAnyPublisher()
     }

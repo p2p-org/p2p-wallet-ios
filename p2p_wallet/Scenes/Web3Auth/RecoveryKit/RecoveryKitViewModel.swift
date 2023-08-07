@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -10,7 +6,6 @@ import Resolver
 
 final class RecoveryKitViewModel: ObservableObject {
     private let analyticsManager: AnalyticsManager
-    private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var model: Model?
@@ -27,7 +22,6 @@ final class RecoveryKitViewModel: ObservableObject {
     ) {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
-        self.userWalletManager = userWalletManager
 
         Publishers
             .CombineLatest(
@@ -74,17 +68,12 @@ final class RecoveryKitViewModel: ObservableObject {
     func openDevices() {
         actions.send(.devices)
     }
-
-    func openHelp() {
-        actions.send(.help)
-    }
 }
 
 extension RecoveryKitViewModel {
     enum Action {
         case seedPhrase
         case deleteAccount
-        case help
         case devices
     }
 
