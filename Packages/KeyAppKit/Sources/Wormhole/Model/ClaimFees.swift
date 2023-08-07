@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 14.03.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 
@@ -27,7 +20,7 @@ public struct ClaimFees: Codable, Hashable, Equatable {
         case createAccount = "create_account"
         case gasInToken = "gas_in_token"
     }
-    
+
     public var totalInFiat: CurrencyAmount {
         gas.asCurrencyAmount
             + arbiter?.asCurrencyAmount

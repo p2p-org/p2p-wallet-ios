@@ -1,17 +1,10 @@
-//
-//  SwapSettingsInfoView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.03.2023.
-//
-
-import SwiftUI
 import KeyAppUI
 import SkeletonUI
+import SwiftUI
 
 struct SwapSettingsInfoView: View {
     @ObservedObject var viewModel: SwapSettingsInfoViewModel
-    
+
     var body: some View {
         VStack {
             Image(uiImage: viewModel.image)
@@ -35,7 +28,7 @@ struct SwapSettingsInfoView: View {
             .background(Color(Asset.Colors.cloud.color))
             .cornerRadius(12)
             .padding(.bottom, 30)
-            
+
             switch viewModel.loadableFee {
             case .loading:
                 feeView(
@@ -44,14 +37,14 @@ struct SwapSettingsInfoView: View {
                     rightTitle: nil,
                     isLoading: true
                 )
-                    .padding(.bottom, 30)
+                .padding(.bottom, 30)
             case let .loaded(fees) where !fees.isEmpty:
                 feesView(fees: fees)
                     .padding(.bottom, 30)
             default:
                 HStack {}
             }
-            
+
             Button(
                 action: {
                     viewModel.closeClicked()
@@ -74,7 +67,7 @@ struct SwapSettingsInfoView: View {
 
     private func feesView(fees: [SwapSettingsInfoViewModel.Fee]) -> some View {
         VStack(spacing: 24) {
-            ForEach(Array(zip(fees.indices, fees)), id: \.0) { index, fee in
+            ForEach(Array(zip(fees.indices, fees)), id: \.0) { _, fee in
                 feeView(
                     title: fee.title,
                     subtitle: fee.subtitle,

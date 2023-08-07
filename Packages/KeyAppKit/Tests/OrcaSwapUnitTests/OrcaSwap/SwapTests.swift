@@ -75,12 +75,12 @@ final class SwapTests: XCTestCase {
             networkManager: URLSession.shared
         )
         let blockchainClient = BlockchainClient(apiClient: solanaAPIClient)
-        orcaSwap = OrcaSwap(
+        orcaSwap = try OrcaSwap(
             apiClient: APIClient(configsProvider: MockConfigsProvider()),
             solanaClient: solanaAPIClient,
             blockchainClient: blockchainClient,
             accountStorage: MockAccountStorage(
-                account: try await KeyPair(
+                account: await KeyPair(
                     phrase: test.seedPhrase.components(separatedBy: " "),
                     network: network
                 )

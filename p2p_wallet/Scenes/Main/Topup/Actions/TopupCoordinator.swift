@@ -40,6 +40,6 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
                 })
                 .eraseToAnyPublisher()
         )
-            .prefix(1).eraseToAnyPublisher()
+        .prefix(1).eraseToAnyPublisher()
     }
 }

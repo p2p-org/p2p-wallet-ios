@@ -2,7 +2,7 @@ import BankTransfer
 
 extension StrigaSourceOfFunds {
     var title: String {
-        return rawValue.replacingOccurrences(of: "_", with: " ").lowercased().uppercaseFirst
+        rawValue.replacingOccurrences(of: "_", with: " ").lowercased().uppercaseFirst
     }
 }
 
@@ -12,7 +12,7 @@ extension StrigaSourceOfFunds: Identifiable {
 
 extension StrigaSourceOfFunds: ChooseItemSearchableItem {
     func matches(keyword: String) -> Bool {
-        return title.hasPrefix(keyword) || title.contains(keyword)
+        title.hasPrefix(keyword) || title.contains(keyword)
     }
 }
 

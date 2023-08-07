@@ -1,11 +1,11 @@
-import KeyAppUI
-import SwiftUI
 import AnalyticsManager
+import KeyAppUI
 import Resolver
+import SwiftUI
 
 struct SupportedTokenNetworksView: View {
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     let item: SupportedTokenItem
     let onTap: (SupportedTokenItemNetwork?) -> Void
 

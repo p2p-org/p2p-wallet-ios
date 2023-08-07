@@ -5,15 +5,14 @@ public struct DefaultHTTPEndpoint: HTTPEndpoint {
     public let baseURL: String
     public let path: String
     public let method: HTTPMethod
-    public let header: [String : String]
+    public let header: [String: String]
     public let body: String?
-    
-    
+
     public init(
         baseURL: String,
         path: String,
         method: HTTPMethod,
-        header: [String : String],
+        header: [String: String],
         body: String? = nil
     ) {
         self.baseURL = baseURL

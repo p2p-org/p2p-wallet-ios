@@ -1,10 +1,3 @@
-//
-//  EthereumTransaction.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 15.03.2023.
-//
-
 import Collections
 import Foundation
 import Web3
@@ -76,14 +69,13 @@ public extension EthereumTransaction {
                 let bytes = element?[0].bytes,
                 let ethDataArray = element?[1].array,
                 let addr = try? EthereumAddress(rawAddress: bytes) else { return }
-                newAccessList[addr] = ethDataArray.compactMap { item in
-                    guard let bytes = item.bytes else { return nil }
-                    return EthereumData(bytes)
-                }
+            newAccessList[addr] = ethDataArray.compactMap { item in
+                guard let bytes = item.bytes else { return nil }
+                return EthereumData(bytes)
+            }
         }
         return newAccessList
     }
-
 }
 
 extension EthereumTransaction {

@@ -1,16 +1,15 @@
 import Foundation
 
 public actor MockStrigaLocalProvider: StrigaLocalProvider {
-    
     // MARK: - Properties
-    
+
     private var useCase: MockStrigaUseCase
     private var cachedRegistrationData: StrigaUserDetailsResponse?
-    
+
     private var userId: String?
-    
+
     // MARK: - Initializer
-    
+
     public init(
         useCase: MockStrigaUseCase,
         hasCachedInput: Bool
@@ -18,10 +17,10 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         self.useCase = useCase
         if hasCachedInput {
             var kyc: StrigaKYCStatus = .notStarted
-            if .registeredAndVerifiedUser == useCase {
+            if useCase == .registeredAndVerifiedUser {
                 kyc = .approved
             }
-            
+
             cachedRegistrationData = StrigaUserDetailsResponse(
                 firstName: "Tester",
                 lastName: "Tester1",
@@ -59,17 +58,17 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     public func getUserId() async -> String? {
         userId
     }
-    
+
     public func saveUserId(_ id: String) async {
         userId = id
     }
-    
+
     public func getCachedRegistrationData() async -> StrigaUserDetailsResponse? {
         cachedRegistrationData
     }
-    
+
     public func save(registrationData: StrigaUserDetailsResponse) async throws {
-        self.cachedRegistrationData = registrationData
+        cachedRegistrationData = registrationData
     }
 
     public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
@@ -80,11 +79,11 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         fatalError()
     }
 
-    public func save(userData: UserData) async throws {
+    public func save(userData _: UserData) async throws {
 //        fatalError()
     }
 
-    public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {
+    public func save(whitelisted _: [StrigaWhitelistAddressResponse]) async throws {
         fatalError()
     }
 
@@ -92,13 +91,12 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         fatalError()
     }
 
-    public func save(withdrawalInfo: StrigaWithdrawalInfo) async throws {
+    public func save(withdrawalInfo _: StrigaWithdrawalInfo) async throws {
         fatalError()
     }
 
     public func clear() async {
-        self.cachedRegistrationData = nil
-        self.useCase = .unregisteredUser
+        cachedRegistrationData = nil
+        useCase = .unregisteredUser
     }
-
 }

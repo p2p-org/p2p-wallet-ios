@@ -1,10 +1,3 @@
-//
-//  RecoveryKitDevicesViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 13/06/2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness

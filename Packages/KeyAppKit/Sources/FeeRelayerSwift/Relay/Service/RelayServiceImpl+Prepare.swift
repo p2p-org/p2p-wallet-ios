@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 02.04.2023.
-//
-
 import Foundation
 import SolanaSwift
 
@@ -59,8 +52,8 @@ extension RelayServiceImpl {
             // if payingFeeToken is SPL token, use RelayProgram
             else {
                 // return paybackFee (WITHOUT additionalPaybackFee) to Fee payer
-                preparedTransaction.transaction.instructions.append(
-                    try RelayProgram.transferSolInstruction(
+                try preparedTransaction.transaction.instructions.append(
+                    RelayProgram.transferSolInstruction(
                         userAuthorityAddress: account.publicKey,
                         recipient: feePayer,
                         lamports: paybackFee - additionalPaybackFee, // Important: MINUS additionalPaybackFee

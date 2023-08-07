@@ -1,14 +1,11 @@
-//
-
 import Foundation
-import XCTest
 import KeyAppNetworking
 import SolanaSwift
 import TweetNacl
+import XCTest
 @testable import BankTransfer
 
 final class StrigaRemoteProviderTests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -21,12 +18,13 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testGetKYCStatus_SuccessfulResponse_ReturnsStrigaKYC() async throws {
         // Arrange
-        let mockData = #"{"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","emailVerified":false,"mobileVerified":false,"status":"NOT_STARTED"}"#
+        let mockData =
+            #"{"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","emailVerified":false,"mobileVerified":false,"status":"NOT_STARTED"}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         let kycStatus = try await provider.getKYCStatus(userId: "123")
-        
+
         // Assert
         XCTAssertEqual(kycStatus.mobileVerified, false)
         XCTAssertEqual(kycStatus.status, .notStarted)
@@ -36,12 +34,13 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testGetUserDetails_SuccessfulResponse_ReturnsStrigaUserDetailsResponse() async throws {
         // Arrange
-        let mockData = #"{"firstName":"Claudia","lastName":"Tracy Lind","email":"test_1655832993@mailinator.com","documentIssuingCountry":"PS","nationality":"RS","mobile":{"countryCode":"+372","number":"56316716"},"dateOfBirth":{"month":"1","day":"15","year":"2000"},"address":{"addressLine1":"Sepapaja 12","addressLine2":"Hajumaa","city":"Tallinn","state":"Tallinn","country":"EE","postalCode":"11412"},"occupation":"PRECIOUS_GOODS_JEWELRY","sourceOfFunds":"CIVIL_CONTRACT","purposeOfAccount":"CRYPTO_PAYMENTS","selfPepDeclaration":true,"placeOfBirth":"Antoniettamouth","expectedIncomingTxVolumeYearly":"MORE_THAN_15000_EUR","expectedOutgoingTxVolumeYearly":"MORE_THAN_15000_EUR","KYC":{"emailVerified":true,"mobileVerified":true,"status":"REJECTED","details":["UNSATISFACTORY_PHOTOS","SCREENSHOTS","PROBLEMATIC_APPLICANT_DATA"],"rejectionComments":{"userComment":"The full name on the profile is either missing or incorrect.","autoComment":"Please enter your first and last name exactly as they are written in your identity document."}},"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","createdAt":1655832993460}"#
+        let mockData =
+            #"{"firstName":"Claudia","lastName":"Tracy Lind","email":"test_1655832993@mailinator.com","documentIssuingCountry":"PS","nationality":"RS","mobile":{"countryCode":"+372","number":"56316716"},"dateOfBirth":{"month":"1","day":"15","year":"2000"},"address":{"addressLine1":"Sepapaja 12","addressLine2":"Hajumaa","city":"Tallinn","state":"Tallinn","country":"EE","postalCode":"11412"},"occupation":"PRECIOUS_GOODS_JEWELRY","sourceOfFunds":"CIVIL_CONTRACT","purposeOfAccount":"CRYPTO_PAYMENTS","selfPepDeclaration":true,"placeOfBirth":"Antoniettamouth","expectedIncomingTxVolumeYearly":"MORE_THAN_15000_EUR","expectedOutgoingTxVolumeYearly":"MORE_THAN_15000_EUR","KYC":{"emailVerified":true,"mobileVerified":true,"status":"REJECTED","details":["UNSATISFACTORY_PHOTOS","SCREENSHOTS","PROBLEMATIC_APPLICANT_DATA"],"rejectionComments":{"userComment":"The full name on the profile is either missing or incorrect.","autoComment":"Please enter your first and last name exactly as they are written in your identity document."}},"userId":"9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde","createdAt":1655832993460}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         let userDetails = try await provider.getUserDetails(userId: "123")
-        
+
         // Assert
 //        XCTAssertEqual(userDetails.userId, "9fd9f525-cb24-4682-8c5a-aa5c2b7e4dde")
         XCTAssertEqual(userDetails.firstName, "Claudia")
@@ -70,9 +69,12 @@ final class StrigaRemoteProviderTests: XCTestCase {
 //        XCTAssertTrue(userDetails.KYC.emailVerified ?? false)
         XCTAssertTrue(userDetails.KYC.mobileVerified)
         XCTAssertEqual(userDetails.KYC.status, .rejected)
-//        XCTAssertEqual(userDetails.KYC.details, ["UNSATISFACTORY_PHOTOS", "SCREENSHOTS", "PROBLEMATIC_APPLICANT_DATA"])
-//        XCTAssertEqual(userDetails.KYC?.rejectionComments?.userComment, "The full name on the profile is either missing or incorrect.")
-//        XCTAssertEqual(userDetails.KYC?.rejectionComments?.autoComment, "Please enter your first and last name exactly as they are written in your identity document.")
+//        XCTAssertEqual(userDetails.KYC.details, ["UNSATISFACTORY_PHOTOS", "SCREENSHOTS",
+//        "PROBLEMATIC_APPLICANT_DATA"])
+//        XCTAssertEqual(userDetails.KYC?.rejectionComments?.userComment, "The full name on the profile is either
+//        missing or incorrect.")
+//        XCTAssertEqual(userDetails.KYC?.rejectionComments?.autoComment, "Please enter your first and last name exactly
+//        as they are written in your identity document.")
 //        XCTAssertEqual(userDetails.createdAt, 1655832993460)
     }
 
@@ -80,9 +82,10 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testCreateUser_SuccessfulResponse_ReturnsCreateUserResponse() async throws {
         // Arrange
-        let mockData = #"{"userId":"de13f7b0-c159-4955-a226-42ca2e4f0b76","email":"test_1652858341@mailinator.com","KYC":{"status":"NOT_STARTED"}}"#
+        let mockData =
+            #"{"userId":"de13f7b0-c159-4955-a226-42ca2e4f0b76","email":"test_1652858341@mailinator.com","KYC":{"status":"NOT_STARTED"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         let response = try await provider.createUser(model: StrigaCreateUserRequest(
             firstName: "John",
@@ -106,9 +109,8 @@ final class StrigaRemoteProviderTests: XCTestCase {
             expectedOutgoingTxVolumeYearly: "MORE_THAN_50000_USD",
             selfPepDeclaration: true,
             purposeOfAccount: "Personal Savings"
-        )
-)
-        
+        ))
+
         // Assert
         XCTAssertEqual(response.userId, "de13f7b0-c159-4955-a226-42ca2e4f0b76")
         XCTAssertEqual(response.email, "test_1652858341@mailinator.com")
@@ -121,19 +123,19 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Arrange
         let mockData = #"Accepted"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
-        
+
         // Assert
         XCTAssertTrue(true)
     }
-    
+
     func testVerifyPhoneNumber_EmptyResponse400_ReturnsInvalidResponse() async throws {
         // Arrange
         let mockData = #"{}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
-        
+
         // Act
         do {
             try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
@@ -144,12 +146,13 @@ final class StrigaRemoteProviderTests: XCTestCase {
             XCTFail()
         }
     }
-    
+
     func testVerifyPhoneNumber_ErrorDetail409_ReturnsOtpExceededVerification() async throws {
         // Arrange
-        let mockData = #"{"status":409,"errorCode":"30003","errorDetails":{"message":"Exceeded verification attempts"}}"#
+        let mockData =
+            #"{"status":409,"errorCode":"30003","errorDetails":{"message":"Exceeded verification attempts"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
-        
+
         // Act
         do {
             try await provider.verifyMobileNumber(userId: "123", verificationCode: "123456")
@@ -167,19 +170,20 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Arrange
         let mockData = #"{"dateExpires":"2023-06-20T12:14:14.981Z"}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         try await provider.resendSMS(userId: "123")
-        
+
         // Assert
         XCTAssertTrue(true)
     }
-    
+
     func testResendSMS_ErrorDetail409_ReturnsInvalidResponse() async throws {
         // Arrange
-        let mockData = #"{"message":"Mobile is already verified","errorCode":"00002","errorDetails":{"message":"Mobile is already verified","errorDetails":"885d9dd3-56d1-416b-a85b-873fcec69071"}}"#
+        let mockData =
+            #"{"message":"Mobile is already verified","errorCode":"00002","errorDetails":{"message":"Mobile is already verified","errorDetails":"885d9dd3-56d1-416b-a85b-873fcec69071"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
-        
+
         // Act
         do {
             try await provider.resendSMS(userId: "123")
@@ -195,21 +199,23 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testGetKYCToken_SuccessfulResponse_ReturnsToken() async throws {
         // Arrange
-        let mockData = #"{"provider":"SUMSUB","token":"_act-sbx-cc6a85f3-4315-4d26-b507-3e5ea31ff2f9","userId":"2f1853b2-927a-4aa9-8bb1-3e51fb119ace","verificationLink":"https://in.sumsub.com/idensic/l/#/sbx_Eke06K3fpzlbWuf3"}"#
+        let mockData =
+            #"{"provider":"SUMSUB","token":"_act-sbx-cc6a85f3-4315-4d26-b507-3e5ea31ff2f9","userId":"2f1853b2-927a-4aa9-8bb1-3e51fb119ace","verificationLink":"https://in.sumsub.com/idensic/l/#/sbx_Eke06K3fpzlbWuf3"}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
         let token = try await provider.getKYCToken(userId: "123")
-        
+
         // Assert
         XCTAssertEqual(token, "_act-sbx-cc6a85f3-4315-4d26-b507-3e5ea31ff2f9")
     }
-    
+
     func testGetKYCToken_InvalidFields400_ReturnsInvalidResponse() async throws {
         // Arrange
-        let mockData = #"{"status":400,"errorCode":"00002","errorDetails":{"message":"Invalid fields","errorDetails":[{"msg":"Invalid value","param":"mobile.number","location":"body"}]}}"#
+        let mockData =
+            #"{"status":400,"errorCode":"00002","errorDetails":{"message":"Invalid fields","errorDetails":[{"msg":"Invalid value","param":"mobile.number","location":"body"}]}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 400)
-        
+
         // Act
         do {
             let _ = try await provider.getKYCToken(userId: "123")
@@ -220,12 +226,12 @@ final class StrigaRemoteProviderTests: XCTestCase {
             XCTFail()
         }
     }
-    
+
     func testGetKYCToken_UserNotVerified409_ReturnsInvalidResponse() async throws {
         // Arrange
         let mockData = #"{"status":409,"errorCode":"30007","errorDetails":{"message":"User is not verified"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 409)
-        
+
         // Act
         do {
             let _ = try await provider.getKYCToken(userId: "123")
@@ -241,32 +247,38 @@ final class StrigaRemoteProviderTests: XCTestCase {
 
     func testGetAllWalletsByUser_SuccessfulResponse_ReturnsStrigaGetAllWalletsResponse() async throws {
         // Arrange
-        let mockData = #"{"wallets":[{"walletId":"3d57a943-8145-4183-8079-cd86b68d2993","accounts":{"EUR":{"accountId":"4dc6ecb29d74198e9e507f8025cad011","parentWalletId":"719c6236-0420-43c1-a7cb-1e20ce540a8d","currency":"EUR","ownerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.673Z","availableBalance":{"amount":"0","currency":"cents"},"linkedCardId":"UNLINKED","linkedBankAccountId":"EUR13467658780233","status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"USDC":{"accountId":"140ecf6f979975c8e868d14038004b37","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"USDC","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.078Z","availableBalance":{"amount":"5889","currency":"cents"},"linkedCardId":"UNLINKED","blockchainDepositAddress":"0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c","blockchainNetwork":{"name":"USD Coin Test (Goerli)","type":"ERC20","contractAddress":"0x07865c6E87B9F70255377e024ace6630C1Eaa37F"},"status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true}},"syncedOwnerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.693Z","comment":"DEFAULT"}],"count":1,"total":1}"#
+        let mockData =
+            #"{"wallets":[{"walletId":"3d57a943-8145-4183-8079-cd86b68d2993","accounts":{"EUR":{"accountId":"4dc6ecb29d74198e9e507f8025cad011","parentWalletId":"719c6236-0420-43c1-a7cb-1e20ce540a8d","currency":"EUR","ownerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.673Z","availableBalance":{"amount":"0","currency":"cents"},"linkedCardId":"UNLINKED","linkedBankAccountId":"EUR13467658780233","status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true},"USDC":{"accountId":"140ecf6f979975c8e868d14038004b37","parentWalletId":"3d57a943-8145-4183-8079-cd86b68d2993","currency":"USDC","ownerId":"aa3534a1-d13d-4920-b023-97cb00d49bad","ownerType":"CONSUMER","createdAt":"2023-05-28T19:47:17.078Z","availableBalance":{"amount":"5889","currency":"cents"},"linkedCardId":"UNLINKED","blockchainDepositAddress":"0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c","blockchainNetwork":{"name":"USD Coin Test (Goerli)","type":"ERC20","contractAddress":"0x07865c6E87B9F70255377e024ace6630C1Eaa37F"},"status":"ACTIVE","permissions":["CUSTODY","TRADE","INTER","INTRA"],"enriched":true}},"syncedOwnerId":"80efa80b-2b53-4b80-be88-4fcaa7d3a540","ownerType":"CONSUMER","createdAt":"2023-06-26T14:06:00.693Z","comment":"DEFAULT"}],"count":1,"total":1}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
-        let response = try await provider.getAllWalletsByUser(userId: "123", startDate: Date(), endDate: Date(), page: 1)
-        
+        let response = try await provider.getAllWalletsByUser(
+            userId: "123",
+            startDate: Date(),
+            endDate: Date(),
+            page: 1
+        )
+
         // Assert the count and total values
         XCTAssertEqual(response.count, 1)
         XCTAssertEqual(response.total, 1)
-        
+
         // Assert the wallets array
         XCTAssertEqual(response.wallets.count, 1)
-        
+
         // Assert the first wallet
         let wallet = response.wallets[0]
         XCTAssertEqual(wallet.walletID, "3d57a943-8145-4183-8079-cd86b68d2993")
-        
+
         // Assert the accounts within the wallet
         let accounts = wallet.accounts
-        
+
         // Assert the EUR account
         let eurAccount = accounts.eur
         XCTAssertEqual(eurAccount?.accountID, "4dc6ecb29d74198e9e507f8025cad011")
         XCTAssertEqual(eurAccount?.currency, "EUR")
         // ... continue asserting other properties of the EUR account
-        
+
         // Assert the USDC account
         let usdcAccount = accounts.usdc
         XCTAssertEqual(usdcAccount?.accountID, "140ecf6f979975c8e868d14038004b37")
@@ -275,46 +287,49 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(usdcAccount?.ownerID, "aa3534a1-d13d-4920-b023-97cb00d49bad")
         XCTAssertEqual(usdcAccount?.ownerType, "CONSUMER")
         XCTAssertEqual(usdcAccount?.createdAt, "2023-05-28T19:47:17.078Z")
-        
+
         // Assert the available balance of USDC account
         let usdcAvailableBalance = usdcAccount?.availableBalance
         XCTAssertEqual(usdcAvailableBalance?.amount, "5889")
         XCTAssertEqual(usdcAvailableBalance?.currency, "cents")
-        
+
         // Assert the linked card ID of USDC account
         XCTAssertEqual(usdcAccount?.linkedCardID, "UNLINKED")
-        
+
         // Assert the blockchain deposit address of USDC account
         XCTAssertEqual(usdcAccount?.blockchainDepositAddress, "0xF13607D9Ab2D98f6734Dc09e4CDE7dA515fe329c")
-        
+
         // Assert the blockchain network details of USDC account
         let usdcBlockchainNetwork = usdcAccount?.blockchainNetwork
         XCTAssertEqual(usdcBlockchainNetwork?.name, "USD Coin Test (Goerli)")
         XCTAssertEqual(usdcBlockchainNetwork?.type, "ERC20")
         XCTAssertEqual(usdcBlockchainNetwork?.contractAddress, "0x07865c6E87B9F70255377e024ace6630C1Eaa37F")
-        
+
         // Assert the status of USDC account
         XCTAssertEqual(usdcAccount?.status, "ACTIVE")
-        
+
         // Assert the permissions of USDC account
         let usdcPermissions = usdcAccount?.permissions
         XCTAssertEqual(usdcPermissions, ["CUSTODY", "TRADE", "INTER", "INTRA"])
-        
+
         // Assert the enriched property of USDC account
         XCTAssertTrue(usdcAccount?.enriched ?? false)
-
     }
 
     // MARK: - Enrich account
 
     func testEnrichAccount_SuccessfulResponse_ReturnsEnrichedAccount() async throws {
         // Arrange
-        let mockData = #"{"blockchainDepositAddress":"0x59d42C04022E926DAF16d139aFCBCa0da33E2323","blockchainNetwork":{"name":"Binance USD (BSC Test)","type":"BEP20","contractAddress":"0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"}}"#
+        let mockData =
+            #"{"blockchainDepositAddress":"0x59d42C04022E926DAF16d139aFCBCa0da33E2323","blockchainNetwork":{"name":"Binance USD (BSC Test)","type":"BEP20","contractAddress":"0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"}}"#
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
-        
+
         // Act
-        let enrichedAccount: StrigaEnrichedUSDCAccountResponse = try await provider.enrichAccount(userId: "123", accountId: "456")
-        
+        let enrichedAccount: StrigaEnrichedUSDCAccountResponse = try await provider.enrichAccount(
+            userId: "123",
+            accountId: "456"
+        )
+
         // Assert
         XCTAssertEqual(enrichedAccount.blockchainDepositAddress, "0x59d42C04022E926DAF16d139aFCBCa0da33E2323")
         XCTAssertEqual(enrichedAccount.blockchainNetwork.name, "Binance USD (BSC Test)")
@@ -325,34 +340,34 @@ final class StrigaRemoteProviderTests: XCTestCase {
     func testInitiateOnChainWalletSend_SuccessfulResponse() async throws {
         // Arrange
         let mockData = """
-    {
-        "challengeId": "eaec4a27-d78d-4f49-80bf-9c1ecba98853",
-        "dateExpires": "2023-03-30T05:21:47.402Z",
-        "transaction": {
-            "syncedOwnerId": "51a2ed48-3b70-4775-b549-0d7e4850b64d",
-            "sourceAccountId": "9c73b2f8a7c4e567c0460ef83c309ce1",
-            "parentWalletId": "2c24c517-c682-4472-bbde-627e4a26fcf8",
-            "currency": "ETH",
-            "amount": "10000000000000000",
-            "status": "PENDING_2FA_CONFIRMATION",
-            "txType": "ON_CHAIN_WITHDRAWAL_INITIATED",
-            "blockchainDestinationAddress": "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD",
-            "blockchainNetwork": {
-                "name": "Ethereum Test (Goerli)"
-            },
-            "transactionCurrency": "ETH"
-        },
-        "feeEstimate": {
-            "totalFee": "948640405755000",
-            "networkFee": "948640405755000",
-            "ourFee": "948640405755000",
-            "theirFee": "0",
-            "feeCurrency": "ETH",
-            "gasLimit": "21000",
-            "gasPrice": "21.044"
-        }
-    }
-"""
+            {
+                "challengeId": "eaec4a27-d78d-4f49-80bf-9c1ecba98853",
+                "dateExpires": "2023-03-30T05:21:47.402Z",
+                "transaction": {
+                    "syncedOwnerId": "51a2ed48-3b70-4775-b549-0d7e4850b64d",
+                    "sourceAccountId": "9c73b2f8a7c4e567c0460ef83c309ce1",
+                    "parentWalletId": "2c24c517-c682-4472-bbde-627e4a26fcf8",
+                    "currency": "ETH",
+                    "amount": "10000000000000000",
+                    "status": "PENDING_2FA_CONFIRMATION",
+                    "txType": "ON_CHAIN_WITHDRAWAL_INITIATED",
+                    "blockchainDestinationAddress": "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD",
+                    "blockchainNetwork": {
+                        "name": "Ethereum Test (Goerli)"
+                    },
+                    "transactionCurrency": "ETH"
+                },
+                "feeEstimate": {
+                    "totalFee": "948640405755000",
+                    "networkFee": "948640405755000",
+                    "ourFee": "948640405755000",
+                    "theirFee": "0",
+                    "feeCurrency": "ETH",
+                    "gasLimit": "21000",
+                    "gasPrice": "21.044"
+                }
+            }
+        """
         let provider = try getMockProvider(responseString: mockData, statusCode: 200)
 
         // Act
@@ -375,7 +390,10 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(decodedData.transaction.amount, "10000000000000000")
         XCTAssertEqual(decodedData.transaction.status, "PENDING_2FA_CONFIRMATION")
         XCTAssertEqual(decodedData.transaction.txType, .initiated)
-        XCTAssertEqual(decodedData.transaction.blockchainDestinationAddress, "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD")
+        XCTAssertEqual(
+            decodedData.transaction.blockchainDestinationAddress,
+            "0x6475C4E02248E463fDBbF2D3fB436aFCa9c56DbD"
+        )
         XCTAssertEqual(decodedData.transaction.blockchainNetwork.name, "Ethereum Test (Goerli)")
         XCTAssertEqual(decodedData.transaction.transactionCurrency, "ETH")
 
@@ -445,7 +463,10 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertEqual(result.id, "e0a00ba5-6788-41c6-95f1-258b49b406a7")
         XCTAssertEqual(result.amount, "50")
         XCTAssertEqual(result.feeSats, "1")
-        XCTAssertEqual(result.invoice, "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3")
+        XCTAssertEqual(
+            result.invoice,
+            "lntb500n1p3k6pj7pp5axdfq2mprvc9csgkgp0fhm3magqw8dp4f64gncwwpjlae2ke8zmqdqqcqzpgxqyz5vqsp5ey8e6twhw0rqnqer8ycsvx4mgy56nalxzqm08gwymj2sxa5s8qcq9qyyssqstksm7hq62vfkqrsv6vh283npc2c597l6mmvjplk84h3dmv5qzh4lusetk3v4pdfr4tcfj3ezf87sakhr9cc6eq8l238uev5mxdhv2gpds0fn3"
+        )
         XCTAssertEqual(result.payeeNode, "020ec0c6a0c4fe5d8a79928ead294c36234a76f6e0dca896c35413612a3fd8dbf8")
         XCTAssertEqual(result.network.bech32, "tb")
         XCTAssertEqual(result.network.pubKeyHash, 111)
@@ -474,7 +495,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
             whitelistedAddressId: "bed66a98-e36a-41e9-a478-3c6bf277d0d5",
             amount: "1210189000000000"
         )
-    
+
         // Assert
         XCTAssertEqual(result.totalFee, "909237719334000")
         XCTAssertEqual(result.networkFee, "909237719334000")
@@ -507,15 +528,19 @@ final class StrigaRemoteProviderTests: XCTestCase {
         var result: StrigaExchangeRatesResponse?
         let mockData = ""
         do {
-            let provider = try getMockProvider(responseString: mockData, statusCode: 0, error: NSError(domain: "", code: NSURLErrorTimedOut))
+            let provider = try getMockProvider(
+                responseString: mockData,
+                statusCode: 0,
+                error: NSError(domain: "", code: NSURLErrorTimedOut)
+            )
             result = try await provider.exchangeRates()
-        } catch let error {
+        } catch {
             // Assert
             XCTAssertNil(result)
             XCTAssertEqual((error as NSError).code, NSURLErrorTimedOut)
         }
     }
-    
+
     func testGetAccountStatement_SuccessfulEmptyResponse() async throws {
         // Arrange
         let mockData = """
@@ -526,7 +551,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         let result = try await provider.getAccountStatement(
             userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
             accountId: "4dc6ecb29d74198e9e507f8025cad011",
-            startDate: Date(timeIntervalSince1970: 1687564800),
+            startDate: Date(timeIntervalSince1970: 1_687_564_800),
             endDate: Date(),
             page: 1
         )
@@ -534,7 +559,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         // Assert
         XCTAssertEqual(result.transactions.isEmpty, true)
     }
-    
+
     func testGetAccountStatement_SuccessfulResponse() async throws {
         // Arrange
         let mockData = """
@@ -545,7 +570,7 @@ final class StrigaRemoteProviderTests: XCTestCase {
         let result = try await provider.getAccountStatement(
             userId: "cecaea44-47f2-439b-99a1-a35fefaf1eb6",
             accountId: "4dc6ecb29d74198e9e507f8025cad011",
-            startDate: Date(timeIntervalSince1970: 1687564800),
+            startDate: Date(timeIntervalSince1970: 1_687_564_800),
             endDate: Date(),
             page: 1
         )
@@ -579,12 +604,15 @@ final class StrigaRemoteProviderTests: XCTestCase {
         XCTAssertFalse(result.challengeId.isEmpty)
     }
 
-
     // MARK: - Helper Methods
-    
+
     func getMockProvider(responseString: String, statusCode: Int, error: Error? = nil) throws -> StrigaRemoteProvider {
         let mockURLSession = MockURLSession(responseString: responseString, statusCode: statusCode, error: error)
         let httpClient = HTTPClient(urlSession: mockURLSession)
-        return StrigaRemoteProviderImpl(baseURL: "https://example.com/api", solanaKeyPair: try KeyPair(), httpClient: httpClient)
+        return try StrigaRemoteProviderImpl(
+            baseURL: "https://example.com/api",
+            solanaKeyPair: KeyPair(),
+            httpClient: httpClient
+        )
     }
 }

@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
@@ -80,4 +80,3 @@ struct CenterTextCellItemView: View {
             .foregroundColor(color)
     }
 }
-

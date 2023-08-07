@@ -6,7 +6,6 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
-import Foundation
 import UIKit
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
@@ -72,7 +71,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             if
                 let parsedPhone = try? self.phoneNumberKit.parse(newPhone),
                 let country = countries?
-                    .first(where: { $0.dialCode.clearedPhoneString == "+\(parsedPhone.countryCode)" }) {
+                    .first(where: { $0.dialCode.clearedPhoneString == "+\(parsedPhone.countryCode)" })
+            {
                 // Change country only if dial code has changed
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                     if self.selectedCountry.dialCode != country.dialCode {
@@ -190,8 +190,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 }
                 .eraseToAnyPublisher()
         )
-            .assignWeak(to: \.phone, on: self)
-            .store(in: &cancellable)
+        .assignWeak(to: \.phone, on: self)
+        .store(in: &cancellable)
 
         $selectedCountry
             .compactMap(\.emoji)
@@ -280,12 +280,12 @@ extension EnterPhoneNumberViewModel {
 
 private extension EnterPhoneNumberViewModel {
     func defaultRegionCode() -> String {
-        return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
+        Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 }
 
 private extension String {
     var clearedPhoneString: String {
-        self.filter("0123456789+".contains)
+        filter("0123456789+".contains)
     }
 }

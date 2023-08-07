@@ -1,10 +1,10 @@
-import Foundation
-import UIKit
 import BankTransfer
-import Resolver
 import Combine
-import SwiftyUserDefaults
+import Foundation
 import Onboarding
+import Resolver
+import SwiftyUserDefaults
+import UIKit
 
 /// Result for `BankTransferClaimCoordinator`
 enum BankTransferClaimCoordinatorResult {
@@ -16,7 +16,6 @@ enum BankTransferClaimCoordinatorResult {
 
 /// Coordinator that controlls claim operation
 final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinatorResult> {
-
     // MARK: - Dependencies
 
     @Injected private var bankTransferService: AnyBankTransferService<StrigaBankTransferUserDataRepository>
@@ -41,7 +40,8 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
         self.navigationController = navigationController
         self.transaction = transaction
         super.init()
-        self.increaseTimer() // We need to increase time because transaction once was called before, then resend logic will appear
+        increaseTimer() // We need to increase time because transaction once was called before, then resend logic will
+        // appear
     }
 
     // MARK: - Methods
@@ -62,7 +62,7 @@ final class BankTransferClaimCoordinator: Coordinator<BankTransferClaimCoordinat
                         navigationController: navigationController,
                         phone: phone,
                         navigation: .nextToRoot,
-                        verifyHandler: { [unowned self] otp in
+                        verifyHandler: { [unowned self] _ in
                             guard let userId = await bankTransferService.value.repository.getUserId() else {
                                 throw BankTransferError.missingMetadata
                             }
@@ -133,22 +133,30 @@ private func getIPAddress() -> String {
         var ptr = ifaddr
         while ptr != nil {
             defer { ptr = ptr?.pointee.ifa_next }
-            
+
             guard let interface = ptr?.pointee else { return "" }
             let addrFamily = interface.ifa_addr.pointee.sa_family
             if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
-                
                 // wifi = ["en0"]
                 // wired = ["en2", "en3", "en4"]
                 // cellular = ["pdp_ip0","pdp_ip1","pdp_ip2","pdp_ip3"]
-                
-                let name: String = String(cString: (interface.ifa_name))
-                if  name == "en0" || name == "en2" || name == "en3" || name == "en4" || name == "pdp_ip0" || name == "pdp_ip1" || name == "pdp_ip2" || name == "pdp_ip3",
-                    let socklen = try? socklen_t((interface.ifa_addr.pointee.sa_len))
+
+                let name = String(cString: interface.ifa_name)
+                if name == "en0" || name == "en2" || name == "en3" || name == "en4" || name == "pdp_ip0" || name ==
+                    "pdp_ip1" || name == "pdp_ip2" || name == "pdp_ip3",
+                    let socklen = try? socklen_t(interface.ifa_addr.pointee.sa_len)
                 {
                     var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                    
-                    getnameinfo(interface.ifa_addr, socklen, &hostname, socklen_t(hostname.count), nil, socklen_t(0), NI_NUMERICHOST)
+
+                    getnameinfo(
+                        interface.ifa_addr,
+                        socklen,
+                        &hostname,
+                        socklen_t(hostname.count),
+                        nil,
+                        socklen_t(0),
+                        NI_NUMERICHOST
+                    )
                     address = String(cString: hostname)
                 }
             }

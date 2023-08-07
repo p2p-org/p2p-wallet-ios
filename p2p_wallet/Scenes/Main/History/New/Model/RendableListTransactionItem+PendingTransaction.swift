@@ -56,7 +56,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
 
             return .double(fromUrl, toUrl)
-            
+
         case let transaction as ClaimSentViaLinkTransaction:
             if
                 let urlStr = transaction.token.logoURI,
@@ -98,7 +98,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
 
         case let transaction as ClaimSentViaLinkTransaction:
-            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
+            return L10n
+                .from(RecipientFormatter
+                    .shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         case let transaction as any StrigaClaimTransactionType:
             return L10n.from(RecipientFormatter.shortFormat(destination: transaction.fromAddress))
         default:
@@ -146,7 +148,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 } else {
                     return "\(L10n.processing)"
                 }
-                
+
             case _ as any StrigaClaimTransactionType:
                 return "\(L10n.pending.capitalized)..."
 
@@ -198,7 +200,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
 
         case let transaction as any StrigaClaimTransactionType:
-            guard let amount = transaction.amount else { return ""}
+            guard let amount = transaction.amount else { return "" }
             return "+\(amount.tokenAmountFormattedString(symbol: transaction.token?.symbol ?? ""))"
         default:
             return ""

@@ -1,5 +1,5 @@
-@testable import Wormhole
 import XCTest
+@testable import Wormhole
 
 final class EthereumAddressTests: XCTestCase {
     func testValidAddress() throws {

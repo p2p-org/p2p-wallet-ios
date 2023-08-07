@@ -3,7 +3,7 @@ import Foundation
 public struct JSONRPCResponseDto<T: Decodable>: Decodable {
     let id: String?
     let result: T
-    
+
     public init(
         id: String,
         result: T

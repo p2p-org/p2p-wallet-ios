@@ -40,7 +40,8 @@ final class ChoosePhoneCodeService: ChooseItemService {
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let countries = section.items as? [PhoneCodeItem] else { return section }
-            return ChooseItemListSection(items: countries.sorted(by: { $0.country.name.lowercased() < $1.country.name.lowercased() }))
+            return ChooseItemListSection(items: countries
+                .sorted(by: { $0.country.name.lowercased() < $1.country.name.lowercased() }))
         }
         let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems

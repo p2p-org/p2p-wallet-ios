@@ -5,7 +5,7 @@ public class MockURLSession: HTTPURLSession {
     private let responseString: String?
     private let statusCode: Int
     private let mockError: Error?
-    
+
     /// Initializes a new instance of `MockURLSession`.
     ///
     /// - Parameters:
@@ -15,9 +15,9 @@ public class MockURLSession: HTTPURLSession {
     public init(responseString: String?, statusCode: Int = 200, error: Error? = nil) {
         self.responseString = responseString
         self.statusCode = statusCode
-        self.mockError = error
+        mockError = error
     }
-    
+
     /// Simulates fetching data for the given URL request.
     ///
     /// - Parameter urlRequest: The URL request for which to fetch the data.
@@ -27,15 +27,15 @@ public class MockURLSession: HTTPURLSession {
         if let error = mockError {
             throw error
         }
-        
+
         guard let responseString = responseString else {
             throw HTTPClientError.invalidResponse(nil, Data())
         }
-        
+
         let url = urlRequest.url!
         let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
         let data = responseString.data(using: .utf8)!
-        
+
         return (data, response)
     }
 }

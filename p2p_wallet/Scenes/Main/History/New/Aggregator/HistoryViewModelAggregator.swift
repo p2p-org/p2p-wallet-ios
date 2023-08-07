@@ -1,9 +1,7 @@
-import Foundation
 import Combine
+import Foundation
 
 enum HistoryViewModelAggregator {
-
-    
     /// Aggregate pending transactions.
     /// - Parameters:
     ///   - pendingTransactionService: Pending transaction service.
@@ -52,6 +50,4 @@ enum HistoryViewModelAggregator {
             }
             .eraseToAnyPublisher()
     }
-
-    
 }

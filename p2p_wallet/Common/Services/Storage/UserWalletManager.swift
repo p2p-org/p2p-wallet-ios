@@ -1,10 +1,10 @@
 import Combine
+import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import Onboarding
 import Resolver
 import SolanaSwift
-import Foundation
 
 /// Centralized class for managing user accounts
 class UserWalletManager: ObservableObject {

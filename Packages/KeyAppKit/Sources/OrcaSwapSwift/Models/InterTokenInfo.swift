@@ -1,10 +1,3 @@
-//
-//  InterTokenInfo.swift
-//  
-//
-//  Created by Chung Tran on 14/10/2021.
-//
-
 import Foundation
 
 public struct InterTokenInfo {

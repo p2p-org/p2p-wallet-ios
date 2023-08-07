@@ -1,5 +1,5 @@
-import Resolver
 import BankTransfer
+import Resolver
 
 protocol LogoutService {
     func logout() async

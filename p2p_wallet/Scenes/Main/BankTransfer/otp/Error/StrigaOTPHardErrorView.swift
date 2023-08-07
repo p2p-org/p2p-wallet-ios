@@ -17,15 +17,17 @@ struct StrigaOTPHardErrorView: View {
                     NewTextButton(
                         title: L10n.openWalletScreen,
                         style: .inverted,
-                        expandable: true) {
-                            onAction()
-                        }
+                        expandable: true
+                    ) {
+                        onAction()
+                    }
                     NewTextButton(
                         title: L10n.writeToSuppot,
                         style: .primaryWhite,
-                        expandable: true) {
-                            onSupport()
-                        }
+                        expandable: true
+                    ) {
+                        onSupport()
+                    }
                 }
             }
         )
@@ -37,6 +39,7 @@ struct StrigaOTPHardErrorView_Previews: PreviewProvider {
         StrigaOTPHardErrorView(
             title: L10n.pleaseWait1DayForTheNextTry,
             subtitle: L10n.after5SMSRequestsWeDisabledItFor1DayToSecureYourAccount,
-            onAction: {}, onSupport: {})
+            onAction: {}, onSupport: {}
+        )
     }
 }

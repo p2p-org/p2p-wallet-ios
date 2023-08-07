@@ -3,8 +3,8 @@ import Combine
 import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
-import Wormhole
 import UIKit
+import Wormhole
 
 enum ReceiveNetwork {
     enum Image {
@@ -17,7 +17,6 @@ enum ReceiveNetwork {
 }
 
 class ReceiveViewModel: BaseViewModel, ObservableObject {
-
     // MARK: -
 
     let network: ReceiveNetwork
@@ -128,12 +127,11 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         ("1", (
                             L10n.sendToYourEthereumAddress(tokenSymbol),
                             L10n.isTheMinimumAmountToReceiveFromTheEthereumNetwork("$5")
-                              )),
+                        )),
                         ("2", (
                             L10n.weBridgeItToSolanaWithWormhole,
                             L10n.youOnlyNeedToSignATransactionWithKeyApp
-                            )
-                        ),
+                        )),
                     ],
                     tip: nil
                 ),

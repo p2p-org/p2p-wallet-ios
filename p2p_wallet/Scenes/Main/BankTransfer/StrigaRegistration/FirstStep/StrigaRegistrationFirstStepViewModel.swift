@@ -31,7 +31,8 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Other views
     @Published var actionTitle: String = L10n.next
-    @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
+    @Published var isDataValid =
+        true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()

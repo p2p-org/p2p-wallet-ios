@@ -10,47 +10,47 @@ private let owner: PublicKey = "6QuXb6mB6WmRASP2y8AavXh6aabBXEH5ZzrSH5xRrgSm"
 
 final class TransitTokenAccountManagerTests: XCTestCase {
     var transitTokenAccountManager: TransitTokenAccountManagerImpl!
-    
+
     func testGetTransitTokenMintPubkey() throws {
         transitTokenAccountManager = TransitTokenAccountManagerImpl(
             owner: owner,
             solanaAPIClient: MockSolanaAPIClient(testCase: 0),
             orcaSwap: MockOrcaSwap()
         )
-        
+
         let mint = try transitTokenAccountManager.getTransitTokenMintPubkey(
             pools: [
                 mockPool(tokenBName: transitTokenSymbol),
-                mockPool(tokenBName: "ETH")
+                mockPool(tokenBName: "ETH"),
             ]
         )
         XCTAssertEqual(mint, transitTokenMint)
     }
-    
+
     func testGetTransitToken() throws {
         transitTokenAccountManager = TransitTokenAccountManagerImpl(
             owner: owner,
             solanaAPIClient: MockSolanaAPIClient(testCase: 1),
             orcaSwap: MockOrcaSwap()
         )
-        
+
         let transitToken = try transitTokenAccountManager.getTransitToken(
             pools: [
                 mockPool(tokenBName: transitTokenSymbol),
-                mockPool(tokenBName: "ETH")
+                mockPool(tokenBName: "ETH"),
             ]
         )
         XCTAssertEqual(transitToken?.address, transitTokenAccount)
         XCTAssertEqual(transitToken?.mint, .usdcMint)
     }
-    
+
     func testCheckIfNeedsCreateTransitTokenAccount1() async throws {
         transitTokenAccountManager = TransitTokenAccountManagerImpl(
             owner: owner,
             solanaAPIClient: MockSolanaAPIClient(testCase: 2),
             orcaSwap: MockOrcaSwap()
         )
-        
+
         let transitToken = FeeRelayerSwift.TokenAccount(
             address: transitTokenAccount,
             mint: transitTokenMint
@@ -61,14 +61,14 @@ final class TransitTokenAccountManagerTests: XCTestCase {
             )
         XCTAssertEqual(needsCreateTransitTokenAccount, false)
     }
-    
+
     func testCheckIfNeedsCreateTransitTokenAccount2() async throws {
         transitTokenAccountManager = TransitTokenAccountManagerImpl(
             owner: owner,
             solanaAPIClient: MockSolanaAPIClient(testCase: 3),
             orcaSwap: MockOrcaSwap()
         )
-        
+
         let transitToken = FeeRelayerSwift.TokenAccount(
             address: transitTokenAccount,
             mint: transitTokenMint
@@ -92,7 +92,7 @@ private class MockOrcaSwap: MockOrcaSwapBase {
     }
 }
 
-private func mockPool(tokenBName: String) -> Pool {
+private func mockPool(tokenBName _: String) -> Pool {
     .init(
         account: "",
         authority: "",
@@ -121,19 +121,33 @@ private func mockPool(tokenBName: String) -> Pool {
 
 private class MockSolanaAPIClient: MockSolanaAPIClientBase {
     private let testCase: Int
-    
+
     init(testCase: Int) {
         self.testCase = testCase
         super.init()
     }
-    
-    override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T : BufferLayout {
+
+    override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T: BufferLayout {
         switch account {
         case "JhhACrqV4LhpZY7ogW9Gy2MRLVanXXFxyiW548dsjBp" where testCase == 2:
             let info = BufferInfo<SPLTokenAccountState>(
                 lamports: 0,
                 owner: TokenProgram.id.base58EncodedString,
-                data: .init(mint: transitTokenMint, owner: SystemProgram.id, lamports: 0, delegateOption: 0, isInitialized: true, isFrozen: true, state: 0, isNativeOption: 0, rentExemptReserve: nil, isNativeRaw: 0, isNative: true, delegatedAmount: 0, closeAuthorityOption: 0),
+                data: .init(
+                    mint: transitTokenMint,
+                    owner: SystemProgram.id,
+                    lamports: 0,
+                    delegateOption: 0,
+                    isInitialized: true,
+                    isFrozen: true,
+                    state: 0,
+                    isNativeOption: 0,
+                    rentExemptReserve: nil,
+                    isNativeRaw: 0,
+                    isNative: true,
+                    delegatedAmount: 0,
+                    closeAuthorityOption: 0
+                ),
                 executable: false,
                 rentEpoch: 0
             )

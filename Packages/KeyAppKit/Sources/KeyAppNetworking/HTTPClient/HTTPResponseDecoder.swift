@@ -13,14 +13,13 @@ public protocol HTTPResponseDecoder {
 
 /// ResponseDecoder for JSON type
 public struct JSONResponseDecoder {
-    
     // MARK: - Properties
-    
+
     /// Default native `JSONDecoder`
     private let jsonDecoder: JSONDecoder
-    
+
     // MARK: - Initializers
-    
+
     /// `JSONResponseDecoder` initializer
     /// - Parameter jsonDecoder: Default native `JSONDecoder`
     public init(jsonDecoder: JSONDecoder = JSONDecoder()) {

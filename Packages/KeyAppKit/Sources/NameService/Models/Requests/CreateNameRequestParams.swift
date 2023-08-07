@@ -48,4 +48,3 @@ public struct PostParams: Encodable {
 public struct PostResponse: Decodable {
     public let signature: String
 }
-

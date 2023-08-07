@@ -1,8 +1,7 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View {
-
     let field: TextFieldType
     let fontStyle: UIFont.Style
     let placeholder: String
@@ -30,10 +29,10 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
         self.field = field
         self.fontStyle = fontStyle
         self.placeholder = placeholder
-        self._text = text
+        _text = text
         self.isEnabled = isEnabled
         self.showClearButton = showClearButton
-        self._focus = focus
+        _focus = focus
         self.onSubmit = onSubmit
         self.submitLabel = submitLabel
     }
@@ -45,7 +44,8 @@ struct StrigaRegistrationTextField<TextFieldType: Identifiable & Hashable>: View
                 focus = field
             })
             .font(uiFont: .font(of: fontStyle))
-            .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
+            .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night)
+                .opacity(0.3))
             .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
             .frame(height: 58)
             .disabled(!isEnabled)
@@ -79,7 +79,7 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
                 placeholder: "Enter email",
                 text: .constant(""),
                 focus: .constant(nil),
-                onSubmit: { },
+                onSubmit: {},
                 submitLabel: .next
             )
 
@@ -88,7 +88,7 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
                 placeholder: "Enter phone",
                 text: .constant(""),
                 focus: .constant(nil),
-                onSubmit: { },
+                onSubmit: {},
                 submitLabel: .done
             )
         }

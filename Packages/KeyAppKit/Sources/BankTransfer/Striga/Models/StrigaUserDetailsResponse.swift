@@ -11,37 +11,37 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     public let sourceOfFunds: StrigaSourceOfFunds?
     public let placeOfBirth: String?
     public let KYC: StrigaKYC
-    
+
     public var mobileNumber: String? {
         mobile.countryCode + mobile.number
     }
-    
+
     public struct Mobile: Codable {
         public let countryCode: String
         public let number: String
-        
+
         public init(countryCode: String, number: String) {
             self.countryCode = countryCode
             self.number = number
         }
 
         public var isEmpty: Bool {
-            return countryCode.isEmpty || number.isEmpty
+            countryCode.isEmpty || number.isEmpty
         }
     }
-    
+
     public struct DateOfBirth: Codable {
         public let year: String?
         public let month: String?
         public let day: String?
-        
+
         public init(year: String?, month: String?, day: String?) {
             self.year = year
             self.month = month
             self.day = day
         }
     }
-    
+
     public struct Address: Codable {
         public let addressLine1: String?
         public let addressLine2: String?
@@ -49,8 +49,15 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         public let postalCode: String?
         public let state: String?
         public let country: String?
-        
-        public init(addressLine1: String?, addressLine2: String?, city: String?, postalCode: String?, state: String?, country: String?) {
+
+        public init(
+            addressLine1: String?,
+            addressLine2: String?,
+            city: String?,
+            postalCode: String?,
+            state: String?,
+            country: String?
+        ) {
             self.addressLine1 = addressLine1
             self.addressLine2 = addressLine2
             self.city = city
@@ -59,8 +66,19 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
             self.country = country
         }
     }
-    
-    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil, KYC: StrigaKYC) {
+
+    public init(
+        firstName: String,
+        lastName: String,
+        email: String,
+        mobile: Mobile,
+        dateOfBirth: DateOfBirth? = nil,
+        address: Address? = nil,
+        occupation: StrigaUserIndustry? = nil,
+        sourceOfFunds: StrigaSourceOfFunds? = nil,
+        placeOfBirth: String? = nil,
+        KYC: StrigaKYC
+    ) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
@@ -75,7 +93,8 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
 
     public static var empty: Self {
         StrigaUserDetailsResponse(
-            firstName: "", lastName: "", email: "", mobile: Mobile(countryCode: "", number: ""), KYC: StrigaKYC(status: .notStarted, mobileVerified: false)
+            firstName: "", lastName: "", email: "", mobile: Mobile(countryCode: "", number: ""),
+            KYC: StrigaKYC(status: .notStarted, mobileVerified: false)
         )
     }
 

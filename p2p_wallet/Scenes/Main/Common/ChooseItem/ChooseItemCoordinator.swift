@@ -62,7 +62,8 @@ final class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseIt
             controller.deallocatedPublisher().map { ChooseItemCoordinatorResult.cancel },
             viewModel.chooseTokenSubject.map { ChooseItemCoordinatorResult.item(item: $0) }
                 .handleEvents(receiveOutput: { [weak self] _ in
-                    isWrapped ? (self?.controller as? UINavigationController)?.popViewController(animated: true, completion: { }) : self?.controller.dismiss(animated: true)
+                    isWrapped ? (self?.controller as? UINavigationController)?
+                        .popViewController(animated: true, completion: {}) : self?.controller.dismiss(animated: true)
                 })
         ).prefix(1).eraseToAnyPublisher()
     }

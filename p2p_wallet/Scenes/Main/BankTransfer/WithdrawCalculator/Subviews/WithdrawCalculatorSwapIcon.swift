@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct WithdrawCalculatorSwapIcon: View {
     var body: some View {

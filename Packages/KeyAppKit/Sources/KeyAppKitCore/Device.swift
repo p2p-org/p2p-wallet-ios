@@ -1,15 +1,8 @@
-//
-//  Device.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 23/09/2022.
-//
-
 import Foundation
 
 public enum Device {
     /// Static method for extracting device model code.
-    static public func currentDevice() -> String {
+    public static func currentDevice() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let modelCode = withUnsafePointer(to: &systemInfo.machine) {
@@ -17,12 +10,12 @@ public enum Device {
                 ptr in String(validatingUTF8: ptr)
             }
         }
-        
+
         return modelCode ?? "Unknown"
     }
-    
+
     /// Static method for displaying device model code in user-friendly readable format.
-    static public func getDeviceNameFromIdentifier(_ identifier: String)
+    public static func getDeviceNameFromIdentifier(_ identifier: String)
     -> String { // swiftlint:disable:this cyclomatic_complexity
         #if os(iOS)
             switch identifier {

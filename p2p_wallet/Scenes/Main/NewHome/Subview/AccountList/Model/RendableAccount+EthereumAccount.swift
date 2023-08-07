@@ -5,7 +5,6 @@ import KeyAppKitCore
 import SolanaSwift
 import UIKit
 import Wormhole
-import BigDecimal
 
 struct RenderableEthereumAccount: RenderableAccount, Equatable {
     let account: EthereumAccount

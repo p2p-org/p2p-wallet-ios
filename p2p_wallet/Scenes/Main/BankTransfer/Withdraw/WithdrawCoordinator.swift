@@ -1,5 +1,5 @@
-import Combine
 import BankTransfer
+import Combine
 import Foundation
 import Resolver
 import SwiftUI
@@ -17,7 +17,6 @@ enum WithdrawStrategy {
 }
 
 final class WithdrawCoordinator: Coordinator<WithdrawCoordinator.Result> {
-
     let navigationController: UINavigationController
     let strategy: WithdrawStrategy
     let withdrawalInfo: StrigaWithdrawalInfo

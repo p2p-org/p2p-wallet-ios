@@ -17,17 +17,15 @@ public protocol StrigaLocalProvider {
 }
 
 public actor StrigaLocalProviderImpl {
-
     // MARK: - Initializer
 
     public init() {
-        
         // migration
         Task {
             await migrate()
         }
     }
-    
+
     // MARK: - Migration
 
     private func migrate() {
@@ -41,9 +39,8 @@ public actor StrigaLocalProviderImpl {
 }
 
 extension StrigaLocalProviderImpl: StrigaLocalProvider {
-
     public func getCachedWithdrawalInfo() async -> StrigaWithdrawalInfo? {
-        return get(from: cacheFileFor(.withdrawalInfo))
+        get(from: cacheFileFor(.withdrawalInfo))
     }
 
     public func save(withdrawalInfo: StrigaWithdrawalInfo) async throws {
@@ -51,7 +48,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     }
 
     public func getCachedRegistrationData() -> StrigaUserDetailsResponse? {
-        return get(from: cacheFileFor(.registration))
+        get(from: cacheFileFor(.registration))
     }
 
     public func save(registrationData: StrigaUserDetailsResponse) async throws {
@@ -59,7 +56,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     }
 
     public func getCachedUserData() async -> UserData? {
-        return get(from: cacheFileFor(.account))
+        get(from: cacheFileFor(.account))
     }
 
     public func save(userData: UserData) async throws {
@@ -67,7 +64,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     }
 
     public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
-        (get(from: cacheFileFor(.whitelisted)) ?? [])
+        get(from: cacheFileFor(.whitelisted)) ?? []
     }
 
     public func save(whitelisted: [StrigaWhitelistAddressResponse]) async throws {

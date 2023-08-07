@@ -1,9 +1,8 @@
-import SwiftUI
 import Combine
 import Resolver
+import SwiftUI
 
 final class StrigaRegistrationHardErrorCoordinator: Coordinator<Void> {
-
     @Injected private var helpLauncher: HelpCenterLauncher
     private let navigationController: UINavigationController
     private let openBlank = PassthroughSubject<Void, Never>()

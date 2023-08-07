@@ -15,7 +15,7 @@ public struct StrigaCreateUserRequest: Encodable {
     let expectedOutgoingTxVolumeYearly: String?
     let selfPepDeclaration: Bool?
     let purposeOfAccount: String?
-    
+
     struct Mobile: Encodable {
         let countryCode: String
         let number: String
@@ -24,7 +24,7 @@ public struct StrigaCreateUserRequest: Encodable {
             countryCode.isEmpty || number.isEmpty
         }
     }
-    
+
     struct DateOfBirth: Encodable {
         let year: Int?
         let month: Int?
@@ -54,7 +54,7 @@ public struct StrigaCreateUserRequest: Encodable {
             }
         }
     }
-    
+
     struct Address: Encodable {
         let addressLine1: String?
         let addressLine2: String?

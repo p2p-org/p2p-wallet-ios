@@ -396,7 +396,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func handleClaim(
-        result: BankTransferClaimUserActionResult,
+        result _: BankTransferClaimUserActionResult,
         in action: BankTransferClaimUserAction,
         tokenPrice: TokenPrice?
     ) {

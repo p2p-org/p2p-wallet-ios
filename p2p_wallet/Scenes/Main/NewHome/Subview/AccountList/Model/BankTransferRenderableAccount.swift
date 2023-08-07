@@ -1,6 +1,6 @@
 import BankTransfer
-import BigInt
 import BigDecimal
+import BigInt
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -42,7 +42,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
             with: amount.token,
             style: .short
         )
-            .string(amount: amount)
+        .string(amount: amount)
     }
 
     var detail: AccountDetail {
@@ -85,7 +85,7 @@ struct BankTransferRenderableAccount: RenderableAccount {
 
 private extension Int {
     func toCent() -> Double {
-        Double(self * 10_000)
+        Double(self * 10000)
     }
 }
 
@@ -146,7 +146,7 @@ struct OutgoingBankTransferRenderableAccount: RenderableAccount {
     }
 }
 
-class BankTransferRenderableAccountFactory {
+enum BankTransferRenderableAccountFactory {
     static func renderableAccount(accounts: UserAccounts, actions: [any UserAction]) -> [any RenderableAccount] {
         var transactions = [any RenderableAccount]()
         if
@@ -155,7 +155,8 @@ class BankTransferRenderableAccountFactory {
             let address = try? EthereumAddress(
                 hex: EthereumAddresses.ERC20.usdc.rawValue,
                 eip55: false
-        ) {
+            )
+        {
             let token = EthereumToken(
                 name: SolanaToken.usdc.name,
                 symbol: SolanaToken.usdc.symbol,

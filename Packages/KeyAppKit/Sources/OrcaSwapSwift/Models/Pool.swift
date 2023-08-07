@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Chung Tran on 20/10/2021.
-//
-
 import Foundation
 import SolanaSwift
 
@@ -36,13 +29,13 @@ public struct Pool: Codable, Equatable {
     let amp: UInt64?
     let programVersion: UInt64?
     public let deprecated: Bool?
-    
+
     // balance (lazy load)
     var tokenABalance: TokenAccountBalance?
     var tokenBBalance: TokenAccountBalance?
-    
+
     var isStable: Bool?
-    
+
     var reversed: Pool {
         var reversedPool = self
         Swift.swap(&reversedPool.tokenAccountA, &reversedPool.tokenAccountB)
@@ -50,22 +43,23 @@ public struct Pool: Codable, Equatable {
         Swift.swap(&reversedPool.tokenABalance, &reversedPool.tokenBBalance)
         return reversedPool
     }
-    
+
     public func getTokenBDecimals() -> Decimals? {
         tokenBBalance?.decimals
     }
-    
+
     public func getTokenADecimals() -> Decimals? {
         tokenABalance?.decimals
     }
-    
+
     public var swapProgramId: PublicKey {
-        .orcaSwapId(version: programVersion == 2 ? 2: 1)
+        .orcaSwapId(version: programVersion == 2 ? 2 : 1)
     }
 }
 
 extension Pool {
     // MARK: - Public methods
+
     public func getMinimumAmountOut(
         inputAmount: UInt64,
         slippage: Double
@@ -73,16 +67,16 @@ extension Pool {
         let estimatedOutputAmount = try getOutputAmount(fromInputAmount: inputAmount)
         return UInt64(Float64(estimatedOutputAmount) * Float64(1 - slippage))
     }
-    
+
     public func getInputAmount(
         minimumReceiveAmount: UInt64,
         slippage: Double
     ) throws -> UInt64? {
-        guard slippage != 1 else {return nil}
+        guard slippage != 1 else { return nil }
         let estimatedAmount = UInt64(Float64(minimumReceiveAmount) / Float64(1 - slippage))
         return try getInputAmount(fromEstimatedAmount: estimatedAmount)
     }
-    
+
     public func createSwapInstruction(
         userTransferAuthorityPubkey: PublicKey,
         sourceTokenAddress: PublicKey,
@@ -90,16 +84,16 @@ extension Pool {
         amountIn: UInt64,
         minAmountOut: UInt64
     ) throws -> TransactionInstruction {
-        TokenSwapProgram.swapInstruction(
-            tokenSwap: try account.toPublicKey(),
-            authority: try authority.toPublicKey(),
+        try TokenSwapProgram.swapInstruction(
+            tokenSwap: account.toPublicKey(),
+            authority: authority.toPublicKey(),
             userTransferAuthority: userTransferAuthorityPubkey,
             userSource: sourceTokenAddress,
-            poolSource: try tokenAccountA.toPublicKey(),
-            poolDestination: try tokenAccountB.toPublicKey(),
+            poolSource: tokenAccountA.toPublicKey(),
+            poolDestination: tokenAccountB.toPublicKey(),
             userDestination: destinationTokenAddress,
-            poolMint: try poolTokenMint.toPublicKey(),
-            feeAccount: try feeAccount.toPublicKey(),
+            poolMint: poolTokenMint.toPublicKey(),
+            feeAccount: feeAccount.toPublicKey(),
             hostFeeAccount: try? hostFeeAccount?.toPublicKey(),
             swapProgramId: swapProgramId,
             tokenProgramId: TokenProgram.id,
@@ -107,8 +101,9 @@ extension Pool {
             minimumAmountOut: minAmountOut
         )
     }
-    
+
     // MARK: - Internal methods
+
     func getOutputAmount(
         fromInputAmount inputAmount: UInt64
     ) throws -> UInt64 {
@@ -116,33 +111,39 @@ extension Pool {
         let inputAmountLessFee = inputAmount.minus(fees)
         return try _getOutputAmount(from: inputAmountLessFee)
     }
-    
+
     func getInputAmount(
         fromEstimatedAmount estimatedAmount: UInt64
     ) throws -> UInt64? {
         guard let poolInputAmount = tokenABalance?.amountInUInt64,
               let poolOutputAmount = tokenBBalance?.amountInUInt64
-        else {throw OrcaSwapError.accountBalanceNotFound}
-        
+        else { throw OrcaSwapError.accountBalanceNotFound }
+
         if estimatedAmount > poolOutputAmount {
             throw OrcaSwapError.estimatedAmountIsTooHigh
         }
-        
+
         switch curveType {
         case STABLE:
-            guard let amp = amp else {throw OrcaSwapError.ampDoesNotExistInPoolConfig}
-            let inputAmountLessFee = computeInputAmount(outputAmount: estimatedAmount, inputPoolAmount: poolInputAmount, outputPoolAmount: poolOutputAmount, amp: amp)
-            let inputAmount = (BInt(inputAmountLessFee) * BInt(feeDenominator)).divide(BInt(feeDenominator.minus(feeNumerator)))
+            guard let amp = amp else { throw OrcaSwapError.ampDoesNotExistInPoolConfig }
+            let inputAmountLessFee = computeInputAmount(
+                outputAmount: estimatedAmount,
+                inputPoolAmount: poolInputAmount,
+                outputPoolAmount: poolOutputAmount,
+                amp: amp
+            )
+            let inputAmount = (BInt(inputAmountLessFee) * BInt(feeDenominator))
+                .divide(BInt(feeDenominator.minus(feeNumerator)))
             return UInt64(inputAmount)
         case CONSTANT_PRODUCT:
             let invariant = BInt(poolInputAmount) * BInt(poolOutputAmount)
-            
+
             let newPoolInputAmount = ceilingDivision(invariant, BInt(poolOutputAmount.minus(estimatedAmount))).quotient
             let inputAmountLessFee = BInt(newPoolInputAmount.minus(poolInputAmount))
-            
+
             let feeRatioNumerator: BInt
             let feeRatioDenominator: BInt
-            
+
             if ownerTradeFeeDenominator == 0 {
                 feeRatioNumerator = BInt(feeDenominator)
                 feeRatioDenominator = BInt(feeDenominator.minus(feeNumerator))
@@ -153,34 +154,34 @@ extension Pool {
                     - (BInt(feeNumerator) * BInt(ownerTradeFeeDenominator))
                     - (BInt(ownerTradeFeeNumerator) * BInt(feeDenominator))
             }
-            
+
             let inputAmount = (inputAmountLessFee * feeRatioNumerator).divide(feeRatioDenominator)
             return UInt64(inputAmount)
-            
+
         default:
             return nil
         }
     }
-    
+
     func calculatingFees(_ inputAmount: UInt64) throws -> UInt64 {
         let inputFees = try getFee(inputAmount)
         return try _getOutputAmount(from: inputFees)
     }
-    
+
     /// baseOutputAmount is the amount the user would receive if fees are included and slippage is excluded.
     func getBaseOutputAmount(
         inputAmount: UInt64
     ) throws -> UInt64? {
         guard let poolInputAmount = tokenABalance?.amountInUInt64,
               let poolOutputAmount = tokenBBalance?.amountInUInt64
-        else {throw OrcaSwapError.accountBalanceNotFound}
-        
+        else { throw OrcaSwapError.accountBalanceNotFound }
+
         let fees = try getFee(inputAmount)
         let inputAmountLessFee = inputAmount.minus(fees)
-        
+
         switch curveType {
         case STABLE:
-            guard let amp = amp else {throw OrcaSwapError.ampDoesNotExistInPoolConfig}
+            guard let amp = amp else { throw OrcaSwapError.ampDoesNotExistInPoolConfig }
             return computeBaseOutputAmount(
                 inputAmount: inputAmountLessFee,
                 inputPoolAmount: poolInputAmount,
@@ -193,7 +194,7 @@ extension Pool {
             return nil
         }
     }
-    
+
     /// Construct exchange
     func constructExchange(
         tokens: [String: TokenValue],
@@ -205,17 +206,17 @@ extension Pool {
         slippage: Double,
         feePayer: PublicKey?,
         minRenExemption: Lamports
-    ) async throws -> (AccountInstructions, Lamports /*account creation fee*/) {
+    ) async throws -> (AccountInstructions, Lamports /* account creation fee */ ) {
         guard let fromMint = try? tokens[tokenAName]?.mint.toPublicKey(),
               let toMint = try? tokens[tokenBName]?.mint.toPublicKey(),
               let fromTokenPubkey = try? fromTokenPubkey.toPublicKey()
         else { throw OrcaSwapError.notFound }
-        
+
         // Create fromTokenAccount when needed
         let sourceAccountInstructions: AccountInstructions
-        
-        if fromMint == .wrappedSOLMint &&
-            owner == fromTokenPubkey
+
+        if fromMint == .wrappedSOLMint,
+           owner == fromTokenPubkey
         {
             sourceAccountInstructions = try await blockchainClient.prepareCreatingWSOLAccountAndCloseWhenDone(
                 from: owner,
@@ -226,10 +227,10 @@ extension Pool {
         } else {
             sourceAccountInstructions = .init(account: fromTokenPubkey)
         }
-        
+
         // If necessary, create a TokenAccount for the output token
         let destinationAccountInstructions: AccountInstructions
-        
+
         // If destination token is Solana, create WSOL if needed
         if toMint == .wrappedSOLMint {
             if let toTokenPubkey = try? toTokenPubkey?.toPublicKey(),
@@ -243,7 +244,7 @@ extension Pool {
                             account: toTokenPubkey,
                             destination: owner,
                             owner: owner
-                        )
+                        ),
                     ]
                 )
             } else {
@@ -256,12 +257,12 @@ extension Pool {
                 )
             }
         }
-        
+
         // If destination is another token and has already been created
         else if let toTokenPubkey = try? toTokenPubkey?.toPublicKey() {
             destinationAccountInstructions = .init(account: toTokenPubkey)
         }
-        
+
         // Create associated token address
         else {
             destinationAccountInstructions = try await blockchainClient.prepareForCreatingAssociatedTokenAccount(
@@ -271,7 +272,7 @@ extension Pool {
                 closeAfterward: false
             )
         }
-        
+
         // form instructions
         var instructions = [TransactionInstruction]()
         var cleanupInstructions = [TransactionInstruction]()
@@ -293,7 +294,7 @@ extension Pool {
 
         // swap instructions
         guard let minAmountOut = try? getMinimumAmountOut(inputAmount: amount, slippage: slippage)
-        else {throw OrcaSwapError.couldNotEstimatedMinimumOutAmount}
+        else { throw OrcaSwapError.couldNotEstimatedMinimumOutAmount }
 
         let swapInstruction = try createSwapInstruction(
             userTransferAuthorityPubkey: owner,
@@ -316,24 +317,28 @@ extension Pool {
             signers: signers
         ), accountCreationFee)
     }
-    
+
     // MARK: - Helpers
+
     func getFee(_ inputAmount: UInt64) throws -> UInt64 {
-        guard curveType == STABLE || curveType == CONSTANT_PRODUCT else {throw OrcaSwapError.unknown}
+        guard curveType == STABLE || curveType == CONSTANT_PRODUCT else { throw OrcaSwapError.unknown }
         let tradingFee = computeFee(baseAmount: inputAmount, feeNumerator: feeNumerator, feeDenominator: feeDenominator)
-        let ownerFee = computeFee(baseAmount: inputAmount, feeNumerator: ownerTradeFeeNumerator, feeDenominator: ownerTradeFeeDenominator)
+        let ownerFee = computeFee(
+            baseAmount: inputAmount,
+            feeNumerator: ownerTradeFeeNumerator,
+            feeDenominator: ownerTradeFeeDenominator
+        )
         return tradingFee + ownerFee
-        
     }
-    
+
     private func _getOutputAmount(from inputAmount: UInt64) throws -> UInt64 {
         guard let poolInputAmount = tokenABalance?.amountInUInt64,
               let poolOutputAmount = tokenBBalance?.amountInUInt64
-        else {throw OrcaSwapError.accountBalanceNotFound}
-        
+        else { throw OrcaSwapError.accountBalanceNotFound }
+
         switch curveType {
         case STABLE:
-            guard let amp = amp else {throw OrcaSwapError.ampDoesNotExistInPoolConfig}
+            guard let amp = amp else { throw OrcaSwapError.ampDoesNotExistInPoolConfig }
             return computeOutputAmount(
                 inputAmount: inputAmount,
                 inputPoolAmount: poolInputAmount,
@@ -348,7 +353,7 @@ extension Pool {
             throw OrcaSwapError.unknown
         }
     }
-    
+
     private func computeFee(baseAmount: UInt64, feeNumerator: UInt64, feeDenominator: UInt64) -> UInt64 {
         if feeNumerator == 0 {
             return 0
@@ -363,7 +368,7 @@ private func ceilingDivision(_ dividend: BInt, _ divisor: BInt) -> (quotient: UI
     if quotient == 0 {
         return (quotient: 0, divisor: UInt64(divisor))
     }
-    
+
     var remainder = dividend % divisor
     if remainder > 0 {
         quotient += 1
@@ -373,7 +378,7 @@ private func ceilingDivision(_ dividend: BInt, _ divisor: BInt) -> (quotient: UI
             divisor += 1
         }
     }
-    
+
     return (quotient: UInt64(quotient), divisor: UInt64(divisor))
 }
 
@@ -386,7 +391,7 @@ private func computeOutputAmount(
     let leverage = amp * N_COINS
     let newInputPoolAmount = inputAmount + inputPoolAmount
     let d = computeD(leverage: leverage, amountA: inputPoolAmount, amountB: outputPoolAmount)
-    
+
     let newOutputPoolAmount = _computeOutputAmount(leverage: leverage, newInputAmount: newInputPoolAmount, d: d)
     let outputAmount = outputPoolAmount.minus(newOutputPoolAmount)
     return outputAmount
@@ -397,15 +402,15 @@ private func computeD(leverage: UInt64, amountA: UInt64, amountB: UInt64) -> UIn
     let amountATimesN = BInt(amountA) * BInt(N_COINS) + 1
     let amountBTimesN = BInt(amountB) * BInt(N_COINS) + 1
     let sumX = BInt(amountA) + BInt(amountB)
-    
+
     if sumX == 0 {
         return 0
     }
-    
+
     var dPrevious: BInt
     var d = sumX
-    
-    for _ in 0..<32 {
+
+    for _ in 0 ..< 32 {
         var dProduct = d
         dProduct = (dProduct * d).divide(amountATimesN)
         dProduct = (dProduct * d).divide(amountBTimesN)
@@ -415,27 +420,27 @@ private func computeD(leverage: UInt64, amountA: UInt64, amountB: UInt64) -> UIn
             break
         }
     }
-    
+
     return UInt64(d)
 }
 
 // d = (leverage * sum_x + d_product * n_coins) * initial_d / ((leverage - 1) * initial_d + (n_coins + 1) * d_product)
 private func calculateStep(
-  initialD: UInt64,
-  leverage: UInt64,
-  sumX: UInt64,
-  dProduct: UInt64
+    initialD: UInt64,
+    leverage: UInt64,
+    sumX: UInt64,
+    dProduct: UInt64
 ) -> UInt64 {
     let leverageMul = BInt(leverage) * BInt(sumX)
     let dPMul = BInt(dProduct) * BInt(N_COINS)
-    
+
     let leverageVal = (leverageMul + dPMul) * BInt(initialD)
 
     let leverageSub = BInt(initialD) * BInt(leverage.minus(1))
     let nCoinsSum = BInt(dProduct) * BInt(N_COINS + 1)
-    
+
     let rVal = leverageSub + nCoinsSum
-    
+
     return UInt64(leverageVal.divide(rVal))
 }
 
@@ -444,29 +449,29 @@ private func calculateStep(
 /// y**2 + y * (sum' - (A*n**n - 1) * D / (A * n**n)) = D ** (n + 1) / (n ** (2 * n) * prod' * A)
 /// y**2 + b*y = c
 private func _computeOutputAmount(leverage: UInt64, newInputAmount: UInt64, d: UInt64) -> UInt64 {
-    let c = (BInt(d) ** Int(N_COINS + 1)).divide((BInt(newInputAmount)) * BInt(N_COINS_SQUARED) * BInt(leverage))
-    
+    let c = (BInt(d) ** Int(N_COINS + 1)).divide(BInt(newInputAmount) * BInt(N_COINS_SQUARED) * BInt(leverage))
+
     let b = BInt(newInputAmount) + (BInt(d).divide(BInt(leverage)))
-    
+
     var yPrevious: BInt
     var y = BInt(d)
-    
-    for _ in 0..<32 {
+
+    for _ in 0 ..< 32 {
         yPrevious = y
         y = ((y ** 2) + c).divide((y * 2) + b - BInt(d))
         if y == yPrevious {
             break
         }
     }
-    
+
     return UInt64(y)
 }
 
 private func computeInputAmount(
-  outputAmount: UInt64,
-  inputPoolAmount: UInt64,
-  outputPoolAmount: UInt64,
-  amp: UInt64
+    outputAmount: UInt64,
+    inputPoolAmount: UInt64,
+    outputPoolAmount: UInt64,
+    amp: UInt64
 ) -> UInt64 {
     let leverage = BInt(amp) * BInt(N_COINS)
     let newOutputPoolAmount = BInt(outputPoolAmount) - BInt(outputAmount)
@@ -480,43 +485,42 @@ private func computeInputAmount(
         newInputAmount: UInt64(newOutputPoolAmount),
         d: d
     )
-    
+
     return newInputPoolAmount.minus(inputPoolAmount)
 }
 
-
 // Take the derivative of the invariant function over x
 private func computeBaseOutputAmount(
-  inputAmount: UInt64,
-  inputPoolAmount: UInt64,
-  outputPoolAmount: UInt64,
-  amp: UInt64
+    inputAmount: UInt64,
+    inputPoolAmount: UInt64,
+    outputPoolAmount: UInt64,
+    amp: UInt64
 ) -> UInt64 {
     let leverage = BInt(amp) * BInt(N_COINS)
     let invariant = computeD(leverage: UInt64(leverage), amountA: inputPoolAmount, amountB: outputPoolAmount)
     let a = BInt(amp) * 16
     let b = a
     let c = BInt(invariant) * 4 - (BInt(invariant) * BInt(amp) * 16)
-    
+
     let numerator = (a * 2 * BInt(inputPoolAmount) + (b * BInt(outputPoolAmount)) + c)
         * BInt(outputPoolAmount)
-    
+
     let denominator = (a * BInt(inputPoolAmount) + (b * 2 * BInt(outputPoolAmount) + c))
         * BInt(inputPoolAmount)
-    
+
     return UInt64((BInt(inputAmount) * numerator).divide(denominator))
 }
 
 private extension UInt64 {
     func minus(_ num: UInt64) -> UInt64 {
-        if self <= num {return 0}
+        if self <= num { return 0 }
         return self - num
     }
 }
 
 private extension BInt {
     func divide(_ divider: BInt) -> BInt {
-        if divider == 0 {return 0}
+        if divider == 0 { return 0 }
         return self / divider
     }
 }

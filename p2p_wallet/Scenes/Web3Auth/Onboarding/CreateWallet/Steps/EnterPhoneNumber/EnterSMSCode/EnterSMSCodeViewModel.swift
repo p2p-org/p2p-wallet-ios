@@ -42,6 +42,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     var phoneText: String {
         strategy == .striga ? L10n.weHaveSentACodeTo : L10n.checkTheNumber
     }
+
     var title: String {
         strategy == .striga ? L10n.enterConfirmationCode : L10n.theCodeFromSMS
     }

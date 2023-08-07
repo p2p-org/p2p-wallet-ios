@@ -6,7 +6,6 @@ import Resolver
 import UIKit
 
 final class BankTransferCoordinator: Coordinator<Void> {
-
     @Injected private var bankTransferService: any BankTransferService
 
     private let viewController: UINavigationController
@@ -49,12 +48,12 @@ final class BankTransferCoordinator: Coordinator<Void> {
         guard userData.userId != nil else {
             return .registration
         }
-        
+
         // mobile verification
         guard userData.mobileVerified else {
             return .otp
         }
-        
+
         // kyc
         switch userData.kycStatus {
         case .approved:
@@ -67,7 +66,9 @@ final class BankTransferCoordinator: Coordinator<Void> {
         }
     }
 
-    private func coordinator(for step: BankTransferStep, userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never> {
+    private func coordinator(for step: BankTransferStep,
+                             userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never>
+    {
         switch step {
         case .registration:
             return coordinate(
@@ -76,7 +77,10 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 guard let self else { return }
                 switch result {
                 case .completed:
-                    self.viewController.setViewControllers([self.viewController.viewControllers.first!], animated: false)
+                    self.viewController.setViewControllers(
+                        [self.viewController.viewControllers.first!],
+                        animated: false
+                    )
                 case .canceled:
                     break
                 }
@@ -102,22 +106,22 @@ final class BankTransferCoordinator: Coordinator<Void> {
                     }
                 )
             )
-                .flatMap { [unowned self] result in
-                    switch result {
-                    case .verified:
-                        return coordinate(
-                            to: StrigaOTPSuccessCoordinator(
-                                navigationController: viewController
-                            )
+            .flatMap { [unowned self] result in
+                switch result {
+                case .verified:
+                    return coordinate(
+                        to: StrigaOTPSuccessCoordinator(
+                            navigationController: viewController
                         )
-                            .map { _ in BankTransferFlowResult.next }
-                            .eraseToAnyPublisher()
-                    case .canceled:
-                        return Just(BankTransferFlowResult.none)
-                            .eraseToAnyPublisher()
-                    }
+                    )
+                    .map { _ in BankTransferFlowResult.next }
+                    .eraseToAnyPublisher()
+                case .canceled:
+                    return Just(BankTransferFlowResult.none)
+                        .eraseToAnyPublisher()
                 }
-                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
         case .kyc:
             return coordinate(
                 to: KYCCoordinator(presentingViewController: viewController)
@@ -134,7 +138,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return coordinate(
                 to: StrigaVerificationPendingSheetCoordinator(presentingViewController: viewController)
             )
-            .map { _ in return BankTransferFlowResult.none }
+            .map { _ in BankTransferFlowResult.none }
             .eraseToAnyPublisher()
         case let .transfer(eurAccount):
             return coordinate(

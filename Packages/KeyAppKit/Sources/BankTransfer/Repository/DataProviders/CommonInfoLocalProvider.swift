@@ -8,7 +8,6 @@ public protocol CommonInfoLocalProvider {
 }
 
 public actor CommonInfoLocalProviderImpl {
-
     private let cacheFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
@@ -18,7 +17,6 @@ public actor CommonInfoLocalProviderImpl {
     // MARK: - Initializer
 
     public init() {
-        
         // migration
         Task {
             await migrate()

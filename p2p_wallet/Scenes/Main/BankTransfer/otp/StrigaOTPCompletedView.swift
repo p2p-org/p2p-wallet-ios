@@ -30,7 +30,7 @@ struct StrigaOTPCompletedView: View {
             VStack(spacing: 0) {
                 Image(uiImage: image)
                     .padding(.top, 77.adaptiveHeight)
-                    .padding(.bottom, title == nil ? 32: 16)
+                    .padding(.bottom, title == nil ? 32 : 16)
 
                 if let title {
                     Text(title)

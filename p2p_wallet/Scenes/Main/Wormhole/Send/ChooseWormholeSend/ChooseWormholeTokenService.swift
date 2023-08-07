@@ -6,7 +6,6 @@ import SolanaSwift
 import Wormhole
 
 final class ChooseWormholeTokenService: ChooseItemService {
-
     let otherTitle = L10n.chosenToken
     let chosenTitle = L10n.otherTokens
     let emptyTitle = L10n.TokenNotFound.tryAnotherOne

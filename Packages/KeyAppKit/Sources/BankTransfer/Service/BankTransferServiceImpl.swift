@@ -5,17 +5,17 @@ import KeyAppKitCore
 /// Default implementation of `BankTransferService`
 public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: BankTransferService {
     public typealias Provider = T
-    
+
     /// Repository that handle CRUD action for UserData
     public let repository: Provider
-    
+
     /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
         AsyncValueState<UserData>(status: .initializing, value: .empty)
     )
-    
+
     // MARK: - Initializers
-    
+
     public init(repository: Provider) {
         self.repository = repository
     }
@@ -26,13 +26,12 @@ public final class BankTransferServiceImpl<T: BankTransferUserDataRepository>: B
     private var cachedKYC: StrigaKYC? // It has StrigaKYCStatus type because it's used in BankTransferService protocol
 }
 
-extension BankTransferServiceImpl {
-
-    public var state: AnyPublisher<AsyncValueState<UserData>, Never> {
+public extension BankTransferServiceImpl {
+    var state: AnyPublisher<AsyncValueState<UserData>, Never> {
         subject.eraseToAnyPublisher()
     }
-        
-    public func reload() async {
+
+    func reload() async {
         // mark as loading
         subject.send(
             .init(
@@ -41,13 +40,13 @@ extension BankTransferServiceImpl {
                 error: subject.value.error
             )
         )
-        
+
         do {
             // registered user
             if let userId = await repository.getUserId() {
                 return try await handleRegisteredUser(userId: userId)
             }
-            
+
             // unregistered user
             else {
                 return try await handleUnregisteredUser()
@@ -59,15 +58,15 @@ extension BankTransferServiceImpl {
 
     // MARK: - Registration
 
-    public func getRegistrationData() async throws -> BankTransferRegistrationData {
+    func getRegistrationData() async throws -> BankTransferRegistrationData {
         try await repository.getRegistrationData()
     }
-    
-    public func updateLocally(data: BankTransferRegistrationData) async throws {
+
+    func updateLocally(data: BankTransferRegistrationData) async throws {
         try await repository.updateLocally(registrationData: data)
     }
-    
-    public func createUser(data: BankTransferRegistrationData) async throws {
+
+    func createUser(data: BankTransferRegistrationData) async throws {
         let response = try await repository.createUser(registrationData: data)
         subject.send(
             .init(
@@ -81,11 +80,11 @@ extension BankTransferServiceImpl {
             )
         )
     }
-    
-    public func verify(OTP: String) async throws {
+
+    func verify(OTP: String) async throws {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
-        
+
         subject.send(
             .init(
                 status: .ready,
@@ -96,18 +95,18 @@ extension BankTransferServiceImpl {
             )
         )
     }
-    
-    public func resendSMS() async throws {
+
+    func resendSMS() async throws {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         try await repository.resendSMS(userId: userId)
     }
-    
-    public func getKYCToken() async throws -> String {
+
+    func getKYCToken() async throws -> String {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         return try await repository.getKYCToken(userId: userId)
     }
-    
-    public func clearCache() async {
+
+    func clearCache() async {
         await repository.clearCache()
     }
 
@@ -148,7 +147,7 @@ extension BankTransferServiceImpl {
 
         try? await repository.updateLocally(userData: subject.value.value)
     }
-    
+
     private func handleUnregisteredUser() async throws {
         subject.send(
             .init(
@@ -158,7 +157,7 @@ extension BankTransferServiceImpl {
             )
         )
     }
-    
+
     private func handleError(error: Error) {
         subject.send(
             .init(
@@ -169,12 +168,12 @@ extension BankTransferServiceImpl {
         )
     }
 
-    public func getWithdrawalInfo() async throws -> Provider.WithdrawalInfo? {
+    func getWithdrawalInfo() async throws -> Provider.WithdrawalInfo? {
         guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         return try await repository.getWithdrawalInfo(userId: userId)
     }
 
-    public func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {
+    func saveWithdrawalInfo(info: Provider.WithdrawalInfo) async throws {
         try await repository.save(info)
     }
 }

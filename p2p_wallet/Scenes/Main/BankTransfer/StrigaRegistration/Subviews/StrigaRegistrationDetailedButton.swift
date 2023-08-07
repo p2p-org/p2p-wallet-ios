@@ -1,12 +1,12 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct StrigaRegistrationDetailedButton: View {
     @Binding private var value: String
     private let action: () -> Void
 
     init(value: Binding<String>, action: @escaping () -> Void) {
-        self._value = value
+        _value = value
         self.action = action
     }
 

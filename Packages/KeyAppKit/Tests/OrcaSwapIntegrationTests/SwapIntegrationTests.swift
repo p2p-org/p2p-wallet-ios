@@ -88,12 +88,12 @@ final class SwapIntegrationTests: XCTestCase {
             JSONRPCAPIClient(endpoint: .init(address: test.endpoint, network: network,
                                              additionalQuery: test.endpointAdditionalQuery))
         let blockchainClient = BlockchainClient(apiClient: solanaAPIClient)
-        orcaSwap = OrcaSwap(
+        orcaSwap = try OrcaSwap(
             apiClient: APIClient(configsProvider: MockConfigsProvider()),
             solanaClient: solanaAPIClient,
             blockchainClient: blockchainClient,
             accountStorage: MockAccountStorage(
-                account: try await KeyPair(
+                account: await KeyPair(
                     phrase: test.seedPhrase.components(separatedBy: " "),
                     network: network
                 )
@@ -116,7 +116,7 @@ final class SwapIntegrationTests: XCTestCase {
     func closeAssociatedToken(mint: String) throws {
         let associatedTokenAddress = try PublicKey.associatedTokenAddress(
             walletAddress: orcaSwap.accountStorage.account!.publicKey,
-            tokenMintAddress: try PublicKey(string: mint)
+            tokenMintAddress: PublicKey(string: mint)
         )
 
 //        let _ = try orcaSwap.solanaClient.closeTokenAccount(

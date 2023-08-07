@@ -1,10 +1,3 @@
-//
-//  SheetHeaderView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 01.10.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI

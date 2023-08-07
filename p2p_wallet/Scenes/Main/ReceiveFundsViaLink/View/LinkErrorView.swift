@@ -1,18 +1,10 @@
-//
-//  LinkErrorView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.03.2023.
-//
-
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct LinkErrorView: View {
-    
     let model: Model
     let okayClicked: () -> Void
-    
+
     var body: some View {
         VStack {
             Spacer()

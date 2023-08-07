@@ -1,15 +1,14 @@
 import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
-
     // MARK: - Properties
 
     private var useCase: MockStrigaUseCase
     private let mockUserId: String
     private let mockKYCToken: String
-    
+
     // MARK: - Initializer
-    
+
     public init(
         useCase: MockStrigaUseCase,
         mockUserId: String,
@@ -19,22 +18,22 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         self.mockUserId = mockUserId
         self.mockKYCToken = mockKYCToken
     }
-    
+
     // MARK: - Methods
-    
-    public func getKYCStatus(userId: String) async throws -> StrigaKYC {
+
+    public func getKYCStatus(userId _: String) async throws -> StrigaKYC {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        
+
         let mobileVerified: Bool
-        
+
         switch useCase {
         case .unregisteredUser, .registeredUserWithUnverifiedOTP:
             mobileVerified = false
         case .registeredUserWithoutKYC, .registeredAndVerifiedUser:
             mobileVerified = true
         }
-        
+
         // return value
         switch useCase {
         case .unregisteredUser, .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC:
@@ -43,33 +42,40 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             return .init(status: .approved, mobileVerified: mobileVerified)
         }
     }
-    
-    public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
+
+    public func getUserDetails(userId _: String) async throws -> StrigaUserDetailsResponse {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        
+
         // return value
-        return .init(
+        return try .init(
             firstName: "Remote",
             lastName: "Provider",
             email: "remote.provider@mocking.com",
             mobile: .init(countryCode: "1", number: "5853042520"),
             dateOfBirth: .init(year: "1986", month: "12", day: "1"),
-            address: .init(addressLine1: "Remote street 12", addressLine2: nil, city: "Remote Provider", postalCode: "12345", state: "Remote Provider", country: "USA"),
+            address: .init(
+                addressLine1: "Remote street 12",
+                addressLine2: nil,
+                city: "Remote Provider",
+                postalCode: "12345",
+                state: "Remote Provider",
+                country: "USA"
+            ),
             occupation: nil,
             sourceOfFunds: nil,
             placeOfBirth: nil,
-            KYC: try await getKYCStatus(userId: mockUserId)
+            KYC: await getKYCStatus(userId: mockUserId)
         )
     }
-    
+
     public func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
         // Fake network request
         try await Task.sleep(nanoseconds: 2_000_000_000)
-        
+
         // return value
         useCase = .registeredUserWithUnverifiedOTP
-        
+
         // return value
         return .init(
             userId: mockUserId,
@@ -79,30 +85,30 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             )
         )
     }
-    
-    public func verifyMobileNumber(userId: String, verificationCode: String) async throws {
+
+    public func verifyMobileNumber(userId _: String, verificationCode _: String) async throws {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        
+
         // all goods
         // return value
         useCase = .registeredUserWithoutKYC
     }
-    
+
     var invokedResendSMS = false
     var invokedResendSMSCount = 0
     var invokedResendSMSParameters: (userId: String, Void)?
     var invokedResendSMSParametersList = [(userId: String, Void)]()
-    
-    public func resendSMS(userId: String) async throws {
+
+    public func resendSMS(userId _: String) async throws {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         // all goods
     }
-    
-    public func getKYCToken(userId: String) async throws -> String {
+
+    public func getKYCToken(userId _: String) async throws -> String {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        
+
         // return value
         switch useCase {
         case .unregisteredUser, .registeredUserWithUnverifiedOTP, .registeredAndVerifiedUser:
@@ -111,24 +117,36 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             return mockKYCToken
         }
     }
-    
-    public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {
-        fatalError("Implementing")
-    }
-    
-    public func enrichAccount<T>(userId: String, accountId: String) async throws -> T where T : Decodable {
+
+    public func getAllWalletsByUser(userId _: String, startDate _: Date, endDate _: Date,
+                                    page _: Int) async throws -> StrigaGetAllWalletsResponse
+    {
         fatalError("Implementing")
     }
 
-    public func initiateOnChainWalletSend(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String, accountCreation: Bool) async throws -> StrigaWalletSendResponse {
+    public func enrichAccount<T>(userId _: String, accountId _: String) async throws -> T where T: Decodable {
         fatalError("Implementing")
     }
 
-    public func transactionResendOTP(userId: String, challengeId: String) async throws -> StrigaTransactionResendOTPResponse {
+    public func initiateOnChainWalletSend(
+        userId _: String,
+        sourceAccountId _: String,
+        whitelistedAddressId _: String,
+        amount _: String,
+        accountCreation _: Bool
+    ) async throws -> StrigaWalletSendResponse {
         fatalError("Implementing")
     }
 
-    public func transactionConfirmOTP(userId: String, challengeId: String, code: String, ip: String) async throws -> StrigaTransactionConfirmOTPResponse {
+    public func transactionResendOTP(userId _: String,
+                                     challengeId _: String) async throws -> StrigaTransactionResendOTPResponse
+    {
+        fatalError("Implementing")
+    }
+
+    public func transactionConfirmOTP(userId _: String, challengeId _: String, code _: String,
+                                      ip _: String) async throws -> StrigaTransactionConfirmOTPResponse
+    {
         fatalError("Implementing")
     }
 
@@ -136,7 +154,12 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         fatalError("Implementing")
     }
 
-    public func initiateOnchainFeeEstimate(userId: String, sourceAccountId: String, whitelistedAddressId: String, amount: String) async throws -> FeeEstimateResponse {
+    public func initiateOnchainFeeEstimate(
+        userId _: String,
+        sourceAccountId _: String,
+        whitelistedAddressId _: String,
+        amount _: String
+    ) async throws -> FeeEstimateResponse {
         FeeEstimateResponse(
             totalFee: "909237719334000",
             networkFee: "909237719334000",
@@ -149,36 +172,53 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     }
 
     public func getWhitelistedUserDestinations(
-        userId: String,
-        currency: String?,
-        label: String?,
-        page: String?
+        userId _: String,
+        currency _: String?,
+        label _: String?,
+        page _: String?
     ) async throws -> StrigaWhitelistAddressesResponse {
         fatalError()
     }
 
     public func whitelistDestinationAddress(
-        userId: String,
-        address: String,
-        currency: String,
-        network: String,
-        label: String?
+        userId _: String,
+        address _: String,
+        currency _: String,
+        network _: String,
+        label _: String?
     ) async throws -> StrigaWhitelistAddressResponse {
         fatalError()
     }
 
     public func exchangeRates() async throws -> StrigaExchangeRatesResponse {
-        return ["USDCEUR": StrigaExchangeRates(price: "0.9", buy: "0.9", sell: "0.88", timestamp: Int(Date().timeIntervalSince1970), currency: "Euros")]
+        ["USDCEUR": StrigaExchangeRates(price: "0.9", buy: "0.9", sell: "0.88",
+                                        timestamp: Int(Date().timeIntervalSince1970), currency: "Euros")]
     }
 
-    public func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse {
+    public func getAccountStatement(
+        userId _: String,
+        accountId _: String,
+        startDate _: Date,
+        endDate _: Date,
+        page _: Int
+    ) async throws -> StrigaGetAccountStatementResponse {
         StrigaGetAccountStatementResponse(transactions: [
-            StrigaGetAccountStatementResponse.Transaction(id: "a25e0dd1-8f4f-441d-a671-2f7d1e9738e6", txType: "SEPA_PAYIN_COMPLETED", bankingSenderBic: "BUKBGB22", bankingSenderIban: "GB29NWBK60161331926819")
+            StrigaGetAccountStatementResponse.Transaction(
+                id: "a25e0dd1-8f4f-441d-a671-2f7d1e9738e6",
+                txType: "SEPA_PAYIN_COMPLETED",
+                bankingSenderBic: "BUKBGB22",
+                bankingSenderIban: "GB29NWBK60161331926819"
+            ),
         ])
     }
 
-    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> StrigaInitiateSEPAPaymentResponse {
+    public func initiateSEPAPayment(
+        userId _: String,
+        accountId _: String,
+        amount _: String,
+        iban _: String,
+        bic _: String
+    ) async throws -> StrigaInitiateSEPAPaymentResponse {
         fatalError()
     }
-
 }

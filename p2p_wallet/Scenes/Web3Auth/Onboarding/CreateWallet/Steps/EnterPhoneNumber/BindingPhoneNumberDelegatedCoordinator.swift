@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import AnalyticsManager
 import Combine
 import CountriesAPI
@@ -168,10 +164,15 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
     func selectCountry(chosen: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
-        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(title: L10n.selectYourCountry, controller: rootViewController, service: ChoosePhoneCodeService(), chosen: PhoneCodeItem(country: chosen))
+        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(
+            title: L10n.selectYourCountry,
+            controller: rootViewController,
+            service: ChoosePhoneCodeService(),
+            chosen: PhoneCodeItem(country: chosen)
+        )
         let result = try await coordinator.start().async()
         switch result {
-        case .item(let item):
+        case let .item(item):
             guard let item = item as? PhoneCodeItem? else { return nil }
             return item?.country
         case .cancel:

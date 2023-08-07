@@ -15,15 +15,17 @@ struct StrigaRegistrationHardErrorView: View {
                     NewTextButton(
                         title: L10n.openMyBlank,
                         style: .inverted,
-                        expandable: true) {
-                            onAction()
-                        }
+                        expandable: true
+                    ) {
+                        onAction()
+                    }
                     NewTextButton(
                         title: L10n.support,
                         style: .primary,
-                        expandable: true) {
-                            onSupport()
-                        }
+                        expandable: true
+                    ) {
+                        onSupport()
+                    }
                 }
             }
         )

@@ -17,7 +17,7 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
     init(account: EthereumAccount, presentation: SmartCoordinatorPresentation) {
         self.account = account
         super.init(presentation: presentation)
-        
+
         analyticsManager.log(event: .claimBridgesScreenOpen(from: "main"))
     }
 

@@ -1,13 +1,6 @@
-//
-//  NotificationRepository.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.04.2022.
-//
-
 import Foundation
-import Resolver
 import KeyAppNetworking
+import Resolver
 
 protocol NotificationRepository {
     typealias DeviceTokenResponse = JSONRPCResponseDto<DeviceTokenResponseDto>
@@ -18,12 +11,12 @@ protocol NotificationRepository {
 
 final class NotificationRepositoryImpl: NotificationRepository {
     private let httpClient: HTTPClient
-    
+
     init() {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        self.httpClient = .init(
+        httpClient = .init(
             decoder: JSONRPCDecoder(jsonDecoder: jsonDecoder)
         )
     }

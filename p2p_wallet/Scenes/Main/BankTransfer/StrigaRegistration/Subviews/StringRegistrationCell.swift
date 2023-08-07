@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 enum StrigaFormTextFieldStatus: Equatable {
     case valid
@@ -42,7 +42,7 @@ struct StrigaFormCell<Content: View>: View {
                         .stroke(status == .valid ? .clear : Color(asset: Asset.Colors.rose), lineWidth: 1)
                 )
 
-            if case .invalid(let error) = status {
+            if case let .invalid(error) = status {
                 Text(error)
                     .apply(style: .label1)
                     .foregroundColor(Color(asset: Asset.Colors.rose))

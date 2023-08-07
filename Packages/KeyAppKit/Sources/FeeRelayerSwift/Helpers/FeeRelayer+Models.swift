@@ -1,6 +1,6 @@
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 public protocol FeeRelayerRelaySwapType: Encodable {}
 
@@ -31,7 +31,7 @@ public struct FeeLimitForAuthorityResponse: Codable {
         let maxTokenAccountCreationAmount: UInt64
         let maxTokenAccountCreationCount: Int
         let period: Period
-    
+
         enum CodingKeys: String, CodingKey {
             case useFreeFee = "use_free_fee"
             case maxFeeAmount = "max_fee_amount"
@@ -50,7 +50,7 @@ public struct FeeLimitForAuthorityResponse: Codable {
         let totalFeeAmount: UInt64
         let feeCount: Int
         let rentCount: Int
-        
+
         enum CodingKeys: String, CodingKey {
             case totalFeeAmount = "total_fee_amount"
             case feeCount = "fee_count"
@@ -60,27 +60,28 @@ public struct FeeLimitForAuthorityResponse: Codable {
 }
 
 // MARK: - Top up
+
 public struct TopUpWithSwapParams: Encodable {
     let userSourceTokenAccount: PublicKey
     let sourceTokenMint: PublicKey
     let userAuthority: PublicKey
     let topUpSwap: SwapData
-    let feeAmount:  UInt64
+    let feeAmount: UInt64
     let signatures: SwapTransactionSignatures
-    let blockhash:  String
+    let blockhash: String
     let statsInfo: StatsInfo
-    
+
     enum CodingKeys: String, CodingKey {
         case userSourceTokenAccount = "user_source_token_account_pubkey"
         case sourceTokenMint = "source_token_mint_pubkey"
         case userAuthority = "user_authority_pubkey"
         case topUpSwap = "top_up_swap"
         case feeAmount = "fee_amount"
-        case signatures = "signatures"
-        case blockhash = "blockhash"
+        case signatures
+        case blockhash
         case statsInfo = "info"
     }
-    
+
     init(
         userSourceTokenAccount: PublicKey,
         sourceTokenMint: PublicKey,
@@ -93,24 +94,25 @@ public struct TopUpWithSwapParams: Encodable {
         buildNumber: String?,
         environment: StatsInfo.Environment
     ) {
-            self.userSourceTokenAccount = userSourceTokenAccount
-            self.sourceTokenMint = sourceTokenMint
-            self.userAuthority = userAuthority
-            self.topUpSwap = topUpSwap
-            self.feeAmount = feeAmount
-            self.signatures = signatures
-            self.blockhash = blockhash
-            self.statsInfo = .init(
-                operationType: .topUp,
-                deviceType: deviceType,
-                currency: sourceTokenMint.base58EncodedString,
-                build: buildNumber,
-                environment: environment
-            )
-        }
+        self.userSourceTokenAccount = userSourceTokenAccount
+        self.sourceTokenMint = sourceTokenMint
+        self.userAuthority = userAuthority
+        self.topUpSwap = topUpSwap
+        self.feeAmount = feeAmount
+        self.signatures = signatures
+        self.blockhash = blockhash
+        statsInfo = .init(
+            operationType: .topUp,
+            deviceType: deviceType,
+            currency: sourceTokenMint.base58EncodedString,
+            build: buildNumber,
+            environment: environment
+        )
+    }
 }
 
 // MARK: - Swap
+
 public struct SwapParams: Encodable {
     let userSourceTokenAccountPubkey: String
     let userDestinationPubkey: String
@@ -122,7 +124,7 @@ public struct SwapParams: Encodable {
     let feeAmount: UInt64
     let signatures: SwapTransactionSignatures
     let blockhash: String
-    
+
     enum CodingKeys: String, CodingKey {
         case userSourceTokenAccountPubkey = "user_source_token_account_pubkey"
         case userDestinationPubkey = "user_destination_pubkey"
@@ -132,39 +134,41 @@ public struct SwapParams: Encodable {
         case userAuthorityPubkey = "user_authority_pubkey"
         case userSwap = "user_swap"
         case feeAmount = "fee_amount"
-        case signatures = "signatures"
-        case blockhash = "blockhash"
+        case signatures
+        case blockhash
     }
 }
 
 // MARK: - TransferParam
+
 public struct TransferParam: Codable {
     let senderTokenAccountPubkey, recipientPubkey, tokenMintPubkey, authorityPubkey: String
     let amount, feeAmount: UInt64
     let decimals: UInt8
     let authoritySignature, blockhash: String
-    
+
     enum CodingKeys: String, CodingKey {
         case senderTokenAccountPubkey = "sender_token_account_pubkey"
         case recipientPubkey = "recipient_pubkey"
         case tokenMintPubkey = "token_mint_pubkey"
         case authorityPubkey = "authority_pubkey"
-        case amount = "amount"
-        case decimals = "decimals"
+        case amount
+        case decimals
         case feeAmount = "fee_amount"
         case authoritySignature = "authority_signature"
-        case blockhash = "blockhash"
+        case blockhash
     }
 }
 
 // MARK: - RelayTransactionParam
+
 public struct RelayTransactionParam: Codable {
     let instructions: [RequestInstruction]
     let signatures: [String: String]
     let pubkeys: [String]
     let blockhash: String
     let statsInfo: StatsInfo
-    
+
     enum CodingKeys: String, CodingKey {
         case instructions
         case signatures
@@ -172,27 +176,27 @@ public struct RelayTransactionParam: Codable {
         case blockhash
         case statsInfo = "info"
     }
-    
+
     public init(preparedTransaction: PreparedTransaction, statsInfo: StatsInfo) throws {
         guard let recentBlockhash = preparedTransaction.transaction.recentBlockhash
-        else {throw FeeRelayerError.unknown}
-        
+        else { throw FeeRelayerError.unknown }
+
         let message = try preparedTransaction.transaction.compileMessage()
-        pubkeys = message.accountKeys.map {$0.base58EncodedString}
+        pubkeys = message.accountKeys.map(\.base58EncodedString)
         blockhash = recentBlockhash
-        instructions = message.instructions.enumerated().map {index, compiledInstruction -> RequestInstruction in
+        instructions = message.instructions.enumerated().map { index, compiledInstruction -> RequestInstruction in
             let accounts: [RequestAccountMeta] = compiledInstruction.accounts.map { account in
                 let pubkey = message.accountKeys[account]
                 let meta = preparedTransaction.transaction.instructions[index].keys
-                    .first(where: {$0.publicKey == pubkey})
+                    .first(where: { $0.publicKey == pubkey })
                 return .init(
                     pubkeyIndex: UInt8(account),
                     isSigner: meta?.isSigner ?? message.isAccountSigner(index: account),
                     isWritable: meta?.isWritable ?? message.isAccountWritable(index: account)
                 )
             }
-            
-            return.init(
+
+            return .init(
                 programIndex: compiledInstruction.programIdIndex,
                 accounts: accounts,
                 data: compiledInstruction.data
@@ -217,7 +221,7 @@ public struct RequestInstruction: Codable {
     let programIndex: UInt8
     let accounts: [RequestAccountMeta]
     let data: [UInt8]
-    
+
     enum CodingKeys: String, CodingKey {
         case programIndex = "program_id"
         case accounts
@@ -229,7 +233,7 @@ public struct RequestAccountMeta: Codable {
     let pubkeyIndex: UInt8
     let isSigner: Bool
     let isWritable: Bool
-    
+
     enum CodingKeys: String, CodingKey {
         case pubkeyIndex = "pubkey"
         case isSigner = "is_signer"
@@ -238,20 +242,21 @@ public struct RequestAccountMeta: Codable {
 }
 
 // MARK: - Swap data
+
 public struct SwapData: Encodable {
     public init(_ swap: FeeRelayerRelaySwapType) {
         switch swap {
         case let swap as DirectSwapData:
-            self.Spl = swap
-            self.SplTransitive = nil
+            Spl = swap
+            SplTransitive = nil
         case let swap as TransitiveSwapData:
-            self.Spl = nil
-            self.SplTransitive = swap
+            Spl = nil
+            SplTransitive = swap
         default:
             fatalError("unsupported swap type")
         }
     }
-    
+
     public let Spl: DirectSwapData?
     public let SplTransitive: TransitiveSwapData?
 }
@@ -261,7 +266,7 @@ public struct TransitiveSwapData: FeeRelayerRelaySwapType, Equatable {
     let to: DirectSwapData
     let transitTokenMintPubkey: String
     let needsCreateTransitTokenAccount: Bool
-    
+
     public init(
         from: DirectSwapData,
         to: DirectSwapData,
@@ -273,7 +278,7 @@ public struct TransitiveSwapData: FeeRelayerRelaySwapType, Equatable {
         self.transitTokenMintPubkey = transitTokenMintPubkey
         self.needsCreateTransitTokenAccount = needsCreateTransitTokenAccount
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case from, to
         case transitTokenMintPubkey = "transit_token_mint_pubkey"
@@ -292,8 +297,19 @@ public struct DirectSwapData: FeeRelayerRelaySwapType, Equatable {
     let poolFeeAccountPubkey: String
     let amountIn: UInt64
     let minimumAmountOut: UInt64
-    
-    public init(programId: String, accountPubkey: String, authorityPubkey: String, transferAuthorityPubkey: String, sourcePubkey: String, destinationPubkey: String, poolTokenMintPubkey: String, poolFeeAccountPubkey: String, amountIn: UInt64, minimumAmountOut: UInt64) {
+
+    public init(
+        programId: String,
+        accountPubkey: String,
+        authorityPubkey: String,
+        transferAuthorityPubkey: String,
+        sourcePubkey: String,
+        destinationPubkey: String,
+        poolTokenMintPubkey: String,
+        poolFeeAccountPubkey: String,
+        amountIn: UInt64,
+        minimumAmountOut: UInt64
+    ) {
         self.programId = programId
         self.accountPubkey = accountPubkey
         self.authorityPubkey = authorityPubkey
@@ -305,7 +321,7 @@ public struct DirectSwapData: FeeRelayerRelaySwapType, Equatable {
         self.amountIn = amountIn
         self.minimumAmountOut = minimumAmountOut
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case programId = "program_id"
         case accountPubkey = "account_pubkey"
@@ -323,12 +339,12 @@ public struct DirectSwapData: FeeRelayerRelaySwapType, Equatable {
 public struct SwapTransactionSignatures: Encodable {
     let userAuthoritySignature: String
     let transferAuthoritySignature: String?
-    
+
     public init(userAuthoritySignature: String, transferAuthoritySignature: String?) {
         self.userAuthoritySignature = userAuthoritySignature
         self.transferAuthoritySignature = transferAuthoritySignature
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case userAuthoritySignature = "user_authority_signature"
         case transferAuthoritySignature = "transfer_authority_signature"
@@ -336,6 +352,7 @@ public struct SwapTransactionSignatures: Encodable {
 }
 
 // MARK: - Others
+
 public enum RelayAccountStatus: Equatable, Codable, CustomStringConvertible {
     case notYetCreated
     case created(balance: UInt64)
@@ -343,16 +360,16 @@ public enum RelayAccountStatus: Equatable, Codable, CustomStringConvertible {
         switch self {
         case .notYetCreated:
             return "Relay account is not yet created"
-        case .created(let balance):
+        case let .created(balance):
             return "Relay account is created, balance: \(balance)"
         }
     }
-    
+
     public var balance: UInt64? {
         switch self {
         case .notYetCreated:
             return nil
-        case .created(let balance):
+        case let .created(balance):
             return balance
         }
     }
@@ -377,7 +394,7 @@ public struct TransferSolParams: Encodable {
     var signature: String
     var blockhash: String
     let statsInfo: StatsInfo
-    
+
     public init(
         sender: String,
         recipient: String,
@@ -393,7 +410,7 @@ public struct TransferSolParams: Encodable {
         self.amount = amount
         self.signature = signature
         self.blockhash = blockhash
-        self.statsInfo = .init(
+        statsInfo = .init(
             operationType: .transfer,
             deviceType: deviceType,
             currency: "SOL",
@@ -401,18 +418,19 @@ public struct TransferSolParams: Encodable {
             environment: environment
         )
     }
-    
+
     enum CodingKeys: String, CodingKey {
-        case sender     =   "sender_pubkey"
-        case recipient  =   "recipient_pubkey"
-        case amount     =   "lamports"
+        case sender = "sender_pubkey"
+        case recipient = "recipient_pubkey"
+        case amount = "lamports"
         case signature
         case blockhash
-        case statsInfo  =   "info"
+        case statsInfo = "info"
     }
 }
 
 // MARK: - Transfer SPL Tokens
+
 public struct TransferSPLTokenParams: Encodable {
     let sender: String
     let recipient: String
@@ -423,7 +441,7 @@ public struct TransferSPLTokenParams: Encodable {
     var signature: String
     var blockhash: String
     let statsInfo: StatsInfo
-    
+
     public init(
         sender: String,
         recipient: String,
@@ -445,7 +463,7 @@ public struct TransferSPLTokenParams: Encodable {
         self.decimals = decimals
         self.signature = signature
         self.blockhash = blockhash
-        self.statsInfo = .init(
+        statsInfo = .init(
             operationType: .transfer,
             deviceType: deviceType,
             currency: mintAddress,
@@ -453,16 +471,16 @@ public struct TransferSPLTokenParams: Encodable {
             environment: environment
         )
     }
-    
+
     enum CodingKeys: String, CodingKey {
-        case sender         =   "sender_token_account_pubkey"
-        case recipient      =   "recipient_pubkey"
-        case mintAddress    =   "token_mint_pubkey"
-        case authority      =   "authority_pubkey"
+        case sender = "sender_token_account_pubkey"
+        case recipient = "recipient_pubkey"
+        case mintAddress = "token_mint_pubkey"
+        case authority = "authority_pubkey"
         case amount
         case decimals
         case signature
         case blockhash
-        case statsInfo      =   "info"
+        case statsInfo = "info"
     }
 }

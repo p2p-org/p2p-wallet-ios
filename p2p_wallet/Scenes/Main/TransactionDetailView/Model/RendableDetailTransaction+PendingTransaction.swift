@@ -389,7 +389,8 @@ struct RenderableDetailPendingTransaction: RenderableTransactionDetail {
         switch trx.status {
         case .finalized:
             if trx.rawTransaction as? any StrigaWithdrawTransactionType != nil ||
-               trx.rawTransaction as? any StrigaClaimTransactionType != nil {
+                trx.rawTransaction as? any StrigaClaimTransactionType != nil
+            {
                 return []
             }
             return [.share, .explorer]

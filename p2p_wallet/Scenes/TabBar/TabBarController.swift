@@ -231,7 +231,7 @@ final class TabBarController: UITabBarController {
         standardAppearance.stackedItemPositioning = .automatic
         UITabBar.appearance().standardAppearance = standardAppearance
         UITabBar.appearance().scrollEdgeAppearance = standardAppearance
-        
+
         tabBar.isTranslucent = true
         tabBar.backgroundColor = .clear
     }

@@ -1,13 +1,6 @@
-//
-//  TransactionProcessView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.03.2023.
-//
-
 import Foundation
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct TransactionProcessView: View {
     @Binding private var state: TransactionProcessView.Status
@@ -23,8 +16,8 @@ struct TransactionProcessView: View {
 
     init(state: Binding<TransactionProcessView.Status>, errorMessageTapAction: @escaping () -> Void) {
         _state = state
-        self.currentAppearance = Appearance(state: state.wrappedValue)
-        self.previousAppearance = nil
+        currentAppearance = Appearance(state: state.wrappedValue)
+        previousAppearance = nil
         self.errorMessageTapAction = errorMessageTapAction
     }
 
@@ -111,7 +104,7 @@ extension TransactionProcessView {
         let backgroundColor: Color
         let circleColor: Color
         let imageColor: Color
-        
+
         init(state: TransactionProcessView.Status) {
             switch state {
             case .loading:

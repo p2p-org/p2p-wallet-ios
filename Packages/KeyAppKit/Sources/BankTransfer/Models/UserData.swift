@@ -4,13 +4,13 @@ public struct UserData: Codable {
     public var userId: String?
     public var mobileVerified: Bool
     public var kycStatus: StrigaKYCStatus
-    
+
     public var mobileNumber: String?
 
     public var wallet: UserWallet?
 
     // MARK: - Initializer
-    
+
     /// Private initializer for `UserData`
     private init(
         userId: String? = nil,
@@ -27,7 +27,7 @@ public struct UserData: Codable {
         self.mobileNumber = mobileNumber
         self.wallet = wallet
     }
-    
+
     public static var empty: Self {
         .init(
             userId: nil,
@@ -37,7 +37,7 @@ public struct UserData: Codable {
             wallet: nil
         )
     }
-    
+
     public func updated(
         userId: String? = nil,
         mobileVerified: Bool? = nil,
