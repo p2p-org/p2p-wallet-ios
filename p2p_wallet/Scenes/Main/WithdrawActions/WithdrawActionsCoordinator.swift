@@ -5,13 +5,11 @@ import Resolver
 import SwiftUI
 
 final class WithdrawActionsCoordinator: Coordinator<WithdrawActionsCoordinator.Result> {
-    private var viewController: UIViewController!
+    private var viewController: UIViewController
 
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(
-        viewController: UIViewController? = nil
-    ) {
+    init(viewController: UIViewController) {
         self.viewController = viewController
     }
 
@@ -20,7 +18,7 @@ final class WithdrawActionsCoordinator: Coordinator<WithdrawActionsCoordinator.R
         let controller = BottomSheetController(
             rootView: WithdrawActionsView(viewModel: viewModel)
         )
-        viewController?.present(controller, animated: true)
+        viewController.present(controller, animated: true)
 
         return Publishers.Merge(
             // Cancel event
