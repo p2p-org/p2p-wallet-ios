@@ -7,20 +7,20 @@ public extension SolanaToken {
     }
 }
 
-public struct KeyAppTokenExtension: Codable, Equatable {
+public struct KeyAppTokenExtension: Codable, Hashable {
     public let ruleOfProcessingTokenPriceWS: RuleOfProcessingTokenPriceWS?
     public let isPositionOnWS: Bool?
     public let isTokenCellVisibleOnWS: Bool?
-    public let percentDifferenceToShowByPriceOnWS: Int?
+    public let percentDifferenceToShowByPriceOnWS: Double?
     public let calculationOfFinalBalanceOnWS: Bool?
     public let ruleOfFractionalPartOnWS: RuleOfFractionalPartOnWS?
     public let canBeHidden: Bool?
 
-    public enum RuleOfProcessingTokenPriceWS: String, Codable, Equatable {
+    public enum RuleOfProcessingTokenPriceWS: String, Codable, Hashable {
         case byCountOfTokensValue
     }
 
-    public enum RuleOfFractionalPartOnWS: String, Codable, Equatable {
+    public enum RuleOfFractionalPartOnWS: String, Codable, Hashable {
         case droppingAfterHundredthPart
     }
 
@@ -28,7 +28,7 @@ public struct KeyAppTokenExtension: Codable, Equatable {
         isPositionOnWS = data["isPositionOnWS"]?.boolValue
         isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue
         calculationOfFinalBalanceOnWS = data["calculationOfFinalBalanceOnWS"]?.boolValue
-        percentDifferenceToShowByPriceOnWS = data["percentDifferenceToShowByPriceOnWS"]?.intValue
+        percentDifferenceToShowByPriceOnWS = data["percentDifferenceToShowByPriceOnWS"]?.doubleValue
         canBeHidden = data["canBeHidden"]?.boolValue
 
         if data["ruleOfProcessingTokenPriceWS"]?.stringValue == "byCountOfTokensValue" {
@@ -42,5 +42,23 @@ public struct KeyAppTokenExtension: Codable, Equatable {
         } else {
             ruleOfFractionalPartOnWS = nil
         }
+    }
+
+    public init(
+        ruleOfProcessingTokenPriceWS: KeyAppTokenExtension.RuleOfProcessingTokenPriceWS? = nil,
+        isPositionOnWS: Bool? = nil,
+        isTokenCellVisibleOnWS: Bool? = nil,
+        percentDifferenceToShowByPriceOnWS: Double? = nil,
+        calculationOfFinalBalanceOnWS: Bool? = nil,
+        ruleOfFractionalPartOnWS: KeyAppTokenExtension.RuleOfFractionalPartOnWS? = nil,
+        canBeHidden: Bool? = nil
+    ) {
+        self.ruleOfProcessingTokenPriceWS = ruleOfProcessingTokenPriceWS
+        self.isPositionOnWS = isPositionOnWS
+        self.isTokenCellVisibleOnWS = isTokenCellVisibleOnWS
+        self.percentDifferenceToShowByPriceOnWS = percentDifferenceToShowByPriceOnWS
+        self.calculationOfFinalBalanceOnWS = calculationOfFinalBalanceOnWS
+        self.ruleOfFractionalPartOnWS = ruleOfFractionalPartOnWS
+        self.canBeHidden = canBeHidden
     }
 }
