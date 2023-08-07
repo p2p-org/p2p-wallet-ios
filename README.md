@@ -111,6 +111,8 @@ GIT_AUTHORIZATION=""
 MATCH_PASSWORD=""
 IS_CI=false
 
+XCCONFIG_URL=""
+
 ```
 
 ## Code style
