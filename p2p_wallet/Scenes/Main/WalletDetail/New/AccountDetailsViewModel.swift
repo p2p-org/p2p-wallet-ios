@@ -93,7 +93,9 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 SolanaToken.usdt.mintAddress: Wormhole.SupportedToken.usdt,
             ]
 
-            if let supportedWormholeToken = supportedTokens[solanaAccount.token.mintAddress], !Defaults.ethBannerShouldHide {
+            if let supportedWormholeToken = supportedTokens[solanaAccount.token.mintAddress],
+               !Defaults.ethBannerShouldHide
+            {
                 banner = .init(
                     title: L10n.toSendToEthereumNetworkYouHaveToSwapItTo(
                         solanaAccount.token.symbol,

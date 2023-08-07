@@ -1,8 +1,7 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct Spinner: View {
-
     let color: Color
     let activePartColor: Color
 

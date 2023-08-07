@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import AnalyticsManager
 import Combine
 import CountriesAPI
@@ -73,10 +69,15 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
     private func selectCountry(chosen: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
-        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(title: L10n.selectYourCountry, controller: rootViewController, service: ChoosePhoneCodeService(), chosen: PhoneCodeItem(country: chosen))
+        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(
+            title: L10n.selectYourCountry,
+            controller: rootViewController,
+            service: ChoosePhoneCodeService(),
+            chosen: PhoneCodeItem(country: chosen)
+        )
         let result = try await coordinator.start().async()
         switch result {
-        case .item(let item):
+        case let .item(item):
             guard let item = item as? PhoneCodeItem? else { return nil }
             return item?.country
         case .cancel:
@@ -306,7 +307,8 @@ private extension RestoreCustomDelegatedCoordinator {
             }, help: nil,
             customActions: {
                 TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
-                               size: .large) { [stateMachine] in
+                               size: .large)
+                { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
                 }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
             })
@@ -317,7 +319,7 @@ private extension RestoreCustomDelegatedCoordinator {
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
         let title: String
         let subtitle: (_ value: Any) -> String
-        
+
         switch reason {
         case .blockEnterOTP:
             title = L10n.confirmationCodeLimitHit
@@ -329,7 +331,7 @@ private extension RestoreCustomDelegatedCoordinator {
             title = L10n.confirmationCodeLimitHit
             subtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
         }
-        
+
         let view = OnboardingBlockScreen(
             primaryButtonAction: L10n.startingScreen,
             contentTitle: title,

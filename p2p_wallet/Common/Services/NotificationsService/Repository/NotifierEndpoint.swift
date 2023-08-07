@@ -1,10 +1,3 @@
-//
-//  NotifierEndpoint.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.04.2022.
-//
-
 import Foundation
 import KeyAppNetworking
 
@@ -19,7 +12,7 @@ extension NotifierEndpoint: HTTPEndpoint {
     var baseURL: String {
         GlobalAppState.shared.pushServiceEndpoint
     }
-    
+
     var header: [String: String] {
         [
             "Content-Type": "application/json",
@@ -27,7 +20,7 @@ extension NotifierEndpoint: HTTPEndpoint {
             "CHANNEL_ID": "P2PWALLET_MOBILE",
         ]
     }
-    
+
     var path: String {
         ""
     }

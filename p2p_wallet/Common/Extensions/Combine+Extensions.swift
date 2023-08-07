@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 
@@ -36,7 +32,8 @@ extension AnyPublisher {
 extension Publisher {
     typealias Pairwise<T> = (previous: T?, current: T)
 
-    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the previous element is optional.
+    /// Includes the current element as well as the previous element from the upstream publisher in a tuple where the
+    /// previous element is optional.
     /// The first time the upstream publisher emits an element, the previous element will be `nil`.
     ///
     /// ```
@@ -61,21 +58,19 @@ extension Publisher {
     }
 }
 
-
 // MARK: - deallocatedPublisher
 
 var deinitCallbackKey = "deallocatedPublisher"
 
 extension NSObject {
     func deallocatedPublisher() -> AnyPublisher<Void, Never> {
-        self.synchronized {
+        synchronized {
             NSObject.deinitCallback(forObject: self)
         }
     }
 
-    static fileprivate func deinitCallback(forObject object: NSObject) -> AnyPublisher<Void, Never> {
-        if let deinitCallback = objc_getAssociatedObject(object, &deinitCallbackKey) as? DeinitCallback
-        {
+    fileprivate static func deinitCallback(forObject object: NSObject) -> AnyPublisher<Void, Never> {
+        if let deinitCallback = objc_getAssociatedObject(object, &deinitCallbackKey) as? DeinitCallback {
             return deinitCallback.subject.eraseToAnyPublisher()
         }
         let rem = DeinitCallback()
@@ -85,7 +80,7 @@ extension NSObject {
 }
 
 extension NSObject {
-    func synchronized<T>( _ action: () -> T) -> T {
+    func synchronized<T>(_ action: () -> T) -> T {
         objc_sync_enter(self)
         let result = action()
         objc_sync_exit(self)
@@ -93,7 +88,7 @@ extension NSObject {
     }
 }
 
-@objc fileprivate class DeinitCallback: NSObject {
+@objc private class DeinitCallback: NSObject {
     let subject = PassthroughSubject<Void, Never>()
 
     override init() {}

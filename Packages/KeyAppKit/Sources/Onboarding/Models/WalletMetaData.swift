@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import KeyAppKitCore
 
@@ -179,7 +175,7 @@ public struct WalletMetaData: Codable, Equatable {
     public func encrypt(seedPhrase: String) throws -> String {
         let metaDataJson = try serialize()
         let encryptedMetadataRaw = try Crypto.encryptMetadata(seedPhrase: seedPhrase, data: metaDataJson)
-        guard let result = String(data: try JSONEncoder().encode(encryptedMetadataRaw), encoding: .utf8) else {
+        guard let result = try String(data: JSONEncoder().encode(encryptedMetadataRaw), encoding: .utf8) else {
             throw OnboardingError.encodingError("metadata")
         }
         return result

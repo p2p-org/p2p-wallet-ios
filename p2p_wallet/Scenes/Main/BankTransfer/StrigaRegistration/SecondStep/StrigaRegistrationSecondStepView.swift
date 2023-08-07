@@ -1,9 +1,9 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
-fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias Cell = StrigaFormCell
-fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
+private typealias TextField = StrigaRegistrationTextField
+private typealias Cell = StrigaFormCell
+private typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationSecondStepView: View {
     @ObservedObject private var viewModel: StrigaRegistrationSecondStepViewModel
@@ -32,7 +32,7 @@ struct StrigaRegistrationSecondStepView: View {
                     )
                     .padding(.bottom, 14)
                 }
-                    .padding(.horizontal, 16)
+                .padding(.horizontal, 16)
             }
         }
     }

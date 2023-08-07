@@ -1,9 +1,9 @@
 import BankTransfer
 import Combine
 import Foundation
+import Onboarding
 import Resolver
 import UIKit
-import Onboarding
 
 final class IBANDetailsInfoViewModel: BaseViewModel, ObservableObject {
     @Published var isChecked = false

@@ -1,7 +1,7 @@
 import Foundation
 import SolanaSwift
-@testable import FeeRelayerSwift
 import XCTest
+@testable import FeeRelayerSwift
 
 class RelayActionTests: XCTestCase {
     fileprivate var accountStorage: MockAccountStorage!
@@ -20,16 +20,12 @@ class RelayActionTests: XCTestCase {
 //
 //        }
 //
-        class MockSolanaAPIClient: MockSolanaAPIClientBase {
+        class MockSolanaAPIClient: MockSolanaAPIClientBase {}
 
-        }
+        class MockFeeRelayerAPIClient: MockFeeRelayerAPIClientBase {}
 
-        class MockFeeRelayerAPIClient: MockFeeRelayerAPIClientBase {
-
-        }
-        
         class CreateRenBTCFeeCalculator: FeeCalculator {
-            func calculateNetworkFee(transaction: Transaction) throws -> FeeAmount {
+            func calculateNetworkFee(transaction _: Transaction) throws -> FeeAmount {
                 .zero
             }
         }
@@ -43,13 +39,13 @@ class RelayActionTests: XCTestCase {
 //            deviceType: .iOS,
 //            buildNumber: "1.0.0"
 //        )
-        
+
 //        let solanaAPIClient = MockSolanaAPIClient()
 //        let feeRelayerAPIClient = MockFeeRelayerAPIClient()
-//        
+//
 //        // get properties
 //        let feePayer = try await feeRelayerAPIClient.getFeePayerPubkey()
-//        
+//
 //        // form transaction
 //        let blockchainClient = BlockchainClient(apiClient: solanaAPIClient)
 //        let preparedTransaction = try await blockchainClient.prepareTransaction(
@@ -68,8 +64,6 @@ class RelayActionTests: XCTestCase {
 //        XCTAssertEqual(preparedTransaction.expectedFee.total, .zero)
     }
 }
-
-
 
 //        let freeTransactionFeeLimit = FeeLimitForAuthorityResponse(
 //            authority: [],

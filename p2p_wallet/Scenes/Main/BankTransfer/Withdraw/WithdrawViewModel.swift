@@ -26,23 +26,25 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
     public var gatheringCompletedPublisher: AnyPublisher<(IBAN: String, BIC: String), Never> {
         gatheringCompletedSubject.eraseToAnyPublisher()
     }
+
     private let paymentInitiatedSubject = PassthroughSubject<String, Never>()
     public var paymentInitiatedPublisher: AnyPublisher<String, Never> {
         paymentInitiatedSubject.eraseToAnyPublisher()
     }
+
     private let strategy: WithdrawStrategy
 
     init(
         withdrawalInfo: StrigaWithdrawalInfo,
         strategy: WithdrawStrategy
-        
+
     ) {
         self.strategy = strategy
         super.init()
 
-        self.IBAN = withdrawalInfo.IBAN ?? ""
-        self.BIC = withdrawalInfo.BIC ?? ""
-        self.receiver = withdrawalInfo.receiver
+        IBAN = withdrawalInfo.IBAN ?? ""
+        BIC = withdrawalInfo.BIC ?? ""
+        receiver = withdrawalInfo.receiver
 
         Publishers.CombineLatest3($IBAN, $BIC, $actionHasBeenTapped)
             .drop(while: { _, _, actionHasBeenTapped in
@@ -51,13 +53,13 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             .map { [unowned self] iban, bic, _ in
                 [
                     WithdrawViewField.IBAN: checkIBAN(iban),
-                    WithdrawViewField.BIC: checkBIC(bic)
+                    WithdrawViewField.BIC: checkBIC(bic),
                 ]
             }
             .handleEvents(receiveOutput: { [unowned self] fields in
-                isDataValid = fields.values.filter({ status in
+                isDataValid = fields.values.filter { status in
                     status == .valid
-                }).count == fields.keys.count
+                }.count == fields.keys.count
                 actionTitle = isDataValid ? L10n.withdraw : L10n.checkYourData
             })
             .assignWeak(to: \.fieldsStatuses, on: self)
@@ -111,7 +113,9 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func initiateSEPAPayment(params: WithdrawConfirmationParameters, info: StrigaWithdrawalInfo) async -> String? {
+    private func initiateSEPAPayment(params: WithdrawConfirmationParameters,
+                                     info: StrigaWithdrawalInfo) async -> String?
+    {
         do {
             guard let userId = await bankTransferService.value.repository.getUserId() else {
                 throw BankTransferError.missingUserId
@@ -132,7 +136,7 @@ class WithdrawViewModel: BaseViewModel, ObservableObject {
             return nil
         }
     }
-    
+
     private func checkIBAN(_ iban: String) -> FieldStatus {
         let filteredIBAN = iban.filterIBAN()
         if filteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -156,7 +160,7 @@ private extension String {
         let symbols: [Character] = Array(self)
         let swapped = symbols.dropFirst(4) + symbols.prefix(4)
 
-        let mod: Int = swapped.reduce(0) { (previousMod, char) in
+        let mod: Int = swapped.reduce(0) { previousMod, char in
             let value = Int(String(char), radix: 36)! // "0" => 0, "A" => 10, "Z" => 35
             let factor = value < 10 ? 10 : 100
             return (factor * previousMod + value) % 97
@@ -174,7 +178,7 @@ private extension String {
         guard uppercase.range(of: "^[0-9A-Z]*$", options: .regularExpression) != nil else {
             return false
         }
-        return (uppercase.mod97() == 1)
+        return uppercase.mod97() == 1
     }
 
     func passesBICCheck() -> Bool {
@@ -185,9 +189,10 @@ private extension String {
 
     func filterIBAN() -> String {
         // Use a character set containing allowed characters (alphanumeric and spaces)
-        let allowedCharacterSet = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+        let allowedCharacterSet =
+            CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
         // Remove any characters not in the allowed set
-        return self.components(separatedBy: allowedCharacterSet.inverted).joined()
+        return components(separatedBy: allowedCharacterSet.inverted).joined()
     }
 }
 

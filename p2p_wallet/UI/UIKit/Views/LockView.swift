@@ -1,6 +1,6 @@
+import BEPureLayout
 import KeyAppUI
 import UIKit
-import BEPureLayout
 
 class LockView: BECompositionView {
     override func build() -> UIView {

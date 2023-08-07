@@ -1,10 +1,3 @@
-//
-//  CheckTransitTokenAccountTests.swift
-//  
-//
-//  Created by Chung Tran on 04/11/2022.
-//
-
 import XCTest
 @testable import FeeRelayerSwift
 @testable import OrcaSwapSwift
@@ -12,7 +5,7 @@ import XCTest
 
 final class CheckTransitTokenAccountTests: XCTestCase {
     var swapTransactionBuilder: SwapTransactionBuilderImpl!
-    
+
     override func tearDown() async throws {
         swapTransactionBuilder = nil
     }
@@ -26,20 +19,20 @@ final class CheckTransitTokenAccountTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
+
         var env = SwapTransactionBuilderOutput()
-        
+
         try await swapTransactionBuilder.checkTransitTokenAccount(
             owner: .owner,
             poolsPair: [.solBTC],
             output: &env
         )
-        
+
         XCTAssertNil(env.needsCreateTransitTokenAccount)
         XCTAssertNil(env.transitTokenMintPubkey)
         XCTAssertNil(env.transitTokenAccountAddress)
     }
-    
+
     func testTransitiveSwapWithNonCreatedTransitTokenAccount() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -49,20 +42,20 @@ final class CheckTransitTokenAccountTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
+
         var env = SwapTransactionBuilderOutput()
-        
+
         try await swapTransactionBuilder.checkTransitTokenAccount(
             owner: .owner,
             poolsPair: [.solBTC, .btcETH], // SOL -> BTC -> ETH
             output: &env
         )
-        
+
         XCTAssertEqual(env.needsCreateTransitTokenAccount, true)
         XCTAssertEqual(env.transitTokenMintPubkey, .btcMint)
         XCTAssertEqual(env.transitTokenAccountAddress, .btcTransitTokenAccountAddress)
     }
-    
+
     func testTransitiveSwapWithCreatedTransitTokenAccount() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -72,15 +65,15 @@ final class CheckTransitTokenAccountTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
+
         var env = SwapTransactionBuilderOutput()
-        
+
         try await swapTransactionBuilder.checkTransitTokenAccount(
             owner: .owner,
             poolsPair: [.solBTC, .btcETH], // SOL -> BTC -> ETH
             output: &env
         )
-        
+
         XCTAssertEqual(env.needsCreateTransitTokenAccount, false)
         XCTAssertEqual(env.transitTokenMintPubkey, .btcMint)
         XCTAssertEqual(env.transitTokenAccountAddress, .btcTransitTokenAccountAddress)
@@ -93,8 +86,8 @@ private class MockTransitTokenAccountManager: TransitTokenAccountManager {
     init(testCase: Int) {
         self.testCase = testCase
     }
-    
-    func getTransitToken(pools: OrcaSwapSwift.PoolsPair) throws -> FeeRelayerSwift.TokenAccount? {
+
+    func getTransitToken(pools _: OrcaSwapSwift.PoolsPair) throws -> FeeRelayerSwift.TokenAccount? {
         switch testCase {
         case 0:
             return nil
@@ -102,8 +95,8 @@ private class MockTransitTokenAccountManager: TransitTokenAccountManager {
             return .init(address: .btcTransitTokenAccountAddress, mint: .btcMint)
         }
     }
-    
-    func checkIfNeedsCreateTransitTokenAccount(transitToken: FeeRelayerSwift.TokenAccount?) async throws -> Bool? {
+
+    func checkIfNeedsCreateTransitTokenAccount(transitToken _: FeeRelayerSwift.TokenAccount?) async throws -> Bool? {
         switch testCase {
         case 0:
             return nil

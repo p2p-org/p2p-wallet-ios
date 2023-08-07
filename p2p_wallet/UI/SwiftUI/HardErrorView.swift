@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 /// An error view with image :)
 struct HardErrorView<Content: View>: View {
@@ -40,12 +40,13 @@ struct HardErrorView_Previews: PreviewProvider {
     static var previews: some View {
         HardErrorView(
             title: "Title",
-            subtitle: "Subtitle") {
-                VStack {
-                    Text("1")
-                    Text("2")
-                    Text("3")
-                }
+            subtitle: "Subtitle"
+        ) {
+            VStack {
+                Text("1")
+                Text("2")
+                Text("3")
             }
+        }
     }
 }

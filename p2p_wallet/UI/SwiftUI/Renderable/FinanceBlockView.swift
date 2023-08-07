@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct FinanceBlockView: View {
     let leadingItem: any Renderable
@@ -34,11 +34,14 @@ struct FinanceBlockView: View {
     }
 }
 
-
 struct FinanceBlockView_Previews: PreviewProvider {
     static var previews: some View {
         FinanceBlockView(
-            leadingItem: FinanceBlockLeadingItem(image: .image(.iconUpload), iconSize: CGSize(width: 50, height: 50), isWrapped: false),
+            leadingItem: FinanceBlockLeadingItem(
+                image: .image(.iconUpload),
+                iconSize: CGSize(width: 50, height: 50),
+                isWrapped: false
+            ),
             centerItem: FinancialBlockCenterItem(
                 title: "renderable.title",
                 subtitle: "renderable.subtitle"

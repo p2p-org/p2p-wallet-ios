@@ -1,10 +1,3 @@
-//
-//  NameServiceUserDefaultCache.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 07/06/2022.
-//
-
 import Foundation
 import KeyAppBusiness
 import NameService

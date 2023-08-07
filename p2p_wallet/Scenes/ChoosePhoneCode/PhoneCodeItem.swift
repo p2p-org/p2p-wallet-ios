@@ -33,7 +33,7 @@ extension PhoneCodeItem: ChooseItemRenderable {
 
 extension PhoneCodeItem: Equatable, Hashable {
     static func == (lhs: PhoneCodeItem, rhs: PhoneCodeItem) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 
     func hash(into hasher: inout Hasher) {

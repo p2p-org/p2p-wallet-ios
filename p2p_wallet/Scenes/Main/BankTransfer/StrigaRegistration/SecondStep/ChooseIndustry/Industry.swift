@@ -13,7 +13,7 @@ struct Industry: Identifiable {
 
 extension Industry: ChooseItemSearchableItem {
     func matches(keyword: String) -> Bool {
-        return title.hasPrefix(keyword) || title.contains(keyword)
+        title.hasPrefix(keyword) || title.contains(keyword)
     }
 }
 

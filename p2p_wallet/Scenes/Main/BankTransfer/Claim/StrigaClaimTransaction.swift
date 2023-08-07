@@ -1,9 +1,8 @@
 import Foundation
-import Resolver
 import KeyAppBusiness
-import SolanaSwift
-import SolanaSwift
 import KeyAppKitCore
+import Resolver
+import SolanaSwift
 
 protocol StrigaConfirmableTransactionType: RawTransactionType, Equatable {
     var challengeId: String { get }
@@ -29,7 +28,6 @@ extension StrigaClaimTransactionType {
 
 /// Default implemetation of `StrigaClaimTransactionType`
 struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTransactionType {
-
     // MARK: - Properties
 
     let challengeId: String
@@ -39,7 +37,7 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTran
     let feeAmount: FeeAmount
     let fromAddress: String
     let receivingAddress: String
-    
+
     var mainDescription: String {
         ""
     }
@@ -48,9 +46,9 @@ struct StrigaClaimTransaction: StrigaClaimTransactionType, StrigaConfirmableTran
 
     func createRequest() async throws -> String {
         // get transaction from proxy api
-        
+
         // sign transaction
-        
+
         // TODO: - send to blockchain
         try? await Task.sleep(seconds: 1)
         return .fakeTransactionSignature(id: UUID().uuidString)
@@ -75,7 +73,6 @@ extension StrigaWithdrawTransactionType {
 
 /// Default implemetation of `StrigaClaimTransactionType`
 struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmableTransactionType {
-
     // MARK: - Properties
 
     var challengeId: String
@@ -93,9 +90,9 @@ struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmab
 
     func createRequest() async throws -> String {
         // get transaction from proxy api
-        
+
         // sign transaction
-        
+
         // TODO: - send to blockchain
         try? await Task.sleep(seconds: 1)
         return .fakeTransactionSignature(id: UUID().uuidString)
@@ -103,7 +100,6 @@ struct StrigaWithdrawTransaction: StrigaWithdrawTransactionType, StrigaConfirmab
 }
 
 extension StrigaClaimTransaction: Equatable {}
-
 
 /// Used to wrap Send transaction into Striga Withdraw format
 struct StrigaWithdrawSendTransaction: StrigaWithdrawTransactionType, RawTransactionType {
@@ -122,9 +118,9 @@ struct StrigaWithdrawSendTransaction: StrigaWithdrawTransactionType, RawTransact
 
     func createRequest() async throws -> String {
         // get transaction from proxy api
-        
+
         // sign transaction
-        
+
         // TODO: - send to blockchain
         try? await Task.sleep(seconds: 1)
         return .fakePausedTransactionSignaturePrefix + UUID().uuidString

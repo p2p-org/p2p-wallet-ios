@@ -1,15 +1,8 @@
-//
-//  NewHistoryRepository.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 14.02.2023.
-//
-
 import Foundation
 import History
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
-import KeyAppKitCore
 
 class HistoryRepository: Repository {
     typealias Element = HistoryTransaction
@@ -20,7 +13,7 @@ class HistoryRepository: Repository {
         self.provider = provider
     }
 
-    func get(id: Element.ID) async throws {
+    func get(id _: Element.ID) async throws {
         fatalError()
     }
 
@@ -29,7 +22,13 @@ class HistoryRepository: Repository {
         let pubKey = account?.publicKey.base58EncodedString ?? ""
 
         return PaginatedAsyncSequence { [provider] offset, limit in
-            try await provider.transactions(secretKey: secretKey, pubKey: pubKey, mint: mint, offset: offset, limit: limit)
+            try await provider.transactions(
+                secretKey: secretKey,
+                pubKey: pubKey,
+                mint: mint,
+                offset: offset,
+                limit: limit
+            )
         }
         .eraseToAnyAsyncSequence()
     }

@@ -1,8 +1,3 @@
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let strigaGetAllWalletResponse = try? JSONDecoder().decode(StrigaGetAllWalletsResponse.self, from: jsonData)
-
 import Foundation
 
 // MARK: - StrigaGetAllWalletsResponse
@@ -52,7 +47,7 @@ public struct StrigaWalletAccount: Codable {
     public let enriched: Bool
     public let blockchainDepositAddress: String?
     public let blockchainNetwork: StrigaWalletAccountBlockchainNetwork?
-    
+
     enum CodingKeys: String, CodingKey {
         case accountID = "accountId"
         case parentWalletID = "parentWalletId"

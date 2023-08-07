@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -184,14 +177,14 @@ internal class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
 
             do {
                 // Fetch balance and token balances
-                let (balance, wallet) = try await (
+                let (balance, wallet) = try await(
                     web3.eth.getBalance(address: address, block: .latest),
                     web3.eth.getTokenBalances(address: address)
                 )
 
-                let nativeAccount = EthereumAccount(
+                let nativeAccount = try EthereumAccount(
                     address: address.hex(eip55: false),
-                    token: try await ethereumTokenRepository.nativeToken,
+                    token: await ethereumTokenRepository.nativeToken,
                     balance: balance.quantity,
                     price: nil
                 )

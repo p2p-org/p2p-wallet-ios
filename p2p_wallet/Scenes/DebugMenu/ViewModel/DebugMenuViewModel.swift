@@ -1,11 +1,11 @@
+import BankTransfer
 import Combine
-import Onboarding
 import FirebaseRemoteConfig
 import KeyAppBusiness
+import Onboarding
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
-import BankTransfer
 import UIKit
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
@@ -52,11 +52,11 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://swap.key.app",
             "https://swap.keyapp.org",
         ]
-        
+
         strigaEndpoints = [
             .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!,
             .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!,
-            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV_NEW")!
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV_NEW")!,
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
@@ -88,20 +88,20 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             )
         )
     }
-    
+
     func clearStrigaUserIdFromMetadata() async throws {
         await Resolver.resolve((any BankTransferService).self).clearCache()
-        
+
         let service = Resolver.resolve(WalletMetadataService.self)
-        
+
         if var currentMetadata = service.metadata.value {
             currentMetadata.striga.userId = nil
             await service.update(currentMetadata)
         }
-        
+
         Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
     }
-    
+
     func copyMetadata() {
         UIPasteboard.general.string = Resolver.resolve(WalletMetadataService.self).metadata.value?.jsonString
         Resolver.resolve(NotificationService.self).showToast(title: "Copied", text: "Metadata copied to clipboard")

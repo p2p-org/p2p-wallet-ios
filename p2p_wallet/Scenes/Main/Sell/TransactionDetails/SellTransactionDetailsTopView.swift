@@ -1,12 +1,5 @@
-//
-//  SellTransactionDetailsTopView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SellTransactionDetailsTopView: View {
     let model: Model

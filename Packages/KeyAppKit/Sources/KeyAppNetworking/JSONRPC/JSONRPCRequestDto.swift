@@ -5,7 +5,7 @@ public struct JSONRPCRequestDto<T: Encodable>: Encodable {
     let id: String
     let method: String
     let params: [T]?
-    
+
     public init(
         jsonrpc: String = "2.0",
         id: String = UUID().uuidString,
@@ -19,7 +19,8 @@ public struct JSONRPCRequestDto<T: Encodable>: Encodable {
     }
 }
 
-public extension JSONRPCRequestDto where T == String { /*T == String, or what ever confirmed to Encodable to fix ambiguous type*/
+public extension JSONRPCRequestDto
+where T == String { /* T == String, or what ever confirmed to Encodable to fix ambiguous type */
     /// Non-params initializer
     init(
         jsonrpc: String = "2.0",

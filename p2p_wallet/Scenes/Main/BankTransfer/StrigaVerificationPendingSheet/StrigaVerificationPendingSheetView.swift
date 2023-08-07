@@ -40,7 +40,7 @@ struct StrigaVerificationPendingSheetView: View {
 struct StrigaVerificationPendingSheetView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            StrigaVerificationPendingSheetView(action: { })
+            StrigaVerificationPendingSheetView(action: {})
         }
     }
 }

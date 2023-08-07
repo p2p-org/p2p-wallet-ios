@@ -1,7 +1,5 @@
 import Firebase
-import Intercom
 import KeyAppUI
-import Lokalise
 import Resolver
 import Sentry
 @_exported import SwiftyUserDefaults
@@ -30,8 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Defaults.fiat = .usd
 
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        // TODO: - Swizzle localization later
-//        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
@@ -50,12 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 options.enableOutOfMemoryTracking = true
             }
         #endif
-
-        Lokalise.shared.setProjectID(
-            String.secretConfig("LOKALISE_PROJECT_ID")!,
-            token: String.secretConfig("LOKALISE_TOKEN")!
-        )
-        Lokalise.shared.swizzleMainBundle()
 
         // Set app coordinator
         appCoordinator = AppCoordinator()
@@ -79,10 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let userWalletManager: UserWalletManager = Resolver.resolve()
             let ethAddress = available(.ethAddressEnabled) ? userWalletManager.wallet?.ethAddress : nil
             try await notificationService.sendRegisteredDeviceToken(deviceToken, ethAddress: ethAddress)
-        }
-        Intercom.setDeviceToken(deviceToken) { error in
-            guard let error else { return }
-            print("Intercom.setDeviceToken error: ", error)
         }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
         Defaults.apnsDeviceToken = deviceToken

@@ -1,7 +1,6 @@
 import BankTransfer
 
 final class ChooseIndustryDataLocalProvider {
-    
     private func getEmoji(industry: StrigaUserIndustry) -> String {
         switch industry {
         case .accounting: return "🧮"
@@ -35,14 +34,13 @@ final class ChooseIndustryDataLocalProvider {
 
     func getIndustries() -> [Industry] {
         StrigaUserIndustry.allCases.map { industry in
-            return Industry(emoji: getEmoji(industry: industry), title: industry.rawValue.formatted(), rawValue: industry)
+            Industry(emoji: getEmoji(industry: industry), title: industry.rawValue.formatted(), rawValue: industry)
         }
     }
 }
 
 private extension String {
     func formatted() -> String {
-        return self.replacingOccurrences(of: "_", with: " ").lowercased().uppercaseFirst
+        replacingOccurrences(of: "_", with: " ").lowercased().uppercaseFirst
     }
 }
-

@@ -1,6 +1,6 @@
-import SwiftUI
 import KeyAppUI
 import SkeletonUI
+import SwiftUI
 
 struct SellView: View {
     @ObservedObject var viewModel: SellViewModel
@@ -52,7 +52,7 @@ struct SellView: View {
                 .shape(type: .rounded(.radius(12, style: .circular)))
                 .padding(.bottom, 10)
         }
-            .padding(.top, 90)
-            .padding(.horizontal, 16)
+        .padding(.top, 90)
+        .padding(.horizontal, 16)
     }
 }

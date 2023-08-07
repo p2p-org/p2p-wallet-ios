@@ -11,7 +11,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     private var smsInputRef = BERef<BaseTextFieldView>()
     private var resendButtonRef = BERef<UIButton>()
     private var continueButtonRef = BERef<TextButton>()
-    
+
     private var disableRightButton: Bool
 
     var store = Set<AnyCancellable>()

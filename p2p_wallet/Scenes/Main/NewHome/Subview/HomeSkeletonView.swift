@@ -1,10 +1,3 @@
-//
-//  HomeSkeletonView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.10.2022.
-//
-
 import KeyAppUI
 import SkeletonUI
 import SwiftUI

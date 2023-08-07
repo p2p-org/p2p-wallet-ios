@@ -4,14 +4,13 @@ import SolanaSwift
 import TweetNacl
 
 public final class StrigaRemoteProviderImpl {
-
     // Dependencies
     private let httpClient: IHTTPClient
     private let keyPair: KeyPair?
     private let baseURL: String
-    
+
     // MARK: - Init
-    
+
     public init(
         baseURL: String,
         solanaKeyPair keyPair: KeyPair?,
@@ -26,13 +25,12 @@ public final class StrigaRemoteProviderImpl {
 // MARK: - StrigaProvider
 
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
-
     public func getKYCStatus(userId: String) async throws -> StrigaKYC {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYC(baseURL: baseURL, keyPair: keyPair, userId: userId)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaKYC.self)
     }
-    
+
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {
@@ -40,7 +38,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = try StrigaEndpoint.getUserDetails(baseURL: baseURL, keyPair: keyPair, userId: userId)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserDetailsResponse.self)
     }
-    
+
     public func createUser(
         model: StrigaCreateUserRequest
     ) async throws -> StrigaCreateUserResponse {
@@ -48,15 +46,16 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = try StrigaEndpoint.createUser(baseURL: baseURL, keyPair: keyPair, body: model)
         do {
             return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
-        } catch HTTPClientError.invalidResponse(let response, let data) where response?.statusCode == 400 {
+        } catch let HTTPClientError.invalidResponse(response, data) where response?.statusCode == 400 {
             if let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
-                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError
+                    .invalidResponse(response, data)
             } else {
                 throw HTTPClientError.invalidResponse(response, data)
             }
         }
     }
-    
+
     public func verifyMobileNumber(
         userId: String,
         verificationCode: String
@@ -75,9 +74,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
                 throw HTTPClientError.invalidResponse(nil, response.data(using: .utf8) ?? Data())
             }
             return
-        } catch HTTPClientError.invalidResponse(let response, let data) {
+        } catch let HTTPClientError.invalidResponse(response, data) {
             let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
-            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError
+                .invalidResponse(response, data)
         }
     }
 
@@ -89,12 +89,13 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
                 endpoint: endpoint,
                 responseModel: StrigaResendOTPResponse.self
             )
-        } catch HTTPClientError.invalidResponse(let response, let data) {
+        } catch let HTTPClientError.invalidResponse(response, data) {
             let error = try JSONDecoder().decode(StrigaRemoteProviderError.self, from: data)
             if error.errorCode == "00002" {
                 throw BankTransferError.mobileAlreadyVerified
             }
-            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+            throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError
+                .invalidResponse(response, data)
         }
     }
 
@@ -126,12 +127,16 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
 
         do {
-            let response = try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
+            let response = try await httpClient.request(
+                endpoint: endpoint,
+                responseModel: StrigaUserGetTokenResponse.self
+            )
             return response.token
-        } catch HTTPClientError.invalidResponse(let response, let data) {
+        } catch let HTTPClientError.invalidResponse(response, data) {
             if let errorCode = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data).errorCode {
                 for bankTransferError in [BankTransferError.kycVerificationInProgress, .kycAttemptLimitExceeded,
-                                          .kycRejectedCantRetry] {
+                                          .kycRejectedCantRetry]
+                {
                     if String(bankTransferError.rawValue).elementsEqual(errorCode) {
                         throw bankTransferError
                     }
@@ -141,16 +146,30 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         }
     }
 
-    public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAllWalletsResponse {
+    public func getAllWalletsByUser(userId: String, startDate: Date, endDate: Date,
+                                    page: Int) async throws -> StrigaGetAllWalletsResponse
+    {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
-        let endpoint = try StrigaEndpoint.getAllWallets(baseURL: baseURL, keyPair: keyPair, userId: userId, startDate: startDate, endDate: endDate, page: page)
-        
+        let endpoint = try StrigaEndpoint.getAllWallets(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            startDate: startDate,
+            endDate: endDate,
+            page: page
+        )
+
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAllWalletsResponse.self)
     }
 
     public func enrichAccount<T: Decodable>(userId: String, accountId: String) async throws -> T {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
-        let endpoint = try StrigaEndpoint.enrichAccount(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId)
+        let endpoint = try StrigaEndpoint.enrichAccount(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            accountId: accountId
+        )
         return try await httpClient.request(endpoint: endpoint, responseModel: T.self)
     }
 
@@ -263,15 +282,35 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaExchangeRatesResponse.self)
     }
 
-    public func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date, page: Int) async throws -> StrigaGetAccountStatementResponse {
+    public func getAccountStatement(userId: String, accountId: String, startDate: Date, endDate: Date,
+                                    page: Int) async throws -> StrigaGetAccountStatementResponse
+    {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
-        let endpoint = try StrigaEndpoint.getAccountStatement(baseURL: baseURL, keyPair: keyPair, userId: userId, accountId: accountId, startDate: startDate, endDate: endDate, page: page)
+        let endpoint = try StrigaEndpoint.getAccountStatement(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            accountId: accountId,
+            startDate: startDate,
+            endDate: endDate,
+            page: page
+        )
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaGetAccountStatementResponse.self)
     }
 
-    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String, bic: String) async throws -> StrigaInitiateSEPAPaymentResponse {
+    public func initiateSEPAPayment(userId: String, accountId: String, amount: String, iban: String,
+                                    bic: String) async throws -> StrigaInitiateSEPAPaymentResponse
+    {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
-        let endpoint = try StrigaEndpoint.initiateSEPAPayment(baseURL: baseURL, keyPair: keyPair, userId: userId, sourceAccountId: accountId, amount: amount, iban: iban, bic: bic)
+        let endpoint = try StrigaEndpoint.initiateSEPAPayment(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId,
+            sourceAccountId: accountId,
+            amount: amount,
+            iban: iban,
+            bic: bic
+        )
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaInitiateSEPAPaymentResponse.self)
     }
 }

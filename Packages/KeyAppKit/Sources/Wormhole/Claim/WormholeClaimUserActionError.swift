@@ -3,7 +3,7 @@ import KeyAppBusiness
 
 public enum WormholeClaimUserActionError: Int, Error {
     public typealias RawValue = Int
-    
+
     public static let domain = "WormholeClaimUserActionConsumer"
 
     public static let invalidToken = UserActionError(
@@ -17,7 +17,7 @@ public enum WormholeClaimUserActionError: Int, Error {
         code: WormholeClaimUserActionError.submitErrorCode.rawValue,
         reason: "Sending Ethereum bundle returns with error"
     )
-    
+
     public static let claimFailure = UserActionError(
         domain: "WormholeClaimUserActionConsumer",
         code: WormholeClaimUserActionError.claimFailureCode.rawValue,
@@ -27,7 +27,7 @@ public enum WormholeClaimUserActionError: Int, Error {
     case invalidTokenCode = 1
     case submitErrorCode
     case claimFailureCode
-    
+
     public enum UserInfoKey: String {
         case action
         case token

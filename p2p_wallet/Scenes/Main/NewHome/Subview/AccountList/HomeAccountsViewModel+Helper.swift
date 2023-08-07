@@ -12,7 +12,7 @@ extension SolanaAccount {
     var isNFTToken: Bool {
         (token.decimals == 0) || scamAddresses.contains(token.mintAddress)
     }
-    
+
     var isUSDC: Bool {
         Token.usdc.address.contains(token.address)
     }

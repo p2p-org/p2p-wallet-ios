@@ -31,7 +31,8 @@ struct IBANDetailsView: View {
                             .useThisDetailsToMakeTransfersThroughYourBankingApp, icon: .user)
 
                         buildSecondaryInformerView(title: L10n
-                            .weUseSEPAInstantForBankTransfersAndTypicallyMoneyWillAppearInYourAccountInLessThanAMinute, icon: .historyFilled)
+                            .weUseSEPAInstantForBankTransfersAndTypicallyMoneyWillAppearInYourAccountInLessThanAMinute,
+                            icon: .historyFilled)
                     }
                     .backgroundStyle(asset: Asset.Colors.rain)
                 }

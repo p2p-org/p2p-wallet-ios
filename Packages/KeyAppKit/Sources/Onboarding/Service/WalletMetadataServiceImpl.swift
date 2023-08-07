@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -75,7 +71,7 @@ public actor WalletMetadataServiceImpl: WalletMetadataService {
             {
                 // Try merge data if they are difference
                 let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
-                
+
                 print(localMetadata)
                 print(remoteMetadata)
 

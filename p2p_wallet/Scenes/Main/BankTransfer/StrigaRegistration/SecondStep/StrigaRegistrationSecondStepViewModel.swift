@@ -1,13 +1,12 @@
-import Combine
-import Onboarding
 import BankTransfer
-import Resolver
+import Combine
 import CountriesAPI
-import SwiftyUserDefaults
 import Foundation
+import Onboarding
+import Resolver
+import SwiftyUserDefaults
 
 final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObject {
-
     // Dependencies
     @Injected private var service: any BankTransferService
     @Injected private var notificationService: NotificationService
@@ -30,7 +29,8 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     // Other views
     @Published var isLoading = false
     @Published var actionTitle: String = L10n.confirm
-    @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
+    @Published var isDataValid =
+        true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
     let chooseIndustry = PassthroughSubject<Industry?, Never>()
@@ -66,7 +66,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
         $selectedCountry
             .map { value in
                 if let value {
-                    return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
+                    return [value.emoji, value.name].compactMap { $0 }.joined(separator: " ")
                 }
                 return ""
             }
@@ -88,7 +88,6 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 }
 
 private extension StrigaRegistrationSecondStepViewModel {
-
     func setInitial(userData: StrigaUserDetailsResponse) {
         if let industry = userData.occupation {
             selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
@@ -141,7 +140,8 @@ private extension StrigaRegistrationSecondStepViewModel {
             .sinkAsync { [weak self] sourceOfFunds, address1, address2 in
                 guard let self else { return }
 
-                let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
+                let currentData: StrigaUserDetailsResponse = (try? await service
+                    .getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
 
                 let newData = currentData.updated(
                     address: StrigaUserDetailsResponse.Address(
@@ -170,8 +170,9 @@ private extension StrigaRegistrationSecondStepViewModel {
         Task {
             do {
                 // get registration data
-                guard let currentData = try await service.getRegistrationData() as? StrigaUserDetailsResponse else { throw NSError() }
-                
+                guard let currentData = try await service.getRegistrationData() as? StrigaUserDetailsResponse
+                else { throw NSError() }
+
                 // create user
                 try await service.createUser(data: currentData)
                 await MainActor.run {
@@ -199,12 +200,12 @@ private extension StrigaRegistrationSecondStepViewModel {
             }
         }
     }
-    
+
     // MARK: - Helpers
 
     private func logAlertMessage(error: Error) async {
         let loggerData = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-        
+
         DefaultLogManager.shared.log(
             event: "Striga Registration iOS Alarm",
             logLevel: .alert,
@@ -234,6 +235,6 @@ private extension StrigaRegistrationSecondStepViewModel {
 
 private extension String {
     func trimmed() -> String {
-        self.trimmingCharacters(in: .whitespacesAndNewlines)
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

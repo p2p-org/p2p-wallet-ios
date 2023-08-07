@@ -22,7 +22,6 @@ struct StrigaRegistrationFirstStepView: View {
             ColoredBackground {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-
                         fields
                         ListSpacerCellView(height: 10, backgroundColor: .clear)
 

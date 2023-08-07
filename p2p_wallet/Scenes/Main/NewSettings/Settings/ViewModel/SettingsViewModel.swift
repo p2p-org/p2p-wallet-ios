@@ -69,7 +69,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         super.init()
-        Defaults.region = nil
+
         setUpAuthType()
         updateNameIfNeeded()
         bind()
@@ -195,7 +195,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
+
     func openTwitter() {
         if let url = URL(string: "https://twitter.com/KeyApp_") {
             UIApplication.shared.open(url)

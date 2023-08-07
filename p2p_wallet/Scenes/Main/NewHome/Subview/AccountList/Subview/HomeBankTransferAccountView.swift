@@ -1,6 +1,6 @@
 import Foundation
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct HomeBankTransferAccountView: View {
     let renderable: any RenderableAccount

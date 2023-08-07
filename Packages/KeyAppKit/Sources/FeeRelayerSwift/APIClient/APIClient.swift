@@ -1,25 +1,20 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 /// Default implementation of ``FeeRelayerAPIClient``
 public class APIClient: FeeRelayerAPIClient {
-    
     // MARK: - Properties
-    
+
     /// Current FeeRelayer's version
     public let version: Int
-    
+
     /// Base url of fee relayer server
     private let baseUrlString: String
-    
+
     /// HTTPClient to handle requests
     private var httpClient: HTTPClient
 
     // MARK: - Initializers
-    
+
     /// ``APIClient`` initializer
     /// - Parameters:
     ///   - httpClient: httpClient that handles requests
@@ -53,7 +48,7 @@ public class APIClient: FeeRelayerAPIClient {
         guard let res = res else { throw APIClientError.unknown }
         return res
     }
-    
+
     /// Get free fee limits for current user
     /// - Parameter authority: user's authority
     /// - Returns: current user's usage limit
@@ -73,14 +68,21 @@ public class APIClient: FeeRelayerAPIClient {
         Logger.log(event: "FeeRelayerSwift requestFreeFeeLimits", message: urlRequest.cURL(), logLevel: .debug)
 
         do {
-            return try await httpClient.sendRequest(request: urlRequest, decoder: JSONDecoder()) as FeeLimitForAuthorityResponse
+            return try await httpClient.sendRequest(
+                request: urlRequest,
+                decoder: JSONDecoder()
+            ) as FeeLimitForAuthorityResponse
         } catch let HTTPClientError.unexpectedStatusCode(_, data) {
-            Logger.log(event: "FeeRelayerSwift: requestFreeFeeLimits", message: String(data: data, encoding: .utf8), logLevel: .error)
+            Logger.log(
+                event: "FeeRelayerSwift: requestFreeFeeLimits",
+                message: String(data: data, encoding: .utf8),
+                logLevel: .error
+            )
             let decodedError = try JSONDecoder().decode(FeeRelayerError.self, from: data)
             throw decodedError
         }
     }
-    
+
     /// Get free fee limits for current user
     /// - Parameter authority: user's authority
     /// - Returns: current user's usage limit
@@ -88,7 +90,7 @@ public class APIClient: FeeRelayerAPIClient {
     public func requestFreeFeeLimits(for authority: String) async throws -> FeeLimitForAuthorityResponse {
         try await getFreeFeeLimits(for: authority)
     }
-    
+
     /// Get fee token data
     public func feeTokenData(mint: String) async throws -> FeeTokenData {
         var url = baseUrlString
@@ -108,7 +110,11 @@ public class APIClient: FeeRelayerAPIClient {
         do {
             return try await httpClient.sendRequest(request: urlRequest, decoder: JSONDecoder())
         } catch let HTTPClientError.unexpectedStatusCode(_, data) {
-            Logger.log(event: "FeeRelayerSwift: getFeeTokenData", message: String(data: data, encoding: .utf8), logLevel: .error)
+            Logger.log(
+                event: "FeeRelayerSwift: getFeeTokenData",
+                message: String(data: data, encoding: .utf8),
+                logLevel: .error
+            )
             let decodedError = try JSONDecoder().decode(FeeRelayerError.self, from: data)
             throw decodedError
         }
@@ -116,7 +122,8 @@ public class APIClient: FeeRelayerAPIClient {
 
     /// Send transaction to fee relayer server to process
     /// - Parameter requestType: FeeRelayer's Request Type
-    /// - Returns: signature, can be confirmed or signature of fee payer account that can be added to process later by client
+    /// - Returns: signature, can be confirmed or signature of fee payer account that can be added to process later by
+    /// client
     public func sendTransaction(_ requestType: RequestType) async throws -> String {
         do {
             // Custom Response for sign_relay_transaction
@@ -126,18 +133,25 @@ public class APIClient: FeeRelayerAPIClient {
                     let signature: String
                     let transaction: String
                 }
-                
-                let response: Response = try await httpClient.sendRequest(request: urlRequest(requestType), decoder: JSONDecoder())
+
+                let response: Response = try await httpClient.sendRequest(
+                    request: urlRequest(requestType),
+                    decoder: JSONDecoder()
+                )
                 return response.signature
             }
-            
+
             // Other response
-            let response: String = try await httpClient.sendRequest(request: urlRequest(requestType), decoder: JSONDecoder())
+            let response: String = try await httpClient.sendRequest(
+                request: urlRequest(requestType),
+                decoder: JSONDecoder()
+            )
             return response
         } catch let HTTPClientError.cantDecode(data) {
             guard let ret = String(data: data, encoding: .utf8) else { throw APIClientError.unknown }
-            
-            let signature = ret.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "\"", with: "")
+
+            let signature = ret.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+                .replacingOccurrences(of: "\"", with: "")
             Logger.log(
                 event: "FeeRelayerSwift sendTransaction",
                 message: "Transaction has been successfully sent with signature: \(signature)",
@@ -146,9 +160,9 @@ public class APIClient: FeeRelayerAPIClient {
             return signature
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     /// Form request
     /// - Parameter requestType: FeeRelayer's ``RequestType``
     /// - Returns: urlRequest
@@ -185,7 +199,7 @@ private extension URLRequest {
         var header = ""
         var data = ""
 
-        if let httpHeaders = allHTTPHeaderFields, httpHeaders.keys.count > 0 {
+        if let httpHeaders = allHTTPHeaderFields, !httpHeaders.keys.isEmpty {
             for (key, value) in httpHeaders {
                 header += (pretty ? "--header " : "-H ") + "\'\(key): \(value)\' \(newLine)"
             }

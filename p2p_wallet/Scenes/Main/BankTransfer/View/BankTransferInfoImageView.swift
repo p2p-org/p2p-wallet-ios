@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 import SkeletonUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
@@ -169,4 +169,3 @@ struct CenterTextCellItemView: View {
             .foregroundColor(color)
     }
 }
-

@@ -1,10 +1,3 @@
-//
-//  IgnoreAccountsStore.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import Foundation
 
 class FavouriteAccountsDataSource: ObservableObject {

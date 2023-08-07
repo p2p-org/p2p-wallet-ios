@@ -69,7 +69,6 @@ struct HomeAccountsView: View {
                     .cornerRadius(16)
                     .padding(.horizontal, 16)
                     .frame(height: 72)
-                
             }
         }
     }
@@ -92,7 +91,6 @@ struct HomeAccountsView: View {
                     .padding(.top, 48)
             }
             Spacer()
-
         }
     }
 

@@ -1,5 +1,5 @@
-import Onboarding
 import Foundation
+import Onboarding
 
 protocol OnboardingService: AnyObject {
     var lastState: CreateWalletFlowState? { get set }

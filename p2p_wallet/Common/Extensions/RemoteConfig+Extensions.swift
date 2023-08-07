@@ -48,6 +48,7 @@ extension RemoteConfig {
 }
 
 // MARK: - Swap
+
 extension RemoteConfig {
     var swapRouteRefresh: Double? {
         configValues(Double.self, forKey: "swap_route_refresh")
@@ -64,7 +65,7 @@ private extension RemoteConfigValue {
         else {
             return nil
         }
-        
+
         return stringValue
     }
 }

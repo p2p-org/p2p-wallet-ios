@@ -5,12 +5,12 @@ extension Encodable {
     var snakeCaseEncoded: String? {
         encoded(strategy: .convertToSnakeCase)
     }
-    
+
     /// Encoded string for request as a json string
     var encoded: String? {
         encoded(strategy: .useDefaultKeys)
     }
-    
+
     private func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

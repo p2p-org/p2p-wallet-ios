@@ -1,10 +1,3 @@
-//
-//  OnboardingDebugViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 21.06.2023.
-//
-
 import Foundation
 import Onboarding
 import Resolver

@@ -1,7 +1,6 @@
 import Foundation
 
 public struct StrigaUserGetTokenResponse: Decodable {
-
     // MARK: - Properties
 
     public let provider: String

@@ -1,11 +1,10 @@
-import Foundation
 import CountriesAPI
+import Foundation
 import PhoneNumberKit
 
 extension CountriesAPI {
-
     func defaultRegionCode() -> String {
-        return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
+        Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 
     func currentCountryName() async throws -> Region? {

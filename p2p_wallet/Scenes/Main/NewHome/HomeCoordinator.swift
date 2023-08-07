@@ -317,7 +317,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         case .addMoney:
             return coordinate(to: TopupCoordinator(viewController: tabBarController))
-                .handleEvents(receiveOutput:  { [weak self] result in
+                .handleEvents(receiveOutput: { [weak self] result in
                     switch result {
                     case let .action(action):
                         self?.handleAction(action)
@@ -325,7 +325,7 @@ final class HomeCoordinator: Coordinator<Void> {
                         break
                     }
                 })
-                .map({ _ in return () })
+                .map { _ in () }
                 .eraseToAnyPublisher()
         }
     }
@@ -405,8 +405,8 @@ final class HomeCoordinator: Coordinator<Void> {
                     viewModel: TransactionDetailViewModel(pendingTransaction: transaction),
                     presentingViewController: navigationController
                 ))
-        }
-        .map { _ in () }
-        .eraseToAnyPublisher()
+            }
+            .map { _ in () }
+            .eraseToAnyPublisher()
     }
 }

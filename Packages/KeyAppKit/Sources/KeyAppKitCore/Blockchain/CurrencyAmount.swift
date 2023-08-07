@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import BigDecimal
 import BigInt
 import Foundation

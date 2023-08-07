@@ -1,10 +1,9 @@
 import Foundation
 import KeyAppUI
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 struct SwapInputView: View {
-
     @ObservedObject var viewModel: SwapInputViewModel
 
     var body: some View {

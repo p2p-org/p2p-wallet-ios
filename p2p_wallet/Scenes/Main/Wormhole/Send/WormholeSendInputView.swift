@@ -1,10 +1,3 @@
-//
-//  WormholeSendView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 15.03.2023.
-//
-
 import KeyAppKitCore
 import KeyAppUI
 import Kingfisher
@@ -52,7 +45,8 @@ struct WormholeSendInputView: View {
                     mainTokenText: viewModel.inputMode == .crypto ? account.token.symbol : viewModel.adapter
                         .fiatString,
                     secondaryAmountText: viewModel.secondaryAmountString,
-                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.token.symbol,
+                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.token
+                        .symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
                     isMaxButtonVisible: viewModel.isMaxButtonVisible,

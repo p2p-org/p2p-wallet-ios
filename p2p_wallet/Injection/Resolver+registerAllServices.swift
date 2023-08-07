@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import CountriesAPI
 import FeeRelayerSwift
 import FirebaseRemoteConfig
@@ -6,6 +7,7 @@ import History
 import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
+import KeyAppNetworking
 import Moonpay
 import NameService
 import Onboarding
@@ -18,8 +20,6 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
-import BankTransfer
-import KeyAppNetworking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -399,7 +399,7 @@ extension Resolver: ResolverRegistering {
                     StrigaBankTransferOutgoingUserActionConsumer(
                         persistence: resolve(),
                         bankTransferService: resolve()
-                    )
+                    ),
                 ]
             )
         }
@@ -573,7 +573,7 @@ extension Resolver: ResolverRegistering {
         }
         .implements(JupiterTokensProvider.self)
         .scope(.session)
-        
+
         register {
             BankTransferServiceImpl<StrigaBankTransferUserDataRepository>(
                 repository: StrigaBankTransferUserDataRepository(
@@ -610,7 +610,9 @@ extension Resolver: ResolverRegistering {
         register {
             AnyBankTransferService<StrigaBankTransferUserDataRepository>(
                 value:
-                    Resolver.resolve((any BankTransferService).self) as! BankTransferServiceImpl<StrigaBankTransferUserDataRepository>
+                Resolver
+                    .resolve((any BankTransferService)
+                        .self) as! BankTransferServiceImpl<StrigaBankTransferUserDataRepository>
             )
         }
         .scope(.session)
