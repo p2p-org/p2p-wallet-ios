@@ -42,7 +42,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: CurrencyAmount = state.value
-                    .filter { !$0.isUSDC }
+                    .filter { !($0.token.keyAppExtensions.isPositionOnWS ?? false) }
                     .reduce(CurrencyAmount(usd: 0)) {
                         if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
                             return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
