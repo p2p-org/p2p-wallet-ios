@@ -1,10 +1,3 @@
-//
-//  TKeyWalletMetadataProvider.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 09.06.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import Onboarding

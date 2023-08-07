@@ -1,7 +1,7 @@
-import Combine
-import SwiftUI
-import Resolver
 import AnalyticsManager
+import Combine
+import Resolver
+import SwiftUI
 
 final class SellSOLInfoCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
@@ -38,7 +38,7 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
     }
 
     private func finish() {
-        self.viewController?.dismiss(animated: true)
-        self.subject.send(())
+        viewController?.dismiss(animated: true)
+        subject.send(())
     }
 }

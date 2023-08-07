@@ -1,10 +1,3 @@
-//
-//  TabItem.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 08.07.2022.
-//
-
 import UIKit
 
 enum TabItem: Int, CaseIterable {

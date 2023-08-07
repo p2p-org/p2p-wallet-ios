@@ -24,9 +24,9 @@ struct StartView: View {
                             }
                         }
                     )
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                        .padding(.bottom, 32)
-                        .padding(.top, 60)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .padding(.bottom, 32)
+                    .padding(.top, 60)
 
                     bottomActionsView
                         .transition(.opacity.combined(with: .move(edge: .bottom)))

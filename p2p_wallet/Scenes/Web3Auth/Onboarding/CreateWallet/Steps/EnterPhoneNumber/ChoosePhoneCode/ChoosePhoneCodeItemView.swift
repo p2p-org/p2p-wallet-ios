@@ -8,10 +8,10 @@ struct ChoosePhoneCodeItemView: View {
     let isSelected: Bool
 
     init(country: SelectableCountry) {
-        self.emoji = country.value.emoji ?? ""
-        self.countryName = country.value.name
-        self.phoneCode = country.value.dialCode
-        self.isSelected = country.isSelected
+        emoji = country.value.emoji ?? ""
+        countryName = country.value.name
+        phoneCode = country.value.dialCode
+        isSelected = country.isSelected
     }
 
     var body: some View {
@@ -36,7 +36,6 @@ struct ChoosePhoneCodeItemView: View {
                 Image(uiImage: Asset.MaterialIcon.checkmark.image.withRenderingMode(.alwaysOriginal))
                     .frame(width: 14.3, height: 14.19)
             }
-            
         }
         .padding(14)
         .background(Color(Asset.Colors.snow.color))

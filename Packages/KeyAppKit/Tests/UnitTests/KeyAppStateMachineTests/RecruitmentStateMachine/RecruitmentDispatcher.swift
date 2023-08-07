@@ -3,7 +3,7 @@ import KeyAppStateMachine
 
 class RecruitmentDispatcher: Dispatcher {
     // MARK: - Properties
-    
+
     var shouldBeginDispatchingAnyAction: Bool = true
     var newActionShouldCancelPreviousAction: Bool = false
     let apiClient: APIClient
@@ -23,34 +23,34 @@ class RecruitmentDispatcher: Dispatcher {
     // MARK: - Methods
 
     func shouldBeginDispatching(
-        currentAction: RecruitmentAction,
-        newAction: RecruitmentAction,
-        currentState: RecruitmentState
+        currentAction _: RecruitmentAction,
+        newAction _: RecruitmentAction,
+        currentState _: RecruitmentState
     ) -> Bool {
         shouldBeginDispatchingAnyAction
     }
-    
+
     func shouldCancelCurrentAction(
-        currentAction: RecruitmentAction,
-        newAction: RecruitmentAction,
-        currentState: RecruitmentState
+        currentAction _: RecruitmentAction,
+        newAction _: RecruitmentAction,
+        currentState _: RecruitmentState
     ) -> Bool {
         newActionShouldCancelPreviousAction
     }
-    
+
     func actionWillBeginDispatching(
         action: RecruitmentAction,
         currentState: RecruitmentState
     ) async -> RecruitmentState? {
         switch action {
-        case .submitApplication(let applicantName):
+        case let .submitApplication(applicantName):
             return currentState.modified {
                 $0.sendingStatus = .sending
                 $0.applicantName = applicantName
             }
         }
     }
-    
+
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState
@@ -62,7 +62,7 @@ class RecruitmentDispatcher: Dispatcher {
                     applicantName: applicantName,
                     apiClient: apiClient
                 )
-                
+
                 return currentState.modified {
                     $0.sendingStatus = .completed
                 }
@@ -73,13 +73,12 @@ class RecruitmentDispatcher: Dispatcher {
             }
         }
     }
-    
+
     func actionDidEndDispatching(
-        action: RecruitmentAction,
-        currentState: RecruitmentState
+        action _: RecruitmentAction,
+        currentState _: RecruitmentState
     ) async -> RecruitmentState? {
         // No additional state modifications in this example
-        return nil
+        nil
     }
 }
-

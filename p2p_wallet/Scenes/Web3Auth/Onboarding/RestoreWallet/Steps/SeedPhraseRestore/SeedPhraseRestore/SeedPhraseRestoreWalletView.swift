@@ -65,8 +65,8 @@ struct SeedPhraseRestoreWalletView: View {
                 }
 
                 SeedPhraseTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused)
-                .frame(maxHeight: 343)
-                .colorMultiply(Color(Asset.Colors.smoke.color))
+                    .frame(maxHeight: 343)
+                    .colorMultiply(Color(Asset.Colors.smoke.color))
 
             }.padding(.horizontal, 12)
         }
@@ -89,14 +89,14 @@ struct SeedPhraseRestoreWalletView: View {
                 .font(uiFont: UIFont.font(of: .text4))
                 .foregroundColor(.black)
         }
-            .frame(height: 32)
-            .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-            .background(viewModel.seed.isEmpty ? Color(Asset.Colors.lime.color) : Color.clear)
-            .cornerRadius(8)
-            .fixedSize()
-            .onTapGesture {
-                viewModel.paste()
-            }
+        .frame(height: 32)
+        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
+        .background(viewModel.seed.isEmpty ? Color(Asset.Colors.lime.color) : Color.clear)
+        .cornerRadius(8)
+        .fixedSize()
+        .onTapGesture {
+            viewModel.paste()
+        }
     }
 
     var clearButton: some View {
@@ -109,14 +109,14 @@ struct SeedPhraseRestoreWalletView: View {
                 .frame(width: 16, height: 16)
                 .foregroundColor(.black)
         }
-            .frame(height: 32)
-            .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-            .background(Color(Asset.Colors.rain.color))
-            .cornerRadius(8)
-            .fixedSize()
-            .onTapGesture {
-                viewModel.clear()
-            }
+        .frame(height: 32)
+        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
+        .background(Color(Asset.Colors.rain.color))
+        .cornerRadius(8)
+        .fixedSize()
+        .onTapGesture {
+            viewModel.clear()
+        }
     }
 
     var suggestions: some View {

@@ -1,7 +1,3 @@
-//
-// Created by Giang Long Tran on 21.02.2022.
-//
-
 import Foundation
 import Moonpay
 

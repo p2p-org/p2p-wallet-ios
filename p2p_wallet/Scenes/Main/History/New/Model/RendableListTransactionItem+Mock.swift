@@ -4,21 +4,21 @@ import UIKit
 
 struct MockedRendableListTransactionItem: RendableListTransactionItem {
     var id: String
-    
+
     var date: Date
-    
+
     var status: RendableListTransactionItemStatus
-    
+
     var icon: RendableListTransactionItemIcon
-    
+
     var title: String
-    
+
     var subtitle: String
-    
+
     var detail: (RendableListTransactionItemChange, String)
-    
+
     var subdetail: String
-    
+
     var onTap: (() -> Void)? = nil
 }
 
@@ -35,7 +35,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func send() -> Self {
         .init(
             id: UUID().uuidString,
@@ -48,13 +48,13 @@ extension MockedRendableListTransactionItem {
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func failedSend() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .failed,
-            
+
             icon: .single(URL(string: TokenMetadata.usdc.logoURI!)!),
             title: "Send",
             subtitle: "To mad.p2p.sol",
@@ -62,7 +62,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "–34.36 USDC"
         )
     }
-    
+
     static func receive() -> Self {
         .init(
             id: UUID().uuidString,
@@ -75,7 +75,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "+0.3271523 renBTC"
         )
     }
-    
+
     static func swap() -> Self {
         .init(
             id: UUID().uuidString,
@@ -91,13 +91,13 @@ extension MockedRendableListTransactionItem {
             subdetail: "-120 SOL"
         )
     }
-    
+
     static func burn() -> Self {
         .init(
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            
+
             icon: .single(URL(string: TokenMetadata.renBTC.logoURI!)!),
             title: "Burn",
             subtitle: "Signature: ...Hs7s",
@@ -105,7 +105,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "–0.3271523 renBTC"
         )
     }
-    
+
     static func mint() -> Self {
         .init(
             id: UUID().uuidString,
@@ -118,7 +118,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "0.3271523 renBTC"
         )
     }
-    
+
     static func stake() -> Self {
         .init(
             id: UUID().uuidString,
@@ -131,7 +131,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "–5.21 SOL"
         )
     }
-    
+
     static func unstake() -> Self {
         .init(
             id: UUID().uuidString,
@@ -144,7 +144,7 @@ extension MockedRendableListTransactionItem {
             subdetail: "+5.21 SOL"
         )
     }
-    
+
     static func create() -> Self {
         .init(
             id: UUID().uuidString,
@@ -157,7 +157,7 @@ extension MockedRendableListTransactionItem {
             subdetail: ""
         )
     }
-    
+
     static func close() -> Self {
         .init(
             id: UUID().uuidString,
@@ -170,7 +170,7 @@ extension MockedRendableListTransactionItem {
             subdetail: ""
         )
     }
-    
+
     static func unknown() -> Self {
         .init(
             id: UUID().uuidString,

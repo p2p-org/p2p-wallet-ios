@@ -5,7 +5,7 @@ struct RawPool: Codable {
         self.name = name
         self.reversed = reversed
     }
-    
+
     let name: String
     let reversed: Bool
 }

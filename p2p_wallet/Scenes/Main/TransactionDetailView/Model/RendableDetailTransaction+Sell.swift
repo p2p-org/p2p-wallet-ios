@@ -1,14 +1,7 @@
-//
-//  RendableDetailTransaction+Sell.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.02.2023.
-//
-
 import Foundation
 import Sell
 
-//struct RendableDetailSellTransaction: RendableTransactionDetail {
+// struct RendableDetailSellTransaction: RendableTransactionDetail {
 //    let trx: SellDataServiceTransaction
 //
 //    var status: TransactionDetailStatus {
@@ -33,4 +26,4 @@ import Sell
 //    var extra: [TransactionDetailExtraInfo]
 //
 //    var actions: [TransactionDetailAction]
-//}
+// }

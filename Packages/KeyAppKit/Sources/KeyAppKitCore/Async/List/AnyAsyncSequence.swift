@@ -1,10 +1,3 @@
-//
-//  AnyAsyncSequence.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 
 public struct AnyAsyncSequence<Element>: AsyncSequence {
@@ -20,29 +13,29 @@ public struct AnyAsyncSequence<Element>: AsyncSequence {
 
         public init<I: AsyncIteratorProtocol>(itr: I) where I.Element == Element {
             var itr = itr
-            self._next = {
+            _next = {
                 try await itr.next()
             }
         }
 
         public mutating func next() async throws -> Element? {
-            return try await _next()
+            try await _next()
         }
     }
 
     public init<S: AsyncSequence>(seq: S) where S.Element == Element {
-        self._makeAsyncIterator = {
+        _makeAsyncIterator = {
             AnyAsyncIterator(itr: seq.makeAsyncIterator())
         }
     }
 
     public func makeAsyncIterator() -> AnyAsyncIterator<Element> {
-        return _makeAsyncIterator()
+        _makeAsyncIterator()
     }
 }
 
-extension AsyncSequence {
-    public func eraseToAnyAsyncSequence() -> AnyAsyncSequence<Element> {
+public extension AsyncSequence {
+    func eraseToAnyAsyncSequence() -> AnyAsyncSequence<Element> {
         AnyAsyncSequence(seq: self)
     }
 }

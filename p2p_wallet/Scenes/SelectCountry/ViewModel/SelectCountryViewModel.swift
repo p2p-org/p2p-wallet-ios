@@ -1,10 +1,3 @@
-//
-//  SelectCountryViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.04.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation

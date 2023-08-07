@@ -17,7 +17,6 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
 
     private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
     var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
-    
 
     init(rootView: Content, ignoresKeyboard: Bool = false,
          navigationBarVisibility: NavigationBarVisibility = .default)

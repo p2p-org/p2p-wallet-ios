@@ -1,10 +1,3 @@
-//
-//  RecoveryKitDevicesCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Combine
 import Foundation
 import Onboarding
@@ -136,9 +129,9 @@ final class RecoveryKitDevicesCoordinator: Coordinator<Void> {
                     self?.notificationService.showToast(title: "❌", text: L10n.SomethingWentWrong.pleaseTryAgain)
                 case .cancel:
                     return
-                    // guard let prevVC = self?.prevVC else { return }
-                    // self?.navigationController.popToViewController(prevVC, animated: true)
-                    // self?.result.send(completion: .finished)
+                        // guard let prevVC = self?.prevVC else { return }
+                        // self?.navigationController.popToViewController(prevVC, animated: true)
+                        // self?.result.send(completion: .finished)
                 }
             }
             .store(in: &subscriptions)

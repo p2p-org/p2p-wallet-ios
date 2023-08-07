@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct ColoredBackground<Content: View>: View {
     let content: Content
@@ -7,12 +7,12 @@ struct ColoredBackground<Content: View>: View {
 
     init(@ViewBuilder _ content: () -> Content, color: UIColor = Asset.Colors.smoke.color) {
         self.content = content()
-        self.backgroundColor = Color(color)
+        backgroundColor = Color(color)
     }
 
     init(@ViewBuilder _ content: () -> Content, color: Color) {
         self.content = content()
-        self.backgroundColor = color
+        backgroundColor = color
     }
 
     var body: some View {

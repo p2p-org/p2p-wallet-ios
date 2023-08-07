@@ -1,15 +1,8 @@
-//
-//  SwapSettingsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 01.03.2023.
-//
-
 import Combine
 import Foundation
-import UIKit
-import SwiftUI
 import Jupiter
+import SwiftUI
+import UIKit
 
 enum SwapSettingsCoordinatorResult {
     case selectedSlippageBps(Int)
@@ -17,8 +10,8 @@ enum SwapSettingsCoordinatorResult {
 }
 
 final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> {
-
     // MARK: - Properties
+
     private let stateMachine: JupiterSwapStateMachine
     private let navigationController: UINavigationController
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
@@ -39,22 +32,22 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
         // create viewModel
         viewModel = SwapSettingsViewModel(stateMachine: stateMachine)
-        
+
         // navigation
         viewModel.rowTapped
             .sink(receiveValue: { [unowned self] rowIdentifier in
                 presentSettingsInfo(rowIdentifier: rowIdentifier)
             })
             .store(in: &subscriptions)
-        
+
         // create view
         let view = SwapSettingsView(viewModel: viewModel)
-        
+
         // return viewModel
         let viewController = view.asViewController(withoutUIKitNavBar: false)
         viewController.title = L10n.swapDetails
         navigationController.pushViewController(viewController, animated: true)
-        
+
         // complete Coordinator
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
@@ -62,11 +55,11 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                     let slippageBps = round(slippage * 100)
                     self?.result.send(.selectedSlippageBps(Int(slippageBps)))
                 }
-                
+
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)
-        
+
         return result.eraseToAnyPublisher()
     }
 
@@ -79,7 +72,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                     } else {
                         return .loaded(
                             routeInfos: state.routes.map { $0.mapToInfo(currentState: state) },
-                            selectedIndex: state.routes.firstIndex(where: {$0.id == state.route?.id})
+                            selectedIndex: state.routes.firstIndex(where: { $0.id == state.route?.id })
                         )
                     }
                 }
@@ -95,11 +88,11 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 navigationController.presentedViewController?.dismiss(animated: true)
             }
         )
-        
+
         selectRouteViewController = UIBottomSheetHostingController(rootView: view)
         selectRouteViewController.view.layer.cornerRadius = 20
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
-        
+
         stateMachine.statePublisher
             .receive(on: RunLoop.main)
             .sink { _ in
@@ -109,7 +102,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             }
             .store(in: &subscriptions)
     }
-    
+
     private func presentSettingsInfo(rowIdentifier: SwapSettingsView.RowIdentifier) {
         // map row identifier to strategy
         let strategy: SwapSettingsInfoViewModel.Strategy
@@ -127,27 +120,27 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         case .minimumReceived:
             strategy = .minimumReceived
         }
-        
+
         // create viewModel
         let settingsInfoViewModel = SwapSettingsInfoViewModel(strategy: strategy)
-        
+
         // handle closing
         settingsInfoViewModel.close
             .sink { [weak self] _ in
                 self?.selectRouteViewController.dismiss(animated: true)
             }
             .store(in: &subscriptions)
-        
+
         // create view
         let view = SwapSettingsInfoView(viewModel: settingsInfoViewModel)
-        
+
         // create hosting controller
         selectRouteViewController = UIBottomSheetHostingController(rootView: view)
         selectRouteViewController.view.layer.cornerRadius = 20
-        
+
         // present bottomSheet
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
-        
+
         // observe viewModel status
         if rowIdentifier == .liquidityFee {
             viewModel.$currentState
@@ -176,13 +169,13 @@ private extension JupiterSwapState {
         guard route != nil else {
             return .loading
         }
-        
+
         return .loaded(
             info.liquidityFee.map { lqFee in
                 SwapSettingsInfoViewModel.Fee(
                     title: L10n.liquidityFee(
                         lqFee.tokenName ?? L10n.unknownToken,
-                        "\(lqFee.pct == nil ? L10n.unknown: "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
+                        "\(lqFee.pct == nil ? L10n.unknown : "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
                     ),
                     subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
                     amount: lqFee.amountInFiatDescription

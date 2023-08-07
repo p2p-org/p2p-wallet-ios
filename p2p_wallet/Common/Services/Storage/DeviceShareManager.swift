@@ -1,10 +1,3 @@
-//
-//  DeviceShareManager.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07/06/2023.
-//
-
 import Combine
 import Foundation
 import KeychainSwift

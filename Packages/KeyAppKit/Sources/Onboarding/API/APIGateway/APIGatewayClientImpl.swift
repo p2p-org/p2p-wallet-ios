@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import KeyAppKitCore
 import TweetNacl
@@ -49,13 +45,13 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
 
         // Create rpc request
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "get_metadata",
             params: APIGatewayGetMetadataParams(
                 solanaPublicKey: Base58.encode(solanaPublicKey),
                 ethereumAddress: ethAddress,
-                signature: try GetMetadataSignature(
+                signature: GetMetadataSignature(
                     ethereumAddress: ethAddress,
                     solanaPublicKey: Base58.encode(solanaPublicKey),
                     timestampDevice: Int64(timestampDevice.timeIntervalSince1970)
@@ -83,17 +79,17 @@ public class APIGatewayClientImpl: APIGatewayClient {
         // Prepare
         var request = createDefaultRequest()
         let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
-        
+
         let encryptedMetadataInBase64 = encryptedMetadata.base64()
 
         // Create rpc request
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "update_metadata",
             params: APIGatewayUpdateMetadataParams(
                 solanaPublicKey: Base58.encode(solanaPublicKey),
                 ethereumAddress: ethAddress,
-                signature: try UpdateMetadataSignature(
+                signature: UpdateMetadataSignature(
                     ethereumAddress: ethAddress,
                     solanaPublicKey: Base58.encode(solanaPublicKey),
                     timestampDevice: Int64(timestampDevice.timeIntervalSince1970),
@@ -104,7 +100,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
             )
         )
         request.httpBody = try JSONEncoder().encode(rpcRequest)
-        
+
         // Request
         let responseData = try await networkManager.requestData(request: request)
 
@@ -138,7 +134,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
 
         // Create rpc request
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "register_wallet",
             params: APIGatewayRegisterWalletParams(
@@ -146,7 +142,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
                 ethereumAddress: ethAddress,
                 phone: phone,
                 channel: channel.rawValue,
-                signature: try RegisterWalletSignature(
+                signature: RegisterWalletSignature(
                     solanaPublicKey: Base58.encode(solanaPublicKey),
                     ethereumAddress: ethAddress,
                     phone: phone,
@@ -189,7 +185,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
 
         // Create rpc request
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "confirm_register_wallet",
             params: APIGatewayConfirmRegisterWalletParams(
@@ -200,7 +196,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
                 encryptedMetadata: encryptedMetaData.base64(),
                 phone: phone,
                 phoneConfirmationCode: otpCode,
-                signature: try ConfirmRegisterWalletSignature(
+                signature: ConfirmRegisterWalletSignature(
                     ethereumId: ethAddress,
                     solanaPublicKey: Base58.encode(solanaPublicKey),
                     encryptedShare: share,
@@ -239,7 +235,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
         var request = createDefaultRequest()
         let solanaKeypair = try NaclSign.KeyPair.keyPair(fromSecretKey: solPrivateKey)
 
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "restore_wallet",
             params: APIGatewayRestoreWalletParams(
@@ -247,7 +243,7 @@ public class APIGatewayClientImpl: APIGatewayClient {
                 phone: phone,
                 // appHash: "",
                 channel: channel.rawValue,
-                signature: try RestoreWalletSignature(
+                signature: RestoreWalletSignature(
                     restoreId: Base58.encode(solanaKeypair.publicKey),
                     phone: phone,
                     appHash: "",
@@ -283,14 +279,14 @@ public class APIGatewayClientImpl: APIGatewayClient {
         var request = createDefaultRequest()
         let solanaKeypair = try NaclSign.KeyPair.keyPair(fromSecretKey: solanaPrivateKey)
 
-        let rpcRequest = JSONRPCRequest(
+        let rpcRequest = try JSONRPCRequest(
             id: uuid.uuidString,
             method: "confirm_restore_wallet",
             params: APIGatewayConfirmRestoreWalletParams(
                 restoreId: Base58.encode(solanaKeypair.publicKey),
                 phone: phone,
                 phoneConfirmationCode: otpCode,
-                signature: try ConfirmRestoreWalletSignature(
+                signature: ConfirmRestoreWalletSignature(
                     restoreId: Base58.encode(solanaKeypair.publicKey),
                     phone: phone,
                     phoneConfirmationCode: otpCode
@@ -317,12 +313,12 @@ public class APIGatewayClientImpl: APIGatewayClient {
         }
 
         guard let result = response.result else { throw APIGatewayError.failedSending }
-        return .init(
+        return try .init(
             solanaPublicKey: result.solanaPublicKey,
             ethereumId: result.ethereumAddress,
-            encryptedShare: try result.share.fromBase64(),
-            encryptedPayload: try result.payload.fromBase64(),
-            encryptedMetaData: try result.metadata.fromBase64()
+            encryptedShare: result.share.fromBase64(),
+            encryptedPayload: result.payload.fromBase64(),
+            encryptedMetaData: result.metadata.fromBase64()
         )
     }
 

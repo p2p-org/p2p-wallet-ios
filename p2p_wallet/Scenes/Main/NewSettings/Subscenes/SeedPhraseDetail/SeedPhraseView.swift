@@ -1,10 +1,3 @@
-//
-//  SeedPhraseView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 01.09.2022.
-//
-
 import CarPlay
 import KeyAppUI
 import SwiftUI

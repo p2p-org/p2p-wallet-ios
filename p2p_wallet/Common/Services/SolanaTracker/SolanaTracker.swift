@@ -1,10 +1,3 @@
-//
-//  SolanaTracker.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.10.2022.
-//
-
 import Combine
 import Foundation
 

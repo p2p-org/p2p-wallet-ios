@@ -1,13 +1,14 @@
 import Foundation
 
 // MARK: - Country
+
 public struct Country: Codable, Hashable {
     public let name: String
     public let code: String
     public let dialCode: String
     public let emoji: String?
 
-    public init (name: String, code: String, dialCode: String, emoji: String?) {
+    public init(name: String, code: String, dialCode: String, emoji: String?) {
         self.name = name
         self.code = code
         self.dialCode = dialCode

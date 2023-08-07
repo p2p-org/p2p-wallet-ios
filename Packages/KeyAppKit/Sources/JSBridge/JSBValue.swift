@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 public class JSBValue: JSBridge, CustomStringConvertible {
@@ -62,7 +58,7 @@ public class JSBValue: JSBridge, CustomStringConvertible {
     ) async throws -> JSBValue {
         let context = try await getContext()
         let result = JSBValue(in: context)
-        try await context.evaluate("\(result.name) = \(name).\(method)(\(try parseArgs(args)));")
+        try await context.evaluate("\(result.name) = \(name).\(method)(\(parseArgs(args)));")
         return result
     }
 
@@ -77,10 +73,10 @@ public class JSBValue: JSBridge, CustomStringConvertible {
             Task {
                 let id = await context.promiseDispatchTable.register(continuation: continuation)
 
-                let script = """
+                let script = try """
                  var \(result.name);
                 \(name)
-                     .\(method)(\(try parseArgs(args)))
+                     .\(method)(\(parseArgs(args)))
                      .then((value) => {
                              \(result.name) = value;
                              window
@@ -113,7 +109,7 @@ public class JSBValue: JSBridge, CustomStringConvertible {
     public func invokeNew(withArguments args: [CustomStringConvertible]) async throws -> JSBValue {
         let context = try await getContext()
         let result = JSBValue(in: context)
-        try await context.evaluate("\(result.name) = new \(name)(\(try parseArgs(args)));")
+        try await context.evaluate("\(result.name) = new \(name)(\(parseArgs(args)));")
         return result
     }
 
@@ -142,15 +138,15 @@ public class JSBValue: JSBridge, CustomStringConvertible {
         }
 
         if let arg = arg as? [String: Any] {
-            return String(
-                data: try JSONSerialization.data(withJSONObject: arg, options: .sortedKeys),
+            return try String(
+                data: JSONSerialization.data(withJSONObject: arg, options: .sortedKeys),
                 encoding: .utf8
             )!
         }
 
         if let arg = arg as? [Any] {
-            return String(
-                data: try JSONSerialization.data(withJSONObject: arg, options: .sortedKeys),
+            return try String(
+                data: JSONSerialization.data(withJSONObject: arg, options: .sortedKeys),
                 encoding: .utf8
             )!
         }

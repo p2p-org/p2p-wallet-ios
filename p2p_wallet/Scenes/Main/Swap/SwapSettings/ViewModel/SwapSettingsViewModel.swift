@@ -42,9 +42,9 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         // capture state machine
         self.stateMachine = stateMachine
         // copy current state
-        self.currentState = stateMachine.currentState
+        currentState = stateMachine.currentState
         // copy selected slippage
-        self.selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
+        selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
             .rounded(decimals: 2)
 
         super.init()

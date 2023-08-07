@@ -1,29 +1,35 @@
+import AppsFlyerLib
 import Foundation
 import Resolver
-import AppsFlyerLib
 import UIKit
 
 final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_: UIApplication,
+                     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
+    {
         AppsFlyerLib.shared().deepLinkDelegate = self
 //        AppsFlyerLib.shared().appInviteOneLinkID = "sHgH"
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         // Handler by Appflyer?
 //            AppsFlyerLib.shared().handleOpen(url, options: options)
 //            return true
-        
+
         // Handler natively
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         else { return false }
-        
+
         handleCustomURIScheme(urlComponents: components)
         return true
     }
-    
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
+    func application(
+        _: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         // get url components
         guard
             let webpageURL = userActivity.webpageURL,
@@ -31,7 +37,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         else {
             return false
         }
-        
+
         // handle appflyer deeplinks
         // https://keyapp.onelink.me/rRAL/transfer?deep_link_value=<seed>
         if urlComponents.url?.absoluteString.hasPrefix("https://keyapp.onelink.me/rRAL/transfer") == true {
@@ -39,14 +45,14 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
             return true
         }
-        
+
         // handle natively
         else {
             handleCustomUniversalLinks(urlComponents: urlComponents)
             return true
         }
     }
-    
+
     // MARK: - Helpers
 
     private func handleCustomUniversalLinks(urlComponents: URLComponents) {
@@ -54,7 +60,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         guard urlComponents.scheme == "https" else {
             return
         }
-        
+
         // Intercom survey
         // https://key.app/intercom?intercom_survey_id=133423424
         if urlComponents.host == "key.app",
@@ -66,19 +72,19 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 GlobalAppState.shared.surveyID = value
             }
         }
-        
+
         // Send via link
         // https://t.key.app/<seed>
         else if urlComponents.host == "t.key.app" {
             GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
         }
     }
-    
+
     private func handleCustomURIScheme(urlComponents components: URLComponents) {
         let host = components.host
         let path = components.path
         let scheme = components.scheme
-        
+
         // Login to test with urischeme
         // keyapptest://onboarding/seedPhrase?value=seed-phrase-separated-by-hyphens&pincode=222222
         if scheme == "keyapptest",
@@ -97,14 +103,20 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 appEventHandler.delegate?.disablePincodeOnFirstAppear()
                 pincodeStorageService.save(pincode)
                 Defaults.isBiometryEnabled = false
-                
-                try await userWalletManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
-                
+
+                try await userWalletManager.add(
+                    seedPhrase: seedPhrase.components(separatedBy: "-"),
+                    derivablePath: .default,
+                    name: nil,
+                    deviceShare: nil,
+                    ethAddress: nil
+                )
+
                 try await Task.sleep(nanoseconds: 1_000_000_000)
                 authService.authenticate(presentationStyle: nil)
             }
         }
-        
+
         // Send via link
         // keyapp://t/<seed>
         else if scheme == "keyapp", host == "t" {
@@ -130,22 +142,21 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         case .found:
             NSLog("[AFSDK] Deep link found")
         }
-        
+
         guard let deepLinkObj = result.deepLink else {
             NSLog("[AFSDK] Could not extract deep link object")
             return
         }
-        
+
         // handle appflyer link
-        if( deepLinkObj.isDeferred == true) {
+        if deepLinkObj.isDeferred == true {
             NSLog("[AFSDK] This is a deferred deep link")
-        }
-        else {
+        } else {
             NSLog("[AFSDK] This is a direct deep link")
         }
-        
+
         // disable
-        guard let urlStringOptional = deepLinkObj.clickEvent["link"] as? Optional<String>,
+        guard let urlStringOptional = deepLinkObj.clickEvent["link"] as? String?,
               let urlString = urlStringOptional,
               let urlComponents = URLComponents(string: urlString),
               let host = urlComponents.host,
@@ -153,7 +164,7 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         else {
             return
         }
-        
+
         seed = deepLinkObj.deeplinkValue
         GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
     }
@@ -170,7 +181,7 @@ private func urlFromSeed(_ seed: String?) -> URL? {
     return urlComponent.url
 }
 
-//private func externalURLSchemes() -> [String] {
+// private func externalURLSchemes() -> [String] {
 //    guard let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [AnyObject],
 //          let urlSchemes = (urlTypes as? [[String: AnyObject]])?
 //            .compactMap({$0["CFBundleURLSchemes"] as? [String]})
@@ -178,4 +189,4 @@ private func urlFromSeed(_ seed: String?) -> URL? {
 //    else { return [] }
 //    print(urlSchemes)
 //    return urlSchemes
-//}
+// }
