@@ -24,24 +24,8 @@ struct BuyView: View, KeyboardVisibilityReadable {
         content.toolbar {
             ToolbarItem(placement: .principal) {
                 HStack {
-                    Spacer()
-                    Spacer()
                     Text(L10n.buyWithMoonpay)
                         .fontWeight(.semibold)
-                    Spacer()
-                    Button(
-                        action: {
-                            viewModel.flagClicked()
-                        },
-                        label: {
-                            HStack(spacing: 10) {
-                                Text(viewModel.flag)
-                                    .font(uiFont: .font(of: .title1, weight: .bold))
-                                Image(uiImage: .chevronDown)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                            }
-                        }
-                    )
                 }
             }
         }
@@ -49,23 +33,6 @@ struct BuyView: View, KeyboardVisibilityReadable {
 
     @ViewBuilder
     private var content: some View {
-        switch viewModel.state {
-        case .usual:
-            basicContent
-        case let .buyNotAllowed(model):
-            ChangeCountryErrorView(
-                model: model,
-                buttonAction: {
-                    viewModel.goBackClicked()
-                },
-                subButtonAction: {
-                    viewModel.changeTheRegionClicked()
-                }
-            )
-        }
-    }
-
-    private var basicContent: some View {
         VStack(spacing: 0) {
             ScrollView {
                 // Tutorial

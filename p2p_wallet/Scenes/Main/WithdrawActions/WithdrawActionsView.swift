@@ -2,8 +2,8 @@ import Combine
 import KeyAppUI
 import SwiftUI
 
-struct TopupActionsView: View {
-    @ObservedObject var viewModel: TopupActionsViewModel
+struct WithdrawActionsView: View {
+    @ObservedObject var viewModel: WithdrawActionsViewModel
 
     var body: some View {
         VStack(spacing: 0) {
@@ -11,10 +11,9 @@ struct TopupActionsView: View {
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
-            Text(L10n.addMoney)
+            Text(L10n.withdrawTo)
                 .apply(style: .title3, weight: .semibold)
                 .padding(.top, 24)
-                .padding(.bottom, 15)
             VStack(spacing: 8) {
                 ForEach(viewModel.actions) { item in
                     Button {
@@ -35,11 +34,11 @@ struct TopupActionsView: View {
         .cornerRadius(20)
     }
     
-    private func foregroundColor(item: TopupActionsViewModel.ActionItem) -> Color {
+    private func foregroundColor(item: WithdrawActionsViewModel.ActionItem) -> Color {
         item.isDisabled ? Color(Asset.Colors.mountain.color) : Color(Asset.Colors.night.color)
     }
 
-    private func cell(item: TopupActionsViewModel.ActionItem) -> some View {
+    private func cell(item: WithdrawActionsViewModel.ActionItem) -> some View {
         HStack(spacing: 12) {
             Image(uiImage: item.icon)
                 .frame(width: 50, height: 50)
@@ -47,6 +46,7 @@ struct TopupActionsView: View {
                 Text(item.title)
                     .apply(style: .text3, weight: .semibold)
                     .foregroundColor(foregroundColor(item: item))
+
                 Text(item.subtitle)
                     .apply(style: .label1, weight: .regular)
                     .foregroundColor(foregroundColor(item: item))
@@ -70,8 +70,8 @@ struct TopupActionsView: View {
     }
 }
 
-struct TopupActions_Previews: PreviewProvider {
+struct WithdrawActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        TopupActionsView(viewModel: .init())
+        WithdrawActionsView(viewModel: .init())
     }
 }

@@ -294,7 +294,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             navigation.send(.addMoney)
         case .withdraw:
             analyticsManager.log(event: .mainScreenWithdrawClick)
-            navigation.send(.withdrawCalculator)
+            navigation.send(.withdrawActions)
+//            navigation.send(.withdrawCalculator)
         }
     }
 

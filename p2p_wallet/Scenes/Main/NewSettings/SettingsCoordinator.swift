@@ -1,4 +1,5 @@
 import Combine
+import CountriesAPI
 import Resolver
 import UIKit
 
@@ -49,14 +50,31 @@ final class SettingsCoordinator: Coordinator<Void> {
                     coordinate(to: coordinator)
                         .sink(receiveValue: {})
                         .store(in: &subscriptions)
+                case .country:
+                    coordinate(to: ChooseItemCoordinator<Region>(
+                        title: L10n.selectYourCountry,
+                        controller: settingsVC,
+                        service: ChooseCountryService(),
+                        chosen: Defaults.region,
+                        showDoneButton: true
+                    ))
+                    .sink { result in
+                        switch result {
+                            case .item(let item):
+                            if let region = item as? Region {
+                                viewModel.region = region
+                            } else {
+                                assert(true)
+                            }
+                            case .cancel: break
+                        }
+                    }.store(in: &subscriptions)
                 }
             })
             .store(in: &subscriptions)
 
-        let closeSubject = PassthroughSubject<Void, Never>()
-        settingsVC.onClose = {
-            closeSubject.send()
-        }
-        return closeSubject.prefix(1).eraseToAnyPublisher()
+        return settingsVC.deallocatedPublisher()
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }

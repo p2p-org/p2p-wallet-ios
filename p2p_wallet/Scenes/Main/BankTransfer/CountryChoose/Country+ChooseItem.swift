@@ -10,4 +10,12 @@ extension Country: ChooseItemSearchableItem {
     }
 }
 
+extension Region: ChooseItemSearchableItem {
+    public var id: String { name }
+
+    func matches(keyword: String) -> Bool {
+        name.lowercased().hasPrefix(keyword.lowercased())
+    }
+}
+
 extension Country: DefaultsSerializable {}

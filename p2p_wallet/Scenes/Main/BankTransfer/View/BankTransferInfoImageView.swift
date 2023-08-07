@@ -1,5 +1,6 @@
 import KeyAppUI
 import SwiftUI
+import SkeletonUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
@@ -45,11 +46,99 @@ struct BankTransferTitleCellView: View {
 
     var body: some View {
         Text(title)
-            .fontWeight(.bold)
-            .apply(style: .title2)
+            .apply(style: .title2, weight: .bold)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 20)
+    }
+}
+
+// MARK: - Country
+
+struct BankTransferCountryCellViewItem: Identifiable {
+    var id: String { name + flag }
+    var name: String
+    var flag: String
+    var isLoading: Bool
+}
+
+extension BankTransferCountryCellViewItem: Renderable {
+    func render() -> some View {
+        BankTransferCountryCellView(name: name, flag: flag, isLoading: isLoading)
+    }
+}
+
+struct BankTransferCountryCellView: View {
+    let name: String
+    let flag: String
+    let isLoading: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            flagView
+                .padding(.leading, 16)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(name)
+                    .apply(style: .text3, weight: .semibold)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .skeleton(
+                        with: isLoading,
+                        size: CGSize(width: 150, height: 20),
+                        animated: .default
+                    )
+                Text(L10n.yourCountry)
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
+            Spacer()
+            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .padding(.trailing, 19)
+        }
+        .padding(.vertical, 12)
+        .background(Color(Asset.Colors.snow.color))
+        .cornerRadius(radius: 16, corners: .allCorners)
+    }
+
+    var flagView: some View {
+        Rectangle()
+            .fill(Color(Asset.Colors.smoke.color))
+            .cornerRadius(radius: 24, corners: .allCorners)
+            .frame(width: 48, height: 48)
+            .overlay {
+                Text(flag)
+                    .apply(style: .title1, weight: .bold)
+                    .skeleton(
+                        with: isLoading,
+                        size: CGSize(width: 32, height: 32),
+                        animated: .default
+                    )
+            }
+    }
+}
+
+// MARK: -
+
+struct BankTransferInfoCountriesTextCellViewItem: Identifiable {
+    var id: String = UUID().uuidString
+}
+
+extension BankTransferInfoCountriesTextCellViewItem: Renderable {
+    func render() -> some View {
+        BankTransferInfoCountriesTextCellView()
+    }
+}
+
+struct BankTransferInfoCountriesTextCellView: View {
+    var body: some View {
+        HStack(spacing: 0) {
+            Text(L10n.checkTheListOfCountries + " ")
+                .apply(style: .text3)
+                .foregroundColor(Color(Asset.Colors.night.color))
+            Text(L10n.here)
+                .apply(style: .text3)
+                .foregroundColor(Color(Asset.Colors.sky.color))
+        }
     }
 }
 
@@ -59,12 +148,12 @@ struct CenterTextCellViewItem: Identifiable {
     var id: String = UUID().uuidString
     let text: String
     let style: UIFont.Style
-    let color: Color
+    let color: UIColor
 }
 
 extension CenterTextCellViewItem: Renderable {
     func render() -> some View {
-        CenterTextCellItemView(text: text, style: style, color: color)
+        CenterTextCellItemView(text: text, style: style, color: Color(color))
     }
 }
 

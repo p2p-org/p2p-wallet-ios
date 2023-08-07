@@ -1,4 +1,5 @@
 import BankTransfer
+import CountriesAPI
 import Combine
 import Foundation
 import Onboarding
@@ -14,18 +15,12 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
     @Published var actions: [ActionItem] = [
         ActionItem(
-            id: .card,
-            icon: .addMoneyBankCard,
-            title: L10n.bankCard,
-            subtitle: L10n.instant·Fees("4.5%"),
-            isLoading: false
-        ),
-        ActionItem(
             id: .crypto,
             icon: .addMoneyCrypto,
             title: L10n.crypto,
             subtitle: L10n.upTo1Hour·Fees("%0"),
-            isLoading: false
+            isLoading: false,
+            isDisabled: false
         ),
     ]
 
@@ -64,14 +59,30 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     override init() {
         super.init()
 
-        if shouldShowBankTransfer {
+        if let region = Defaults.region, region.isMoonpayAllowed {
+            actions.insert(
+                ActionItem(
+                    id: .card,
+                    icon: region.isMoonpayAllowed ? .addMoneyBankCard : .addMoneyBankCardDisabled,
+                    title: L10n.bankCard,
+                    subtitle: L10n.instant·Fees("4.5%"),
+                    isLoading: false,
+                    isDisabled: !region.isMoonpayAllowed
+                ),
+                at: 0
+            )
+        }
+
+        let isStrigaAllowed = Defaults.region?.isStrigaAllowed ?? false
+        if shouldShowBankTransfer, isStrigaAllowed {
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: .addMoneyBankTransfer,
+                    icon: isStrigaAllowed ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled ,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
-                    isLoading: false
+                    isLoading: false,
+                    isDisabled: !isStrigaAllowed
                 ),
                 at: 0
             )
@@ -143,5 +154,6 @@ extension TopupActionsViewModel {
         var title: String
         var subtitle: String
         var isLoading: Bool
+        var isDisabled: Bool
     }
 }

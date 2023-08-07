@@ -12,20 +12,16 @@ import Wormhole
 
 enum HomeNavigation: Equatable {
     // HomeWithTokens
-    case buy
     case receive(publicKey: PublicKey)
-    case send
-    case swap
     case cashOut
-    case earn
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case bankTransferClaim(StrigaClaimTransaction)
     case bankTransferConfirm(StrigaWithdrawTransaction)
-    case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(TokenMetadata)
     case topUp // Top up via bank transfer, bank card or crypto receive
+    case withdrawActions // Withdraw actions My bank account / somone else
     case bankTransfer // Only bank transfer
     case withdrawCalculator
     case withdrawInfo(StrigaWithdrawalInfo, WithdrawConfirmationParameters)
@@ -49,6 +45,8 @@ final class HomeCoordinator: Coordinator<Void> {
 
     var tokensViewModel: HomeAccountsViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
+    /// A list of actions required to check if country is selected
+    private let regionSelectionReqired = [HomeNavigation.withdrawActions, .addMoney]
 
     // MARK: - Initializers
 
@@ -97,12 +95,25 @@ final class HomeCoordinator: Coordinator<Void> {
         }
 
         // handle navigation
-        navigation
-            .flatMap { [unowned self] in
-                navigate(to: $0, homeView: homeView)
+        navigation.flatMap({ [unowned self] action in
+            if regionSelectionReqired.contains(action), Defaults.region == nil {
+                return coordinate(to: SelectRegionCoordinator(navigationController: navigationController))
+                    .handleEvents(receiveOutput: { [unowned self] _ in
+                        navigationController.popViewController(animated: true)
+                    })
+                    .flatMap { [unowned self] result in
+                        switch result {
+                        case .selected(_):
+                            return navigate(to: action, homeView: homeView)
+                        case .cancelled:
+                            return Just(()).eraseToAnyPublisher()
+                        }
+                    }.eraseToAnyPublisher()
             }
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+            return navigate(to: action, homeView: homeView)
+        })
+        .sink(receiveValue: {})
+        .store(in: &subscriptions)
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -111,10 +122,6 @@ final class HomeCoordinator: Coordinator<Void> {
 
     private func navigate(to scene: HomeNavigation, homeView: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
-        case .buy:
-            return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                .map { _ in () }
-                .eraseToAnyPublisher()
         case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
@@ -129,32 +136,6 @@ final class HomeCoordinator: Coordinator<Void> {
                 )
                 return coordinate(to: coordinator).eraseToAnyPublisher()
             }
-        case .send:
-            return coordinate(
-                to: SendCoordinator(
-                    rootViewController: navigationController,
-                    preChosenWallet: nil,
-                    hideTabBar: true,
-                    allowSwitchingMainAmountType: true
-                )
-            )
-            .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak self] result in
-                switch result {
-                case let .sent(model):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showSendTransactionStatus(model: model)
-                case let .wormhole(trx):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showUserAction(userAction: trx)
-                case .sentViaLink:
-                    self?.navigationController.popToRootViewController(animated: true)
-                case .cancelled:
-                    break
-                }
-            })
-            .map { _ in () }
-            .eraseToAnyPublisher()
 
         case let .claim(account, userAction):
             if let userAction, userAction.status == .processing {
@@ -196,19 +177,6 @@ final class HomeCoordinator: Coordinator<Void> {
             return openBankTransferClaimCoordinator(transaction: transaction)
                 .eraseToAnyPublisher()
 
-        case .swap:
-            analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
-            return coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: navigationController,
-                    params: JupiterSwapParameters(
-                        dismissAfterCompletion: true,
-                        openKeyboardOnStart: true,
-                        source: .actionPanel
-                    )
-                )
-            )
-            .eraseToAnyPublisher()
         case .cashOut:
             analyticsManager.log(event: .sellClicked(source: "Main"))
             return coordinate(
@@ -231,9 +199,6 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
-        case .earn:
-            return Just(())
-                .eraseToAnyPublisher()
 
         case let .solanaAccount(solanaAccount):
             analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.token.symbol))
@@ -246,11 +211,27 @@ final class HomeCoordinator: Coordinator<Void> {
             )
             .map { _ in () }
             .eraseToAnyPublisher()
-        case .actions, .topUp:
+        case .topUp:
             return Just(()).eraseToAnyPublisher()
         case .bankTransfer:
             return coordinate(to: BankTransferCoordinator(viewController: navigationController))
                 .eraseToAnyPublisher()
+        case .withdrawActions:
+            return coordinate(to: WithdrawActionsCoordinator(viewController: navigationController))
+                .flatMap { [unowned self] result in
+                    switch result {
+                    case .action(let action):
+                        switch action {
+                        case .transfer:
+                            return self.navigate(to: .withdrawCalculator, homeView: homeView)
+                        case .user, .wallet:
+                            return coordinate(to: SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, allowSwitchingMainAmountType: true))
+                                .map {_ in }.eraseToAnyPublisher()
+                        }
+                    case .cancel:
+                        return Just(()).eraseToAnyPublisher()
+                    }
+                }.eraseToAnyPublisher()
         case .withdrawCalculator:
             return coordinate(to: WithdrawCalculatorCoordinator(
                 navigationController: navigationController

@@ -2,6 +2,8 @@ import Foundation
 
 public protocol CountriesAPI {
     func fetchCountries() async throws -> Countries
+    /// Fetches regions from the server
+    func fetchRegions() async throws -> [Region]
 }
 
 public final class CountriesAPIImpl: CountriesAPI {
@@ -23,5 +25,13 @@ public final class CountriesAPIImpl: CountriesAPI {
             try Task.checkCancellation()
             return countries
         }.value
+    }
+
+    public func fetchRegions() async throws -> [Region] {
+        let regionListURL = URL(string: "https://raw.githubusercontent.com/p2p-org/country-list/main/country-list.json")!
+        let data = try Data(contentsOf: regionListURL)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode([Region].self, from: data)
     }
 }

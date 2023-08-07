@@ -17,9 +17,6 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: ResendCounter?
 
-    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
-    private var lastChosenCountry: Country?
-
     // Fields
     @Published var occupationIndustry: String = ""
     @Published var sourceOfFunds: String = ""
@@ -76,11 +73,6 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .assignWeak(to: \.country, on: self)
             .store(in: &subscriptions)
 
-        $selectedCountry
-            .compactMap { $0 }
-            .assignWeak(to: \.lastChosenCountry, on: self)
-            .store(in: &subscriptions)
-
         $selectedIndustry
             .map { $0?.wholeName ?? "" }
             .assignWeak(to: \.occupationIndustry, on: self)
@@ -113,8 +105,6 @@ private extension StrigaRegistrationSecondStepViewModel {
                 $0.code.lowercased() == userData.address?.country?.lowercased()
             }) {
                 self.selectedCountry = country
-            } else if let lastChosenCountry {
-                self.selectedCountry = lastChosenCountry
             }
         }
     }
