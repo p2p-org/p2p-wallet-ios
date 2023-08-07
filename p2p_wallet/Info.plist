@@ -137,6 +137,10 @@
 	<string>Your data will be used only to measure advertising efficiency</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
+	<key>SEND_DEV</key>
+	<string>$(SEND_DEV)</string>
+	<key>SEND_PROD</key>
+	<string>$(SEND_PROD)</string>
 	<key>SEND_VIA_LINK_MEMO_PREFIX</key>
 	<string>$(SEND_VIA_LINK_MEMO_PREFIX)</string>
 	<key>SEND_VIA_LINK_SALT</key>

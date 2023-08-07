@@ -1,6 +1,10 @@
 import Foundation
 
 public class HTTPJSONRPCCLient {
+    public struct EmptyParams: Codable {
+        public init() {}
+    }
+
     static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
