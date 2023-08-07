@@ -6,6 +6,8 @@ extension NSError {
             NSURLErrorNetworkConnectionLost,
             NSURLErrorNotConnectedToInternet,
             NSURLErrorDataNotAllowed,
+            NSURLErrorCannotFindHost,
+            NSURLErrorTimedOut,
         ]
             .contains(code)
     }
