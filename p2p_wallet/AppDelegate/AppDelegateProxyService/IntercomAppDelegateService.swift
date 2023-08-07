@@ -6,8 +6,11 @@ final class IntercomAppDelegateService: NSObject, AppDelegateService {
 
     func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Intercom.setDeviceToken(deviceToken) { error in
-            guard let error else { return }
-            print("Intercom.setDeviceToken error: ", error)
+            #if DEBUG
+                if let error {
+                    print("Intercom.setDeviceToken error: ", error)
+                }
+            #endif
         }
     }
 

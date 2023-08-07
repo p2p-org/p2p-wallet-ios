@@ -22,9 +22,3 @@ extension Bundle {
         return releaseVersionNumber + "(" + buildVersionNumber + ")"
     }
 }
-
-extension UIApplication {
-    static func languageChanged() {
-//        Bundle.current = Bundle.valueForCurrentBundle()
-    }
-}
