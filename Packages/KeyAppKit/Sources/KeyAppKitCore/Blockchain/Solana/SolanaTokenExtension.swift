@@ -10,7 +10,7 @@ public extension SolanaToken {
 public struct KeyAppTokenExtension: Codable, Hashable {
     public let ruleOfProcessingTokenPriceWS: RuleOfProcessingTokenPriceWS?
     public let isPositionOnWS: Bool?
-    public let isTokenCellVisibleOnWS: Bool?
+    public let isTokenCellVisibleOnWS: Bool
     public let percentDifferenceToShowByPriceOnWS: Double?
     public let calculationOfFinalBalanceOnWS: Bool?
     public let ruleOfFractionalPartOnWS: RuleOfFractionalPartOnWS?
@@ -26,7 +26,7 @@ public struct KeyAppTokenExtension: Codable, Hashable {
 
     init(data: [String: TokenExtensionValue]) {
         isPositionOnWS = data["isPositionOnWS"]?.boolValue
-        isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue
+        isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue ?? true
         calculationOfFinalBalanceOnWS = data["calculationOfFinalBalanceOnWS"]?.boolValue
         percentDifferenceToShowByPriceOnWS = data["percentDifferenceToShowByPriceOnWS"]?.doubleValue
         canBeHidden = data["canBeHidden"]?.boolValue
@@ -55,7 +55,7 @@ public struct KeyAppTokenExtension: Codable, Hashable {
     ) {
         self.ruleOfProcessingTokenPriceWS = ruleOfProcessingTokenPriceWS
         self.isPositionOnWS = isPositionOnWS
-        self.isTokenCellVisibleOnWS = isTokenCellVisibleOnWS
+        self.isTokenCellVisibleOnWS = isTokenCellVisibleOnWS ?? true
         self.percentDifferenceToShowByPriceOnWS = percentDifferenceToShowByPriceOnWS
         self.calculationOfFinalBalanceOnWS = calculationOfFinalBalanceOnWS
         self.ruleOfFractionalPartOnWS = ruleOfFractionalPartOnWS

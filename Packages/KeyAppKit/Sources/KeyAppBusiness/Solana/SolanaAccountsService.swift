@@ -122,6 +122,11 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .compactMap { $0 }
             .switchToLatest()
             .sink { [weak outputSubject] state in
+                var state = state
+                state.value = state.value.filter { account in
+                    account.token.keyAppExtensions.isTokenCellVisibleOnWS
+                }
+
                 outputSubject?.send(state)
             }
             .store(in: &subscriptions)
@@ -254,7 +259,7 @@ internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, (resolved, _)) = try await(
+                let (balance, (resolved, _)) = try await (
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,
