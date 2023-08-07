@@ -8,10 +8,10 @@ final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result>
 
     // MARK: -
 
-    private var viewController: UINavigationController
+    private var navigationController: UINavigationController
 
-    init(viewController: UINavigationController) {
-        self.viewController = viewController
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<SelectRegionCoordinator.Result, Never> {
@@ -37,7 +37,7 @@ final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result>
         }.store(in: &subscriptions)
 
         controller.hidesBottomBarWhenPushed = true
-        viewController.pushViewController(controller, animated: true)
+        navigationController.pushViewController(controller, animated: true)
 
         return Publishers.Merge(
             controller.deallocatedPublisher().map { SelectRegionCoordinator.Result.cancelled },
