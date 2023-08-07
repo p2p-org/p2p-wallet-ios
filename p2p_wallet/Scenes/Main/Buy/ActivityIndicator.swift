@@ -1,10 +1,3 @@
-//
-//  ActivityIndicator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import SwiftUI
 
 struct ActivityIndicator: UIViewRepresentable {

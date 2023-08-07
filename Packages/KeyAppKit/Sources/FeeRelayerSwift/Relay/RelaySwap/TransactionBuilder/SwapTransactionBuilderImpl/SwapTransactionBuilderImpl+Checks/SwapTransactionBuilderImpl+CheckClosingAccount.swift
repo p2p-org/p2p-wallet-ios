@@ -1,10 +1,6 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension SwapTransactionBuilderImpl {
     func checkClosingAccount(
@@ -20,7 +16,7 @@ extension SwapTransactionBuilderImpl {
                     account: newAccount.publicKey,
                     destination: owner,
                     owner: owner
-                )
+                ),
             ])
         }
         // close destination
@@ -35,10 +31,9 @@ extension SwapTransactionBuilderImpl {
                     from: owner,
                     to: feePayer,
                     lamports: minimumTokenAccountBalance
-                )
+                ),
             ])
             env.accountCreationFee -= minimumTokenAccountBalance
         }
     }
 }
-

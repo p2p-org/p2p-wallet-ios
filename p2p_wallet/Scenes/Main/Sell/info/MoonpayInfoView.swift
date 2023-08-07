@@ -1,17 +1,16 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct MoonpayInfoView: View {
-
     var actionButtonPressed: ((Bool) -> Void)?
     @State var isChecked = false
 
     var body: some View {
         VStack {
             Color(Asset.Colors.rain.color)
-                   .frame(width: 31, height: 4)
-                   .cornerRadius(2)
-                   .padding(.vertical, 6)
+                .frame(width: 31, height: 4)
+                .cornerRadius(2)
+                .padding(.vertical, 6)
             Image(uiImage: .moonpayLogo)
                 .padding(.top, 18)
             Text(L10n.serviceIsNextStep)

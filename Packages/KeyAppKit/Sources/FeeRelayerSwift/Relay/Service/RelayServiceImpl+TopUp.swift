@@ -1,6 +1,6 @@
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension RelayServiceImpl {
     /// Check and top up (if needed)
@@ -17,40 +17,40 @@ extension RelayServiceImpl {
         guard let context = contextManager.currentContext else {
             throw RelayContextManagerError.invalidContext
         }
-        
+
         // if paying fee token is solana, skip the top up
         // and transfer SOL directly to feePayer address
         if payingFeeToken?.mint == PublicKey.wrappedSOLMint {
             return nil
         }
-        
+
         // calculate needed topUpAmount
         let topUpAmount = try await feeCalculator.calculateNeededTopUpAmount(
             context,
             expectedFee: expectedFee,
             payingTokenMint: payingFeeToken?.mint
         )
-        
+
         // no need to top up if amount <= 0
         guard topUpAmount.total > 0 else {
             return nil
         }
-        
+
         // top up
         let payingFeeToken = try payingFeeToken ?! FeeRelayerError.unknown
-        
+
         let poolsPair = try await getPoolsPairForTopUp(
             topUpAmount: topUpAmount.total,
             payingFeeToken: payingFeeToken
         )
-        
+
         return try await topUp(
             sourceToken: payingFeeToken,
             targetAmount: topUpAmount.total,
             topUpPools: poolsPair
         )
     }
-    
+
     /// Get poolsPair for topUp
     /// - Parameters:
     ///   - context: current context of Relay's service
@@ -72,15 +72,18 @@ extension RelayServiceImpl {
         let topUpPools: PoolsPair
         // force using transitive swap (for testing only)
         if forceUsingTransitiveSwap {
-            let pools = tradableTopUpPoolsPair.first(where: {$0.count == 2})!
+            let pools = tradableTopUpPoolsPair.first(where: { $0.count == 2 })!
             topUpPools = pools
         }
         // prefer direct swap to transitive swap
-        else if let directSwapPools = tradableTopUpPoolsPair.first(where: {$0.count == 1}) {
+        else if let directSwapPools = tradableTopUpPoolsPair.first(where: { $0.count == 1 }) {
             topUpPools = directSwapPools
         }
         // if direct swap is not available, use transitive swap
-        else if let transitiveSwapPools = try orcaSwap.findBestPoolsPairForEstimatedAmount(topUpAmount, from: tradableTopUpPoolsPair) {
+        else if let transitiveSwapPools = try orcaSwap.findBestPoolsPairForEstimatedAmount(
+            topUpAmount,
+            from: tradableTopUpPoolsPair
+        ) {
             topUpPools = transitiveSwapPools
         }
         // no swap is available
@@ -90,7 +93,7 @@ extension RelayServiceImpl {
         // return needed amount and pools
         return topUpPools
     }
-    
+
     /// Top up to fill relay account before relaying any transaction
     /// - Parameters:
     ///   - context: current context of Relay's service
@@ -109,7 +112,7 @@ extension RelayServiceImpl {
         guard let context = contextManager.currentContext else {
             throw RelayContextManagerError.invalidContext
         }
-        
+
         let blockhash = try await solanaApiClient.getRecentBlockhash(commitment: nil)
 
         // STEP 3: prepare for topUp
@@ -125,22 +128,22 @@ extension RelayServiceImpl {
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         // STEP 4: send transaction
         let signatures = preparedTransaction.transaction.signatures
         guard signatures.count >= 2 else { throw FeeRelayerError.invalidSignature }
-        
+
         // the second signature is the owner's signature
         let ownerSignature = try signatures.getSignature(index: 1)
-        
+
         // the third signature (optional) is the transferAuthority's signature
         let transferAuthoritySignature = try? signatures.getSignature(index: 2)
-        
+
         let topUpSignatures = SwapTransactionSignatures(
             userAuthoritySignature: ownerSignature,
             transferAuthoritySignature: transferAuthoritySignature
         )
-        let result = try await self.feeRelayerAPIClient.sendTransaction(
+        let result = try await feeRelayerAPIClient.sendTransaction(
             .relayTopUpWithSwap(
                 .init(
                     userSourceTokenAccount: sourceToken.address,
@@ -150,9 +153,9 @@ extension RelayServiceImpl {
                     feeAmount: preparedTransaction.expectedFee.total,
                     signatures: topUpSignatures,
                     blockhash: blockhash,
-                    deviceType: self.deviceType,
-                    buildNumber: self.buildNumber,
-                    environment: self.environment
+                    deviceType: deviceType,
+                    buildNumber: buildNumber,
+                    environment: environment
                 )
             )
         )

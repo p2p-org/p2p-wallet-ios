@@ -20,7 +20,6 @@ struct HomeAccountsView: View {
                         .padding(.bottom, 16)
                         .id(0)
                     actionsView
-                    
                 }
             }
             .customRefreshable {
@@ -52,7 +51,7 @@ struct HomeAccountsView: View {
             balanceTapAction: viewModel.balanceTapped
         )
     }
-    
+
     private var actionsView: some View {
         HomeActionsView(
             actions: viewModel.actions,

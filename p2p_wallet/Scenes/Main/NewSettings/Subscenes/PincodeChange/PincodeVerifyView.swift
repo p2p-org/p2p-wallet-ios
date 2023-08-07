@@ -1,10 +1,3 @@
-//
-//  PincodeEnterView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.09.2022.
-//
-
 import Combine
 import KeyAppUI
 import Resolver

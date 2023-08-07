@@ -56,7 +56,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
 
             return .double(fromUrl, toUrl)
-            
+
         case let transaction as ClaimSentViaLinkTransaction:
             if
                 let urlStr = transaction.token.logoURI,
@@ -89,7 +89,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
 
         case let transaction as ClaimSentViaLinkTransaction:
-            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
+            return L10n
+                .from(RecipientFormatter
+                    .shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         default:
             return L10n.unknown
         }

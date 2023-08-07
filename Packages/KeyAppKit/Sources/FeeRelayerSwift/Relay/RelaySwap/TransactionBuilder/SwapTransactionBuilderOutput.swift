@@ -3,18 +3,18 @@ import OrcaSwapSwift
 import SolanaSwift
 
 struct SwapTransactionBuilderOutput {
-    var userSource: PublicKey? = nil
-    var sourceWSOLNewAccount: KeyPair? = nil
-    
+    var userSource: PublicKey?
+    var sourceWSOLNewAccount: KeyPair?
+
     var transitTokenMintPubkey: PublicKey?
     var transitTokenAccountAddress: PublicKey?
     var needsCreateTransitTokenAccount: Bool?
 
-    var destinationNewAccount: KeyPair? = nil
-    var userDestinationTokenAccountAddress: PublicKey? = nil
+    var destinationNewAccount: KeyPair?
+    var userDestinationTokenAccountAddress: PublicKey?
 
     var instructions = [TransactionInstruction]()
-    var additionalTransaction: PreparedTransaction? = nil
+    var additionalTransaction: PreparedTransaction?
 
     var signers: [KeyPair] = []
 

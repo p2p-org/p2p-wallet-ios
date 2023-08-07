@@ -3,7 +3,6 @@ import CountriesAPI
 import PhoneNumberKit
 
 final class ChoosePhoneCodeViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Properties
 
     private var cachedResult = [SelectableCountry]()
@@ -30,6 +29,7 @@ final class ChoosePhoneCodeViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Methods
+
     func select(country: SelectableCountry) {
         guard !country.isSelected, !country.isEmpty else { return }
         selectedDialCode = country.value.dialCode

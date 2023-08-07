@@ -4,8 +4,8 @@ import SolanaSwift
 
 class MockDestinationAnalysatorBase: DestinationAnalysator {
     func analyseDestination(
-        owner: PublicKey,
-        mint: PublicKey
+        owner _: PublicKey,
+        mint _: PublicKey
     ) async throws -> DestinationAnalysatorResult {
         fatalError()
     }

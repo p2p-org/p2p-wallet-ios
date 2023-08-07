@@ -24,7 +24,7 @@ enum HomeNavigation: Equatable {
     case topUpCoin(TokenMetadata)
     // Error
     case error(show: Bool)
-    
+
     // Actions
     case addMoney
 }
@@ -278,7 +278,7 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             return Just(())
                 .eraseToAnyPublisher()
-            
+
         case .addMoney:
             coordinate(to: ActionsCoordinator(viewController: tabBarController))
                 .sink(receiveValue: { [weak self] result in
@@ -294,12 +294,12 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
         }
     }
-    
+
     private func handleAction(_ action: ActionsViewActionType) {
         guard
             let navigationController = tabBarController.selectedViewController as? UINavigationController
         else { return }
-        
+
         switch action {
         case .bankTransfer:
             let buyCoordinator = BuyCoordinator(

@@ -1,10 +1,3 @@
-//
-//  NotFoundView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 26.11.2022.
-//
-
 import SwiftUI
 
 struct NotFoundView: View {

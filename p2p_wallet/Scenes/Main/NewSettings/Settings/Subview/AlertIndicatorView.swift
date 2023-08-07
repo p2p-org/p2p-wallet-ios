@@ -1,17 +1,10 @@
-//
-//  AlertIndicatorView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07/06/2023.
-//
-
 import Foundation
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct AlertIndicatorView: View {
     let fillColor: Color
-    
+
     var body: some View {
         Circle()
             .strokeBorder(Color(Asset.Colors.snow.color), lineWidth: 1)

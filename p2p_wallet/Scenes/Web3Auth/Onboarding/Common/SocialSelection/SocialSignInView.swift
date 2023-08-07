@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import KeyAppUI
 import SwiftUI
 
@@ -41,7 +37,7 @@ struct SocialSignInView: View {
                         viewModel?.onSignInTap(.apple)
                     }
                 )
-                    .frame(height: TextButton.Size.large.height)
+                .frame(height: TextButton.Size.large.height)
                 TextButtonView(
                     title: viewModel.googleButtonTitle,
                     style: .inverted,
@@ -53,8 +49,8 @@ struct SocialSignInView: View {
                         viewModel?.onSignInTap(.google)
                     }
                 )
-                    .frame(height: TextButton.Size.large.height)
-                    .padding(.top, 12)
+                .frame(height: TextButton.Size.large.height)
+                .padding(.top, 12)
             }
         }
     }

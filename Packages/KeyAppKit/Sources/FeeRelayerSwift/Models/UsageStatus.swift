@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 /// A user's usage status for fee relayer service.
@@ -11,7 +7,7 @@ public struct UsageStatus: Equatable, Codable {
     public let maxAmount: UInt64
     public var amountUsed: UInt64
     public var reachedLimitLinkCreation: Bool
-    
+
     public init(
         maxUsage: Int,
         currentUsage: Int,
@@ -25,7 +21,7 @@ public struct UsageStatus: Equatable, Codable {
         self.amountUsed = amountUsed
         self.reachedLimitLinkCreation = reachedLimitLinkCreation
     }
-    
+
     public func isFreeTransactionFeeAvailable(transactionFee: UInt64) -> Bool {
         currentUsage < maxUsage && (amountUsed + transactionFee) <= maxAmount
     }

@@ -1,10 +1,3 @@
-//
-//  SendHistoryLocalProvider.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 28.11.2022.
-//
-
 import Cache
 import Foundation
 import Send

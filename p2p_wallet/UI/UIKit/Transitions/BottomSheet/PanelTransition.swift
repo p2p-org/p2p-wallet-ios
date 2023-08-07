@@ -1,22 +1,15 @@
-//
-//  PanelTransition.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 19.08.2022.
-//
-
 import Combine
 import UIKit
 
 final class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private var cancellables = Set<AnyCancellable>()
-    
+
     // Subjects
     private let subject = PassthroughSubject<Void, Never>()
     private let dismissedSubject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
     var dismissed: AnyPublisher<Void, Never> { dismissedSubject.eraseToAnyPublisher() }
-    
+
     var presentationController: DimmPresentationController?
 
     private let driver = TransitionDriver()
@@ -49,7 +42,7 @@ final class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
                 self?.dismissedSubject.send()
             })
             .store(in: &cancellables)
-        
+
         self.presentationController = presentationController
 
         return presentationController

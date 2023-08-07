@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 15/06/2023.
-//
-
 import Foundation
 import KeyAppKitCore
 
@@ -31,7 +24,6 @@ public enum ReAuthSocialShareState: State, Equatable {
 
     public static var initialState: Self = .signIn(socialProvider: .google)
     static let realtimeErrorConfig: ErrorObserverConfig = .init(domain: "Web3Auth ReAuth", flags: .realtimeAlert)
-
 
     case signIn(socialProvider: SocialProvider)
     case wrongAccount(socialProvider: SocialProvider, wrongEmail: String)
@@ -96,11 +88,11 @@ public enum ReAuthSocialShareState: State, Equatable {
         case .signIn:
             do {
                 let (tokenId, email) = try await provider.socialAuthService.auth(type: socialProvider)
-                
+
                 if email != provider.expectedEmail {
                     return .wrongAccount(socialProvider: socialProvider, wrongEmail: email)
                 }
-                
+
                 try await provider.tkeyFacade.initialize()
                 let torusKey = try await provider.tkeyFacade
                     .obtainTorusKey(
@@ -109,7 +101,7 @@ public enum ReAuthSocialShareState: State, Equatable {
                             provider: socialProvider.rawValue
                         )
                     )
-                
+
                 return .finish(result: ReAuthSocialShareResult(torusKey: torusKey))
             } catch {
                 throw provider.errorObserver.intercept(error, config: Self.realtimeErrorConfig)

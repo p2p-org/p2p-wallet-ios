@@ -1,6 +1,6 @@
+import Foundation
 import Jupiter
 import SolanaSwift
-import Foundation
 
 protocol JupiterTokensProvider {
     func getCachedData() -> JupiterTokensCache?
@@ -16,12 +16,11 @@ struct JupiterTokensCache: Codable {
     init(tokens: [TokenMetadata], routeMap: RouteMap) {
         self.tokens = tokens
         self.routeMap = routeMap
-        self.created = Date()
+        created = Date()
     }
 }
 
 final class JupiterTokensLocalProvider: JupiterTokensProvider {
-
     private let cacheFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]

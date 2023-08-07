@@ -1,10 +1,3 @@
-//
-//  DebugTextField.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 06.06.2023.
-//
-
 import SwiftUI
 
 struct DebugTextField: View {
@@ -19,7 +12,6 @@ struct DebugTextField: View {
         }
     }
 }
-
 
 struct DebugTextField_Previews: PreviewProvider {
     static var previews: some View {

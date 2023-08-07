@@ -1,13 +1,6 @@
-//
-//  DeleteMyAccountView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.11.2022.
-//
-
-import SwiftUI
 import KeyAppUI
 import Resolver
+import SwiftUI
 
 struct DeleteMyAccountView: View {
     @State var slider: Bool = false
@@ -29,7 +22,8 @@ struct DeleteMyAccountView: View {
             VStack {
                 VStack(spacing: 12) {
                     ExplainText(text: L10n.whenYouDeleteYourAccountYouWillLoseAccessToYourFunds)
-                    ExplainText(text: L10n.YouWillLoseAccessToTheFreeUsernameThatYouReceivedDuringRegistration.yourFriendsWillNotBeAbleToSendYouFundsUsingYourUsername)
+                    ExplainText(text: L10n.YouWillLoseAccessToTheFreeUsernameThatYouReceivedDuringRegistration
+                        .yourFriendsWillNotBeAbleToSendYouFundsUsingYourUsername)
                     ExplainText(text: L10n.youWillNotBeAbleToUseFreeTransactionsWithinTheSolanaNetworkWithKeyApp)
                 }
                 .padding(.vertical, 24)
@@ -44,16 +38,15 @@ struct DeleteMyAccountView: View {
                         style: .white,
                         isOn: $slider
                     )
-                        .frame(height: 56)
-                        .onChange(of: slider) { _ in
-                            guard slider == true else { return }
+                    .frame(height: 56)
+                    .onChange(of: slider) { _ in
+                        guard slider == true else { return }
 
-                            walletSettings.deleteWeb3AuthRequest = Date()
-                            didRequestDelete?()
+                        walletSettings.deleteWeb3AuthRequest = Date()
+                        didRequestDelete?()
 
-                            slider = false
-                        }
-
+                        slider = false
+                    }
                 }
             }
         } hint: {

@@ -1,10 +1,10 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 enum HomeAction {
     case addMoney
     case withdraw
-    
+
     var text: String {
         switch self {
         case .addMoney:
@@ -13,7 +13,7 @@ enum HomeAction {
             return L10n.withdraw
         }
     }
-    
+
     var image: UIImage {
         switch self {
         case .addMoney:

@@ -2,7 +2,7 @@ import Foundation
 
 public class MoonpaySellActionService: SellActionService {
     public typealias Provider = MoonpaySellActionServiceProvider
-    
+
     private let endpoint: String
     private let apiKey: String
     private var provider: Provider
@@ -24,7 +24,7 @@ public class MoonpaySellActionService: SellActionService {
         baseCurrencyCode: String,
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
-        extraFeePercentage: Double
+        extraFeePercentage _: Double
     ) async throws -> Provider.Quote {
         try await provider.sellQuote(
             baseCurrencyCode: baseCurrencyCode,
@@ -45,7 +45,7 @@ public class MoonpaySellActionService: SellActionService {
             .init(name: "refundWalletAddress", value: refundWalletAddress),
             .init(name: "quoteCurrencyCode", value: quoteCurrencyCode),
             .init(name: "baseCurrencyAmount", value: baseCurrencyAmount.toString()),
-            .init(name: "externalCustomerId", value: externalCustomerId)
+            .init(name: "externalCustomerId", value: externalCustomerId),
         ]
 
         guard let url = components.url else {

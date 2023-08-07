@@ -1,10 +1,3 @@
-//
-//  Array+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 20.02.2023.
-//
-
 import Foundation
 
 enum ListBuilder {
@@ -26,7 +19,12 @@ enum ListBuilder {
         return dateFormatter
     }()
 
-    static func aggregate<T, V>(list: [T], by dateKeyPath: KeyPath<T, Date>, dateFormatter: DateFormatter = ListBuilder.defaultDateFormatter, tranform: (String, [T]) -> V) -> [V] {
+    static func aggregate<T, V>(
+        list: [T],
+        by dateKeyPath: KeyPath<T, Date>,
+        dateFormatter: DateFormatter = ListBuilder.defaultDateFormatter,
+        tranform: (String, [T]) -> V
+    ) -> [V] {
         let dictionary = Dictionary(grouping: list) { item -> Date in
             Calendar.current.startOfDay(for: item[keyPath: dateKeyPath])
         }
@@ -38,7 +36,7 @@ enum ListBuilder {
                 items.sort { lhs, rhs in
                     lhs[keyPath: dateKeyPath] >= rhs[keyPath: dateKeyPath]
                 }
-                
+
                 // Date format
                 let dateStr: String
                 if Calendar.current.isDateInToday(date) {

@@ -1,7 +1,7 @@
+import AnalyticsManager
 import Onboarding
 import Resolver
 import UIKit
-import AnalyticsManager
 
 protocol StartOnboardingNavigationProvider {
     func startCoordinator(for window: UIWindow) -> Coordinator<OnboardingResult>
@@ -11,7 +11,7 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
     @Injected private var service: OnboardingService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var deviceShareManager: DeviceShareManager
-    
+
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<OnboardingResult> {
         let isDeviceShareAvailable = deviceShareManager.deviceShare != nil
         analyticsManager.log(parameter: .userDeviceshare(isDeviceShareAvailable))

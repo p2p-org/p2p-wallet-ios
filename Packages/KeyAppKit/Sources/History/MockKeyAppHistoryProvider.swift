@@ -3,7 +3,9 @@ import Foundation
 public class MockKeyAppHistoryProvider: KeyAppHistoryProvider {
     public init() {}
 
-    public func transactions(secretKey: Data, pubKey: String, mint: String?, offset: Int, limit: Int) async throws -> [HistoryTransaction] {
+    public func transactions(secretKey _: Data, pubKey _: String, mint _: String?, offset _: Int,
+                             limit _: Int) async throws -> [HistoryTransaction]
+    {
         []
 //        [sendTx, receiveTx, swapTx, stakeTx, unstakeTx, createAccountTx, closeAccountTx, burnTx, mintTx, unknownTx]
     }

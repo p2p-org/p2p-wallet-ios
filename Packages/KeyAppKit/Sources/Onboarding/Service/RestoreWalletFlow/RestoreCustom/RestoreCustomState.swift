@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 import TweetNacl
@@ -96,8 +92,7 @@ public enum RestoreCustomState: Codable, State, Equatable {
                         attempt: .init(.zero()),
                         provider: provider
                     )
-                }
-                catch let error as APIGatewayCooldownError {
+                } catch let error as APIGatewayCooldownError {
                     return .block(until: Date() + error.cooldown, social: social, reason: .blockEnterPhoneNumber)
                 }
 
@@ -186,8 +181,7 @@ public enum RestoreCustomState: Codable, State, Equatable {
                     )
                     attempt.value = attempt.value.incremented()
                     return state
-                }
-                catch let error as APIGatewayCooldownError {
+                } catch let error as APIGatewayCooldownError {
                     return .block(until: Date() + error.cooldown, social: social, reason: .blockResend)
                 }
 

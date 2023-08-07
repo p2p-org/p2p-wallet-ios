@@ -1,12 +1,8 @@
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let orcaConfigs = try? newJSONDecoder().decode(OrcaConfigs.self, from: jsonData)
-
 import Foundation
 import SolanaSwift
 
 // MARK: - OrcaConfigs
+
 public struct OrcaInfo: Codable {
     public let pools: [String: Pool]
     public let programIds: ProgramIDS
@@ -24,6 +20,7 @@ public enum TokenEnum: String, Codable {
 }
 
 // MARK: - ProgramIDS
+
 public struct ProgramIDS: Codable {
     public let serumTokenSwap, tokenSwapV2, tokenSwap: String
     public let token: TokenEnum
@@ -39,6 +36,7 @@ public struct ProgramIDS: Codable {
 }
 
 // MARK: - TokenValue
+
 public struct TokenValue: Codable {
     public let mint, name: String
     public let decimals: Int

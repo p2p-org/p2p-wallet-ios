@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 public protocol NameService {
@@ -42,9 +38,9 @@ public protocol NameService {
     func post(name: String, params: PostParams) async throws -> PostResponse
 }
 
-extension NameService {
+public extension NameService {
     /// Check if the name is available for binding.
-    public func isNameAvailable(_ name: String) async throws -> Bool {
+    func isNameAvailable(_ name: String) async throws -> Bool {
         try await getOwnerAddress(name) == nil
     }
 }

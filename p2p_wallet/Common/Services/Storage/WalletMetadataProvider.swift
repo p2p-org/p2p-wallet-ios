@@ -1,10 +1,3 @@
-//
-//  WalletMetadataProvider.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 29.05.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import KeychainSwift

@@ -37,8 +37,8 @@ extension ContinueView {
                         viewModel?.startDidTap.send()
                     }
                 )
-                    .styled()
-                    .padding(.top, 12)
+                .styled()
+                .padding(.top, 12)
             }
         }
     }

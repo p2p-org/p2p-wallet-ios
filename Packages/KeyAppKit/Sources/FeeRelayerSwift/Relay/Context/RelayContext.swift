@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 
@@ -12,7 +8,7 @@ public struct RelayContext: Hashable, Codable {
     public let lamportsPerSignature: UInt64
     public let relayAccountStatus: RelayAccountStatus
     public var usageStatus: UsageStatus
-    
+
     public init(
         minimumTokenAccountBalance: UInt64,
         minimumRelayAccountBalance: UInt64,
@@ -28,7 +24,7 @@ public struct RelayContext: Hashable, Codable {
         self.relayAccountStatus = relayAccountStatus
         self.usageStatus = usageStatus
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(minimumTokenAccountBalance)
         hasher.combine(minimumRelayAccountBalance)

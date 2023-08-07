@@ -21,10 +21,9 @@ struct CoinLogoImageViewRepresentable: UIViewRepresentable {
             imageView.setup(preferredImage: preferredImage, url: url, key: key, wrapped: wrapped)
         }
     }
-    
+
     enum Args {
         case token(TokenMetadata?)
         case manual(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool)
     }
 }
-

@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import SolanaSwift
 import TweetNacl
@@ -435,7 +431,13 @@ extension RestoreWalletState: Step, Continuable {
                 customResult: customResult
             ).step
         case let .restoreSocial(.signInProgress(tokenID, email, deviceShare, customResult, backState), option: .device):
-            return 4 * 100 + RestoreSocialState.signInProgress(tokenID: tokenID, email: email, deviceShare: deviceShare, customResult: customResult, backState: backState).step
+            return 4 * 100 + RestoreSocialState.signInProgress(
+                tokenID: tokenID,
+                email: email,
+                deviceShare: deviceShare,
+                customResult: customResult,
+                backState: backState
+            ).step
 
         // Custom
         case let .restoreCustom(restoreCustomState):
@@ -468,9 +470,24 @@ extension RestoreWalletState: Step, Continuable {
                 customResult: customResult
             ).step
         case let .restoreSocial(.signInProgress(tokenID, email, deviceShare, customResult, backState), option: .custom):
-            return 6 * 100 + RestoreSocialState.signInProgress(tokenID: tokenID, email: email, deviceShare: deviceShare, customResult: customResult, backState: backState).step
-        case let .restoreSocial(.signInProgress(tokenID, email, deviceShare, customResult, backState), option: .customDevice):
-            return 6 * 100 + RestoreSocialState.signInProgress(tokenID: tokenID, email: email, deviceShare: deviceShare, customResult: customResult, backState: backState).step
+            return 6 * 100 + RestoreSocialState.signInProgress(
+                tokenID: tokenID,
+                email: email,
+                deviceShare: deviceShare,
+                customResult: customResult,
+                backState: backState
+            ).step
+        case let .restoreSocial(
+            .signInProgress(tokenID, email, deviceShare, customResult, backState),
+            option: .customDevice
+        ):
+            return 6 * 100 + RestoreSocialState.signInProgress(
+                tokenID: tokenID,
+                email: email,
+                deviceShare: deviceShare,
+                customResult: customResult,
+                backState: backState
+            ).step
 
         case let .securitySetup(_, _, _, securitySetupState):
             return 7 * 100 + securitySetupState.step
