@@ -703,7 +703,7 @@
 "Learn more" = "Learn more";
 "Withdraw" = "Withdraw";
 "Select your country of residence" = "Select your country of residence";
-"We suggest payment options based on your choice" = "We suggest payment options based on your choice";
+"We suggest payment options based on your choice" = "We suggest payment options\nbased on your choice";
 "My bank account" = "My bank account";
 "KeyApp user" = "Key App user";
 "Crypto exchange or wallet" = "Crypto exchange or wallet";
@@ -726,3 +726,4 @@
 "This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money." = "This account acts as an intermediary between Key App and our banking partner, Striga payment provider, which operates with your fiat money.";
 "By pressing the button below you agree" = "By pressing the button below you agree";
 "Terms" = "Terms";
+"Withdraw to" = "Withdraw to";

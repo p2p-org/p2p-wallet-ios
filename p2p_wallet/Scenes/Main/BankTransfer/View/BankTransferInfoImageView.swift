@@ -46,8 +46,7 @@ struct BankTransferTitleCellView: View {
 
     var body: some View {
         Text(title)
-            .fontWeight(.bold)
-            .apply(style: .title2)
+            .apply(style: .title2, weight: .bold)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 20)
@@ -80,8 +79,7 @@ struct BankTransferCountryCellView: View {
                 .padding(.leading, 16)
             VStack(alignment: .leading, spacing: 6) {
                 Text(name)
-                    .fontWeight(.semibold)
-                    .apply(style: .text3)
+                    .apply(style: .text3, weight: .semibold)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .skeleton(
                         with: isLoading,
@@ -97,7 +95,7 @@ struct BankTransferCountryCellView: View {
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.trailing, 19)
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
         .background(Color(Asset.Colors.snow.color))
         .cornerRadius(radius: 16, corners: .allCorners)
     }
@@ -109,8 +107,7 @@ struct BankTransferCountryCellView: View {
             .frame(width: 48, height: 48)
             .overlay {
                 Text(flag)
-                    .fontWeight(.bold)
-                    .apply(style: .title1)
+                    .apply(style: .title1, weight: .bold)
                     .skeleton(
                         with: isLoading,
                         size: CGSize(width: 32, height: 32),

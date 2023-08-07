@@ -56,7 +56,7 @@ struct SettingsView: View {
                     cellView(image: .settingsCountry, title: L10n.country.uppercaseFirst) {
                         HStack(spacing: 14) {
                             if let country = viewModel.region {
-                                Text(country.name)
+                                Text(country?.name)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
                                     .apply(style: .label1)
                             }

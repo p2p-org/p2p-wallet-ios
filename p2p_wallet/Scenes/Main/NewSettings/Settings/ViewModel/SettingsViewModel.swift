@@ -33,9 +33,13 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var region = Defaults.region {
+    @Published var region = Optional(Defaults.region) {
         didSet {
-            Defaults.region = region
+            if let region {
+                Defaults.region = region
+            } else {
+                Defaults.region = nil
+            }
         }
     }
 
@@ -65,6 +69,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         super.init()
+        Defaults.region = nil
         setUpAuthType()
         updateNameIfNeeded()
         bind()
@@ -168,6 +173,9 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata.value != nil
         } else {
             isNameEnabled = true
+        }
+        if region != Defaults.region {
+            region = Defaults.region
         }
     }
 

@@ -90,7 +90,7 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
             ),
             ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
             countryCell,
-            ListSpacerCellViewItem(height: 92 + 16, backgroundColor: .clear),
+            ListSpacerCellViewItem(height: 92 + 21, backgroundColor: .clear),
             ButtonListCellItem(
                 leadingImage: nil,
                 title: L10n.next,
@@ -100,7 +100,7 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
                 style: .primaryWhite,
                 trailingImage: Asset.MaterialIcon.arrowForward.image
             ),
-            ListSpacerCellViewItem(height: 48, backgroundColor: .clear)
+            ListSpacerCellViewItem(height: 53, backgroundColor: .clear)
         ]
     }
 

@@ -18,9 +18,6 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: ResendCounter?
 
-//    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
-//    private var lastChosenCountry: Country?
-
     // Fields
     @Published var occupationIndustry: String = ""
     @Published var sourceOfFunds: String = ""

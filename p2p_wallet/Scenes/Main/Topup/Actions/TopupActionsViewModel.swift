@@ -60,7 +60,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     override init() {
         super.init()
 
-        if let region = Defaults.region {
+        if let region = Defaults.region, region.isMoonpayAllowed {
             actions.insert(
                 ActionItem(
                     id: .card,
@@ -74,16 +74,16 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             )
         }
 
-        if shouldShowBankTransfer, let region = Defaults.region {
-            let isAvailable = region.isStrigaAllowed
+        let isStrigaAllowed = Defaults.region?.isStrigaAllowed ?? false
+        if shouldShowBankTransfer, isStrigaAllowed {
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: isAvailable ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled ,
+                    icon: isStrigaAllowed ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled ,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
                     isLoading: false,
-                    isDisabled: !isAvailable
+                    isDisabled: !isStrigaAllowed
                 ),
                 at: 0
             )

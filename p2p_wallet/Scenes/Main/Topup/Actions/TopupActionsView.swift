@@ -6,29 +6,31 @@ struct TopupActionsView: View {
     @ObservedObject var viewModel: TopupActionsViewModel
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             RoundedRectangle(cornerRadius: 2, style: .circular)
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
             Text(L10n.addMoney)
-                .fontWeight(.semibold)
-                .apply(style: .title3)
-                .padding(.top, 22)
-                .padding(.bottom, 20)
-            ForEach(viewModel.actions) { item in
-                Button {
-                    viewModel.didTapItem(item: item)
-                } label: {
-                    cell(item: item)
+                .apply(style: .title3, weight: .semibold)
+                .padding(.top, 24)
+                .padding(.bottom, 15)
+            VStack(spacing: 8) {
+                ForEach(viewModel.actions) { item in
+                    Button {
+                        viewModel.didTapItem(item: item)
+                    } label: {
+                        cell(item: item)
+                    }
+                    .disabled(item.isDisabled)
+                    .frame(minHeight: 69)
                 }
-                .disabled(item.isDisabled)
-                .frame(minHeight: 73)
             }
+            .padding(.top, 21)
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 100)
+        .padding(.bottom, 38)
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
     }
@@ -40,16 +42,13 @@ struct TopupActionsView: View {
     private func cell(item: TopupActionsViewModel.ActionItem) -> some View {
         HStack(spacing: 12) {
             Image(uiImage: item.icon)
-                .frame(width: 48, height: 48)
+                .frame(width: 50, height: 50)
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
-                    .fontWeight(.semibold)
-                    .apply(style: .text3)
+                    .apply(style: .text3, weight: .semibold)
                     .foregroundColor(foregroundColor(item: item))
-
                 Text(item.subtitle)
-                    .fontWeight(.regular)
-                    .apply(style: .label1)
+                    .apply(style: .label1, weight: .regular)
                     .foregroundColor(foregroundColor(item: item))
             }
             Spacer()
@@ -64,7 +63,8 @@ struct TopupActionsView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
         }
-        .padding(.all, 16)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .background(Color(Asset.Colors.snow.color))
         .cornerRadius(16)
     }
