@@ -5,11 +5,12 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
     private let serviceAppDelegates: [AppDelegateService]
 
     override init() {
-        var services: [AppDelegateService] = [
+        let services: [AppDelegateService] = [
             AppflyerAppDelegateService(),
             DeeplinkAppDelegateService(),
             HistoryAppdelegateService(),
             IntercomAppDelegateService(),
+            LokaliseAppDelegateService(),
         ]
         serviceAppDelegates = services.compactMap { $0 }
     }

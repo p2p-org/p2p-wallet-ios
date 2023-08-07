@@ -47,7 +47,6 @@ extension AppEventHandler: ChangeNetworkResponder {
 
 extension AppEventHandler: ChangeLanguageResponder {
     func languageDidChange(to: LocalizedLanguage) {
-        UIApplication.languageChanged()
         delegate?.userDidChangeLanguage(to: to)
     }
 }
