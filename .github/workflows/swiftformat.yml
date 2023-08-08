@@ -1,0 +1,23 @@
+name: Swiftformat
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/swiftformat.yml'
+      - '.swiftformat'
+      - '**/*.swift'
+
+jobs:
+  SwiftLint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Swiftformat
+        env:
+          REPO_OWNER: "p2p-org"
+          REPO_NAME: "p2p-wallet-ios"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod u+x Scripts/format_and_pull_request.sh
+          Scripts/format_and_pull_request.sh
