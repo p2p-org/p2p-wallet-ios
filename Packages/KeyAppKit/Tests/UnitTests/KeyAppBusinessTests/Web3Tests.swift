@@ -38,8 +38,8 @@ final class EthereumTests: XCTestCase {
     func testGetAllToken() throws {
         let expectation = expectation(description: "Get logs callback")
 
-        web3.eth.getLogs(
-            addresses: [try .init(hex: "0x96b1BE95ca5ec06d9bd6926e1c5302E1265049C0", eip55: true)],
+        try web3.eth.getLogs(
+            addresses: [.init(hex: "0x96b1BE95ca5ec06d9bd6926e1c5302E1265049C0", eip55: true)],
             topics: nil,
             fromBlock: .earliest,
             toBlock: .latest

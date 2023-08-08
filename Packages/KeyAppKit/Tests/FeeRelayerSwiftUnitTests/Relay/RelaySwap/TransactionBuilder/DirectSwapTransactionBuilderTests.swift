@@ -287,17 +287,17 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         ))
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[1], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[1], try .init(
             keys: [
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
@@ -342,17 +342,17 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[0], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[0], try .init(
             keys: [
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
@@ -397,17 +397,17 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[0], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[0], try .init(
             keys: [
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
-                try .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
@@ -474,17 +474,17 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         ))
         // - - Direct Swap instruction
         let minAmountOut = try Pool.solBTC.reversed.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[2], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[2], try .init(
             keys: [
-                try .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.account), isSigner: false),
-                try .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountA), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountB), isSigner: false),
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.poolTokenMint), isSigner: false),
-                try .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.feeAccount), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.feeAccount), isSigner: false),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .swapProgramId,

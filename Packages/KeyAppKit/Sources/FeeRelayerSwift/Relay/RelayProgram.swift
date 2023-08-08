@@ -11,9 +11,9 @@ public enum RelayProgram {
         static let createTransitToken: UInt8 = 3
         static let transitiveSwap: UInt8 = 4
     }
-    
+
     // MARK: - Properties
-    
+
     public static func id(network: Network) -> PublicKey {
         switch network {
         case .mainnetBeta:
@@ -24,29 +24,35 @@ public enum RelayProgram {
             return "6xKJFyuM6UHCT8F5SBxnjGt6ZrZYjsVfnAnAeHPU775k" // unknown
         }
     }
-    
+
     public static func getUserRelayAddress(
         user: PublicKey,
         network: Network
     ) throws -> PublicKey {
         try .findProgramAddress(seeds: [user.data, "relay".data(using: .utf8)!], programId: id(network: network)).0
     }
-    
+
     public static func getUserTemporaryWSOLAddress(
         user: PublicKey,
         network: Network
     ) throws -> PublicKey {
-        try .findProgramAddress(seeds: [user.data, "temporary_wsol".data(using: .utf8)!], programId: id(network: network)).0
+        try .findProgramAddress(
+            seeds: [user.data, "temporary_wsol".data(using: .utf8)!],
+            programId: id(network: network)
+        ).0
     }
-    
+
     public static func getTransitTokenAccountAddress(
         user: PublicKey,
         transitTokenMint: PublicKey,
         network: Network
     ) throws -> PublicKey {
-        try .findProgramAddress(seeds: [user.data, transitTokenMint.data, "transit".data(using: .utf8)!], programId: id(network: network)).0
+        try .findProgramAddress(
+            seeds: [user.data, transitTokenMint.data, "transit".data(using: .utf8)!],
+            programId: id(network: network)
+        ).0
     }
-    
+
     public static func topUpSwapInstruction(
         network: Network,
         topUpSwap: FeeRelayerRelaySwapType,
@@ -56,23 +62,23 @@ public enum RelayProgram {
     ) throws -> TransactionInstruction {
         let userRelayAddress = try getUserRelayAddress(user: userAuthorityAddress, network: network)
         let userTemporarilyWSOLAddress = try getUserTemporaryWSOLAddress(user: userAuthorityAddress, network: network)
-        
+
         switch topUpSwap {
         case let swap as DirectSwapData:
-            return topUpWithSPLSwapDirectInstruction(
+            return try topUpWithSPLSwapDirectInstruction(
                 feePayer: feePayerAddress,
                 userAuthority: userAuthorityAddress,
                 userRelayAccount: userRelayAddress,
-                userTransferAuthority: try PublicKey(string: swap.transferAuthorityPubkey),
+                userTransferAuthority: PublicKey(string: swap.transferAuthorityPubkey),
                 userSourceTokenAccount: userSourceTokenAccountAddress,
                 userTemporaryWsolAccount: userTemporarilyWSOLAddress,
-                swapProgramId: try PublicKey(string: swap.programId),
-                swapAccount: try PublicKey(string: swap.accountPubkey),
-                swapAuthority: try PublicKey(string: swap.authorityPubkey),
-                swapSource: try PublicKey(string: swap.sourcePubkey),
-                swapDestination: try PublicKey(string: swap.destinationPubkey),
-                poolTokenMint: try PublicKey(string: swap.poolTokenMintPubkey),
-                poolFeeAccount: try PublicKey(string: swap.poolFeeAccountPubkey),
+                swapProgramId: PublicKey(string: swap.programId),
+                swapAccount: PublicKey(string: swap.accountPubkey),
+                swapAuthority: PublicKey(string: swap.authorityPubkey),
+                swapSource: PublicKey(string: swap.sourcePubkey),
+                swapDestination: PublicKey(string: swap.destinationPubkey),
+                poolTokenMint: PublicKey(string: swap.poolTokenMintPubkey),
+                poolFeeAccount: PublicKey(string: swap.poolFeeAccountPubkey),
                 amountIn: swap.amountIn,
                 minimumAmountOut: swap.minimumAmountOut,
                 network: network
@@ -82,24 +88,24 @@ public enum RelayProgram {
                 feePayer: feePayerAddress,
                 userAuthority: userAuthorityAddress,
                 userRelayAccount: userRelayAddress,
-                userTransferAuthority: try PublicKey(string: swap.from.transferAuthorityPubkey),
+                userTransferAuthority: PublicKey(string: swap.from.transferAuthorityPubkey),
                 userSourceTokenAccount: userSourceTokenAccountAddress,
                 userDestinationTokenAccount: userTemporarilyWSOLAddress,
-                transitTokenMint: try PublicKey(string: swap.transitTokenMintPubkey),
-                swapFromProgramId: try PublicKey(string: swap.from.programId),
-                swapFromAccount: try PublicKey(string: swap.from.accountPubkey),
-                swapFromAuthority: try PublicKey(string: swap.from.authorityPubkey),
-                swapFromSource: try PublicKey(string: swap.from.sourcePubkey),
-                swapFromDestination: try PublicKey(string: swap.from.destinationPubkey),
-                swapFromPoolTokenMint: try PublicKey(string: swap.from.poolTokenMintPubkey),
-                swapFromPoolFeeAccount: try PublicKey(string: swap.from.poolFeeAccountPubkey),
-                swapToProgramId: try PublicKey(string: swap.to.programId),
-                swapToAccount: try PublicKey(string: swap.to.accountPubkey),
-                swapToAuthority: try PublicKey(string: swap.to.authorityPubkey),
-                swapToSource: try PublicKey(string: swap.to.sourcePubkey),
-                swapToDestination: try PublicKey(string: swap.to.destinationPubkey),
-                swapToPoolTokenMint: try PublicKey(string: swap.to.poolTokenMintPubkey),
-                swapToPoolFeeAccount: try PublicKey(string: swap.to.poolFeeAccountPubkey),
+                transitTokenMint: PublicKey(string: swap.transitTokenMintPubkey),
+                swapFromProgramId: PublicKey(string: swap.from.programId),
+                swapFromAccount: PublicKey(string: swap.from.accountPubkey),
+                swapFromAuthority: PublicKey(string: swap.from.authorityPubkey),
+                swapFromSource: PublicKey(string: swap.from.sourcePubkey),
+                swapFromDestination: PublicKey(string: swap.from.destinationPubkey),
+                swapFromPoolTokenMint: PublicKey(string: swap.from.poolTokenMintPubkey),
+                swapFromPoolFeeAccount: PublicKey(string: swap.from.poolFeeAccountPubkey),
+                swapToProgramId: PublicKey(string: swap.to.programId),
+                swapToAccount: PublicKey(string: swap.to.accountPubkey),
+                swapToAuthority: PublicKey(string: swap.to.authorityPubkey),
+                swapToSource: PublicKey(string: swap.to.sourcePubkey),
+                swapToDestination: PublicKey(string: swap.to.destinationPubkey),
+                swapToPoolTokenMint: PublicKey(string: swap.to.poolTokenMintPubkey),
+                swapToPoolFeeAccount: PublicKey(string: swap.to.poolFeeAccountPubkey),
                 amountIn: swap.from.amountIn,
                 transitMinimumAmount: swap.from.minimumAmountOut,
                 minimumAmountOut: swap.to.minimumAmountOut,
@@ -109,28 +115,31 @@ public enum RelayProgram {
             fatalError("unsupported swap type")
         }
     }
-    
+
     public static func transferSolInstruction(
         userAuthorityAddress: PublicKey,
         recipient: PublicKey,
         lamports: UInt64,
         network: Network
     ) throws -> TransactionInstruction {
-        .init(
+        try .init(
             keys: [
                 .readonly(publicKey: userAuthorityAddress, isSigner: true),
-                .writable(publicKey: try getUserRelayAddress(user: userAuthorityAddress, network: network), isSigner: false),
+                .writable(
+                    publicKey: getUserRelayAddress(user: userAuthorityAddress, network: network),
+                    isSigner: false
+                ),
                 .writable(publicKey: recipient, isSigner: false),
                 .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: id(network: network),
             data: [
                 Index.transferSOL,
-                lamports
+                lamports,
             ]
         )
     }
-    
+
     public static func createTransitTokenAccountInstruction(
         feePayer: PublicKey,
         userAuthority: PublicKey,
@@ -146,13 +155,13 @@ public enum RelayProgram {
                 .readonly(publicKey: feePayer, isSigner: true),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: id(network: network),
             data: [Index.createTransitToken]
         )
     }
-    
+
     public static func createRelaySwapInstruction(
         transitiveSwap: TransitiveSwapData,
         userAuthorityAddressPubkey: PublicKey,
@@ -181,8 +190,7 @@ public enum RelayProgram {
         let amountIn = transitiveSwap.from.amountIn
         let transitMinimumAmount = transitiveSwap.from.minimumAmountOut
         let minimumAmountOut = transitiveSwap.to.minimumAmountOut
-        
-        
+
         return try splSwapTransitiveInstruction(
             feePayer: feePayerPubkey,
             userAuthority: userAuthorityAddressPubkey,
@@ -211,8 +219,9 @@ public enum RelayProgram {
             network: network
         )
     }
-    
+
     // MARK: - Helpers
+
     private static func topUpWithSPLSwapDirectInstruction(
         feePayer: PublicKey,
         userAuthority: PublicKey,
@@ -249,17 +258,17 @@ public enum RelayProgram {
                 .writable(publicKey: poolTokenMint, isSigner: false),
                 .writable(publicKey: poolFeeAccount, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: id(network: network),
             data: [
                 Index.topUpWithDirectSwap,
                 amountIn,
-                minimumAmountOut
+                minimumAmountOut,
             ]
         )
     }
-    
+
     private static func topUpWithSPLSwapTransitiveInstruction(
         feePayer: PublicKey,
         userAuthority: PublicKey,
@@ -287,7 +296,7 @@ public enum RelayProgram {
         minimumAmountOut: UInt64,
         network: Network
     ) throws -> TransactionInstruction {
-        .init(
+        try .init(
             keys: [
                 .readonly(publicKey: .wrappedSOLMint, isSigner: false),
                 .writable(publicKey: feePayer, isSigner: true),
@@ -296,7 +305,11 @@ public enum RelayProgram {
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
                 .readonly(publicKey: userTransferAuthority, isSigner: true),
                 .writable(publicKey: userSourceTokenAccount, isSigner: false),
-                .writable(publicKey: try getTransitTokenAccountAddress(user: userAuthority, transitTokenMint: transitTokenMint, network: network), isSigner: false),
+                .writable(
+                    publicKey: getTransitTokenAccountAddress(user: userAuthority, transitTokenMint: transitTokenMint,
+                                                             network: network),
+                    isSigner: false
+                ),
                 .writable(publicKey: userDestinationTokenAccount, isSigner: false),
                 .readonly(publicKey: swapFromProgramId, isSigner: false),
                 .readonly(publicKey: swapFromAccount, isSigner: false),
@@ -313,26 +326,26 @@ public enum RelayProgram {
                 .writable(publicKey: swapToPoolTokenMint, isSigner: false),
                 .writable(publicKey: swapToPoolFeeAccount, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: id(network: network),
             data: [
                 Index.topUpWithTransitiveSwap,
                 amountIn,
                 transitMinimumAmount,
-                minimumAmountOut
+                minimumAmountOut,
             ]
         )
     }
-    
+
     private static func splSwapTransitiveInstruction(
         feePayer: PublicKey,
-        userAuthority: PublicKey,
+        userAuthority _: PublicKey,
         userTransferAuthority: PublicKey,
         userSourceTokenAccount: PublicKey,
         userTransitTokenAccount: PublicKey,
         userDestinationTokenAccount: PublicKey,
-        transitTokenMint: PublicKey,
+        transitTokenMint _: PublicKey,
         swapFromProgramId: PublicKey,
         swapFromAccount: PublicKey,
         swapFromAuthority: PublicKey,
@@ -380,7 +393,7 @@ public enum RelayProgram {
                 Index.transitiveSwap,
                 amountIn,
                 transitMinimumAmount,
-                minimumAmountOut
+                minimumAmountOut,
             ]
         )
     }
