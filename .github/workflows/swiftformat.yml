@@ -28,3 +28,32 @@ jobs:
         run: |
           chmod u+x Scripts/format_and_pull_request.sh
           Scripts/format_and_pull_request.sh
+
+      - name: Comment to Pull request
+        id: write-comment
+        run: |
+          if [ -n "$PR_URL" ]; then
+            # Customize your comment message here
+            COMMENT="Thank you for your contribution! We detected unformatted code and fixed them for you at: [here](${{ env.PR_URL }})"
+
+            # Get the pull request number
+            PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+
+            # Create a comment using GitHub API
+            RESPONSE=$(curl -X POST \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d "{\"body\": \"$COMMENT\"}" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments")
+
+            # Print response for debugging
+            echo "$RESPONSE"
+
+            exit 1
+          else
+            exit 0
+          fi
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
