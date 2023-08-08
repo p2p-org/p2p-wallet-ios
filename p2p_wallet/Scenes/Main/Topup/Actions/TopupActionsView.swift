@@ -34,7 +34,7 @@ struct TopupActionsView: View {
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
     }
-    
+
     private func foregroundColor(item: TopupActionsViewModel.ActionItem) -> Color {
         item.isDisabled ? Color(Asset.Colors.mountain.color) : Color(Asset.Colors.night.color)
     }

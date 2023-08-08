@@ -1,12 +1,11 @@
-import CountriesAPI
 import Combine
+import CountriesAPI
 import Foundation
 import Onboarding
 import Resolver
 import UIKit
 
 final class WithdrawActionsViewModel: BaseViewModel, ObservableObject {
-
     @Injected private var metadataService: WalletMetadataService
 
     // MARK: -
@@ -14,7 +13,7 @@ final class WithdrawActionsViewModel: BaseViewModel, ObservableObject {
     @Published var actions: [ActionItem] = []
 
     var tappedItem: AnyPublisher<Action, Never> {
-        return tappedItemSubject.eraseToAnyPublisher()
+        tappedItemSubject.eraseToAnyPublisher()
     }
 
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
@@ -70,7 +69,6 @@ final class WithdrawActionsViewModel: BaseViewModel, ObservableObject {
             )
         }
     }
-
 }
 
 extension WithdrawActionsViewModel {
