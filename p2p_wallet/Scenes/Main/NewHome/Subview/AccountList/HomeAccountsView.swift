@@ -7,8 +7,6 @@ import SwiftUI
 struct HomeAccountsView: View {
     @ObservedObject var viewModel: HomeAccountsViewModel
 
-    @State var isHiddenSectionDisabled: Bool = true
-    @State var currentUserInteractionCellID: String?
     @State var scrollAnimationIsEnded = true
 
     var body: some View {

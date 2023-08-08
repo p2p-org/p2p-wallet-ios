@@ -11,16 +11,12 @@ import Sell
 import SolanaSwift
 import SwiftyUserDefaults
 import Web3
-import Wormhole
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
-    private var defaultsDisposables: [DefaultsDisposable] = []
 
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
-
-    private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationService: NotificationService
@@ -55,52 +51,17 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
-        favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        sellDataService _: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
-        self.favouriteAccountsStore = favouriteAccountsStore
 
         actions = [.addMoney]
 
         super.init()
         bindTransferData()
         addWithdrawIfNeeded()
-
-        // TODO: Replace with combine
-        defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
-            self?.hideZeroBalance = change.newValue ?? false
-        })
-
-        // Ethereum accounts
-        let ethereumAggregator = HomeEthereumAccountsAggregator()
-        let ethereumAccountsPublisher = Publishers
-            .CombineLatest(
-                ethereumAccountsService.statePublisher,
-                userActionService.actions.map { userActions in
-                    userActions.compactMap { $0 as? WormholeClaimUserAction }
-                }
-            )
-            .map { state, actions in
-                ethereumAggregator.transform(input: (state.value, actions))
-            }
-
-        // Solana accounts
-        let solanaAggregator = HomeSolanaAccountsAggregator()
-        let solanaAccountsPublisher = Publishers
-            .CombineLatest4(
-                solanaAccountsService.statePublisher,
-                favouriteAccountsStore.$favourites,
-                favouriteAccountsStore.$ignores,
-                $hideZeroBalance
-            )
-            .map { state, favourites, ignores, hideZeroBalance in
-                solanaAggregator.transform(input: (state.value, favourites, ignores, hideZeroBalance))
-            }
 
         // bankTransferPublisher
         let bankTransferServicePublisher = Publishers.CombineLatest(
@@ -116,21 +77,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         }
 
         let homeAccountsAggregator = HomeAccountsAggregator()
-        Publishers
-            .CombineLatest3(
-                solanaAccountsPublisher,
-                ethereumAccountsPublisher,
-                bankTransferServicePublisher.prepend([])
-            )
-            .map { solanaAccounts, ethereumAccounts, bankTransferAccounts in
-                homeAccountsAggregator
-                    .transform(input: (solanaAccounts, ethereumAccounts, bankTransferAccounts))
-            }
+        bankTransferServicePublisher
             .receive(on: RunLoop.main)
-            .sink { primary, secondary in
-                self.accounts = primary
-                self.hiddenAccounts = secondary
-            }
+            .assignWeak(to: \.accounts, on: self)
             .store(in: &subscriptions)
 
         // Balance
@@ -252,26 +201,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             switch event {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
-            case .visibleToggle:
-                let pubkey = renderableAccount.account.address
-                let tags = renderableAccount.tags
-
-                if tags.contains(.ignore) {
-                    favouriteAccountsStore.markAsFavourite(key: pubkey)
-                } else if tags.contains(.favourite) {
-                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-                } else {
-                    favouriteAccountsStore.markAsIgnore(key: pubkey)
-                }
-            default:
-                break
-            }
-
-        case let renderableAccount as RenderableEthereumAccount:
-            switch event {
-            case .extraButtonTap:
-                navigation
-                    .send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }
@@ -295,7 +224,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case .withdraw:
             analyticsManager.log(event: .mainScreenWithdrawClick)
             navigation.send(.withdrawActions)
-//            navigation.send(.withdrawCalculator)
         }
     }
 
@@ -318,10 +246,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         smallBannerVisibility = HomeBannerVisibility(id: id, closed: true)
         smallBanner = nil
         shouldCloseBanner = false
-    }
-
-    func hiddenTokensTapped() {
-        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 
     // Bank transfer
@@ -416,7 +340,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 extension HomeAccountsViewModel {
     enum Event {
         case tap
-        case visibleToggle
         case extraButtonTap
     }
 }
