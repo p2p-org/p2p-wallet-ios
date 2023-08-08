@@ -35,6 +35,7 @@ current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 # Run swiftformat on the p2p_wallet directory
 swiftformat p2p_wallet
+swiftformat Packages/KeyAppKit
 
 # Check if any .swift files require formatting
 if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
