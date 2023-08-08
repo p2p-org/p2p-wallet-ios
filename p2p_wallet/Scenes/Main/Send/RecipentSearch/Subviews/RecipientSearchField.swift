@@ -24,7 +24,7 @@ struct RecipientSearchField: View {
                 }
                 .frame(height: 24)
                 .padding(.vertical, 12)
-                .accessibilityIdentifier("RecipientSearchField.FocusedTextField")
+                    .accessibilityIdentifier("RecipientSearchField.FocusedTextField")
 
                 if isLoading {
                     Spinner()
