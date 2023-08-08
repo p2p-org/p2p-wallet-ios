@@ -55,6 +55,8 @@ public actor StateMachine<Dispatcher> where Dispatcher: KeyAppStateMachine.Dispa
         stateSubject.sink { state in
             dispatcher.onEnter(currentState: state)
         }.store(in: &subscriptions)
+
+        log(message: "🚧 Initialising with state: \(initialState)")
     }
 
     // MARK: - Public methods

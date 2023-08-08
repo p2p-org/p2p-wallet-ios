@@ -13,11 +13,13 @@ public protocol SendProvider {
     func version() async throws -> String
 }
 
-public class SendProviderImpl {
+public class SendProviderImpl: SendProvider {
     let client: HTTPJSONRPCCLient
 
     public init(client: HTTPJSONRPCCLient) {
         self.client = client
+        client.encoder.keyEncodingStrategy = .convertToSnakeCase
+        client.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
     public func send(
@@ -30,7 +32,7 @@ public class SendProviderImpl {
         struct Params: Codable {
             let userWallet: String
             let mint: String?
-            let amount: UInt64
+            let amount: String
             let recipient: String
             let options: TransferOptions
         }
@@ -40,14 +42,14 @@ public class SendProviderImpl {
             params: Params(
                 userWallet: userWallet,
                 mint: mint,
-                amount: amount,
+                amount: "\(amount)",
                 recipient: recipient,
                 options: options
             )
         )
     }
 
-    func version() async throws -> String {
+    public func version() async throws -> String {
         try await client.call(method: "version", params: HTTPJSONRPCCLient.EmptyParams())
     }
 }

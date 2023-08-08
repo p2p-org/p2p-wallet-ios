@@ -11,7 +11,7 @@ enum NSendInputBusinessLogic {
     static func calculate(provider: SendProvider, input: NSendInput) async -> NSendInputState {
         do {
             let result = try await provider.send(
-                userWallet: input.userWallet,
+                userWallet: input.userWallet.address,
                 mint: input.token.mintAddress,
                 amount: input.amount,
                 recipient: input.recipient,

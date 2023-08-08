@@ -87,7 +87,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
     ) {
-        coordinate(to: SendInputCoordinator(
+        coordinate(to: NSendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,

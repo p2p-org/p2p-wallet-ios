@@ -91,6 +91,14 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.application)
 
+        register {
+            SendProviderImpl(
+                client: HTTPJSONRPCCLient(endpoint: String.secretConfig("SEND_DEV")!)
+            )
+        }
+        .implements(SendProvider.self)
+        .scope(.session)
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)

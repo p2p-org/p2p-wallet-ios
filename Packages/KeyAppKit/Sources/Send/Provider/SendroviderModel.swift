@@ -1,19 +1,24 @@
 import Foundation
 import KeyAppKitCore
 
-public enum SwapMode: Codable, Hashable {
-    case exactIn
-    case exactOut
+public enum SwapMode: String, Codable, Hashable {
+    case exactIn = "ExactIn"
+    case exactOut = "ExactOut"
 }
 
-public enum FeePayer: Codable, Hashable {
-    case service
-    case user
+public enum FeePayer: String, Codable, Hashable {
+    case service = "Service"
+    case user = "User"
 }
 
 public struct TransferOptions: Codable, Hashable {
     let swapMode: SwapMode
     let feePayer: FeePayer
+
+    public init(swapMode: SwapMode, feePayer: FeePayer) {
+        self.swapMode = swapMode
+        self.feePayer = feePayer
+    }
 }
 
 public struct SendResponse: Codable, Hashable {

@@ -8,10 +8,10 @@
 import Foundation
 import KeyAppStateMachine
 
-class NSendInputDispatcher: Dispatcher {
-    typealias State = NSendInputState
+public final class SendInputDispatcher: Dispatcher {
+    public typealias State = NSendInputState
 
-    typealias Action = NSendInputAction
+    public typealias Action = NSendInputAction
 
     let sendProvider: SendProvider
 
@@ -19,7 +19,7 @@ class NSendInputDispatcher: Dispatcher {
         self.sendProvider = sendProvider
     }
 
-    func shouldBeginDispatching(
+    public func shouldBeginDispatching(
         currentAction _: NSendInputAction,
         newAction _: NSendInputAction,
         currentState _: NSendInputState
@@ -27,7 +27,7 @@ class NSendInputDispatcher: Dispatcher {
         true
     }
 
-    func shouldCancelCurrentAction(
+    public func shouldCancelCurrentAction(
         currentAction _: NSendInputAction,
         newAction _: NSendInputAction,
         currentState _: NSendInputState
@@ -35,20 +35,20 @@ class NSendInputDispatcher: Dispatcher {
         true
     }
 
-    func actionWillBeginDispatching(
+    public func actionWillBeginDispatching(
         action _: NSendInputAction,
         currentState: NSendInputState
     ) async -> NSendInputState? {
         currentState
     }
 
-    func onEnter(currentState: NSendInputState) {
+    public func onEnter(currentState: NSendInputState) {
         Task { [weak self] in
             await self?.dispatch(action: .calculating, currentState: currentState)
         }
     }
 
-    func dispatch(action: NSendInputAction, currentState: NSendInputState) async -> NSendInputState {
+    public func dispatch(action: NSendInputAction, currentState: NSendInputState) async -> NSendInputState {
         switch currentState {
         case .initialising:
 
@@ -88,7 +88,7 @@ class NSendInputDispatcher: Dispatcher {
         }
     }
 
-    func actionDidEndDispatching(
+    public func actionDidEndDispatching(
         action _: NSendInputAction,
         currentState _: NSendInputState
     ) async -> NSendInputState? {
