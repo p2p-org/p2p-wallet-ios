@@ -1,17 +1,33 @@
 #!/bin/bash
 
-# Function to recursively find the next available branch name
-get_next_branch_name() {
-  local branch_name="$1"
-  local suffix=0
-  local new_branch_name="$branch_name"
+# Function to check if a pull request already exists with given base and head branches
+check_existing_pull_request() {
+  local base_branch="$1"
+  local head_branch="$2"
   
-  while git rev-parse --quiet --verify "refs/heads/$new_branch_name" >/dev/null; do
-    ((suffix++))
-    new_branch_name="${branch_name}${suffix}"
-  done
+  local github_token="$GITHUB_TOKEN"
 
-  echo "$new_branch_name"
+  local url="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/pulls"
+  local query="?base=$base_branch&head=$head_branch"
+  
+  local response=$(curl -s -H "Authorization: token $github_token" "$url$query")
+  echo "$response"
+}
+
+# Function to create a pull request using GitHub API
+create_pull_request() {
+  local base_branch="$1"
+  local head_branch="$2"
+  local title="$3"
+  
+  local github_token="$GITHUB_TOKEN"
+
+  local url="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/pulls"
+  local data="{\"title\":\"$title\",\"base\":\"$base_branch\",\"head\":\"$head_branch\"}"
+
+  local pr_response=$(curl -s -X POST -H "Authorization: token $github_token" -d "$data" "$url")
+  local pr_url=$(echo "$pr_response" | jq -r .html_url)
+  echo "$pr_url"
 }
 
 # Get the current branch name
@@ -22,25 +38,32 @@ swiftformat p2p_wallet
 
 # Check if any .swift files require formatting
 if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
-  # Generate a new branch name for formatting changes
-  formatting_branch="${current_branch}-swiftformat"
-  new_formatting_branch=$(get_next_branch_name "$formatting_branch")
-
   # Create a new branch for formatting changes
+  new_formatting_branch="swiftformat/$current_branch"
+
+  # Create a new branch and force push formatting changes
   git checkout -b "$new_formatting_branch"
-
-  # Add only Swift files to the staging area
-  git add $(git status --porcelain | grep '^ M' | grep '\.swift$' | awk '{print $2}')
-
-  # Commit the formatting changes
+  git add -A
   git commit -m "fix(swiftformat): Apply Swiftformat changes"
+  git push -f origin "$new_formatting_branch"
 
-  # Push the changes to the remote repository
-  git push origin "$new_formatting_branch"
-
-  # Print formatted message for GitHub Actions failure
-  echo "::error::Formatting changes detected. Created pull request for SwiftFormat changes in branch '$new_formatting_branch'."
-  exit 1
+  # Check if a pull request with the same base and head branches already exists
+  existing_prs=$(check_existing_pull_request "$current_branch" "$new_formatting_branch")
+  
+  if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
+    # Create a pull request using GitHub API
+    pr_title="[Swiftformat] Correct format for $new_formatting_branch"
+    pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title")
+  
+    # Print formatted message for GitHub Actions failure with green PR URL
+    echo "::error::Formatting changes detected. Created pull request: $pr_url"
+    exit 1
+  else
+    # Print formatted message for GitHub Actions failure with existing PR information
+    existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
+    echo "::warning::A pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: $existing_pr_url"
+    exit 0
+  fi
 else
   # Print formatted message for GitHub Actions success
   echo "No formatting changes detected."
