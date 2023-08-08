@@ -11,7 +11,10 @@ jobs:
   SwiftLint:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out current branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
 
       - name: Swiftformat
         env:
