@@ -23,7 +23,7 @@ public struct EURUserAccount: Codable {
         currency: String,
         createdAt: String,
         enriched: Bool,
-        availableBalance: Int?,
+        availableBalance _: Int?,
         iban: String? = nil,
         bic: String? = nil,
         bankAccountHolderName: String? = nil
@@ -32,7 +32,7 @@ public struct EURUserAccount: Codable {
         self.currency = currency
         self.createdAt = createdAt
         self.enriched = enriched
-        self.availableBalance = 1000 //availableBalance
+        availableBalance = 1000 // availableBalance
         self.iban = iban
         self.bic = bic
         self.bankAccountHolderName = bankAccountHolderName

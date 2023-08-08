@@ -128,6 +128,7 @@ extension String {
 }
 
 // MARK: - HTML Entiteles
+
 extension String {
     func decodeHTMLEntities() -> String? {
         guard let data = data(using: .utf8) else {
@@ -136,7 +137,7 @@ extension String {
 
         let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [
             .documentType: NSAttributedString.DocumentType.html,
-            .characterEncoding: String.Encoding.utf8.rawValue
+            .characterEncoding: String.Encoding.utf8.rawValue,
         ]
 
         do {
