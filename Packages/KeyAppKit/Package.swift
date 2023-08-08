@@ -230,6 +230,7 @@ let package = Package(
                 "NameService",
                 "History",
                 "Wormhole",
+                "KeyAppStateMachine",
             ]
         ),
 

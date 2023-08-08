@@ -19,7 +19,7 @@ public actor StateMachine<
     // MARK: - Private properties
 
     /// Subject that holds a stream of current state, start with an initial state
-    private let stateSubject = CurrentValueSubject<State, Never>(.initial)
+    private let stateSubject: CurrentValueSubject<State, Never>
 
     /// Current active action
     private var currentAction: Action?
@@ -46,7 +46,8 @@ public actor StateMachine<
     /// `StateMachine`'s initialization
     /// - Parameter dispatcher: Dispatcher that controls dispatching actions
     /// - Parameter verbose: Define if if logging available
-    public init(dispatcher: Dispatcher, verbose: Bool = false) {
+    public init(initialState: State, dispatcher: Dispatcher, verbose: Bool = false) {
+        stateSubject = CurrentValueSubject<State, Never>(initialState)
         self.dispatcher = dispatcher
         self.verbose = verbose
     }

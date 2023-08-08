@@ -11,7 +11,7 @@ final class StateMachineTests: XCTestCase {
 
     override func setUpWithError() throws {
         dispatcher = .init(apiClient: apiClient)
-        stateMachine = .init(dispatcher: dispatcher, verbose: true)
+        stateMachine = .init(initialState: RecruitmentState.initial, dispatcher: dispatcher, verbose: true)
     }
 
     override func tearDownWithError() throws {

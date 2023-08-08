@@ -1,9 +1,19 @@
 import Foundation
 import KeyAppKitCore
 
-public enum TransferOptions: String, Codable, Hashable {
-    case swapMode = "swap_mode"
-    case feePayer = "fee_payer"
+public enum SwapMode: Codable, Hashable {
+    case exactIn
+    case exactOut
+}
+
+public enum FeePayer: Codable, Hashable {
+    case service
+    case user
+}
+
+public struct TransferOptions: Codable, Hashable {
+    let swapMode: SwapMode
+    let feePayer: FeePayer
 }
 
 public struct SendResponse: Codable, Hashable {
