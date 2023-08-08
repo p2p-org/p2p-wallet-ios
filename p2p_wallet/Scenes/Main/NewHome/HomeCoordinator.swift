@@ -95,7 +95,7 @@ final class HomeCoordinator: Coordinator<Void> {
         }
 
         // handle navigation
-        navigation.flatMap({ [unowned self] action in
+        navigation.flatMap { [unowned self] action in
             if regionSelectionReqired.contains(action), Defaults.region == nil {
                 return coordinate(to: SelectRegionCoordinator(navigationController: navigationController))
                     .handleEvents(receiveOutput: { [unowned self] _ in
@@ -103,7 +103,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     })
                     .flatMap { [unowned self] result in
                         switch result {
-                        case .selected(_):
+                        case .selected:
                             return navigate(to: action, homeView: homeView)
                         case .cancelled:
                             return Just(()).eraseToAnyPublisher()
@@ -111,7 +111,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     }.eraseToAnyPublisher()
             }
             return navigate(to: action, homeView: homeView)
-        })
+        }
         .sink(receiveValue: {})
         .store(in: &subscriptions)
         // return publisher
@@ -220,13 +220,17 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: WithdrawActionsCoordinator(viewController: navigationController))
                 .flatMap { [unowned self] result in
                     switch result {
-                    case .action(let action):
+                    case let .action(action):
                         switch action {
                         case .transfer:
                             return self.navigate(to: .withdrawCalculator, homeView: homeView)
                         case .user, .wallet:
-                            return coordinate(to: SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, allowSwitchingMainAmountType: true))
-                                .map {_ in }.eraseToAnyPublisher()
+                            return coordinate(to: SendCoordinator(
+                                rootViewController: navigationController,
+                                preChosenWallet: nil,
+                                allowSwitchingMainAmountType: true
+                            ))
+                            .map { _ in }.eraseToAnyPublisher()
                         }
                     case .cancel:
                         return Just(()).eraseToAnyPublisher()
