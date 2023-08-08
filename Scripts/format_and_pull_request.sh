@@ -32,41 +32,40 @@ create_pull_request() {
 
 # Get the current branch name
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-echo "$current_branch"
 
-# # Run swiftformat on the p2p_wallet directory
-# swiftformat p2p_wallet
+# Run swiftformat on the p2p_wallet directory
+swiftformat p2p_wallet
 
-# # Check if any .swift files require formatting
-# if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
-#   # Create a new branch for formatting changes
-#   new_formatting_branch="swiftformat/$current_branch"
+# Check if any .swift files require formatting
+if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
+  # Create a new branch for formatting changes
+  new_formatting_branch="swiftformat/$current_branch"
 
-#   # Create a new branch and force push formatting changes
-#   git checkout -B "$new_formatting_branch"
-#   git status --porcelain | grep '^ M' | grep '\.swift$' | awk '{print $2}' | xargs git add
-#   git commit -m "fix(swiftformat): Apply Swiftformat changes"
-#   git push -f origin "$new_formatting_branch"
+  # Create a new branch and force push formatting changes
+  git checkout -B "$new_formatting_branch"
+  git status --porcelain | grep '^ M' | grep '\.swift$' | awk '{print $2}' | xargs git add
+  git commit -m "fix(swiftformat): Apply Swiftformat changes"
+  git push -f origin "$new_formatting_branch"
 
-#   # Check if an opened pull request with the same base and head branches already exists
-#   existing_prs=$(check_existing_pull_request "$current_branch" "$new_formatting_branch")
+  # Check if an opened pull request with the same base and head branches already exists
+  existing_prs=$(check_existing_pull_request "$current_branch" "$new_formatting_branch")
   
-#   if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
-#     # Create a pull request using GitHub API
-#     pr_title="[Swiftformat] Correct format for $new_formatting_branch"
-#     pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title")
+  if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
+    # Create a pull request using GitHub API
+    pr_title="[Swiftformat] Correct format for $new_formatting_branch"
+    pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title")
   
-#     # Print formatted message for GitHub Actions failure with clickable PR URL
-#     echo "::error::Formatting changes detected. Created pull request: [$pr_url]($pr_url)"
-#     exit 1
-#   else
-#     # Print formatted message for GitHub Actions failure with existing PR information
-#     existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
-#     echo "::warning::Formatting changes detected. An opened pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: [$existing_pr_url]($existing_pr_url)"
-#     exit 1
-#   fi
-# else
-#   # Print formatted message for GitHub Actions success
-#   echo "No formatting changes detected."
-#   exit 0
-# fi
+    # Print formatted message for GitHub Actions failure with clickable PR URL
+    echo "::error::Formatting changes detected. Created pull request: [$pr_url]($pr_url)"
+    exit 1
+  else
+    # Print formatted message for GitHub Actions failure with existing PR information
+    existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
+    echo "::warning::Formatting changes detected. An opened pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: [$existing_pr_url]($existing_pr_url)"
+    exit 1
+  fi
+else
+  # Print formatted message for GitHub Actions success
+  echo "No formatting changes detected."
+  exit 0
+fi
