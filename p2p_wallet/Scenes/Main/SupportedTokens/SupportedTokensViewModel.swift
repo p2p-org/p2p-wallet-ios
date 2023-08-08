@@ -88,6 +88,7 @@ enum SupportedTokensBusinnes {
         } else {
             let lowercasedFilter = filter.lowercased()
             return tokens
+                .filter { $0.symbol.uppercased() != "MATIC" }
                 .filter {
                     // Filter by title (token name) and subtitle (token symbol
                     $0.symbol.lowercased().contains(lowercasedFilter)
@@ -125,7 +126,6 @@ enum SupportedTokensBusinnes {
             "AVAX",
             "BNB",
             "WBNB",
-            "MATIC",
             "CRV",
         ]
 
