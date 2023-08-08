@@ -11,7 +11,6 @@ import Sell
 import SolanaSwift
 import SwiftyUserDefaults
 import Web3
-import Wormhole
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -55,7 +54,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
         sellDataService _: any SellDataService = Resolver.resolve(),
@@ -249,15 +247,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 } else {
                     favouriteAccountsStore.markAsIgnore(key: pubkey)
                 }
-            default:
-                break
-            }
-
-        case let renderableAccount as RenderableEthereumAccount:
-            switch event {
-            case .extraButtonTap:
-                navigation
-                    .send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
                 break
             }
