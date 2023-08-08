@@ -76,19 +76,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             self?.hideZeroBalance = change.newValue ?? false
         })
 
-        // Ethereum accounts
-        let ethereumAggregator = HomeEthereumAccountsAggregator()
-        let ethereumAccountsPublisher = Publishers
-            .CombineLatest(
-                ethereumAccountsService.statePublisher,
-                userActionService.actions.map { userActions in
-                    userActions.compactMap { $0 as? WormholeClaimUserAction }
-                }
-            )
-            .map { state, actions in
-                ethereumAggregator.transform(input: (state.value, actions))
-            }
-
         // Solana accounts
         let solanaAggregator = HomeSolanaAccountsAggregator()
         let solanaAccountsPublisher = Publishers
@@ -117,19 +104,18 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         let homeAccountsAggregator = HomeAccountsAggregator()
         Publishers
-            .CombineLatest3(
+            .CombineLatest(
                 solanaAccountsPublisher,
-                ethereumAccountsPublisher,
                 bankTransferServicePublisher.prepend([])
             )
-            .map { solanaAccounts, ethereumAccounts, bankTransferAccounts in
+            .map { solanaAccounts, bankTransferAccounts in
                 homeAccountsAggregator
-                    .transform(input: (solanaAccounts, ethereumAccounts, bankTransferAccounts))
+                    .transform(input: (solanaAccounts, [], bankTransferAccounts))
             }
             .receive(on: RunLoop.main)
-            .sink { primary, secondary in
-                self.accounts = primary
-                self.hiddenAccounts = secondary
+            .sink { [weak self] primary, secondary in
+                self?.accounts = primary
+                self?.hiddenAccounts = secondary
             }
             .store(in: &subscriptions)
 
