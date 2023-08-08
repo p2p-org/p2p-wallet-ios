@@ -63,9 +63,9 @@
 //        \"postalCode\",\n    \"state\" : \"state\"\n  },\n  \"dateOfBirth\" : {\n    \"day\" : 24,\n    \"month\" :
 //        5,\n    \"year\" : 2023\n  },\n  \"email\" : \"email\",\n  \"expectedIncomingTxVolumeYearly\" :
 //        \"expectedIncomingTxVolumeYearly\",\n  \"expectedOutgoingTxVolumeYearly\" :
-//        \"expectedOutgoingTxVolumeYearly\",\n  \"firstName\" : \"firstName\",\n  \"ipAddress\" : \"ipAddress\",\n 
+//        \"expectedOutgoingTxVolumeYearly\",\n  \"firstName\" : \"firstName\",\n  \"ipAddress\" : \"ipAddress\",\n
 //        \"lastName\" : \"lastName\",\n  \"mobile\" : {\n    \"countryCode\" : \"countryCode\",\n    \"number\" :
-//        \"number\"\n  },\n  \"occupation\" : \"occupation\",\n  \"placeOfBirth\" : \"placeOfBirth\",\n 
+//        \"number\"\n  },\n  \"occupation\" : \"occupation\",\n  \"placeOfBirth\" : \"placeOfBirth\",\n
 //        \"purposeOfAccount\" : \"purposeOfAccount\",\n  \"selfPepDeclaration\" : false,\n  \"sourceOfFunds\" :
 //        \"sourceOfFunds\"\n}")
 //    }

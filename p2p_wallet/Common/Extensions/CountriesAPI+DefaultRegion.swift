@@ -8,7 +8,7 @@ extension CountriesAPI {
     }
 
     func currentCountryName() async throws -> Region? {
-        return try await self.fetchRegions().first { country in
+        try await fetchRegions().first { country in
             country.alpha2.lowercased() == defaultRegionCode()
         }
     }

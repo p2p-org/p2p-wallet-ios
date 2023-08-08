@@ -33,7 +33,7 @@ final class WithdrawActionsCoordinator: Coordinator<WithdrawActionsCoordinator.R
                 })
                 .eraseToAnyPublisher()
         )
-            .prefix(1).eraseToAnyPublisher()
+        .prefix(1).eraseToAnyPublisher()
     }
 }
 
