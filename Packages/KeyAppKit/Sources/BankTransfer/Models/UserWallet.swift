@@ -32,7 +32,7 @@ public struct EURUserAccount: Codable {
         self.currency = currency
         self.createdAt = createdAt
         self.enriched = enriched
-        self.availableBalance = availableBalance
+        self.availableBalance = 1000 //availableBalance
         self.iban = iban
         self.bic = bic
         self.bankAccountHolderName = bankAccountHolderName
