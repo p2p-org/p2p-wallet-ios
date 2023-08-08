@@ -3,29 +3,30 @@ import Foundation
 
 /// A machine that consists of a set of states, actions, and a dispatcher that controls transition rules and define how
 /// the system transitions from one state to another based on the inputs it receives.
-public actor StateMachine<
-    State: KeyAppStateMachine.State,
-    Action: KeyAppStateMachine.Action,
-    Dispatcher: KeyAppStateMachine.Dispatcher<State, Action>
-> {
+public actor StateMachine<Dispatcher> where Dispatcher: KeyAppStateMachine.Dispatcher {
+    public typealias State = Dispatcher.State
+    public typealias Action = Dispatcher.Action
+
     // MARK: - Dependencies
 
     /// Dispatcher that controls dispatching actions
-    private let dispatcher: Dispatcher
+    let dispatcher: Dispatcher
 
     /// Define if if logging available
-    private let verbose: Bool
+    let verbose: Bool
 
     // MARK: - Private properties
 
     /// Subject that holds a stream of current state, start with an initial state
-    private let stateSubject: CurrentValueSubject<State, Never>
+    let stateSubject: CurrentValueSubject<State, Never>
 
     /// Current active action
-    private var currentAction: Action?
+    var currentAction: Action?
 
     /// Current working task
-    private var currentTask: Task<Void, Never>?
+    var currentTask: Task<Void, Never>?
+
+    var subscriptions: [AnyCancellable] = []
 
     // MARK: - Public properties
 
@@ -50,6 +51,10 @@ public actor StateMachine<
         stateSubject = CurrentValueSubject<State, Never>(initialState)
         self.dispatcher = dispatcher
         self.verbose = verbose
+
+        stateSubject.sink { state in
+            dispatcher.onEnter(currentState: state)
+        }.store(in: &subscriptions)
     }
 
     // MARK: - Public methods
@@ -58,12 +63,12 @@ public actor StateMachine<
     /// - Parameter action: new action
     public func accept(action: Action) async {
         // Log
-        logIfVerbose(message: "📲 Action accepted: \(action)")
+        log(message: "📲 Action accepted: \(action)")
 
         // If there is any performing action, task
         if let currentTask, let currentAction, currentTask.isCancelled == false {
             // Log
-            logIfVerbose(message: "🚧 [AnotherInProgress] Another action in progress: \(currentAction)")
+            log(message: "🚧 [AnotherInProgress] Another action in progress: \(currentAction)")
 
             // Check if action should be dispatched
             guard dispatcher.shouldBeginDispatching(
@@ -71,7 +76,7 @@ public actor StateMachine<
                 newAction: action,
                 currentState: currentState
             ) else {
-                logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action refused: \(action)")
+                log(message: "🚧 ❌ [AnotherInProgress] Action refused: \(action)")
                 return
             }
 
@@ -85,13 +90,13 @@ public actor StateMachine<
                 currentTask.cancel()
 
                 // Log
-                logIfVerbose(message: "🚧 ❌ [AnotherInProgress] Action is marked as cancelled: \(currentAction)")
+                log(message: "🚧 ❌ [AnotherInProgress] Action is marked as cancelled: \(currentAction)")
             }
 
             // Wait for current action to be completed
             else {
                 // Log
-                logIfVerbose(message: "🚧 🕑 [AnotherInProgress] Wait for current action to be completed...")
+                log(message: "🚧 🕑 [AnotherInProgress] Wait for current action to be completed...")
 
                 // Wait
                 await currentTask.value
@@ -113,7 +118,7 @@ public actor StateMachine<
     // MARK: - Private methods
 
     /// Log an event
-    private nonisolated func logIfVerbose(message: String) {
+    private nonisolated func log(message: String) {
         guard verbose else { return }
         print("[StateMachine] \(message)")
     }
@@ -121,7 +126,7 @@ public actor StateMachine<
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
         // Log
-        logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
+        log(message: "🏗️ Action will begin dispatching: \(action)")
 
         if let intermediateState = await dispatcher.actionWillBeginDispatching(
             action: action,
@@ -133,12 +138,12 @@ public actor StateMachine<
 
         // check cancellation
         guard !Task.isCancelled else {
-            logIfVerbose(message: "❌ Action cancelled: \(action)")
+            log(message: "❌ Action cancelled: \(action)")
             return
         }
 
         // Log
-        logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
+        log(message: "🚀 Action is being dispatched: \(action)")
 
         // dispatch action
         stateSubject.send(
@@ -150,12 +155,12 @@ public actor StateMachine<
 
         // check cancellation
         guard !Task.isCancelled else {
-            logIfVerbose(message: "❌ Action cancelled: \(action)")
+            log(message: "❌ Action cancelled: \(action)")
             return
         }
 
         // Log
-        logIfVerbose(message: "✅ Action did end dispatching: \(action)")
+        log(message: "✅ Action did end dispatching: \(action)")
 
         if let endState = await dispatcher.actionDidEndDispatching(
             action: action,

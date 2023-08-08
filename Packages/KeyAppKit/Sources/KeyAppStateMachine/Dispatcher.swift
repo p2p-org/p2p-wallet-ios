@@ -8,6 +8,8 @@ public protocol Dispatcher<State, Action> {
     associatedtype State: KeyAppStateMachine.State
     associatedtype Action: KeyAppStateMachine.Action
 
+    func onEnter(currentState: State)
+
     /// Asks the dispatcher whether to begin dispatching an action.
     func shouldBeginDispatching(currentAction: Action, newAction: Action, currentState: State) -> Bool
 

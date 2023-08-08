@@ -42,6 +42,12 @@ class NSendInputDispatcher: Dispatcher {
         currentState
     }
 
+    func onEnter(currentState: NSendInputState) {
+        Task { [weak self] in
+            await self?.dispatch(action: .calculating, currentState: currentState)
+        }
+    }
+
     func dispatch(action: NSendInputAction, currentState: NSendInputState) async -> NSendInputState {
         switch currentState {
         case .initialising:
@@ -84,12 +90,8 @@ class NSendInputDispatcher: Dispatcher {
 
     func actionDidEndDispatching(
         action _: NSendInputAction,
-        currentState: NSendInputState
+        currentState _: NSendInputState
     ) async -> NSendInputState? {
-        Task { [weak self] in
-            await self?.dispatch(action: .calculating, currentState: currentState)
-        }
-
-        return nil
+        nil
     }
 }

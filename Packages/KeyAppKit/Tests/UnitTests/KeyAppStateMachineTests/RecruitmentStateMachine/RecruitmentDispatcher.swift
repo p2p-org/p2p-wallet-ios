@@ -51,6 +51,8 @@ class RecruitmentDispatcher: Dispatcher {
         }
     }
 
+    func onEnter(currentState _: RecruitmentState) {}
+
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState
