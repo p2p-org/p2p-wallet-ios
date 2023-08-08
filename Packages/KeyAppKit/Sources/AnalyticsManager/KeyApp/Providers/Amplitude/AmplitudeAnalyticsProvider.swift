@@ -1,30 +1,22 @@
 import Amplitude
 import Foundation
-import AnalyticsManager
 
-final class AmplitudeAnalyticsProvider: AnalyticsProvider {
-    var providerId: AnalyticsProviderId {
+public final class AmplitudeAnalyticsProvider: AnalyticsProvider {
+    public var providerId: AnalyticsProviderId {
         KeyAppAnalyticsProviderId.amplitude.rawValue
     }
-    
-    init() {
-        let apiKey: String
-        #if !RELEASE
-        apiKey = .secretConfig("AMPLITUDE_API_KEY_FEATURE")!
-        #else
-        apiKey = .secretConfig("AMPLITUDE_API_KEY")!
-        #endif
-        
-        Amplitude.instance().trackingSessionEvents = true
+
+    public init(apiKey: String) {
+        Amplitude.instance().defaultTracking.sessions = true
         Amplitude.instance().initializeApiKey(apiKey)
     }
 
-    func logEvent(_ event: AnalyticsEvent) {
+    public func logEvent(_ event: AnalyticsEvent) {
         guard let eventName = event.name else { return }
         Amplitude.instance().logEvent(eventName, withEventProperties: event.params)
     }
-    
-    func logParameter(_ parameter: AnalyticsParameter) {
+
+    public func logParameter(_ parameter: AnalyticsParameter) {
         guard
             let value = parameter.value as? NSObject,
             let identify = AMPIdentify().set(parameter.name, value: value)

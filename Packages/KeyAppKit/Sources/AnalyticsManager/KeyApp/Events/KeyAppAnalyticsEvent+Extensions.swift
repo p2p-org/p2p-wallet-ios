@@ -1,13 +1,12 @@
 import Foundation
-import AnalyticsManager
 
-extension KeyAppAnalyticsEvent {
-
+public extension KeyAppAnalyticsEvent {
     /// The name of the event to send
     var name: String? {
         // By default, name of the event will be converted from `camelCase` to `Uppercased_Snake_Case` format
-        // For example: `KeyAppAnalyticsEvent.mainScreenSwapOpen` will be converted to "Main_Screen_Swap_Open" automatically.
-        
+        // For example: `KeyAppAnalyticsEvent.mainScreenSwapOpen` will be converted to "Main_Screen_Swap_Open"
+        // automatically.
+
         // Modify the name manually and prevent default behavior
         switch self {
         case .sellOnlySOLNotification:
@@ -23,7 +22,7 @@ extension KeyAppAnalyticsEvent {
         default:
             break
         }
-        
+
         // Default converter from `camelCase` to `Uppercased_Snake_Case` format
         return mirror.label.snakeAndFirstUppercased
     }
@@ -31,9 +30,10 @@ extension KeyAppAnalyticsEvent {
     /// Params sent with event
     var params: [String: Any]? {
         guard !mirror.params.isEmpty else { return nil }
-        
-        // The same for params, params key & value can be customized too, if not, it will be automatically converted to `Uppercased_Snake_Case`
-        
+
+        // The same for params, params key & value can be customized too, if not, it will be automatically converted to
+        // `Uppercased_Snake_Case`
+
         // Modify the key & value manually and prevent default behavior
         switch self {
         case let .swapChangingTokenAClick(tokenAName):
@@ -43,7 +43,11 @@ extension KeyAppAnalyticsEvent {
         case let .swapChangingValueTokenA(tokenAName, tokenAValue):
             return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
         case let .swapChangingValueTokenB(tokenBName, tokenBValue, transactionSimulation):
-            return ["Token_B_Name": tokenBName, "Token_B_Value": tokenBValue, "Transaction_Simulation": transactionSimulation]
+            return [
+                "Token_B_Name": tokenBName,
+                "Token_B_Value": tokenBValue,
+                "Transaction_Simulation": transactionSimulation,
+            ]
         case let .swapChangingValueTokenAAll(tokenAName, tokenAValue):
             return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
         case let .swapSwitchTokens(tokenAName, tokenBName):
@@ -51,11 +55,11 @@ extension KeyAppAnalyticsEvent {
         default:
             break
         }
-        
+
         // Default converter from `camelCase` to `Uppercased_Snake_Case` format
         let formatted = mirror.params.map {
             var key = $0.key.snakeAndFirstUppercased
-            
+
             switch key {
             case "Token_BName":
                 key = "Token_B_Name"
@@ -68,7 +72,7 @@ extension KeyAppAnalyticsEvent {
             default:
                 break
             }
-            
+
             return (key ?? "", $0.value)
         }
         return Dictionary(uniqueKeysWithValues: formatted)
@@ -78,33 +82,33 @@ extension KeyAppAnalyticsEvent {
     var providerIds: [AnalyticsProviderId] {
         // By default, all events will be sent to amplitude only
         var ids: [KeyAppAnalyticsProviderId] = [
-            .amplitude
+            .amplitude,
         ]
-        
+
         // for some events, we will sent to appsFlyer and firebaseAnalytics
         switch self {
         case .onboardingStartButton,
-                .creationPhoneScreen,
-                .createSmsValidation,
-                .createConfirmPin,
-                .usernameCreationScreen,
-                .usernameCreationButton,
-                .restoreSeed,
-                .onboardingMerged,
-                .login,
-                .buyButtonPressed,
-                .sendNewConfirmButtonClick,
-                .swapClickApproveButton:
+             .creationPhoneScreen,
+             .createSmsValidation,
+             .createConfirmPin,
+             .usernameCreationScreen,
+             .usernameCreationButton,
+             .restoreSeed,
+             .onboardingMerged,
+             .login,
+             .buyButtonPressed,
+             .sendNewConfirmButtonClick,
+             .swapClickApproveButton:
             ids.append(contentsOf: [
                 .appsFlyer,
-                .firebaseAnalytics
+                .firebaseAnalytics,
             ])
         default:
             break
         }
         return ids.map(\.rawValue)
     }
-    
+
     // MARK: - Helpers
 
     private var mirror: (label: String, params: [String: Any]) {
