@@ -58,12 +58,14 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
   
     # Print formatted message for GitHub Actions failure with clickable PR URL
     echo "::warning::Unformatted code detected. Don't worry, I fixed them for you here: $pr_url"
-    exit 1
+    echo "PR_URL=${pr_url}" >> $GITHUB_ENV
+    exit 0
   else
     # Print formatted message for GitHub Actions failure with existing PR information
     existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
     echo "::warning::Unformatted code detected. Don't worry, I fixed them for you here: $existing_pr_url"
-    exit 1
+    echo "PR_URL=${existing_pr_url}" >> $GITHUB_ENV
+    exit 0
   fi
 else
   # Print formatted message for GitHub Actions success
