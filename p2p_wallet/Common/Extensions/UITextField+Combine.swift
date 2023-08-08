@@ -1,6 +1,6 @@
-// https://github.com/CombineCommunity/CombineCocoa/blob/main/Sources/CombineCocoa/Controls/UITextField%2BCombine.swift
-
 #if !(os(iOS) && (arch(i386) || arch(arm)))
+    // https://github.com/CombineCommunity/CombineCocoa/blob/main/Sources/CombineCocoa/Controls/UITextField%2BCombine.swift
+
     import Combine
     import UIKit
 
