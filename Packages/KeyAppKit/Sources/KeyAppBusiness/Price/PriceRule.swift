@@ -29,6 +29,8 @@ internal class DepeggingPriceRule: PriceRule {
             let percentageDifferenceValue = 100 - (1 / price.value) * 100
             if abs(percentageDifferenceValue) <= BigDecimal(floatLiteral: allowPercentageDifferenceValue) {
                 return .break(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
+            } else {
+                return .break(price)
             }
         }
 
