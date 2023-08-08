@@ -50,7 +50,7 @@ public class PriceServiceImpl: PriceService {
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
 
-    let rules: [PriceRule] = [OneToOnePriceRule(), DepeggingPriceRule()]
+    let rules: [PriceRule] = [DepeggingPriceRule(), OneToOnePriceRule()]
 
     // MARK: - Event stream
 
