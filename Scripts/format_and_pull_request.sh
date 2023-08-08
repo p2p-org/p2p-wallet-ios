@@ -55,14 +55,14 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
     pr_title="[Swiftformat] Correct format for $new_formatting_branch"
     pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title")
   
-    # Print formatted message for GitHub Actions failure with green PR URL
-    echo "::error::Formatting changes detected. Created pull request: $pr_url"
+    # Print formatted message for GitHub Actions failure with clickable PR URL
+    echo "::error::Formatting changes detected. Created pull request: [$pr_url]($pr_url)"
     exit 1
   else
     # Print formatted message for GitHub Actions failure with existing PR information
     existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
-    echo "::warning::An opened pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: $existing_pr_url"
-    exit 0
+    echo "::warning::Formatting changes detected. An opened pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: [$existing_pr_url]($existing_pr_url)"
+    exit 1
   fi
 else
   # Print formatted message for GitHub Actions success
