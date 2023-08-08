@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to check if a pull request already exists with given base and head branches
+# Function to check if an opened pull request already exists with given base and head branches
 check_existing_pull_request() {
   local base_branch="$1"
   local head_branch="$2"
@@ -8,7 +8,7 @@ check_existing_pull_request() {
   local github_token="$GITHUB_TOKEN"
 
   local url="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/pulls"
-  local query="?base=$base_branch&head=$head_branch"
+  local query="?base=$base_branch&head=$head_branch&state=open"
   
   local response=$(curl -s -H "Authorization: token $github_token" "$url$query")
   echo "$response"
@@ -42,12 +42,12 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
   new_formatting_branch="swiftformat/$current_branch"
 
   # Create a new branch and force push formatting changes
-  git checkout -b "$new_formatting_branch"
-  git add -A
+  git checkout -B "$new_formatting_branch"
+  git status --porcelain | grep '^ M' | grep '\.swift$' | awk '{print $2}' | xargs git add
   git commit -m "fix(swiftformat): Apply Swiftformat changes"
   git push -f origin "$new_formatting_branch"
 
-  # Check if a pull request with the same base and head branches already exists
+  # Check if an opened pull request with the same base and head branches already exists
   existing_prs=$(check_existing_pull_request "$current_branch" "$new_formatting_branch")
   
   if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
@@ -61,7 +61,7 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
   else
     # Print formatted message for GitHub Actions failure with existing PR information
     existing_pr_url=$(echo "$existing_prs" | jq -r '.[0].html_url')
-    echo "::warning::A pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: $existing_pr_url"
+    echo "::warning::An opened pull request already exists with base branch '$current_branch' and head branch '$new_formatting_branch'. PR URL: $existing_pr_url"
     exit 0
   fi
 else
