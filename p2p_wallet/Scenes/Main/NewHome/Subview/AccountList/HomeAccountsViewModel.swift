@@ -13,7 +13,6 @@ import SwiftyUserDefaults
 import Web3
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
@@ -44,9 +43,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
 
-    /// Secondary list accounts. Will be normally hidded and need to be manually action from user to show in view.
-    var hiddenAccounts: [any RenderableAccount] = []
-
     // MARK: - Initializer
 
     init(
@@ -64,7 +60,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         addWithdrawIfNeeded()
 
         // bankTransferPublisher
-        let bankTransferServicePublisher = Publishers.CombineLatest(
+        Publishers.CombineLatest(
             bankTransferService.value.state
                 .compactMap { $0.value.wallet?.accounts },
             userActionService.actions
@@ -75,12 +71,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 actions: actions
             )
         }
-
-        let homeAccountsAggregator = HomeAccountsAggregator()
-        bankTransferServicePublisher
-            .receive(on: RunLoop.main)
-            .assignWeak(to: \.accounts, on: self)
-            .store(in: &subscriptions)
+        .receive(on: RunLoop.main)
+        .assignWeak(to: \.accounts, on: self)
+        .store(in: &subscriptions)
 
         // Balance
         solanaAccountsService.statePublisher
