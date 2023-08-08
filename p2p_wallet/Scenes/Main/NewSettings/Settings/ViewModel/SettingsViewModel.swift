@@ -1,6 +1,6 @@
 import AnalyticsManager
-import CountriesAPI
 import Combine
+import CountriesAPI
 import Foundation
 import LocalAuthentication
 import Onboarding

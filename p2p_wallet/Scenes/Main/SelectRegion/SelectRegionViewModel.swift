@@ -1,12 +1,11 @@
 import BankTransfer
-import CountriesAPI
 import Combine
-import SwiftyUserDefaults
-import Resolver
+import CountriesAPI
 import KeyAppUI
+import Resolver
+import SwiftyUserDefaults
 
 final class SelectRegionViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Navigation
 
     var showCountries: AnyPublisher<Region?, Never> {
@@ -25,10 +24,10 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
 
     @Published var items: [any Renderable] = []
     @Published var isLoading = false {
-       didSet {
-           items = makeItems()
-       }
-   }
+        didSet {
+            items = makeItems()
+        }
+    }
 
     // MARK: -
 
@@ -53,7 +52,7 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
     }
 
     func bind() {
-        if nil != Defaults.region {
+        if Defaults.region != nil {
             currentRegion = Defaults.region
         } else {
             Task {
@@ -99,14 +98,14 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
                 style: .primaryWhite,
                 trailingImage: Asset.MaterialIcon.arrowForward.image
             ),
-            ListSpacerCellViewItem(height: 53, backgroundColor: .clear)
+            ListSpacerCellViewItem(height: 53, backgroundColor: .clear),
         ]
     }
 
     // MARK: -
 
     func itemTapped(item: any Identifiable) {
-        if nil != item as? BankTransferCountryCellViewItem {
+        if item as? BankTransferCountryCellViewItem != nil {
             openCountries()
         }
     }
