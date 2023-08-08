@@ -60,13 +60,13 @@ final class SettingsCoordinator: Coordinator<Void> {
                     ))
                     .sink { result in
                         switch result {
-                            case .item(let item):
+                        case let .item(item):
                             if let region = item as? Region {
                                 viewModel.region = region
                             } else {
                                 assert(true)
                             }
-                            case .cancel: break
+                        case .cancel: break
                         }
                     }.store(in: &subscriptions)
                 }

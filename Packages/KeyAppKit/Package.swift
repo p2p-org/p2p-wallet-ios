@@ -273,7 +273,7 @@ let package = Package(
                 "KeyAppNetworking",
                 "KeyAppKitCore",
                 "KeyAppBusiness",
-                "KeyAppKitLogger"
+                "KeyAppKitLogger",
             ]
         ),
 

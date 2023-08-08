@@ -28,7 +28,8 @@ public final class CountriesAPIImpl: CountriesAPI {
     }
 
     public func fetchRegions() async throws -> [Region] {
-        let regionListURL = URL(string: "https://raw.githubusercontent.com/p2p-org/country-list/main/country-list.json")!
+        let regionListURL =
+            URL(string: "https://raw.githubusercontent.com/p2p-org/country-list/main/country-list.json")!
         let data = try Data(contentsOf: regionListURL)
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase

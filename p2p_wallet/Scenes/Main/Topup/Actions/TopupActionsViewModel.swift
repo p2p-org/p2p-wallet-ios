@@ -1,6 +1,6 @@
 import BankTransfer
-import CountriesAPI
 import Combine
+import CountriesAPI
 import Foundation
 import Onboarding
 import Resolver
@@ -78,7 +78,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             actions.insert(
                 ActionItem(
                     id: .transfer,
-                    icon: isStrigaAllowed ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled ,
+                    icon: isStrigaAllowed ? .addMoneyBankTransfer : .addMoneyBankTransferDisabled,
                     title: L10n.bankTransfer,
                     subtitle: L10n.upTo3Days·Fees("0%"),
                     isLoading: false,
