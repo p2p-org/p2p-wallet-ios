@@ -13,7 +13,6 @@ import SwiftyUserDefaults
 import Web3
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Dependencies
 
     private let solanaAccountsService: SolanaAccountsService
