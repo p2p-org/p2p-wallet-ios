@@ -34,7 +34,7 @@ jobs:
         run: |
           if [ -n "$PR_URL" ]; then
             # Customize your comment message here
-            COMMENT="Thank you for your contribution! We detected unformatted code and fixed them for you at: [here](${{ env.PR_URL }})"
+            COMMENT="Thank you for your contribution! We detected unformatted code and fixed them for you here: [${{ env.PR_URL }}](${{ env.PR_URL }})"
 
             # Get the pull request number
             PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
