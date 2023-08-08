@@ -4,12 +4,6 @@ import UIKit
 
 extension Bundle {
     // MARK: - Build number, marketing number
-    
-    
-    
-    
-    
-    
 
     var releaseVersionNumber: String? {
         infoDictionary?["CFBundleShortVersionString"] as? String
