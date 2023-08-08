@@ -1,11 +1,3 @@
-/* 
-  Localizable.strings
-  p2p_wallet
-
-  Created by Chung Tran on 10/23/20.
-  
-*/
-"i already have a wallet" = "i already have a wallet";
 "Cancel" = "Cancel";
 "error" = "error";
 "Identify yourself!" = "Identify yourself!";
@@ -435,6 +427,7 @@
 "Buy with Moonpay" = "Buy with Moonpay";
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
+"The address was copied to clipboard" = "The address was copied to clipboard";
 "Received from" = "Received from";
 "Swap details" = "Swap details";
 "Your history will appear here.\nTo get started you can:" = "Your history will appear here.\nTo get started you can:";
@@ -592,5 +585,4 @@
 "My crypto" = "My crypto";
 "Username copied to clipboard" = "Username copied to clipboard";
 "Address copied to clipboard" = "Address copied to clipboard";
-
 "1%% fees" = "1%% fees";

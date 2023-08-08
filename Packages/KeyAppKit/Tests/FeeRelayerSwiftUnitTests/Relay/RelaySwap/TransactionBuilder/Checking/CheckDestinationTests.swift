@@ -162,7 +162,7 @@ final class CheckDestinationTests: XCTestCase {
         let additionalTransactionInstructionsEncoded = try JSONEncoder()
             .encode(env.additionalTransaction!.transaction.instructions)
         let expectedAdditionalTransactionInstructionsEncoded = try JSONEncoder().encode([
-            try AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
+            AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
                 mint: .usdcMint,
                 owner: account.publicKey,
                 payer: .feePayerAddress

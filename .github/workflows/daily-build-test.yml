@@ -20,3 +20,21 @@ jobs:
       lane: "daily_test"
       branch: "develop"
     secrets: inherit
+
+  add_new_keys_to_lokalise:
+    runs-on: ubuntu-latest
+    env:
+      SCRIPT_DIR: "Scripts/send-new-keys-to-lokalise.sh"
+      TAG_NAME: "lokalise/synced"
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Run script and sync with Lokalise
+        env:
+          LOKALISE_API_TOKEN: ${{ secrets.LOKALISE_API_TOKEN }}
+          LOKALISE_PROJECT_ID: ${{ secrets.LOKALISE_PROJECT_ID }}
+        run: |
+          chmod u+x ${{ env.SCRIPT_DIR }} && ${{ env.SCRIPT_DIR }}

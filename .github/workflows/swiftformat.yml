@@ -1,0 +1,30 @@
+name: Swiftformat
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/swiftformat.yml'
+      - '.swiftformat'
+      - '**/*.swift'
+
+concurrency:
+  group: swiftformat-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  SwiftLint:
+    runs-on: macos-latest
+    steps:
+      - name: Check out current branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
+
+      - name: Swiftformat
+        env:
+          REPO_OWNER: "p2p-org"
+          REPO_NAME: "p2p-wallet-ios"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod u+x Scripts/format_and_pull_request.sh
+          Scripts/format_and_pull_request.sh
