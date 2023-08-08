@@ -23,8 +23,8 @@ struct RecipientSearchField: View {
                     textField.clearButtonMode = .never
                 }
                 .frame(height: 24)
-                    .padding(.vertical, 12)
-                    .accessibilityIdentifier("RecipientSearchField.FocusedTextField")
+                .padding(.vertical, 12)
+                .accessibilityIdentifier("RecipientSearchField.FocusedTextField")
 
                 if isLoading {
                     Spinner()
@@ -37,7 +37,7 @@ struct RecipientSearchField: View {
                                 .frame(width: 18, height: 18)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
-                            .accessibilityIdentifier("RecipientSearchField.paste")
+                        .accessibilityIdentifier("RecipientSearchField.paste")
                 } else {
                     Button { text = "" }
                         label: {
