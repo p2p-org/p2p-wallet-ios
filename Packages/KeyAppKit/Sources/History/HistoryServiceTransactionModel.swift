@@ -13,16 +13,6 @@ public struct HistoryTransactionResult: Codable {
 public struct HistoryTransaction: Identifiable, Codable {
     public var id: String { signature }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     public let signature: String
     public let date: Date
     public let status: Status
