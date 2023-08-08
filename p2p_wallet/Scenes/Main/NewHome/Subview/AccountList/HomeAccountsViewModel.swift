@@ -230,11 +230,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // USDC amount
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
-                    return ""
-                }
-
                 let cryptoFormatter = CryptoFormatter()
+                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                    return cryptoFormatter.string(amount: CryptoAmount(amount: 0, token: TokenMetadata.usdc))
+                }
                 return cryptoFormatter.string(amount: usdcAccount.cryptoAmount)
             }
             .receive(on: RunLoop.main)
