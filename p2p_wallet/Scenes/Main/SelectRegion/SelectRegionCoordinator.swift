@@ -5,7 +5,6 @@ import Resolver
 import SwiftUI
 
 final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result> {
-
     // MARK: -
 
     private var navigationController: UINavigationController
@@ -30,7 +29,7 @@ final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result>
             ))
         }.sink { [weak viewModel] result in
             switch result {
-            case .item(let item):
+            case let .item(item):
                 viewModel?.setRegion(item as! Region)
             case .cancel: break
             }
@@ -48,8 +47,8 @@ final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result>
                 return SelectRegionCoordinator.Result.cancelled
             }
         )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        .prefix(1)
+        .eraseToAnyPublisher()
     }
 }
 
@@ -58,5 +57,4 @@ extension SelectRegionCoordinator {
         case cancelled
         case selected(Region)
     }
-
 }

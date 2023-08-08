@@ -1,6 +1,6 @@
 import KeyAppUI
-import SwiftUI
 import SkeletonUI
+import SwiftUI
 
 struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
