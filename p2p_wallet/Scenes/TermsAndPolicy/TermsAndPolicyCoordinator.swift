@@ -18,7 +18,7 @@ final class TermsAndPolicyCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let vc = WLMarkdownVC(
-            title: self.title(),
+            title: title(),
             bundledMarkdownTxtFileName: docType.rawValue
         )
         parentController.present(vc, animated: true)
@@ -37,7 +37,7 @@ final class TermsAndPolicyCoordinator: Coordinator<Void> {
 }
 
 extension TermsAndPolicyCoordinator: UIAdaptivePresentationControllerDelegate {
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+    func presentationControllerDidDismiss(_: UIPresentationController) {
         subject.send(completion: .finished)
     }
 }

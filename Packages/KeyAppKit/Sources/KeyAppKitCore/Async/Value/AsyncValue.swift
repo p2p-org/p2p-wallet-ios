@@ -1,10 +1,3 @@
-//
-//  AsyncItem.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Combine
 import Foundation
 
@@ -107,7 +100,7 @@ open class AsyncValue<T> {
         stateSubject = .init(.init(status: .initializing, value: initialItem))
         request = {
             do {
-                return (try await throwableRequest(), nil)
+                return try (await throwableRequest(), nil)
             } catch {
                 return (nil, error)
             }

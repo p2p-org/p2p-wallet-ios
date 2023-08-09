@@ -1,10 +1,3 @@
-//
-//  WalletMetaDataTests.swift
-//
-//
-//  Created by Giang Long Tran on 29.05.2023.
-//
-
 import XCTest
 @testable import Onboarding
 
@@ -101,7 +94,7 @@ final class WalletMetaDataTests: XCTestCase {
         let current: UInt64 = 1000
         let past5SecondsAgo = current - 5
         let past15SecondsAgo = current - 15
-        
+
         let local = WalletMetaData(
             ethPublic: "123",
             deviceName: "iPhone1",

@@ -19,7 +19,7 @@ class OnboardingNavigationController: UINavigationController {
 
 extension OnboardingNavigationController {
     func fadeTo(_ viewController: UIViewController) {
-        let transition: CATransition = CATransition()
+        let transition = CATransition()
         transition.duration = 0.3
         transition.type = CATransitionType.fade
         view.layer.add(transition, forKey: nil)
@@ -27,7 +27,7 @@ extension OnboardingNavigationController {
     }
 
     func fadeOut(_ viewController: UIViewController) {
-        let transition: CATransition = CATransition()
+        let transition = CATransition()
         transition.duration = 0.3
         transition.type = CATransitionType.fade
         view.layer.add(transition, forKey: nil)

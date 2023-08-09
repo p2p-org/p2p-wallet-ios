@@ -1,10 +1,3 @@
-//
-//  ScanQrCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.08.2022.
-//
-
 import Combine
 import Foundation
 import Resolver

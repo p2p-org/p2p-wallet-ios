@@ -1,7 +1,7 @@
+import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import Combine
-import AnalyticsManager
 import UIKit
 
 protocol AuthenticationHandlerType {
@@ -64,7 +64,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                 }
             })
             .store(in: &subscriptions)
-        
+
         NotificationCenter.default
             .publisher(for: UIApplication.didBecomeActiveNotification)
             .sink(receiveValue: { [weak self] _ in

@@ -1,10 +1,3 @@
-//
-//  Fileswift
-//
-//
-//  Created by Giang Long Tran on 07032023
-//
-
 import Foundation
 import Web3
 

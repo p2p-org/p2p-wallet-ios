@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import CryptoKit
 import Foundation
 import SolanaSwift
@@ -167,7 +163,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                         ethAddress: data.ethAddress,
                         share: data.customShare,
                         encryptedPayload: data.payload,
-                        encryptedMetaData: try metaData.encrypt(seedPhrase: data.seedPhrase),
+                        encryptedMetaData: metaData.encrypt(seedPhrase: data.seedPhrase),
                         phone: phoneNumber,
                         otpCode: opt,
                         timestampDevice: Date()

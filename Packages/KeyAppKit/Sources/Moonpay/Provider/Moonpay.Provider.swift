@@ -1,21 +1,17 @@
-//
-// Created by Giang Long Tran on 15.12.21.
-//
-
 import Foundation
 
-extension Moonpay {
-    public enum MoonpayProviderError: Swift.Error {
+public extension Moonpay {
+    enum MoonpayProviderError: Swift.Error {
         case unknown
     }
 
-    public enum MoonpayPaymentMethod: String {
+    enum MoonpayPaymentMethod: String {
         case creditDebitCard = "credit_debit_card"
         case sepaBankTransfer = "sepa_bank_transfer"
         case gbpBankTransfer = "gbp_bank_transfer"
     }
 
-    public class Provider {
+    class Provider {
         public let api: API
         public let serverSideAPI: API
 
@@ -84,7 +80,7 @@ extension Moonpay {
             var params = [
                 "apiKey": api.apiKey,
                 "areFeesIncluded": "true",
-                "baseCurrencyAmount": baseCurrencyAmount
+                "baseCurrencyAmount": baseCurrencyAmount,
             ] as [String: Any]
             params["quoteCurrencyCode"] = quoteCurrencyCode
             if let extraFeePercentage {
@@ -188,7 +184,7 @@ extension Moonpay {
             let (data, _) = try await URLSession.shared.data(for: urlRequest)
             return try JSONDecoder().decode(IpAddressResponse.self, from: data)
         }
-        
+
         public func getCountries() async throws -> [MoonpayCountry] {
             var components = URLComponents(string: api.endpoint + "v3/countries")!
             var urlRequest = URLRequest(url: components.url!)
@@ -199,8 +195,8 @@ extension Moonpay {
     }
 }
 
-extension Moonpay.Provider {
-    public func bankTransferAvailableAlpha3Codes() -> [String] {
+public extension Moonpay.Provider {
+    func bankTransferAvailableAlpha3Codes() -> [String] {
         [
             "AND",
             "AUT",
@@ -242,17 +238,17 @@ extension Moonpay.Provider {
         ]
     }
 
-    public func UKAlpha3Code() -> String {
+    func UKAlpha3Code() -> String {
         "GBR"
     }
 
-    public func USAlpha3Code() -> String {
+    func USAlpha3Code() -> String {
         "USA"
     }
 }
 
-extension Moonpay.Provider {
-    public struct IpAddressResponse: Codable {
+public extension Moonpay.Provider {
+    struct IpAddressResponse: Codable {
         public let alpha2: String
         public let alpha3: String
         public let country: String

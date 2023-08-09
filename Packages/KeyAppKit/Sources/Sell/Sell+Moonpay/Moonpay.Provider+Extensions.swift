@@ -1,15 +1,9 @@
-//
-//  File.swift
-//  
-//
-//  Created by Chung Tran on 23/12/2022.
-//
-
 import Foundation
 import Moonpay
 
 extension Moonpay.Provider {
-    func sellTransactions(externalCustomerId: String) async throws -> [MoonpaySellDataServiceProvider.MoonpayTransaction] {
+    func sellTransactions(externalCustomerId: String) async throws
+    -> [MoonpaySellDataServiceProvider.MoonpayTransaction] {
         var components = URLComponents(string: serverSideAPI.endpoint + "api/v3/sell_transactions")!
         let params = ["apiKey": api.apiKey, "externalCustomerId": externalCustomerId]
         components.queryItems = params.map { key, value in
@@ -39,7 +33,7 @@ extension Moonpay.Provider {
         var urlRequest = URLRequest(url: components.url!)
         urlRequest.httpMethod = "DELETE"
         let (_, response) = try await URLSession.shared.data(for: urlRequest)
-        guard let code = (response as? HTTPURLResponse)?.statusCode, (200...299).contains(code) else {
+        guard let code = (response as? HTTPURLResponse)?.statusCode, (200 ... 299).contains(code) else {
             throw Moonpay.MoonpayProviderError.unknown
         }
     }

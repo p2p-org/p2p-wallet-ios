@@ -2,7 +2,7 @@ import Combine
 
 actor JupiterSwapStateMachine {
     // MARK: - Nested type
-    
+
     /// The cache that handle currentTask and currentAction
     /// Must be actor to make sure that currentTask and currentAction are thread-safe
     private actor Cache {
@@ -13,7 +13,7 @@ actor JupiterSwapStateMachine {
             currentTask = task
         }
     }
-    
+
     // MARK: - Properties
 
     private nonisolated let stateSubject: CurrentValueSubject<JupiterSwapState, Never>
@@ -32,7 +32,7 @@ actor JupiterSwapStateMachine {
         stateSubject = .init(initialState)
         self.services = services
     }
-    
+
     // MARK: - Accept function
 
     @discardableResult
@@ -48,10 +48,10 @@ actor JupiterSwapStateMachine {
             print("JupiterSwapBusinessLogic.action: \(newAction.description) ignored")
             return currentState
         }
-        
+
         // log
         print("JupiterSwapBusinessLogic.action: \(newAction.description) triggerred")
-        
+
         // define if needs to cancel previous action
         let cancelPreviousAction: Bool
         switch newAction {
@@ -60,40 +60,40 @@ actor JupiterSwapStateMachine {
         default:
             cancelPreviousAction = true
         }
-        
+
         // cancel previous action if needed
         if cancelPreviousAction {
             await cache.currentTask?.cancel()
         }
-        
+
         // create task to dispatch new action (can be immediately or after current action)
         let currentState = currentState
         let task = Task { [weak self] in
-            guard let self else { return currentState}
+            guard let self else { return currentState }
             return await self.dispatch(action: newAction)
         }
-        
+
         // save task to cache
         await cache.saveCurrentTask(task)
-        
+
         // await it value
         return await task.value
     }
-    
+
     // MARK: - Dispatching
-    
+
     @discardableResult
     private func dispatch(action: JupiterSwapAction) async -> JupiterSwapState {
         // log
         print("JupiterSwapBusinessLogic.action: \(action.description) dispatched")
-        
+
         // return the progress (loading state)
         if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(
             state: currentState, action: action
         ) {
             stateSubject.send(progressState)
         }
-        
+
         // perform the action
         guard Task.isNotCancelled else {
             print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
@@ -111,7 +111,7 @@ actor JupiterSwapStateMachine {
             return currentState
         }
         stateSubject.send(mainActionState)
-        
+
         // Create transaction if needed
         guard Task.isNotCancelled else {
             print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
@@ -125,30 +125,30 @@ actor JupiterSwapStateMachine {
             state: currentState,
             services: services
         )
-        
+
         guard Task.isNotCancelled else {
             print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
             return currentState
         }
         stateSubject.send(createTransactionState)
-        
+
         print("JupiterSwapBusinessLogic.action: \(action.description) finished")
-        
+
         // FIXME: - Optional part of action, refactor later
         guard Task.isNotCancelled else {
             return currentState
         }
-        
+
         let updatePricesState = await JupiterSwapBusinessLogic.updatePrices(
             state: currentState,
             services: services
         )
-        
+
         guard Task.isNotCancelled else {
             return currentState
         }
         stateSubject.send(updatePricesState)
-        
+
         return currentState
     }
 }

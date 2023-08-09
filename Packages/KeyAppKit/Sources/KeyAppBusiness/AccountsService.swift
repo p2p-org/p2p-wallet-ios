@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 12.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppKitCore
@@ -13,7 +6,7 @@ import KeyAppKitCore
 /// This protocol observes account changing in network.
 public protocol AccountsService<Account>: AnyObject {
     associatedtype Account
-    
+
     var state: AsyncValueState<[Account]> { get }
 
     /// Accounts state

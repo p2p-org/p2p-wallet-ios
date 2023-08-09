@@ -1,7 +1,7 @@
+import BEPureLayout
 import Foundation
 import SolanaSwift
 import UIKit
-import BEPureLayout
 
 protocol QrCodeImageRender {
     func render(username: String?, address: String?, token: TokenMetadata?, showTokenIcon: Bool) async throws -> UIImage
@@ -14,34 +14,34 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
         let qrBackgroundColor: UIColor
         let logoColor: UIColor
     }
-    
+
     private static let lightTheme = Theme(
         backgroundColor: .white,
         qrBackgroundColor: .white,
         logoColor: .black
     )
-    
+
     private static let darkTheme = Theme(
         backgroundColor: .black,
         qrBackgroundColor: .white,
         logoColor: .white
     )
-    
+
     private func tokenIcon(urlString: String?) async throws -> UIImage? {
         guard let urlString, let url = URL(string: urlString)
         else { return nil }
-        
+
         let imageData = try await URLSession.shared.data(from: url).0
         return UIImage(data: imageData)
     }
-    
+
     private func qrCode(data: String) -> UIImage {
         let data = data.data(using: String.Encoding.ascii)
-        
+
         if let filter = CIFilter(name: "CIQRCodeGenerator") {
             filter.setValue(data, forKey: "inputMessage")
             let transform = CGAffineTransform(scaleX: 10, y: 10)
-            
+
             if let output = filter.outputImage?.transformed(by: transform) {
                 let qrCode = UIImage(ciImage: output)
                 return qrCode
@@ -49,15 +49,15 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
         }
         return UIImage()
     }
-    
+
     private func renderAsView(username: String?, address: String?, tokenImage: UIImage?) -> UIView {
         guard let address = address else {
             return UIView()
         }
-        
+
         let style = UITraitCollection.current.userInterfaceStyle
         let theme = style == .light ? QrCodeImageRenderImpl.lightTheme : QrCodeImageRenderImpl.darkTheme
-        
+
         return UIStackView(axis: .vertical, alignment: .fill) {
             // Username
             if username != nil {
@@ -72,7 +72,7 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                         view.attributedText = text
                     }.padding(.init(only: .top, inset: 26))
             }
-            
+
             // Qr code
             BECenter {
                 BEZStack {
@@ -93,7 +93,7 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                 }.frame(width: 238, height: 238)
                     .padding(.init(all: 16), backgroundColor: theme.qrBackgroundColor, cornerRadius: 8)
             }
-            
+
             // Address
             UILabel(textSize: 15, weight: .semibold, numberOfLines: 5, textAlignment: .center)
                 .setup { label in
@@ -110,27 +110,27 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                     )
                     label.attributedText = address
                 }.padding(.init(top: 18, left: 48, bottom: 32, right: 48))
-            
+
             // Logo
             UIImageView(image: .keyappLogo, tintColor: theme.logoColor)
                 .centered(.horizontal)
                 .padding(.init(only: .bottom, inset: 19))
-            
+
         }.frame(width: 340, height: 480)
             .backgroundColor(color: theme.backgroundColor)
     }
-    
+
     func render(username: String?, address: String?, token: TokenMetadata?,
                 showTokenIcon: Bool) async throws -> UIImage
     {
         guard let address = address else {
             return UIImage()
         }
-        
+
         if !showTokenIcon {
             return renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground()
         }
-        
+
         let image = try await tokenIcon(urlString: token?.logoURI ?? TokenMetadata.nativeSolana.logoURI)
         return renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
     }

@@ -1,10 +1,3 @@
-//
-//  ActionsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 18.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -33,9 +26,9 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
         navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
-        
+
         let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
-        
+
         transition.dismissed
             .sink(receiveValue: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

@@ -53,7 +53,7 @@ struct WormholeSendFeesView: View {
 
             Spacer()
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { (_) in
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             UIApplication.shared.keyWindow?.endEditing(true)
         }
     }

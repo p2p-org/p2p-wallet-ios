@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 01.03.2023.
-//
-
 import Foundation
 import Web3
 

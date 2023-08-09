@@ -1,12 +1,12 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct ActionsCellView: View {
     let icon: UIImage
     let title: String
     let subtitle: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(alignment: .center, spacing: 0) {
@@ -40,6 +40,6 @@ struct ActionsCellView: View {
 
 struct ActionsCellViewPreview: PreviewProvider {
     static var previews: some View {
-        ActionsCellView(icon: .appleIcon, title: "Test", subtitle: "Test", action: {  })
+        ActionsCellView(icon: .appleIcon, title: "Test", subtitle: "Test", action: {})
     }
 }

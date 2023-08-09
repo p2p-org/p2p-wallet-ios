@@ -1,15 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Chung Tran on 13/10/2021.
-//
-
 import Foundation
 
 public typealias Route = [String]
 public typealias Routes = [String: [Route]]
-    
+
 //    "FTT/RAY": [
 //            [
 //                "FTT/SOL",

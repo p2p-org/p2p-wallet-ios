@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 21.03.2023.
-//
-
 import BigInt
 import FeeRelayerSwift
 import Foundation
@@ -117,7 +110,7 @@ public enum WormholeSendInputState: Equatable {
                     transactions = try await service.wormhole.transferFromSolana(
                         userWallet: input.keyPair.publicKey.base58EncodedString,
                         feePayer: feePayerAddress,
-                        from: input.solanaAccount.address ,
+                        from: input.solanaAccount.address,
                         recipient: input.recipient,
                         mint: mint,
                         amount: String(input.amount.value)

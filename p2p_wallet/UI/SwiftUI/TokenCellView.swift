@@ -1,10 +1,3 @@
-//
-//  TokenCellView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import KeyAppKitCore
 import KeyAppUI
 import SolanaSwift

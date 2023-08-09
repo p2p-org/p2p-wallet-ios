@@ -1,10 +1,3 @@
-//
-//  NotificationRepository.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.04.2022.
-//
-
 import Foundation
 import Resolver
 

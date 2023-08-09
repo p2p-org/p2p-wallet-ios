@@ -1,9 +1,5 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
-import Foundation
 import Combine
+import Foundation
 
 protocol WalletSettingsProvider {
     func write<T: Codable>(key: String, value: T?)
@@ -34,7 +30,7 @@ class WalletSettings: ObservableObject {
     init(provider: WalletSettingsProvider) {
         self.provider = provider
 
-        self.deleteWeb3AuthRequest = provider.read(key: "deleteWeb3AuthRequest")
+        deleteWeb3AuthRequest = provider.read(key: "deleteWeb3AuthRequest")
     }
 
     func reset() {

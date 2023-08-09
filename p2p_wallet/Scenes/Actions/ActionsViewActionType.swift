@@ -1,11 +1,11 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 enum ActionsViewActionType: CaseIterable {
     case bankTransfer
     case bankCard
     case crypto
-    
+
     var title: String {
         switch self {
         case .bankTransfer:
@@ -16,7 +16,7 @@ enum ActionsViewActionType: CaseIterable {
             return L10n.crypto
         }
     }
-    
+
     var subtitle: String {
         switch self {
         case .bankTransfer:
@@ -27,7 +27,7 @@ enum ActionsViewActionType: CaseIterable {
             return L10n._0Fees
         }
     }
-    
+
     var icon: UIImage {
         switch self {
         case .bankTransfer:

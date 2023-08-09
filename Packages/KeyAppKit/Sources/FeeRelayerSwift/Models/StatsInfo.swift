@@ -8,7 +8,7 @@ public struct StatsInfo: Codable {
         case other = "Other"
         case sendViaLink = "SendViaLink"
     }
-    
+
     public enum DeviceType: String, Codable {
         case web = "Web"
         case android = "Android"
@@ -25,7 +25,7 @@ public struct StatsInfo: Codable {
     let currency: String?
     let build: String?
     let environment: Environment
-    
+
     enum CodingKeys: String, CodingKey {
         case operationType = "operation_type"
         case deviceType = "device_type"
@@ -34,7 +34,13 @@ public struct StatsInfo: Codable {
         case environment
     }
 
-    public init(operationType: StatsInfo.OperationType, deviceType: StatsInfo.DeviceType, currency: String?, build: String?, environment: Environment) {
+    public init(
+        operationType: StatsInfo.OperationType,
+        deviceType: StatsInfo.DeviceType,
+        currency: String?,
+        build: String?,
+        environment: Environment
+    ) {
         self.operationType = operationType
         self.deviceType = deviceType
         self.currency = currency

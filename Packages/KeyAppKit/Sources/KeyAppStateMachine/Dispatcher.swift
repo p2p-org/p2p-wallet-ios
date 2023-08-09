@@ -18,7 +18,7 @@ public protocol Dispatcher<State, Action> {
     /// Tells the `StateMachine` that an action is about to be dispatched.
     /// Any loading state can be return from this function if needed.
     func actionWillBeginDispatching(action: Action, currentState: State) async -> State?
-    
+
     /// Dispatch an action and return new `State`
     func dispatch(action: Action, currentState: State) async -> State
 

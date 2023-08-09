@@ -12,21 +12,23 @@ final class LokaliseAppDelegateService: NSObject, AppDelegateService {
             token: String.secretConfig("LOKALISE_TOKEN")!
         )
 
-        #if !RELEASE
-            Lokalise.shared.localizationType = .prerelease
-        #else
-            Lokalise.shared.localizationType = .release
-        #endif
+//        #if !RELEASE
+//            Lokalise.shared.localizationType = .prerelease
+//        #else
+//            Lokalise.shared.localizationType = .release
+//        #endif
 
-        Lokalise.shared.swizzleMainBundle()
+//        Lokalise.shared.swizzleMainBundle()
 
         return true
     }
 
     func applicationDidBecomeActive(_: UIApplication) {
-        Lokalise.shared.checkForUpdates { updated, error in
-            if let error { print(error) }
-            print(updated)
-        }
+//        Lokalise.shared.checkForUpdates { updated, error in
+//            #if DEBUG
+//                if let error { print(error) }
+//                print(updated)
+//            #endif
+//        }
     }
 }

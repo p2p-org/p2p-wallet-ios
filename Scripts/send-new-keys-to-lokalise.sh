@@ -15,8 +15,8 @@ while IFS= read -r line; do
     
     # Check if key_name or value is empty
     if [ -z "$key_name" ] || [ -z "$value" ]; then
-        echo "Error: key_name or value is empty."
-        exit 1
+        echo "No new key added. Skipping..."
+        exit 0
     fi
 
     json_payload+="{"\"key_name\":$key_name,\"platforms\":[\"ios\"],\"tags\":[\"$marketing_version\"],\"translations\":[{\"language_iso\":\"en\",\"translation\":$value}]"},"

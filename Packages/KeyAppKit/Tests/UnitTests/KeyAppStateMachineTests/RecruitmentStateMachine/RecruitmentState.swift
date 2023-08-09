@@ -3,11 +3,12 @@ import KeyAppStateMachine
 
 struct RecruitmentState: State {
     // MARK: - Properties
+
     var applicantName: String
     var sendingStatus: Status
-    
+
     static var initial: RecruitmentState {
-        return RecruitmentState(
+        RecruitmentState(
             applicantName: "",
             sendingStatus: .initializing
         )

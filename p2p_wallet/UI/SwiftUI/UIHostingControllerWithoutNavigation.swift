@@ -1,28 +1,22 @@
-//
-//  UIHostingControllerWithoutNavigation.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.08.2022.
-//
-
 import Combine
 import SwiftUI
 
 final class UICustomHostingController<Content: View>: UIHostingController<Content> {
-    typealias Builder = ((UICustomHostingController<Content>, _ animated: Bool) -> Void)
-    
+    typealias Builder = (UICustomHostingController<Content>, _ animated: Bool) -> Void
+
     let viewWillAppearFn: Builder?
-    
+
     init(rootView: Content, viewWillAppear: Builder?) {
-        self.viewWillAppearFn = viewWillAppear
-        
+        viewWillAppearFn = viewWillAppear
+
         super.init(rootView: rootView)
     }
-    
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+
+    @available(*, unavailable)
+    @MainActor dynamic required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         viewWillAppearFn?(self, animated)
     }

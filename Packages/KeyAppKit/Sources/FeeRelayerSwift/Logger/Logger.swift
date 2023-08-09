@@ -11,8 +11,7 @@ public protocol FeeRelayerSwiftLogger {
     func log(event: String, data: String?, logLevel: FeeRelayerSwiftLoggerLogLevel)
 }
 
-public class Logger {
-
+public enum Logger {
     // MARK: -
 
     private static var loggers: [FeeRelayerSwiftLogger] = []

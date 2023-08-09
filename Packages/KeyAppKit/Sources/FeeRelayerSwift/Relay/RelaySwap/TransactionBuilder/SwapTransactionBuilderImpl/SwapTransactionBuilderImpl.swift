@@ -2,15 +2,14 @@ import Foundation
 import OrcaSwapSwift
 import SolanaSwift
 
-public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
-    
+public class SwapTransactionBuilderImpl: SwapTransactionBuilder {
     let network: Network
     let transitTokenAccountManager: TransitTokenAccountManager
     let destinationAnalysator: DestinationAnalysator
     let feePayerAddress: PublicKey
     let minimumTokenAccountBalance: UInt64
     let lamportsPerSignature: UInt64
-    
+
     public init(
         network: Network,
         transitTokenAccountManager: TransitTokenAccountManager,
@@ -26,7 +25,7 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
         self.minimumTokenAccountBalance = minimumTokenAccountBalance
         self.lamportsPerSignature = lamportsPerSignature
     }
-    
+
     public func buildSwapTransaction(
         userAccount: KeyPair,
         pools: PoolsPair,
@@ -40,21 +39,21 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
         // form output
         var output = SwapTransactionBuilderOutput()
         output.userSource = sourceTokenAccount.address
-        
+
         // assert userSource
         let associatedToken = try PublicKey.associatedTokenAddress(
             walletAddress: feePayerAddress,
             tokenMintAddress: sourceTokenAccount.mint
         )
         guard output.userSource != associatedToken else { throw FeeRelayerError.wrongAddress }
-        
+
         // check transit token
         try await checkTransitTokenAccount(
             owner: userAccount.publicKey,
             poolsPair: pools,
             output: &output
         )
-        
+
         // check source
         try await checkSource(
             owner: userAccount.publicKey,
@@ -62,7 +61,7 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
             inputAmount: inputAmount,
             output: &output
         )
-        
+
         // check destination
         try await checkDestination(
             owner: userAccount,
@@ -71,7 +70,7 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
             recentBlockhash: blockhash,
             output: &output
         )
-        
+
         // build swap data
         let swapData = try await buildSwapData(
             userAccount: userAccount,
@@ -82,7 +81,7 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
             transitTokenMintPubkey: output.transitTokenMintPubkey,
             needsCreateTransitTokenAccount: output.needsCreateTransitTokenAccount == true
         )
-        
+
         // check swap data
         try checkSwapData(
             owner: userAccount.publicKey,
@@ -90,7 +89,7 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
             env: &output,
             swapData: swapData
         )
-        
+
         // closing accounts
         try checkClosingAccount(
             owner: userAccount.publicKey,
@@ -99,33 +98,33 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             env: &output
         )
-        
+
         // check signers
         checkSigners(
             ownerAccount: userAccount,
             env: &output
         )
-        
+
         var transactions: [PreparedTransaction] = []
-        
+
         // include additional transaciton
         if let additionalTransaction = output.additionalTransaction { transactions.append(additionalTransaction) }
-        
+
         // make primary transaction
-        transactions.append(
-            try makeTransaction(
+        try transactions.append(
+            makeTransaction(
                 instructions: output.instructions,
                 signers: output.signers,
                 blockhash: blockhash,
                 accountCreationFee: output.accountCreationFee
             )
         )
-        
+
         return (transactions: transactions, additionalPaybackFee: output.additionalPaybackFee)
-        
+
 //        fatalError()
     }
-    
+
     func makeTransaction(
         instructions: [TransactionInstruction],
         signers: [KeyPair],
@@ -136,15 +135,15 @@ public class SwapTransactionBuilderImpl : SwapTransactionBuilder {
         transaction.instructions = instructions
         transaction.recentBlockhash = blockhash
         transaction.feePayer = feePayerAddress
-    
+
         try transaction.sign(signers: signers)
-        
+
         // calculate fee first
-        let expectedFee = FeeAmount(
-            transaction: try transaction.calculateTransactionFee(lamportsPerSignatures: lamportsPerSignature),
+        let expectedFee = try FeeAmount(
+            transaction: transaction.calculateTransactionFee(lamportsPerSignatures: lamportsPerSignature),
             accountBalances: accountCreationFee
         )
-        
+
         return .init(transaction: transaction, signers: signers, expectedFee: expectedFee)
     }
 }

@@ -1,10 +1,3 @@
-//
-//  PopularCoinView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -69,4 +62,3 @@ struct PopularCoinView_Previews: PreviewProvider {
         PopularCoinView(title: "USDC", subtitle: "USD Coint", actionTitle: "Buy", image: .usdc)
     }
 }
-

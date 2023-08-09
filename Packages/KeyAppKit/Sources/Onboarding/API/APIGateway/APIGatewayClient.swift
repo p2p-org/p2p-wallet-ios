@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 
 public struct APIGatewayCooldownError: Error {
@@ -70,7 +66,7 @@ public protocol APIGatewayClient {
     /// - Returns: Encrypted base64 metadata
     /// - Throws:
     func getMetadata(ethAddress: String, solanaPrivateKey: String, timestampDevice: Date) async throws -> String
-    
+
     /// Update metadata
     /// - Parameters:
     ///   - ethAddress: Ethereum address.

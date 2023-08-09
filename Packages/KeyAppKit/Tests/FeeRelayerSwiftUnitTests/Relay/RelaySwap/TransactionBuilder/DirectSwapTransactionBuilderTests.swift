@@ -1,22 +1,22 @@
 import Foundation
 import XCTest
 @testable import FeeRelayerSwift
-@testable import SolanaSwift
 @testable import OrcaSwapSwift
+@testable import SolanaSwift
 
 final class DirectSwapTransactionBuilderTests: XCTestCase {
     var swapTransactionBuilder: SwapTransactionBuilderImpl!
     var accountStorage: SolanaAccountStorage!
-    
+
     override func setUp() async throws {
         accountStorage = try await MockAccountStorage()
     }
-    
+
     override func tearDown() async throws {
         swapTransactionBuilder = nil
         accountStorage = nil
     }
-    
+
     func testBuildDirectSwapSOLToNonCreatedSPL() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -26,10 +26,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.solBTC],
@@ -40,19 +40,25 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: nil,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, minimumTokenAccountBalance) // WSOL
         // 2 transactions needed:
         XCTAssertEqual(output.transactions.count, 2)
-        
+
         // - Create destination spl token address // TODO: - Also for direct swap or not???
         let createDestinationSPLTokenTransaction = output.transactions[0]
         XCTAssertEqual(createDestinationSPLTokenTransaction.signers, [accountStorage.account])
-        XCTAssertEqual(createDestinationSPLTokenTransaction.expectedFee, .init(transaction: 10000, accountBalances: minimumTokenAccountBalance))
+        XCTAssertEqual(
+            createDestinationSPLTokenTransaction.expectedFee,
+            .init(transaction: 10000, accountBalances: minimumTokenAccountBalance)
+        )
         XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.instructions.count, 1)
-        XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.instructions[0].programId, AssociatedTokenProgram.id)
+        XCTAssertEqual(
+            createDestinationSPLTokenTransaction.transaction.instructions[0].programId,
+            AssociatedTokenProgram.id
+        )
         XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.instructions[0].data, [])
         XCTAssertEqual(createDestinationSPLTokenTransaction.transaction.instructions[0].keys, [
             .writable(publicKey: .feePayerAddress, isSigner: true),
@@ -63,12 +69,13 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             .readonly(publicKey: TokenProgram.id, isSigner: false),
             .readonly(publicKey: .sysvarRent, isSigner: false),
         ])
-        
+
         // - Swap transaction
         let swapTransaction = output.transactions[1]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee,
+                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 5) // transfer
@@ -76,29 +83,33 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         XCTAssertEqual(swapTransaction.transaction.instructions[0], .init( // transfer inputAmount to fee relayer
             keys: [
                 .writable(publicKey: .owner, isSigner: true),
-                .writable(publicKey: .feePayerAddress, isSigner: false)
+                .writable(publicKey: .feePayerAddress, isSigner: false),
             ],
             programId: SystemProgram.id,
-            data: SystemProgram.Index.transfer.bytes + inputAmount.bytes)
-        )
-        XCTAssertEqual(swapTransaction.transaction.instructions[1], .init( // create wsol and transfer input amount + rent exempt
-            keys: [
-                .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true)
-            ],
-            programId: SystemProgram.id,
-            data: SystemProgram.Index.create.bytes + (inputAmount + minimumTokenAccountBalance).bytes + UInt64(165).bytes + TokenProgram.id.bytes)
+            data: SystemProgram.Index.transfer.bytes + inputAmount.bytes
+        ))
+        XCTAssertEqual(
+            swapTransaction.transaction.instructions[1],
+            .init( // create wsol and transfer input amount + rent exempt
+                keys: [
+                    .writable(publicKey: .feePayerAddress, isSigner: true),
+                    .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true),
+                ],
+                programId: SystemProgram.id,
+                data: SystemProgram.Index.create.bytes + (inputAmount + minimumTokenAccountBalance).bytes + UInt64(165)
+                    .bytes + TokenProgram.id.bytes
+            )
         )
         XCTAssertEqual(swapTransaction.transaction.instructions[2], .init( // initialize wsol
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .readonly(publicKey: .wrappedSOLMint, isSigner: false),
                 .readonly(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .sysvarRent, isSigner: false)
+                .readonly(publicKey: .sysvarRent, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.initializeAccount.bytes)
-        )
+            data: TokenProgram.Index.initializeAccount.bytes
+        ))
         let minAmountOut = try Pool.solBTC.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
         XCTAssertEqual(swapTransaction.transaction.instructions[3], .init( // direct swap
             keys: [
@@ -111,23 +122,23 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
                 .writable(publicKey: Pool.solBTC.poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: Pool.solBTC.feeAccount.publicKey, isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .swapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
-        
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
+
         XCTAssertEqual(swapTransaction.transaction.instructions[4], .init( // close wsol
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .writable(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .owner, isSigner: false)
+                .readonly(publicKey: .owner, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.closeAccount.bytes)
-        )
+            data: TokenProgram.Index.closeAccount.bytes
+        ))
     }
-    
+
     func testBuildDirectSwapSOLToCreatedSPL() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -137,10 +148,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.solBTC],
@@ -151,14 +162,15 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: .btcAssociatedAddress,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, minimumTokenAccountBalance) // WSOL
         XCTAssertEqual(output.transactions.count, 1)
         // - Swap transaction
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee,
+                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 5) // transfer
@@ -166,29 +178,33 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         XCTAssertEqual(swapTransaction.transaction.instructions[0], .init( // transfer inputAmount to fee relayer
             keys: [
                 .writable(publicKey: .owner, isSigner: true),
-                .writable(publicKey: .feePayerAddress, isSigner: false)
+                .writable(publicKey: .feePayerAddress, isSigner: false),
             ],
             programId: SystemProgram.id,
-            data: SystemProgram.Index.transfer.bytes + inputAmount.bytes)
-        )
-        XCTAssertEqual(swapTransaction.transaction.instructions[1], .init( // create wsol and transfer input amount + rent exempt
-            keys: [
-                .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true)
-            ],
-            programId: SystemProgram.id,
-            data: SystemProgram.Index.create.bytes + (inputAmount + minimumTokenAccountBalance).bytes + UInt64(165).bytes + TokenProgram.id.bytes)
+            data: SystemProgram.Index.transfer.bytes + inputAmount.bytes
+        ))
+        XCTAssertEqual(
+            swapTransaction.transaction.instructions[1],
+            .init( // create wsol and transfer input amount + rent exempt
+                keys: [
+                    .writable(publicKey: .feePayerAddress, isSigner: true),
+                    .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true),
+                ],
+                programId: SystemProgram.id,
+                data: SystemProgram.Index.create.bytes + (inputAmount + minimumTokenAccountBalance).bytes + UInt64(165)
+                    .bytes + TokenProgram.id.bytes
+            )
         )
         XCTAssertEqual(swapTransaction.transaction.instructions[2], .init( // initialize wsol
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .readonly(publicKey: .wrappedSOLMint, isSigner: false),
                 .readonly(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .sysvarRent, isSigner: false)
+                .readonly(publicKey: .sysvarRent, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.initializeAccount.bytes)
-        )
+            data: TokenProgram.Index.initializeAccount.bytes
+        ))
         let minAmountOut = try Pool.solBTC.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
         XCTAssertEqual(swapTransaction.transaction.instructions[3], .init( // direct swap
             keys: [
@@ -201,23 +217,23 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
                 .writable(publicKey: Pool.solBTC.poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: Pool.solBTC.feeAccount.publicKey, isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .swapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
 
         XCTAssertEqual(swapTransaction.transaction.instructions[4], .init( // close wsol
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .writable(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .owner, isSigner: false)
+                .readonly(publicKey: .owner, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.closeAccount.bytes)
-        )
+            data: TokenProgram.Index.closeAccount.bytes
+        ))
     }
-    
+
     func testBuildDirectSwapSPLToNonCreatedSPL() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -227,10 +243,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.btcETH],
@@ -241,14 +257,17 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: nil,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, 0) // No Source WSOL created
         XCTAssertEqual(output.transactions.count, 1)
         // - Swap transaction
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 1) // owner only
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 10000, accountBalances: minimumTokenAccountBalance)) // payer's, owner's signatures + SPL account creation fee
+        XCTAssertEqual(
+            swapTransaction.expectedFee,
+            .init(transaction: 10000, accountBalances: minimumTokenAccountBalance)
+        ) // payer's, owner's signatures + SPL account creation fee
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 2) // transfer
@@ -261,31 +280,31 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
                 .readonly(publicKey: .ethMint, isSigner: false),
                 .readonly(publicKey: SystemProgram.id, isSigner: false),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
-                .readonly(publicKey: .sysvarRent, isSigner: false)
+                .readonly(publicKey: .sysvarRent, isSigner: false),
             ],
             programId: AssociatedTokenProgram.id,
-            data: [])
-        )
+            data: []
+        ))
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[1], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[1], try .init(
             keys: [
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.account), isSigner: false),
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
     }
-    
+
     func testBuildDirectSwapSPLToCreatedSPL() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -295,10 +314,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.btcETH],
@@ -309,37 +328,38 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: .ethAssociatedAddress,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, 0) // No Source WSOL created
         XCTAssertEqual(output.transactions.count, 1)
         // - Swap transaction
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 1) // owner only
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
+        XCTAssertEqual(swapTransaction.expectedFee,
+                       .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[0], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[0], try .init(
             keys: [
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.account), isSigner: false),
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
     }
-    
+
     func testBuildDirectSwapSPLToCreatedSPLEvenWhenUserDoesNotGiveDestinationSPLTokenAddress() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -349,10 +369,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.btcETH],
@@ -363,37 +383,38 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: nil,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, 0) // No Source WSOL created
         XCTAssertEqual(output.transactions.count, 1)
         // - Swap transaction
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 1) // owner only
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
+        XCTAssertEqual(swapTransaction.expectedFee,
+                       .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer
         // - - Direct Swap instruction
         let minAmountOut = try Pool.btcETH.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[0], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[0], try .init(
             keys: [
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.account), isSigner: false),
-                .readonly(publicKey: try PublicKey(string: Pool.btcETH.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.btcETH.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.tokenAccountB), isSigner: false),
                 .writable(publicKey: .ethAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .writable(publicKey: PublicKey(string: Pool.btcETH.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.btcETH.feeAccount), isSigner: false),
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .deprecatedSwapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
     }
-    
+
     func testBuildDirectSwapToSOL() async throws {
         swapTransactionBuilder = .init(
             network: .mainnetBeta,
@@ -403,10 +424,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             minimumTokenAccountBalance: minimumTokenAccountBalance,
             lamportsPerSignature: lamportsPerSignature
         )
-        
-        let inputAmount: UInt64 = 1000000
-        let slippage: Double = 0.1
-        
+
+        let inputAmount: UInt64 = 1_000_000
+        let slippage = 0.1
+
         let output = try await swapTransactionBuilder.buildSwapTransaction(
             userAccount: accountStorage.account!,
             pools: [.solBTC.reversed],
@@ -417,70 +438,77 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
             destinationTokenAddress: .owner,
             blockhash: blockhash
         )
-        
+
         XCTAssertEqual(output.additionalPaybackFee, 0) // No Source WSOL created
         XCTAssertEqual(output.transactions.count, 1)
         // - Swap transaction
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner, destination wsol
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee, .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, destination wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 15000,
+            accountBalances: 0
+        )) // payer's, owner's, destination wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 5) // transfer
-        
+
         XCTAssertEqual(swapTransaction.transaction.instructions[0], .init( // create destination wsol
             keys: [
                 .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true)
+                .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: true),
             ],
             programId: SystemProgram.id,
-            data: SystemProgram.Index.create.bytes + minimumTokenAccountBalance.bytes + UInt64(165).bytes + TokenProgram.id.bytes)
-        )
+            data: SystemProgram.Index.create.bytes + minimumTokenAccountBalance.bytes + UInt64(165).bytes + TokenProgram
+                .id.bytes
+        ))
         XCTAssertEqual(swapTransaction.transaction.instructions[1], .init( // initialize wsol
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .readonly(publicKey: .wrappedSOLMint, isSigner: false),
                 .readonly(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .sysvarRent, isSigner: false)
+                .readonly(publicKey: .sysvarRent, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.initializeAccount.bytes)
-        )
+            data: TokenProgram.Index.initializeAccount.bytes
+        ))
         // - - Direct Swap instruction
         let minAmountOut = try Pool.solBTC.reversed.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        XCTAssertEqual(swapTransaction.transaction.instructions[2], .init(
+        XCTAssertEqual(swapTransaction.transaction.instructions[2], try .init(
             keys: [
-                .readonly(publicKey: try PublicKey(string: Pool.solBTC.reversed.account), isSigner: false),
-                .readonly(publicKey: try PublicKey(string: Pool.solBTC.reversed.authority), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.account), isSigner: false),
+                .readonly(publicKey: PublicKey(string: Pool.solBTC.reversed.authority), isSigner: false),
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .btcAssociatedAddress, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.solBTC.reversed.tokenAccountA), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.solBTC.reversed.tokenAccountB), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountA), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.tokenAccountB), isSigner: false),
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.solBTC.reversed.poolTokenMint), isSigner: false),
-                .writable(publicKey: try PublicKey(string: Pool.solBTC.reversed.feeAccount), isSigner: false),
-                .readonly(publicKey: TokenProgram.id, isSigner: false)
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.poolTokenMint), isSigner: false),
+                .writable(publicKey: PublicKey(string: Pool.solBTC.reversed.feeAccount), isSigner: false),
+                .readonly(publicKey: TokenProgram.id, isSigner: false),
             ],
             programId: .swapProgramId,
-            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes)
-        )
+            data: [UInt8(1)] + inputAmount.bytes + minAmountOut!.bytes
+        ))
         XCTAssertEqual(swapTransaction.transaction.instructions[3], .init( // close wsol and receive rent exempt
             keys: [
                 .writable(publicKey: swapTransaction.signers[1].publicKey, isSigner: false),
                 .writable(publicKey: .owner, isSigner: false),
-                .readonly(publicKey: .owner, isSigner: false)
+                .readonly(publicKey: .owner, isSigner: false),
             ],
             programId: TokenProgram.id,
-            data: TokenProgram.Index.closeAccount.bytes)
-        )
-        XCTAssertEqual(swapTransaction.transaction.instructions[4], .init( // return the rent exempt to fee payer address
-            keys: [
-                .writable(publicKey: .owner, isSigner: true),
-                .writable(publicKey: .feePayerAddress, isSigner: false)
-            ],
-            programId: SystemProgram.id,
-            data: SystemProgram.Index.transfer.bytes + minimumTokenAccountBalance.bytes)
+            data: TokenProgram.Index.closeAccount.bytes
+        ))
+        XCTAssertEqual(
+            swapTransaction.transaction.instructions[4],
+            .init( // return the rent exempt to fee payer address
+                keys: [
+                    .writable(publicKey: .owner, isSigner: true),
+                    .writable(publicKey: .feePayerAddress, isSigner: false),
+                ],
+                programId: SystemProgram.id,
+                data: SystemProgram.Index.transfer.bytes + minimumTokenAccountBalance.bytes
+            )
         )
     }
 }
@@ -491,9 +519,9 @@ private class MockDestinationAnalysator: DestinationAnalysator {
     init(testCase: Int) {
         self.testCase = testCase
     }
-    
+
     func analyseDestination(
-        owner: PublicKey,
+        owner _: PublicKey,
         mint: PublicKey
     ) async throws -> DestinationAnalysatorResult {
         switch mint {
@@ -517,11 +545,11 @@ private class MockDestinationAnalysator: DestinationAnalysator {
 }
 
 private class MockTransitTokenAccountManager: TransitTokenAccountManager {
-    func getTransitToken(pools: OrcaSwapSwift.PoolsPair) throws -> FeeRelayerSwift.TokenAccount? {
+    func getTransitToken(pools _: OrcaSwapSwift.PoolsPair) throws -> FeeRelayerSwift.TokenAccount? {
         nil
     }
-    
-    func checkIfNeedsCreateTransitTokenAccount(transitToken: FeeRelayerSwift.TokenAccount?) async throws -> Bool? {
+
+    func checkIfNeedsCreateTransitTokenAccount(transitToken _: FeeRelayerSwift.TokenAccount?) async throws -> Bool? {
         nil
     }
 }

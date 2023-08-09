@@ -1,10 +1,6 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
-import KeyAppKitLogger
 import KeyAppKitCore
+import KeyAppKitLogger
 import SolanaSwift
 import TweetNacl
 
@@ -52,7 +48,8 @@ public class NameServiceImpl: NameService {
     }
 
     // TODO: Tech debt, don't delete.
-    // This method will be used after release for users not authorized with web3auth. For now it is not changed to JSONRPC
+    // This method will be used after release for users not authorized with web3auth. For now it is not changed to
+    // JSONRPC
     public func post(name: String, params: PostParams) async throws -> PostResponse {
         let urlString = "\(endpoint)/\(name)"
         let url = URL(string: urlString)!
@@ -73,12 +70,12 @@ public class NameServiceImpl: NameService {
     public func create(name: String, publicKey: String, privateKey: Data) async throws -> CreateNameTransaction {
         let timestamp = Date()
         var serializedData = Data()
-        
+
         try CreateNameRequestMessage(
             owner: publicKey,
             timestamp: Int64(timestamp.timeIntervalSince1970)
         )
-            .serialize(to: &serializedData)
+        .serialize(to: &serializedData)
 
         let signature = try NaclSign.signDetached(message: serializedData, secretKey: privateKey)
         let signatureBase58 = Base58.encode(signature)
@@ -94,7 +91,8 @@ public class NameServiceImpl: NameService {
             params: credentials
         )
         let urlRequest = try createURLRequest(with: rpcRequest)
-        let response: KeyAppKitCore.JSONRPCResponse<CreateNameTransaction, ErrorData> = try await request(request: urlRequest)
+        let response: KeyAppKitCore
+            .JSONRPCResponse<CreateNameTransaction, ErrorData> = try await request(request: urlRequest)
         if let error = response.error {
             throw NameServiceError(rawValue: error.code) ?? UndefinedNameServiceError(code: error.code)
         }
@@ -183,4 +181,4 @@ public class NameServiceImpl: NameService {
     }
 }
 
-private struct ErrorData: Codable { }
+private struct ErrorData: Codable {}

@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 30.03.2023.
-//
-
 import Foundation
 
 public enum UserActionStatus: Codable, Equatable {
@@ -32,4 +25,3 @@ public protocol UserAction: Codable, Equatable {
 
     var updatedDate: Date { get set }
 }
-

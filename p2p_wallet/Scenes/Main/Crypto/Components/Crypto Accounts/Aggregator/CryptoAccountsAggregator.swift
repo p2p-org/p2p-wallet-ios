@@ -1,8 +1,8 @@
+import BigDecimal
 import Foundation
 import KeyAppKitCore
 import Web3
 import Wormhole
-import BigDecimal
 
 struct CryptoAccountsAggregator: DataAggregator {
     typealias Input = (
@@ -14,10 +14,10 @@ struct CryptoAccountsAggregator: DataAggregator {
         primary: [any RenderableAccount],
         secondary: [any RenderableAccount]
     )
-    
+
     func transform(input: Input) -> Output {
         let (solanaAccounts, allEthereumAccounts) = input
-        
+
         // Claimable transfer accounts
         let transferAccounts = allEthereumAccounts.filter { ethAccount in
             switch ethAccount.status {
@@ -27,27 +27,27 @@ struct CryptoAccountsAggregator: DataAggregator {
                 return false
             }
         }
-        
+
         // Ethereum accounts without claimable transfers
         let filteredEthereumAccounts = allEthereumAccounts.filter { account in
-            return !transferAccounts.contains(account)
+            !transferAccounts.contains(account)
         }
 
         let mergedNonTransferAccounts: [any RenderableAccount] = (filteredEthereumAccounts + solanaAccounts)
             .filter(hiddenFilter)
             .sorted(by: commonSort)
-        
+
         let primaryAccounts = mergedNonTransferAccounts
             .filter(primaryFilter)
-        
+
         let secondaryAccounts = mergedNonTransferAccounts
             .filter { !primaryFilter(account: $0) }
 
         return (transferAccounts, primaryAccounts, secondaryAccounts)
     }
-    
+
     // MARK: - Helpers
-    
+
     /// Filter out hidden accounts
     func hiddenFilter(account: any RenderableAccount) -> Bool {
         !account.tags.contains(.hidden)
@@ -64,14 +64,14 @@ struct CryptoAccountsAggregator: DataAggregator {
         }
         return true
     }
-    
+
     /// Sort by sorting key
     func commonSort(lhs: any SortableAccount, rhs: any SortableAccount) -> Bool {
         guard
             let lhsKey = lhs.sortingKey,
             let rhsKey = rhs.sortingKey
         else { return false }
-        
+
         return lhsKey > rhsKey
     }
 }

@@ -134,8 +134,8 @@ struct BuySelectTokenCellView: BuySelectViewModelCell {
                             currency: model.fiat ?? Fiat.usd
                         )
                     )
-                        .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
                 }
             }
             Spacer()

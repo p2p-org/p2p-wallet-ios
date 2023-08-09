@@ -1,8 +1,8 @@
 import AnalyticsManager
-import SwiftUI
 import Combine
 import KeyAppUI
 import Resolver
+import SwiftUI
 
 struct SentViaLinkHistoryView: View {
     // MARK: - Nested type
@@ -11,14 +11,14 @@ struct SentViaLinkHistoryView: View {
         let id: String
         var transactions: [SendViaLinkTransactionInfo]
     }
-    
+
     // MARK: - Properties
-    
+
     let transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>
     @State var sections: [SVLSection] = []
-    
+
     let onSelectTransaction: (SendViaLinkTransactionInfo) -> Void
-    
+
     // MARK: - Body
 
     var body: some View {
@@ -29,30 +29,30 @@ struct SentViaLinkHistoryView: View {
                 }
             }
         }
-            .background(Color(Asset.Colors.smoke.color))
-            .onReceive(transactionsPublisher, perform: onReceive(transactions:))
+        .background(Color(Asset.Colors.smoke.color))
+        .onReceive(transactionsPublisher, perform: onReceive(transactions:))
     }
-    
+
     // MARK: - ViewBuilders
-    
+
     @ViewBuilder
     private func sectionView(section: SVLSection) -> some View {
         Section(header: sectionHeaderView(section: section)) {
-            ForEach(0..<section.transactions.count, id: \.self) { index in
+            ForEach(0 ..< section.transactions.count, id: \.self) { index in
                 SentViaLinkHistoryTransactionView(
                     transaction: section.transactions[index]
                 )
-                    .background(Color(Asset.Colors.snow.color))
-                    .cornerRadius(radius: 16, index: index, itemsCount: section.transactions.count)
-                    .onTapGesture {
-                        Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
-                        onSelectTransaction(section.transactions[index])
-                    }
+                .background(Color(Asset.Colors.snow.color))
+                .cornerRadius(radius: 16, index: index, itemsCount: section.transactions.count)
+                .onTapGesture {
+                    Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
+                    onSelectTransaction(section.transactions[index])
+                }
             }
         }
-            .padding(.horizontal, 12)
+        .padding(.horizontal, 12)
     }
-    
+
     @ViewBuilder
     private func sectionHeaderView(section: SVLSection) -> some View {
         HStack {
@@ -62,18 +62,18 @@ struct SentViaLinkHistoryView: View {
                 .foregroundColor(Color(Asset.Colors.mountain.color))
             Spacer()
         }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
-            .background(Color(Asset.Colors.smoke.color))
+        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .background(Color(Asset.Colors.smoke.color))
     }
-    
+
     // MARK: - Helpers
-    
+
     private func onReceive(transactions: [SendViaLinkTransactionInfo]) {
         // sort transaction
         let sortedTransactions = transactions
-            .sorted(by: {$0.timestamp > $1.timestamp})
-        
+            .sorted(by: { $0.timestamp > $1.timestamp })
+
         // group transactions into section
         var sections = [SVLSection]()
         for transaction in sortedTransactions {
@@ -111,13 +111,13 @@ private extension View {
 }
 
 #if DEBUG
-struct SentViaLinkHistoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        SentViaLinkHistoryView(
-            transactionsPublisher: Just(.mocked)
-                .eraseToAnyPublisher(),
-            onSelectTransaction: { _ in }
-        )
+    struct SentViaLinkHistoryView_Previews: PreviewProvider {
+        static var previews: some View {
+            SentViaLinkHistoryView(
+                transactionsPublisher: Just(.mocked)
+                    .eraseToAnyPublisher(),
+                onSelectTransaction: { _ in }
+            )
+        }
     }
-}
 #endif
