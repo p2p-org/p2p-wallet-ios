@@ -6,7 +6,7 @@ import SolanaSwift
 
 protocol CreateNameService {
     var createNameResult: AnyPublisher<Bool, Never> { get }
-    func create(username: String) async
+    func create(username: String) async throws
 }
 
 final class CreateNameServiceImpl: CreateNameService {
@@ -22,7 +22,7 @@ final class CreateNameServiceImpl: CreateNameService {
 
     private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 
-    func create(username: String) async {
+    func create(username: String) async throws {
         do {
             guard let account = storage.account else {
                 createNameResultSubject.send(false)
@@ -45,18 +45,6 @@ final class CreateNameServiceImpl: CreateNameService {
             createNameResultSubject.send(true)
         } catch {
             createNameResultSubject.send(false)
-            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-            DefaultLogManager.shared.log(
-                event: "Name Create iOS Alarm",
-                logLevel: .alert,
-                data: CreateNameAlertLoggerErrorMessage(
-                    name: username,
-                    error: error.readableDescription,
-                    userPubKey: data.userPubkey
-                )
-            )
-
-            Resolver.resolve(AnalyticsManager.self).log(title: "Name Create iOS Error", error: error)
         }
     }
 }

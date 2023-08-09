@@ -77,8 +77,24 @@ private extension CreateUsernameViewModel {
             guard let self = self else { return }
             Task {
                 self.isLoading = true
-                await self.createNameService.create(username: self.username)
-                self.analyticsManager.log(event: .usernameCreationButton(result: true))
+                do {
+                    try await self.createNameService.create(username: self.username)
+                    self.analyticsManager.log(event: .usernameCreationButton(result: true))
+                } catch {
+                    self.analyticsManager.log(event: .usernameCreationButton(result: false))
+                    let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+                    DefaultLogManager.shared.log(
+                        event: "Name Create iOS Alarm",
+                        logLevel: .alert,
+                        data: CreateNameAlertLoggerErrorMessage(
+                            name: self.username,
+                            error: error.readableDescription,
+                            userPubKey: data.userPubkey
+                        )
+                    )
+
+                    Resolver.resolve(AnalyticsManager.self).log(title: "Name Create iOS Error", error: error)
+                }
                 self.close.send(())
             }
         }.store(in: &subscriptions)
