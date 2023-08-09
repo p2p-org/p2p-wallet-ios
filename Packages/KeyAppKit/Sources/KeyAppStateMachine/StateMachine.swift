@@ -10,23 +10,23 @@ public actor StateMachine<Dispatcher> where Dispatcher: KeyAppStateMachine.Dispa
     // MARK: - Dependencies
 
     /// Dispatcher that controls dispatching actions
-    let dispatcher: Dispatcher
+    private let dispatcher: Dispatcher
 
     /// Define if if logging available
-    let verbose: Bool
+    private let verbose: Bool
 
     // MARK: - Private properties
 
     /// Subject that holds a stream of current state, start with an initial state
-    let stateSubject: CurrentValueSubject<State, Never>
+    private let stateSubject: CurrentValueSubject<State, Never>
 
     /// Current active action
-    var currentAction: Action?
+    private var currentAction: Action?
 
     /// Current working task
-    var currentTask: Task<Void, Never>?
+    private var currentTask: Task<Void, Never>?
 
-    var subscriptions: [AnyCancellable] = []
+    private var subscriptions: [AnyCancellable] = []
 
     // MARK: - Public properties
 
@@ -51,11 +51,6 @@ public actor StateMachine<Dispatcher> where Dispatcher: KeyAppStateMachine.Dispa
         stateSubject = CurrentValueSubject<State, Never>(initialState)
         self.dispatcher = dispatcher
         self.verbose = verbose
-
-        stateSubject.sink { state in
-            dispatcher.onEnter(currentState: state)
-        }.store(in: &subscriptions)
-
         log(message: "🚧 Initialising with state: \(initialState)")
     }
 

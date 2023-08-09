@@ -44,7 +44,7 @@ public final class SendInputDispatcher: Dispatcher {
 
     public func onEnter(currentState: NSendInputState) {
         Task { [weak self] in
-            await self?.dispatch(action: .calculating, currentState: currentState)
+            await self?.dispatch(action: .enterCalculate, currentState: currentState)
         }
     }
 
@@ -62,7 +62,7 @@ public final class SendInputDispatcher: Dispatcher {
         case let .calculating(input):
 
             switch action {
-            case .calculating:
+            case .enterCalculate:
                 return await NSendInputBusinessLogic.calculate(provider: sendProvider, input: input)
             default:
                 return currentState
