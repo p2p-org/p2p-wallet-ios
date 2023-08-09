@@ -26,7 +26,7 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
 
                 if favourites.contains(account.address) {
                     tags.insert(.favourite)
-                } else if ignores.contains(account.address) {
+                } else if ignores.contains(account.address) && account.token.keyAppExtensions.canBeHidden == false {
                     tags.insert(.ignore)
                 } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
