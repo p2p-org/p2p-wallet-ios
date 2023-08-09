@@ -20,10 +20,10 @@ final class SelectRegionCoordinator: Coordinator<SelectRegionCoordinator.Result>
         )
 
         viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
-            self.coordinate(to: ChooseItemCoordinator<Region>(
+            coordinate(to: ChooseItemCoordinator<Region>(
                 title: L10n.selectYourCountry,
                 controller: controller,
-                service: ChooseCountryService(),
+                service: SelectRegionService(),
                 chosen: val,
                 showDoneButton: true
             ))

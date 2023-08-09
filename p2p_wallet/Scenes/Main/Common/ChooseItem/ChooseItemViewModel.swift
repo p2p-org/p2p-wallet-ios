@@ -70,22 +70,23 @@ private extension ChooseItemViewModel {
 
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sinkAsync(receiveValue: { [weak self] value in
-                guard let self else { return }
-                self.isSearchGoing = !value.isEmpty
-                if value.isEmpty {
-                    self.sections = self.allItems
-                } else {
-                    // Do not split up sections if there is a keyword
-                    let searchedItems = self.allItems
-                        .flatMap(\.items)
-                        .filter { $0.matches(keyword: value.lowercased()) }
-                    self.sections = self.service.sortFiltered(
-                        by: value.lowercased(),
-                        items: [ChooseItemListSection(items: searchedItems)]
-                    )
-                }
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [unowned self] value in
+                isSearchGoing = !value.isEmpty
             })
+            .map { [unowned self] value in
+                guard !value.isEmpty else {
+                    return allItems
+                }
+                let searchedItems = allItems
+                    .flatMap(\.items)
+                    .filter { $0.matches(keyword: value.lowercased()) }
+                return service.sortFiltered(
+                    by: value.lowercased(),
+                    items: [ChooseItemListSection(items: searchedItems)])
+            }
+            .receive(on: RunLoop.main)
+            .assignWeak(to: \.sections, on: self)
             .store(in: &subscriptions)
     }
 }
