@@ -13,9 +13,17 @@ final class LokaliseAppDelegateService: NSObject, AppDelegateService {
         )
 
         #if !RELEASE
+            // For Debug build or build from Firebase
             Lokalise.shared.localizationType = .prerelease
         #else
-            Lokalise.shared.localizationType = .release
+            let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+            if isTestFlight {
+                // Use prerelease bundle for build from testflight
+                Lokalise.shared.localizationType = .prerelease
+            } else {
+                // Use release bundle for build from store
+                Lokalise.shared.localizationType = .release
+            }
         #endif
 
         Lokalise.shared.swizzleMainBundle()

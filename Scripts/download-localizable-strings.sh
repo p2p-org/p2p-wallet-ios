@@ -16,7 +16,8 @@ json_data='{
   "all_platforms": false,
   "filter_langs": '"$supported_languages"',
   "replace_breaks": true,
-  "escape_percent": true
+  "escape_percent": true,
+  "add_newline_eof": true
 }'
 
 # Print the JSON data being sent in the request
@@ -44,3 +45,12 @@ unzip -o "localization_bundle.zip" -d "p2p_wallet/Resources"
 
 # Remove downloaded file
 rm "localization_bundle.zip"
+
+# Check if there are any changes in *.lproj folders and commit the updated localization
+if [[ $(git status --porcelain "p2p_wallet/Resources" | grep -E '\.lproj/') ]]; then
+    git add "p2p_wallet/Resources"
+    git commit -m "feat(lokalise): Update localization from Lokalise"
+    echo "Changes detected and committed."
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git push origin "$current_branch"
+fi
