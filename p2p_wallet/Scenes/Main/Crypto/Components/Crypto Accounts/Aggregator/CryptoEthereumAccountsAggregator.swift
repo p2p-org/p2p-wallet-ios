@@ -21,15 +21,16 @@ struct CryptoEthereumAccountsAggregator: DataAggregator {
                 claimBindingAggregator.transform(input: (account, claims))
             }
             .filter { account, claiming in
+                let isNotMatic = account.token.address != "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
                 if claiming == nil {
                     let balanceInFiat = account.balanceInFiat
                     if let balanceInFiat {
-                        return balanceInFiat >= CurrencyAmount(usd: 5)
+                        return balanceInFiat >= CurrencyAmount(usd: 5) && isNotMatic
                     } else {
                         return false
                     }
                 } else {
-                    return true
+                    return isNotMatic
                 }
             }
             .map { account, claiming in

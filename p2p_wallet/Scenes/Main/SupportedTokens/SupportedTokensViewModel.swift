@@ -88,6 +88,7 @@ enum SupportedTokensBusinnes {
         } else {
             let lowercasedFilter = filter.lowercased()
             return tokens
+                .filter { $0.symbol.uppercased() != "MATIC" }
                 .filter {
                     // Filter by title (token name) and subtitle (token symbol
                     $0.symbol.lowercased().contains(lowercasedFilter)
@@ -125,7 +126,6 @@ enum SupportedTokensBusinnes {
             "AVAX",
             "BNB",
             "WBNB",
-            "MATIC",
             "CRV",
         ]
 
@@ -170,7 +170,7 @@ enum SupportedTokensBusinnes {
                 icon: .url(
                     URL(string: "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912")!
                 ),
-                name: "Polygon", symbol: "MATIC", availableNetwork: [.ethereum, .solana]
+                name: "Polygon", symbol: "MATIC", availableNetwork: [.solana]
             ),
             SupportedTokenItem(
                 icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484")!),
