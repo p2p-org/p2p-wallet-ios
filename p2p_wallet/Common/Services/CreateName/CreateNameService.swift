@@ -6,7 +6,7 @@ import SolanaSwift
 
 protocol CreateNameService {
     var createNameResult: AnyPublisher<Bool, Never> { get }
-    func create(username: String) async throws
+    func create(username: String)
 }
 
 final class CreateNameServiceImpl: CreateNameService {
@@ -22,29 +22,43 @@ final class CreateNameServiceImpl: CreateNameService {
 
     private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 
-    func create(username: String) async throws {
-        do {
-            guard let account = storage.account else {
+    func create(username: String) {
+        Task {
+            do {
+                guard let account = storage.account else {
+                    createNameResultSubject.send(false)
+                    return
+                }
+
+                let createResult = try await self.nameService.create(
+                    name: username,
+                    publicKey: account.publicKey.base58EncodedString,
+                    privateKey: account.secretKey
+                )
+
+                _ = try await solanaAPIClient.sendTransaction(
+                    transaction: createResult.transaction,
+                    configs: RequestConfiguration(encoding: "base64")!
+                )
+
+                nameStorage.save(name: username)
+                nameCache.save(username, for: account.publicKey.base58EncodedString)
+                createNameResultSubject.send(true)
+            } catch {
                 createNameResultSubject.send(false)
-                return
+                let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+                DefaultLogManager.shared.log(
+                    event: "Name Create iOS Alarm",
+                    logLevel: .alert,
+                    data: CreateNameAlertLoggerErrorMessage(
+                        name: username,
+                        error: error.readableDescription,
+                        userPubKey: data.userPubkey
+                    )
+                )
+
+                Resolver.resolve(AnalyticsManager.self).log(title: "Name Create iOS Error", error: error)
             }
-
-            let createResult = try await nameService.create(
-                name: username,
-                publicKey: account.publicKey.base58EncodedString,
-                privateKey: account.secretKey
-            )
-
-            _ = try await solanaAPIClient.sendTransaction(
-                transaction: createResult.transaction,
-                configs: RequestConfiguration(encoding: "base64")!
-            )
-
-            nameStorage.save(name: username)
-            nameCache.save(username, for: account.publicKey.base58EncodedString)
-            createNameResultSubject.send(true)
-        } catch {
-            createNameResultSubject.send(false)
         }
     }
 }

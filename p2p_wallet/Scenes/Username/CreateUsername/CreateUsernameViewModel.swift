@@ -75,29 +75,17 @@ private extension CreateUsernameViewModel {
 
         createUsername.sink { [weak self] in
             guard let self = self else { return }
-            Task {
-                self.isLoading = true
-                do {
-                    try await self.createNameService.create(username: self.username)
-                    self.analyticsManager.log(event: .usernameCreationButton(result: true))
-                } catch {
-                    self.analyticsManager.log(event: .usernameCreationButton(result: false))
-                    let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
-                    DefaultLogManager.shared.log(
-                        event: "Name Create iOS Alarm",
-                        logLevel: .alert,
-                        data: CreateNameAlertLoggerErrorMessage(
-                            name: self.username,
-                            error: error.readableDescription,
-                            userPubKey: data.userPubkey
-                        )
-                    )
-
-                    Resolver.resolve(AnalyticsManager.self).log(title: "Name Create iOS Error", error: error)
-                }
+            self.isLoading = true
+            self.createNameService.create(username: self.username)
+        }.store(in: &subscriptions)
+        
+        createNameService.createNameResult
+            .sink { [weak self] isCreated in
+                guard let self = self else { return }
+                self.analyticsManager.log(event: .usernameCreationButton(result: isCreated))
                 self.close.send(())
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
 
         $username
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
