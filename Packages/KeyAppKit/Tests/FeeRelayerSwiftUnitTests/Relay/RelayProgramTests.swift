@@ -169,9 +169,9 @@ final class RelayProgramTests: XCTestCase {
 
         XCTAssertEqual(instruction.programId, RelayProgram.id(network: .mainnetBeta))
         XCTAssertEqual(instruction.data.toHexString(), "02f01d1f0000000000")
-        XCTAssertEqual(instruction.keys, [
+        XCTAssertEqual(instruction.keys, try [
             .init(publicKey: userAuthorityAddress, isSigner: true, isWritable: false),
-            try .init(
+            .init(
                 publicKey: RelayProgram.getUserRelayAddress(user: userAuthorityAddress, network: .mainnetBeta),
                 isSigner: false,
                 isWritable: true
