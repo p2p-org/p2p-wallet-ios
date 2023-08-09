@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AppsFlyerSDK/AppsFlyerFramework",
       "state" : {
-        "revision" : "d798f38fdc006621f5720579fdcba292c522a660",
-        "version" : "6.12.1"
+        "revision" : "a8e607ae6fc19b1e26f440cadf0dac28fd4c81ac",
+        "version" : "6.12.0"
       }
     },
     {
@@ -356,8 +356,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "a2e487b77f17edbce9a65f2b7415f2f479dc8e48",
-        "version" : "2.57.0"
+        "revision" : "324bc65a28323660fad8a36a7a37f0c2c78eeb9a",
+        "version" : "2.55.0"
       }
     },
     {
@@ -455,8 +455,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Boilertalk/Web3.swift.git",
       "state" : {
-        "revision" : "808d6c70daa10186d0084f44b3dfa2b8d4c88789",
-        "version" : "0.8.4"
+        "revision" : "4647a88ef5a85d92963512e0f7ebc78a66b6d850",
+        "version" : "0.8.3"
       }
     },
     {
