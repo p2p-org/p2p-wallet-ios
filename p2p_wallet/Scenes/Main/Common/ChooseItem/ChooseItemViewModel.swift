@@ -83,7 +83,8 @@ private extension ChooseItemViewModel {
                     .filter { $0.matches(keyword: value.lowercased()) }
                 return service.sortFiltered(
                     by: value.lowercased(),
-                    items: [ChooseItemListSection(items: searchedItems)])
+                    items: [ChooseItemListSection(items: searchedItems)]
+                )
             }
             .receive(on: RunLoop.main)
             .assignWeak(to: \.sections, on: self)
