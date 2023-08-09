@@ -122,14 +122,6 @@ public actor StateMachine<
         // Log
         logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
 
-        if let intermediateState = await dispatcher.actionWillBeginDispatching(
-            action: action,
-            currentState: currentState
-        ) {
-            // loading state whene action is about to be dispatched if it is needed
-            stateSubject.send(intermediateState)
-        }
-
         // check cancellation
         guard !Task.isCancelled else {
             logIfVerbose(message: "❌ Action cancelled: \(action)")
@@ -140,29 +132,27 @@ public actor StateMachine<
         logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
 
         // dispatch action
-        stateSubject.send(
-            await dispatcher.dispatch(
-                action: action,
-                currentState: currentState
-            )
-        )
+        let stateStream = AsyncStream { continuation in
+            Task {
+                await dispatcher.dispatch(
+                    action: action,
+                    currentState: currentState,
+                    continuation: continuation
+                )
+            }
+        }
 
-        // check cancellation
-        guard !Task.isCancelled else {
-            logIfVerbose(message: "❌ Action cancelled: \(action)")
-            return
+        for await state in stateStream {
+            // check cancellation
+            guard !Task.isCancelled else {
+                logIfVerbose(message: "❌ Action cancelled: \(action)")
+                return
+            }
+            stateSubject.send(state)
         }
 
         // Log
         logIfVerbose(message: "✅ Action did end dispatching: \(action)")
-
-        if let endState = await dispatcher.actionDidEndDispatching(
-            action: action,
-            currentState: currentState
-        ) {
-            // additional state when action is dispatched if it is needed
-            stateSubject.send(endState)
-        }
     }
 
     /// Save current action
