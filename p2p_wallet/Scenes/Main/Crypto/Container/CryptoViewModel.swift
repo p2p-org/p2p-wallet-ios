@@ -122,8 +122,8 @@ private extension CryptoViewModel {
                 }
 
                 let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
-                    ethereumState.value.contains(where: { account in account.balance > 0 })
+                    solanaState.value.contains(where: { $0.lamports > 0 }) ||
+                    ethereumState.value.contains(where: { $0.balance > 0 })
 
                 // Merge two status
                 let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)

@@ -71,7 +71,7 @@ extension SendInputBusinessLogic {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }
 
-        if state.feeInToken.total > (wallet.lamports ?? 0) {
+        if state.feeInToken.total > wallet.lamports {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }
 
@@ -112,7 +112,7 @@ extension SendInputBusinessLogic {
                     payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
                 )) ?? .zero
 
-                if feeInToken.total <= (wallet.lamports ?? 0) {
+                if feeInToken.total <= wallet.lamports {
                     return (wallet.token, feeInToken)
                 }
             } catch {

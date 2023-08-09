@@ -121,7 +121,7 @@ enum WormholeSendInputLogic {
                         payingFeeTokenMint: PublicKey(string: feePayerCandidate.token.mintAddress)
                     )
 
-                    if (feeInToken?.total ?? 0) < (feePayerCandidate.lamports ?? 0) {
+                    if (feeInToken?.total ?? 0) < feePayerCandidate.lamports {
                         feePayerBestCandidate = feePayerCandidate
                         feeAmountForBestCandidate = CryptoAmount(
                             uint64: feeInToken?.total ?? 0,

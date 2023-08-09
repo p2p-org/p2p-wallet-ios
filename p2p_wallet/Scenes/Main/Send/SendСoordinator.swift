@@ -63,9 +63,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let hasToken = walletsRepository.getWallets().contains { wallet in
-            (wallet.lamports ?? 0) > 0
-        }
+        let hasToken = walletsRepository.getWallets().contains { $0.lamports > 0 }
 
         if hasToken {
             // normal flow with no preChosenRecipient
