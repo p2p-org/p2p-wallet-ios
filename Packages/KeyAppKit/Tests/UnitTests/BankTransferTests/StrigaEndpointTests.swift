@@ -14,7 +14,7 @@ class StrigaEndpointTests: XCTestCase {
         )
         let date = NSDate(timeIntervalSince1970: 1_685_587_890.6146898)
 
-        let signedTimestampMessage = try keyPair.getSignedTimestampMessage(date: date)
+        let signedTimestampMessage = try keyPair.getSignedTimestampMessage(timestamp: date)
 
         let expectedMessage =
             "1685587890000:VhqmzP3ub4pQv8WwZG4IUMVeMwDPYXPQDRAIRxSFmMVezD5MWIBRl/UN11mpu0XXYXweaFHV92joLN2c89SEDg=="
@@ -25,11 +25,13 @@ class StrigaEndpointTests: XCTestCase {
     func testGetKYC() throws {
         let keyPair = try KeyPair()
         let userId = "userId"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.getKYC(
             baseURL: baseURL,
             keyPair: keyPair,
-            userId: userId
+            userId: userId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/kyc/userId")
@@ -38,7 +40,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -49,12 +51,14 @@ class StrigaEndpointTests: XCTestCase {
         let keyPair = try KeyPair()
         let userId = "userId"
         let verificationCode = "code"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.verifyMobileNumber(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
-            verificationCode: verificationCode
+            verificationCode: verificationCode,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/verify-mobile")
@@ -63,7 +67,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -74,11 +78,13 @@ class StrigaEndpointTests: XCTestCase {
     func testGetUserDetails() throws {
         let keyPair = try KeyPair()
         let userId = "abdicidjdi"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.getUserDetails(
             baseURL: baseURL,
             keyPair: keyPair,
-            userId: userId
+            userId: userId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/abdicidjdi")
@@ -87,7 +93,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -122,11 +128,13 @@ class StrigaEndpointTests: XCTestCase {
             selfPepDeclaration: true,
             purposeOfAccount: "hack"
         )
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.createUser(
             baseURL: baseURL,
             keyPair: keyPair,
-            body: body
+            body: body,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/create")
@@ -135,7 +143,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -147,11 +155,13 @@ class StrigaEndpointTests: XCTestCase {
     func testResendSMS() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.resendSMS(
             baseURL: baseURL,
             keyPair: keyPair,
-            userId: userId
+            userId: userId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/resend-sms")
@@ -160,7 +170,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -171,11 +181,13 @@ class StrigaEndpointTests: XCTestCase {
     func testKYCGetToken() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.getKYCToken(
             baseURL: baseURL,
             keyPair: keyPair,
-            userId: userId
+            userId: userId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/user/kyc/start")
@@ -184,7 +196,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -195,6 +207,7 @@ class StrigaEndpointTests: XCTestCase {
     func testGetAllWallets() throws {
         let keyPair = try KeyPair()
         let userId = "ijivjiji-jfijdij"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.getAllWallets(
             baseURL: baseURL,
@@ -202,7 +215,8 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId,
             startDate: Date(timeIntervalSince1970: 0),
             endDate: Date(timeIntervalSince1970: 2),
-            page: 1
+            page: 1,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/get/all")
@@ -211,7 +225,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -223,12 +237,14 @@ class StrigaEndpointTests: XCTestCase {
         let keyPair = try KeyPair()
         let userId = "19085577-4f74-40ad-a86c-0ad28d664170"
         let accountId = "817c19ad473cd1bef869b408858156a2"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.enrichAccount(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
-            accountId: accountId
+            accountId: accountId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/account/enrich")
@@ -236,7 +252,7 @@ class StrigaEndpointTests: XCTestCase {
 
         let expectedHeader = try [
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
             "Content-Type": "application/json",
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
@@ -252,6 +268,7 @@ class StrigaEndpointTests: XCTestCase {
         let sourceAccountId = "817c19ad473cd1bef869b408858156a2"
         let whitelistedAddressId = "817c19ad473cd1bef869b408858156a2"
         let amount = "123"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.initiateOnChainWalletSend(
             baseURL: baseURL,
@@ -259,7 +276,8 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId,
             sourceAccountId: sourceAccountId,
             whitelistedAddressId: whitelistedAddressId,
-            amount: amount
+            amount: amount,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/wallets/send/initiate/onchain")
@@ -268,7 +286,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeaders = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeaders)
 
@@ -281,12 +299,14 @@ class StrigaEndpointTests: XCTestCase {
         let keyPair = try KeyPair()
         let userId = "cecaea44-47f2-439b-99a1-a35fefaf1eb6"
         let challengeId = "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.transactionResendOTP(
             baseURL: baseURL,
             keyPair: keyPair,
             userId: userId,
-            challengeId: challengeId
+            challengeId: challengeId,
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/transaction/resend-otp")
@@ -295,7 +315,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -308,6 +328,7 @@ class StrigaEndpointTests: XCTestCase {
         let keyPair = try KeyPair()
         let userId = "cecaea44-47f2-439b-99a1-a35fefaf1eb6"
         let challengeId = "f56aaf67-acc1-4397-ae6b-57b553bdc5b0"
+        let timestamp = NSDate()
 
         let endpoint = try StrigaEndpoint.transactionConfirmOTP(
             baseURL: baseURL,
@@ -315,7 +336,8 @@ class StrigaEndpointTests: XCTestCase {
             userId: userId,
             challengeId: challengeId,
             verificationCode: "123456",
-            ip: "ipString"
+            ip: "ipString",
+            timestamp: timestamp
         )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/wallets/transaction/confirm")
@@ -324,7 +346,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
@@ -335,8 +357,13 @@ class StrigaEndpointTests: XCTestCase {
 
     func testExchangeRatesEndpoint() async throws {
         let keyPair = try KeyPair()
+        let timestamp = NSDate()
 
-        let endpoint = try StrigaEndpoint.exchangeRates(baseURL: baseURL, keyPair: keyPair)
+        let endpoint = try StrigaEndpoint.exchangeRates(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            timestamp: timestamp
+        )
 
         XCTAssertEqual(endpoint.urlString, "https://example.com/striga/api/v1/trade/rates")
         XCTAssertEqual(endpoint.method, .post)
@@ -344,7 +371,7 @@ class StrigaEndpointTests: XCTestCase {
         let expectedHeader = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
         XCTAssertEqual(endpoint.body, nil)
