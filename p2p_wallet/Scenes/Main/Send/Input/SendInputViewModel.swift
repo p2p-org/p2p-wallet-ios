@@ -402,7 +402,7 @@ private extension SendInputViewModel {
                 if currentWallet.price == nil {
                     self.turnOffInputSwitch()
                 } else if
-                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value = 1.0
+                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
                 {
                     self.turnOffInputSwitch()
                 } else {
