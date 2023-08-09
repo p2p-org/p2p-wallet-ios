@@ -31,10 +31,12 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
 
         viewModel.chooseCountry
             .flatMap { [unowned self] in
-                self
-                    .coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry,
-                                                                   controller: navigationController,
-                                                                   service: ChooseCountryService(), chosen: $0))
+                coordinate(to: ChooseItemCoordinator<Country>(
+                    title: L10n.selectYourCountry,
+                    controller: navigationController,
+                    service: ChooseCountryService(),
+                    chosen: $0
+                ))
             }
             .sink { [weak viewModel] result in
                 switch result {
@@ -48,7 +50,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
 
         viewModel.choosePhoneCountryCode
             .flatMap { [unowned self] in
-                self.coordinate(to: ChooseItemCoordinator<PhoneCodeItem>(
+                coordinate(to: ChooseItemCoordinator<PhoneCodeItem>(
                     title: L10n.selectYourCountry,
                     controller: navigationController,
                     service: ChoosePhoneCodeService(),

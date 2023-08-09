@@ -4,7 +4,7 @@ import Foundation
 import KeyAppKitCore
 import Resolver
 
-final class ChooseCountryService: ChooseItemService {
+final class SelectRegionService: ChooseItemService {
     let chosenTitle = L10n.chosenCountry
     let otherTitle = L10n.allCountries
     let emptyTitle = L10n.nothingWasFound
@@ -23,7 +23,7 @@ final class ChooseCountryService: ChooseItemService {
 
         Task {
             do {
-                let countries = try await self.countriesService.fetchCountries()
+                let countries = try await self.countriesService.fetchRegions()
                 self.statePublisher.send(
                     AsyncValueState(status: .ready, value: [ChooseItemListSection(items: countries)])
                 )

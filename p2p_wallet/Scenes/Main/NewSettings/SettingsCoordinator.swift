@@ -54,7 +54,7 @@ final class SettingsCoordinator: Coordinator<Void> {
                     coordinate(to: ChooseItemCoordinator<Region>(
                         title: L10n.selectYourCountry,
                         controller: settingsVC,
-                        service: ChooseCountryService(),
+                        service: SelectRegionService(),
                         chosen: Defaults.region,
                         showDoneButton: true
                     ))
