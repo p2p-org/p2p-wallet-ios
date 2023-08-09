@@ -22,7 +22,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         path: String,
         method: HTTPMethod,
         keyPair: KeyPair,
-        body: Encodable?
+        body: Encodable?,
+        timestamp: NSDate = NSDate()
     ) throws {
         self.baseURL = baseURL
         self.path = path
@@ -31,7 +32,7 @@ struct StrigaEndpoint: HTTPEndpoint {
         header = try [
             "Content-Type": "application/json",
             "User-PublicKey": keyPair.publicKey.base58EncodedString,
-            "Signed-Message": keyPair.getSignedTimestampMessage(),
+            "Signed-Message": keyPair.getSignedTimestampMessage(timestamp: timestamp),
         ]
         self.body = body?.encoded
     }
@@ -41,14 +42,16 @@ struct StrigaEndpoint: HTTPEndpoint {
     static func getKYC(
         baseURL: String,
         keyPair: KeyPair,
-        userId: String
+        userId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
             path: "/striga/api/v1/user/kyc/\(userId)",
             method: .get,
             keyPair: keyPair,
-            body: nil
+            body: nil,
+            timestamp: timestamp
         )
     }
 
@@ -56,7 +59,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         baseURL: String,
         keyPair: KeyPair,
         userId: String,
-        verificationCode: String
+        verificationCode: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -66,7 +70,8 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: [
                 "userId": userId,
                 "verificationCode": verificationCode,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -76,7 +81,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         userId: String,
         sourceAccountId: String,
         whitelistedAddressId: String,
-        amount: String
+        amount: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -88,42 +94,48 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "sourceAccountId": sourceAccountId,
                 "whitelistedAddressId": whitelistedAddressId,
                 "amount": amount,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
     static func getUserDetails(
         baseURL: String,
         keyPair: KeyPair,
-        userId: String
+        userId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
             path: "/striga/api/v1/user/\(userId)",
             method: .get,
             keyPair: keyPair,
-            body: nil
+            body: nil,
+            timestamp: timestamp
         )
     }
 
     static func createUser(
         baseURL: String,
         keyPair: KeyPair,
-        body: StrigaCreateUserRequest
+        body: StrigaCreateUserRequest,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
             path: "/api/v1/user/create",
             method: .post,
             keyPair: keyPair,
-            body: body
+            body: body,
+            timestamp: timestamp
         )
     }
 
     static func resendSMS(
         baseURL: String,
         keyPair: KeyPair,
-        userId: String
+        userId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -132,7 +144,8 @@ struct StrigaEndpoint: HTTPEndpoint {
             keyPair: keyPair,
             body: [
                 "userId": userId,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -143,7 +156,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         sourceAccountId: String,
         whitelistedAddressId: String,
         amount: String,
-        accountCreation: Bool = false
+        accountCreation: Bool = false,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -156,14 +170,16 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "whitelistedAddressId": .init(whitelistedAddressId),
                 "amount": .init(amount),
                 "accountCreation": .init(accountCreation),
-            ] as [String: KeyAppNetworking.AnyEncodable]
+            ] as [String: KeyAppNetworking.AnyEncodable],
+            timestamp: timestamp
         )
     }
 
     static func getKYCToken(
         baseURL: String,
         keyPair: KeyPair,
-        userId: String
+        userId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -172,7 +188,8 @@ struct StrigaEndpoint: HTTPEndpoint {
             keyPair: keyPair,
             body: [
                 "userId": userId,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -182,7 +199,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         userId: String,
         startDate: Date,
         endDate: Date,
-        page: Int
+        page: Int,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -194,7 +212,8 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "startDate": .init(startDate.millisecondsSince1970),
                 "endDate": .init(endDate.millisecondsSince1970),
                 "page": .init(page),
-            ] as [String: KeyAppNetworking.AnyEncodable]
+            ] as [String: KeyAppNetworking.AnyEncodable],
+            timestamp: timestamp
         )
     }
 
@@ -202,7 +221,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         baseURL: String,
         keyPair: KeyPair,
         userId: String,
-        accountId: String
+        accountId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -212,7 +232,8 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: [
                 "userId": userId,
                 "accountId": accountId,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -220,7 +241,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         baseURL: String,
         keyPair: KeyPair,
         userId: String,
-        challengeId: String
+        challengeId: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -230,7 +252,8 @@ struct StrigaEndpoint: HTTPEndpoint {
             body: [
                 "userId": userId,
                 "challengeId": challengeId,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -240,7 +263,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         userId: String,
         challengeId: String,
         verificationCode: String,
-        ip: String
+        ip: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -252,7 +276,8 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "challengeId": challengeId,
                 "verificationCode": verificationCode,
                 "ip": ip,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -263,7 +288,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         address: String,
         currency: String,
         network: String,
-        label: String?
+        label: String?,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -276,7 +302,8 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "currency": currency,
                 "network": network,
                 "label": label,
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
@@ -286,7 +313,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         userId: String,
         currency: String?,
         label _: String?,
-        page _: String?
+        page _: String?,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try .init(
             baseURL: baseURL,
@@ -298,20 +326,23 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "currency": currency,
 //                "label": label,
 //                "page": page
-            ]
+            ],
+            timestamp: timestamp
         )
     }
 
     static func exchangeRates(
         baseURL: String,
-        keyPair: KeyPair
+        keyPair: KeyPair,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
             path: "/striga/api/v1/trade/rates",
             method: .post,
             keyPair: keyPair,
-            body: nil
+            body: nil,
+            timestamp: timestamp
         )
     }
 
@@ -322,7 +353,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         sourceAccountId: String,
         amount: String,
         iban: String,
-        bic: String
+        bic: String,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
@@ -335,7 +367,8 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "amount": .init(amount),
                 "destination": .init(["iban": .init(iban),
                                       "bic": .init(bic)] as [String: KeyAppNetworking.AnyEncodable]),
-            ] as [String: KeyAppNetworking.AnyEncodable]
+            ] as [String: KeyAppNetworking.AnyEncodable],
+            timestamp: timestamp
         )
     }
 
@@ -346,7 +379,8 @@ struct StrigaEndpoint: HTTPEndpoint {
         accountId: String,
         startDate: Date,
         endDate: Date,
-        page: Int
+        page: Int,
+        timestamp: NSDate = NSDate()
     ) throws -> Self {
         try StrigaEndpoint(
             baseURL: baseURL,
@@ -359,15 +393,16 @@ struct StrigaEndpoint: HTTPEndpoint {
                 "startDate": .init(startDate.millisecondsSince1970),
                 "endDate": .init(endDate.millisecondsSince1970),
                 "page": .init(page),
-            ] as [String: KeyAppNetworking.AnyEncodable]
+            ] as [String: KeyAppNetworking.AnyEncodable],
+            timestamp: timestamp
         )
     }
 }
 
 extension KeyPair {
-    func getSignedTimestampMessage(date: NSDate = NSDate()) throws -> String {
+    func getSignedTimestampMessage(timestamp: NSDate = NSDate()) throws -> String {
         // get timestamp
-        let timestamp = "\(Int(date.timeIntervalSince1970) * 1000)"
+        let timestamp = "\(Int(timestamp.timeIntervalSince1970) * 1000)"
 
         // form message
         guard
