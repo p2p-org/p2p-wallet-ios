@@ -48,6 +48,7 @@ class RecruitmentDispatcher: Dispatcher {
             // loading state
             var currentState = currentState.modified {
                 $0.sendingStatus = .sending
+                $0.applicantName = applicantName
             }
 
             // emit state
