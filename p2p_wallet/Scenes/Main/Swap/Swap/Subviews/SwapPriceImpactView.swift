@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct SwapPriceImpactView: View {
-
     let model: Model
 
     var body: some View {

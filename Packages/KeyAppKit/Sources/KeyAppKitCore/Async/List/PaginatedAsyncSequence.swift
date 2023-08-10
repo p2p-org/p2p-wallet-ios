@@ -1,10 +1,3 @@
-//
-//  PaginatedAsyncSequence.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 20.02.2023.
-//
-
 import Foundation
 
 public struct PaginatedAsyncSequence<Element>: AsyncSequence {
@@ -53,6 +46,6 @@ public struct PaginatedAsyncSequence<Element>: AsyncSequence {
     }
 
     public func makeAsyncIterator() -> AsyncIterator {
-        return AsyncIterator(fetchFn: fetchFn, limit: limit)
+        AsyncIterator(fetchFn: fetchFn, limit: limit)
     }
 }

@@ -1,9 +1,8 @@
 import Foundation
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 struct SwapInputView: View {
-
     @ObservedObject var viewModel: SwapInputViewModel
 
     var body: some View {
@@ -15,7 +14,7 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if viewModel.isEditable && viewModel.balance != nil && !viewModel.isLoading  {
+                if viewModel.isEditable && viewModel.balance != nil && !viewModel.isLoading {
                     allButton
                 }
             }
@@ -33,7 +32,9 @@ struct SwapInputView: View {
                     Text("≈\(fiatAmount.toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)")
                         .subtitleStyle(color: Color(viewModel.fiatAmountTextColor))
                         .lineLimit(1)
-                        .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)FiatLabel")
+                        .accessibilityIdentifier(
+                            "SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)FiatLabel"
+                        )
                 }
             }
             .frame(minHeight: 16)
@@ -41,13 +42,14 @@ struct SwapInputView: View {
         .padding(EdgeInsets(top: 12, leading: 16, bottom: 16, trailing: 12))
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .foregroundColor(Color(.snow).opacity(viewModel.isEditable ? 1 : 0.6)))
+                .foregroundColor(Color(.snow).opacity(viewModel.isEditable ? 1 : 0.6))
+        )
     }
 }
 
 // MARK: - Subviews
-private extension SwapInputView {
 
+private extension SwapInputView {
     var allButton: some View {
         Button(action: viewModel.allButtonPressed.send, label: {
             HStack(spacing: 4) {
@@ -124,6 +126,6 @@ private extension SwapInputView {
 
 private extension Text {
     func subtitleStyle(color: Color = Color(.silver)) -> some View {
-        return self.apply(style: .label1).foregroundColor(color)
+        apply(style: .label1).foregroundColor(color)
     }
 }

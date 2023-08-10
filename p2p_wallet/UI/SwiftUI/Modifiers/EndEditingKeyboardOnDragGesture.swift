@@ -3,7 +3,7 @@ import UIKit
 
 struct EndEditingKeyboardOnDragGesture: ViewModifier {
     func body(content: Content) -> some View {
-        content.highPriorityGesture (
+        content.highPriorityGesture(
             DragGesture().onChanged { _ in
                 UIApplication.shared.endEditing()
             }
@@ -26,4 +26,3 @@ extension UIApplication {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-

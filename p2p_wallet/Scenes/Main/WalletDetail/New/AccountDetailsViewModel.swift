@@ -53,7 +53,6 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 analyticsManager.log(event: .tokenScreenReceiveBar)
                 actionSubject?.send(.openReceive)
             }
-            return
         }
 
         // Render solana wallet (account)
@@ -94,7 +93,9 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 SolanaToken.usdt.mintAddress: Wormhole.SupportedToken.usdt,
             ]
 
-            if let supportedWormholeToken = supportedTokens[solanaAccount.token.mintAddress], !Defaults.ethBannerShouldHide {
+            if let supportedWormholeToken = supportedTokens[solanaAccount.token.mintAddress],
+               !Defaults.ethBannerShouldHide
+            {
                 banner = .init(
                     title: L10n.toSendToEthereumNetworkYouHaveToSwapItTo(
                         solanaAccount.token.symbol,

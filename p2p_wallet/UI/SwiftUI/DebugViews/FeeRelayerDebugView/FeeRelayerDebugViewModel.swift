@@ -1,5 +1,5 @@
-import Foundation
 import FeeRelayerSwift
+import Foundation
 import Resolver
 import SolanaSwift
 
@@ -8,9 +8,9 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
     private let feeInSOL: FeeAmount
     private let feeInToken: FeeAmount
     private let payingFeeTokenDecimals: Decimals
-    
+
     @Published var calculationDebugText: String = ""
-    
+
     init(
         feeInSOL: FeeAmount,
         feeInToken: FeeAmount,
@@ -22,7 +22,7 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
         super.init()
         bind()
     }
-    
+
     private func bind() {
         contextManager.contextPublisher
             .receive(on: RunLoop.main)
@@ -33,7 +33,7 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
             .assignWeak(to: \.calculationDebugText, on: self)
             .store(in: &subscriptions)
     }
-    
+
     private func getCalculationDebugText(relayContext context: RelayContext?) -> String {
         guard let context else { return "RelayContext missing" }
         let relayAccountStatus = context.relayAccountStatus
@@ -42,21 +42,25 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
         let feeInSOL = feeInSOL.total
         let feeInToken = feeInToken.total
         let exchangeRate: Double
-        
+
         if feeInSOL != 0 {
-            exchangeRate = feeInToken.convertToBalance(decimals: payingFeeTokenDecimals) / feeInSOL.convertToBalance(decimals: 9)
+            exchangeRate = feeInToken.convertToBalance(decimals: payingFeeTokenDecimals) / feeInSOL
+                .convertToBalance(decimals: 9)
         } else {
             exchangeRate = 0
         }
-        
+
         var mark = "+"
-        let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
+        let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(
+            relayAccountBalance,
+            minRelayAccountBalance
+        )
         if relayAccountBalance < minRelayAccountBalance {
             mark = "-"
         }
-        
+
         let expectedTransactionFee: UInt64
-        
+
         if feeInSOL > 0 {
             if mark == "+" {
                 expectedTransactionFee = feeInSOL + remainder

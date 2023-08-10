@@ -1,10 +1,3 @@
-//
-//  DeviceShareMigrationView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.06.2023.
-//
-
 import Onboarding
 import SwiftUI
 

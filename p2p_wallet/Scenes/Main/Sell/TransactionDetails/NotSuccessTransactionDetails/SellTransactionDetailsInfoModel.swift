@@ -1,5 +1,5 @@
-import SwiftUI
 import Foundation
+import SwiftUI
 
 struct SellTransactionDetailsInfoModel {
     enum InfoText {
@@ -16,41 +16,52 @@ struct SellTransactionDetailsInfoModel {
     init(strategy: SellTransactionDetailsViewModel.Strategy) {
         switch strategy {
         case .processing:
-            self.iconColor = Color(.h9799Af)
-            self.textColor = Color(.night)
-            self.backgroundColor = Color(.e0E0E7)
-            self.icon = .sellInfo
-            let attributedText = NSMutableAttributedString(string: L10n.SOLWasSentToMoonpayAndIsBeingProcessed.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
-            attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
-            self.text = .help(text: attributedText)
+            iconColor = Color(.h9799Af)
+            textColor = Color(.night)
+            backgroundColor = Color(.e0E0E7)
+            icon = .sellInfo
+            let attributedText = NSMutableAttributedString(
+                string: L10n.SOLWasSentToMoonpayAndIsBeingProcessed
+                    .anyQuestionsRegardingYourTransactionCanBeAnsweredVia,
+                attributes: Constants.textAttributes
+            )
+            attributedText.appending(NSMutableAttributedString(
+                string: " \(L10n.moonpayHelpCenter)",
+                attributes: Constants.helpAttributes
+            ))
+            text = .help(text: attributedText)
 
         case .fundsWereSent:
-            self.iconColor = Color(.h9799Af)
-            self.textColor = Color(.night)
-            self.backgroundColor = Color(.e0E0E7)
-            self.icon = .sellInfo
-            let attributedText = NSMutableAttributedString(string: L10n.ItUsuallyTakesUpTo3BusinessDays.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
-            attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
-            self.text = .help(text: attributedText)
+            iconColor = Color(.h9799Af)
+            textColor = Color(.night)
+            backgroundColor = Color(.e0E0E7)
+            icon = .sellInfo
+            let attributedText = NSMutableAttributedString(
+                string: L10n.ItUsuallyTakesUpTo3BusinessDays.anyQuestionsRegardingYourTransactionCanBeAnsweredVia,
+                attributes: Constants.textAttributes
+            )
+            attributedText.appending(NSMutableAttributedString(
+                string: " \(L10n.moonpayHelpCenter)",
+                attributes: Constants.helpAttributes
+            ))
+            text = .help(text: attributedText)
 
         case .youNeedToSend:
-            self.iconColor = Color(.sun)
-            self.textColor = Color(.night)
-            self.backgroundColor = Color(.e0E0E7)
-            self.icon = .sellPendingWarning
-            self.text = .raw(text: L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
+            iconColor = Color(.sun)
+            textColor = Color(.night)
+            backgroundColor = Color(.e0E0E7)
+            icon = .sellPendingWarning
+            text = .raw(text: L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
 
         case .youVeNotSent:
-            self.iconColor = Color(.rose)
-            self.textColor = Color(.rose)
-            self.backgroundColor = Color(.rose).opacity(0.1)
-            self.icon = .sellPendingWarning
-            self.text = .raw(text: L10n
+            iconColor = Color(.rose)
+            textColor = Color(.rose)
+            backgroundColor = Color(.rose).opacity(0.1)
+            icon = .sellPendingWarning
+            text = .raw(text: L10n
                 .YouDidnTFinishYourCashOutTransaction
                 .After7DaysYourTransactionHasBeenAutomaticallyDeclined
-                .youCanTryAgainButYourNewTransactionWillBeSubjectToTheCurrentRates
-            )
-
+                .youCanTryAgainButYourNewTransactionWillBeSubjectToTheCurrentRates)
         }
     }
 }
@@ -59,14 +70,14 @@ private enum Constants {
     static var textAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.font(of: .text3),
-            .foregroundColor: UIColor(resource: .night)
+            .foregroundColor: UIColor(resource: .night),
         ]
     }
-    
+
     static var helpAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.font(of: .text3),
-            .foregroundColor: UIColor(resource: .sky)
+            .foregroundColor: UIColor(resource: .sky),
         ]
     }
 }

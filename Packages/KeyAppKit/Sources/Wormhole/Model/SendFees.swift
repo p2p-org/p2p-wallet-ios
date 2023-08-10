@@ -1,37 +1,30 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 21.03.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 
 public struct SendFees: Codable, Hashable, Equatable {
     public let recipientGetsAmount: TokenAmount?
-    
+
     /// Receive amount for user B. Nil when fees are greater than sending amount.
     public let totalAmount: TokenAmount?
-    
+
     /// Process fee in Ethereum network.
     public let arbiter: TokenAmount?
-    
+
     /// Network fee in Solana network (SOL).
     public let networkFee: TokenAmount?
-    
+
     /// Network fee in Solana network (in same result amount token).
     public let networkFeeInToken: TokenAmount?
-    
+
     /// Account creation fee in Solana network (SOL).
     public let messageAccountRent: TokenAmount?
-    
+
     /// Account creation fee in Solana network (in same result amount token).
     public let messageAccountRentInToken: TokenAmount?
-    
+
     /// Bridge fee in Solana network (SOL).
     public let bridgeFee: TokenAmount?
-    
+
     /// Bridge fee in Solana network (in same result amount token).
     public let bridgeFeeInToken: TokenAmount?
 

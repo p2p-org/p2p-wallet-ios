@@ -5,7 +5,6 @@ import Resolver
 import Sell
 
 final class SellTransactionDetailsViewModel: ObservableObject {
-
     let openHelp = PassthroughSubject<URL, Never>()
 
     @Injected private var analyticsManager: AnalyticsManager
@@ -96,7 +95,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             resultSubject.send(.tryAgain)
         }
     }
-    
+
     func bottomButtonClicked() {
         removeClicked()
     }
@@ -108,7 +107,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
 
     func helpTapped() {
         guard let url = Constants.helpURL else { return }
-        self.openHelp.send(url)
+        openHelp.send(url)
     }
 
     private func removeClicked() {
@@ -143,7 +142,7 @@ extension SellTransactionDetailsViewModel {
 
         static func == (lhs: Self, rhs: Self) -> Bool {
             switch (lhs, rhs) {
-            case (.youNeedToSend(let lAddress), .youNeedToSend(let rAddress)):
+            case let (.youNeedToSend(lAddress), .youNeedToSend(rAddress)):
                 return lAddress == rAddress
             case (.processing, .processing):
                 return true

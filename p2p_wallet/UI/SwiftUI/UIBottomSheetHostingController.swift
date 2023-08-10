@@ -1,10 +1,3 @@
-//
-//  UIBottomSheetHostingController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 05/01/2023.
-//
-
 import Foundation
 import SwiftUI
 
@@ -14,10 +7,10 @@ class UIBottomSheetHostingController<Content: View>: UIHostingController<Content
 
     /// transactionManager required by CustomPresentableViewController
     var transitionManager: UIViewControllerTransitioningDelegate?
-    
+
     /// (Optional) Custom modifier for height in case of custom modification needed
     var heightModifier: ((CGFloat) -> CGFloat)?
-    
+
     // MARK: - CustomPresentableViewController
 
     /// fitting size for presented view, required by CustomPresentableViewController
@@ -35,10 +28,11 @@ class UIBottomSheetHostingController<Content: View>: UIHostingController<Content
 
 extension UIBottomSheetHostingController {
     /// Convenience init for overriding default avoiding-keyboard behavior in UIHostingController
-    /// WARNING: Don't know why convenience init(rootView:ignoresKeyboard:) not recognizable for UIBottomSheetHostingController in xcode 15, so I need to put this additional method.
-    convenience public init(rootView: Content, shouldIgnoresKeyboard: Bool) {
+    /// WARNING: Don't know why convenience init(rootView:ignoresKeyboard:) not recognizable for
+    /// UIBottomSheetHostingController in xcode 15, so I need to put this additional method.
+    public convenience init(rootView: Content, shouldIgnoresKeyboard: Bool) {
         self.init(rootView: rootView)
-        
+
         if shouldIgnoresKeyboard {
             disableLayoutWithKeyboard()
         }

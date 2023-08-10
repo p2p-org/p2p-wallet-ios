@@ -57,7 +57,12 @@ class WLIndicatorModalVC: BaseVC {
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
-        let topGestureView = UIView(width: 71, height: 5, backgroundColor: .init(resource: .indicator), cornerRadius: 2.5)
+        let topGestureView = UIView(
+            width: 71,
+            height: 5,
+            backgroundColor: .init(resource: .indicator),
+            cornerRadius: 2.5
+        )
         view.addSubview(topGestureView)
         topGestureView.autoPinEdge(toSuperviewSafeArea: .top)
         topGestureView.autoAlignAxis(toSuperviewAxis: .vertical)

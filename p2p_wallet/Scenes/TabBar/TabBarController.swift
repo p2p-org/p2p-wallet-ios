@@ -66,14 +66,16 @@ final class TabBarController: UITabBarController {
             .receive(on: RunLoop.main)
             .sink { [weak self] migrationIsAvailable in
                 if migrationIsAvailable {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .init(resource: .tabBarSettingsWithAlert)
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .image = .init(resource: .tabBarSettingsWithAlert)
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
                         .selectedImage = .selectedTabBarSettingsWithAlert
                 } else {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .init(resource: .tabBarSettings)
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .init(resource: .tabBarSettings)
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .image = .init(resource: .tabBarSettings)
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .init(resource: .tabBarSettings)
                 }
-                
             }
             .store(in: &subscriptions)
     }
@@ -231,7 +233,7 @@ final class TabBarController: UITabBarController {
         standardAppearance.stackedItemPositioning = .automatic
         UITabBar.appearance().standardAppearance = standardAppearance
         UITabBar.appearance().scrollEdgeAppearance = standardAppearance
-        
+
         tabBar.isTranslucent = true
         tabBar.backgroundColor = .clear
     }
@@ -287,9 +289,11 @@ final class TabBarController: UITabBarController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] claimableTransferExist in
                 let image: ImageResource = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
-                let selectedImage: ImageResource = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
+                let selectedImage: ImageResource = claimableTransferExist ? .selectedTabBarCryptoWithAlert :
+                    .tabBarCrypto
                 self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = .init(resource: image)
-                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = .init(resource: selectedImage)
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem
+                    .selectedImage = .init(resource: selectedImage)
             }
             .store(in: &subscriptions)
 

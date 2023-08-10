@@ -33,7 +33,6 @@ struct TipAppearance {
             nextButtonStyle = .primary
             skipButtonStyle = .ghost
             countColor = UIColor(resource: .mountain)
-
         }
 
         switch pointerPosition {

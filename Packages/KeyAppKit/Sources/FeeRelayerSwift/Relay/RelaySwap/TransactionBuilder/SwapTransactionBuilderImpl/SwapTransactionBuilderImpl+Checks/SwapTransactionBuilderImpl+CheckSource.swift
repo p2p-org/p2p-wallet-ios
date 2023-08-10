@@ -1,6 +1,6 @@
 import Foundation
-import SolanaSwift
 import OrcaSwapSwift
+import SolanaSwift
 
 extension SwapTransactionBuilderImpl {
     func checkSource(
@@ -9,14 +9,13 @@ extension SwapTransactionBuilderImpl {
         inputAmount: UInt64,
         output: inout SwapTransactionBuilderOutput
     ) async throws {
-        
         var sourceWSOLNewAccount: KeyPair?
-        
+
         // Check if source token is NATIVE SOL
         // Treat SPL SOL like another SPL Token (WSOL new account is not needed)
-        
-        if sourceMint == PublicKey.wrappedSOLMint &&
-           (output.userSource == nil || output.userSource == owner) // check for native sol
+
+        if sourceMint == PublicKey.wrappedSOLMint,
+           output.userSource == nil || output.userSource == owner // check for native sol
         {
             sourceWSOLNewAccount = try await KeyPair(network: network)
             output.instructions.append(contentsOf: [
@@ -41,7 +40,7 @@ extension SwapTransactionBuilderImpl {
             output.userSource = sourceWSOLNewAccount!.publicKey
             output.additionalPaybackFee += minimumTokenAccountBalance
         }
-        
+
         output.sourceWSOLNewAccount = sourceWSOLNewAccount
     }
 }

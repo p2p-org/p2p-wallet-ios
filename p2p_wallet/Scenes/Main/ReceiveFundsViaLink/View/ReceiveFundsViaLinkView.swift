@@ -1,22 +1,14 @@
-//
-//  ReceiveFundsViaLinkView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 23.03.2023.
-//
-
-import SwiftUI
 import SkeletonUI
 import SolanaSwift
+import SwiftUI
 
 struct ReceiveFundsViaLinkView: View {
-    
     @ObservedObject var viewModel: ReceiveFundsViaLinkViewModel
-    
+
     var body: some View {
         content
     }
-    
+
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -52,15 +44,15 @@ struct ReceiveFundsViaLinkView: View {
             .padding(.bottom, 32)
         }
     }
-    
+
     private func confirmView(token: TokenMetadata, cryptoAmount: String) -> some View {
         VStack(spacing: 52) {
             topPart(token: token, cryptoAmount: cryptoAmount)
             bottomPart
         }
     }
-    
-   private func topPart(token: TokenMetadata, cryptoAmount: String) -> some View {
+
+    private func topPart(token: TokenMetadata, cryptoAmount: String) -> some View {
         VStack(spacing: 16) {
             CoinLogoImageViewRepresentable(size: 66, args: .token(token))
                 .frame(width: 64, height: 64)
@@ -70,7 +62,7 @@ struct ReceiveFundsViaLinkView: View {
                 .font(uiFont: .font(of: .largeTitle, weight: .bold))
         }
     }
-    
+
     @ViewBuilder
     private var bottomPart: some View {
         if !viewModel.processingVisible {
@@ -84,21 +76,21 @@ struct ReceiveFundsViaLinkView: View {
                     }
                 )
                 .frame(height: 56)
-                
+
                 #if !RELEASE
-                Toggle(isOn: $viewModel.isFakeSendingTransaction) {
-                    Text("Fake")
-                }
-                .fixedSize(horizontal: true, vertical: false)
-                
-                if viewModel.isFakeSendingTransaction {
-                    Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
-                        ForEach(FakeTransactionErrorType.allCases) { errorType in
-                            Text(errorType.rawValue.capitalized).tag(errorType)
-                        }
+                    Toggle(isOn: $viewModel.isFakeSendingTransaction) {
+                        Text("Fake")
                     }
                     .fixedSize(horizontal: true, vertical: false)
-                }
+
+                    if viewModel.isFakeSendingTransaction {
+                        Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
+                            ForEach(FakeTransactionErrorType.allCases) { errorType in
+                                Text(errorType.rawValue.capitalized).tag(errorType)
+                            }
+                        }
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
                 #endif
             }
         } else {
@@ -116,14 +108,14 @@ struct ReceiveFundsViaLinkView: View {
             }
         }
     }
-    
+
     private var statusView: some View {
         TransactionProcessView(
             state: $viewModel.processingState,
             errorMessageTapAction: {}
         )
     }
-    
+
     private var skeleton: some View {
         VStack {
             Text("")
@@ -154,7 +146,7 @@ struct ReceiveFundsViaLinkView: View {
                 .frame(height: 56)
         }
     }
-    
+
     private func youReceivedToken(cryptoAmount: String) -> some View {
         ZStack {
             VStack(spacing: 32) {

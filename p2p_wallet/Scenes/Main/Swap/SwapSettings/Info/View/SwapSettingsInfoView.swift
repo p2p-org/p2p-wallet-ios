@@ -1,9 +1,9 @@
-import SwiftUI
 import SkeletonUI
+import SwiftUI
 
 struct SwapSettingsInfoView: View {
     @ObservedObject var viewModel: SwapSettingsInfoViewModel
-    
+
     var body: some View {
         VStack {
             Image(viewModel.image)
@@ -27,7 +27,7 @@ struct SwapSettingsInfoView: View {
             .background(Color(.cloud))
             .cornerRadius(12)
             .padding(.bottom, 30)
-            
+
             switch viewModel.loadableFee {
             case .loading:
                 feeView(
@@ -36,14 +36,14 @@ struct SwapSettingsInfoView: View {
                     rightTitle: nil,
                     isLoading: true
                 )
-                    .padding(.bottom, 30)
+                .padding(.bottom, 30)
             case let .loaded(fees) where !fees.isEmpty:
                 feesView(fees: fees)
                     .padding(.bottom, 30)
             default:
                 HStack {}
             }
-            
+
             Button(
                 action: {
                     viewModel.closeClicked()
@@ -66,7 +66,7 @@ struct SwapSettingsInfoView: View {
 
     private func feesView(fees: [SwapSettingsInfoViewModel.Fee]) -> some View {
         VStack(spacing: 24) {
-            ForEach(Array(zip(fees.indices, fees)), id: \.0) { index, fee in
+            ForEach(Array(zip(fees.indices, fees)), id: \.0) { _, fee in
                 feeView(
                     title: fee.title,
                     subtitle: fee.subtitle,

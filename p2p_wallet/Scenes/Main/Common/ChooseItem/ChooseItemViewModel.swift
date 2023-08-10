@@ -4,7 +4,6 @@ import SolanaSwift
 import UIKit
 
 final class ChooseItemViewModel: BaseViewModel, ObservableObject {
-
     let chooseTokenSubject = PassthroughSubject<any ChooseItemSearchableItem, Never>()
 
     @Published var sections: [ChooseItemListSection] = []
@@ -45,7 +44,7 @@ private extension ChooseItemViewModel {
                             )
                         }
                         self.allItems = self.service.sort(items: dataWithoutChosen)
-                        
+
                         if !self.isSearchGoing {
                             self.sections = self.allItems
                         }
@@ -65,7 +64,7 @@ private extension ChooseItemViewModel {
                 }
             }
             .store(in: &subscriptions)
-        
+
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
@@ -76,7 +75,7 @@ private extension ChooseItemViewModel {
                 } else {
                     // Do not split up sections if there is a keyword
                     let searchedItems = self.allItems
-                        .flatMap { $0.items }
+                        .flatMap(\.items)
                         .filter { $0.matches(keyword: value.lowercased()) }
                     self.sections = self.service.sortFiltered(
                         by: value.lowercased(),

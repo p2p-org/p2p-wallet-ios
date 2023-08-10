@@ -1,16 +1,8 @@
-//
-//  AmountTextField.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.03.2023.
-//
-
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 struct AmountTextField: UIViewRepresentable {
-
     @Binding private var value: Double?
     @Binding private var isFirstResponder: Bool
     @Binding private var textColor: ColorResource
@@ -21,7 +13,7 @@ struct AmountTextField: UIViewRepresentable {
     let moveCursorToTrailingWhenDidBeginEditing: Bool
 
     // MARK: - Init
-    
+
     init(
         value: Binding<Double?>,
         isFirstResponder: Binding<Bool>,
@@ -41,10 +33,10 @@ struct AmountTextField: UIViewRepresentable {
         self.decimalSeparator = decimalSeparator
         self.configuration = configuration
     }
-    
+
     // MARK: - UIViewRepresentable
-    
-    func makeUIView(context: Context) -> AmountUITextField {
+
+    func makeUIView(context _: Context) -> AmountUITextField {
         let textField = AmountUITextField(
             value: $value,
             firstResponder: $isFirstResponder,
@@ -61,9 +53,7 @@ struct AmountTextField: UIViewRepresentable {
 
     func updateUIView(_ uiView: AmountUITextField, context _: Context) {
         if let value = value {
-            if let text = uiView.text, let double = Double(text), double == value
-            {
-                
+            if let text = uiView.text, let double = Double(text), double == value {
             } else {
                 uiView.text = value.toString(
                     decimalSeparator: decimalSeparator,
@@ -73,13 +63,13 @@ struct AmountTextField: UIViewRepresentable {
         } else {
             uiView.text = nil
         }
-        
+
         if uiView.isFirstResponder, !isFirstResponder {
             DispatchQueue.main.async { uiView.resignFirstResponder() }
         } else if !uiView.isFirstResponder, isFirstResponder {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
-        
+
         configuration(uiView)
         uiView.textColor = .init(resource: textColor)
     }
@@ -88,14 +78,13 @@ struct AmountTextField: UIViewRepresentable {
 // MARK: - AmountUITextField
 
 final class AmountUITextField: UITextField, UITextFieldDelegate {
-
     fileprivate var decimalSeparator = Locale.current.decimalSeparator ?? "."
     fileprivate var value: Binding<Double?>
     fileprivate var firstResponder: Binding<Bool>
     fileprivate var maxFractionDigits: Binding<Int>
     fileprivate var maxValue: Binding<Double?>
     fileprivate var moveCursorToTrailingWhenDidBeginEditing: Bool = false
-    
+
     // MARK: - Init
 
     convenience init(
@@ -112,28 +101,27 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
     }
 
     override init(frame: CGRect) {
-        self.value = .constant(nil)
-        self.firstResponder = .constant(false)
-        self.maxFractionDigits = .constant(2)
-        self.maxValue = .constant(nil)
+        value = .constant(nil)
+        firstResponder = .constant(false)
+        maxFractionDigits = .constant(2)
+        maxValue = .constant(nil)
         super.init(frame: frame)
         commonInit()
     }
-    
+
     @available(*, unavailable,
-    message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
-    )
-    required init?(coder: NSCoder) {
+               message: "Loading this view from a nib is unsupported in favor of initializer dependency injection.")
+    required init?(coder _: NSCoder) {
         fatalError("Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     }
-    
+
     // Private
     private func commonInit() {
         keyboardType = .decimalPad
         delegate = self
         addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
     }
-    
+
     @objc private func textFieldEditingChanged() {
         text = text?.amountFormat(
             maxAfterComma: maxFractionDigits.wrappedValue,
@@ -141,7 +129,7 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
         )
         value.wrappedValue = Double(text ?? "")
     }
-    
+
     private func isNotMoreThanMax(text: String) -> Bool {
         guard
             let max = maxValue.wrappedValue,
@@ -150,12 +138,12 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
 
         return number <= max
     }
-    
+
     // MARK: - UITextFieldDelegate
-    
+
     func textFieldDidBeginEditing(_: UITextField) {
         firstResponder.wrappedValue = true
-        
+
         // Move cursor to trailing
         if moveCursorToTrailingWhenDidBeginEditing {
             DispatchQueue.main.async { [weak self] in
@@ -169,12 +157,12 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
     func textFieldDidEndEditing(_: UITextField) {
         firstResponder.wrappedValue = false
     }
-    
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+
+    func textFieldShouldEndEditing(_: UITextField) -> Bool {
         firstResponder.wrappedValue = false
         return true
     }
-    
+
     func textField(
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,

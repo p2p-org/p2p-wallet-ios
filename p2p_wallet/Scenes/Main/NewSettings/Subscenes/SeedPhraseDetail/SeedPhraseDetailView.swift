@@ -40,7 +40,7 @@ struct SeedPhraseDetailView: View {
                             style: .white,
                             isOn: $viewModel.isSliderOn
                         )
-                            .frame(height: 56)
+                        .frame(height: 56)
                     } else {
                         TextButtonView(
                             title: L10n.copy,

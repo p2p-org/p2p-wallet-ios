@@ -1,10 +1,3 @@
-//
-//  SellSuccessTransactionDetailsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
 import Combine
 import SwiftUI
 
@@ -89,7 +82,7 @@ extension SellSuccessTransactionDetailsView {
         let topViewModel: SellTransactionDetailsTopView.Model
         let receiverAddress: String
         let transactionFee: String
-        
+
         var formattedAddress: String {
             receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6)
         }
@@ -104,8 +97,8 @@ extension SellSuccessTransactionDetailsView {
     }
 }
 
-fileprivate typealias TopViewModel = SellTransactionDetailsTopView.Model
-fileprivate typealias Model = SellSuccessTransactionDetailsView.Model
+private typealias TopViewModel = SellTransactionDetailsTopView.Model
+private typealias Model = SellSuccessTransactionDetailsView.Model
 
 struct SellSuccessTransactionDetailsView_Previews: PreviewProvider {
     static var previews: some View {

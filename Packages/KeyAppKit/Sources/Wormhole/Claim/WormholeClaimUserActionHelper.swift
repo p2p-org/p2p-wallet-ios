@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 17.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore

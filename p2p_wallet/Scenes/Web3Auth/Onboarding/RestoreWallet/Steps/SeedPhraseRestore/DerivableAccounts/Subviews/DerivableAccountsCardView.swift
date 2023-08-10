@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct DerivableAccountsCardView: View {
-
     let derivationPath: String
 
     var body: some View {

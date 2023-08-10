@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct DerivableAccountsView: View {
-
     @ObservedObject private var viewModel: DerivableAccountsViewModel
 
     init(viewModel: DerivableAccountsViewModel) {
@@ -17,7 +16,8 @@ struct DerivableAccountsView: View {
                     viewModel.selectDerivableType.send(viewModel.selectedDerivablePath)
                 }
 
-            Text(L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultKeyAppWillUseM4450100AsTheDerivationPathForTheMainWallet)
+            Text(L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase
+                .byDefaultKeyAppWillUseM4450100AsTheDerivationPathForTheMainWallet)
                 .apply(style: .text3)
                 .foregroundColor(Color(.night))
                 .padding(.all, 18)

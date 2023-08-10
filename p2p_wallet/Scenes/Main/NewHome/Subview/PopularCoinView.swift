@@ -61,4 +61,3 @@ struct PopularCoinView_Previews: PreviewProvider {
         PopularCoinView(title: "USDC", subtitle: "USD Coint", actionTitle: "Buy", image: .usdc)
     }
 }
-

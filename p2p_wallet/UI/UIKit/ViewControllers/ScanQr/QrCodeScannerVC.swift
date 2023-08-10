@@ -22,7 +22,11 @@ class QrCodeScannerVC: BaseVC {
 
     var previewLayer: AVCaptureVideoPreviewLayer!
     lazy var cameraContainerView = UIView(cornerRadius: 20)
-    private lazy var rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .init(resource: .qrCodeRange))
+    private lazy var rangeImageView = UIImageView(
+        width: scanSize.width,
+        height: scanSize.height,
+        image: .init(resource: .qrCodeRange)
+    )
     private lazy var overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
     private lazy var rangeLabel = UILabel(
         text: L10n.scanQRCode,
@@ -177,7 +181,7 @@ class QrCodeScannerVC: BaseVC {
             self.captureSession?.startRunning()
         }
     }
-    
+
     private func stopCapturing() {
         DispatchQueue.global(qos: .background).async {
             self.captureSession?.stopRunning()

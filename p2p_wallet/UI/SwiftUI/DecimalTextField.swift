@@ -1,22 +1,14 @@
-//
-//  DecimalTextField.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 08/12/2022.
-//
-
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 /// TextField that allows only decimal number
 public struct DecimalTextField: UIViewRepresentable {
-    
     // MARK: - Properties
 
     /// Detect if decimal text field is first responder
     @Binding private var isFirstResponder: Bool
-    
+
     /// Value of current text field
     @Binding private var value: Double?
 
@@ -53,20 +45,22 @@ public struct DecimalTextField: UIViewRepresentable {
                let double = Double(text),
                double == value
             {
-                
             } else {
-                uiView.text = value.toString(decimalSeparator: uiView.decimalSeparator, maximumFractionDigits: uiView.maximumFractionDigits ?? 9)
+                uiView.text = value.toString(
+                    decimalSeparator: uiView.decimalSeparator,
+                    maximumFractionDigits: uiView.maximumFractionDigits ?? 9
+                )
             }
         } else {
             uiView.text = nil
         }
-        
+
         if uiView.isFirstResponder, !isFirstResponder {
             DispatchQueue.main.async { uiView.resignFirstResponder() }
         } else if !uiView.isFirstResponder, isFirstResponder {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
-        
+
         configuration(uiView)
         uiView.textColor = textColor
     }
@@ -83,11 +77,11 @@ public struct DecimalTextField: UIViewRepresentable {
             self.value = value
             self.isFirstResponder = isFirstResponder
         }
-        
-        public func decimalTextFieldDidReceiveValue(_ decimalTextField: UIDecimalTextField, value: Double?) {
+
+        public func decimalTextFieldDidReceiveValue(_: UIDecimalTextField, value: Double?) {
             self.value.wrappedValue = value
         }
-        
+
         public func textFieldDidBeginEditing(_: UITextField) {
             DispatchQueue.main.async { [weak self] in
                 self?.isFirstResponder.wrappedValue = true
@@ -99,8 +93,8 @@ public struct DecimalTextField: UIViewRepresentable {
                 self?.isFirstResponder.wrappedValue = false
             }
         }
-        
-        public func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+
+        public func textFieldShouldEndEditing(_: UITextField) -> Bool {
             // TODO: - Why textFieldDidEndEditing not called??
             DispatchQueue.main.async { [weak self] in
                 self?.isFirstResponder.wrappedValue = false

@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
 @testable import FeeRelayerSwift
-@testable import SolanaSwift
 @testable import OrcaSwapSwift
+@testable import SolanaSwift
 
 private let transitToken = TokenAccount(address: "E4WiTThe5vWiQEqzUGvtgTfWZnUoxaLxprumwfhhttuf", mint: .usdtMint)
 
@@ -13,20 +13,20 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
         address: .usdcAssociatedAddress,
         mint: .usdcMint
     )
-    
+
     let targetAmount: Lamports = minimumTokenAccountBalance + minimumRelayAccountBalance
-    
+
     override func tearDown() async throws {
         builder = nil
     }
-    
+
     func testTopUpTransactionBuilderWhenRelayAccountIsNotYetCreatedAndTransitTokenIsNotYetCreated() async throws {
-        builder = TopUpTransactionBuilderImpl(
+        builder = try TopUpTransactionBuilderImpl(
             solanaApiClient: MockSolanaAPIClient(testCase: 0),
             orcaSwap: MockOrcaSwapBase(),
-            account: try await MockAccountStorage().account!
+            account: await MockAccountStorage().account!
         )
-        
+
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
                 relayAccountStatus: .notYetCreated
@@ -36,7 +36,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 75705
         let transitAmount: UInt64 = 73280
         // swap data
@@ -72,7 +72,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 needsCreateTransitTokenAccount: true
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
@@ -84,12 +84,12 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
         XCTAssertEqual(createRelayAccountInstruction, .init(
             keys: [
                 .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: .relayAccount, isSigner: false)
+                .writable(publicKey: .relayAccount, isSigner: false),
             ],
             programId: SystemProgram.id,
             data: SystemProgram.Index.transfer.bytes + minimumRelayAccountBalance.bytes
         ))
-        
+
         // - Create transit account instruction
         let createTransitAccountInstruction = transaction!.instructions[1]
         XCTAssertEqual(createTransitAccountInstruction, .init(
@@ -100,7 +100,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .feePayerAddress, isSigner: true),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: RelayProgram.Index.createTransitToken.bytes
@@ -134,10 +134,11 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .writable(publicKey: topUpPools[1].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[1].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
-            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount.bytes + targetAmount.bytes
+            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount
+                .bytes + targetAmount.bytes
         ))
 
         // - Relay transfer SOL instruction
@@ -147,7 +148,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
@@ -158,14 +159,14 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             2 * lamportsPerSignature + minimumRelayAccountBalance + minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenRelayAccountIsNotYetCreatedAndTransitTokenIsCreated() async throws {
-        builder = TopUpTransactionBuilderImpl(
+        builder = try TopUpTransactionBuilderImpl(
             solanaApiClient: MockSolanaAPIClient(testCase: 1),
             orcaSwap: MockOrcaSwapBase(),
-            account: try await MockAccountStorage().account!
+            account: await MockAccountStorage().account!
         )
-        
+
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
                 relayAccountStatus: .notYetCreated
@@ -175,7 +176,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 75705
         let transitAmount: UInt64 = 73280
         // swap data
@@ -211,7 +212,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 needsCreateTransitTokenAccount: false
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
@@ -223,7 +224,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
         XCTAssertEqual(createRelayAccountInstruction, .init(
             keys: [
                 .writable(publicKey: .feePayerAddress, isSigner: true),
-                .writable(publicKey: .relayAccount, isSigner: false)
+                .writable(publicKey: .relayAccount, isSigner: false),
             ],
             programId: SystemProgram.id,
             data: SystemProgram.Index.transfer.bytes + minimumRelayAccountBalance.bytes
@@ -257,10 +258,11 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .writable(publicKey: topUpPools[1].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[1].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
-            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount.bytes + targetAmount.bytes
+            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount
+                .bytes + targetAmount.bytes
         ))
 
         // - Relay transfer SOL instruction
@@ -270,7 +272,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
@@ -281,24 +283,25 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             2 * lamportsPerSignature + minimumRelayAccountBalance + minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenRelayAccountIsCreatedAndTransitTokenIsNotYetCreated() async throws {
-        builder = TopUpTransactionBuilderImpl(
+        builder = try TopUpTransactionBuilderImpl(
             solanaApiClient: MockSolanaAPIClient(testCase: 2),
             orcaSwap: MockOrcaSwapBase(),
-            account: try await MockAccountStorage().account!
+            account: await MockAccountStorage().account!
         )
-        
+
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
-                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance..<minimumRelayAccountBalance+10000))
+                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance ..<
+                        minimumRelayAccountBalance + 10000))
             ),
             sourceToken: sourceToken,
             topUpPools: topUpPools,
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 75705
         let transitAmount: UInt64 = 73280
         // swap data
@@ -334,13 +337,13 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 needsCreateTransitTokenAccount: true
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
 
         XCTAssertEqual(transaction?.instructions.count, 3)
-        
+
         // - Create transit account instruction
         let createTransitAccountInstruction = transaction!.instructions[0]
         XCTAssertEqual(createTransitAccountInstruction, .init(
@@ -351,7 +354,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .feePayerAddress, isSigner: true),
                 .readonly(publicKey: TokenProgram.id, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: RelayProgram.Index.createTransitToken.bytes
@@ -385,10 +388,11 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .writable(publicKey: topUpPools[1].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[1].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
-            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount.bytes + targetAmount.bytes
+            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount
+                .bytes + targetAmount.bytes
         ))
 
         // - Relay transfer SOL instruction
@@ -398,7 +402,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
@@ -409,24 +413,25 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             2 * lamportsPerSignature + minimumTokenAccountBalance
         )
     }
-    
+
     func testTopUpTransactionBuilderWhenRelayAccountIsCreatedAndTransitTokenIsCreated() async throws {
-        builder = TopUpTransactionBuilderImpl(
+        builder = try TopUpTransactionBuilderImpl(
             solanaApiClient: MockSolanaAPIClient(testCase: 3),
             orcaSwap: MockOrcaSwapBase(),
-            account: try await MockAccountStorage().account!
+            account: await MockAccountStorage().account!
         )
-        
+
         let transaction1 = try await builder?.buildTopUpTransaction(
             context: getContext(
-                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance..<minimumRelayAccountBalance+10000))
+                relayAccountStatus: .created(balance: .random(in: minimumRelayAccountBalance ..<
+                        minimumRelayAccountBalance + 10000))
             ),
             sourceToken: sourceToken,
             topUpPools: topUpPools,
             targetAmount: targetAmount,
             blockhash: blockhash
         )
-        
+
         let expectedAmountIn: UInt64 = 75705
         let transitAmount: UInt64 = 73280
         // swap data
@@ -462,7 +467,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 needsCreateTransitTokenAccount: false
             )
         )
-        
+
         // prepared transaction
         let transaction = transaction1?.preparedTransaction.transaction
         let expectedFee = transaction1?.preparedTransaction.expectedFee
@@ -497,10 +502,11 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .writable(publicKey: topUpPools[1].poolTokenMint.publicKey, isSigner: false),
                 .writable(publicKey: topUpPools[1].feeAccount.publicKey, isSigner: false),
                 .readonly(publicKey: .sysvarRent, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
-            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount.bytes + targetAmount.bytes
+            data: [RelayProgram.Index.topUpWithTransitiveSwap] + expectedAmountIn.bytes + transitAmount
+                .bytes + targetAmount.bytes
         ))
 
         // - Relay transfer SOL instruction
@@ -510,7 +516,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
                 .readonly(publicKey: .owner, isSigner: true),
                 .writable(publicKey: .relayAccount, isSigner: false),
                 .writable(publicKey: .feePayerAddress, isSigner: false),
-                .readonly(publicKey: SystemProgram.id, isSigner: false)
+                .readonly(publicKey: SystemProgram.id, isSigner: false),
             ],
             programId: RelayProgram.id(network: .mainnetBeta),
             data: [RelayProgram.Index.transferSOL] + expectedFee!.total.bytes
@@ -521,7 +527,7 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             2 * lamportsPerSignature + minimumTokenAccountBalance
         )
     }
-    
+
     // MARK: - Helpers
 
     private func getContext(
@@ -536,8 +542,8 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
             usageStatus: .init(
                 maxUsage: 100,
                 currentUsage: 100,
-                maxAmount: 10000000,
-                amountUsed: 10000000,
+                maxAmount: 10_000_000,
+                amountUsed: 10_000_000,
                 reachedLimitLinkCreation: true
             )
         )
@@ -546,13 +552,13 @@ final class TopUpTransactionBuilderWithTransitiveSwapWithOutFreeTransactionsTest
 
 private class MockSolanaAPIClient: MockSolanaAPIClientBase {
     private let testCase: Int
-    
+
     init(testCase: Int) {
         self.testCase = testCase
         super.init()
     }
-    
-    override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T : BufferLayout {
+
+    override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T: BufferLayout {
         switch account {
         case transitToken.address.base58EncodedString: // transit token
             switch testCase {
@@ -562,7 +568,21 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
                 let info = BufferInfo<SPLTokenAccountState>(
                     lamports: 0,
                     owner: TokenProgram.id.base58EncodedString,
-                    data: .init(mint: transitToken.mint, owner: SystemProgram.id, lamports: 0, delegateOption: 0, isInitialized: true, isFrozen: true, state: 0, isNativeOption: 0, rentExemptReserve: nil, isNativeRaw: 0, isNative: true, delegatedAmount: 0, closeAuthorityOption: 0),
+                    data: .init(
+                        mint: transitToken.mint,
+                        owner: SystemProgram.id,
+                        lamports: 0,
+                        delegateOption: 0,
+                        isInitialized: true,
+                        isFrozen: true,
+                        state: 0,
+                        isNativeOption: 0,
+                        rentExemptReserve: nil,
+                        isNativeRaw: 0,
+                        isNative: true,
+                        delegatedAmount: 0,
+                        closeAuthorityOption: 0
+                    ),
                     executable: false,
                     rentEpoch: 0
                 )

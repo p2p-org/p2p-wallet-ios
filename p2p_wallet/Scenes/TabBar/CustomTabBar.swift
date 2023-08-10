@@ -1,10 +1,3 @@
-//
-//  CustomTabBar.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import Combine
 import UIKit
 
@@ -46,13 +39,13 @@ final class CustomTabBar: UITabBar {
         }
         return 14
     }
-    
+
     override var clipsToBounds: Bool {
         didSet {
             middleButton.clipsToBounds = false
         }
     }
-    
+
     private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
     var middleButtonClicked: AnyPublisher<Void, Never> { middleButtonClickedSubject.eraseToAnyPublisher() }
 
@@ -76,15 +69,15 @@ final class CustomTabBar: UITabBar {
         size.height += Self.additionalHeight
         return size
     }
-    
-    override func draw(_ rect: CGRect) {
+
+    override func draw(_: CGRect) {
         // Create a rounded rect path
         let path = UIBezierPath(
             roundedRect: bounds,
             byRoundingCorners: [.topLeft, .topRight],
             cornerRadii: CGSize(width: 16, height: 16)
         )
-        
+
         // Set the fill color
         Asset.Colors.snow.color.setFill()
         path.fill()

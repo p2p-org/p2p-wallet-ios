@@ -35,14 +35,14 @@ struct PincodeChangeStartView: View {
                         style: .white,
                         isOn: $isOn
                     )
-                        .accessibilityIdentifier("PincodeChangeStartView.ExplainLayoutView.SliderButtonView")
-                        .onChange(of: isOn, perform: { newValue in
-                            if newValue {
-                                startChanging?()
-                                isOn = false
-                            }
-                        })
-                        .frame(height: 56)
+                    .accessibilityIdentifier("PincodeChangeStartView.ExplainLayoutView.SliderButtonView")
+                    .onChange(of: isOn, perform: { newValue in
+                        if newValue {
+                            startChanging?()
+                            isOn = false
+                        }
+                    })
+                    .frame(height: 56)
                 }
             }
         } hint: {

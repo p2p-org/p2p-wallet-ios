@@ -1,10 +1,9 @@
-import Combine
-import Resolver
 import AnalyticsManager
+import Combine
 import Foundation
+import Resolver
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
-
     let allButtonPressed = PassthroughSubject<Void, Never>()
     let amountFieldTap = PassthroughSubject<Void, Never>()
     let changeTokenPressed = PassthroughSubject<Void, Never>()
@@ -25,6 +24,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             decimalLength = Int(token.token.decimals)
         }
     }
+
     @Published var fiatAmountTextColor: ColorResource = .silver
     @Published var decimalLength: Int
     let accessibilityIdentifierTokenPrefix: String
@@ -36,6 +36,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     private var skipLogAmount = false
 
     // MARK: - Dependencies
+
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
 
@@ -43,10 +44,10 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         self.isFromToken = isFromToken
         self.stateMachine = stateMachine
         self.openKeyboardOnStart = openKeyboardOnStart
-        self.title = isFromToken ? L10n.youPay : L10n.youReceive
-        self.isFirstResponder = false
-        self.isEditable = isFromToken
-        self.token = stateMachine.currentState.fromToken
+        title = isFromToken ? L10n.youPay : L10n.youReceive
+        isFirstResponder = false
+        isEditable = isFromToken
+        token = stateMachine.currentState.fromToken
         decimalLength = Int(stateMachine.currentState.fromToken.token.decimals)
 
         accessibilityIdentifierTokenPrefix = isFromToken ? "from" : "to"
@@ -174,7 +175,7 @@ private extension SwapInputViewModel {
     }
 
     func isStateReady(status: JupiterSwapState.Status) -> Bool {
-        return status != .requiredInitialize && status != .initializing && status != .error(reason: .initializationFailed)
+        status != .requiredInitialize && status != .initializing && status != .error(reason: .initializationFailed)
     }
 
     func openKeyboardIfNeeded(status: JupiterSwapState.Status) {
@@ -188,9 +189,13 @@ private extension SwapInputViewModel {
 }
 
 // MARK: - Analytics
+
 private extension SwapInputViewModel {
     func logAllClick() {
-        analyticsManager.log(event: .swapChangingValueTokenAAll(tokenAName: token.token.symbol, tokenAValue: balance ?? 0))
+        analyticsManager.log(event: .swapChangingValueTokenAAll(
+            tokenAName: token.token.symbol,
+            tokenAValue: balance ?? 0
+        ))
     }
 
     func logChangeTokenClick() {
@@ -215,7 +220,8 @@ private extension SwapInputViewModel {
             analyticsManager.log(event: .swapChangingValueTokenB(
                 tokenBName: token.token.symbol,
                 tokenBValue: amount,
-                transactionSimulation: available(.swapTransactionSimulationEnabled)) // We need to send FT value
+                transactionSimulation: available(.swapTransactionSimulationEnabled)
+            ) // We need to send FT value
             )
         }
     }

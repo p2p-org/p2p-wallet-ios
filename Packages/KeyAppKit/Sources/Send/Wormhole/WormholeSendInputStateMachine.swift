@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 21.03.2023.
-//
-
 import Combine
 import Foundation
 import Wormhole

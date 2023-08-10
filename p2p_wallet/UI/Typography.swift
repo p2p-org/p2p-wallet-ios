@@ -1,8 +1,7 @@
-import UIKit
 import SwiftUI
+import UIKit
 
 public extension UIFont {
-    
     /// Typography styles
     enum Style: String, CaseIterable {
         case label2
@@ -17,28 +16,28 @@ public extension UIFont {
         case title1
         case largeTitle
     }
-    
+
     /// Font by style and weight
     static func font(of style: Style, weight: Weight = .regular) -> UIFont {
         UIFont.systemFont(ofSize: fontSize(of: style), weight: weight)
     }
-    
+
     static func monospaceFont(of style: Style, weight: Weight = .regular) -> UIFont {
         UIFont.monospacedSystemFont(ofSize: fontSize(of: style), weight: weight)
     }
-    
+
     /// Font by custom font size and weight
     static func font(of fontSize: CGFloat, weight: Weight = .regular) -> UIFont {
         UIFont.systemFont(ofSize: fontSize, weight: weight)
     }
-    
+
     /// Attributed string of selected style and weight
     static func text(_ text: String, of style: Style, weight: Weight = .regular) -> NSAttributedString {
         NSAttributedString.attributedString(with: text, of: style, weight: weight)
     }
-    
+
     // MARK: -
-    
+
     static func fontSize(of style: Style) -> CGFloat {
         var fontSize: CGFloat = 11
         switch style {
@@ -65,7 +64,7 @@ public extension UIFont {
         }
         return fontSize
     }
-    
+
     static func lineHeight(for style: Style) -> CGFloat {
         let font = UIFont.font(of: style)
         /// figma line height
@@ -88,7 +87,7 @@ public extension UIFont {
         }
         return max(0, lineHeight - font.lineHeight)
     }
-    
+
     static func letterSpacing(for style: Style) -> CGFloat {
         var letterSpacing = 0.07
         switch style {
@@ -131,7 +130,7 @@ public extension NSAttributedString {
         let string = NSAttributedString(string: text, attributes: [
             .font: monospace ? UIFont.monospaceFont(of: style, weight: weight) : UIFont.font(of: style, weight: weight),
             .paragraphStyle: paragraph,
-            .kern: UIFont.letterSpacing(for: style)
+            .kern: UIFont.letterSpacing(for: style),
         ])
         return string
     }
@@ -139,7 +138,7 @@ public extension NSAttributedString {
 
 public extension Text {
     func apply(style: UIFont.Style) -> some View {
-        self.kerning(UIFont.letterSpacing(for: style))
+        kerning(UIFont.letterSpacing(for: style))
             .font(Font(UIFont.font(of: style).withSize(UIFont.fontSize(of: style)) as CTFont))
             .lineSpacing(UIFont.lineHeight(for: style))
     }

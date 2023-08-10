@@ -1,5 +1,5 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct SwapSwitchButton: View {
     let action: PassthroughSubject<Void, Never>

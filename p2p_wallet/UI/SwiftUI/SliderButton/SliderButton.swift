@@ -1,6 +1,6 @@
-import UIKit
-import SwiftUI
 import BEPureLayout
+import SwiftUI
+import UIKit
 
 struct SliderButtonView: UIViewRepresentable {
     let title: String
@@ -12,15 +12,15 @@ struct SliderButtonView: UIViewRepresentable {
         self.title = title
         self.image = image
         self.style = style
-        self._isOn = isOn
+        _isOn = isOn
     }
 
-    func makeUIView(context: Context) -> SliderButton {
+    func makeUIView(context _: Context) -> SliderButton {
         SliderButton(image: image, title: title, style: style)
             .onChanged { self.isOn = $0 }
     }
 
-    func updateUIView(_ uiView: SliderButton, context: Context) {
+    func updateUIView(_ uiView: SliderButton, context _: Context) {
         uiView.title = title
         uiView.image = image
         uiView.set(isOn: isOn)
@@ -28,8 +28,8 @@ struct SliderButtonView: UIViewRepresentable {
 }
 
 final class SliderButton: BEView {
-
     // MARK: - Public variables
+
     var isOn: Bool = false
     var onChanged: ((Bool) -> Void)?
 
@@ -62,7 +62,7 @@ final class SliderButton: BEView {
     private let titleView = BERef<UILabel>()
     private var progressTitleView: UILabel?
     private let container = BERef<UIView>()
-    private let imageControl: UIView = UIView()
+    private let imageControl: UIView = .init()
 
     private let theme: SliderButtonAppearance
     private let softFeedback = UIImpactFeedbackGenerator(style: .soft)
@@ -113,17 +113,18 @@ final class SliderButton: BEView {
     }
 
     private func addImageControl() {
-        guard let frame = container.view?.frame.size, frame.width > .zero, container.view?.subviews.contains(imageControl) == false else { return }
+        guard let frame = container.view?.frame.size, frame.width > .zero,
+              container.view?.subviews.contains(imageControl) == false else { return }
 
         container.view?.addSubview(imageControl)
         imageControl.frame = CGRect(origin: Constants.position, size: Constants.imageControlSize)
     }
 
     private func addMaskLayer() {
-        guard self.bounds != containerMaskLayer.bounds else { return }
-        let roundPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 32)
+        guard bounds != containerMaskLayer.bounds else { return }
+        let roundPath = UIBezierPath(roundedRect: bounds, cornerRadius: 32)
         containerMaskLayer.path = roundPath.cgPath
-        self.layer.mask = containerMaskLayer
+        layer.mask = containerMaskLayer
     }
 
     private func setupImageControl() {
@@ -191,9 +192,11 @@ final class SliderButton: BEView {
         guard let rootView = container.view else { return }
         let translation = sender.translation(in: imageControl)
         let controlX = translation.x
-        let controlCenterX = controlX > 0 ? controlX + Constants.imageControlSize.width/2 :  controlX - Constants.imageControlSize.width / 2
+        let controlCenterX = controlX > 0 ? controlX + Constants.imageControlSize.width / 2 : controlX - Constants
+            .imageControlSize.width / 2
 
-        let moveToLeft = (controlX > 0 && controlCenterX < rootView.center.x) || (controlX < 0 && abs(controlCenterX) > rootView.center.x)
+        let moveToLeft = (controlX > 0 && controlCenterX < rootView.center.x) ||
+            (controlX < 0 && abs(controlCenterX) > rootView.center.x)
 
         switch sender.state {
         case .began:
@@ -204,11 +207,9 @@ final class SliderButton: BEView {
         case .changed:
             if isOn && (controlX >= 0 || imageControl.frame.minX <= Constants.padding) {
                 return
-            }
-            else if !isOn && (controlX <= 0 || imageControl.frame.maxX >= rootView.frame.width - Constants.padding) {
+            } else if !isOn && (controlX <= 0 || imageControl.frame.maxX >= rootView.frame.width - Constants.padding) {
                 return
-            }
-            else {
+            } else {
                 changeGradientAndControl(translation: translation)
             }
 
@@ -216,11 +217,9 @@ final class SliderButton: BEView {
             vibrate(with: softFeedback)
             if isOn && controlX >= 0 {
                 animateGradientAndControl(moveToLeft: false)
-            }
-            else if !isOn && controlX <= 0 {
+            } else if !isOn && controlX <= 0 {
                 animateGradientAndControl(moveToLeft: true)
-            }
-            else {
+            } else {
                 animateGradientAndControl(moveToLeft: moveToLeft)
             }
 
@@ -236,7 +235,10 @@ final class SliderButton: BEView {
         imageControl.frame.origin = CGPoint(x: initialPoint.x + translation.x, y: initialPoint.y)
         gradientLayer.frame = CGRect(
             origin: Constants.position,
-            size: CGSize(width: imageControl.frame.maxX - Constants.padding * 2, height: Constants.imageControlSize.height)
+            size: CGSize(
+                width: imageControl.frame.maxX - Constants.padding * 2,
+                height: Constants.imageControlSize.height
+            )
         )
         fillProgressLabelIfNeeded(translation: translation)
         CATransaction.commit()
@@ -254,7 +256,9 @@ final class SliderButton: BEView {
             let newSize = CGSize(width: newWidth, height: titleView.frame.height)
             progressTitleView.bounds = CGRect(origin: .zero, size: newSize)
             progressTitleView.frame = CGRect(origin: titleView.frame.origin, size: newSize)
-        } else if translation.x < 0 && abs(translation.x) + Constants.imageControlSize.width > (container.frame.maxX - titleView.frame.maxX) {
+        } else if translation.x < 0 && abs(translation.x) + Constants.imageControlSize
+            .width > (container.frame.maxX - titleView.frame.maxX)
+        {
             var newWidth = titleView.frame.maxX + translation.x - Constants.imageControlSize.width
             newWidth = newWidth < 0 ? 0 : newWidth
 
@@ -270,10 +274,17 @@ final class SliderButton: BEView {
 
         let padding = Constants.padding
 
-        let newGradientLayerWidth = moveToLeft ? Constants.imageControlSize.width : containerView.frame.maxX - padding * 2
-        let bounds = CGRect(origin: .zero, size: CGSize(width: newGradientLayerWidth, height: Constants.imageControlSize.height))
+        let newGradientLayerWidth = moveToLeft ? Constants.imageControlSize.width : containerView.frame
+            .maxX - padding * 2
+        let bounds = CGRect(
+            origin: .zero,
+            size: CGSize(width: newGradientLayerWidth, height: Constants.imageControlSize.height)
+        )
 
-        let newImageControlPosition = moveToLeft ? Constants.position : CGPoint(x: containerView.frame.maxX - imageControl.frame.width - padding, y: padding)
+        let newImageControlPosition = moveToLeft ? Constants.position : CGPoint(
+            x: containerView.frame.maxX - imageControl.frame.width - padding,
+            y: padding
+        )
 
         CATransaction.begin()
         CATransaction.setCompletionBlock { self.updateIfNeeded() }
@@ -308,7 +319,10 @@ final class SliderButton: BEView {
 
         guard isLeftMoveNotEnded || isRightMoveNotEnded else { return }
 
-        let newLabelBounds = CGRect(origin: .zero, size: CGSize(width: moveToLeft ? 0 : titleView.frame.width, height: titleView.frame.height))
+        let newLabelBounds = CGRect(
+            origin: .zero,
+            size: CGSize(width: moveToLeft ? 0 : titleView.frame.width, height: titleView.frame.height)
+        )
 
         let labelAnimation = CABasicAnimation(keyPath: "bounds")
         labelAnimation.fromValue = progressTitleView.bounds
@@ -340,7 +354,10 @@ final class SliderButton: BEView {
         )
         container.view?.sendSubviewToBack(titleView.view!)
 
-        let size = CGSize(width: imageControl.frame.maxX - Constants.padding * 2, height: Constants.imageControlSize.height)
+        let size = CGSize(
+            width: imageControl.frame.maxX - Constants.padding * 2,
+            height: Constants.imageControlSize.height
+        )
         gradientLayer.frame = CGRect(origin: Constants.position, size: size)
         gradientLayer.anchorPoint = .zero
         gradientLayer.masksToBounds = true
@@ -348,7 +365,10 @@ final class SliderButton: BEView {
             gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
             gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
             gradientLayer.locations = [0.0, 1.0]
-            gradientLayer.colors = [UIColor(resource: .lime).cgColor, UIColor(resource: .lime).withAlphaComponent(0).cgColor]
+            gradientLayer.colors = [
+                UIColor(resource: .lime).cgColor,
+                UIColor(resource: .lime).withAlphaComponent(0).cgColor,
+            ]
         } else {
             gradientLayer.backgroundColor = UIColor(resource: .lime).cgColor
         }
@@ -375,7 +395,7 @@ private class SliderContainer: BEView {
         super.init(frame: .zero)
     }
 
-    final override func commonInit() {
+    override final func commonInit() {
         super.commonInit()
         super.addSubview(child)
         child.autoCenterInSuperview()

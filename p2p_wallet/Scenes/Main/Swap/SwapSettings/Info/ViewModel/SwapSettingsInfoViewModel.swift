@@ -3,26 +3,25 @@ import Foundation
 
 @MainActor
 final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
-    
     enum LoadableFee {
         case loading
         case loaded([Fee])
     }
-    
+
     let image: ImageResource
     let title: String
     let subtitle: String
     let buttonTitle: String
 
     @Published var loadableFee: LoadableFee = .loaded([])
-    
+
     // MARK: - Output
-    
+
     private let closeSubject = PassthroughSubject<Void, Never>()
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
-    
+
     // MARK: - Init
-    
+
     init(strategy: Strategy) {
         switch strategy {
         case .enjoyFreeTransaction:
@@ -47,7 +46,7 @@ final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
             buttonTitle = L10n.okay + "👍"
         }
     }
-    
+
     func closeClicked() {
         closeSubject.send()
     }

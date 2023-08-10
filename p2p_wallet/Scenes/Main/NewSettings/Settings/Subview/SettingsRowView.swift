@@ -1,19 +1,11 @@
-//
-//  SettingsRow.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07/06/2023.
-//
-
 import Foundation
 import SwiftUI
 
 struct SettingsRowView<Leading: View>: View {
-    
     let title: String
     let withArrow: Bool
     @ViewBuilder let leading: Leading
-    
+
     var body: some View {
         HStack(spacing: 12) {
             leading

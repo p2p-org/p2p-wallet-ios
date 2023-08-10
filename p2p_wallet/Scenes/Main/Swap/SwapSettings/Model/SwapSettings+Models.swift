@@ -9,7 +9,7 @@ struct SwapSettingsRouteInfo: Identifiable, Equatable {
         self.description = description
         self.tokensChain = tokensChain
     }
-    
+
     let id: String
     let name: String
     let description: String
@@ -24,12 +24,12 @@ struct JupiterSwapStateInfo: Equatable {
     let liquidityFee: [SwapFeeInfo]
     let minimumReceived: SwapTokenAmountInfo?
     let exchangeRateInfo: String?
-    
+
     var estimatedFees: String? {
         let estimatedFees = (liquidityFee + [networkFee, accountCreationFee].compactMap { $0 })
             .compactMap(\.amountInFiat)
             .reduce(0.0, +)
-        
+
         return estimatedFees > 0 ? "≈ " + estimatedFees.formattedFiat() : nil
     }
 }
@@ -67,14 +67,14 @@ extension JupiterSwapState {
             ),
             accountCreationFee: accountCreationFee,
             liquidityFee: liquidityFee,
-            minimumReceived: minimumReceivedAmount == nil ? nil: .init(
+            minimumReceived: minimumReceivedAmount == nil ? nil : .init(
                 amount: minimumReceivedAmount!,
                 token: toToken.token.symbol
             ),
             exchangeRateInfo: exchangeRateInfo
         )
     }
-    
+
     var isSettingsLoading: Bool {
         // observe stateMachine status
         switch status {

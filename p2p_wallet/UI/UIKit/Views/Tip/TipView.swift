@@ -1,8 +1,7 @@
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class TipView: BECompositionView {
-
     // MARK: - Variables
 
     var nextButtonHandler: (() -> Void)?
@@ -26,7 +25,7 @@ final class TipView: BECompositionView {
         pointerPosition: TipPointerPosition
     ) {
         self.content = content
-        self.appearance = TipAppearance(
+        appearance = TipAppearance(
             theme: theme,
             pointerPosition: pointerPosition,
             pointerInset: Constants.pointerSize.height
@@ -102,9 +101,9 @@ final class TipView: BECompositionView {
             }
             .margin(UIEdgeInsets(all: 12))
         }.backgroundColor(color: appearance.backgroundColor)
-        .box(cornerRadius: Constants.cornerRadius)
-        .bind(container)
-        .margin(appearance.pointerMarginSide)
+            .box(cornerRadius: Constants.cornerRadius)
+            .bind(container)
+            .margin(appearance.pointerMarginSide)
     }
 
     // MARK: - Private
@@ -123,59 +122,107 @@ final class TipView: BECompositionView {
 
         switch appearance.pointerPosition {
         case .topLeft:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint)
+            )
             shapeLayerPosition = CGPoint(x: bounds.minX + margin, y: bounds.minY + size.height)
 
         case .topCenter:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint)
+            )
             shapeLayerPosition = CGPoint(x: bounds.maxX / 2 - size.width, y: bounds.minY + size.height)
 
         case .topRight:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: -curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: -curveYPoint)
+            )
             shapeLayerPosition = CGPoint(x: bounds.maxX - margin - size.width, y: bounds.minY + size.height)
 
         case .rightTop:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.maxX - size.height, y: bounds.minY + margin - size.width / 2)
 
         case .rightCenter:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.maxX - size.height, y: bounds.maxY / 2 - size.width / 2)
 
         case .rightBottom:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.maxX - size.height, y: bounds.maxY - margin - size.width / 2)
 
         case .bottomLeft:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.minX + margin, y: bounds.maxY - size.height)
 
         case .bottomCenter:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint)
+            )
 
-            shapeLayerPosition = CGPoint(x: bounds.maxX / 2 - size.width / 2, y: bounds.maxY -  size.height)
+            shapeLayerPosition = CGPoint(x: bounds.maxX / 2 - size.width / 2, y: bounds.maxY - size.height)
 
         case .bottomRight:
-            trianglePath.addCurve(to: CGPoint(x: size.width, y: .zero), controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint), controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint))
+            trianglePath.addCurve(
+                to: CGPoint(x: size.width, y: .zero),
+                controlPoint1: CGPoint(x: size.width / 2, y: curveYPoint),
+                controlPoint2: CGPoint(x: size.width / 2, y: curveYPoint)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.maxX - margin, y: bounds.maxY - size.height)
 
         case .leftTop:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.minX + size.height, y: bounds.minY + margin)
-            
+
         case .leftCenter:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.minX + size.height, y: bounds.maxY / 2 - size.width)
 
         case .leftBottom:
-            trianglePath.addCurve(to: CGPoint(x: .zero, y: size.width), controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2), controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2))
+            trianglePath.addCurve(
+                to: CGPoint(x: .zero, y: size.width),
+                controlPoint1: CGPoint(x: -curveYPoint, y: size.width / 2),
+                controlPoint2: CGPoint(x: -curveYPoint, y: size.width / 2)
+            )
 
             shapeLayerPosition = CGPoint(x: bounds.minX + size.height, y: bounds.maxY - margin)
 
@@ -191,7 +238,7 @@ final class TipView: BECompositionView {
         shapeLayer.position = shapeLayerPosition
 
         layer.addSublayer(shapeLayer)
-        self.pointerLayer = shapeLayer
+        pointerLayer = shapeLayer
     }
 
     private func drawShadow() {
@@ -203,6 +250,7 @@ final class TipView: BECompositionView {
 }
 
 // MARK: - Constants
+
 extension TipView {
     private enum Constants {
         static let pointerSize = CGSize(width: 12, height: 8)

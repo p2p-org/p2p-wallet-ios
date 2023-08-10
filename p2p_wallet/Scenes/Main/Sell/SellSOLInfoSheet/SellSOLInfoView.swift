@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct SellSOLInfoView: View {
-
     let actionButtonPressed: () -> Void
 
     var body: some View {
@@ -44,4 +43,3 @@ struct SellSOLInfoView_Previews: PreviewProvider {
         SellSOLInfoView(actionButtonPressed: {})
     }
 }
-

@@ -8,9 +8,9 @@ struct SliderActionButtonData {
 
 struct SliderActionButton: View {
     @State private var animatedFinish: Bool = false
-    
+
     @Binding var isSliderOn: Bool
-    
+
     let data: SliderActionButtonData
     let showFinished: Bool
 

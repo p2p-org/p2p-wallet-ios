@@ -1,13 +1,9 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
-import AnalyticsManager
 
 enum RestoreWalletNavigation {
     case root(window: UIWindow)
@@ -125,7 +121,7 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
                 self.result.send(.breakProcess)
                 switch navigation {
                 case .root: break
-                case .child: self.navigationController.dismiss(animated: true)
+                case .child: navigationController.dismiss(animated: true)
                 }
             }
             self.result.send(completion: .finished)
@@ -139,15 +135,13 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         if to.step >= (from?.step ?? -1) {
             if case .restoreSocial(.signInProgress, _) = to {
                 navigationController.fadeTo(vc)
-            }
-            else {
+            } else {
                 navigationController.setViewControllers([vc], animated: true)
             }
         } else {
             if let from = from, case .restoreSocial(.signInProgress, _) = from {
                 navigationController.fadeOut(vc)
-            }
-            else {
+            } else {
                 navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
                 navigationController.popToViewController(vc, animated: true)
             }
@@ -223,7 +217,7 @@ private extension RestoreWalletCoordinator {
                 }
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
         }

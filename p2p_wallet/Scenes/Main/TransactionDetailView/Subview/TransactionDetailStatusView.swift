@@ -31,7 +31,6 @@ struct TransactionDetailStatusAppearance {
     }
 }
 
-
 struct TransactionDetailStatusView: View {
     let status: TransactionDetailStatus
     let context: String?
@@ -49,8 +48,8 @@ struct TransactionDetailStatusView: View {
         self.status = status
         self.context = context
         self.errorMessageTapAction = errorMessageTapAction
-        self.currentAppearance = TransactionDetailStatusAppearance(status: status)
-        self.previousAppearance = nil
+        currentAppearance = TransactionDetailStatusAppearance(status: status)
+        previousAppearance = nil
     }
 
     private let maxScaleEffect: CGFloat = 1.0
@@ -124,7 +123,7 @@ struct TransactionDetailStatusView: View {
 
 private extension Text {
     func messageStyled() -> some View {
-        return self.apply(style: .text4)
+        apply(style: .text4)
             .foregroundColor(Color(.night))
             .fixedSize(horizontal: false, vertical: true)
     }

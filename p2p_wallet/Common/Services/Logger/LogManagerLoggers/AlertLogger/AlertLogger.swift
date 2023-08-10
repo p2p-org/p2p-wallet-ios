@@ -5,7 +5,7 @@ final class AlertLogger: LogManagerLogger {
 
     private let url = URL(string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!)!
 
-    func log(event: String, logLevel: LogLevel, data: String?) {
+    func log(event: String, logLevel _: LogLevel, data: String?) {
         Task {
             // send request to endpoint
             var urlRequest = URLRequest(url: url)
@@ -16,7 +16,6 @@ final class AlertLogger: LogManagerLogger {
             _ = try? await URLSession.shared.data(for: urlRequest)
         }
     }
-
 }
 
 // MARK: - Models

@@ -3,7 +3,6 @@ import SwiftUI
 
 /// View of `CryptoPending` scene
 struct CryptoPendingView: View {
-    
     var body: some View {
         NavigationView {
             content

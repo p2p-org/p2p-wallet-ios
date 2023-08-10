@@ -4,8 +4,8 @@ import PureLayout
 import UIKit
 
 class SnackBar: BECompositionView {
-
     // MARK: - Properties
+
     var autoHide: Bool = true
     var hideCompletion: (() -> Void)?
 
@@ -31,7 +31,7 @@ class SnackBar: BECompositionView {
     let leadingView = BERef<UIView>()
     let trailing: UIView?
 
-    var appearance: Appearance = Appearance(
+    var appearance: Appearance = .init(
         titleFontSize: 24.0,
         textFontSize: 15.0,
         textFontWeight: .regular,
@@ -68,9 +68,10 @@ class SnackBar: BECompositionView {
                         height: 24,
                         image: icon,
                         contentMode: .scaleAspectFit,
-                        tintColor: appearance.iconTintColor)
-                        .frame(width: 24, height: 24)
-                        .bind(leadingView)
+                        tintColor: appearance.iconTintColor
+                    )
+                    .frame(width: 24, height: 24)
+                    .bind(leadingView)
                 }
 
                 if title != nil {
@@ -94,12 +95,12 @@ class SnackBar: BECompositionView {
                     textColor: .init(resource: .snow),
                     numberOfLines: appearance.numberOnLines
                 ).bind(textView)
-                .margin(.init(top: 20, left: 0, bottom: 20, right: 0))
-                .setup { view in
-                    view.setContentHuggingPriority(.defaultLow, for: .horizontal)
-                    view.setContentCompressionResistancePriority(.required, for: .horizontal)
-                }
-                
+                    .margin(.init(top: 20, left: 0, bottom: 20, right: 0))
+                    .setup { view in
+                        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+                        view.setContentCompressionResistancePriority(.required, for: .horizontal)
+                    }
+
                 UIView.spacer
 
                 if let trailing = trailing {
@@ -107,8 +108,8 @@ class SnackBar: BECompositionView {
                 }
             }
         }.backgroundColor(color: .init(resource: .night))
-        .box(cornerRadius: appearance.cornerRadius)
-        .border(width: 1, color: appearance.borderColor)
+            .box(cornerRadius: appearance.cornerRadius)
+            .border(width: 1, color: appearance.borderColor)
     }
 
     @available(*, unavailable)

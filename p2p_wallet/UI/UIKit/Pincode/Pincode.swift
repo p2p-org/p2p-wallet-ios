@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import BEPureLayout
 import UIKit
 
@@ -229,7 +225,7 @@ final class PinCode: BEView {
         guard let resetingDelayInSeconds = resetingDelayInSeconds else {
             return
         }
-        
+
         // clear pincode after 3 seconds
         isPresentingError = true
         DispatchQueue.main.asyncAfter(

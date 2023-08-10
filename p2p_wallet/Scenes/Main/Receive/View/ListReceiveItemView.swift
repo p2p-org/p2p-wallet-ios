@@ -41,7 +41,7 @@ struct ListReceiveItemView_Previews: PreviewProvider {
             description: "0x9b7e823BC5578bcBeA74ba04F003167c590Aea0d",
             showTopCorners: true,
             showBottomCorners: true,
-            isShort: false)
-        )
+            isShort: false
+        ))
     }
 }

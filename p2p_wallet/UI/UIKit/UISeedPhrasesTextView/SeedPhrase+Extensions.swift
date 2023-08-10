@@ -2,14 +2,16 @@ import Foundation
 
 extension String {
     private func removingExtraSpaces() -> String {
-        return self.replacingOccurrences(of: "[\\s\n]+", with: " ", options: .regularExpression, range: nil)
+        replacingOccurrences(of: "[\\s\n]+", with: " ", options: .regularExpression, range: nil)
     }
+
     private var lettersAndSpaces: String {
-        return String(unicodeScalars.filter({ scalar in
+        String(unicodeScalars.filter { scalar in
             CharacterSet.englishLowercaseLetters.contains(scalar) ||
-            CharacterSet(charactersIn: " ").contains(scalar)
-        }))
+                CharacterSet(charactersIn: " ").contains(scalar)
+        })
     }
+
     public var seedPhraseFormatted: String {
         lowercased()
             .lettersAndSpaces

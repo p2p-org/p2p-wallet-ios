@@ -1,7 +1,6 @@
 import SwiftUI
 
 public struct NewCircularProgressIndicator: View {
-
     private let backgroundColor: Color
     private let foregroundColor: Color
     private let size: CGSize
@@ -31,35 +30,39 @@ public struct NewCircularProgressIndicator: View {
                 .frame(width: size.width, height: size.height)
 
             Circle()
-                .trim(from: animateStart ? 1/3 : 1/9, to: animateEnd ? 2/5 : 1)
+                .trim(from: animateStart ? 1 / 3 : 1 / 9, to: animateEnd ? 2 / 5 : 1)
                 .stroke(lineWidth: lineWidth)
                 .rotationEffect(.degrees(isCircleRotating ? 360 : 0))
                 .frame(width: size.width, height: size.height)
                 .foregroundColor(foregroundColor)
-                .onAppear() {
+                .onAppear {
                     withAnimation(Animation
                         .linear(duration: 1)
-                        .repeatForever(autoreverses: false)) {
-                            self.isCircleRotating.toggle()
-                        }
+                        .repeatForever(autoreverses: false))
+                    {
+                        self.isCircleRotating.toggle()
+                    }
                     withAnimation(Animation
                         .linear(duration: 1)
                         .delay(0.5)
-                        .repeatForever(autoreverses: true)) {
-                            self.animateStart.toggle()
-                        }
+                        .repeatForever(autoreverses: true))
+                    {
+                        self.animateStart.toggle()
+                    }
                     withAnimation(Animation
                         .linear(duration: 1)
                         .delay(1)
-                        .repeatForever(autoreverses: true)) {
-                            self.animateEnd.toggle()
-                        }
+                        .repeatForever(autoreverses: true))
+                    {
+                        self.animateEnd.toggle()
+                    }
                 }
         }
     }
 }
 
 // MARK: - Preview
+
 struct NewCircularProgressIndicator_Previews: PreviewProvider {
     static var previews: some View {
         NewCircularProgressIndicator(

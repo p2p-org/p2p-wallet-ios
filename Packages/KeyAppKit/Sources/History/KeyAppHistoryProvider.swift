@@ -4,7 +4,8 @@ import Onboarding
 import SolanaSwift
 
 public protocol KeyAppHistoryProvider {
-    func transactions(secretKey: Data, pubKey: String, mint: String?, offset: Int, limit: Int) async throws -> [HistoryTransaction]
+    func transactions(secretKey: Data, pubKey: String, mint: String?, offset: Int, limit: Int) async throws
+        -> [HistoryTransaction]
 }
 
 public enum KeyAppHistoryProviderError: Error {
@@ -20,7 +21,9 @@ public class KeyAppHistoryProviderImpl: KeyAppHistoryProvider {
         self.endpoint = URL(string: endpoint)!
     }
 
-    public func transactions(secretKey: Data, pubKey: String, mint: String?, offset: Int, limit: Int = 100) async throws -> [HistoryTransaction] {
+    public func transactions(secretKey: Data, pubKey: String, mint: String?, offset: Int,
+                             limit: Int = 100) async throws -> [HistoryTransaction]
+    {
         var params = TransactionsRequestParams(
             pubKey: pubKey,
             limit: UInt64(limit),
@@ -36,10 +39,13 @@ public class KeyAppHistoryProviderImpl: KeyAppHistoryProvider {
 
         // Request
         let responseData = try await networkManager.requestData(request: request)
-        
+
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let response = try JSONDecoder().decode(KeyAppKitCore.JSONRPCResponse<HistoryTransactionResult, String>.self, from: responseData)
+        let response = try JSONDecoder().decode(
+            KeyAppKitCore.JSONRPCResponse<HistoryTransactionResult, String>.self,
+            from: responseData
+        )
         if let error = response.error {
             throw KeyAppHistoryProviderError.any(code: error.code, message: error.message)
         }

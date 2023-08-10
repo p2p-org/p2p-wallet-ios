@@ -1,11 +1,11 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import Resolver
+import SafariServices
+import Sell
 import SwiftUI
 import UIKit
-import SafariServices
-import Resolver
-import Sell
 
 enum SellCoordinatorResult {
     case completed
@@ -14,7 +14,6 @@ enum SellCoordinatorResult {
 }
 
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
-
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
@@ -37,8 +36,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         self.initialAmountInToken = initialAmountInToken
         self.navigationController = navigationController
     }
-    
+
     // MARK: - Methods
+
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create viewController
         viewModel = SellViewModel(initialBaseAmount: initialAmountInToken, navigation: navigation)
@@ -46,7 +46,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
         setTitle(to: vc)
-        
+
         // scene navigation
         navigation
             .compactMap { $0 }
@@ -67,18 +67,18 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.viewModel?.isEnteringBaseAmount = false
             })
-            .flatMap({ [unowned self, unowned vc] _ in
+            .flatMap { [unowned self, unowned vc] _ in
                 self.coordinate(to: SellSOLInfoCoordinator(parentController: vc))
                     .handleEvents(receiveOutput: { [weak self] in
                         self?.viewModel?.isEnteringBaseAmount = true
                     })
-            })
+            }
             .sink {}
             .store(in: &subscriptions)
 
         vc.deallocatedPublisher()
             .sink { [weak self] _ in
-                guard let self else {return}
+                guard let self else { return }
                 if !self.isCompleted {
                     self.resultSubject.send(.none)
                 }
@@ -99,7 +99,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
 
     private func navigate(to scene: SellNavigation) -> AnyPublisher<Void, Never> {
         switch scene {
-        case .webPage(let url):
+        case let .webPage(url):
             return navigateToProviderWebPage(url: url)
                 .deallocatedPublisher()
                 .handleEvents(receiveCompletion: { [weak self] _ in
@@ -108,7 +108,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                     self?.viewModel.shouldNotShowKeyboard = false
                 }).eraseToAnyPublisher()
 
-        case .showPending(let transactions, let fiat):
+        case let .showPending(transactions, fiat):
             return Publishers.MergeMany(
                 transactions.map { transaction in
                     coordinate(
@@ -119,42 +119,42 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             navigatedFromMoonpay: navigatedFromMoonpay
                         )
                     )
-                    .map {($0, transaction)}
+                    .map { ($0, transaction) }
                 }
             )
-                .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
-                    guard let self = self else { return }
-                    switch result {
-                    case .transactionRemoved:
-                        self.navigationController.popViewController(animated: true)
-                    case .cancelled:
-                        // pop to rootViewController and resultSubject.send(.none)
+            .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
+                guard let self = self else { return }
+                switch result {
+                case .transactionRemoved:
+                    self.navigationController.popViewController(animated: true)
+                case .cancelled:
+                    // pop to rootViewController and resultSubject.send(.none)
+                    self.navigationController.popToRootViewController(animated: true)
+                case .cashOutInterupted:
+                    if self.navigatedFromMoonpay {
+                        self.resultSubject.send(.interupted)
+                    } else {
                         self.navigationController.popToRootViewController(animated: true)
-                    case .cashOutInterupted:
-                        if self.navigatedFromMoonpay {
-                            self.resultSubject.send(.interupted)
-                        } else {
-                            self.navigationController.popToRootViewController(animated: true)
-                        }
-                    case .transactionSent(let transaction):
-                        // mark as completed
-                        self.isCompleted = true
-                        
-                        // pop to rootViewController
-                        self.navigationController.popToRootViewController(animated: true)
-                        
-                        // mark as pending handly, as server may return status a little bit later
-                        Task {
-                            await self.sellDataService.markAsPending(id: sellTransaction.id)
-                        }
-                        
-                        // Show status
-                        self.navigateToSendTransactionStatus(model: transaction)
                     }
-                    self.navigatedFromMoonpay = false
-                })
-                .map { _ in }
-                .eraseToAnyPublisher()
+                case let .transactionSent(transaction):
+                    // mark as completed
+                    self.isCompleted = true
+
+                    // pop to rootViewController
+                    self.navigationController.popToRootViewController(animated: true)
+
+                    // mark as pending handly, as server may return status a little bit later
+                    Task {
+                        await self.sellDataService.markAsPending(id: sellTransaction.id)
+                    }
+
+                    // Show status
+                    self.navigateToSendTransactionStatus(model: transaction)
+                }
+                self.navigatedFromMoonpay = false
+            })
+            .map { _ in }
+            .eraseToAnyPublisher()
 
         case .moonpayInfo:
             moonpayInfoViewController = UIHostingController(
@@ -168,9 +168,10 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             self?.viewModel.openProviderWebView()
                         }
                     },
-                    isChecked: false)
+                    isChecked: false
+                )
             )
-            guard let moonpayInfoViewController else {  return Just(()).eraseToAnyPublisher() }
+            guard let moonpayInfoViewController else { return Just(()).eraseToAnyPublisher() }
             transition = PanelTransition()
             transition?.containerHeight = 541.adaptiveHeight
             transition?.dimmClicked.sink(receiveValue: { [weak self] _ in
@@ -179,7 +180,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             moonpayInfoViewController.view.layer.cornerRadius = 20
             moonpayInfoViewController.transitioningDelegate = transition
             moonpayInfoViewController.modalPresentationStyle = .custom
-            self.navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
+            navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
             return moonpayInfoViewController.deallocatedPublisher()
         }
     }
@@ -191,7 +192,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         analyticsManager.log(event: .sellMoonpay)
         return vc
     }
-    
+
     private func navigateToSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
             .sink(receiveCompletion: { [weak self] _ in

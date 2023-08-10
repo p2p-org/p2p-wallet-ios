@@ -6,11 +6,10 @@ protocol TipManagerDelegate: AnyObject {
 }
 
 final class TipManager {
-
     weak var delegate: TipManagerDelegate?
     private weak var currentTip: TipView?
 
-    init() { }
+    init() {}
 
     func createTip(content: TipContent, theme: TipTheme, pointerPosition: TipPointerPosition) -> UIView {
         hideCurrentTip()
@@ -20,8 +19,7 @@ final class TipManager {
         tipView.nextButtonHandler = { [weak self] in
             if content.count == content.currentNumber {
                 self?.hideCurrentTip()
-            }
-            else {
+            } else {
                 self?.delegate?.next(after: content.currentNumber)
             }
         }
@@ -30,7 +28,7 @@ final class TipManager {
             self?.hideCurrentTip()
         }
 
-        self.currentTip = tipView
+        currentTip = tipView
 
         return tipView
     }

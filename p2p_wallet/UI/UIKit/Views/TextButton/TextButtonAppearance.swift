@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import Foundation
 import UIKit
 
@@ -10,7 +6,8 @@ struct TextButtonAppearance {
     /// A background color of button.
     let backgroundColor: UIColor
 
-    /// A foreground color of button. This value affects to title and icon. Icon should be rendered as template to have effect.
+    /// A foreground color of button. This value affects to title and icon. Icon should be rendered as template to have
+    /// effect.
     let foregroundColor: UIColor
 
     /// A font of title

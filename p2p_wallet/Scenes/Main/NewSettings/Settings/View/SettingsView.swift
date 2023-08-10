@@ -177,7 +177,9 @@ struct SettingsView: View {
         }
     #endif
 
-    private func cellView<Content: View>(image: ImageResource?, title: String, rightContent: () -> Content) -> some View {
+    private func cellView<Content: View>(image: ImageResource?, title: String,
+                                         rightContent: () -> Content) -> some View
+    {
         HStack(spacing: 8) {
             cellView(image: image, title: title, withArrow: false)
             Spacer()

@@ -1,14 +1,13 @@
 import SwiftUI
 
 struct SendViaLinkClaimErrorView: View {
-    
     let title: String
     let subtitle: String?
     let image: ImageResource
     @Binding var isLoading: Bool
     let reloadClicked: () -> Void
     let cancelClicked: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 39) {
             if let subtitle {

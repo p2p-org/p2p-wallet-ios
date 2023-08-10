@@ -1,6 +1,6 @@
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 extension UIView {
     @discardableResult

@@ -1,10 +1,3 @@
-//
-//  LABiometryType+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 26/11/2020.
-//
-
 import Foundation
 import LocalAuthentication
 

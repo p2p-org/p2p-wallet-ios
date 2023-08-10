@@ -1,10 +1,3 @@
-//
-//  SwiftyUserDefaults+Workaround.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 12/04/2022.
-//
-
 import Foundation
 
 public extension DefaultsSerializable where Self: Codable {

@@ -4,13 +4,20 @@ import UIKit
 
 extension SnackBar {
     @discardableResult
-    convenience init(title: String? = nil, icon: UIImage? = nil, text: String, buttonTitle: String? = nil, buttonAction: (() -> Void)? = nil) {
-        let button = buttonTitle != nil ? TextButton(title: buttonTitle ?? "", style: .primary, size: .small).onPressed { _ in
-            buttonAction?()
-        } : nil
+    convenience init(
+        title: String? = nil,
+        icon: UIImage? = nil,
+        text: String,
+        buttonTitle: String? = nil,
+        buttonAction: (() -> Void)? = nil
+    ) {
+        let button = buttonTitle != nil ? TextButton(title: buttonTitle ?? "", style: .primary, size: .small)
+            .onPressed { _ in
+                buttonAction?()
+            } : nil
         self.init(title: title, icon: icon, text: text, trailing: button)
     }
-    
+
     /// Show snackbar on top of view controller.
     ///
     /// - Parameters:
@@ -21,11 +28,11 @@ extension SnackBar {
         // add subview and layout
         view.addSubview(self)
         autoPinEdgesToSuperviewSafeArea(with: .init(x: 4, y: 5), excludingEdge: .bottom)
-        
+
         // set properties
         self.autoHide = autoHide
         self.hideCompletion = hideCompletion
-        
+
         // present using SnackBarManager
         SnackBarManager.shared.present(self)
     }

@@ -1,10 +1,3 @@
-//
-//  EarnBannerView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 30/09/2022.
-//
-
 import SwiftUI
 
 struct EarnBannerView: View {
@@ -34,8 +27,8 @@ struct EarnBannerView: View {
 
                     Text(L10n.stakeYourTokensAndGetRewardsEveryDay)
 //                        ._lineHeightMultiple(1.26)
-                        .font(uiFont: .systemFont(ofSize: 14))
-                        .foregroundColor(Color(.bdbdbd))
+                            .font(uiFont: .systemFont(ofSize: 14))
+                            .foregroundColor(Color(.bdbdbd))
                 }
                 .padding(.top, 23)
                 .padding(.leading, 24)

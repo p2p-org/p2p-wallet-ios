@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import BEPureLayout
 import Foundation
 import PureLayout
@@ -56,7 +52,12 @@ class TextButton: ButtonControl<TextButtonAppearance> {
 
     // MARK: Init
 
-    init(leadingImage: UIImage? = nil, title: String, trailingImage: UIImage? = nil, themes: ThemeState<TextButtonAppearance>) {
+    init(
+        leadingImage: UIImage? = nil,
+        title: String,
+        trailingImage: UIImage? = nil,
+        themes: ThemeState<TextButtonAppearance>
+    ) {
         self.leadingImage = leadingImage
         self.trailingImage = trailingImage
         self.title = title
@@ -85,10 +86,13 @@ class TextButton: ButtonControl<TextButtonAppearance> {
                         .frame(width: 20, height: 20)
                         .hidden(leadingImage == nil)
                         .setup { view in view.tintColor = theme.foregroundColor }
-                    CircularProgressIndicator(backgroundCircularColor: theme.loadingBackgroundColor, foregroundCircularColor: theme.foregroundColor)
-                        .bind(leadingLoadingIndicator)
-                        .hidden(!isLoading)
-                        .frame(width: 20, height: 20)
+                    CircularProgressIndicator(
+                        backgroundCircularColor: theme.loadingBackgroundColor,
+                        foregroundCircularColor: theme.foregroundColor
+                    )
+                    .bind(leadingLoadingIndicator)
+                    .hidden(!isLoading)
+                    .frame(width: 20, height: 20)
                     BEContainer()
                         .frame(width: theme.iconSpacing)
                         .hidden(leadingImage == nil)
@@ -114,10 +118,13 @@ class TextButton: ButtonControl<TextButtonAppearance> {
                         .frame(width: 20, height: 20)
                         .hidden(trailingImage == nil)
                         .setup { view in view.tintColor = theme.foregroundColor }
-                    CircularProgressIndicator(backgroundCircularColor: theme.loadingBackgroundColor, foregroundCircularColor: theme.foregroundColor)
-                        .bind(trailingLoadingIndicator)
-                        .hidden(!isLoading)
-                        .frame(width: 20, height: 20)
+                    CircularProgressIndicator(
+                        backgroundCircularColor: theme.loadingBackgroundColor,
+                        foregroundCircularColor: theme.foregroundColor
+                    )
+                    .bind(trailingLoadingIndicator)
+                    .hidden(!isLoading)
+                    .frame(width: 20, height: 20)
                 }
                 .hidden(trailingImage == nil && (isLoading == false || leadingImage != nil))
                 .bind(trailing)
@@ -159,13 +166,11 @@ class TextButton: ButtonControl<TextButtonAppearance> {
     func updateTrailing() {
         if trailingImage != nil {
             trailing.isHidden = false
-        }
-        else {
+        } else {
             if isLoading && leadingImage == nil {
                 // If there are no trailing and leading images then loading indicator will be in the trailing
                 trailing.isHidden = false
-            }
-            else {
+            } else {
                 trailing.isHidden = true
             }
         }
@@ -188,7 +193,7 @@ private final class TextButtonContainer: BEView {
         super.init(frame: .zero)
     }
 
-    final override func commonInit() {
+    override final func commonInit() {
         super.commonInit()
 
         super.addSubview(child)

@@ -5,7 +5,6 @@ enum ChooseItemSearchableItemViewState {
 }
 
 struct ChooseItemSearchableItemView<Content: View>: View {
-
     private let state: ChooseItemSearchableItemViewState
     @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
     private let model: ChooseItemSearchableItemViewModel
@@ -18,7 +17,7 @@ struct ChooseItemSearchableItemView<Content: View>: View {
     ) {
         self.content = content
         self.state = state
-        self.model = ChooseItemSearchableItemViewModel(item: item, isChosen: isChosen)
+        model = ChooseItemSearchableItemViewModel(item: item, isChosen: isChosen)
     }
 
     var body: some View {

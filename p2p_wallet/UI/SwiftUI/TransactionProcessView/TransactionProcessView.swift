@@ -15,8 +15,8 @@ struct TransactionProcessView: View {
 
     init(state: Binding<TransactionProcessView.Status>, errorMessageTapAction: @escaping () -> Void) {
         _state = state
-        self.currentAppearance = Appearance(state: state.wrappedValue)
-        self.previousAppearance = nil
+        currentAppearance = Appearance(state: state.wrappedValue)
+        previousAppearance = nil
         self.errorMessageTapAction = errorMessageTapAction
     }
 
@@ -103,7 +103,7 @@ extension TransactionProcessView {
         let backgroundColor: Color
         let circleColor: Color
         let imageColor: Color
-        
+
         init(state: TransactionProcessView.Status) {
             switch state {
             case .loading:

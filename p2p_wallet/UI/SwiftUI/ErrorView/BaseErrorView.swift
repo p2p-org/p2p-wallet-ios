@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct BaseErrorView: View {
-
     struct Appearance {
         let actionButtonHorizontalOffset: CGFloat
         let imageTextPadding: CGFloat

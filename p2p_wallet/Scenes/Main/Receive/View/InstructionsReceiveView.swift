@@ -77,7 +77,6 @@ struct InstructionsReceiveView: View {
             .padding(.bottom, instruction.0 == item.instructions.last?.0 ? 0 : 24)
         }
     }
-
 }
 
 struct InstructionsReceiveCellView_Previews: PreviewProvider {
@@ -87,8 +86,10 @@ struct InstructionsReceiveCellView_Previews: PreviewProvider {
                 instructions: [
                     ("1", ("We bridge to Solana", "One twot")),
                     ("2", ("Send USDC to your Ethereum account", "One two")),
-                    ("3", ("text3", "One two"))],
-                tip: "You need only to sign a transaction"))
+                    ("3", ("text3", "One two")),
+                ],
+                tip: "You need only to sign a transaction"
+            ))
             Spacer()
         }
     }

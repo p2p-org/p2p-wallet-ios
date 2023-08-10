@@ -1,10 +1,3 @@
-//
-//  AppleSocialService.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 25.07.2022.
-//
-
 import AuthenticationServices
 import Resolver
 

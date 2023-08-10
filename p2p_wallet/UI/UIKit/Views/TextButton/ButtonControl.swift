@@ -1,14 +1,10 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import BEPureLayout
 import Foundation
 import UIKit
 
 class ButtonControl<T>: UIControl {
     typealias ThemeState<T> = [State: T]
-    
+
     var onPressed: BECallback<ButtonControl<T>>?
 
     var themes: ThemeState<T> = [:] {

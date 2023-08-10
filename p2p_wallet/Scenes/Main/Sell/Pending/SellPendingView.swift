@@ -1,6 +1,6 @@
 import Combine
-import SwiftUI
 import Sell
+import SwiftUI
 
 struct SellPendingView: View {
     @ObservedObject var viewModel: SellPendingViewModel
@@ -32,7 +32,8 @@ struct SellPendingView: View {
                             viewModel.sendClicked()
                         },
                         label: {
-                            Text(viewModel.model.navigatedFromMoonpay ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
+                            Text(viewModel.model.navigatedFromMoonpay ? L10n
+                                .send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
                                 .foregroundColor(Color(.snow))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
@@ -60,7 +61,6 @@ struct SellPendingView: View {
                                 .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
-                                
                             }
                         )
                         .disabled(viewModel.isRemoving)

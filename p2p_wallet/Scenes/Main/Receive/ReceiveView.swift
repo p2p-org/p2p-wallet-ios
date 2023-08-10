@@ -1,5 +1,5 @@
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct ReceiveView: View {
     @ObservedObject var viewModel: ReceiveViewModel
@@ -56,7 +56,7 @@ struct ReceiveView: View {
                     .url(centerImageURL)
                     .setProcessor(
                         DownsamplingImageProcessor(size: .init(width: iconSize * 2, height: iconSize * 2))
-                        |> RoundCornerImageProcessor(cornerRadius: iconSize)
+                            |> RoundCornerImageProcessor(cornerRadius: iconSize)
                     )
                     .placeholder {
                         placeholderIcon
@@ -100,8 +100,8 @@ struct ReceiveView: View {
 }
 
 // TODO: Refactor
-//struct ReceiveView_Previews: PreviewProvider {
+// struct ReceiveView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage(resource: .usdc)))
 //    }
-//}
+// }

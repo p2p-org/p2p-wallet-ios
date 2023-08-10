@@ -2,16 +2,16 @@ import SwiftUI
 
 struct SlippageSettingsView: View {
     @StateObject private var viewModel: SlippageSettingsViewModel
-    
+
     @State private var textFieldColor: UIColor = .init(resource: .night)
-    
+
     let onSelectSlippage: (Double?) -> Void
-    
+
     init(slippage: Double?, onSelectSlippage: @escaping (Double?) -> Void) {
-        self._viewModel = StateObject(wrappedValue: .init(slippage: slippage))
+        _viewModel = StateObject(wrappedValue: .init(slippage: slippage))
         self.onSelectSlippage = onSelectSlippage
     }
-    
+
     var body: some View {
         ForEach(Array(zip(viewModel.slippages.indices, viewModel.slippages)), id: \.0) { index, slippage in
             Button(
@@ -30,7 +30,7 @@ struct SlippageSettingsView: View {
             onSelectSlippage(selectedSlippage)
         }
     }
-    
+
     @ViewBuilder
     func cell(index: Int, slippage: Double?) -> some View {
         if let slippage = slippage {
@@ -39,7 +39,7 @@ struct SlippageSettingsView: View {
             customInput(index: index)
         }
     }
-    
+
     @ViewBuilder
     func staticSelectionCell(index: Int, slippage: Double) -> some View {
         HStack {
@@ -53,7 +53,7 @@ struct SlippageSettingsView: View {
         }
         .padding(.vertical, 16)
     }
-    
+
     @ViewBuilder
     func customInput(index: Int) -> some View {
         VStack {
@@ -79,19 +79,18 @@ struct SlippageSettingsView: View {
                                         lineWidth: viewModel.isCustomSlippageValid ? 0 : 1
                                     )
                             )
-                        
+
                         percentSuffixTextField
-                        
                     }
                     Text("\(L10n.theSlippageCouldBe) 0.01-50%")
-                        .foregroundColor(viewModel.isCustomSlippageValid ? Color(.mountain): Color(.rose))
+                        .foregroundColor(viewModel.isCustomSlippageValid ? Color(.mountain) : Color(.rose))
                         .font(uiFont: .font(of: .label1))
                 }
             }
         }
         .padding(.vertical, 16)
     }
-    
+
     var percentSuffixTextField: some View {
         HStack(alignment: .center, spacing: 4) {
             DecimalTextField(
@@ -106,18 +105,18 @@ struct SlippageSettingsView: View {
                 textField.decimalSeparator = "."
                 textField.setContentHuggingPriority(.required, for: .horizontal)
             }
-            
+
             Text("%")
                 .apply(style: .text3)
                 .foregroundColor(Color(.night).opacity(0.3))
 
             Spacer(minLength: 0)
         }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.isCustomSlippageSelected.toggle()
-            }
-            .padding(.horizontal, 16)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.isCustomSlippageSelected.toggle()
+        }
+        .padding(.horizontal, 16)
     }
 }
 
@@ -125,7 +124,7 @@ struct SlippageSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             Section {
-                SlippageSettingsView(slippage: 0.5) {_ in }
+                SlippageSettingsView(slippage: 0.5) { _ in }
             }
         }
     }

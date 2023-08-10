@@ -44,9 +44,8 @@ class JSBValueTests: XCTestCase {
         struct S: CustomStringConvertible {
             var description: String = ""
             let a: String
-            
         }
-        
+
         XCTAssertThrowsError(try v.parseArgs([S(a: "abc")]))
     }
 }

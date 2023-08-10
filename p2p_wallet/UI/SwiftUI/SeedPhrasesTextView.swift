@@ -26,7 +26,7 @@ public struct SeedPhraseTextView: UIViewRepresentable {
         if currentPhrases != text.seedPhraseFormatted {
             uiView.replaceText(newText: text)
         }
-        
+
         if uiView.isFirstResponder, !isFirstResponder {
             DispatchQueue.main.async { uiView.resignFirstResponder() }
         } else if !uiView.isFirstResponder, isFirstResponder {
@@ -46,16 +46,16 @@ public struct SeedPhraseTextView: UIViewRepresentable {
             self.text = text
             self.isFirstResponder = isFirstResponder
         }
-        
-        public func seedPhrasesTextView(_ textView: UISeedPhrasesTextView, didEnterPhrases phrases: String) {
+
+        public func seedPhrasesTextView(_: UISeedPhrasesTextView, didEnterPhrases phrases: String) {
             text.wrappedValue = phrases
         }
-        
-        public func seedPhrasesTextViewDidBeginEditing(_ textView: UISeedPhrasesTextView) {
+
+        public func seedPhrasesTextViewDidBeginEditing(_: UISeedPhrasesTextView) {
             isFirstResponder.wrappedValue = true
         }
-        
-        public func seedPhrasesTextViewDidEndEditing(_ textView: UISeedPhrasesTextView) {
+
+        public func seedPhrasesTextViewDidEndEditing(_: UISeedPhrasesTextView) {
             isFirstResponder.wrappedValue = false
         }
     }

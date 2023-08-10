@@ -12,14 +12,14 @@ struct SentViaLinkHistoryTransactionView: View {
             Image(.sendViaLinkCircleCompleted)
                 .resizable()
                 .frame(width: 48, height: 48)
-            
+
             Text(L10n.sentViaOneTimeLink)
                 .fontWeight(.semibold)
                 .apply(style: .text3)
                 .layoutPriority(1)
-            
+
             Spacer(minLength: 0)
-            
+
             Text(transaction.amount.tokenAmountFormattedString(
                 symbol: transaction.token.symbol,
                 maximumFractionDigits: Int(transaction.token.decimals)
@@ -35,11 +35,11 @@ struct SentViaLinkHistoryTransactionView: View {
 }
 
 #if DEBUG
-struct SentViaLinkHistoryTransactionView_Previews: PreviewProvider {
-    static var previews: some View {
-        SentViaLinkHistoryTransactionView(
-            transaction: Array<SendViaLinkTransactionInfo>.mocked.first!
-        )
+    struct SentViaLinkHistoryTransactionView_Previews: PreviewProvider {
+        static var previews: some View {
+            SentViaLinkHistoryTransactionView(
+                transaction: Array<SendViaLinkTransactionInfo>.mocked.first!
+            )
+        }
     }
-}
 #endif

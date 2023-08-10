@@ -1,10 +1,3 @@
-//
-//  PendingTransaction.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 06/03/2022.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore

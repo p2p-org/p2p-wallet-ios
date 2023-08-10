@@ -1,10 +1,3 @@
-//
-//  Moonpay.API+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 23/12/2022.
-//
-
 import Foundation
 import Moonpay
 

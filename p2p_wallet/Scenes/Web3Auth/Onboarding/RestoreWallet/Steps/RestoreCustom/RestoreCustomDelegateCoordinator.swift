@@ -301,7 +301,8 @@ private extension RestoreCustomDelegatedCoordinator {
             }, help: nil,
             customActions: {
                 TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
-                               size: .large) { [stateMachine] in
+                               size: .large)
+                { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
                 }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
             })
@@ -312,7 +313,7 @@ private extension RestoreCustomDelegatedCoordinator {
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
         let title: String
         let subtitle: (_ value: Any) -> String
-        
+
         switch reason {
         case .blockEnterOTP:
             title = L10n.confirmationCodeLimitHit
@@ -324,7 +325,7 @@ private extension RestoreCustomDelegatedCoordinator {
             title = L10n.confirmationCodeLimitHit
             subtitle = { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
         }
-        
+
         let view = OnboardingBlockScreen(
             primaryButtonAction: L10n.startingScreen,
             contentTitle: title,

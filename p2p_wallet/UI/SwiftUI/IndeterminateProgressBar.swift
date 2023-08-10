@@ -5,7 +5,7 @@ public struct IndeterminateProgressBar: View {
     public let indicatorColor: Color
 
     private let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-    
+
     public init(indicatorColor: Color) {
         self.indicatorColor = indicatorColor
     }

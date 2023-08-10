@@ -2,14 +2,13 @@ import Foundation
 
 /// ResponseDecoder for JsonRpc type
 public struct JSONRPCDecoder {
-
     // MARK: - Properties
 
     /// Default native `JSONDecoder`
     private let jsonDecoder: JSONDecoder
 
     // MARK: - Initializer
-    
+
     /// `JsonRpcDecoder` initializer
     /// - Parameter jsonDecoder: Default native `JSONDecoder`
     public init(jsonDecoder: JSONDecoder = JSONDecoder()) {
@@ -26,8 +25,7 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
     ///   - data: data to decode
     ///   - response: httpURLResponse from network
     /// - Returns: object of predefined type
-    public func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
-        
+    public func decode<T: Decodable>(_: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
         // Check status code
         switch response.statusCode {
         case 200 ... 299:
@@ -41,9 +39,9 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
             throw decodeRpcError(from: data) ?? HTTPClientError.invalidResponse(response, data)
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     /// Custom error return from rpc endpoint
     private func decodeRpcError(from data: Data) -> JSONRPCError? {
         try? jsonDecoder.decode(JSONRPCResponseErrorDto.self, from: data).error

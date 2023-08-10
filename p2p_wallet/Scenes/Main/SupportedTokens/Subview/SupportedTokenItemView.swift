@@ -61,7 +61,7 @@ struct SupportedTokenItemView: View {
                         .background(
                             Circle()
                                 .fill(.white)
-                                .frame(width: networkSize+1, height: networkSize+1)
+                                .frame(width: networkSize + 1, height: networkSize + 1)
                         )
                         .offset(x: -10)
                 }

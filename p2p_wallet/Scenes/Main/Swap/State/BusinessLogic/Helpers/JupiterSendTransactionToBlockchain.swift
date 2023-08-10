@@ -1,10 +1,3 @@
-//
-//  JupiterSendTransactionToBlockchain.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 21.02.2023.
-//
-
 import Jupiter
 import SolanaSwift
 import Task_retrying

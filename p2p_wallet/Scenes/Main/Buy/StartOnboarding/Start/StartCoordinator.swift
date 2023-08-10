@@ -102,8 +102,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                                     )
                             )
                         ))
-                            .sink(receiveValue: onFinish)
-                            .store(in: &subscriptions)
+                        .sink(receiveValue: onFinish)
+                        .store(in: &subscriptions)
 
                         return
                     } else {
@@ -150,7 +150,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     private func open(docType: TermsAndPolicyType) {
         guard let viewController = viewController else { return }
         coordinate(to: TermsAndPolicyCoordinator(parentController: viewController, docType: docType))
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 }

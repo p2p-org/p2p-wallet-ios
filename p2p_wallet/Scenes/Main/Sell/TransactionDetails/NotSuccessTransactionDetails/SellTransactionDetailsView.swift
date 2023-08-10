@@ -1,10 +1,3 @@
-//
-//  SellTransactionDetailsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 15.12.2022.
-//
-
 import Combine
 import SwiftUI
 

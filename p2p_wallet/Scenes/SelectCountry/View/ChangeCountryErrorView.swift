@@ -1,18 +1,10 @@
-//
-//  ChangeCountryErrorView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 12.04.2023.
-//
-
 import SwiftUI
 
 struct ChangeCountryErrorView: View {
-    
     let model: ChangeCountryModel
     let buttonAction: () -> Void
     let subButtonAction: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -32,7 +24,7 @@ struct ChangeCountryErrorView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 32)
     }
-    
+
     private var actions: some View {
         VStack(spacing: 12) {
             Button(

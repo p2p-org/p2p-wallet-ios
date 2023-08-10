@@ -1,6 +1,6 @@
-import SwiftUI
 import Kingfisher
 import SolanaSwift
+import SwiftUI
 
 struct TransactionDetailIconView: View {
     private let size: CGFloat = 64
@@ -12,7 +12,7 @@ struct TransactionDetailIconView: View {
         Group {
             switch icon {
             case let .icon(image):
-                RoundedRectangle(cornerRadius: size/2)
+                RoundedRectangle(cornerRadius: size / 2)
                     .fill(Color(.rain))
                     .overlay(
                         Image(image)
@@ -23,7 +23,7 @@ struct TransactionDetailIconView: View {
                 KFImage
                     .url(url)
                     .setProcessor(
-                        DownsamplingImageProcessor(size: .init(width: size*2, height: size*2))
+                        DownsamplingImageProcessor(size: .init(width: size * 2, height: size * 2))
                             |> RoundCornerImageProcessor(cornerRadius: size)
                     )
                     .resizable()
@@ -35,7 +35,7 @@ struct TransactionDetailIconView: View {
                     KFImage
                         .url(from)
                         .setProcessor(
-                            DownsamplingImageProcessor(size: .init(width: size*2, height: size*2))
+                            DownsamplingImageProcessor(size: .init(width: size * 2, height: size * 2))
                                 |> RoundCornerImageProcessor(cornerRadius: size)
                         )
                         .resizable()
@@ -43,12 +43,12 @@ struct TransactionDetailIconView: View {
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
                         .background(defaultBackground)
-                        .offset(x: -size/4)
-                    
+                        .offset(x: -size / 4)
+
                     KFImage
                         .url(to)
                         .setProcessor(
-                            DownsamplingImageProcessor(size: .init(width: size*2, height: size*2))
+                            DownsamplingImageProcessor(size: .init(width: size * 2, height: size * 2))
                                 |> RoundCornerImageProcessor(cornerRadius: size)
                         )
                         .resizable()
@@ -56,7 +56,7 @@ struct TransactionDetailIconView: View {
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
                         .background(defaultBackground)
-                        .offset(x: size/4)
+                        .offset(x: size / 4)
                 }
             }
         }

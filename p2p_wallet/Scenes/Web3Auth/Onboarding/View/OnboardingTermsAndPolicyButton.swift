@@ -5,7 +5,11 @@ struct OnboardingTermsAndPolicyButton: View {
     let privacyPolicyPressed: () -> Void
     let termsText: String
 
-    init(termsPressed: @escaping () -> Void, privacyPolicyPressed: @escaping () -> Void, termsText: String = L10n.keyAppS) {
+    init(
+        termsPressed: @escaping () -> Void,
+        privacyPolicyPressed: @escaping () -> Void,
+        termsText: String = L10n.keyAppS
+    ) {
         self.termsPressed = termsPressed
         self.privacyPolicyPressed = privacyPolicyPressed
         self.termsText = termsText

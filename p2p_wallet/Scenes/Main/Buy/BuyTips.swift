@@ -1,10 +1,3 @@
-//
-//  BuyTips.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 04.10.2022.
-//
-
 import SwiftUI
 
 struct BuyTips: View {

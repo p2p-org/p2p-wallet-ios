@@ -1,13 +1,6 @@
-//
-//  JSBridgeIntegrationTests.swift
-//  JSBridgeIntegrationTests
-//
-//  Created by Giang Long Tran on 08.07.2022.
-//
-
+import WebKit
 import XCTest
 @testable import JSBridge
-import WebKit
 
 class JSBContextTests: XCTestCase {
     var app: XCUIApplication!
@@ -15,7 +8,7 @@ class JSBContextTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
-    
+
     override func setUp() {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -34,7 +27,7 @@ class JSBContextTests: XCTestCase {
         let test = try await context.this.valueForKey("test").toString()
         XCTAssertEqual(test, msg)
     }
-    
+
     @MainActor func testInit2() async throws {
         let context = JSBContext()
 
@@ -45,7 +38,7 @@ class JSBContextTests: XCTestCase {
         let test = try await context.this.valueForKey("test").toString()
         XCTAssertEqual(test, msg)
     }
-    
+
     @MainActor func testEvaluateVoid() async throws {
         let context = JSBContext()
 
@@ -54,13 +47,13 @@ class JSBContextTests: XCTestCase {
         } catch {
             XCTExpectFailure()
         }
-        
+
         do {
             try await context.evaluate("abc = 5 = 6")
             XCTExpectFailure()
         } catch {}
     }
-    
+
     @MainActor func testEvaluateWithReturn() async throws {
         let context = JSBContext()
 
@@ -70,11 +63,10 @@ class JSBContextTests: XCTestCase {
         } catch {
             XCTExpectFailure()
         }
-        
+
         do {
             let _: Int? = try await context.evaluate("5 = 6")
             XCTExpectFailure()
         } catch {}
     }
-    
 }

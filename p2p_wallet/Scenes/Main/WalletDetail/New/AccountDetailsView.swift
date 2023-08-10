@@ -37,8 +37,8 @@ struct AccountDetailsView: View {
                         banner.close()
                     }
                 })
-                    .padding(.all, 16)
-                    .padding(.top, 16)
+                .padding(.all, 16)
+                .padding(.top, 16)
             }
         }
     }

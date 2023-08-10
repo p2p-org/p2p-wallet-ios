@@ -15,7 +15,7 @@ class SynchronizedArray<T> {
             self.array.remove(at: index)
         }
     }
-    
+
     func removeFirst() -> T? {
         var el: T?
         accessQueue.sync {

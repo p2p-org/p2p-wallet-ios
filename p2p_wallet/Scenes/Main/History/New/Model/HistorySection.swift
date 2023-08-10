@@ -1,10 +1,3 @@
-//
-//  NewHistorySection.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 17.02.2023.
-//
-
 import Foundation
 
 struct HistorySection: Identifiable, Equatable {

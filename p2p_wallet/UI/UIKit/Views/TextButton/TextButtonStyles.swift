@@ -1,9 +1,5 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
-import UIKit
 import SwiftUI
+import UIKit
 
 extension TextButton {
     enum Style: CaseIterable {
@@ -26,14 +22,16 @@ extension TextButton {
             case .primary, .primaryWhite: return UIColor(resource: .night)
             case .second: return UIColor(resource: .rain)
             case .third: return UIColor(resource: .lime)
-            case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime, .outlineRose: return .clear
+            case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime,
+                 .outlineRose: return .clear
             case .inverted, .invertedRed: return UIColor(resource: .snow)
             }
         }
 
         var disabledBackgroundColor: UIColor? {
             switch self {
-            case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime, .outlineRose: return .clear
+            case .ghost, .ghostWhite, .ghostLime, .outlineBlack, .outlineWhite, .outlineLime,
+                 .outlineRose: return .clear
             default: return UIColor(resource: .rain)
             }
         }
@@ -90,7 +88,8 @@ extension TextButton {
 
         var loadingBackgroundColor: UIColor {
             switch self {
-            case .primary, .primaryWhite, .ghostWhite, .ghostLime, .outlineWhite, .outlineLime: return UIColor(resource: .snow).withAlphaComponent(0.6)
+            case .primary, .primaryWhite, .ghostWhite, .ghostLime, .outlineWhite,
+                 .outlineLime: return UIColor(resource: .snow).withAlphaComponent(0.6)
             case .invertedRed, .outlineRose: return UIColor(resource: .rain)
             default: return UIColor(resource: .night).withAlphaComponent(0.6)
             }
@@ -132,12 +131,12 @@ extension TextButton {
     convenience init(title: String, style: Style, size: Size, leading: UIImage? = nil, trailing: UIImage? = nil) {
         var left: CGFloat = leading != nil ? 14 : 20
         var right: CGFloat = trailing != nil ? 14 : 20
-        
+
         if size == .small {
             left = 0
             right = 0
         }
-        
+
         let theme = TextButtonAppearance(
             backgroundColor: style.backgroundColor,
             foregroundColor: style.foreground,

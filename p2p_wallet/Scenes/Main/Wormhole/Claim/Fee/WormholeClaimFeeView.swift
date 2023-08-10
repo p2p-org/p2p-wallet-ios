@@ -45,7 +45,6 @@ struct WormholeClaimFeeView: View {
 
             VStack(spacing: 24) {
                 if let value = viewModel.fee.value {
-
                     if let accountsFee = value.accountCreationFee {
                         WormholeFeeView(
                             title: L10n.accountCreationFee,
@@ -83,7 +82,7 @@ struct WormholeClaimFeeView: View {
                         isFree: value.receive.isFree,
                         isLoading: viewModel.fee.isFetching
                     )
-                    
+
                     WormholeFeeView(
                         title: L10n.totalAmount,
                         subtitle: value.receive.isFree ? value.receive.crypto : value.total?.crypto ?? "",

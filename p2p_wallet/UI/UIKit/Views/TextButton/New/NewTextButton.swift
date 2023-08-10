@@ -116,21 +116,21 @@ struct NewTextButton_Previews: PreviewProvider {
                 size: .medium,
                 style: .primary,
                 trailing: .init(resource: .arrowForward)
-            ) { }
+            ) {}
 
             NewTextButton(
                 title: "Title",
                 size: .large,
                 style: .second,
                 leading: .init(resource: .arrowForward)
-            ) { }
+            ) {}
 
             NewTextButton(
                 title: "Title",
                 size: .medium,
                 style: .invertedRed,
                 expandable: true
-            ) { }
+            ) {}
 
             NewTextButton(
                 title: "Title",
@@ -138,7 +138,7 @@ struct NewTextButton_Previews: PreviewProvider {
                 style: .outlineLime,
                 isLoading: true,
                 trailing: .init(resource: .arrowForward)
-            ) { }
+            ) {}
 
             NewTextButton(
                 title: "Title",
@@ -146,14 +146,14 @@ struct NewTextButton_Previews: PreviewProvider {
                 style: .primaryWhite,
                 expandable: true,
                 isEnabled: false
-            ) { }
+            ) {}
 
             NewTextButton(
                 title: "Title",
                 size: .small,
                 style: .primaryWhite,
                 isEnabled: false
-            ) { }
+            ) {}
 
             Spacer()
         }

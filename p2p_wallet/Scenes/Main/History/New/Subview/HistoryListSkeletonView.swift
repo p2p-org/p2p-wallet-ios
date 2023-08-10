@@ -1,10 +1,3 @@
-//
-//  NewHistoryListSkeletonView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.02.2023.
-//
-
 import SwiftUI
 
 struct HistoryListSkeletonView: View {
@@ -18,7 +11,7 @@ struct HistoryListSkeletonView: View {
                     .fill(Color(.rain))
                     .frame(maxWidth: 120)
                     .frame(height: 12)
-                
+
                 RoundedRectangle(cornerSize: .init(width: 4, height: 4))
                     .fill(Color(.rain))
                     .frame(maxWidth: 120)

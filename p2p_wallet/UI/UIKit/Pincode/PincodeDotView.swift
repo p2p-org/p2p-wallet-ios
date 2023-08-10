@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import BEPureLayout
 import UIKit
 
@@ -11,7 +7,7 @@ class PinCodeDotsView: BEView {
     private let dotSize: CGFloat = 12.adaptiveHeight
     private let cornerRadius: CGFloat = 12.adaptiveHeight
     private let padding: UIEdgeInsets = .init(x: 13.adaptiveHeight, y: 8.adaptiveHeight)
-    
+
     /// Default color for dots
     private let defaultColor = UIColor(resource: .night).withAlphaComponent(0.3)
     /// Color for highlight state

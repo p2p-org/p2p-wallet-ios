@@ -1,7 +1,3 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
-
 import BEPureLayout
 import Foundation
 
@@ -11,7 +7,10 @@ class NumpadView: BEView {
     private let buttonSize: CGFloat = 68
     private let spacing = 42.adaptiveHeight
     private let vSpacing = 12.adaptiveHeight
-    private let deleteButtonColor = PincodeStateColor(normal: UIColor(resource: .night), tapped: UIColor(resource: .night).withAlphaComponent(0.65))
+    private let deleteButtonColor = PincodeStateColor(
+        normal: UIColor(resource: .night),
+        tapped: UIColor(resource: .night).withAlphaComponent(0.65)
+    )
 
     // MARK: - Callback
 
