@@ -73,29 +73,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         case .registration:
             return coordinate(
                 to: BankTransferInfoCoordinator(navigationController: viewController)
-            )
-            .flatMap { [unowned self] result in
-                switch result {
-                case .completed:
-                    return coordinate(
-                        to: StrigaRegistrationFirstStepCoordinator(navigationController: viewController)
-                    )
-                case .canceled:
-                    return Just(StrigaRegistrationFirstStepCoordinatorResult.canceled).eraseToAnyPublisher()
-                }
-            }
-            .handleEvents(receiveOutput: { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case .completed:
-                    self.viewController.setViewControllers(
-                        [self.viewController.viewControllers.first!],
-                        animated: false
-                    )
-                case .canceled:
-                    break
-                }
-            }).map { result in
+            ).map { result in
                 switch result {
                 case .completed:
                     return BankTransferFlowResult.next
