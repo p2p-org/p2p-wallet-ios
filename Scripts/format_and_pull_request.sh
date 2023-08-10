@@ -54,7 +54,7 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
   
   if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
     # Create a pull request using GitHub API
-    pr_title="[Swiftformat] Correct format for $current_branch"
+    pr_title="🚧 Correct format for $current_branch"
     pr_body="Fix code format for $current_branch"
     pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title" "$pr_body")
 
