@@ -1,13 +1,13 @@
-//import Combine
-//import KeyAppBusiness
-//import KeyAppKitCore
-//import KeyAppUI
-//import Resolver
-//import Send
-//import SolanaSwift
-//import SwiftUI
+// import Combine
+// import KeyAppBusiness
+// import KeyAppKitCore
+// import KeyAppUI
+// import Resolver
+// import Send
+// import SolanaSwift
+// import SwiftUI
 //
-//final class NSendTransactionDetailViewModel: BaseViewModel, ObservableObject {
+// final class NSendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 //    let cancelSubject = PassthroughSubject<Void, Never>()
 //    let feePrompt = PassthroughSubject<[SolanaAccount], Never>()
 //    let longTapped = PassthroughSubject<CellModel, Never>()
@@ -223,16 +223,16 @@
 //            extractTotalCellModel(state: state),
 //        ].compactMap { $0 }
 //    }
-//}
+// }
 //
-//private extension SendTransactionDetailViewModel {
+// private extension SendTransactionDetailViewModel {
 //    func copyToClipboard(address: String) {
 //        clipboardManager.copyToClipboard(address)
 //        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
 //    }
-//}
+// }
 //
-//extension SendTransactionDetailViewModel {
+// extension SendTransactionDetailViewModel {
 //    enum CellType: String {
 //        case address
 //        case recipientGets
@@ -252,4 +252,4 @@
 //
 //        var id: String { type.rawValue }
 //    }
-//}
+// }
