@@ -14,7 +14,7 @@ public struct KeyAppTokenExtension: Codable, Hashable {
     public let percentDifferenceToShowByPriceOnWS: Double?
     public let calculationOfFinalBalanceOnWS: Bool?
     public let ruleOfFractionalPartOnWS: RuleOfFractionalPartOnWS?
-    public let canBeHidden: Bool?
+    public let canBeHidden: Bool
 
     public enum RuleOfProcessingTokenPriceWS: String, Codable, Hashable {
         case byCountOfTokensValue
@@ -29,7 +29,7 @@ public struct KeyAppTokenExtension: Codable, Hashable {
         isTokenCellVisibleOnWS = data["isTokenCellVisibleOnWS"]?.boolValue ?? true
         calculationOfFinalBalanceOnWS = data["calculationOfFinalBalanceOnWS"]?.boolValue
         percentDifferenceToShowByPriceOnWS = data["percentDifferenceToShowByPriceOnWS"]?.doubleValue
-        canBeHidden = data["canBeHidden"]?.boolValue
+        canBeHidden = data["canBeHidden"]?.boolValue ?? true
 
         if data["ruleOfProcessingTokenPriceWS"]?.stringValue == "byCountOfTokensValue" {
             ruleOfProcessingTokenPriceWS = .byCountOfTokensValue
@@ -59,6 +59,6 @@ public struct KeyAppTokenExtension: Codable, Hashable {
         self.percentDifferenceToShowByPriceOnWS = percentDifferenceToShowByPriceOnWS
         self.calculationOfFinalBalanceOnWS = calculationOfFinalBalanceOnWS
         self.ruleOfFractionalPartOnWS = ruleOfFractionalPartOnWS
-        self.canBeHidden = canBeHidden
+        self.canBeHidden = canBeHidden ?? true
     }
 }

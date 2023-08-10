@@ -26,14 +26,13 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
 
                 if favourites.contains(account.address) {
                     tags.insert(.favourite)
-                } else if ignores.contains(account.address) && account.token.keyAppExtensions.canBeHidden == false {
+                } else if ignores.contains(account.address), account.token.keyAppExtensions.canBeHidden == true {
                     tags.insert(.ignore)
                 } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
                 }
 
-                let canBeHidden = account.token.keyAppExtensions.canBeHidden ?? true
-                let extraAction: AccountExtraAction? = canBeHidden ? .showHide : nil
+                let extraAction: AccountExtraAction? = account.token.keyAppExtensions.canBeHidden ? .showHide : nil
 
                 return RenderableSolanaAccount(
                     account: account,
