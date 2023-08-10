@@ -16,8 +16,8 @@ struct ActionsPanelView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .foregroundColor(Color(.night))
-                    .padding(.top, 24)
-                    .padding(.bottom, usdAmount.isEmpty ? 46 : 12)
+                    .padding(.top, 18)
+                    .padding(.bottom, usdAmount.isEmpty ? 24 : 12)
                     .onTapGesture {
                         balanceTapAction?()
                     }

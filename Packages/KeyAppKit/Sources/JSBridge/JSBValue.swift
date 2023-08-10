@@ -73,10 +73,10 @@ public class JSBValue: JSBridge, CustomStringConvertible {
             Task {
                 let id = await context.promiseDispatchTable.register(continuation: continuation)
 
-                let script = """
+                let script = try """
                  var \(result.name);
                 \(name)
-                try      .\(method)(\(parseArgs(args)))
+                     .\(method)(\(parseArgs(args)))
                      .then((value) => {
                              \(result.name) = value;
                              window

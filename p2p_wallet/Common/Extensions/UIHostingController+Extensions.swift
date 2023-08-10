@@ -3,7 +3,7 @@ import SwiftUI
 
 extension UIHostingController {
     /// Convenience init for overriding default avoiding-keyboard behavior in UIHostingController
-    public convenience init(rootView: Content, ignoresKeyboard: Bool) {
+    convenience init(rootView: Content, ignoresKeyboard: Bool) {
         self.init(rootView: rootView)
 
         if ignoresKeyboard {

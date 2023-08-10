@@ -13,7 +13,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getAccountInfo<T>(account _: String) async throws -> SolanaSwift.BufferInfo<T>?
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         fatalError()
     }
 
@@ -59,10 +60,10 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         fatalError()
     }
 
-    func getSignatureStatuses(signatures _: [String],
-                              configs _: SolanaSwift
-                                  .RequestConfiguration?) async throws -> [SolanaSwift.SignatureStatus?]
-    {
+    func getSignatureStatuses(
+        signatures _: [String],
+        configs _: SolanaSwift.RequestConfiguration?
+    ) async throws -> [SolanaSwift.SignatureStatus?] {
         fatalError()
     }
 
@@ -73,7 +74,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getTokenAccountBalance(pubkey _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TokenAccountBalance {
+        .TokenAccountBalance
+    {
         fatalError()
     }
 
@@ -101,7 +103,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getTokenSupply(pubkey _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TokenAmount {
+        .TokenAmount
+    {
         fatalError()
     }
 
@@ -124,7 +127,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func sendTransaction(transaction _: String, configs _: SolanaSwift.RequestConfiguration) async throws -> SolanaSwift
-    .TransactionID {
+        .TransactionID
+    {
         fatalError()
     }
 
@@ -143,29 +147,33 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getMultipleAccounts<T>(pubkeys _: [String]) async throws -> [SolanaSwift.BufferInfo<T>]
-    where T: SolanaSwift.BufferLayout {
-        fatalError()
-    }
-
-    func getSignaturesForAddress(address _: String,
-                                 configs _: SolanaSwift
-                                     .RequestConfiguration?) async throws -> [SolanaSwift.SignatureInfo]
+        where T: SolanaSwift.BufferLayout
     {
         fatalError()
     }
 
+    func getSignaturesForAddress(
+        address _: String,
+        configs _: SolanaSwift.RequestConfiguration?
+    ) async throws -> [SolanaSwift.SignatureInfo] {
+        fatalError()
+    }
+
     func getTransaction(signature _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TransactionInfo? {
+        .TransactionInfo?
+    {
         fatalError()
     }
 
     func batchRequest(with _: [SolanaSwift.JSONRPCRequestEncoder.RequestType]) async throws
-    -> [SolanaSwift.AnyResponse<SolanaSwift.JSONRPCRequestEncoder.RequestType.Entity>] {
+        -> [SolanaSwift.AnyResponse<SolanaSwift.JSONRPCRequestEncoder.RequestType.Entity>]
+    {
         fatalError()
     }
 
     func batchRequest<Entity>(method _: String, params _: [[Encodable]]) async throws -> [Entity?]
-    where Entity: Decodable {
+        where Entity: Decodable
+    {
         fatalError()
     }
 
@@ -190,13 +198,15 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getAddressLookupTable(accountKey _: SolanaSwift.PublicKey) async throws -> SolanaSwift
-    .AddressLookupTableAccount? {
+        .AddressLookupTableAccount?
+    {
         fatalError()
     }
 
     func getMultipleAccounts<T>(pubkeys _: [String],
                                 commitment _: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?]
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         fatalError()
     }
 }

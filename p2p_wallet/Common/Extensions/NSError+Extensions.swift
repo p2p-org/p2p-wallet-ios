@@ -2,7 +2,13 @@ import Foundation
 
 extension NSError {
     var isNetworkConnectionError: Bool {
-        code == NSURLErrorNetworkConnectionLost || code == NSURLErrorNotConnectedToInternet || code ==
-            NSURLErrorDataNotAllowed
+        [
+            NSURLErrorNetworkConnectionLost,
+            NSURLErrorNotConnectedToInternet,
+            NSURLErrorDataNotAllowed,
+            NSURLErrorCannotFindHost,
+            NSURLErrorTimedOut,
+        ]
+        .contains(code)
     }
 }

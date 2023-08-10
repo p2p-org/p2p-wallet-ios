@@ -388,7 +388,7 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            if account.token.isNativeSOL {
+            if account.token.isNative {
                 return false
             } else {
                 return supportedToken.contains(account.token.mintAddress)

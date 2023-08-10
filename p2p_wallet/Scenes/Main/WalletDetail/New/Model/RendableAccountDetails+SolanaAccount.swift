@@ -19,7 +19,7 @@ struct RendableNewSolanaAccountDetails: RendableAccountDetails {
     }
 
     var actions: [RendableAccountDetailsAction] {
-        if account.token.isNativeSOL || account.token.symbol == "USDC" {
+        if account.token.isNative || account.token.symbol == "USDC" {
             return [.buy, .receive(.solanaAccount(account)), .send, .swap(account)]
         } else {
             return [.receive(.solanaAccount(account)), .send, .swap(account)]

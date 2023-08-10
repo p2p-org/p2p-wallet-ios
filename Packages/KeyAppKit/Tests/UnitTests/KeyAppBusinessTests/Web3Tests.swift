@@ -54,13 +54,11 @@ final class EthereumTests: XCTestCase {
     func testGetAllBalances() throws {
         let expectation = expectation(description: "Get logs callback")
 
-        try web3.eth.getTokenBalances(address: .init(
-            hex: "0x0583B332697C1406E8fa82deBF224B285Dc25632",
-            eip55: true
-        )) { resp in
-            print(resp)
-            expectation.fulfill()
-        }
+        try web3.eth
+            .getTokenBalances(address: .init(hex: "0x0583B332697C1406E8fa82deBF224B285Dc25632", eip55: true)) { resp in
+                print(resp)
+                expectation.fulfill()
+            }
 
         waitForExpectations(timeout: 100)
     }

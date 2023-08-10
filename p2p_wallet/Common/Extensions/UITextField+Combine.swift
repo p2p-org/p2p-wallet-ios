@@ -1,6 +1,6 @@
-// https://github.com/CombineCommunity/CombineCocoa/blob/main/Sources/CombineCocoa/Controls/UITextField%2BCombine.swift
-
 #if !(os(iOS) && (arch(i386) || arch(arm)))
+    // https://github.com/CombineCommunity/CombineCocoa/blob/main/Sources/CombineCocoa/Controls/UITextField%2BCombine.swift
+
     import Combine
     import UIKit
 
@@ -70,7 +70,8 @@
 
     extension Combine.Publishers.ControlProperty {
         private final class Subscription<S: Subscriber, Control: UIControl, Value>: Combine.Subscription
-        where S.Input == Value {
+            where S.Input == Value
+        {
             private var subscriber: S?
             private weak var control: Control?
             let keyPath: KeyPath<Control, Value>

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 struct SellTransactionDetailsInfoModel {
     enum InfoText {

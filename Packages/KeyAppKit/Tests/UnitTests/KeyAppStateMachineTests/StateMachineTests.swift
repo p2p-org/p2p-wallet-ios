@@ -2,7 +2,7 @@ import Combine
 import KeyAppStateMachine
 import XCTest
 
-private let fakeNetworkDelayInMilliseconds: Int = 300
+private let fakeNetworkDelayInMilliseconds: Int = 500
 
 final class StateMachineTests: XCTestCase {
     var apiClient: APIClient = MockAPIClient(delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds))
@@ -20,21 +20,20 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAcceptAnAction_ShouldReturnExpectedState() async throws {
-        // observing task
-        let task = Task {
+        // accept action(s)
+        Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
+            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
+        }
+
+        // await states
+        let states = try await Task {
             try await collectResult(finishWhenReceiving: .init(
                 applicantName: "Napoleon The First",
                 sendingStatus: .completed
             ))
         }
-
-        // accept action(s)
-        Task.detached {
-            await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
-        }
-
-        // await states
-        let states = try await task.value
+        .value
 
 //        XCTAssertEqual(states.count, 3)
         XCTAssertEqual(states[states.count - 2], .init(
@@ -48,16 +47,9 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAcceptAnAction_WaitForItToFinish_AcceptSecondAction_ShouldReturnFirstStateThenSecondState() async throws {
-        // observing task
-        let task = Task {
-            try await collectResult(finishWhenReceiving: .init(
-                applicantName: "Napoleon The Second",
-                sendingStatus: .completed
-            ))
-        }
-
         // accept action(s)
         Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             // wait for first action to complete
             try await Task.sleep(nanoseconds: UInt64(3 * fakeNetworkDelayInMilliseconds * 1_000_000))
@@ -67,7 +59,13 @@ final class StateMachineTests: XCTestCase {
         }
 
         // await states
-        let states = try await task.value
+        let states = try await Task {
+            try await collectResult(finishWhenReceiving: .init(
+                applicantName: "Napoleon The Second",
+                sendingStatus: .completed
+            ))
+        }
+        .value
 
 //        XCTAssertEqual(states.count, 5)
 //        XCTAssertEqual(states[0], .initial)
@@ -90,22 +88,21 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAcceptNewAction_WaitForPreviousActionToComplete_ShouldReturnBothStates() async throws {
-        // observing task
-        let task = Task {
-            try await collectResult(finishWhenReceiving: .init(
-                applicantName: "Napoleon The Second",
-                sendingStatus: .completed
-            ))
-        }
-
         // accept action(s)
         Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
         }
 
         // await states
-        let states = try await task.value
+        let states = try await Task {
+            try await collectResult(finishWhenReceiving: .init(
+                applicantName: "Napoleon The Second",
+                sendingStatus: .completed
+            ))
+        }
+        .value
 
 //        XCTAssertEqual(states.count, 5)
 //        XCTAssertEqual(states[0], .initial)
@@ -128,23 +125,22 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAccept3Actions_WaitForEachPreviousActionToComplete_ShouldReturnAllStates() async throws {
-        // observing task
-        let task = Task {
-            try await collectResult(finishWhenReceiving: .init(
-                applicantName: "Napoleon The Third",
-                sendingStatus: .completed
-            ))
-        }
-
         // accept actions
         Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Second"))
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The Third"))
         }
 
         // await states
-        let states = try await task.value
+        let states = try await Task {
+            try await collectResult(finishWhenReceiving: .init(
+                applicantName: "Napoleon The Third",
+                sendingStatus: .completed
+            ))
+        }
+        .value
 
 //        XCTAssertEqual(states.count, 7)
 //        XCTAssertEqual(states[0], .initial)
@@ -175,16 +171,9 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAcceptNewAction_CancelingPreviousActionImmediately_ShouldReturnSecondState() async throws {
-        // observing task
-        let task = Task {
-            try await collectResult(finishWhenReceiving: .init(
-                applicantName: "Napoleon The Second",
-                sendingStatus: .completed
-            ))
-        }
-
         // accept an action
         Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
 
             self.dispatcher.newActionShouldCancelPreviousAction = true
@@ -192,7 +181,13 @@ final class StateMachineTests: XCTestCase {
         }
 
         // await states
-        let states = try await task.value
+        let states = try await Task {
+            try await collectResult(finishWhenReceiving: .init(
+                applicantName: "Napoleon The Second",
+                sendingStatus: .completed
+            ))
+        }
+        .value
 
 //        XCTAssertEqual(states.count, 4)
 //        XCTAssertEqual(states[0], .initial)
@@ -211,16 +206,9 @@ final class StateMachineTests: XCTestCase {
     }
 
     func testAcceptNewActions_CancelingPreviousActionOrWaiting_ShouldPerformActionsCorrectly() async throws {
-        // Observing task
-        let task = Task {
-            try await collectResult(finishWhenReceiving: .init(
-                applicantName: "Napoleon The Fourth",
-                sendingStatus: .completed
-            ))
-        }
-
         // Accept an action and then immediately accept multiple new actions
         Task.detached {
+            try await Task.sleep(nanoseconds: 500_000_000)
             // first action
             await self.stateMachine.accept(action: .submitApplication(applicantName: "Napoleon The First"))
 
@@ -238,7 +226,13 @@ final class StateMachineTests: XCTestCase {
         }
 
         // await states
-        let states = try await task.value
+        let states = try await Task {
+            try await collectResult(finishWhenReceiving: .init(
+                applicantName: "Napoleon The Fourth",
+                sendingStatus: .completed
+            ))
+        }
+        .value
 
         // Verify the states are as expected
 //        XCTAssertEqual(states.count, 7)

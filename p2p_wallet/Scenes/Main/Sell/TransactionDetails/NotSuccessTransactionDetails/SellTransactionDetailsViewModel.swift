@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import Resolver
 import Sell
+import UIKit
 
 final class SellTransactionDetailsViewModel: ObservableObject {
     let openHelp = PassthroughSubject<URL, Never>()

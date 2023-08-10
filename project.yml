@@ -1,18 +1,5 @@
 name: p2p_wallet
 
-# how to add localization back:
-# 1. remove scripts in preGenCommand+postGenCommand
-# 2. repace in project.yml:
-
-#- path: p2p_wallet
-#          name: p2p_wallet
-#          excludes:
-#            - "Resources/*.lproj-backup/*"
-
-# to
-#- p2p_wallet
-
-# 3. Remove these comment when done
 packages:
     KeyAppKit:
         path: ./Packages/KeyAppKit
@@ -77,8 +64,8 @@ options:
         iOS: 15.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
-    preGenCommand: sh Scripts/preGenCommand.sh
-    postGenCommand: sh Scripts/postGenCommand.sh
+    # preGenCommand: sh Scripts/preGenCommand.sh
+    # postGenCommand: sh Scripts/postGenCommand.sh
 
 configs:
     Debug: debug
@@ -145,9 +132,9 @@ targets:
         - path: p2p_wallet
           name: p2p_wallet
           excludes:
-            - "Resources/*.lproj-backup/*"
             - "**/*.a"
             - "**/GoogleService-Info.plist"
+            - "Resources/Base.lproj/*"
         - path: README.MD
         preBuildScripts:
           - script: |
