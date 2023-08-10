@@ -135,6 +135,9 @@ final class HomeCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
                 switch result {
+                case let .simpleSend(transaction):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showSimpleSend(model: transaction)
                 case let .sent(model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
@@ -165,7 +168,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     )
                 )
                 .handleEvents(receiveOutput: { [weak self] result in
-                    guard let self = self else { return }
+                    guard let self else { return }
                     switch result {
                     case let .claiming(pendingTrx):
                         self.coordinate(
@@ -349,5 +352,14 @@ final class HomeCoordinator: Coordinator<Void> {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
             .sink(receiveValue: {})
             .store(in: &subscriptions)
+    }
+
+    private func showSimpleSend(model: PendingTransaction) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(pendingTransaction: model),
+            presentingViewController: navigationController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
     }
 }

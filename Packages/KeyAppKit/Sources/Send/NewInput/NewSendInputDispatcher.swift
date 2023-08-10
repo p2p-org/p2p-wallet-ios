@@ -37,14 +37,24 @@ public final class SendInputDispatcher: Dispatcher {
 
     public func actionWillBeginDispatching(
         action _: NSendInputAction,
-        currentState: NSendInputState
+        currentState _: NSendInputState
     ) async -> NSendInputState? {
-        currentState
+        nil
     }
 
-    public func onEnter(currentState: NSendInputState) {
-        Task { [weak self] in
-            await self?.dispatch(action: .enterCalculate, currentState: currentState)
+    public func actionDidEndDispatching(
+        action _: NSendInputAction,
+        currentState _: NSendInputState
+    ) async -> NSendInputState? {
+        nil
+    }
+
+    public func onEnterInvokeAction(currentState: NSendInputState) -> NSendInputAction? {
+        switch currentState {
+        case .calculating:
+            return .fetch
+        default:
+            return nil
         }
     }
 
@@ -62,7 +72,7 @@ public final class SendInputDispatcher: Dispatcher {
         case let .calculating(input):
 
             switch action {
-            case .enterCalculate:
+            case .fetch:
                 return await NSendInputBusinessLogic.calculate(provider: sendProvider, input: input)
             default:
                 return currentState
@@ -86,12 +96,5 @@ public final class SendInputDispatcher: Dispatcher {
                 return currentState
             }
         }
-    }
-
-    public func actionDidEndDispatching(
-        action _: NSendInputAction,
-        currentState _: NSendInputState
-    ) async -> NSendInputState? {
-        nil
     }
 }

@@ -11,7 +11,5 @@ import KeyAppStateMachine
 public enum NSendInputAction: Action {
     case calculate(input: NSendInput)
 
-    case enterCalculate
-
-    case receiveError(input: NSendInput, output: NSendOutput?, error: NSendError)
+    case fetch
 }

@@ -60,14 +60,14 @@ struct NSendInputView: View {
 
                 Button(action: viewModel.feeInfoPressed.send) {
                     HStack(spacing: 4) {
-                        Text(viewModel.feeTitle)
+                        Text(viewModel.fee.title)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.sky.color))
                             .onTapGesture(perform: viewModel.feeInfoPressed.send)
-                        if viewModel.isFeeLoading {
-                            CircularProgressIndicatorView(
-                                backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                foregroundColor: Asset.Colors.sky.color
+                        if viewModel.fee.loading {
+                            NewCircularProgressIndicator(
+                                backgroundColor: Color(Asset.Colors.sky.color.withAlphaComponent(0.6)),
+                                foregroundColor: Color(Asset.Colors.sky.color)
                             )
                             .frame(width: 16, height: 16)
                         } else {
@@ -79,18 +79,22 @@ struct NSendInputView: View {
                         }
                     }
                 }
-                .allowsHitTesting(!viewModel.isFeeLoading)
+                .allowsHitTesting(!viewModel.fee.loading)
                 .accessibilityIdentifier("fee-label")
             }
             .padding(.horizontal, 4)
 
-            SendInputTokenView(
-                wallet: viewModel.sourceWallet,
-                amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
-                isChangeEnabled: viewModel.isTokenChoiceEnabled,
-                changeAction: viewModel.changeTokenPressed.send
-            )
-            .accessibilityIdentifier("token-view")
+            if let input = viewModel.currentState.input {
+                SendInputTokenView(
+                    wallet: input.account,
+                    amountInFiat: input.account.amountInCurrentFiat,
+                    isChangeEnabled: viewModel.allowSwitchAccount,
+                    changeAction: viewModel.changeTokenPressed.send
+                )
+                .accessibilityIdentifier("token-view")
+            } else {
+                inputSkeletonView
+            }
 
             switch viewModel.status {
             case .initializing:
@@ -180,11 +184,8 @@ struct NSendInputView_Previews: PreviewProvider {
                     category: .solanaAddress,
                     attributes: [.funds]
                 ),
-                preChosenWallet: nil,
-                preChosenAmount: nil,
-                flow: .send,
-                allowSwitchingMainAmountType: false,
-                sendViaLinkSeed: nil
+                account: nil,
+                allowSwitchAccount: false
             )
         )
     }

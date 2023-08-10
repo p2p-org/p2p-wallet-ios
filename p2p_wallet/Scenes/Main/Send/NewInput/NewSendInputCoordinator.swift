@@ -40,11 +40,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     override func start() -> AnyPublisher<SendResult, Never> {
         let viewModel = NSendInputViewModel(
             recipient: recipient,
-            preChosenWallet: preChosenWallet,
-            preChosenAmount: preChosenAmount,
-            flow: flow,
-            allowSwitchingMainAmountType: allowSwitchingMainAmountType,
-            sendViaLinkSeed: sendViaLinkSeed
+            account: preChosenWallet,
+            allowSwitchAccount: allowSwitchingMainAmountType
         )
         let view = NSendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
@@ -101,7 +98,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.transaction
             .sink { [weak self, viewModel] model in
-                self?.subject.send(.sent(model))
+                self?.subject.send(.simpleSend(model))
                 self?.subject.send(completion: .finished)
             }
             .store(in: &subscriptions)
@@ -130,14 +127,16 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: NSendInputViewModel) {
+        guard let input = viewModel.currentState.input else { return }
+
         coordinate(to: ChooseSendItemCoordinator(
             strategy: .sendToken,
-            chosenWallet: viewModel.sourceWallet,
+            chosenWallet: input.account,
             parentController: vc
         ))
         .sink { walletToken in
             if let walletToken {
-                viewModel.sourceWallet = walletToken
+                viewModel.changeAccount(account: walletToken)
             }
             viewModel.openKeyboard()
         }
@@ -171,7 +170,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         .store(in: &subscriptions)
     }
 
-    private func openFeeDetail(from vc: UIViewController, viewModel: NSendInputViewModel) {
+    private func openFeeDetail(from _: UIViewController, viewModel _: NSendInputViewModel) {
 //        coordinate(to: SendTransactionDetailsCoordinator(
 //            parentController: vc,
 //            sendInputViewModel: viewModel

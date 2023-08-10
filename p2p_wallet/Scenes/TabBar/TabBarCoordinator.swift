@@ -174,6 +174,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                     return
                 }
                 switch result {
+                case let .simpleSend(model):
+                    navigationController.popToRootViewController(animated: true)
+                    self?.showSimpleSendTransactionStatus(navigationController: navigationController, model: model)
                 case let .sent(model):
                     navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(navigationController: navigationController, model: model)
@@ -227,6 +230,18 @@ final class TabBarCoordinator: Coordinator<Void> {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
             .sink(receiveValue: {})
             .store(in: &subscriptions)
+    }
+
+    private func showSimpleSendTransactionStatus(
+        navigationController: UINavigationController,
+        model: PendingTransaction
+    ) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(pendingTransaction: model),
+            presentingViewController: navigationController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
     }
 
     private func routeToCrypto(

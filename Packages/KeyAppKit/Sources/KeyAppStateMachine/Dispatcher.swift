@@ -9,7 +9,7 @@ public protocol Dispatcher<State, Action> {
     associatedtype Action: KeyAppStateMachine.Action
 
     /// Will be trigged when state has been changed.
-    func onEnter(currentState: State)
+    func onEnterInvokeAction(currentState: State) -> Action?
 
     /// Asks the dispatcher whether to begin dispatching an action.
     func shouldBeginDispatching(currentAction: Action, newAction: Action, currentState: State) -> Bool

@@ -47,11 +47,30 @@ public actor StateMachine<Dispatcher> where Dispatcher: KeyAppStateMachine.Dispa
     /// `StateMachine`'s initialization
     /// - Parameter dispatcher: Dispatcher that controls dispatching actions
     /// - Parameter verbose: Define if if logging available
-    public init(initialState: State, dispatcher: Dispatcher, verbose: Bool = false) {
+    public init(
+        initialState: State,
+        dispatcher: Dispatcher,
+        verbose: Bool = false
+    ) {
         stateSubject = CurrentValueSubject<State, Never>(initialState)
         self.dispatcher = dispatcher
         self.verbose = verbose
-        log(message: "🚧 Initialising with state: \(initialState)")
+
+        let subscription = statePublisher.sink { [weak self] state in
+            if let action = dispatcher.onEnterInvokeAction(currentState: state) {
+                Task { [weak self] in
+                    await self?.accept(action: action)
+                }
+            }
+        }
+
+        Task {
+            await store(subscription: subscription)
+        }
+    }
+
+    private func store(subscription: AnyCancellable) {
+        subscriptions.append(subscription)
     }
 
     // MARK: - Public methods

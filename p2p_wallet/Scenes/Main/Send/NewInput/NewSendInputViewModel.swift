@@ -8,6 +8,21 @@ import KeyAppUI
 import Resolver
 import Send
 
+public extension Publisher where Output: Equatable, Failure == Never {
+    func aggregate<Root: AnyObject, TransformedOutput: Equatable>(
+        on root: Root,
+        to keyPath: ReferenceWritableKeyPath<Root, TransformedOutput>,
+        transform: @escaping (Output) -> TransformedOutput
+    ) -> AnyCancellable {
+        map(transform)
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak root] in
+                root?[keyPath: keyPath] = $0
+            }
+    }
+}
+
 final class NSendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Type
 
@@ -27,21 +42,16 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Configuration
 
-    let isTokenChoiceEnabled: Bool
-    let allowSwitchingMainAmountType: Bool
+    let allowSwitchAccount: Bool
 
     // MARK: - Properties
 
     let stateMachine: KeyAppStateMachine.StateMachine<SendInputDispatcher>
 
-    var currentState: NSendInputState { stateMachine.currentState }
+    @Published var currentState: NSendInputState = .initialising
 
-    @Published var status: Status = .initializing
-    @Published var sourceWallet: SolanaAccount
-
-    @Published var feeTitle = L10n.fees("")
-    @Published var isFeeLoading: Bool = true
     @Published var loadingState: LoadableState = .loaded
+    @Published var fee: SendInputFeeData = .init(loading: true, title: L10n.fees(""))
 
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
@@ -56,25 +66,28 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
     let openFeeInfo = PassthroughSubject<Bool, Never>()
     let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
     let snackBar = PassthroughSubject<SnackBar, Never>()
-    let transaction = PassthroughSubject<SendTransaction, Never>()
+    let transaction = PassthroughSubject<PendingTransaction, Never>()
 
+    /// Initializing view model
+    /// - Parameters:
+    ///   - recipient: The destination recipient information
+    ///   - account: The account that will be withdrawn
+    ///   - allowSwitchAccount: Allow to select another account for withdrawing
+    ///   - solanaAccountsService: Solana account service
     init(
         recipient: Recipient,
-        preChosenWallet _: SolanaAccount?,
-        preChosenAmount _: Double?,
-        flow _: SendFlow,
-        allowSwitchingMainAmountType: Bool,
-        sendViaLinkSeed _: String?
+        account: SolanaAccount?,
+        allowSwitchAccount: Bool,
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve()
     ) {
-        isTokenChoiceEnabled = false
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
+        self.allowSwitchAccount = allowSwitchAccount
 
-        let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
-        let initialAccount = solanaAccountsService.state.value.first
-            ?? SolanaAccount(token: SolanaToken.nativeSolana)
-        sourceWallet = initialAccount
+        let account = account
+            ?? solanaAccountsService.state.value.first
+            ?? solanaAccountsService.nativeAccount
 
-        inputAmountViewModel = SendInputAmountViewModel(initialToken: initialAccount)
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: account)
+        inputAmountViewModel.token = account
 
         stateMachine = .init(
             initialState: .initialising,
@@ -86,6 +99,21 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
+        $currentState.sink { state in
+            print("STATTE", state)
+        }.store(in: &subscriptions)
+
+        $isSliderOn
+            .sinkAsync(receiveValue: { [weak self] isSliderOn in
+                guard let self else { return }
+                if isSliderOn {
+                    await self.send()
+                    self.isSliderOn = false
+                    self.showFinished = false
+                }
+            })
+            .store(in: &subscriptions)
+
         inputAmountViewModel.changeAmount
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] amount, _ in
@@ -95,33 +123,35 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                input.amount = amount.inToken.toLamport(decimals: input.token.decimals)
+                input.amount = amount.inToken.toLamport(decimals: input.account.token.decimals)
                 _ = await self.stateMachine.accept(action: .calculate(input: input))
             }
             .store(in: &subscriptions)
 
-        stateMachine.statePublisher.removeDuplicates().sink { [weak self] state in
-            guard let self else { return }
-            switch state {
-            case .initialising:
-                isFeeLoading = true
-            case let .calculating(input):
-                isFeeLoading = true
-            case let .ready(input, output):
-                isFeeLoading = false
-            case let .error(input, output, error):
-                isFeeLoading = false
-            }
+        // Bind action button
+        stateMachine
+            .statePublisher
+            .assignWeak(to: \.currentState, on: self)
+            .store(in: &subscriptions)
 
-            self.updateInputAmountView(state: state)
-        }.store(in: &subscriptions)
+        stateMachine
+            .statePublisher
+            .aggregate(on: self, to: \.actionButtonData, transform: SendInputSliderAggregator().transform)
+            .store(in: &subscriptions)
+
+        stateMachine
+            .statePublisher
+            .aggregate(on: self, to: \.fee, transform: SendInputFeeDataAggregator().transform)
+            .store(in: &subscriptions)
 
         Task {
+            let walletManager: UserWalletManager = Resolver.resolve()
+
             await stateMachine.accept(action: .calculate(input: NSendInput(
-                userWallet: initialAccount,
+                owner: walletManager.wallet?.account.publicKey.base58EncodedString ?? "",
+                account: account,
                 recipient: recipient.address,
-                token: initialAccount.token,
-                amount: 10,
+                amount: 0,
                 feeSelectionMode: .auto(.sameToken),
                 configuration: .init(swapMode: .exactOut, feePayer: .service)
             )))
@@ -132,19 +162,47 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
 
     func load() async {}
 
-    func openKeyboard() {}
-}
+    func changeAccount(account: SolanaAccount) {
+        DispatchQueue.main.async {
+            self.inputAmountViewModel.token = account
+        }
+        
+        Task {
+            if var currentInput = currentState.input {
+                currentInput.account = account
+                await stateMachine.accept(action: .calculate(input: currentInput))
+            }
+        }
+    }
 
-private extension NSendInputViewModel {
-    func updateInputAmountView(state: NSendInputState) {
-        switch state {
-        case let .ready(input, output):
-            let cryptoFormatter = CryptoFormatter()
-            var title = L10n.send + cryptoFormatter.string(amount: input.tokenAmount)
-            actionButtonData = SliderActionButtonData(isEnabled: true, title: title)
-        default:
-            var title = L10n.error
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: title)
+    func openKeyboard() {}
+
+    func send() async {
+        guard case let .ready(input, output) = currentState else {
+            return
+        }
+
+        await MainActor.run {
+            let transaction = SimpleSendTransaction(input: input, output: output)
+
+            let handler: TransactionHandler = Resolver.resolve()
+            let index = handler.sendTransaction(transaction)
+            let pending = handler.transactionsSubject.value[index]
+
+            self.transaction.send(pending)
         }
     }
 }
+
+extension NSendInputViewModel {
+    var status: Status {
+        switch currentState {
+        case .initialising:
+            return .initializing
+        default:
+            return .ready
+        }
+    }
+}
+
+private extension NSendInputViewModel {}

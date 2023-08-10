@@ -41,7 +41,9 @@ public enum NSendInputState: Hashable, State {
 }
 
 public enum NSendError: Hashable {
-    case network(description: String)
+    case noAmount
+    case insufficientAmount
+    case server(code: Int, message: String)
     case unknown(String)
 }
 
@@ -57,25 +59,24 @@ public struct NSendInput: Hashable {
         case manual(SolanaToken)
     }
 
-    public let userWallet: SolanaAccount
+    public var owner: String
+    public var account: SolanaAccount
     public let recipient: String
-
-    public let token: SolanaToken
     public var amount: UInt64
     public let feeSelectionMode: FeeSelectionMode
     public let configuration: TransferOptions
 
     public init(
-        userWallet: SolanaAccount,
+        owner: String,
+        account: SolanaAccount,
         recipient: String,
-        token: SolanaToken,
         amount: UInt64,
         feeSelectionMode: FeeSelectionMode,
         configuration: TransferOptions
     ) {
-        self.userWallet = userWallet
+        self.owner = owner
+        self.account = account
         self.recipient = recipient
-        self.token = token
         self.amount = amount
         self.feeSelectionMode = feeSelectionMode
         self.configuration = configuration
@@ -84,7 +85,7 @@ public struct NSendInput: Hashable {
 
 public extension NSendInput {
     var tokenAmount: CryptoAmount {
-        CryptoAmount(uint64: amount, token: userWallet.token)
+        CryptoAmount(uint64: amount, token: account.token)
     }
 }
 
