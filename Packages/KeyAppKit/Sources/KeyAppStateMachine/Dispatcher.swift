@@ -19,6 +19,6 @@ public protocol Dispatcher<State, Action> {
     func dispatch(
         action: Action,
         currentState: State,
-        continuation: AsyncStream<State>.Continuation
+        yield: (State) -> Void
     ) async
 }

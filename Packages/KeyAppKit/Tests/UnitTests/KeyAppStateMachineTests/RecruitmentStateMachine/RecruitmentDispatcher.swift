@@ -41,7 +41,7 @@ class RecruitmentDispatcher: Dispatcher {
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState,
-        continuation: AsyncStream<RecruitmentState>.Continuation
+        yield: (RecruitmentState) -> Void
     ) async {
         switch action {
         case let .submitApplication(applicantName):
@@ -51,7 +51,7 @@ class RecruitmentDispatcher: Dispatcher {
             }
 
             // emit state
-            continuation.yield(currentState)
+            yield(currentState)
 
             do {
                 try await RecruitmentBusinessLogic.sendApplicant(
@@ -69,10 +69,7 @@ class RecruitmentDispatcher: Dispatcher {
             }
 
             // emit state
-            continuation.yield(currentState)
-
-            // end
-            continuation.finish()
+            yield(currentState)
         }
     }
 }

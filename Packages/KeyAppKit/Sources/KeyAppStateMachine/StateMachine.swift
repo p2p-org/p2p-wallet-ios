@@ -131,23 +131,29 @@ public actor StateMachine<
         // Log
         logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
 
-        // dispatch action
+        // get stream of states by dispatching action
         let stateStream = AsyncStream { continuation in
             Task {
                 await dispatcher.dispatch(
                     action: action,
-                    currentState: currentState,
-                    continuation: continuation
-                )
+                    currentState: currentState
+                ) { state in
+                    continuation.yield(state)
+                }
+
+                continuation.finish()
             }
         }
 
+        // Listen to stream and send state to user
         for await state in stateStream {
             // check cancellation
             guard !Task.isCancelled else {
                 logIfVerbose(message: "❌ Action cancelled: \(action)")
                 return
             }
+
+            // send state
             stateSubject.send(state)
         }
 
