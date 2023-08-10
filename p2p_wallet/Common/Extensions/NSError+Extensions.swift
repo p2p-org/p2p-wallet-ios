@@ -9,6 +9,6 @@ extension NSError {
             NSURLErrorCannotFindHost,
             NSURLErrorTimedOut,
         ]
-        .contains(code)
+            .contains(code)
     }
 }
