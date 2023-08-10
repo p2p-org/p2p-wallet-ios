@@ -42,33 +42,31 @@ public struct Region: Codable, Equatable, Hashable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String.self, forKey: .name)
-        self.alpha2 = try container.decode(String.self, forKey: .alpha2)
-        self.alpha3 = try container.decode(String.self, forKey: .alpha3)
-        self.flagEmoji = try container.decodeIfPresent(String.self, forKey: .flagEmoji)?.stringByDecodingHTMLEntities
-        self.isStrigaAllowed = try container.decode(Bool.self, forKey: .isStrigaAllowed)
-        self.isMoonpayAllowed = try container.decode(Bool.self, forKey: .isMoonpayAllowed)
+        name = try container.decode(String.self, forKey: .name)
+        alpha2 = try container.decode(String.self, forKey: .alpha2)
+        alpha3 = try container.decode(String.self, forKey: .alpha3)
+        flagEmoji = try container.decodeIfPresent(String.self, forKey: .flagEmoji)?.stringByDecodingHTMLEntities
+        isStrigaAllowed = try container.decode(Bool.self, forKey: .isStrigaAllowed)
+        isMoonpayAllowed = try container.decode(Bool.self, forKey: .isMoonpayAllowed)
     }
 }
 
 public typealias Countries = [Country]
 
-
 private extension String {
     /// Returns a new string made by replacing in the `String`
     /// all HTML character entity references with the corresponding
     /// character.
-    var stringByDecodingHTMLEntities : String {
-
+    var stringByDecodingHTMLEntities: String {
         // ===== Utility functions =====
 
         // Convert the number in the string to the corresponding
         // Unicode character, e.g.
         //    decodeNumeric("64", 10)   --> "@"
         //    decodeNumeric("20ac", 16) --> "€"
-        func decodeNumeric(_ string : Substring, base : Int) -> Character? {
+        func decodeNumeric(_ string: Substring, base: Int) -> Character? {
             guard let code = UInt32(string, radix: base),
-                let uniScalar = UnicodeScalar(code) else { return nil }
+                  let uniScalar = UnicodeScalar(code) else { return nil }
             return Character(uniScalar)
         }
 
@@ -78,8 +76,7 @@ private extension String {
         //     decode("&#x20ac;") --> "€"
         //     decode("&lt;")     --> "<"
         //     decode("&foo;")    --> nil
-        func decode(_ entity : Substring) -> Character? {
-
+        func decode(_ entity: Substring) -> Character? {
             if entity.hasPrefix("&#x") || entity.hasPrefix("&#X") {
                 return decodeNumeric(entity.dropFirst(3).dropLast(), base: 16)
             } else if entity.hasPrefix("&#") {
@@ -121,16 +118,16 @@ private extension String {
     }
 }
 
-private let characterEntities : [ Substring : Character ] = [
+private let characterEntities: [Substring: Character] = [
     // XML predefined entities:
-    "&quot;"    : "\"",
-    "&amp;"     : "&",
-    "&apos;"    : "'",
-    "&lt;"      : "<",
-    "&gt;"      : ">",
+    "&quot;": "\"",
+    "&amp;": "&",
+    "&apos;": "'",
+    "&lt;": "<",
+    "&gt;": ">",
 
     // HTML character entity references:
-    "&nbsp;"    : "\u{00a0}",
+    "&nbsp;": "\u{00a0}",
     // ...
-    "&diams;"   : "♦",
+    "&diams;": "♦",
 ]
