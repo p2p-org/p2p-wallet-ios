@@ -16,9 +16,5 @@ public protocol Dispatcher<State, Action> {
     func shouldCancelCurrentAction(currentAction: Action, newAction: Action, currentState: State) -> Bool
 
     /// Dispatch an action and return new `State`
-    func dispatch(
-        action: Action,
-        currentState: inout State,
-        yield: (State) -> Void
-    ) async
+    func dispatch(action: Action, currentState: inout State, yield: (State) -> Void) async
 }
