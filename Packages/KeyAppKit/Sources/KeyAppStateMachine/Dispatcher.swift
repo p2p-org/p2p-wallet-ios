@@ -19,6 +19,6 @@ public protocol Dispatcher<State, Action> {
     func dispatch(
         action: Action,
         currentState: State,
-        yield: (State) -> Void
+        yield: (inout State, (inout State) -> Void) -> Void
     ) async
 }

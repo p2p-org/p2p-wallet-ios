@@ -134,7 +134,8 @@ public actor StateMachine<
                 await dispatcher.dispatch(
                     action: action,
                     currentState: currentState
-                ) { state in
+                ) { state, modifier in
+                    modifier(&state)
                     continuation.yield(state)
                 }
 

@@ -41,18 +41,17 @@ class RecruitmentDispatcher: Dispatcher {
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState,
-        yield: (RecruitmentState) -> Void
+        yield: (inout RecruitmentState, (inout RecruitmentState) -> Void) -> Void
     ) async {
         switch action {
         case let .submitApplication(applicantName):
             // loading state
-            var currentState = currentState.modified {
+            var currentState = currentState
+
+            yield(&currentState) {
                 $0.sendingStatus = .sending
                 $0.applicantName = applicantName
             }
-
-            // emit state
-            yield(currentState)
 
             do {
                 try await RecruitmentBusinessLogic.sendApplicant(
@@ -60,17 +59,14 @@ class RecruitmentDispatcher: Dispatcher {
                     apiClient: apiClient
                 )
 
-                currentState = currentState.modified {
+                yield(&currentState) {
                     $0.sendingStatus = .completed
                 }
             } catch {
-                currentState = currentState.modified {
+                yield(&currentState) {
                     $0.sendingStatus = .error("\(error)")
                 }
             }
-
-            // emit state
-            yield(currentState)
         }
     }
 }
