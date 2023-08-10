@@ -73,7 +73,7 @@ final class SelectRegionViewModel: BaseViewModel, ObservableObject {
     private func makeItems() -> [any Renderable] {
         let countryCell = BankTransferCountryCellViewItem(
             name: currentRegion?.name ?? "",
-            flag: currentRegion?.flagEmoji?.decodeHTMLEntities() ?? "🏴",
+            flag: currentRegion?.flagEmoji ?? "🏴",
             isLoading: isLoading
         )
         return [
