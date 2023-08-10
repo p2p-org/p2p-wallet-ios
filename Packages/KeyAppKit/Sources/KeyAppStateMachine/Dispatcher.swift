@@ -18,7 +18,7 @@ public protocol Dispatcher<State, Action> {
     /// Dispatch an action and return new `State`
     func dispatch(
         action: Action,
-        currentState: State,
-        yield: (inout State, (inout State) -> Void) -> Void
+        currentState: inout State,
+        yield: (State) -> Void
     ) async
 }

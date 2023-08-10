@@ -131,11 +131,12 @@ public actor StateMachine<
         // get stream of states by dispatching action
         let stateStream = AsyncStream { continuation in
             Task {
+                var currentState = currentState
+
                 await dispatcher.dispatch(
                     action: action,
-                    currentState: currentState
-                ) { state, modifier in
-                    modifier(&state)
+                    currentState: &currentState
+                ) { state in
                     continuation.yield(state)
                 }
 
