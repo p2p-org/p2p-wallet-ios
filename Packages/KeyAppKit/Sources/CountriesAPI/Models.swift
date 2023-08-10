@@ -36,9 +36,9 @@ public struct Region: Codable, Equatable, Hashable {
     public var name: String
     public let alpha2: String
     public let alpha3: String
-    public var flagEmoji: String?
-    public var isStrigaAllowed: Bool
-    public var isMoonpayAllowed: Bool
+    public let flagEmoji: String?
+    public let isStrigaAllowed: Bool
+    public let isMoonpayAllowed: Bool
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
