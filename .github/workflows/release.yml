@@ -29,6 +29,7 @@ jobs:
         #   token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Map fix version to jira tasks
+        if: ${{ github.event.inputs.is_release_candidate == 'true' }}
         env:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
