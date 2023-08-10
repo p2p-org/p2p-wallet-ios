@@ -46,6 +46,7 @@ class RecruitmentDispatcher: Dispatcher {
         switch action {
         case let .submitApplication(applicantName):
 
+            // emit loading state
             currentState.modify {
                 $0.sendingStatus = .sending
                 $0.applicantName = applicantName
@@ -68,6 +69,7 @@ class RecruitmentDispatcher: Dispatcher {
                 }
             }
 
+            // emit last state
             yield(currentState)
         }
     }
