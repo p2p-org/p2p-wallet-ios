@@ -119,9 +119,6 @@ public actor StateMachine<
 
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
-        // Log
-        logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
-
         // check cancellation
         guard !Task.isCancelled else {
             logIfVerbose(message: "❌ Action cancelled: \(action)")
