@@ -33,8 +33,8 @@ struct ActionsCellView: View {
             }
             .frame(maxWidth: .infinity, minHeight: 72)
         }
-        .background(Color(Asset.Colors.snow.color))
-        .cornerRadius(16)
+            .background(Color(Asset.Colors.snow.color))
+            .cornerRadius(16)
     }
 }
 
