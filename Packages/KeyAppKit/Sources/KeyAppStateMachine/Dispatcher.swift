@@ -15,6 +15,6 @@ public protocol Dispatcher<State, Action> {
     /// or wait for it to finish then perform new action.
     func shouldCancelCurrentAction(currentAction: Action, newAction: Action, currentState: State) -> Bool
 
-    /// Dispatch an action and return new `State`
+    /// Dispatch an action and yield one or some `State`(s)
     func dispatch(action: Action, currentState: inout State, yield: (State) -> Void) async
 }
