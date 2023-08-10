@@ -20,5 +20,5 @@ public protocol Dispatcher<State, Action> {
         action: Action,
         currentState: State,
         continuation: AsyncStream<State>.Continuation
-    ) async -> AsyncStream<State>
+    ) async
 }

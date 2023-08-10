@@ -38,47 +38,41 @@ class RecruitmentDispatcher: Dispatcher {
         newActionShouldCancelPreviousAction
     }
 
-    func actionWillBeginDispatching(
-        action: RecruitmentAction,
-        currentState: RecruitmentState
-    ) async -> RecruitmentState? {
-        switch action {
-        case let .submitApplication(applicantName):
-            return currentState.modified {
-                $0.sendingStatus = .sending
-                $0.applicantName = applicantName
-            }
-        }
-    }
-
     func dispatch(
         action: RecruitmentAction,
-        currentState: RecruitmentState
-    ) async -> RecruitmentState {
+        currentState: RecruitmentState,
+        continuation: AsyncStream<RecruitmentState>.Continuation
+    ) async {
         switch action {
         case let .submitApplication(applicantName):
+            // loading state
+            var currentState = currentState.modified {
+                $0.sendingStatus = .sending
+            }
+
+            // emit state
+            continuation.yield(currentState)
+
             do {
                 try await RecruitmentBusinessLogic.sendApplicant(
                     applicantName: applicantName,
                     apiClient: apiClient
                 )
 
-                return currentState.modified {
+                currentState = currentState.modified {
                     $0.sendingStatus = .completed
                 }
             } catch {
-                return currentState.modified {
+                currentState = currentState.modified {
                     $0.sendingStatus = .error("\(error)")
                 }
             }
-        }
-    }
 
-    func actionDidEndDispatching(
-        action _: RecruitmentAction,
-        currentState _: RecruitmentState
-    ) async -> RecruitmentState? {
-        // No additional state modifications in this example
-        nil
+            // emit state
+            continuation.yield(currentState)
+
+            // end
+            continuation.finish()
+        }
     }
 }
