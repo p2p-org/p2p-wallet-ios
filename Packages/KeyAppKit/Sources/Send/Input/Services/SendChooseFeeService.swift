@@ -19,11 +19,11 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
     }
 
     public func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [SolanaAccount] {
-        let filteredWallets = wallets.filter { ($0.lamports ?? 0) > 0 }
+        let filteredWallets = wallets.filter { $0.lamports > 0 }
         var feeWallets = [SolanaAccount]()
         for element in filteredWallets {
             if element.token.mintAddress == PublicKey.wrappedSOLMint
-                .base58EncodedString && (element.lamports ?? 0) >= feeInSOL.total
+                .base58EncodedString && element.lamports >= feeInSOL.total
             {
                 feeWallets.append(element)
                 continue
@@ -34,7 +34,7 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
                     feeInSOL: feeInSOL,
                     payingFeeTokenMint: PublicKey(string: element.token.mintAddress)
                 )
-                if (feeAmount?.total ?? 0) <= (element.lamports ?? 0) {
+                if (feeAmount?.total ?? 0) <= element.lamports {
                     feeWallets.append(element)
                 }
             } catch {

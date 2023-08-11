@@ -32,7 +32,7 @@ struct CryptoAccountsView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     header
-                        .padding(.top, 11)
+                        .padding(.top, 5)
                         .padding(.bottom, 32)
                         .id(0)
                     content

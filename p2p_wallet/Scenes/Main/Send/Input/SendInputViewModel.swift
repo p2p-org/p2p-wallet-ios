@@ -487,7 +487,7 @@ private extension SendInputViewModel {
     }
 
     func checkMaxButtonIfNeeded() {
-        guard currentState.token.isNativeSOL else { return }
+        guard currentState.token.isNative else { return }
         let range = currentState.maxAmountInputInSOLWithLeftAmount ..< currentState.maxAmountInputInToken
         if range.contains(currentState.amountInToken) {
             if !wasMaxWarningToastShown {
@@ -659,7 +659,7 @@ private extension SendInputViewModel {
 
 private extension SolanaAccount {
     var isSendable: Bool {
-        lamports ?? 0 > 0 && !isNFTToken
+        lamports > 0 && !isNFTToken
     }
 
     var isUsdcOrUsdt: Bool {
