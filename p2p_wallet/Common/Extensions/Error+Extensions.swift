@@ -26,8 +26,7 @@ extension SolanaSwift.APIClientError: LocalizedError {
             }
             return string
         case .transactionSimulationError:
-            
-            
+
             return L10n.transactionFailed
         case .couldNotRetrieveAccountInfo:
             return L10n.accountNotFound
