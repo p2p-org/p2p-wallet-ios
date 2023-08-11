@@ -64,7 +64,7 @@ options:
         iOS: 15.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
-    # preGenCommand: sh Scripts/preGenCommand.sh
+    preGenCommand: rm -f p2p_wallet/Resources/Asset+Generated.swift p2p_wallet/Resources/Fonts+Generated.swift
     # postGenCommand: sh Scripts/postGenCommand.sh
 
 configs:

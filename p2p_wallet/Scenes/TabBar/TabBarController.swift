@@ -69,7 +69,7 @@ final class TabBarController: UITabBarController {
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
                         .image = .init(resource: .tabBarSettingsWithAlert)
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                        .selectedImage = .selectedTabBarSettingsWithAlert
+                        .selectedImage = .init(resource: .selectedTabBarSettingsWithAlert)
                 } else {
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
                         .image = .init(resource: .tabBarSettings)
