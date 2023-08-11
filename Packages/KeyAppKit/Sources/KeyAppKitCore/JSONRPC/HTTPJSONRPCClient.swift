@@ -80,7 +80,7 @@ public class HTTPJSONRPCCLient {
             method: method,
             params: params
         )
-        
+
         print(rpcBody)
 
         request.httpBody = try encoder.encode(rpcBody)

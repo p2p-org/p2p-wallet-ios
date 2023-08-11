@@ -1,14 +1,14 @@
-//import Combine
-//import KeyAppKitCore
-//import Send
-//import SolanaSwift
-//import SwiftUI
+// import Combine
+// import KeyAppKitCore
+// import Send
+// import SolanaSwift
+// import SwiftUI
 //
-//enum NSendTransactionDetailsCoordinatorResult {
+// enum NSendTransactionDetailsCoordinatorResult {
 //    case redirectToFeePrompt(availableTokens: [SolanaAccount])
-//}
+// }
 //
-//final class NSendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
+// final class NSendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
 //    private let parentController: UIViewController
 //    private var subject = PassthroughSubject<SendTransactionDetailsCoordinatorResult, Never>()
 //
@@ -58,4 +58,4 @@
 //
 //        return subject.eraseToAnyPublisher()
 //    }
-//}
+// }

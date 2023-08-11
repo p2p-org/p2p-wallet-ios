@@ -270,7 +270,7 @@ internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, (resolved, _)) = try await (
+                let (balance, (resolved, _)) = try await(
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,

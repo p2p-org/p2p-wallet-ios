@@ -166,7 +166,7 @@ final class NSendInputViewModel: BaseViewModel, ObservableObject {
         DispatchQueue.main.async {
             self.inputAmountViewModel.token = account
         }
-        
+
         Task {
             if var currentInput = currentState.input {
                 currentInput.account = account
