@@ -427,6 +427,7 @@ private extension HomeAccountsViewModel {
                     isSmallBanner: true
                 )
             }
+            .receive(on: RunLoop.main)
             .assignWeak(to: \.smallBanner, on: self)
             .store(in: &subscriptions)
 
