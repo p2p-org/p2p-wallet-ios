@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/krzyzanowskim/OpenSSL",
       "state" : {
-        "revision" : "0c70e4b7d22411a7fe3ff59b913d5b760b735ce1",
-        "version" : "1.1.2100"
+        "revision" : "0faf71a188bcfdf0245cab42886b9b240ca71c52",
+        "version" : "1.1.2200"
       }
     },
     {
@@ -347,8 +347,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
-        "branch" : "main",
-        "revision" : "5d186612724dd806eb5293e565ef8dab43d24d39"
+        "revision" : "ab9a29e291a2adb1f4dfecea09b9c516c9fba970",
+        "version" : "4.0.0"
       }
     },
     {
@@ -374,8 +374,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "cf281631ff10ec6111f2761052aa81896a83a007",
-        "version" : "2.58.0"
+        "revision" : "a2e487b77f17edbce9a65f2b7415f2f479dc8e48",
+        "version" : "2.57.0"
       }
     },
     {
@@ -401,8 +401,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-transport-services.git",
       "state" : {
-        "revision" : "e7403c35ca6bb539a7ca353b91cc2d8ec0362d58",
-        "version" : "1.19.0"
+        "revision" : "41f4098903878418537020075a4d8a6e20a0b182",
+        "version" : "1.17.0"
       }
     },
     {
