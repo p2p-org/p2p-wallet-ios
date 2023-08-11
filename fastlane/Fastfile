@@ -147,7 +147,7 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
   )
 
   # Parse JSON response and extract binary_url
-  binary_url = result["binary_url"]
+  binary_url = result[:binaryDownloadUri]
 
   # upload to browserstack
   if custom_id.nil?
