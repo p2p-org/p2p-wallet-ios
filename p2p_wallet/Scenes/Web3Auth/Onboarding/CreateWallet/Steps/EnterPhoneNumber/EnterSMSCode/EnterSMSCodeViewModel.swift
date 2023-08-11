@@ -12,9 +12,8 @@ import SwiftyUserDefaults
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    private var cancellable = Set<AnyCancellable>()
+    var attemptCounter: Wrapper<ResendCounter>
 
-    private let attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
     private static let codeLength = 6
     private let strategy: Strategy
@@ -40,6 +39,13 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Published var resendEnabled: Bool = false
     @Published var resendText: String = ""
     @Published var isButtonEnabled: Bool = false
+    var phoneText: String {
+        strategy == .striga ? L10n.weHaveSentACodeTo : L10n.checkTheNumber
+    }
+
+    var title: String {
+        strategy == .striga ? L10n.enterConfirmationCode : L10n.theCodeFromSMS
+    }
 
     func buttonTaped() {
         guard !isLoading, reachability.check() else { return }
@@ -88,7 +94,11 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     var coordinatorIO: CoordinatorIO = .init()
 
-    private var timer: Timer?
+    private weak var timer: Timer?
+
+    deinit {
+        timer?.invalidate()
+    }
 
     init(phone: String, attemptCounter: Wrapper<ResendCounter>, strategy: Strategy) {
         self.phone = phone
@@ -114,6 +124,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             analyticsManager.log(event: .createSmsScreen)
         case .restore:
             analyticsManager.log(event: .restoreSmsScreen)
+        case .striga:
+            break
         }
     }
 
@@ -121,8 +133,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         coordinatorIO
             .error
             .receive(on: RunLoop.main)
-            .sinkAsync { error in
-                if let serviceError = error as? APIGatewayError {
+            .sinkAsync { [weak self] error in
+                if let self, let serviceError = error as? APIGatewayError {
                     switch serviceError {
                     case .invalidOTP:
                         self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
@@ -131,23 +143,25 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                     default:
                         self.showError(error: error)
                     }
+                } else if (error as? NSError)?.isNetworkConnectionError == true {
+                    self?.notificationService.showConnectionErrorNotification()
                 } else if error is UndefinedAPIGatewayError {
-                    self.notificationService.showDefaultErrorNotification()
+                    self?.notificationService.showDefaultErrorNotification()
                 } else {
-                    self.showError(error: error)
+                    self?.showError(error: error)
                 }
             }
             .store(in: &subscriptions)
 
         $code.removeDuplicates()
             .debounce(for: 0.0, scheduler: DispatchQueue.main)
+            .map { Self.format(code: $0) }
             .handleEvents(receiveOutput: { [weak self] aCode in
                 self?.showCodeError(error: nil)
                 self?.rawCode = Self.prepareRawCode(code: aCode)
             })
-            .map { Self.format(code: $0) }
             .assignWeak(to: \.code, on: self)
-            .store(in: &cancellable)
+            .store(in: &subscriptions)
     }
 
     @MainActor
@@ -165,15 +179,16 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            DispatchQueue.main.async { [weak self] in
-                self?.countdown -= 1
-                self?.setResendCountdown()
-
-                if self?.countdown == 0 {
-                    self?.timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            Task {
+                await MainActor.run { [weak self] in
+                    self?.countdown -= 1
                     self?.setResendCountdown()
-                    return
+                    if self?.countdown == 0 {
+                        self?.timer?.invalidate()
+                        self?.setResendCountdown()
+                        return
+                    }
                 }
             }
         }
@@ -182,7 +197,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     private func setResendCountdown() {
         let secs = countdown <= 0 ? "" : " \(countdown) sec"
-        resendText = " Tap to resend\(secs)"
+        resendText = secs.isEmpty ? L10n.tapToResend : L10n.resendSMS(secs)
         updateResendEnabled()
     }
 
@@ -201,12 +216,6 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     static func prepareRawCode(code: String) -> String {
         code.replacingOccurrences(of: " ", with: "")
-    }
-}
-
-extension Substring {
-    func asString() -> String {
-        String(self)
     }
 }
 
@@ -238,5 +247,12 @@ extension EnterSMSCodeViewModel {
     enum Strategy {
         case create
         case restore
+        case striga
+    }
+}
+
+private extension Substring {
+    func asString() -> String {
+        String(self)
     }
 }

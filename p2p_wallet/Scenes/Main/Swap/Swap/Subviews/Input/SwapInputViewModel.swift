@@ -51,7 +51,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         token = stateMachine.currentState.fromToken
         decimalLength = Int(stateMachine.currentState.fromToken.token.decimals)
 
-        accessibilityIdentifierTokenPrefix = isFromToken ? "from" : "to"
+        accessibilityIdentifierTokenPrefix = isFromToken ? "SwapInputView.from" : "SwapInputView.to"
         super.init()
 
         allButtonPressed

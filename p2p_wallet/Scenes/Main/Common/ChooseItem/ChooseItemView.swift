@@ -2,9 +2,19 @@ import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
+/// In case of successful experiment make a base Renderable protocol
+protocol ChooseItemRenderable<ViewType>: Identifiable where ID == String {
+    associatedtype ViewType: View
+
+    var id: String { get }
+
+    @ViewBuilder func render() -> ViewType
+}
+
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
     @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
+    @FocusState private var isSearchFieldFocused
 
     init(
         viewModel: ChooseItemViewModel,
@@ -15,26 +25,33 @@ struct ChooseItemView<Content: View>: View {
     }
 
     var body: some View {
-        ColoredBackground {
-            VStack(spacing: 16) {
+        VStack(spacing: 16) {
+            if viewModel.isSearchEnabled {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
+                    isFocused: _isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-
-                // List of tokens
-                if viewModel.isLoading {
-                    loadingView
-                } else if viewModel.sections.isEmpty {
-                    emptyView
-                } else {
-                    listView
-                }
             }
-            .ignoresSafeArea(.keyboard)
+
+            // List of tokens
+            if viewModel.isLoading {
+                loadingView
+            } else if viewModel.sections.isEmpty {
+                emptyView
+            } else {
+                listView
+            }
+        }
+        .background(Color(asset: Asset.Colors.smoke).ignoresSafeArea())
+        .ignoresSafeArea(.keyboard)
+        .onAppear {
+            isSearchFieldFocused = true
+        }
+        .onDisappear {
+            isSearchFieldFocused = false
         }
     }
 
@@ -58,7 +75,7 @@ struct ChooseItemView<Content: View>: View {
 private extension ChooseItemView {
     private var emptyView: some View {
         Group {
-            NotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
+            NotFoundView(text: viewModel.emptyTitle)
                 .accessibility(identifier: "ChooseItemView.NotFoundView")
                 .padding(.top, 30)
             Spacer()
@@ -71,23 +88,23 @@ private extension ChooseItemView {
 
     private var listView: some View {
         WrappedList {
-            if !viewModel.isSearchGoing {
+            if let chosen = viewModel.chosenItem, !viewModel.isSearchGoing {
                 // Chosen token
-                Text(L10n.chosenToken.uppercased())
+                Text(viewModel.chosenTitle.uppercased())
                     .sectionStyle()
                 ChooseItemSearchableItemView(
                     content: content,
                     state: .single,
-                    item: viewModel.chosenToken,
+                    item: chosen,
                     isChosen: true
                 )
                 .onTapGesture {
-                    viewModel.chooseTokenSubject.send(viewModel.chosenToken)
+                    viewModel.chooseTokenSubject.send(chosen)
                 }
             }
 
             // Search resuls or all tokens
-            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound.uppercased() : viewModel.otherTokensTitle.uppercased())
+            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound.uppercased() : viewModel.otherTitle.uppercased())
                 .sectionStyle()
 
             ForEach(viewModel.sections) { section in

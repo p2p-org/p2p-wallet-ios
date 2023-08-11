@@ -50,6 +50,8 @@ struct RenderableSolanaAccount: RenderableAccount {
 
     let tags: AccountTags
 
+    var isLoading: Bool { false }
+
     var sortingKey: BigDecimal? {
         account.amountInFiat?.value
     }

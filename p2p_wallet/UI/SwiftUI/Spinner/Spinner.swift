@@ -1,13 +1,19 @@
+import KeyAppUI
 import SwiftUI
 
 struct Spinner: View {
+    let color: Color
+    let activePartColor: Color
+
     let rotationTime: Double = 0.75
     static let initialDegree: Angle = .degrees(270)
 
-    let color: Color = .init(.lightSea)
-    let activePartColor: Color = .init(.sea)
-
     @State var rotationDegree = initialDegree
+
+    init(color: Color = Color(asset: Asset.Colors.lightSea), activePartColor: Color = Color(asset: Asset.Colors.sea)) {
+        self.color = color
+        self.activePartColor = activePartColor
+    }
 
     var body: some View {
         ZStack {

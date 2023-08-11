@@ -1,0 +1,16 @@
+public enum StrigaSourceOfFunds: String, CaseIterable, Codable {
+    case personalSavings = "PERSONAL_SAVINGS"
+    case familySavings = "FAMILY_SAVINGS"
+    case labourContract = "LABOUR_CONTRACT"
+    case civilContract = "CIVIL_CONTRACT"
+    case rent = "RENT"
+    case fundsFromOtherAuxiliarySources = "FUNDS_FROM_OTHER_AUXILIARY_SOURCES"
+    case saleOfMovableAssets = "SALE_OF_MOVABLE_ASSETS"
+    case saleOfReal = "SALE_OF_REAL_ESTATE"
+    case ordinaryBusinessActivity = "ORDINARY_BUSINESS_ACTIVITY"
+    case dividends = "DIVIDENDS"
+    case loanFromFinancialInstitutionsCreditUnions = "LOAN_FROM_FINANCIAL_INSTITUTIONS_CREDIT_UNIONS"
+    case loadFromThirdParties = "LOAN_FROM_THIRD_PARTIES"
+    case inheritance = "INHERITANCE"
+    case saleOfComponySharesBusiness = "SALE_OF_COMPANY_SHARES_BUSINESS"
+}

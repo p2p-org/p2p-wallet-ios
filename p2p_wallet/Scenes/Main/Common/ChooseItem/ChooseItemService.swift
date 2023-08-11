@@ -2,7 +2,9 @@ import Combine
 import KeyAppKitCore
 
 protocol ChooseItemService {
-    var otherTokensTitle: String { get }
+    var otherTitle: String { get }
+    var chosenTitle: String { get }
+    var emptyTitle: String { get }
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> { get }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection]

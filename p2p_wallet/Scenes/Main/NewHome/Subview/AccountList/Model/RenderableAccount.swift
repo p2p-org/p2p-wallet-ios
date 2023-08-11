@@ -17,6 +17,8 @@ protocol RenderableAccount: SortableAccount, Identifiable, Equatable where ID ==
     var extraAction: AccountExtraAction? { get }
 
     var tags: AccountTags { get }
+
+    var isLoading: Bool { get }
 }
 
 extension RenderableAccount {

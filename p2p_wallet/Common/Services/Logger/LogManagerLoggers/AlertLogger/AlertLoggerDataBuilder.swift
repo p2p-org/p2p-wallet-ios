@@ -10,6 +10,7 @@ enum AlertLoggerDataBuilder {
         let userPubkey: String
         let blockchainError: String?
         let feeRelayerError: String?
+        let otherError: String?
         let appVersion: String
         let timestamp: String
     }
@@ -22,6 +23,7 @@ enum AlertLoggerDataBuilder {
 
         var blockchainError: String?
         var feeRelayerError: String?
+        var otherError: String?
         switch error {
         case let error as APIClientError:
             blockchainError = error.blockchainErrorDescription
@@ -36,7 +38,14 @@ enum AlertLoggerDataBuilder {
             )
             .blockchainErrorDescription
         default:
-            feeRelayerError = "\(error)"
+            // if error is encodable, log the json
+            if let encodableError = error as? Encodable {
+                otherError = encodableError.jsonString
+            }
+            // otherwise reflect to see error detail
+            else {
+                otherError = String(reflecting: error)
+            }
         }
 
         let appVersion = AppInfo.appVersionDetail
@@ -47,6 +56,7 @@ enum AlertLoggerDataBuilder {
             userPubkey: userPubkey,
             blockchainError: blockchainError,
             feeRelayerError: feeRelayerError,
+            otherError: otherError,
             appVersion: appVersion,
             timestamp: timestamp
         )

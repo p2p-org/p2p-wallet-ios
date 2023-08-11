@@ -23,11 +23,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
 
-            mv.coordinatorIO.selectCode.sinkAsync { [weak self] dialCode, countryCode in
-                guard let result = try await self?.selectCountry(
-                    selectedDialCode: dialCode,
-                    selectedCountryCode: countryCode
-                )
+            mv.coordinatorIO.selectCode.sinkAsync { [weak self] country in
+                guard let result = try await self?.selectCountry(chosen: country)
                 else { return }
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
@@ -165,14 +162,22 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         rootViewController?.present(viewController, animated: true)
     }
 
-    func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
+    func selectCountry(chosen: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
-        let coordinator = ChoosePhoneCodeCoordinator(
-            selectedDialCode: selectedDialCode,
-            selectedCountryCode: selectedCountryCode,
-            presentingViewController: rootViewController
+        let coordinator = ChooseItemCoordinator<PhoneCodeItem>(
+            title: L10n.selectYourCountry,
+            controller: rootViewController,
+            service: ChoosePhoneCodeService(),
+            chosen: PhoneCodeItem(country: chosen)
         )
-        return try await coordinator.start().async()
+        let result = try await coordinator.start().async()
+        switch result {
+        case let .item(item):
+            guard let item = item as? PhoneCodeItem? else { return nil }
+            return item?.country
+        case .cancel:
+            return nil
+        }
     }
 
     private func openHelp() {

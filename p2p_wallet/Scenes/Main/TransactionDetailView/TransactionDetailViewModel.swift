@@ -56,7 +56,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         style = .active
         self.statusContext = statusContext
-        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction)
+        rendableTransaction = RenderableDetailPendingTransaction(trx: pendingTransaction)
 
         super.init()
 
@@ -64,7 +64,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
-                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx)
+                self.rendableTransaction = RenderableDetailPendingTransaction(trx: trx)
             }
             .store(in: &subscriptions)
     }
@@ -89,7 +89,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             userActionService
                 .observer(id: userAction.id)
                 .receive(on: RunLoop.main)
-                .sink { userAction in
+                .sink { [unowned self] userAction in
                     self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
                 }
                 .store(in: &subscriptions)

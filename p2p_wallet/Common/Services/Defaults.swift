@@ -1,3 +1,4 @@
+import CountriesAPI
 import FirebaseRemoteConfig
 import Foundation
 import Onboarding
@@ -41,6 +42,7 @@ extension DefaultsKeys {
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedStrigaEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }
@@ -123,6 +125,30 @@ extension DefaultsKeys {
     var ethBannerShouldHide: DefaultsKey<Bool> {
         .init(#function, defaultValue: false)
     }
+
+    var strigaOTPResendCounter: DefaultsKey<ResendCounter?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var strigaOTPConfirmErrorDate: DefaultsKey<Date?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var strigaOTPResendErrorDate: DefaultsKey<Date?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var region: DefaultsKey<Region?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var homeBannerVisibility: DefaultsKey<HomeBannerVisibility?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var strigaIBANInfoDoNotShow: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
 }
 
 // MARK: - Moonpay Environment
@@ -133,3 +159,5 @@ extension DefaultsKeys {
         case sandbox
     }
 }
+
+extension Region: DefaultsSerializable {}

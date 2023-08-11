@@ -3,7 +3,9 @@ import KeyAppKitCore
 import SolanaSwift
 
 final class ChooseSendFeeTokenService: ChooseItemService {
-    let otherTokensTitle = L10n.otherTokens
+    let chosenTitle = L10n.chosenToken
+    let emptyTitle = L10n.TokenNotFound.tryAnotherOne
+    let otherTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()

@@ -2,12 +2,15 @@ import AnalyticsManager
 import BEPureLayout
 import Combine
 import Foundation
+import KeyAppNetworking
 import KeyAppUI
 import Resolver
 import SolanaSwift
 import UIKit
 
 protocol NotificationService {
+    typealias DeviceTokenResponse = JSONRPCResponseDto<DeviceTokenResponseDto>
+
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
     func deleteDeviceToken(ethAddress: String?) async throws
     func showInAppNotification(_ notification: InAppNotification)

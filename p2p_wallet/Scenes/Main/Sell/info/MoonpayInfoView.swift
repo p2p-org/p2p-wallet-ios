@@ -103,21 +103,6 @@ struct MoonpayInfoView: View {
     }
 }
 
-struct CheckboxView: View {
-    @Binding var isChecked: Bool
-    var body: some View {
-        Button {
-            isChecked.toggle()
-        } label: {
-            if isChecked {
-                Image(uiImage: .checkboxFill)
-            } else {
-                Image(uiImage: .checkboxEmpty)
-            }
-        }
-    }
-}
-
 struct MoonpayInfoView_Previews: PreviewProvider {
     static var previews: some View {
         MoonpayInfoView()

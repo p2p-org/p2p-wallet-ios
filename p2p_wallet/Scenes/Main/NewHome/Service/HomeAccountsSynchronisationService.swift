@@ -1,3 +1,4 @@
+import BankTransfer
 import Foundation
 import KeyAppBusiness
 import Resolver
@@ -8,37 +9,22 @@ class HomeAccountsSynchronisationService {
     @Injected var ethereumAccountsService: EthereumAccountsService
     @Injected var priceService: PriceService
     @Injected var userActionService: UserActionService
+    @Injected var bankTransfer: any BankTransferService
 
     func refresh() async {
         // Update wormhole
         userActionService.handle(event: WormholeClaimUserActionEvent.refresh)
+        async let _ = (
+            try? await priceService.clear(),
+            try? await solanaAccountsService.fetch(),
+            try? await ethereumAccountsService.fetch(),
+            try? await loadEthereumAccountsService()
+        )
+        await bankTransfer.reload()
+    }
 
-        do {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                // Clear price cache
-                group.addTask { [weak self] in
-                    try await self?.priceService.clear()
-                }
-
-                // solana
-                group.addTask { [weak self] in
-                    guard let self else { return }
-                    try await self.solanaAccountsService.fetch()
-                }
-
-                // ethereum
-                if available(.ethAddressEnabled) {
-                    group.addTask { [weak self] in
-                        guard let self else { return }
-                        try await self.ethereumAccountsService.fetch()
-                    }
-                }
-
-                // another chains goes here
-
-                // await values
-                for try await _ in group {}
-            }
-        } catch {}
+    func loadEthereumAccountsService() async throws {
+        guard available(.ethAddressEnabled) else { return }
+        try await ethereumAccountsService.fetch()
     }
 }

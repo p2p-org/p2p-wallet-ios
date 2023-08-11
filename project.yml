@@ -59,6 +59,9 @@ packages:
     Firebase:
         url: https://github.com/firebase/firebase-ios-sdk.git
         from: 10.7.0
+    IdensicMobileSDK:
+        url: https://github.com/SumSubstance/IdensicMobileSDK-iOS.git
+        from: 1.24.0
 
 
 options:
@@ -209,6 +212,7 @@ targets:
                 - "\"CFNetwork\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
+                SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/$(PROJECT_NAME)/$(SWIFT_MODULE_NAME)-Bridging-Header.h"
             configs:
                 Debug:
                     PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber.test
@@ -250,6 +254,10 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
+            - package: KeyAppKit
+              product: KeyAppNetworking
+            - package: KeyAppKit
+              product: BankTransfer
 
             - package: KeyAppUI
             - package: BEPureLayout
@@ -290,6 +298,11 @@ targets:
 
             - package: Firebase
               product: FirebaseRemoteConfig
+
+            - package: IdensicMobileSDK
+              product: IdensicMobileSDK
+            - package: IdensicMobileSDK
+              product: IdensicMobileSDK_MRTDReader
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

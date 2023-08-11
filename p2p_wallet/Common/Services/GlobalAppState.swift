@@ -38,6 +38,21 @@ class GlobalAppState: ObservableObject {
         }
     }
 
+    // New striga endpoint
+    @Published var strigaEndpoint: String {
+        didSet {
+            Defaults.forcedStrigaEndpoint = strigaEndpoint
+            ResolverScope.session.reset()
+        }
+    }
+
+    // Striga mocking
+    @Published var strigaMockingEnabled: Bool = false {
+        didSet {
+            ResolverScope.session.reset()
+        }
+    }
+
     // TODO: Refactor!
     @Published var surveyID: String?
     @Published var sendViaLinkUrl: URL?
@@ -53,6 +68,17 @@ class GlobalAppState: ObservableObject {
             newSwapEndpoint = forcedValue
         } else {
             newSwapEndpoint = "https://swap.key.app"
+        }
+
+        if let forcedValue = Defaults.forcedStrigaEndpoint {
+            strigaEndpoint = forcedValue
+        } else {
+            switch Environment.current {
+            case .debug, .test:
+                strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!
+            case .release:
+                strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!
+            }
         }
     }
 

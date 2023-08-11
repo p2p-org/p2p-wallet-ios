@@ -66,6 +66,15 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             } else {
                 return .icon(.transactionReceive)
             }
+        case let transaction as any StrigaClaimTransactionType:
+            if
+                let urlStr = transaction.token?.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
         default:
             return .icon(.planet)
         }
@@ -92,6 +101,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return L10n
                 .from(RecipientFormatter
                     .shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
+        case let transaction as any StrigaClaimTransactionType:
+            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.fromAddress))
         default:
             return L10n.unknown
         }
@@ -109,6 +120,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
 
             case _ as ClaimSentViaLinkTransaction:
                 return "\(L10n.sendViaLink)"
+            case _ as any StrigaClaimTransactionType:
+                return "\(L10n.claim)"
             default:
                 return "\(L10n.transactionFailed)"
             }
@@ -136,6 +149,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                     return "\(L10n.processing)"
                 }
 
+            case _ as any StrigaClaimTransactionType:
+                return "\(L10n.pending.capitalized)..."
+
             default:
                 if trx.transactionId == nil {
                     return "\(L10n.processing).."
@@ -162,6 +178,11 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return (.unchanged, "")
             }
             return (.positive, "+\(amountInFiat.fiatAmountFormattedString())")
+        case let transaction as any StrigaClaimTransactionType:
+            guard let amountInFiat = transaction.amountInFiat else {
+                return (.unchanged, "")
+            }
+            return (.unchanged, "+\(amountInFiat.fiatAmountFormattedString())")
         default:
             return (.unchanged, "")
         }
@@ -178,6 +199,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as ClaimSentViaLinkTransaction:
             return "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
 
+        case let transaction as any StrigaClaimTransactionType:
+            guard let amount = transaction.amount else { return "" }
+            return "+\(amount.tokenAmountFormattedString(symbol: transaction.token?.symbol ?? ""))"
         default:
             return ""
         }

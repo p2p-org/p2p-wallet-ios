@@ -496,6 +496,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BankTransfer"
+               BuildableName = "BankTransfer"
+               BlueprintName = "BankTransfer"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -642,6 +656,16 @@
                BlueprintIdentifier = "WormholeTests"
                BuildableName = "WormholeTests"
                BlueprintName = "WormholeTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BankTransferTests"
+               BuildableName = "BankTransferTests"
+               BlueprintName = "BankTransferTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

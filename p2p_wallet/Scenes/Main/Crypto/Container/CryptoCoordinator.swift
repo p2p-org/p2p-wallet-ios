@@ -62,7 +62,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             actionsPanelViewModel: actionsPanelViewModel,
             accountsViewModel: accountsViewModel
         )
-        let cryptoVC = UIHostingController(rootView: cryptoView)
+        let cryptoVC = cryptoView.asViewController(withoutUIKitNavBar: false)
         cryptoVC.title = L10n.myCrypto
         navigationController.setViewControllers([cryptoVC], animated: false)
 

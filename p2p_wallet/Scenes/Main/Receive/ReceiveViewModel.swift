@@ -159,7 +159,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    func itemTapped(_ item: any Rendable) {
+    func itemTapped(_ item: any Renderable) {
         if let row = item as? ListReceiveItem {
             clipboardManager.copyToClipboard(row.description)
             var message = ""

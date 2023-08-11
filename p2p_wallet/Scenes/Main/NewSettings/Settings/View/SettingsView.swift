@@ -51,6 +51,26 @@ struct SettingsView: View {
                 )
             }
             Button(
+                action: { viewModel.showView(.country) },
+                label: {
+                    cellView(image: .settingsCountry, title: L10n.country.uppercaseFirst) {
+                        HStack(spacing: 14) {
+                            if let country = viewModel.region, let name = country?.name {
+                                Text(name)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .label1)
+                            } else {
+                                Text(L10n.select)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .label1)
+                            }
+                            Image(uiImage: .cellArrow)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                        }
+                    }
+                }
+            )
+            Button(
                 action: { viewModel.showView(.support) },
                 label: { cellView(image: .settingsSupport, title: L10n.support.uppercaseFirst) }
             )

@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import CountriesAPI
 import FeeRelayerSwift
 import FirebaseRemoteConfig
@@ -6,6 +7,7 @@ import History
 import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
+import KeyAppNetworking
 import Moonpay
 import NameService
 import Onboarding
@@ -135,6 +137,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(WalletMetadataService.self)
+        .implements(StrigaMetadataProvider.self)
         .scope(.session)
 
         // Prices
@@ -286,6 +289,9 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
+
+        register { LogoutServiceImpl() }
+            .implements(LogoutService.self)
     }
 
     /// Session scope: Live when user is authenticated
@@ -384,6 +390,15 @@ extension Resolver: ResolverRegistering {
                         ethereumTokenRepository: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
+                    ),
+                    StrigaBankTransferUserActionConsumer(
+                        persistence: resolve(),
+                        bankTransferService: resolve(),
+                        solanaAccountService: resolve()
+                    ),
+                    StrigaBankTransferOutgoingUserActionConsumer(
+                        persistence: resolve(),
+                        bankTransferService: resolve()
                     ),
                 ]
             )
@@ -557,6 +572,49 @@ extension Resolver: ResolverRegistering {
             JupiterTokensLocalProvider()
         }
         .implements(JupiterTokensProvider.self)
+        .scope(.session)
+
+        register {
+            BankTransferServiceImpl<StrigaBankTransferUserDataRepository>(
+                repository: StrigaBankTransferUserDataRepository(
+                    localProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaLocalProvider(
+                            useCase: .unregisteredUser,
+                            hasCachedInput: true
+                        ) :
+                        StrigaLocalProviderImpl(),
+                    remoteProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaRemoteProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id",
+                            mockKYCToken: "kyc-token"
+                        ) :
+                        StrigaRemoteProviderImpl(
+                            baseURL: GlobalAppState.shared.strigaEndpoint,
+                            solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
+                        ),
+                    metadataProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaMetadataProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id"
+                        ) :
+                        Resolver.resolve(StrigaMetadataProvider.self),
+                    commonInfoProvider: CommonInfoLocalProviderImpl(),
+                    solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
+                )
+            )
+        }
+        .implements((any BankTransferService).self)
+        .scope(.session)
+
+        register {
+            AnyBankTransferService<StrigaBankTransferUserDataRepository>(
+                value:
+                Resolver
+                    .resolve((any BankTransferService)
+                        .self) as! BankTransferServiceImpl<StrigaBankTransferUserDataRepository>
+            )
+        }
         .scope(.session)
     }
 

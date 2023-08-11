@@ -5,7 +5,9 @@ import Resolver
 import SolanaSwift
 
 final class ChooseSendTokenService: ChooseItemService {
-    let otherTokensTitle = L10n.otherTokens
+    let chosenTitle = L10n.chosenToken
+    let otherTitle = L10n.otherTokens
+    let emptyTitle = L10n.TokenNotFound.tryAnotherOne
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
