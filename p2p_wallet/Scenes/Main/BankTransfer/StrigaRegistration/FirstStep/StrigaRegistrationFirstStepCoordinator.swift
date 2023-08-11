@@ -77,7 +77,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
                 .map { StrigaRegistrationFirstStepCoordinatorResult.canceled },
             viewModel.openNextStep.eraseToAnyPublisher()
                 .flatMap { [unowned self] response in
-                    self.coordinateToNextStep(response: response)
+                    coordinateToNextStep(response: response)
                         // ignoring cancel events, to not pass this event out of Coordinator
                             .filter { $0 != .canceled }
                 }
