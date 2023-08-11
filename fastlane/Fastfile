@@ -469,7 +469,7 @@ platform :ios do
     version = result[:buildVersion]
 
     # notify tester
-    message = "A daily build **#{version}** was uploaded. Download it [here](#{result[:testingUri]})"
+    message = "A daily build **#{version}** was uploaded.\\nDownload on [Firebase Distribution](#{result[:testingUri]})"
     notify(version, message)
   end
 
