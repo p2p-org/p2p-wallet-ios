@@ -301,7 +301,7 @@ platform :ios do
     result = result_hash[:result]
 
     # notify testers
-    message = "A build **#{version}** was uploaded for testing this feature.\\nDownload it [here](#{result[:firebaseConsoleUri]}) \n #{result[:testingUri]}"
+    message = "A build **#{version}** was uploaded for testing this feature.\\nDownload it [here](#{result[:firebaseConsoleUri]}) \\n #{result[:testingUri]}"
     notify(version, message)
 
     # output
