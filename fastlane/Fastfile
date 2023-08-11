@@ -266,7 +266,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   push_git_tags(tag: tag_name)
 
   # return version
-  return [binary_url, current_build]
+  return { binary_url: binary_url, current_build: current_build }
 end
 
 platform :ios do
@@ -300,8 +300,8 @@ platform :ios do
       nil
     )
 
-    binary_url = result_hash[0]
-    version = result_hash[1]
+    version = result_hash[:current_build]
+    binary_url = result_hash[:binary_url]
 
     # notify testers
     message = "A build **#{version}** was uploaded for testing this feature.\\nDownload it [here](#{binary_url})"
@@ -470,8 +470,8 @@ platform :ios do
       "KeyApp_dev.ipa"
     )
 
-    binary_url = result_hash[0]
-    version = result_hash[1]
+    version = result_hash[:current_build]
+    binary_url = result_hash[:binary_url]
 
     # notify tester
     message = "A daily build **#{version}** was uploaded. Download it [here](#{binary_url})"
