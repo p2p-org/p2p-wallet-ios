@@ -2,7 +2,7 @@ import Foundation
 
 class SynchronizedArray<T> {
     private var array: [T] = []
-    private let accessQueue = DispatchQueue(label: "org.p2p.keyappui.syncronizeArray", attributes: .concurrent)
+    private let accessQueue = DispatchQueue(label: "app.key.syncronizeArray", attributes: .concurrent)
 
     func append(_ newElement: T) {
         accessQueue.async(qos: .default, flags: .barrier) {

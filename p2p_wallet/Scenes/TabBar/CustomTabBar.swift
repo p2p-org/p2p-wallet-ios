@@ -79,7 +79,7 @@ final class CustomTabBar: UITabBar {
         )
 
         // Set the fill color
-        Asset.Colors.snow.color.setFill()
+        UIColor(resource: .snow).setFill()
         path.fill()
     }
 
