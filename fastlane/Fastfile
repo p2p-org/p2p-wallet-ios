@@ -263,7 +263,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   push_git_tags(tag: tag_name)
 
   # return version
-  return { result: result, current_build: current_build }
+  return result
 end
 
 platform :ios do
@@ -289,7 +289,7 @@ platform :ios do
     end
 
     # upload test build
-    result_hash = upload_test(
+    result = upload_test(
       feature_number, # build prefix
       "builds/feature_test", # tag prefix
       BROWSERSTACK_USERNAME,
@@ -297,11 +297,10 @@ platform :ios do
       nil
     )
 
-    version = result_hash[:current_build]
-    result = result_hash[:result]
+    version = result[:buildVersion]
 
     # notify testers
-    message = "A build **#{version}** was uploaded for testing this feature.\\nDownload on [Firebase Distribution](#{result[:testingUri]})"
+    message = "A build **#{version}** was uploaded for testing this feature.\\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}\\nDownload on [Firebase Distribution](#{result[:testingUri]})"
     notify(version, message)
 
     # output
@@ -459,7 +458,7 @@ platform :ios do
     date = DateTime.parse(time).strftime("%y%m%d")
 
     # upload test build
-    result_hash = upload_test(
+    result = upload_test(
       date, # build prefix
       "builds/daily_test", # tag prefix
       BROWSERSTACK_USERNAME_NEW,
@@ -467,8 +466,7 @@ platform :ios do
       "KeyApp_dev.ipa"
     )
 
-    version = result_hash[:current_build]
-    result = result_hash[:result]
+    version = result[:buildVersion]
 
     # notify tester
     message = "A daily build **#{version}** was uploaded. Download it [here](#{result[:testingUri]})"
