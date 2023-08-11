@@ -146,9 +146,6 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
     release_notes: GIT_CHANGELOG
   )
 
-  # Parse JSON response and extract binary_url
-  binary_url = result[:binaryDownloadUri]
-
   # upload to browserstack
   if custom_id.nil?
     upload_to_browserstack_app_live(
@@ -163,7 +160,7 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
     )
   end
   
-  return binary_url
+  return result
 end 
 
 def notify(version, message)
@@ -255,7 +252,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   upload_dsym_to_analytic_providers
 
   # upload to firebase and browser stack
-  binary_url = upload_build("Test", browserstack_username, browserstack_access_key, custom_id)
+  result = upload_build("Test", browserstack_username, browserstack_access_key, custom_id)
 
   # delete temp keychain
   delete_temp_keychain(TEMP_KEYCHAIN_USER)
@@ -266,7 +263,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   push_git_tags(tag: tag_name)
 
   # return version
-  return { binary_url: binary_url, current_build: current_build }
+  return { result: result, current_build: current_build }
 end
 
 platform :ios do
@@ -301,10 +298,10 @@ platform :ios do
     )
 
     version = result_hash[:current_build]
-    binary_url = result_hash[:binary_url]
+    result = result_hash[:result]
 
     # notify testers
-    message = "A build **#{version}** was uploaded for testing this feature.\\nDownload it [here](#{binary_url})"
+    message = "A build **#{version}** was uploaded for testing this feature.\\nDownload it [here](#{result[:firebaseConsoleUri]}) \n #{result[:testingUri]}"
     notify(version, message)
 
     # output
@@ -471,10 +468,10 @@ platform :ios do
     )
 
     version = result_hash[:current_build]
-    binary_url = result_hash[:binary_url]
+    result = result_hash[:result]
 
     # notify tester
-    message = "A daily build **#{version}** was uploaded. Download it [here](#{binary_url})"
+    message = "A daily build **#{version}** was uploaded. Download it [here](#{result[:testingUri]})"
     notify(version, message)
   end
 
