@@ -118,7 +118,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 .first(where: { $0.token.mintAddress == token.mintAddress }) ??
                 SolanaAccount(token: TokenMetadata.nativeSolana)
         default:
-            if let preChosenWallet = preChosenWallet {
+            if let preChosenWallet {
                 tokenInWallet = preChosenWallet
             } else {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
@@ -258,7 +258,7 @@ private extension SendInputViewModel {
         stateMachine.statePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
-                guard let self = self else { return }
+                guard let self else { return }
                 switch value.status {
                 case .error(reason: .networkConnectionError(_)):
                     self.handleConnectionError()
@@ -282,7 +282,7 @@ private extension SendInputViewModel {
         inputAmountViewModel.changeAmount
             .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
-                guard let self = self else { return }
+                guard let self else { return }
                 switch value.type {
                 case .token:
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
@@ -314,7 +314,7 @@ private extension SendInputViewModel {
 
         $isFeeLoading
             .sink { [weak self] isLoading in
-                guard let self = self else { return }
+                guard let self else { return }
                 if isLoading {
                     self.feeTitle = L10n.fees("")
                     self.actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.calculatingTheFees)
@@ -326,7 +326,7 @@ private extension SendInputViewModel {
 
         feeInfoPressed
             .sink { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.openFeeInfo.send(self.currentState.fee == .zero)
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
@@ -338,7 +338,7 @@ private extension SendInputViewModel {
 
         inputAmountViewModel.maxAmountPressed
             .sink { [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 let text: String
                 if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress, self.currentState
                     .fee != .zero
@@ -354,7 +354,7 @@ private extension SendInputViewModel {
 
         changeFeeToken
             .sinkAsync { [weak self] newFeeToken in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.isFeeLoading = true
                 _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken.token))
                 self.isFeeLoading = false
@@ -363,7 +363,7 @@ private extension SendInputViewModel {
 
         $isSliderOn
             .sinkAsync(receiveValue: { [weak self] isSliderOn in
-                guard let self = self else { return }
+                guard let self else { return }
                 if isSliderOn {
                     await self.send()
                     self.isSliderOn = false
@@ -374,7 +374,7 @@ private extension SendInputViewModel {
 
         changeTokenPressed
             .sink { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.logChooseTokenClick(
                     tokenName: self.currentState.token.symbol
                 )
@@ -401,8 +401,7 @@ private extension SendInputViewModel {
                 if currentWallet.price == nil {
                     self.turnOffInputSwitch()
                 } else if
-                    let amount = currentWallet.amount,
-                    currentWallet.isUsdcOrUsdt, abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
                 {
                     self.turnOffInputSwitch()
                 } else {
