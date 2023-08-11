@@ -15,7 +15,7 @@ public struct NewTextButton: View {
 
     public init(
         title: String,
-        size: TextButton.Size,
+        size: TextButton.Size = .large,
         style: TextButton.Style,
         expandable: Bool = false,
         isEnabled: Bool = true,
@@ -47,7 +47,10 @@ public struct NewTextButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            guard !isLoading else { return }
+            action()
+        }) {
             HStack(spacing: 8) {
                 if let leading {
                     if isLoading {
@@ -55,6 +58,9 @@ public struct NewTextButton: View {
                             .padding(.leading, 8)
                     } else {
                         Image(uiImage: leading)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size.iconSize, height: size.iconSize)
                             .padding(.leading, 8)
                     }
                 } else {
@@ -71,8 +77,14 @@ public struct NewTextButton: View {
                             .padding(.trailing, 8)
                     } else {
                         Image(uiImage: trailing)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size.iconSize, height: size.iconSize)
                             .padding(.trailing, 8)
                     }
+                } else if isLoading, leading == nil {
+                    progressView
+                        .padding(.trailing, 8)
                 } else {
                     Spacer().frame(width: 4)
                 }
@@ -84,7 +96,7 @@ public struct NewTextButton: View {
         .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
         .background(isEnabled ? appearance.backgroundColor : Color(Asset.Colors.rain.color))
         .cornerRadius(appearance.borderRadius)
-        .disabled(!isEnabled || isLoading)
+        .disabled(!isEnabled)
         .overlay(
             RoundedRectangle(cornerRadius: appearance.borderRadius)
                 .stroke(
@@ -98,9 +110,8 @@ public struct NewTextButton: View {
         NewCircularProgressIndicator(
             backgroundColor: appearance.loadingBackgroundColor,
             foregroundColor: appearance.loadingForegroundColor,
-            size: CGSize(width: 20, height: 20)
+            size: CGSize(width: size.iconSize, height: size.iconSize)
         )
-        .padding(2)
     }
 }
 
@@ -115,7 +126,8 @@ struct NewTextButton_Previews: PreviewProvider {
                 title: "Title",
                 size: .medium,
                 style: .primary,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                isLoading: true,
+                leading: Asset.MaterialIcon.arrowForward.image
             ) { }
 
             NewTextButton(
@@ -129,7 +141,8 @@ struct NewTextButton_Previews: PreviewProvider {
                 title: "Title",
                 size: .medium,
                 style: .invertedRed,
-                expandable: true
+                expandable: true,
+                isLoading: true
             ) { }
 
             NewTextButton(

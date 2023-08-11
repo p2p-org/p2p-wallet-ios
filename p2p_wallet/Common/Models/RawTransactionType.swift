@@ -6,8 +6,6 @@ import SolanaSwift
 protocol RawTransactionType {
     func createRequest() async throws -> String
     var mainDescription: String { get }
-    var payingFeeWallet: SolanaAccount? { get }
-    var feeAmount: FeeAmount { get }
 }
 
 struct SwapMetaInfo {

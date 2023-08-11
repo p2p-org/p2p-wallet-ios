@@ -16,7 +16,6 @@ final class BuyCoordinator: Coordinator<Void> {
     private let defaultPaymentType: PaymentType?
     private let targetTokenSymbol: String?
 
-    private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -56,7 +55,6 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         } else {
             if shouldPush {
-                navigationController?.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
                 navigationController?.pushViewController(viewController, animated: true)
             } else {
                 let navigation = UINavigationController(rootViewController: viewController)
@@ -134,12 +132,6 @@ final class BuyCoordinator: Coordinator<Void> {
         .assignWeak(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
         .store(in: &subscriptions)
 
-        vcPresentedPercentage.eraseToAnyPublisher()
-            .sink(receiveValue: { val in
-                viewModel.coordinatorIO.navigationSlidingPercentage.send(val)
-            })
-            .store(in: &subscriptions)
-
         viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
@@ -157,59 +149,14 @@ final class BuyCoordinator: Coordinator<Void> {
                 viewController.present(vc, animated: true)
             })
             .store(in: &subscriptions)
+
         viewModel.coordinatorIO.close
             .sink(receiveValue: { [unowned self] in
                 navigationController.popViewController(animated: true)
             })
             .store(in: &subscriptions)
-        viewModel.coordinatorIO.chooseCountry
-            .sink(receiveValue: { [weak self] selectedCountry in
-                guard let self else { return }
-
-                let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
-                let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
-                    .asViewController(withoutUIKitNavBar: false)
-                viewController.navigationController?.pushViewController(selectCountryViewController, animated: true)
-
-                selectCountryViewModel.selectCountry
-                    .sink(receiveValue: { item in
-                        viewModel.countrySelected(item.0, buyAllowed: item.buyAllowed)
-                        viewController.navigationController?.popViewController(animated: true)
-                    })
-                    .store(in: &self.subscriptions)
-                selectCountryViewModel.currentSelected
-                    .sink(receiveValue: {
-                        viewController.navigationController?.popViewController(animated: true)
-                    })
-                    .store(in: &self.subscriptions)
-            })
-            .store(in: &subscriptions)
 
         return result.prefix(1).eraseToAnyPublisher()
-    }
-
-    // MARK: - Gesture
-
-    private var currentTransitionCoordinator: UIViewControllerTransitionCoordinator?
-
-    @objc private func onGesture(sender: UIGestureRecognizer) {
-        switch sender.state {
-        case .began, .changed:
-            if let ct = navigationController.transitionCoordinator {
-                currentTransitionCoordinator = ct
-            }
-        case .cancelled, .ended:
-            //            currentTransitionCoordinator = nil
-            break
-        case .possible, .failed:
-            break
-        @unknown default:
-            break
-        }
-//        if let currentTransitionCoordinator = currentTransitionCoordinator {
-//            vcPresentedPercentage.send(currentTransitionCoordinator.percentComplete)
-//        }
-        vcPresentedPercentage.send(navigationController.transitionCoordinator?.percentComplete ?? 1)
     }
 }
 

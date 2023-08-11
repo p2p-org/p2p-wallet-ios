@@ -9,6 +9,7 @@ struct PendingTransaction {
         case confirmed(_ numberOfConfirmed: Int)
         case finalized
         case error(_ error: Swift.Error)
+        case confirmationNeeded
 
         var numberOfConfirmations: Int? {
             switch self {

@@ -8,6 +8,7 @@ struct DebugMenuView: View {
 
     @ObservedObject private var globalAppState = GlobalAppState.shared
     @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
+    @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
         self.viewModel = viewModel
@@ -19,6 +20,7 @@ struct DebugMenuView: View {
                 Group {
                     solanaEndpoint
                     swapEndpoint
+                    strigaEndpoint
                     nameServiceEndpoint
                 }
 
@@ -146,6 +148,27 @@ struct DebugMenuView: View {
                 ForEach(viewModel.newSwapEndpoints, id: \.self) { endpoint in
                     Text(endpoint).tag(endpoint as String?)
                 }
+            }
+        }
+    }
+
+    var strigaEndpoint: some View {
+        Section(header: Text("Striga endpoint")) {
+            Picker("URL", selection: $globalAppState.strigaEndpoint) {
+                Text("Unknown").tag(nil as String?)
+                ForEach(viewModel.strigaEndpoints, id: \.self) { endpoint in
+                    Text(endpoint).tag(endpoint as String?)
+                }
+            }
+
+            Toggle("Mocking enabled", isOn: $globalAppState.strigaMockingEnabled)
+
+            Button {
+                Task {
+                    try? await viewModel.clearStrigaUserIdFromMetadata()
+                }
+            } label: {
+                Text("Remove userId from metadata")
             }
         }
     }

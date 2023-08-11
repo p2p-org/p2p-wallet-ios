@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -24,11 +25,13 @@ class HomeViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
+    @Injected private var bankTransferService: any BankTransferService
 
     // MARK: - Published properties
 
     @Published var state = State.pending
     @Published var address = ""
+    @Published private var shouldUpdateBankTransfer = false
 
     // MARK: - Properties
 
@@ -42,7 +45,9 @@ class HomeViewModel: ObservableObject {
         bind()
 
         // reload
-        Task { await reload() }
+        Task {
+            await reload()
+        }
     }
 
     // MARK: - Methods
@@ -80,6 +85,10 @@ class HomeViewModel: ObservableObject {
         analyticsManager.log(
             event: .mainScreenOpened(isSellEnabled: sellDataService.isAvailable)
         )
+
+        if shouldUpdateBankTransfer {
+            Task { await bankTransferService.reload() }
+        }
     }
 }
 
@@ -100,9 +109,7 @@ private extension HomeViewModel {
 
         // Monitor user action
         let userActionService: UserActionService = Resolver.resolve()
-        userActionService
-            .actions
-            .withPrevious()
+        userActionService.actions.withPrevious()
             .sink { [weak self] prev, next in
                 for updatedUserAction in next {
                     if let oldUserAction = prev?.first(where: { $0.id == updatedUserAction.id }) {
@@ -144,6 +151,10 @@ private extension HomeViewModel {
             .statePublisher
             .map { $0.status != .initializing }
 
+        let bankTransferServicePublisher = bankTransferService.state
+            .filter { $0.value.wallet?.accounts.usdc != nil }
+            .map { $0.value.wallet?.accounts.usdc }
+
         // Merge two services.
         Publishers
             .CombineLatest(solanaInitialization, ethereumInitialization)
@@ -152,11 +163,14 @@ private extension HomeViewModel {
             .store(in: &subscriptions)
 
         // state, address, error, log
-
         Publishers
-            .CombineLatest(solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher)
+            .CombineLatest3(
+                solanaAccountsService.statePublisher,
+                ethereumAccountsService.statePublisher,
+                bankTransferServicePublisher.prepend(nil)
+            )
             .receive(on: RunLoop.main)
-            .sink { [weak self] solanaState, ethereumState in
+            .sink { [weak self] solanaState, ethereumState, _ in
                 guard let self else { return }
 
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
@@ -189,6 +203,12 @@ private extension HomeViewModel {
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
             }
+            .store(in: &subscriptions)
+
+        bankTransferService.state
+            .receive(on: DispatchQueue.main)
+            .map { $0.value.userId != nil && $0.value.mobileVerified }
+            .assignWeak(to: \.shouldUpdateBankTransfer, on: self)
             .store(in: &subscriptions)
     }
 }

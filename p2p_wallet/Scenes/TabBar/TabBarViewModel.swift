@@ -167,7 +167,7 @@ extension TabBarViewModel {
             let ethAccounts = self.ethereumAggregator.transform(input: (state.value, actions))
             let transferAccounts = ethAccounts.filter { ethAccount in
                 switch ethAccount.status {
-                case .readyToClaim, .isClaiming:
+                case .ready, .isProcessing:
                     return true
                 default:
                     return false

@@ -10,7 +10,7 @@ struct TransactionDetailStatusAppearance {
 
     init(status: TransactionDetailStatus) {
         switch status {
-        case .loading:
+        case .loading, .paused(message: _):
             image = .lightningFilled
             imageSize = CGSize(width: 24, height: 24)
             backgroundColor = Color(Asset.Colors.cloud.color)
@@ -19,8 +19,8 @@ struct TransactionDetailStatusAppearance {
         case .succeed:
             image = .lightningFilled
             imageSize = CGSize(width: 24, height: 24)
-            backgroundColor = Color(.cdf6cd).opacity(0.3)
-            circleColor = Color(.cdf6cd)
+            backgroundColor = Color(Asset.Colors.lightGrass.color).opacity(0.3)
+            circleColor = Color(Asset.Colors.lightGrass.color)
             imageColor = Color(.h04D004)
         case .error:
             image = .solendSubtract
@@ -103,6 +103,8 @@ struct TransactionDetailStatusView: View {
                             Text(L10n.LowSlippage.weRecommendToIncreaseSlippageManually(context ?? ""))
                                 .messageStyled()
                         }
+                    case let .paused(message: message):
+                        Text(message).messageStyled()
                     }
                 }
                 .padding(.leading, 2)

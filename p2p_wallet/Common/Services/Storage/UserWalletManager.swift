@@ -101,10 +101,16 @@ class UserWalletManager: ObservableObject {
         Defaults.shouldShowConfirmAlertOnSwap = true
         Defaults.moonpayInfoShouldHide = false
         Defaults.ethBannerShouldHide = false
+        Defaults.strigaOTPResendCounter = nil
+        Defaults.strigaOTPConfirmErrorDate = nil
+        Defaults.strigaOTPResendErrorDate = nil
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
+        Defaults.region = nil
+        Defaults.homeBannerVisibility = nil
+        Defaults.strigaIBANInfoDoNotShow = false
 
         walletSettings.reset()
 

@@ -13,11 +13,10 @@ struct ListBackgroundModifier: ViewModifier {
                 .listRowSeparatorTint(Color(separatorColor))
         } else {
             content
-                .onAppear {
-                    UITableView.appearance().backgroundColor = .clear
-                    UITableViewCell.appearance().backgroundColor = .clear
-                    UITableView.appearance().separatorColor = separatorColor
-                }
+                .introspectTableView(customize: { view in
+                    view.backgroundColor = .clear
+                    view.separatorColor = separatorColor
+                })
         }
     }
 }

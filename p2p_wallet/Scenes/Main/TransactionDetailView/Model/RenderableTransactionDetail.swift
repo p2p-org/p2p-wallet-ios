@@ -91,6 +91,7 @@ enum TransactionDetailChange {
 }
 
 enum TransactionDetailStatus {
+    case paused(message: String)
     case loading(message: String)
     case succeed(message: String)
     case error(message: NSAttributedString, error: Error?)

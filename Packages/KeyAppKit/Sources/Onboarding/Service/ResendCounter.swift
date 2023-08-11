@@ -7,7 +7,7 @@ public struct ResendCounter: Codable, Equatable {
     public let attempt: Int
     public let until: Date
 
-    func incremented() -> ResendCounter {
+    public func incremented() -> ResendCounter {
         let newAttempt = attempt + 1
         return ResendCounter(
             attempt: newAttempt,

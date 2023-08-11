@@ -1,4 +1,5 @@
 import Foundation
+import KeyAppKitCore
 
 public struct WalletMetaData: Codable, Equatable {
     public static let ethPublicInfoKey = CodingUserInfoKey(rawValue: "ethPublic")!
@@ -44,7 +45,7 @@ public struct WalletMetaData: Codable, Equatable {
         }
     }
 
-    public let striga: Striga
+    public var striga: Striga
 
     public init(
         ethPublic: String,

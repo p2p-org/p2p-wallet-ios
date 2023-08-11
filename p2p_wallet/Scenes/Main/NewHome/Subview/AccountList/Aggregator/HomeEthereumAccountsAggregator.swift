@@ -31,7 +31,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
                         // Compare using fiat.
                         if balanceInFiat >= CurrencyAmount(usd: 5) {
                             // Balance is greater than $1, user can claim.
-                            status = .readyToClaim
+                            status = .ready
                         } else {
                             // Balance is to low.
                             status = .balanceToLow
@@ -40,7 +40,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
                         // Compare using crypto amount.
                         if account.balance > 0 {
                             // Balance is not zero
-                            status = .readyToClaim
+                            status = .ready
                         } else {
                             // Balance is to low.
                             status = .balanceToLow
@@ -49,7 +49,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                 } else {
                     // Claiming is running.
-                    status = .isClaiming
+                    status = .isProcessing
                 }
 
                 return RenderableEthereumAccount(

@@ -21,7 +21,7 @@ struct CryptoAccountsAggregator: DataAggregator {
         // Claimable transfer accounts
         let transferAccounts = allEthereumAccounts.filter { ethAccount in
             switch ethAccount.status {
-            case .readyToClaim, .isClaiming:
+            case .ready, .isProcessing:
                 return true
             default:
                 return false

@@ -87,7 +87,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     platform: data.platform,
                     appVersion: data.appVersion,
                     timestamp: data.timestamp,
-                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? "",
+                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? data.otherError ?? "",
                     diffRoutesTime: diffRoutesTime,
                     diffTxTime: diffTxTime
                 )

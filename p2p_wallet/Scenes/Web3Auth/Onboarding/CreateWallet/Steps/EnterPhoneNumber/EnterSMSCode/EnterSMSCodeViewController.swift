@@ -54,7 +54,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             BEContainer {
                 UILabel(numberOfLines: 0).withAttributedText(
                     .attributedString(
-                        with: L10n.theCodeFromSMS,
+                        with: viewModel.title,
                         of: .title1,
                         weight: .bold,
                         alignment: .center
@@ -63,17 +63,23 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 UIView(height: 10)
                 UILabel().withAttributedText(
                     .attributedString(
-                        with: "Check the number \(self.viewModel.phone)",
+                        with: "\(viewModel.phoneText) \(self.viewModel.phone)",
                         of: .text1
                     ).withForegroundColor(Asset.Colors.night.color)
-                )
+                ).setup { label in
+                    label.numberOfLines = 0
+                    label.textAlignment = .center
+                }
 
-                BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
+                BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true)
+                    .bind(smsInputRef)
                     .setup { input in
                         input.textField?.keyboardType = .numberPad
-                        input.constantPlaceholder = "••• •••"
+                        input.constantPlaceholder = "000 000"
                         input.textField?.textContentType = .oneTimeCode
-                    }.frame(width: 180).padding(.init(only: .top, inset: 28))
+                    }
+                    .frame(width: 180)
+                    .padding(.init(only: .top, inset: 28))
 
                 BEHStack {
                     UIButton().bind(resendButtonRef).setup { _ in }
@@ -123,14 +129,14 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 .assignWeak(to: \.text, on: textField)
                 .store(in: &store)
 
-            textField.textPublisher.map { $0 ?? "" }
+            textField.textPublisher
+                .compactMap { $0 ?? "" }
                 .assignWeak(to: \.code, on: viewModel)
                 .store(in: &store)
         }
 
         viewModel.$isLoading.sink { [weak self] isLoading in
             self?.continueButtonRef.view?.isLoading = isLoading
-            self?.smsInputRef.view?.textField?.isEnabled = !isLoading
         }.store(in: &store)
 
         viewModel.$codeError.sink { [weak self] error in

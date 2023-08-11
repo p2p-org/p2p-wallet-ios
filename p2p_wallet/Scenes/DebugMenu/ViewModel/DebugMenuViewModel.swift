@@ -1,9 +1,12 @@
+import BankTransfer
 import Combine
 import FirebaseRemoteConfig
 import KeyAppBusiness
+import Onboarding
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
+import UIKit
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]
@@ -13,6 +16,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
+    @Published var strigaEndpoints: [String]
 
     override init() {
         features = Menu.allCases
@@ -49,6 +53,12 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://swap.keyapp.org",
         ]
 
+        strigaEndpoints = [
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!,
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!,
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV_NEW")!,
+        ]
+
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
 
         super.init()
@@ -78,6 +88,24 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             )
         )
     }
+
+    func clearStrigaUserIdFromMetadata() async throws {
+        await Resolver.resolve((any BankTransferService).self).clearCache()
+
+        let service = Resolver.resolve(WalletMetadataService.self)
+
+        if var currentMetadata = service.metadata.value {
+            currentMetadata.striga.userId = nil
+            await service.update(currentMetadata)
+        }
+
+        Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
+    }
+
+    func copyMetadata() {
+        UIPasteboard.general.string = Resolver.resolve(WalletMetadataService.self).metadata.value?.jsonString
+        Resolver.resolve(NotificationService.self).showToast(title: "Copied", text: "Metadata copied to clipboard")
+    }
 }
 
 extension DebugMenuViewModel {
@@ -105,6 +133,7 @@ extension DebugMenuViewModel {
         case sendViaLink
         case solanaEthAddressEnabled
         case swapTransactionSimulation
+        case bankTransfer
 
         var title: String {
             switch self {
@@ -121,6 +150,7 @@ extension DebugMenuViewModel {
             case .sendViaLink: return "Send via link"
             case .solanaEthAddressEnabled: return "solana ETH address enabled"
             case .swapTransactionSimulation: return "Swap transaction simulation"
+            case .bankTransfer: return "Striga"
             }
         }
 
@@ -139,6 +169,7 @@ extension DebugMenuViewModel {
             case .sendViaLink: return .sendViaLinkEnabled
             case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
             case .swapTransactionSimulation: return .swapTransactionSimulationEnabled
+            case .bankTransfer: return .bankTransfer
             }
         }
     }

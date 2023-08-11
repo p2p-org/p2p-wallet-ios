@@ -47,6 +47,7 @@ jobs:
             -parallel-testing-enabled YES \
             -resultBundlePath TestResults \
             -only-testing:AnalyticsManagerUnitTests \
+            -only-testing:BankTransferTests \
             -only-testing:CountriesAPIUnitTests \
             -only-testing:JSBridgeTests \
             -only-testing:KeyAppKitCoreTests \

@@ -57,7 +57,7 @@ extension TransactionHandler {
                 }
 
                 // wait for 2 secs
-                try await Task.sleep(nanoseconds: 2_000_000_000)
+                try await Task.sleep(nanoseconds: 20_000_000_000)
 
                 // mark as finalized
                 await MainActor.run { [weak self] in
@@ -66,6 +66,13 @@ extension TransactionHandler {
                 await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = .finalized
+                    return value
+                }
+                return
+            } else if transactionId.hasPrefix(.fakePausedTransactionSignaturePrefix) {
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .confirmationNeeded
                     return value
                 }
                 return

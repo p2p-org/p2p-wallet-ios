@@ -78,6 +78,12 @@ let package = Package(
             targets: ["Moonpay"]
         ),
 
+        // BankTransfer
+        .library(
+            name: "BankTransfer",
+            targets: ["BankTransfer"]
+        ),
+
         // Wormhole
         .library(
             name: "Wormhole",
@@ -112,7 +118,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
+        .package(url: "https://github.com/p2p-org/solana-swift", .upToNextMajor(from: "4.0.0")),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
@@ -260,6 +266,17 @@ let package = Package(
             dependencies: []
         ),
 
+        // BankTransfer
+        .target(
+            name: "BankTransfer",
+            dependencies: [
+                "KeyAppNetworking",
+                "KeyAppKitCore",
+                "KeyAppBusiness",
+                "KeyAppKitLogger",
+            ]
+        ),
+
         // Wormhole
         .target(
             name: "Wormhole",
@@ -350,6 +367,12 @@ let package = Package(
             name: "KeyAppKitCoreTests",
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
+        ),
+
+        .testTarget(
+            name: "BankTransferTests",
+            dependencies: ["BankTransfer"],
+            path: "Tests/UnitTests/BankTransferTests"
         ),
 
         // StateMachine

@@ -26,7 +26,8 @@ final class ChooseSendItemCoordinator: Coordinator<SolanaAccount?> {
     override func start() -> AnyPublisher<SolanaAccount?, Never> {
         let viewModel = ChooseItemViewModel(
             service: buildService(strategy: strategy),
-            chosenToken: chosenWallet
+            chosenItem: chosenWallet,
+            isSearchEnabled: true
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
             TokenCellView(item: .init(wallet: model.item as! SolanaAccount), appearance: .other)

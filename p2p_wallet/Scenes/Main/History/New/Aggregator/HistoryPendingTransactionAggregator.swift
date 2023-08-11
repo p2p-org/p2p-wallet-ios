@@ -33,6 +33,8 @@ class HistoryPendingTransactionAggregator: DataAggregator {
                         transaction.destinationWallet.mintAddress == mint
                 case let transaction as ClaimSentViaLinkTransaction:
                     return transaction.claimableTokenInfo.mintAddress == mint
+                case let transaction as any StrigaClaimTransactionType:
+                    return transaction.token?.address == mint
                 default:
                     return false
                 }

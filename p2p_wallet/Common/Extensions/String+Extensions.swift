@@ -93,6 +93,10 @@ extension String {
         "<FakeTransactionSignature>"
     }
 
+    static var fakePausedTransactionSignaturePrefix: String {
+        "<FakePausedTransactionSignature>"
+    }
+
     static func fakeTransactionSignature(id: String) -> String {
         fakeTransactionSignaturePrefix + "<\(id)>"
     }
@@ -111,3 +115,16 @@ extension String {
         return String(stringLiteral: s)
     }
 }
+
+// MARK: - Date
+
+extension String {
+    func date(withFormat format: String, locale: Locale = Locale.shared) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
+}
+
+// MARK: - HTML Entiteles

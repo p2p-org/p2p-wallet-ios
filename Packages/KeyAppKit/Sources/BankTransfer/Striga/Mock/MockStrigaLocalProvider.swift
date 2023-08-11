@@ -1,0 +1,102 @@
+import Foundation
+
+public actor MockStrigaLocalProvider: StrigaLocalProvider {
+    // MARK: - Properties
+
+    private var useCase: MockStrigaUseCase
+    private var cachedRegistrationData: StrigaUserDetailsResponse?
+
+    private var userId: String?
+
+    // MARK: - Initializer
+
+    public init(
+        useCase: MockStrigaUseCase,
+        hasCachedInput: Bool
+    ) {
+        self.useCase = useCase
+        if hasCachedInput {
+            var kyc: StrigaKYCStatus = .notStarted
+            if useCase == .registeredAndVerifiedUser {
+                kyc = .approved
+            }
+
+            cachedRegistrationData = StrigaUserDetailsResponse(
+                firstName: "Tester",
+                lastName: "Tester1",
+                email: "test@test.test",
+                mobile: .init(
+                    countryCode: "+84",
+                    number: "776059617"
+                ),
+                dateOfBirth: .init(
+                    year: "1984",
+                    month: "03",
+                    day: "12"
+                ),
+                address: .init(
+                    addressLine1: "Test ts str1",
+                    addressLine2: nil,
+                    city: "Ant",
+                    postalCode: "12345",
+                    state: "Ant",
+                    country: "fr"
+                ),
+                occupation: .accounting,
+                sourceOfFunds: .personalSavings,
+                placeOfBirth: "FRA",
+                KYC: StrigaKYC(
+                    status: kyc,
+                    mobileVerified: false
+                )
+            )
+        }
+    }
+
+    // MARK: - Methods
+
+    public func getUserId() async -> String? {
+        userId
+    }
+
+    public func saveUserId(_ id: String) async {
+        userId = id
+    }
+
+    public func getCachedRegistrationData() async -> StrigaUserDetailsResponse? {
+        cachedRegistrationData
+    }
+
+    public func save(registrationData: StrigaUserDetailsResponse) async throws {
+        cachedRegistrationData = registrationData
+    }
+
+    public func getWhitelistedUserDestinations() async throws -> [StrigaWhitelistAddressResponse] {
+        fatalError()
+    }
+
+    public func getCachedUserData() async -> UserData? {
+        fatalError()
+    }
+
+    public func save(userData _: UserData) async throws {
+//        fatalError()
+    }
+
+    public func save(whitelisted _: [StrigaWhitelistAddressResponse]) async throws {
+        fatalError()
+    }
+
+    public func getCachedWithdrawalInfo() async -> StrigaWithdrawalInfo? {
+        fatalError()
+    }
+
+    public func save(withdrawalInfo _: StrigaWithdrawalInfo) async throws {
+        fatalError()
+    }
+
+    public func clear() async {
+        cachedRegistrationData = nil
+        useCase = .unregisteredUser
+    }
+}

@@ -129,7 +129,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     appVersion: data.appVersion,
                     timestamp: data.timestamp,
                     simulationError: nil,
-                    feeRelayerError: data.feeRelayerError,
+                    feeRelayerError: data.feeRelayerError ?? data.otherError,
                     blockchainError: data.blockchainError
                 )
             )

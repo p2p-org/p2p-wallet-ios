@@ -1,10 +1,12 @@
 import AnalyticsManager
 import Combine
+import CountriesAPI
 import Foundation
 import LocalAuthentication
 import Onboarding
 import Resolver
 import SolanaSwift
+import SwiftyUserDefaults
 import UIKit
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
@@ -15,6 +17,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
+    @Injected private var logoutService: LogoutService
     @Injected private var deviceShareMigrationService: DeviceShareMigrationService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
@@ -27,6 +30,16 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Published var biometryIsEnabled = Defaults.isBiometryEnabled {
         didSet {
             toggleBiometryEnabling()
+        }
+    }
+
+    @Published var region = Optional(Defaults.region) {
+        didSet {
+            if let region {
+                Defaults.region = region
+            } else {
+                Defaults.region = nil
+            }
         }
     }
 
@@ -56,6 +69,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         super.init()
+
         setUpAuthType()
         updateNameIfNeeded()
         bind()
@@ -132,6 +146,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 guard let userAddress = solanaStorage.account?.publicKey.base58EncodedString else { return }
                 openActionSubject.send(.reserveUsername(userAddress: userAddress))
             }
+        case .country:
+            openActionSubject.send(.country)
         default:
             openActionSubject.send(type)
         }
@@ -143,7 +159,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     func signOut() {
         analyticsManager.log(event: .signedOut)
-        Task { try await userWalletManager.remove() }
+        Task { await logoutService.logout() }
     }
 
     private func toggleZeroBalancesVisibility() {
@@ -157,6 +173,9 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata.value != nil
         } else {
             isNameEnabled = true
+        }
+        if region != Defaults.region {
+            region = Defaults.region
         }
     }
 
@@ -195,6 +214,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 extension SettingsViewModel {
     enum OpenAction {
         case username
+        case country
         case support
         case reserveUsername(userAddress: String)
         case recoveryKit
