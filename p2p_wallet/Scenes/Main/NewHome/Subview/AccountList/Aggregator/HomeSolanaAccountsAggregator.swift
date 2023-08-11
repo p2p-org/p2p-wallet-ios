@@ -19,6 +19,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
 
         return accounts
             .filter { !$0.isNFTToken && $0.token.keyAppExtensions.isPositionOnWS == true }
+            .filter { $0.token.keyAppExtensions.isTokenCellVisibleOnWS == true }
             .sorted(by: Self.defaultSorter)
             .map { account in
                 var tags: AccountTags = []
