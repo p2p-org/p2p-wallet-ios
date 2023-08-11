@@ -161,6 +161,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         userActionService.actions
             .compactMap { $0.compactMap { $0 as? BankTransferClaimUserAction } }
             .flatMap(\.publisher)
+            .filter { $0.status != .pending && $0.status != .processing }
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] val in
                 switch val.status {
@@ -170,8 +172,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     break
                 }
             })
-            .filter { $0.status == .ready }
-            .removeDuplicates()
             .sinkAsync(receiveValue: { [weak self] action in
                 let priceService = Resolver.resolve(PriceService.self)
                 let price = try? await priceService.getPrice(
