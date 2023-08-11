@@ -81,7 +81,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 localProvider.clear()
 
                 // get new data
-                (jupiterTokens, routeMap) = try await (
+                (jupiterTokens, routeMap) = try await(
                     jupiterClient.getTokens(),
                     jupiterClient.routeMap()
                 )
