@@ -5,24 +5,16 @@ import Foundation
 import KeyAppKitCore
 import SolanaSwift
 
-public struct PriceServiceOptions: OptionSet {
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    public static let actualPrice = PriceServiceOptions(rawValue: 1 << 0)
-}
-
 /// Abstract class for getting exchange rate between token and fiat for any token.
 public protocol PriceService: AnyObject {
+    /// Get actual price in specific fiat for token.
     func getPrice(
         token: AnyToken,
         fiat: String,
         options: PriceServiceOptions
     ) async throws -> TokenPrice?
 
+    /// Get actual prices in specific fiat for token.
     func getPrices(
         tokens: [AnyToken],
         fiat: String,
@@ -36,42 +28,36 @@ public protocol PriceService: AnyObject {
     func clear() async throws
 }
 
-public extension PriceService {
-    func getPrice(
-        token: AnyToken,
-        fiat: String
-    ) async throws -> TokenPrice? {
-        try await getPrice(token: token, fiat: fiat, options: [])
-    }
-
-    func getPrices(
-        tokens: [AnyToken],
-        fiat: String
-    ) async throws -> [SomeToken: TokenPrice] {
-        try await getPrices(tokens: tokens, fiat: fiat, options: [])
-    }
-}
-
 /// This class service allow client to get exchange rate between token and fiat.
 ///
 /// Each rate has 15 minutes lifetime. When the lifetime is expired, the new rate will be requested.
 public class PriceServiceImpl: PriceService {
-    /// Provider
-    let api: KeyAppTokenProvider
-    let errorObserver: ErrorObserver
+    // MARK: - Inner structure
 
     /// Data structure for caching
     enum TokenPriceRecord: Codable, Hashable {
         case requested(TokenPrice?)
     }
 
+    // MARK: - Providers
+
+    let api: KeyAppTokenProvider
+
+    let errorObserver: ErrorObserver
+
+    // MARK: - Properties
+
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
+
+    let rules: [PriceRule] = [DepeggingPriceRule(), OneToOnePriceRule()]
+
+    // MARK: - Event stream
 
     /// The timer synchronisation
     let timerPublisher: Timer.TimerPublisher = .init(interval: 60, runLoop: .main, mode: .default)
 
-    ///
+    /// Manual trigger synchronisation
     let triggerPublisher: PassthroughSubject<Void, Never> = .init()
 
     public var onChangePublisher: AnyPublisher<Void, Never> {
@@ -87,6 +73,8 @@ public class PriceServiceImpl: PriceService {
             .eraseToAnyPublisher()
     }
 
+    // MARK: - Constructor
+
     public init(api: KeyAppTokenProvider, errorObserver: ErrorObserver, lifetime: TimeInterval = 60 * 5) {
         self.api = api
         self.errorObserver = errorObserver
@@ -97,6 +85,8 @@ public class PriceServiceImpl: PriceService {
             defaultLifetime: lifetime
         )
     }
+
+    // MARK: - Methods
 
     public func getPrices(
         tokens: [AnyToken], fiat: String,
@@ -166,13 +156,19 @@ public class PriceServiceImpl: PriceService {
         }
 
         // Transform values of TokenPriceRecord? to TokenPrice?
-        return result
+        var priceResult = result
             .compactMapValues { record in
                 switch record {
                 case let .requested(value):
                     return value
                 }
             }
+
+        for (token, price) in priceResult {
+            priceResult[token] = applyRule(token: token, price: price, fiat: fiat)
+        }
+
+        return priceResult
     }
 
     public func getPrice(token: AnyToken, fiat: String, options: PriceServiceOptions) async throws -> TokenPrice? {
@@ -180,10 +176,11 @@ public class PriceServiceImpl: PriceService {
         return result.values.first ?? nil
     }
 
+    /// Method for fetching price from server
     internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
         var result: [SomeToken: TokenPrice] = [:]
 
-        // Request missing token price
+        // Request token price
         let query: [KeyAppTokenProviderData.TokenQuery] = Dictionary(
             grouping: tokens,
             by: \.network
@@ -193,10 +190,12 @@ public class PriceServiceImpl: PriceService {
             return KeyAppTokenProviderData.TokenQuery(chainId: network.rawValue, addresses: addresses)
         }
 
+        // Fetch
         let newPrices = try await api.getTokensPrice(
             KeyAppTokenProviderData.Params(query: query)
         )
 
+        // Data parsing
         for chain in newPrices {
             for tokenData in chain.data {
                 // Token should be from requested list
@@ -232,23 +231,29 @@ public class PriceServiceImpl: PriceService {
     }
 
     func parseTokenPrice(token: SomeToken, value: String, fiat: String) throws -> TokenPrice {
-        var parsedValue = try BigDecimal(fromString: value)
-
-        /// Adjust prices for stable coin (usdc, usdt) make it equal to 1 if not depegged more than 2%
-        if
-            case let .contract(address) = token.primaryKey,
-            [PublicKey.usdcMint.base58EncodedString, PublicKey.usdtMint.base58EncodedString].contains(address),
-            token.network == .solana,
-            (abs(parsedValue - 1.0) * 100) <= 2
-        {
-            parsedValue = 1.0
-        }
-
-        return TokenPrice(
+        try TokenPrice(
             currencyCode: fiat,
-            value: parsedValue,
+            value: BigDecimal(fromString: value),
             token: token
         )
+    }
+
+    func applyRule(token: SomeToken, price: TokenPrice, fiat: String) -> TokenPrice? {
+        var adjustedPrice: TokenPrice? = price
+
+        loop: for rule in rules {
+            let result = rule.adjustValue(token: token, price: price, fiat: fiat)
+
+            switch result {
+            case let .continue(newPrice):
+                adjustedPrice = newPrice
+            case let .break(newPrice):
+                adjustedPrice = newPrice
+                break loop
+            }
+        }
+
+        return adjustedPrice
     }
 
     public func clear() async throws {
@@ -257,6 +262,7 @@ public class PriceServiceImpl: PriceService {
 }
 
 internal extension AnyToken {
+    /// Map token to requested primary key in backend.
     var addressPriceMapping: String {
         switch network {
         case .solana:

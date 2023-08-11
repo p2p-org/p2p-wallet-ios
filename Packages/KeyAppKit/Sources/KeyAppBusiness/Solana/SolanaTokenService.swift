@@ -5,9 +5,12 @@ import SolanaSwift
 public typealias SolanaTokensService = TokenRepository
 
 public actor KeyAppSolanaTokenRepository: TokenRepository {
+    static let version: Int = 1
+
     internal struct Database: Codable, Hashable {
         var timestamps: Date?
         var data: [String: SolanaToken]
+        var version: Int?
     }
 
     internal enum Status: Int {
@@ -41,8 +44,10 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
         if status == Status.initialising {
             if let encodedData = try? await storage.load(for: filename) {
                 if let database = try? JSONDecoder().decode(Database.self, from: encodedData) {
-                    self.database = database
-                    setupStaticToken(data: database.data)
+                    if let migratedDatabase = migrate(database: database) {
+                        self.database = migratedDatabase
+                        setupStaticToken(data: migratedDatabase.data)
+                    }
                 }
             }
         }
@@ -60,6 +65,7 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
                     (token.mintAddress, token)
                 }
                 let data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
+                database.version = Self.version
                 database.data = data
                 setupStaticToken(data: data)
                 status = .ready
@@ -69,8 +75,18 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
                 try? await storage.save(for: filename, data: encodedData)
             }
         } catch {
-            print(error)
             errorObserver.handleError(error)
+        }
+    }
+
+    func migrate(database: Database) -> Database? {
+        switch database.version {
+        case .none:
+            return nil
+        case 1:
+            return database
+        default:
+            return database
         }
     }
 

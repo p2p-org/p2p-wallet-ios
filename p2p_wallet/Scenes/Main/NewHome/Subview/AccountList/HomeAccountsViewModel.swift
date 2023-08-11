@@ -121,30 +121,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: CurrencyAmount = state.value
-                    .filter(\.isUSDC)
+                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
                     .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
                     .reduce(CurrencyAmount(usd: 0)) {
-                        let usdcAmount = $1.cryptoAmount.amount
-                        let amountInFiat = $1.amountInFiat?.value ?? usdcAmount
-
-                        guard usdcAmount > 0, amountInFiat > 0 else {
-                            if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
-                            }
-                            return $0 + $1.amountInFiat
-                        }
-
-                        let calculatedDifference = abs(100 - ((usdcAmount / amountInFiat) * 100))
-
-                        if let percentDifference = $1.token.keyAppExtensions.percentDifferenceToShowByPriceOnWS {
-                            if calculatedDifference > BigDecimal(exactly: percentDifference) {
-                                return $0 + $1.amountInFiat
-                            } else if $1.token.keyAppExtensions.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
-                                return $0 + CurrencyAmount(usd: $1.cryptoAmount.amount)
-                            }
-                        }
-
-                        return $0 + $1.amountInFiat
+                        $0 + $1.amountInFiat
                     }
 
                 let formatter = CurrencyFormatter(
@@ -215,7 +195,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let cryptoFormatter = CryptoFormatter()
-                guard let usdcAccount = state.value.first(where: { $0.isUSDC }) else {
+                guard let usdcAccount = state.value.first(where: {
+                    $0.isUSDC && ($0.token.keyAppExtensions.isPositionOnWS ?? false)
+                }) else {
                     // Show zero balance for USDC if no USDC account exists
                     return cryptoFormatter.string(amount: CryptoAmount(amount: 0, token: TokenMetadata.usdc))
                 }

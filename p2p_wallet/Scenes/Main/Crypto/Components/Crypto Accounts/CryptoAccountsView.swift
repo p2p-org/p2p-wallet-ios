@@ -71,14 +71,18 @@ struct CryptoAccountsView: View {
 
             wrappedList(items: viewModel.accounts) { data in
                 ForEach(data, id: \.id) { rendableAccount in
-                    tokenCell(rendableAccount: rendableAccount)
-                        .swipeActions(
-                            isVisible: true,
-                            currentUserInteractionCellID: $currentUserInteractionCellID,
-                            action: {
-                                viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                            }
-                        )
+                    if rendableAccount.extraAction == .showHide {
+                        tokenCell(rendableAccount: rendableAccount)
+                            .swipeActions(
+                                isVisible: true,
+                                currentUserInteractionCellID: $currentUserInteractionCellID,
+                                action: {
+                                    viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                                }
+                            )
+                    } else {
+                        tokenCell(rendableAccount: rendableAccount)
+                    }
                 }
             }
             .padding(.top, 12)

@@ -19,11 +19,12 @@ create_pull_request() {
   local base_branch="$1"
   local head_branch="$2"
   local title="$3"
+  local body="$4"
   
   local github_token="$GITHUB_TOKEN"
 
   local url="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/pulls"
-  local data="{\"title\":\"$title\",\"base\":\"$base_branch\",\"head\":\"$head_branch\"}"
+  local data="{\"title\":\"$title\", \"body\":\"$body\",\"base\":\"$base_branch\",\"head\":\"$head_branch\"}"
 
   local pr_response=$(curl -s -X POST -H "Authorization: token $github_token" -d "$data" "$url")
   local pr_url=$(echo "$pr_response" | jq -r .html_url)
@@ -53,8 +54,17 @@ if [[ $(git status --porcelain | grep '^ M' | grep '\.swift$') ]]; then
   
   if [ "$(echo "$existing_prs" | jq length)" -eq 0 ]; then
     # Create a pull request using GitHub API
-    pr_title="[Swiftformat] Correct format for $new_formatting_branch"
-    pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title")
+    pr_title="🚧 Correct format for $current_branch"
+    pr_body="Fix code format for $current_branch"
+    pr_url=$(create_pull_request "$current_branch" "$new_formatting_branch" "$pr_title" "$pr_body")
+
+    # Get the pull request number from the URL
+    pr_number=$(echo "$pr_url" | awk -F'/' '{print $NF}')
+    
+    # Add the "swiftformat" label to the pull request using the GitHub API
+    label_data="{\"labels\":[\"swiftformat\"]}"
+    label_url="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/$pr_number/labels"
+    curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d "$label_data" "$label_url"
   
     # Print formatted message for GitHub Actions failure with clickable PR URL
     echo "::warning::Unformatted code detected. Don't worry, I fixed them for you here: $pr_url"
