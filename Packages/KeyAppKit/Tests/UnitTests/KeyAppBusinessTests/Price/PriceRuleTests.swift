@@ -1,10 +1,3 @@
-//
-//  PriceRuleTests.swift
-//
-//
-//  Created by Giang Long Tran on 03.08.2023.
-//
-
 import SolanaSwift
 import XCTest
 @testable import KeyAppBusiness
@@ -137,7 +130,7 @@ final class PriceRuleTests: XCTestCase {
             XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
-    
+
     func testDepeggingPriceRuleCase2() {
         // Given
         let rule = DepeggingPriceRule()
@@ -180,7 +173,7 @@ final class PriceRuleTests: XCTestCase {
             XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
-    
+
     func testDepeggingPriceRuleCase3() {
         // Given
         let rule = DepeggingPriceRule()
@@ -223,7 +216,7 @@ final class PriceRuleTests: XCTestCase {
             XCTFail("Unexpected PriceRuleHandler.break result")
         }
     }
-    
+
     func testDepeggingPriceRuleCase4() {
         // Given
         let rule = DepeggingPriceRule()

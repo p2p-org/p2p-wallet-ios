@@ -231,9 +231,9 @@ public class PriceServiceImpl: PriceService {
     }
 
     func parseTokenPrice(token: SomeToken, value: String, fiat: String) throws -> TokenPrice {
-        TokenPrice(
+        try TokenPrice(
             currencyCode: fiat,
-            value: try BigDecimal(fromString: value),
+            value: BigDecimal(fromString: value),
             token: token
         )
     }
