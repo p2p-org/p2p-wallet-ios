@@ -300,7 +300,7 @@ platform :ios do
     version = result[:buildVersion]
 
     # notify testers
-    message = "A build **#{version}** was uploaded for testing this feature.\\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}\\nDownload on [Firebase Distribution](#{result[:testingUri]})"
+    message = "A build **#{version}** was uploaded for testing this feature. [Download](#{result[:testingUri]})\\nLink to issue: <#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}>"
     notify(version, message)
 
     # output
