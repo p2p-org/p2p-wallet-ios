@@ -51,6 +51,8 @@ class RecruitmentDispatcher: Dispatcher {
         }
     }
 
+    func onEnterInvokeAction(currentState _: RecruitmentState) -> RecruitmentAction? { nil }
+
     func dispatch(
         action: RecruitmentAction,
         currentState: RecruitmentState

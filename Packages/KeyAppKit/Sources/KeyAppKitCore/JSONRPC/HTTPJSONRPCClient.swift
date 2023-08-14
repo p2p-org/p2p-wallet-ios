@@ -1,11 +1,12 @@
 import Foundation
 
 public class HTTPJSONRPCCLient {
-    static let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .secondsSince1970
-        return decoder
-    }()
+    public struct EmptyParams: Codable {
+        public init() {}
+    }
+
+    public let encoder: JSONEncoder
+    public let decoder: JSONDecoder
 
     public var endpoint: String
     public let urlSession: URLSession
@@ -13,6 +14,18 @@ public class HTTPJSONRPCCLient {
     public init(endpoint: String, urlSession: URLSession = URLSession.shared) {
         self.endpoint = endpoint
         self.urlSession = urlSession
+
+        encoder = {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .secondsSince1970
+            return encoder
+        }()
+
+        decoder = {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .secondsSince1970
+            return decoder
+        }()
     }
 
     /// Invoke method
@@ -35,10 +48,10 @@ public class HTTPJSONRPCCLient {
             params: params
         )
 
-        request.httpBody = try JSONEncoder().encode(rpcBody)
+        request.httpBody = try encoder.encode(rpcBody)
 
         let (data, _) = try await urlSession.data(for: request)
-        let jsonResponse = try Self.decoder.decode(JSONRPCResponse<String, String>.self, from: data)
+        let jsonResponse = try decoder.decode(JSONRPCResponse<String, String>.self, from: data)
 
         if let error = jsonResponse.error {
             throw error
@@ -67,15 +80,17 @@ public class HTTPJSONRPCCLient {
             method: method,
             params: params
         )
+        
+        print(rpcBody)
 
-        request.httpBody = try JSONEncoder().encode(rpcBody)
+        request.httpBody = try encoder.encode(rpcBody)
 
         print(request.cURL())
 
         let (data, _) = try await urlSession.data(for: request)
         debugPrint(String(data: data, encoding: .utf8) as Any)
 
-        let jsonResponse = try Self.decoder.decode(JSONRPCResponse<Result, AdditionalError>.self, from: data)
+        let jsonResponse = try decoder.decode(JSONRPCResponse<Result, AdditionalError>.self, from: data)
 
         if let error = jsonResponse.error {
             throw error

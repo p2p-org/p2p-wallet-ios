@@ -7,11 +7,11 @@ private let fakeNetworkDelayInMilliseconds: Int = 500
 final class StateMachineTests: XCTestCase {
     var apiClient: APIClient = MockAPIClient(delayInMilliseconds: UInt64(fakeNetworkDelayInMilliseconds))
     var dispatcher: RecruitmentDispatcher!
-    var stateMachine: StateMachine<RecruitmentState, RecruitmentAction, RecruitmentDispatcher>!
+    var stateMachine: StateMachine<RecruitmentDispatcher>!
 
     override func setUpWithError() throws {
         dispatcher = .init(apiClient: apiClient)
-        stateMachine = .init(dispatcher: dispatcher, verbose: true)
+        stateMachine = .init(initialState: RecruitmentState.initial, dispatcher: dispatcher, verbose: true)
     }
 
     override func tearDownWithError() throws {

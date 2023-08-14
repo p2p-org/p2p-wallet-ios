@@ -159,7 +159,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             .compactMap { $0 }
 
         if account.token.isNative {
-            if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
+            if available(.ethAddressEnabled), available(.solanaEthAddressEnabled) {
                 var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
                 if let logoURL = URL(string: account.token.logoURI ?? "") {
                     icon = .url(logoURL)
@@ -177,7 +177,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             }
         }
 
-        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.mintAddress) {
+        if available(.ethAddressEnabled), supportedBridgeTokens.contains(account.token.mintAddress) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)
@@ -281,9 +281,12 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         coordinate(to: coordinator)
             .sink { [weak self] result in
-                guard let self = self else { return }
+                guard let self else { return }
 
                 switch result {
+                case .simpleSend:
+                    break
+
                 case let .wormhole(trx):
                     rootViewController.popToViewController(currentVC, animated: true)
 

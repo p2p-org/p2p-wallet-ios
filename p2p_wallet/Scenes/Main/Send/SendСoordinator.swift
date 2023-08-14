@@ -11,6 +11,7 @@ import UIKit
 import Wormhole
 
 enum SendResult {
+    case simpleSend(PendingTransaction)
     case sent(SendTransaction)
     case wormhole(WormholeSendUserAction)
     case sentViaLink(link: String, transaction: SendTransaction)
@@ -85,7 +86,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
     ) {
-        coordinate(to: SendInputCoordinator(
+        coordinate(to: NSendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
@@ -96,6 +97,8 @@ final class SendCoordinator: Coordinator<SendResult> {
         ))
         .sink { [weak self] result in
             switch result {
+            case let .simpleSend(transaction):
+                self?.result.send(.simpleSend(transaction))
             case let .sent(transaction):
                 self?.result.send(.sent(transaction))
             case .sentViaLink:
@@ -126,6 +129,8 @@ final class SendCoordinator: Coordinator<SendResult> {
             }
             .sink { [weak self] result in
                 switch result {
+                case let .simpleSend(transaction):
+                    self?.result.send(.simpleSend(transaction))
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
                 case let .wormhole(transaction):
@@ -233,6 +238,8 @@ final class SendCoordinator: Coordinator<SendResult> {
         ))
         .sink { [weak self] result in
             switch result {
+            case let .simpleSend(transaction):
+                self?.result.send(.simpleSend(transaction))
             case let .sent(transaction):
                 self?.result.send(.sent(transaction))
             case let .sentViaLink(link, transaction):
@@ -268,7 +275,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
         coordinate(to: coordinator)
             .sink(receiveValue: { [weak self] result in
-                guard let self = self else { return }
+                guard let self else { return }
                 switch result {
                 case .success:
                     self.result.send(.sentViaLink(link: link, transaction: transaction))

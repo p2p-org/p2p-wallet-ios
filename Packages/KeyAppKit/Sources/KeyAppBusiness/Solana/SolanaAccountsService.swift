@@ -20,6 +20,8 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     // MARK: - Properties
 
+    let address: String
+
     var subscriptions = [AnyCancellable]()
 
     // MARK: - Source
@@ -61,6 +63,12 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     ) {
         self.priceService = priceService
         self.errorObservable = errorObservable
+
+        if let owner = accountStorage.account {
+            address = owner.publicKey.base58EncodedString
+        } else {
+            address = ""
+        }
 
         // Setup async value
         fetchedAccountsByRpc = SolanaAccountAsyncValue(
@@ -227,9 +235,17 @@ public extension [SolanaAccountsService.Account] {
 }
 
 public extension SolanaAccountsService {
-    @available(*, deprecated, message: "Legacy code")
+    @available(*, deprecated, message: "Unsafe code", renamed: "nativeAccount")
     var nativeWallet: SolanaAccount? {
         state.value.nativeWallet
+    }
+
+    var nativeAccount: SolanaAccount {
+        state.value.nativeWallet ?? SolanaAccount(
+            address: address,
+            lamports: 0,
+            token: SolanaToken.nativeSolana
+        )
     }
 
     @available(*, deprecated, message: "Legacy code")
@@ -259,7 +275,7 @@ internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, (resolved, _)) = try await(
+                let (balance, (resolved, _)) = try await (
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,

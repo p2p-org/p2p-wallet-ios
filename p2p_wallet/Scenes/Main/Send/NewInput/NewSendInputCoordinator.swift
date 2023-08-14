@@ -5,7 +5,7 @@ import Send
 import SolanaSwift
 import SwiftUI
 
-final class NSendInputCoordinator: Coordinator<SendResult> {
+final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
     private let preChosenWallet: SolanaAccount?
@@ -38,15 +38,12 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(
+        let viewModel = NSendInputViewModel(
             recipient: recipient,
-            preChosenWallet: preChosenWallet,
-            preChosenAmount: preChosenAmount,
-            flow: flow,
-            allowSwitchingMainAmountType: allowSwitchingMainAmountType,
-            sendViaLinkSeed: sendViaLinkSeed
+            account: preChosenWallet,
+            allowSwitchAccount: allowSwitchingMainAmountType
         )
-        let view = SendInputView(viewModel: viewModel)
+        let view = NSendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
@@ -75,12 +72,14 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
         viewModel.openFeeInfo
             .sink { [weak self, weak viewModel] isFree in
                 guard let self, let viewModel else { return }
-                if viewModel.currentState.isSendingViaLink {
-                    self.openFreeTransactionsDetail(
-                        from: controller,
-                        isSendingViaLink: true
-                    )
-                } else if viewModel.currentState.amountInToken == 0, isFree {
+//                if viewModel.currentState.isSendingViaLink {
+//                    self.openFreeTransactionsDetail(
+//                        from: controller,
+//                        isSendingViaLink: true
+//                    )
+//                } else
+
+                if viewModel.currentState.input?.amount == 0, isFree {
                     self.openFreeTransactionsDetail(
                         from: controller,
                         isSendingViaLink: false
@@ -91,7 +90,7 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
             }
             .store(in: &subscriptions)
 
-        viewModel.snackbar
+        viewModel.snackBar
             .sink { snackbar in
                 snackbar.show(in: controller.navigationController?.view ?? controller.view)
             }
@@ -99,19 +98,8 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.transaction
             .sink { [weak self, viewModel] model in
-                if let seed = viewModel.stateMachine.currentState.sendViaLinkSeed {
-                    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-                    guard let link = try? sendViaLinkDataService
-                        .restoreURL(givenSeed: seed)
-                        .absoluteString
-                    else {
-                        return
-                    }
-                    self?.subject.send(.sentViaLink(link: link, transaction: model))
-                } else {
-                    self?.subject.send(.sent(model))
-                    self?.subject.send(completion: .finished)
-                }
+                self?.subject.send(.simpleSend(model))
+                self?.subject.send(completion: .finished)
             }
             .store(in: &subscriptions)
 
@@ -138,15 +126,17 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
-    private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
+    private func openChooseWalletToken(from vc: UIViewController, viewModel: NSendInputViewModel) {
+        guard let input = viewModel.currentState.input else { return }
+
         coordinate(to: ChooseSendItemCoordinator(
             strategy: .sendToken,
-            chosenWallet: viewModel.sourceWallet,
+            chosenWallet: input.account,
             parentController: vc
         ))
         .sink { walletToken in
-            if let walletToken = walletToken {
-                viewModel.sourceWallet = walletToken
+            if let walletToken {
+                viewModel.changeAccount(account: walletToken)
             }
             viewModel.openKeyboard()
         }
@@ -174,23 +164,23 @@ final class NSendInputCoordinator: Coordinator<SendResult> {
             availableFeeTokens: feeWallets
         ))
         .sink(receiveValue: { [weak viewModel] feeToken in
-            guard let feeToken = feeToken else { return }
+            guard let feeToken else { return }
             viewModel?.changeFeeToken.send(feeToken)
         })
         .store(in: &subscriptions)
     }
 
-    private func openFeeDetail(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: SendTransactionDetailsCoordinator(
-            parentController: vc,
-            sendInputViewModel: viewModel
-        ))
-        .sink { [weak self] result in
-            switch result {
-            case let .redirectToFeePrompt(tokens):
-                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
-            }
-        }
-        .store(in: &subscriptions)
+    private func openFeeDetail(from _: UIViewController, viewModel _: NSendInputViewModel) {
+//        coordinate(to: SendTransactionDetailsCoordinator(
+//            parentController: vc,
+//            sendInputViewModel: viewModel
+//        ))
+//        .sink { [weak self] result in
+//            switch result {
+//            case let .redirectToFeePrompt(tokens):
+//                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+//            }
+//        }
+//        .store(in: &subscriptions)
     }
 }

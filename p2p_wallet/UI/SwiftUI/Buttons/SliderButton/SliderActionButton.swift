@@ -1,7 +1,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct SliderActionButtonData {
+struct SliderActionButtonData: Equatable {
     let isEnabled: Bool
     let title: String
     static let zero = SliderActionButtonData(isEnabled: false, title: L10n.enterAmount)
