@@ -1,7 +1,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppUI
 import Resolver
 import Sell
 import UIKit
@@ -34,7 +33,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
         fiat: Fiat,
         strategy: Strategy,
         date: Date,
-        tokenImage: UIImage,
+        tokenImage: ImageResource,
         tokenSymbol: String
     ) {
         self.strategy = strategy

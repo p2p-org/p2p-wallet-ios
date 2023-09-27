@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct RestoreSocialOptionView: View {
@@ -11,7 +10,7 @@ struct RestoreSocialOptionView: View {
                 title: L10n.continueWithApple,
                 style: .inverted,
                 size: .large,
-                leading: .appleLogo,
+                leading: .init(resource: .appleLogo),
                 isLoading: viewModel.isLoading == .apple
             ) { [weak viewModel] in
                 guard viewModel?.isLoading == nil else { return }
@@ -22,7 +21,7 @@ struct RestoreSocialOptionView: View {
                 title: L10n.continueWithGoogle,
                 style: .inverted,
                 size: .large,
-                leading: .google,
+                leading: .init(resource: .google),
                 isLoading: viewModel.isLoading == .google
             ) { [weak viewModel] in
                 guard viewModel?.isLoading == nil else { return }

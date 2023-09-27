@@ -71,13 +71,13 @@ extension HomeEmptyViewModel {
         let title: String
         let amount: String?
         @Published var actionTitle: String
-        let image: UIImage
+        let image: ImageResource
 
         init(
             title: String,
             amount: String?,
             actionTitle: String,
-            image: UIImage
+            image: ImageResource
         ) {
             self.title = title
             self.amount = amount
@@ -111,7 +111,7 @@ extension HomeEmptyViewModel {
         return token.name
     }
 
-    func image(for token: TokenMetadata) -> UIImage {
+    func image(for token: TokenMetadata) -> ImageResource {
         if token == .nativeSolana {
             return .solanaIcon
         }
@@ -127,6 +127,6 @@ extension HomeEmptyViewModel {
         if token == .renBTC {
             return .bitcoinIcon
         }
-        return token.image ?? .squircleSolanaIcon
+        return .squircleSolanaIcon
     }
 }

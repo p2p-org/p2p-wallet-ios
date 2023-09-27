@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct PincodeChangeStartView: View {
@@ -8,7 +7,7 @@ struct PincodeChangeStartView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: .pincodeIllustration)
+                Image(.pincodeIllustration)
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 192)
@@ -32,7 +31,7 @@ struct PincodeChangeStartView: View {
                 BottomActionContainer {
                     SliderButtonView(
                         title: L10n.changeMyPIN,
-                        image: Asset.Icons.key.image,
+                        image: .init(resource: .key),
                         style: .white,
                         isOn: $isOn
                     )

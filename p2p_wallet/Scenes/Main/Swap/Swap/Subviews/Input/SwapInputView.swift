@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -43,7 +42,7 @@ struct SwapInputView: View {
         .padding(EdgeInsets(top: 12, leading: 16, bottom: 16, trailing: 12))
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .foregroundColor(Color(Asset.Colors.snow.color).opacity(viewModel.isEditable ? 1 : 0.6))
+                .foregroundColor(Color(.snow).opacity(viewModel.isEditable ? 1 : 0.6))
         )
     }
 }
@@ -58,7 +57,7 @@ private extension SwapInputView {
                     .subtitleStyle()
                 Text("\(viewModel.balanceText) \(viewModel.tokenSymbol)")
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.sky.color))
+                    .foregroundColor(Color(.sky))
             }
         })
         .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)AllButton")
@@ -71,16 +70,16 @@ private extension SwapInputView {
             HStack {
                 Text(viewModel.tokenSymbol)
                     .apply(style: .title1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .if(viewModel.isLoading) { view in
                         view.skeleton(with: true, size: CGSize(width: 84, height: 20))
                     }
-                Image(uiImage: .expandIcon)
+                Image(.expandIcon)
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 12)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
         }
         .allowsHitTesting(!viewModel.isLoading)
@@ -126,7 +125,7 @@ private extension SwapInputView {
 }
 
 private extension Text {
-    func subtitleStyle(color: Color = Color(Asset.Colors.silver.color)) -> some View {
+    func subtitleStyle(color: Color = Color(.silver)) -> some View {
         apply(style: .label1).foregroundColor(color)
     }
 }

@@ -4,7 +4,6 @@ import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import UIKit
@@ -162,12 +161,12 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         let buttonText = L10n.tapForDetails
         let attributedError = NSMutableAttributedString(string: text, attributes: [
             .font: UIFont.font(of: .text4),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
         ])
         attributedError.appending(
             NSMutableAttributedString(string: buttonText, attributes: [
                 .font: UIFont.font(of: .text4, weight: .bold),
-                .foregroundColor: Asset.Colors.rose.color,
+                .foregroundColor: UIColor(resource: .rose),
             ])
         )
         state = .error(message: attributedError)

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseDetailView: View {
@@ -7,7 +6,7 @@ struct SeedPhraseDetailView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: viewModel.state == .lock ? UIImage.fogOpen : UIImage.fogClose)
+                Image(viewModel.state == .lock ? .fogOpen : .fogClose)
                 Text(viewModel.state == .lock ? L10n.showSeedPhrase : L10n.yourSeedPhrase)
                     .fontWeight(.bold)
                     .apply(style: .title1)
@@ -37,7 +36,7 @@ struct SeedPhraseDetailView: View {
                     if viewModel.state == .lock {
                         SliderButtonView(
                             title: L10n.showMySeedPhrase,
-                            image: Asset.Icons.key.image,
+                            image: .init(resource: .key),
                             style: .white,
                             isOn: $viewModel.isSliderOn
                         )
@@ -47,7 +46,7 @@ struct SeedPhraseDetailView: View {
                             title: L10n.copy,
                             style: .third,
                             size: .large,
-                            trailing: Asset.Icons.copyFilled.image
+                            trailing: .init(resource: .copyFilled)
                         ) { viewModel.copy() }
                             .frame(height: TextButton.Size.large.height)
                     }
@@ -67,7 +66,7 @@ struct SeedPhraseDetailView: View {
             .cornerRadius(32)
             .overlay(
                 RoundedRectangle(cornerRadius: 32)
-                    .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                    .stroke(Color(.rain), lineWidth: 1)
             )
             .offset(x: 0, y: 16)
     }

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SendTransactionStatusView: View {
@@ -32,11 +31,11 @@ struct SendTransactionStatusView: View {
             Text(viewModel.title)
                 .fontWeight(.bold)
                 .apply(style: .title3)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
             if !viewModel.subtitle.isEmpty {
                 Text(viewModel.subtitle)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
     }
@@ -53,13 +52,13 @@ struct SendTransactionStatusView: View {
             Text(viewModel.transactionFiatAmount)
                 .fontWeight(.bold)
                 .apply(style: .largeTitle)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.top, 17)
                 .padding(.bottom, 6)
             if !viewModel.transactionCryptoAmount.isEmpty {
                 Text(viewModel.transactionCryptoAmount)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .padding(.bottom, 34)
             } else {
                 Rectangle()
@@ -68,7 +67,7 @@ struct SendTransactionStatusView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
 
     var info: some View {
@@ -77,12 +76,12 @@ struct SendTransactionStatusView: View {
                 HStack {
                     Text(infoItem.title)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                     Spacer()
                     Text(infoItem.detail)
                         .fontWeight(.bold)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
                 .frame(minHeight: 40)
             }
@@ -141,7 +140,7 @@ struct SendTransactionStatusStatusView: View {
                     }
 
                     if case .loading = viewModel.state {
-                        Image(uiImage: .transactionStatusLoadingWrapper)
+                        Image(.transactionStatusLoadingWrapper)
                             .resizable()
                             .frame(width: 48, height: 48)
                             .rotationEffect(.degrees(isRotatingAnimation ? 360 : 0.0))
@@ -154,7 +153,7 @@ struct SendTransactionStatusStatusView: View {
                             .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
                     }
 
-                    Image(uiImage: currentAppearance.image)
+                    Image(currentAppearance.image)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
@@ -193,7 +192,7 @@ struct SendTransactionStatusStatusView: View {
 private extension Text {
     func messageStyled() -> some View {
         apply(style: .text4)
-            .foregroundColor(Color(Asset.Colors.night.color))
+            .foregroundColor(Color(.night))
             .fixedSize(horizontal: false, vertical: true)
     }
 }

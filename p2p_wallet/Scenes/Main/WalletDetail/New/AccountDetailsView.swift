@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct AccountDetailsView: View {
@@ -7,7 +6,7 @@ struct AccountDetailsView: View {
 
     var body: some View {
         NewHistoryView(viewModel: historyList, header: header)
-            .background(Color(Asset.Colors.smoke.color).ignoresSafeArea())
+            .background(Color(.smoke).ignoresSafeArea())
     }
 
     var header: some View {
@@ -16,10 +15,10 @@ struct AccountDetailsView: View {
                 Text(detailAccount.rendableAccountDetails.amountInToken)
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Text(detailAccount.rendableAccountDetails.amountInFiat)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
             .padding(.top, 24)
 

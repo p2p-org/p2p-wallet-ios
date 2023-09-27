@@ -1,5 +1,3 @@
-
-import KeyAppUI
 import SwiftUI
 
 struct ErrorView: View {
@@ -19,7 +17,7 @@ struct ErrorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Image(uiImage: .catFail)
+            Image(.catFail)
                 .padding(.top, 24)
                 .padding(.bottom, title == nil ? 32 : 20)
 

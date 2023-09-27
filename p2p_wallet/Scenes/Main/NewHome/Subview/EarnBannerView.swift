@@ -7,14 +7,14 @@ struct EarnBannerView: View {
     var body: some View {
         ZStack {
             VStack {
-                Color(._644aff)
+                Color(._644Aff)
                     .cornerRadius(12)
                     .padding(.top, 23)
             }
 
             HStack {
                 Spacer()
-                Image(uiImage: .earnBanner)
+                Image(.earnBanner)
                     .frame(width: 206, height: 142)
             }
             .frame(maxWidth: .infinity)
@@ -26,9 +26,9 @@ struct EarnBannerView: View {
                         .foregroundColor(.white)
 
                     Text(L10n.stakeYourTokensAndGetRewardsEveryDay)
-                        ._lineHeightMultiple(1.26)
-                        .font(uiFont: .systemFont(ofSize: 14))
-                        .foregroundColor(Color(.bdbdbd))
+//                        ._lineHeightMultiple(1.26)
+                            .font(uiFont: .systemFont(ofSize: 14))
+                            .foregroundColor(Color(.bdbdbd))
                 }
                 .padding(.top, 23)
                 .padding(.leading, 24)
@@ -54,7 +54,7 @@ struct EarnBannerView: View {
                     Button {
                         closeAction()
                     } label: {
-                        Image(uiImage: .bannerClose)
+                        Image(.bannerClose)
                             .resizable()
                             .frame(width: 28, height: 28)
                     }

@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 struct OnboardingContentData: Identifiable, Equatable {
     struct Subtitle: Identifiable, Equatable {
@@ -13,17 +13,17 @@ struct OnboardingContentData: Identifiable, Equatable {
     }
 
     var id: String { title }
-    let image: UIImage?
+    let image: ImageResource
     let title: String
     let subtitles: [Subtitle]
 
-    init(image: UIImage, title: String, subtitles: [Subtitle] = []) {
+    init(image: ImageResource, title: String, subtitles: [Subtitle] = []) {
         self.image = image
         self.title = title
         self.subtitles = subtitles
     }
 
-    init(image: UIImage, title: String, subtitle: String) {
+    init(image: ImageResource, title: String, subtitle: String) {
         self.image = image
         self.title = title
         subtitles = [Subtitle(text: subtitle, isLimited: false)]

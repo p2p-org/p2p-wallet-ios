@@ -1,5 +1,4 @@
 import AnalyticsManager
-import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -12,7 +11,7 @@ struct SupportedTokenNetworksView: View {
     var body: some View {
         VStack(spacing: 0) {
             RoundedRectangle(cornerRadius: 2, style: .circular)
-                .fill(Color(Asset.Colors.silver.color))
+                .fill(Color(.silver))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
 
@@ -49,7 +48,7 @@ struct SupportedTokenNetworksView: View {
             .padding(.bottom, 30)
         }
         .background(
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .ignoresSafeArea()
                 .cornerRadius(radius: 16, corners: [.topLeft, .topRight])
         )
@@ -58,25 +57,25 @@ struct SupportedTokenNetworksView: View {
         }
     }
 
-    func network(icon: UIImage, title: String, onTap: @escaping () -> Void) -> some View {
+    func network(icon: ImageResource, title: String, onTap: @escaping () -> Void) -> some View {
         Button {
             onTap()
         } label: {
             HStack {
-                Image(uiImage: icon)
+                Image(icon)
                     .clipShape(Circle())
                     .frame(width: 48, height: 48)
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Spacer()
-                Image(uiImage: .cellArrow)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                Image(.cellArrow)
+                    .foregroundColor(Color(.mountain))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .background(Color(Asset.Colors.snow.color))
+            .background(Color(.snow))
             .cornerRadius(16)
         }
     }

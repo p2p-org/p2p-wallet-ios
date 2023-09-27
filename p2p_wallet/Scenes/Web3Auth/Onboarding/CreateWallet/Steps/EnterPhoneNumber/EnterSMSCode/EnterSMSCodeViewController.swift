@@ -1,6 +1,5 @@
 import BEPureLayout
 import Combine
-import KeyAppUI
 import UIKit
 
 final class EnterSMSCodeViewController: BaseOTPViewController {
@@ -65,7 +64,8 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                     .attributedString(
                         with: "Check the number \(self.viewModel.phone)",
                         of: .text1
-                    ).withForegroundColor(Asset.Colors.night.color)
+                    )
+                    .withForegroundColor(.init(resource: .night))
                 )
 
                 BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
@@ -88,7 +88,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 title: L10n.enterTheCodeToContinue,
                 style: .primary,
                 size: .large,
-                trailing: Asset.MaterialIcon.arrowForward.image
+                trailing: UIImage(resource: .arrowForward)
             ).bind(continueButtonRef)
         }.padding(.init(only: .bottom, inset: 18))
     }
@@ -105,7 +105,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                         of: .text1,
                         weight: .regular
                     ).withForegroundColor(
-                        isEnabled ? Asset.Colors.sky.color : Asset.Colors.mountain.color
+                        .init(resource: isEnabled ? .sky : .mountain)
                     ),
                     for: .normal
                 )
@@ -115,7 +115,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheCodeToContinue
-            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? UIImage(resource: .arrowForward) : nil
         }.store(in: &store)
 
         if let textField = smsInputRef.view?.textField {
@@ -159,21 +159,21 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     func configureNavBar() {
         // Left button
         let backButton = UIBarButtonItem(
-            image: Asset.MaterialIcon.arrowBackIos.image,
+            image: .init(resource: .arrowBackIos),
             style: .plain,
             target: self,
             action: #selector(onBack)
         )
-        backButton.tintColor = Asset.Colors.night.color
+        backButton.tintColor = .init(resource: .night)
         navigationItem.leftBarButtonItem = backButton
 
         if !disableRightButton {
             // Right button
             let infoButton = UIButton()
             infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-            infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+            infoButton.setImage(.init(resource: .helpOutline), for: .normal)
             infoButton.contentMode = .scaleAspectFill
-            infoButton.tintColor = Asset.Colors.night.color
+            infoButton.tintColor = .init(resource: .night)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
         }
     }

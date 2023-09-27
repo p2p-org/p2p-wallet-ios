@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SocialSignInView: View {
@@ -30,7 +29,7 @@ struct SocialSignInView: View {
                     title: viewModel.appleButtonTitle,
                     style: .inverted,
                     size: .large,
-                    leading: .appleLogo,
+                    leading: .init(resource: .appleLogo),
                     isLoading: viewModel.loading == .appleButton,
                     onPressed: { [weak viewModel] in
                         guard viewModel?.loading == nil else { return }
@@ -42,7 +41,7 @@ struct SocialSignInView: View {
                     title: viewModel.googleButtonTitle,
                     style: .inverted,
                     size: .large,
-                    leading: .google,
+                    leading: .init(resource: .google),
                     isLoading: viewModel.loading == .googleButton,
                     onPressed: { [weak viewModel] in
                         guard viewModel?.loading == nil else { return }

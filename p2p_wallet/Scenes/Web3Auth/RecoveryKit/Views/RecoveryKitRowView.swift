@@ -1,8 +1,7 @@
-import KeyAppUI
 import SwiftUI
 
 struct RecoveryKitRowView: View {
-    let icon: UIImage
+    let icon: ImageResource
     let title: String
     let subtitle: String
     let alert: Bool
@@ -11,7 +10,7 @@ struct RecoveryKitRowView: View {
     let action: (() -> Void)?
 
     init(
-        icon: UIImage,
+        icon: ImageResource,
         title: String,
         subtitle: String,
         alert: Bool = false,
@@ -29,24 +28,24 @@ struct RecoveryKitRowView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(uiImage: icon)
+                Image(icon)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .fontWeight(.semibold)
                         .apply(style: .text2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
 
                     HStack {
                         if alert {
-                            Image(uiImage: .warningIcon)
-                                .foregroundColor(Color(Asset.Colors.rose.color))
+                            Image(.warningIcon)
+                                .foregroundColor(Color(.rose))
                         }
                         Text(subtitle)
                             .apply(style: .label1)
                             .foregroundColor(
                                 alert ?
-                                    Color(Asset.Colors.rose.color) :
-                                    Color(Asset.Colors.mountain.color)
+                                    Color(.rose) :
+                                    Color(.mountain)
                             )
                     }
                 }.padding(.leading, 12)
@@ -62,7 +61,7 @@ struct RecoveryKitRowView: View {
 
             // Divider
             Rectangle()
-                .fill(Color(Asset.Colors.rain.color))
+                .fill(Color(.rain))
                 .frame(height: 1)
                 .edgesIgnoringSafeArea(.horizontal)
                 .padding(.leading, 20)

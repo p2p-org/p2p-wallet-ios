@@ -1,10 +1,9 @@
-import KeyAppUI
 import SwiftUI
 
 struct SendInputFeePromptView: View {
     @ObservedObject private var viewModel: SendInputFeePromptViewModel
 
-    private let mainColor = Asset.Colors.night.color
+    private let mainColor = ColorResource.night
 
     init(viewModel: SendInputFeePromptViewModel) {
         self.viewModel = viewModel
@@ -13,7 +12,7 @@ struct SendInputFeePromptView: View {
     var body: some View {
         ColoredBackground {
             VStack(alignment: .center, spacing: 0) {
-                Image(uiImage: .fee)
+                Image(.fee)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)

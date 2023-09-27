@@ -1,8 +1,4 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
 import Combine
-import KeyAppUI
 import NameService
 import SwiftUI
 import UIKit
@@ -54,9 +50,9 @@ private extension CreateUsernameCoordinator {
     func parameters() -> CreateUsernameParameters {
         switch navigationOption {
         case .onboarding:
-            return .init(backgroundColor: Asset.Colors.lime.color, buttonStyle: .primary)
+            return .init(backgroundColor: .lime, buttonStyle: .primary)
         case .settings:
-            return .init(backgroundColor: Asset.Colors.rain.color, buttonStyle: .primaryWhite)
+            return .init(backgroundColor: .rain, buttonStyle: .primaryWhite)
         }
     }
 
@@ -70,7 +66,7 @@ private extension CreateUsernameCoordinator {
             target: self,
             action: #selector(skip)
         )
-        button.tintColor = Asset.Colors.night.color
+        button.tintColor = .init(resource: .night)
         vc.navigationItem.rightBarButtonItem = button
     }
 

@@ -1,20 +1,19 @@
-import KeyAppUI
 import SwiftUI
 
 struct HistoryListSkeletonView: View {
     var body: some View {
         HStack {
             Circle()
-                .fill(Color(Asset.Colors.rain.color))
+                .fill(Color(.rain))
                 .frame(width: 48, height: 48)
             VStack(spacing: 8) {
                 RoundedRectangle(cornerSize: .init(width: 4, height: 4))
-                    .fill(Color(Asset.Colors.rain.color))
+                    .fill(Color(.rain))
                     .frame(maxWidth: 120)
                     .frame(height: 12)
 
                 RoundedRectangle(cornerSize: .init(width: 4, height: 4))
-                    .fill(Color(Asset.Colors.rain.color))
+                    .fill(Color(.rain))
                     .frame(maxWidth: 120)
                     .frame(height: 12)
             }

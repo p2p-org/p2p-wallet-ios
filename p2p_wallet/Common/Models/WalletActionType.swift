@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 enum WalletActionType {
     case receive
@@ -22,7 +22,7 @@ enum WalletActionType {
         }
     }
 
-    var icon: UIImage {
+    var icon: ImageResource {
         switch self {
         case .receive:
             return .actionReceive

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct CryptoAccountCellView: View, Equatable {
@@ -42,10 +41,10 @@ struct CryptoAccountCellView: View, Equatable {
             VStack(alignment: .leading, spacing: 4) {
                 Text(rendable.title)
                     .font(uiFont: .font(of: .text2))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Text(rendable.subtitle)
                     .font(uiFont: .font(of: .label1))
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
             Spacer()
 
@@ -53,7 +52,7 @@ struct CryptoAccountCellView: View, Equatable {
             case let .text(text):
                 Text(text)
                     .font(uiFont: .font(of: .text3, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             case let .button(text, enabled):
                 Button(
                     action: { onButtonTap?() },

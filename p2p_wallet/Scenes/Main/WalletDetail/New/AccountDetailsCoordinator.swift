@@ -2,7 +2,6 @@ import AnalyticsManager
 import Combine
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import Resolver
 import Sell
 import SolanaSwift
@@ -160,7 +159,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         if account.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
-                var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+                var icon: SupportedTokenItemIcon = .image(.imageOutlineIcon)
                 if let logoURL = URL(string: account.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
@@ -178,7 +177,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
 
         if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.mintAddress) {
-            var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+            var icon: SupportedTokenItemIcon = .image(.imageOutlineIcon)
             if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
@@ -346,9 +345,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
 extension ReceiveNetwork.Image {
     init?(token: TokenMetadata) {
-        if let image = token.image {
-            self = .image(image)
-        } else if let urlStr = token.logoURI, let url = URL(string: urlStr) {
+        if let urlStr = token.logoURI, let url = URL(string: urlStr) {
             self = .url(url)
         } else {
             return nil

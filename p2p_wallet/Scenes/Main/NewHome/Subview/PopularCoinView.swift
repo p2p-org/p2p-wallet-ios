@@ -1,17 +1,16 @@
-import KeyAppUI
 import SwiftUI
 
 struct PopularCoinView: View {
     let title: String
     let subtitle: String?
     let actionTitle: String
-    let image: UIImage
+    let image: ImageResource
 
     init(
         title: String,
         subtitle: String?,
         actionTitle: String,
-        image: UIImage
+        image: ImageResource
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -21,21 +20,21 @@ struct PopularCoinView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.snow.color)
+            Color(.snow)
                 .frame(height: 74)
                 .cornerRadius(16)
             HStack {
                 HStack(spacing: 12) {
-                    Image(uiImage: image)
+                    Image(image)
                         .frame(width: 48, height: 48)
                         .cornerRadius(16)
                     VStack(alignment: .leading, spacing: 4) {
                         Text(title)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .font(uiFont: .font(of: .text2))
                         if let subtitle {
                             Text(subtitle)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .font(uiFont: .font(of: .label1))
                         }
                     }
@@ -44,11 +43,11 @@ struct PopularCoinView: View {
                 .padding(.leading, 16)
                 Spacer()
                 Text(actionTitle)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text4, weight: .semibold))
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
-                    .background(Color(Asset.Colors.rain.color))
+                    .background(Color(.rain))
                     .cornerRadius(8)
                     .frame(height: 32)
                     .padding(.trailing, 16)

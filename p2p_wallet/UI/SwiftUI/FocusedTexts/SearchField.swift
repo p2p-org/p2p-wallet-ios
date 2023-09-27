@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SearchField: View {
@@ -15,7 +14,7 @@ struct SearchField: View {
                 searchField.autocorrectionType = .no
                 searchField.spellCheckingType = .no
                 searchField.placeholder = L10n.search
-                searchField.textColor = Asset.Colors.night.color
+                searchField.textColor = .init(resource: .night)
             }
         }
         .cornerRadius(10)

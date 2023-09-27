@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct ExplainText: View {
@@ -27,7 +26,7 @@ struct ExplainLayoutView<Header: View, Content: View, Hint: View>: View {
             header
                 .frame(maxWidth: .infinity)
                 .padding(.top, safeAreaInsets.top + 60)
-                .background(Color(Asset.Colors.lime.color))
+                .background(Color(.lime))
                 .cornerRadius(28)
                 .overlay(hint, alignment: .bottom)
 

@@ -1,4 +1,3 @@
-import KeyAppUI
 import Onboarding
 import SwiftUI
 
@@ -30,10 +29,10 @@ struct ReAuthSocialSignInView: View {
             }
             .ignoresSafeArea()
             .background(
-                Color(Asset.Colors.lime.color)
+                Color(.lime)
             )
         }
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -41,7 +40,7 @@ struct ReAuthSocialSignInView: View {
                 Button {
                     viewModel.close()
                 } label: {
-                    Image(uiImage: UIImage.closeIcon)
+                    Image(.closeIcon)
                 }
             }
         }
@@ -61,9 +60,9 @@ private extension SocialProvider {
     var image: UIImage {
         switch self {
         case .apple:
-            return .appleLogo.withTintColor(.black)
+            return .init(resource: .appleLogo).withTintColor(.black)
         case .google:
-            return .google
+            return .init(resource: .google)
         }
     }
 }

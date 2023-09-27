@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 /// View of `Crypto` scene
@@ -31,7 +30,7 @@ struct CryptoView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
             switch viewModel.state {
             case .pending:

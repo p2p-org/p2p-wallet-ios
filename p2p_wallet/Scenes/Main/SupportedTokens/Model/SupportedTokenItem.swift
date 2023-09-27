@@ -1,11 +1,10 @@
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
-import UIKit
 
 enum SupportedTokenItemIcon {
     case url(URL)
-    case image(UIImage)
+    case image(ImageResource)
     case placeholder
 }
 

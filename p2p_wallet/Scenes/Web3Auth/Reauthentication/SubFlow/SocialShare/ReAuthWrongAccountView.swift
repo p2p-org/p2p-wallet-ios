@@ -1,4 +1,3 @@
-import KeyAppUI
 import Onboarding
 import SwiftUI
 
@@ -32,10 +31,10 @@ struct ReAuthWrongAccountView: View {
             }
             .ignoresSafeArea()
             .background(
-                Color(Asset.Colors.lime.color)
+                Color(.lime)
             )
         }
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -43,7 +42,7 @@ struct ReAuthWrongAccountView: View {
                 Button {
                     onClose()
                 } label: {
-                    Image(uiImage: UIImage.closeIcon)
+                    Image(.closeIcon)
                 }
             }
         }

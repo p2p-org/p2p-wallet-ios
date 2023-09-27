@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftUI

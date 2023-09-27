@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 enum ChooseItemSearchableItemViewState {
@@ -28,7 +27,7 @@ struct ChooseItemSearchableItemView<Content: View>: View {
                 .frame(height: 72)
             if state == .first || state == .other {
                 Rectangle()
-                    .foregroundColor(Color(Asset.Colors.rain.color))
+                    .foregroundColor(Color(.rain))
                     .frame(height: 1)
                     .padding(.leading, 20)
             }
@@ -36,10 +35,10 @@ struct ChooseItemSearchableItemView<Content: View>: View {
         .background(
             Rectangle()
                 .cornerRadius(radius: state == .other ? 0 : 16, corners: cornerRadius())
-                .foregroundColor(Color(Asset.Colors.snow.color))
+                .foregroundColor(Color(.snow))
         )
         .padding(.horizontal, 16)
-        .listRowBackground(Color(Asset.Colors.smoke.color))
+        .listRowBackground(Color(.smoke))
     }
 
     func cornerRadius() -> UIRectCorner {

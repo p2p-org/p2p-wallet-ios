@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct RecoveryKitDevicesView: View {
@@ -21,11 +20,11 @@ struct RecoveryKitDevicesView: View {
                         VStack(alignment: .leading) {
                             Text(L10n.thisDevice.uppercased())
                                 .apply(style: .caps)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .padding(.leading, 16)
 
                             HStack {
-                                Image(uiImage: .deviceIcon)
+                                Image(.deviceIcon)
                                     .padding(.top, 18)
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
@@ -38,12 +37,12 @@ struct RecoveryKitDevicesView: View {
                                 }
                             }
                             .padding(.trailing, 16)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .background(Color(Asset.Colors.snow.color))
+                            .foregroundColor(Color(.night))
+                            .background(Color(.snow))
                             .cornerRadius(20)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                    .stroke(Color(.rain), lineWidth: 1)
                             )
                         }
                         .padding(.horizontal, 16)
@@ -55,11 +54,11 @@ struct RecoveryKitDevicesView: View {
                         VStack(alignment: .leading) {
                             Text("Authorization device".uppercased())
                                 .apply(style: .caps)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .padding(.leading, 16)
 
                             HStack {
-                                Image(uiImage: .deviceIcon)
+                                Image(.deviceIcon)
                                     .padding(.top, 18)
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
@@ -69,28 +68,28 @@ struct RecoveryKitDevicesView: View {
                                         .apply(style: .text3)
                                         .padding(.top, 16)
                                     HStack(spacing: 4) {
-                                        Image(uiImage: .warningIcon)
-                                            .foregroundColor(Color(Asset.Colors.rose.color))
+                                        Image(.warningIcon)
+                                            .foregroundColor(Color(.rose))
                                         Text(L10n.makeSureThisIsStillYourDevice)
                                             .fontWeight(.regular)
                                             .apply(style: .label1)
-                                            .foregroundColor(Color(Asset.Colors.rose.color))
+                                            .foregroundColor(Color(.rose))
                                     }
                                     .padding(.bottom, 12)
                                 }
                                 Spacer()
                             }
                             .padding(.trailing, 16)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .background(Color(Asset.Colors.snow.color))
+                            .foregroundColor(Color(.night))
+                            .background(Color(.snow))
                             .cornerRadius(20)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                                    .stroke(Color(.rain), lineWidth: 1)
                             )
                             Text(L10n.attentionIfYouUpdateYourCurrentDeviceYouWillNotBeAbleToUseTheOldDeviceForRecovery)
                                 .apply(style: .label1)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .padding(.horizontal, 16)
                         }
                         .padding(.horizontal, 16)
@@ -100,7 +99,7 @@ struct RecoveryKitDevicesView: View {
             }
         }
         .background(
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .ignoresSafeArea()
         )
     }

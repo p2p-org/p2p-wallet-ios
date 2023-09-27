@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 protocol RenderableAccount: SortableAccount, Identifiable, Equatable where ID == String {
     var id: String { get }
@@ -53,7 +52,7 @@ enum AccountDetail: Equatable {
 }
 
 enum AccountIcon: Equatable {
-    case image(UIImage)
+    case image(ImageResource)
     case url(URL)
     case random(seed: String)
 }

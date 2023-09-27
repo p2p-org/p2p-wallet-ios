@@ -1,7 +1,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppUI
 import Resolver
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
@@ -11,7 +10,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var title: String
     @Published var amount: Double?
-    @Published var amountTextColor = Asset.Colors.night.color
+    @Published var amountTextColor: ColorResource = .night
     @Published var isFirstResponder: Bool
     @Published var isEditable: Bool
     @Published var balance: Double?
@@ -26,7 +25,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var fiatAmountTextColor = Asset.Colors.silver.color
+    @Published var fiatAmountTextColor: ColorResource = .silver
     @Published var decimalLength: Int
     let accessibilityIdentifierTokenPrefix: String
 
@@ -155,10 +154,10 @@ private extension SwapInputViewModel {
         switch state.priceImpact {
         case .high:
             fiatAmount = state.amountToFiat
-            fiatAmountTextColor = Asset.Colors.rose.color
+            fiatAmountTextColor = .rose
         case .medium:
             fiatAmount = state.amountToFiat
-            fiatAmountTextColor = Asset.Colors.sun.color
+            fiatAmountTextColor = .sun
         default:
             fiatAmount = nil
             fiatAmountTextColor = .clear
@@ -168,9 +167,9 @@ private extension SwapInputViewModel {
     func updateAmountFrom(state: JupiterSwapState) {
         switch state.status {
         case .error(reason: .notEnoughFromToken), .error(reason: .inputTooHigh):
-            amountTextColor = Asset.Colors.rose.color
+            amountTextColor = .rose
         default:
-            amountTextColor = Asset.Colors.night.color
+            amountTextColor = .night
         }
         fiatAmount = state.amountFromFiat
     }
@@ -193,8 +192,10 @@ private extension SwapInputViewModel {
 
 private extension SwapInputViewModel {
     func logAllClick() {
-        analyticsManager
-            .log(event: .swapChangingValueTokenAAll(tokenAName: token.token.symbol, tokenAValue: balance ?? 0))
+        analyticsManager.log(event: .swapChangingValueTokenAAll(
+            tokenAName: token.token.symbol,
+            tokenAValue: balance ?? 0
+        ))
     }
 
     func logChangeTokenClick() {

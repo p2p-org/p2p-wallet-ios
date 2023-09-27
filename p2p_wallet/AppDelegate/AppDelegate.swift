@@ -1,5 +1,4 @@
 import Firebase
-import KeyAppUI
 import Resolver
 import Sentry
 @_exported import SwiftyUserDefaults
@@ -166,10 +165,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func setupNavigationAppearance() {
         let barButtonAppearance = UIBarButtonItem.appearance()
         let navBarAppearence = UINavigationBar.appearance()
-        navBarAppearence.backIndicatorImage = .navigationBack
+        navBarAppearence.backIndicatorImage = UIImage(resource: .navigationBack)
             .withRenderingMode(.alwaysTemplate)
             .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
-        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+        navBarAppearence.backIndicatorTransitionMaskImage = UIImage(resource: .navigationBack)
             .withRenderingMode(.alwaysTemplate)
             .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         barButtonAppearance.setBackButtonTitlePositionAdjustment(
@@ -177,8 +176,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = Asset.Colors.night.color
-        barButtonAppearance.tintColor = Asset.Colors.night.color
+        navBarAppearence.tintColor = .init(resource: .night)
+        barButtonAppearance.tintColor = .init(resource: .night)
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true

@@ -1,11 +1,10 @@
-import KeyAppUI
 import SwiftUI
 
 struct CreateUsernameView: View {
     @ObservedObject var viewModel: CreateUsernameViewModel
 
-    private let mainColor = Color(Asset.Colors.night.color)
-    private let errorColor = Color(Asset.Colors.rose.color)
+    private let mainColor = Color(.night)
+    private let errorColor = Color(.rose)
 
     var body: some View {
         ZStack {
@@ -41,7 +40,7 @@ struct CreateUsernameView: View {
 private extension CreateUsernameView {
     var informativeContent: some View {
         VStack(spacing: 0) {
-            Image(uiImage: .nameWallet)
+            Image(.nameWallet)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: 187.5)
@@ -62,8 +61,8 @@ private extension CreateUsernameView {
         HStack(spacing: 0) {
             if viewModel.status == .processing {
                 CircularProgressIndicatorView(
-                    backgroundColor: Asset.Colors.night.color.withAlphaComponent(0.6),
-                    foregroundColor: Asset.Colors.night.color
+                    backgroundColor: .init(resource: .night).withAlphaComponent(0.6),
+                    foregroundColor: .init(resource: .night)
                 )
                 .frame(width: 20, height: 20)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.status == .processing)
@@ -92,7 +91,7 @@ private extension CreateUsernameView {
         .frame(height: 56)
         .disabled(viewModel.status != .available)
         .addBorder(
-            viewModel.status != .available ? Color(Asset.Colors.snow.color).opacity(0.6) : .clear,
+            viewModel.status != .available ? Color(.snow).opacity(0.6) : .clear,
             cornerRadius: 12
         )
     }
@@ -105,7 +104,7 @@ private extension CreateUsernameView {
                 validation: viewModel.usernameValidation,
                 configuration: { textField in
                     textField.font = UIFont.font(of: .title3)
-                    textField.textColor = Asset.Colors.night.color
+                    textField.textColor = .init(resource: .night)
                     textField.autocapitalizationType = .none
                     textField.returnKeyType = .done
                 }
@@ -120,7 +119,7 @@ private extension CreateUsernameView {
                 .padding(.horizontal, 6)
 
             Button(action: viewModel.clearUsername.send) {
-                Image(uiImage: Asset.MaterialIcon.clear.image)
+                Image(.clear)
                     .accentColor(mainColor)
             }
             .frame(width: 16, height: 16)
@@ -139,7 +138,7 @@ private extension CreateUsernameView {
 
 private extension Text {
     func textStyle() -> some View {
-        foregroundColor(Color(Asset.Colors.night.color))
+        foregroundColor(Color(.night))
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
     }
@@ -150,7 +149,7 @@ struct CreateUsernameView_Previews: PreviewProvider {
         CreateUsernameView(
             viewModel: CreateUsernameViewModel(
                 parameters: CreateUsernameParameters(
-                    backgroundColor: Asset.Colors.rain.color,
+                    backgroundColor: .rain,
                     buttonStyle: .primary
                 )
             )

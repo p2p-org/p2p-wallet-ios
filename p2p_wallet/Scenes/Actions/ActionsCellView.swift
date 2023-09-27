@@ -1,8 +1,7 @@
-import KeyAppUI
 import SwiftUI
 
 struct ActionsCellView: View {
-    let icon: UIImage
+    let icon: ImageResource
     let title: String
     let subtitle: String
     let action: () -> Void
@@ -11,7 +10,7 @@ struct ActionsCellView: View {
         Button(action: action) {
             HStack(alignment: .center, spacing: 0) {
                 HStack(alignment: .center, spacing: 0) {
-                    Image(uiImage: icon)
+                    Image(icon)
                         .resizable()
                         .frame(width: 48, height: 48)
                     VStack(alignment: .leading, spacing: 5) {
@@ -27,13 +26,13 @@ struct ActionsCellView: View {
                     .padding(.leading, 12)
                 }
                 .padding()
-                Image(uiImage: UIImage.chevronRight)
+                Image(.chevronRight)
                     .frame(width: 24, height: 24)
                     .padding(.trailing, 12)
             }
             .frame(maxWidth: .infinity, minHeight: 72)
         }
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(16)
     }
 }

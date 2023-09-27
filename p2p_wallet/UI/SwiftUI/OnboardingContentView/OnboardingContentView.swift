@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct OnboardingContentView: View {
@@ -10,7 +9,7 @@ struct OnboardingContentView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            Image(uiImage: data.image)
+            Image(data.image)
                 .resizable()
                 .scaledToFit()
                 .frame(
@@ -19,7 +18,7 @@ struct OnboardingContentView: View {
                 )
             Text(data.title)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 24)
@@ -48,7 +47,7 @@ struct OnboardingContentView: View {
 private extension Text {
     func subtitleStyle() -> some View {
         font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
-            .foregroundColor(Color(Asset.Colors.night.color))
+            .foregroundColor(Color(.night))
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
     }

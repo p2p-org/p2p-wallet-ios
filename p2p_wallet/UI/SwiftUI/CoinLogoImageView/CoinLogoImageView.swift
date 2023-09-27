@@ -18,12 +18,12 @@ class CoinLogoImageView: BEView {
 
     // MARK: - Subviews
 
-    lazy var tokenIcon = UIImageView(tintColor: .textBlack)
+    lazy var tokenIcon = UIImageView(tintColor: .init(resource: .textBlack))
     lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16, cornerRadius: 4)
-        .border(width: 1, color: .h464646)
+        .border(width: 1, color: .init(resource: .h464646))
     lazy var wrappingView: BERoundedCornerShadowView = {
         let view = BERoundedCornerShadowView(
-            shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
+            shadowColor: .init(resource: .textWhite).withAlphaComponent(0.25),
             radius: 2,
             offset: CGSize(width: 0, height: 2),
             opacity: 1,
@@ -81,27 +81,23 @@ class CoinLogoImageView: BEView {
 
         // with token
         if let token = token {
-            if let image = token.image {
-                tokenIcon.image = image
-            } else {
-                let key = token.symbol.isEmpty ? token.mintAddress : token.symbol
-                var seed = Self.cachedJazziconSeeds[key]
-                if seed == nil {
-                    seed = UInt32.random(in: 0 ..< 10_000_000)
-                    Self.cachedJazziconSeeds[key] = seed
-                }
+            let key = token.symbol.isEmpty ? token.mintAddress : token.symbol
+            var seed = Self.cachedJazziconSeeds[key]
+            if seed == nil {
+                seed = UInt32.random(in: 0 ..< 10_000_000)
+                Self.cachedJazziconSeeds[key] = seed
+            }
 
-                tokenIcon.isHidden = true
-                self.seed = seed
+            tokenIcon.isHidden = true
+            self.seed = seed
 
-                tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
-                    switch result {
-                    case .success:
-                        self?.tokenIcon.isHidden = false
-                        self?.seed = nil
-                    case .failure:
-                        self?.tokenIcon.isHidden = true
-                    }
+            tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.tokenIcon.isHidden = false
+                    self?.seed = nil
+                case .failure:
+                    self?.tokenIcon.isHidden = true
                 }
             }
         } else {
@@ -117,7 +113,7 @@ class CoinLogoImageView: BEView {
           */
     }
 
-    func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {
+    func setup(preferredImage: ImageResource?, url: URL?, key: String, wrapped: Bool) {
         // default
         wrappingView.alpha = 0
         backgroundColor = .clear
@@ -125,7 +121,7 @@ class CoinLogoImageView: BEView {
 
         // with token
         if let image = preferredImage {
-            tokenIcon.image = image
+            tokenIcon.image = .init(resource: image)
         } else {
             var seed = Self.cachedJazziconSeeds[key]
             if seed == nil {
@@ -150,7 +146,7 @@ class CoinLogoImageView: BEView {
         // wrapped by
         if wrapped {
             wrappingView.alpha = 1
-            wrappingTokenIcon.image = .wrappedToken
+            wrappingTokenIcon.image = UIImage(resource: .wrappedToken)
         }
     }
 }

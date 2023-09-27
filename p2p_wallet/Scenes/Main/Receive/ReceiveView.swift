@@ -1,4 +1,3 @@
-import KeyAppUI
 import Kingfisher
 import SwiftUI
 
@@ -8,7 +7,7 @@ struct ReceiveView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.f2f5fa)
+            Color(.f2F5Fa)
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 ScrollView {
@@ -25,7 +24,8 @@ struct ReceiveView: View {
                     title: L10n.copyAddress,
                     style: .primaryWhite,
                     size: .large,
-                    trailing: UIImage.transactionsCopy.withTintColor(Asset.Colors.snow.color),
+                    trailing: UIImage(resource: .transactionsCopy)
+                        .withTintColor(.init(resource: .snow)),
                     onPressed: {
                         viewModel.buttonTapped()
                     }
@@ -45,11 +45,11 @@ struct ReceiveView: View {
                 .scaledToFit()
                 .frame(width: 200, height: 200)
             if let centerImage = viewModel.qrCenterImage {
-                Image(uiImage: centerImage)
+                Image(centerImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             } else if let centerImageURL = viewModel.qrCenterImageURL {
                 KFImage
@@ -65,7 +65,7 @@ struct ReceiveView: View {
                     .diskCacheExpiration(.days(7))
                     .fade(duration: 0.25)
                     .frame(width: iconSize, height: iconSize)
-                    .background(Color(Asset.Colors.snow.color))
+                    .background(Color(.snow))
                     .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             }
         }
@@ -88,11 +88,11 @@ struct ReceiveView: View {
 
     var placeholderIcon: some View {
         Circle()
-            .fill(Color(Asset.Colors.smoke.color))
+            .fill(Color(.smoke))
             .overlay(
-                Image(uiImage: .imageOutlineIcon)
+                Image(.imageOutlineIcon)
                     .renderingMode(.template)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             )
             .clipped()
             .frame(width: iconSize, height: iconSize)
@@ -102,6 +102,6 @@ struct ReceiveView: View {
 // TODO: Refactor
 // struct ReceiveView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage.usdc))
+//        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage(resource: .usdc)))
 //    }
 // }

@@ -4,7 +4,6 @@ import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import OrcaSwapSwift
 import Resolver
 import Send

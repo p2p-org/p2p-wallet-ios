@@ -42,8 +42,10 @@ public class KeyAppHistoryProviderImpl: KeyAppHistoryProvider {
 
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let response = try JSONDecoder()
-            .decode(KeyAppKitCore.JSONRPCResponse<HistoryTransactionResult, String>.self, from: responseData)
+        let response = try JSONDecoder().decode(
+            KeyAppKitCore.JSONRPCResponse<HistoryTransactionResult, String>.self,
+            from: responseData
+        )
         if let error = response.error {
             throw KeyAppHistoryProviderError.any(code: error.code, message: error.message)
         }

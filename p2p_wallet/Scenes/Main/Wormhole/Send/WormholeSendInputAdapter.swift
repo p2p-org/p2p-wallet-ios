@@ -1,7 +1,6 @@
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import Send
 import UIKit
 import Wormhole
@@ -94,12 +93,12 @@ struct WormholeSendInputStateAdapter: Equatable {
         }
     }
 
-    var inputColor: UIColor {
+    var inputColor: ColorResource {
         switch state {
         case let .error(input, output, error) where error == .maxAmountReached:
-            return Asset.Colors.rose.color
+            return .rose
         default:
-            return Asset.Colors.night.color
+            return .night
         }
     }
 

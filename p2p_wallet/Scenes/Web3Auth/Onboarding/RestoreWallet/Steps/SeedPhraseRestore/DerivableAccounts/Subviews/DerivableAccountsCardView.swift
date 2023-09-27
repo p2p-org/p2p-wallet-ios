@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct DerivableAccountsCardView: View {
@@ -9,25 +8,25 @@ struct DerivableAccountsCardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(L10n.derivationPath)
                     .font(uiFont: UIFont.font(of: .text3, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
 
                 Text(derivationPath)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
 
             Spacer()
 
-            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+            Image(.chevronRight)
                 .renderingMode(.template)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .frame(width: 20, height: 25)
                 .scaledToFill()
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 28)
-        .background(Color(Asset.Colors.snow.color))
-        .addBorder(Color(Asset.Colors.rain.color), cornerRadius: 16)
+        .background(Color(.snow))
+        .addBorder(Color(.rain), cornerRadius: 16)
         .shadow(color: .black.opacity(0.05), radius: 8 / UIScreen.main.scale)
     }
 }

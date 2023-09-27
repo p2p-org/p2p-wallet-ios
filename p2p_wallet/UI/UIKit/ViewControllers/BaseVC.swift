@@ -9,7 +9,7 @@ class BaseVC: BEViewController {
 
     override func setUp() {
         super.setUp()
-        view.backgroundColor = .background
+        view.backgroundColor = .init(resource: .background)
     }
 
     // TODO: - For re-overriding navigationController settings

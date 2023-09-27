@@ -1,11 +1,10 @@
-import KeyAppUI
 import SwiftUI
 
 struct ColoredBackground<Content: View>: View {
     let content: Content
     let backgroundColor: Color
 
-    init(@ViewBuilder _ content: () -> Content, color: UIColor = Asset.Colors.smoke.color) {
+    init(@ViewBuilder _ content: () -> Content, color: ColorResource = .smoke) {
         self.content = content()
         backgroundColor = Color(color)
     }

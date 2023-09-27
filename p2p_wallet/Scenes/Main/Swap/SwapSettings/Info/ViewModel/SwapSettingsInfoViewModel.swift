@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import UIKit
 
 @MainActor
 final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
@@ -9,7 +8,7 @@ final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
         case loaded([Fee])
     }
 
-    let image: UIImage
+    let image: ImageResource
     let title: String
     let subtitle: String
     let buttonTitle: String

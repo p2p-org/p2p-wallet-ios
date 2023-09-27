@@ -75,8 +75,10 @@ final class TransitiveSwapTransactionBuilderWithNonCreatedTransitTokenTests: XCT
         let swapTransaction = output.transactions[1]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 15000,
+            accountBalances: 0
+        )) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 6) // transfer
@@ -210,8 +212,10 @@ final class TransitiveSwapTransactionBuilderWithNonCreatedTransitTokenTests: XCT
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 15000,
+            accountBalances: 0
+        )) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 6) // transfer

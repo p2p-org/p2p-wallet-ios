@@ -1,9 +1,8 @@
-import KeyAppUI
 import SwiftUI
 
 struct CircleButton: View {
     let title: String
-    let image: UIImage
+    let image: ImageResource
     let onPressed: () -> Void
 
     var body: some View {
@@ -12,10 +11,10 @@ struct CircleButton: View {
         } label: {
             VStack(spacing: 4) {
                 Circle()
-                    .fill(Color(Asset.Colors.night.color))
+                    .fill(Color(.night))
                     .frame(width: 52, height: 52)
                     .overlay(
-                        Image(uiImage: image)
+                        Image(image)
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(.white)
@@ -24,7 +23,7 @@ struct CircleButton: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .label2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
             }
         }
     }

@@ -1,6 +1,5 @@
 import Combine
 import KeyAppBusiness
-import KeyAppUI
 import Resolver
 import Sell
 import SwiftUI
@@ -22,16 +21,20 @@ struct ActionsView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
             Text(L10n.addMoney)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text1, weight: .bold))
                 .padding(.top, 8)
             VStack(spacing: 8) {
                 ForEach(ActionsViewActionType.allCases, id: \.title) { actionType in
-                    ActionsCellView(icon: actionType.icon, title: actionType.title, subtitle: actionType.subtitle) {
+                    ActionsCellView(
+                        icon: actionType.icon,
+                        title: actionType.title,
+                        subtitle: actionType.subtitle
+                    ) {
                         actionSubject.send(actionType)
                     }
                     .padding(.horizontal, 4)
@@ -43,7 +46,7 @@ struct ActionsView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .padding(.top, 6)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .previewLayout(.sizeThatFits)
     }
 }

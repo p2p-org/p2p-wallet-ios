@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -9,12 +8,12 @@ struct StartView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.lime.color)
+            Color(.lime)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
-                        fillColor: Color(Asset.Colors.night.color),
+                        fillColor: Color(.night),
                         content: viewModel.data.map { data in
                             PageContent {
                                 VStack {
@@ -55,7 +54,7 @@ extension StartView {
                     title: L10n.createANewWallet,
                     style: .inverted,
                     size: .large,
-                    trailing: Asset.MaterialIcon.arrowForward.image
+                    trailing: UIImage(resource: .arrowForward)
                 ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                     .styled()
 

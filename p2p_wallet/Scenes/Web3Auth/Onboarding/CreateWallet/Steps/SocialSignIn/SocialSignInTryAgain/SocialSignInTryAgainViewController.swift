@@ -2,7 +2,6 @@ import AuthenticationServices
 import BEPureLayout
 import Combine
 import Foundation
-import KeyAppUI
 
 class SocialSignInTryAgainViewController: BaseViewController {
     let viewModel: SocialSignInTryAgainViewModel
@@ -18,7 +17,7 @@ class SocialSignInTryAgainViewController: BaseViewController {
             BEVStack {
                 BESafeArea {
                     BEVStack {
-                        UIImageView(image: .womanNotFound, contentMode: .scaleAspectFill)
+                        UIImageView(image: .init(resource: .womanNotFound), contentMode: .scaleAspectFill)
                             .frame(width: 220, height: 280)
                             .centered(.horizontal)
 
@@ -50,6 +49,6 @@ class SocialSignInTryAgainViewController: BaseViewController {
                     }
                 }
             }
-        }.backgroundColor(color: Asset.Colors.lime.color)
+        }.backgroundColor(color: .init(resource: .lime))
     }
 }

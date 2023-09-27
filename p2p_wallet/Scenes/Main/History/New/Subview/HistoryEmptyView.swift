@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct HistoryEmptyView: View {
@@ -7,7 +6,7 @@ struct HistoryEmptyView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Image(uiImage: .moneybox)
+            Image(.moneybox)
                 .padding(.top, 24)
                 .padding(.bottom, 50)
             Text(L10n.YourHistoryWillAppearHere.toGetStartedYouCan)
@@ -20,7 +19,7 @@ struct HistoryEmptyView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(radius: 16, corners: .allCorners)
     }
 }

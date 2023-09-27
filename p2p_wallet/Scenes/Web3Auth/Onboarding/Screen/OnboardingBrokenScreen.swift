@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct OnboardingBrokenScreen<CustomActions: View>: View {
@@ -47,7 +46,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
                             title: L10n.support,
                             style: .inverted,
                             size: .large,
-                            leading: Asset.MaterialIcon.newReleasesOutlined.image,
+                            leading: UIImage(resource: .newReleasesOutlined),
                             onPressed: { help() }
                         )
                         .frame(height: TextButton.Size.large.height)

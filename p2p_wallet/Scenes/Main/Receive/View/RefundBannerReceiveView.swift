@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import SwiftUI
 
 struct RefundBannerReceiveView: View {
@@ -8,15 +7,15 @@ struct RefundBannerReceiveView: View {
     var body: some View {
         HStack {
             Text(item.text)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .apply(style: .text3)
                 .multilineTextAlignment(.leading)
             Spacer()
-            Image(uiImage: .moneyDropsIllustration)
+            Image(.moneyDropsIllustration)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 4)
-        .background(Color(UIColor.cdf6cd))
+        .background(Color(.cdf6Cd))
         .cornerRadius(radius: 16, corners: .allCorners)
     }
 }

@@ -9,7 +9,7 @@ import Wormhole
 enum ReceiveNetwork {
     enum Image {
         case url(URL)
-        case image(UIImage)
+        case image(ImageResource)
     }
 
     case solana(tokenSymbol: String, tokenImage: Image?)
@@ -25,7 +25,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
-    @Published var qrCenterImage: UIImage?
+    @Published var qrCenterImage: ImageResource?
     @Published var qrCenterImageURL: URL?
 
     // MARK: -

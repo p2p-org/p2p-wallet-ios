@@ -2,7 +2,6 @@ import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
-import KeyAppUI
 import Reachability
 import Resolver
 import Sell

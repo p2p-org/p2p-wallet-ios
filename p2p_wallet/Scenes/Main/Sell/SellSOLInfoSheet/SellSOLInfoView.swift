@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SellSOLInfoView: View {
@@ -6,24 +5,24 @@ struct SellSOLInfoView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.vertical, 6)
             Spacer()
-            Image(uiImage: .fee)
+            Image(.fee)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 215)
                 .padding(.top, 18)
             Text(L10n.youCanOnlyCashOutSOL)
                 .font(uiFont: .font(of: .title2, weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.top, 21)
             Text(L10n.swapYourCryptocurrenciesToSOLToCashOut)
                 .apply(style: .text1)
                 .multilineTextAlignment(.center)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.top, 21)
             TextButtonView(
                 title: L10n.gotIt,

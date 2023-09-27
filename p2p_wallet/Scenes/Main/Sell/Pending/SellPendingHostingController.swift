@@ -18,7 +18,7 @@ class SellPendingHostingController<Content: View>: UIHostingController<Content> 
 
     func setNavigationBar() {
         let customBackButton = UIBarButtonItem(
-            image: .backArrow,
+            image: .init(resource: .backArrow),
             style: .plain,
             target: self,
             action: #selector(backAction(sender:))

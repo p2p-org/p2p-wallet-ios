@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct OnboardingTermsAndPolicyButton: View {
@@ -19,17 +18,17 @@ struct OnboardingTermsAndPolicyButton: View {
     var body: some View {
         VStack(spacing: 2) {
             Text(termsText)
-                .styled(color: Asset.Colors.mountain)
+                .styled(color: .mountain)
             HStack(spacing: 2) {
                 Text(L10n.termsOfService)
-                    .underline(color: Color(Asset.Colors.snow.color))
-                    .styled(color: Asset.Colors.snow)
+                    .underline(color: Color(.snow))
+                    .styled(color: .snow)
                     .onTapGesture(perform: termsPressed)
                 Text(L10n.and)
-                    .styled(color: Asset.Colors.snow)
+                    .styled(color: .snow)
                 Text(L10n.privacyPolicy)
-                    .underline(color: Color(Asset.Colors.snow.color))
-                    .styled(color: Asset.Colors.snow)
+                    .underline(color: Color(.snow))
+                    .styled(color: .snow)
                     .onTapGesture(perform: privacyPolicyPressed)
             }
         }
@@ -37,8 +36,8 @@ struct OnboardingTermsAndPolicyButton: View {
 }
 
 private extension Text {
-    func styled(color: ColorAsset) -> some View {
-        foregroundColor(Color(color.color))
+    func styled(color: ColorResource) -> some View {
+        foregroundColor(Color(color))
             .font(.system(size: UIFont.fontSize(of: .label1)))
             .lineLimit(.none)
             .multilineTextAlignment(.center)

@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import UIKit
 
 extension UINavigationItem {
@@ -7,12 +6,12 @@ extension UINavigationItem {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont.font(of: .text3, weight: .semibold)
-        titleLabel.textColor = Asset.Colors.night.color
+        titleLabel.textColor = .init(resource: .night)
 
         let subtitleLabel = UILabel()
         subtitleLabel.text = subtitle
         subtitleLabel.font = UIFont.font(of: .label1, weight: .regular)
-        subtitleLabel.textColor = Asset.Colors.mountain.color
+        subtitleLabel.textColor = .init(resource: .mountain)
 
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.distribution = .equalCentering

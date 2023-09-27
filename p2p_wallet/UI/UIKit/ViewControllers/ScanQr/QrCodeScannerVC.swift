@@ -1,7 +1,6 @@
 import AnalyticsManager
 import AVFoundation
 import Foundation
-import KeyAppUI
 import PureLayout
 import Resolver
 import UIKit
@@ -23,7 +22,11 @@ class QrCodeScannerVC: BaseVC {
 
     var previewLayer: AVCaptureVideoPreviewLayer!
     lazy var cameraContainerView = UIView(cornerRadius: 20)
-    private lazy var rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
+    private lazy var rangeImageView = UIImageView(
+        width: scanSize.width,
+        height: scanSize.height,
+        image: .init(resource: .qrCodeRange)
+    )
     private lazy var overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
     private lazy var rangeLabel = UILabel(
         text: L10n.scanQRCode,
@@ -136,13 +139,13 @@ class QrCodeScannerVC: BaseVC {
     private var isTorchOn = false {
         didSet {
             if isTorchOn {
-                torchButton.backgroundColor(color: Asset.Colors.snow.color)
+                torchButton.backgroundColor(color: .init(resource: .snow))
                 torchButton.setTitle(L10n.turnOffTheLight, for: .normal)
-                torchButton.setTitleColor(Asset.Colors.night.color, for: .normal)
+                torchButton.setTitleColor(.init(resource: .night), for: .normal)
             } else {
                 torchButton.backgroundColor(color: .clear)
                 torchButton.setTitle(L10n.turnOnTheLight, for: .normal)
-                torchButton.setTitleColor(Asset.Colors.snow.color, for: .normal)
+                torchButton.setTitleColor(.init(resource: .snow), for: .normal)
             }
         }
     }

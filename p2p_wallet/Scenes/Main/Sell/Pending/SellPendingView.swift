@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import Sell
 import SwiftUI
 
@@ -14,7 +13,7 @@ struct SellPendingView: View {
                 VStack(spacing: 28) {
                     Text(L10n.pleaseSendCryptoToMoonPayAddress)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .title2, weight: .bold))
                         .padding(.horizontal, 20)
                         .padding(.top, 13)
@@ -35,11 +34,11 @@ struct SellPendingView: View {
                         label: {
                             Text(viewModel.model.navigatedFromMoonpay ? L10n
                                 .send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
-                                .foregroundColor(Color(Asset.Colors.snow.color))
+                                .foregroundColor(Color(.snow))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
                                 .frame(maxWidth: .infinity)
-                                .background(Color(Asset.Colors.night.color))
+                                .background(Color(.night))
                                 .cornerRadius(12)
                                 .padding(.horizontal, 24)
                         }
@@ -59,7 +58,7 @@ struct SellPendingView: View {
                                         Text(L10n.delete)
                                     }
                                 }
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
                             }
@@ -78,21 +77,21 @@ struct SellPendingView: View {
     }
 
     private var backgroundColor: Color {
-        Color(Asset.Colors.smoke.color)
+        Color(.smoke)
     }
 
     private var tokenView: some View {
         VStack(spacing: 16) {
-            Image(uiImage: viewModel.model.tokenImage)
+            Image(viewModel.model.tokenImage)
                 .resizable()
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
             VStack(spacing: 4) {
                 Text(viewModel.tokenAmount)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                 Text(viewModel.fiatAmount)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .text2))
             }
         }
@@ -100,27 +99,27 @@ struct SellPendingView: View {
 
     private var infoBlockView: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(uiImage: .sellPendingWarning)
+            Image(.sellPendingWarning)
             Text(L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
         }
         .padding(12)
-        .background(Color(Asset.Colors.rain.color))
+        .background(Color(.rain))
         .cornerRadius(12)
     }
 
     private var textView: some View {
         HStack {
             Text(L10n.sendTo)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
             Spacer()
             HStack(spacing: 8) {
                 Text(viewModel.receiverAddress)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
-                Image(uiImage: .copyReceiverAddress)
+                Image(.copyReceiverAddress)
             }
             .disabled(viewModel.isRemoving)
             .onTapGesture {
@@ -128,7 +127,7 @@ struct SellPendingView: View {
             }
         }
         .padding(16)
-        .background(Color(Asset.Colors.snow.color))
+        .background(Color(.snow))
         .cornerRadius(12)
     }
 }

@@ -221,7 +221,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func showFullLinkError(title: String, subtitle: String, image: UIImage) {
+    private func showFullLinkError(title: String, subtitle: String, image: ImageResource) {
         linkErrorSubject.send(LinkErrorView.Model(title: title, subtitle: subtitle, image: image))
     }
 
@@ -265,7 +265,7 @@ extension ReceiveFundsViaLinkViewModel {
         case pending
         case loaded(model: Model)
         case confirmed(cryptoAmount: String)
-        case failure(title: String, subtitle: String?, image: UIImage)
+        case failure(title: String, subtitle: String?, image: ImageResource)
     }
 
     struct Model {

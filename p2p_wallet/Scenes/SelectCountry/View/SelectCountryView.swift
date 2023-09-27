@@ -1,4 +1,3 @@
-import KeyAppUI
 import SkeletonUI
 import SwiftUI
 
@@ -89,7 +88,7 @@ struct SelectCountryView: View {
             Text(flag)
                 .font(uiFont: .font(of: .title1, weight: .bold))
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
         }
         .padding(.vertical, 6)
@@ -119,9 +118,9 @@ struct SelectCountryView: View {
 private extension SelectCountryView {
     var notFoundView: some View {
         VStack(spacing: 20) {
-            Image(uiImage: .womanNotFound)
+            Image(.womanNotFound)
             Text(L10n.sorryWeDonTKnowThatCountry)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
         }
     }

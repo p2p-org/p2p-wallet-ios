@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SendInputFreeTransactionsDetailView: View {
@@ -8,7 +7,7 @@ struct SendInputFreeTransactionsDetailView: View {
 
     var body: some View {
         VStack(spacing: 32) {
-            Image(uiImage: .startThree)
+            Image(.startThree)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 300)
@@ -17,17 +16,17 @@ struct SendInputFreeTransactionsDetailView: View {
                 ZStack {
                     Circle()
                         .frame(width: 48, height: 48)
-                        .foregroundColor(Color(Asset.Colors.smoke.color))
-                    Image(uiImage: .lightningFilled)
+                        .foregroundColor(Color(.smoke))
+                    Image(.lightningFilled)
                         .renderingMode(.template)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .frame(width: 20, height: 20)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(L10n.enjoyFreeTransactions)!")
                         .font(uiFont: .font(of: .text1, weight: .bold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Text(
                         isFreeTransactionsLimited ?
                             L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp
@@ -35,7 +34,7 @@ struct SendInputFreeTransactionsDetailView: View {
                             L10n.withKeyAppAllTransactionsYouMakeOnTheSolanaNetworkAreFree
                     )
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 }
             }
 

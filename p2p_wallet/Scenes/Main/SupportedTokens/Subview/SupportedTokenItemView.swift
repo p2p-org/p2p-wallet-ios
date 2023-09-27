@@ -1,4 +1,3 @@
-import KeyAppUI
 import Kingfisher
 import SwiftUI
 
@@ -15,8 +14,8 @@ struct SupportedTokenItemView: View {
                 placeholderIcon
             case let .image(image):
                 Circle()
-                    .fill(Color(Asset.Colors.smoke.color))
-                    .overlay(Image(uiImage: image))
+                    .fill(Color(.smoke))
+                    .overlay(Image(image))
                     .clipped()
                     .frame(width: iconSize, height: iconSize)
             case let .url(url):
@@ -39,10 +38,10 @@ struct SupportedTokenItemView: View {
                 Text(item.name)
                     .apply(style: .text3)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Text(item.symbol)
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
 
             Spacer()
@@ -50,12 +49,12 @@ struct SupportedTokenItemView: View {
             switch true {
             case item.availableNetwork.contains(.solana) && item.availableNetwork.contains(.ethereum):
                 ZStack {
-                    Image(uiImage: .ethereumIcon)
+                    Image(.ethereumIcon)
                         .resizable()
                         .frame(width: networkSize, height: networkSize)
                         .cornerRadius(networkSize)
 
-                    Image(uiImage: .solanaIcon)
+                    Image(.solanaIcon)
                         .resizable()
                         .frame(width: networkSize, height: networkSize)
                         .cornerRadius(networkSize)
@@ -68,12 +67,12 @@ struct SupportedTokenItemView: View {
                 }
 
             case item.availableNetwork.contains(.ethereum):
-                Image(uiImage: .ethereumIcon)
+                Image(.ethereumIcon)
                     .resizable()
                     .frame(width: networkSize, height: networkSize)
                     .cornerRadius(networkSize)
             case item.availableNetwork.contains(.solana):
-                Image(uiImage: .solanaIcon)
+                Image(.solanaIcon)
                     .resizable()
                     .frame(width: networkSize, height: networkSize)
                     .cornerRadius(networkSize)
@@ -86,11 +85,11 @@ struct SupportedTokenItemView: View {
 
     var placeholderIcon: some View {
         Circle()
-            .fill(Color(Asset.Colors.smoke.color))
+            .fill(Color(.smoke))
             .overlay(
-                Image(uiImage: .imageOutlineIcon)
+                Image(.imageOutlineIcon)
                     .renderingMode(.template)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             )
             .clipped()
             .frame(width: iconSize, height: iconSize)

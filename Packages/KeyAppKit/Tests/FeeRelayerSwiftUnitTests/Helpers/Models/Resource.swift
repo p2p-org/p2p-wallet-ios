@@ -18,8 +18,10 @@ struct Resource {
         //      - <test case files>
         let testCaseURL = URL(fileURLWithPath: "\(sourceFile)", isDirectory: false)
         let testsFolderURL = testCaseURL.deletingLastPathComponent()
-        let resourcesFolderURL = testsFolderURL.deletingLastPathComponent()
-            .appendingPathComponent("Resources", isDirectory: true)
+        let resourcesFolderURL = testsFolderURL.deletingLastPathComponent().appendingPathComponent(
+            "Resources",
+            isDirectory: true
+        )
         url = resourcesFolderURL.appendingPathComponent("\(name).\(type)", isDirectory: false)
     }
 }

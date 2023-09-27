@@ -1,15 +1,14 @@
 import Combine
-import KeyAppUI
 import UIKit
 
 final class CustomTabBar: UITabBar {
     private lazy var middleButton: UIButton! = {
         let middleButton = UIButton()
         middleButton.frame.size = CGSize(width: 60, height: 60)
-        middleButton.backgroundColor = Asset.Colors.snow.color
+        middleButton.backgroundColor = .init(resource: .snow)
         middleButton.layer.cornerRadius = 30
-        middleButton.setImage(.tabBarSend, for: .normal)
-        middleButton.setImage(.tabBarSend, for: .highlighted)
+        middleButton.setImage(UIImage(resource: .tabBarCenter), for: .normal)
+        middleButton.setImage(UIImage(resource: .tabBarCenter), for: .highlighted)
         middleButton.imageView?.contentMode = .scaleAspectFit
         middleButton.contentHorizontalAlignment = .fill
         middleButton.contentVerticalAlignment = .fill
@@ -22,7 +21,7 @@ final class CustomTabBar: UITabBar {
         let selectedView = UIView()
         selectedView.frame.size = CGSize(width: 36, height: 4)
         selectedView.layer.cornerRadius = 2
-        selectedView.backgroundColor = Asset.Colors.lime.color
+        selectedView.backgroundColor = .init(resource: .lime)
         addSubview(selectedView)
         return selectedView
     }()
@@ -80,7 +79,7 @@ final class CustomTabBar: UITabBar {
         )
 
         // Set the fill color
-        Asset.Colors.snow.color.setFill()
+        UIColor(resource: .snow).setFill()
         path.fill()
     }
 

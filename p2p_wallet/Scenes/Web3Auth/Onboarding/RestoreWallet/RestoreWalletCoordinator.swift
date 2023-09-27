@@ -1,7 +1,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppUI
 import Onboarding
 import Resolver
 import SwiftUI

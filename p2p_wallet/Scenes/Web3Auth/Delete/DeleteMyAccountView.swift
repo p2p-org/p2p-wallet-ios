@@ -1,4 +1,3 @@
-import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -11,7 +10,7 @@ struct DeleteMyAccountView: View {
     var body: some View {
         ExplainLayoutView {
             VStack {
-                Image(uiImage: .shield)
+                Image(.shield)
                 Text(L10n.deleteMyAccount)
                     .fontWeight(.bold)
                     .apply(style: .title1)
@@ -34,7 +33,7 @@ struct DeleteMyAccountView: View {
                 BottomActionContainer {
                     SliderButtonView(
                         title: L10n.yesDeleteIt,
-                        image: Asset.Icons.key.image,
+                        image: .init(resource: .key),
                         style: .white,
                         isOn: $slider
                     )
@@ -59,7 +58,7 @@ struct DeleteMyAccountView: View {
                 .cornerRadius(32)
                 .overlay(
                     RoundedRectangle(cornerRadius: 32)
-                        .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                        .stroke(Color(.rain), lineWidth: 1)
                 )
                 .offset(x: 0, y: 16)
         }

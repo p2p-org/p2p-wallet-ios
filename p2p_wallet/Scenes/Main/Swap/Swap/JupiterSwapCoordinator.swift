@@ -1,6 +1,5 @@
 import Combine
 import KeyAppKitCore
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -124,12 +123,11 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         controller.title = L10n.swap
         controller.navigationItem.largeTitleDisplayMode = .never
         swapSettingBarButton = UIBarButtonItem(
-            image: .receipt,
+            image: .init(resource: .receipt),
             style: .plain,
             target: self,
             action: #selector(receiptButtonPressed)
         )
-
         // show rightBarButtonItem only on successful loading
         viewModel.$viewState
             .map { state -> Bool in

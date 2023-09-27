@@ -74,8 +74,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         let swapTransaction = output.transactions[1]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 15000,
+            accountBalances: 0
+        )) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 5) // transfer
@@ -169,8 +171,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 2) // owner / wsol new account
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 15000, accountBalances: 0)) // payer's, owner's, wsol's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 15000,
+            accountBalances: 0
+        )) // payer's, owner's, wsol's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 5) // transfer
@@ -335,8 +339,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 1) // owner only
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 10000,
+            accountBalances: 0
+        )) // payer's, owner's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer
@@ -390,8 +396,10 @@ final class DirectSwapTransactionBuilderTests: XCTestCase {
         let swapTransaction = output.transactions[0]
         XCTAssertEqual(swapTransaction.signers.count, 1) // owner only
         XCTAssertEqual(swapTransaction.signers[0], accountStorage.account)
-        XCTAssertEqual(swapTransaction.expectedFee,
-                       .init(transaction: 10000, accountBalances: 0)) // payer's, owner's signatures
+        XCTAssertEqual(swapTransaction.expectedFee, .init(
+            transaction: 10000,
+            accountBalances: 0
+        )) // payer's, owner's signatures
         XCTAssertEqual(swapTransaction.transaction.feePayer, .feePayerAddress)
         XCTAssertEqual(swapTransaction.transaction.recentBlockhash, blockhash)
         XCTAssertEqual(swapTransaction.transaction.instructions.count, 1) // transfer

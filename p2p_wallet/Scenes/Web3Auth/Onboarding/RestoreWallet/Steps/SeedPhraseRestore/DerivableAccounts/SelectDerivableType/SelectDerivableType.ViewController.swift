@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import SolanaSwift
 import UIKit
 
@@ -39,7 +38,7 @@ extension SelectDerivableType {
                         text: L10n.derivationPath,
                         textSize: 13,
                         weight: .semibold,
-                        textColor: .textSecondary,
+                        textColor: .init(resource: .textSecondary),
                         textAlignment: .center
                     ).padding(.init(x: 0, y: 15))
                     UIView.separator(height: 1, color: .separator)
@@ -56,20 +55,25 @@ extension SelectDerivableType {
                                 UIStackView(axis: .horizontal, alignment: .center) {
                                     UILabel(text: path.title, textSize: 17, weight: selected ? .semibold : .regular)
                                     UIView.spacer
-                                    selected ? UIImageView(width: 22, height: 22, image: .checkBoxIOS) : UIView()
+                                    selected ? UIImageView(
+                                        width: 22,
+                                        height: 22,
+                                        image: .init(resource: .checkBoxIOS)
+                                    ) :
+                                        UIView()
                                 }.padding(.init(top: 0, left: 20, bottom: 0, right: 24))
                                 UIView.separator(height: 1, color: .separator)
                             }.withTag(index)
                                 .frame(height: 55)
                                 .onTap(self, action: #selector(onPathSelect))
                         }
-                }.padding(.zero, backgroundColor: .background, cornerRadius: 14)
+                }.padding(.zero, backgroundColor: .init(resource: .background), cornerRadius: 14)
 
                 // Cancel
                 WLButton.stepButton(
                     type: .white,
                     label: L10n.cancel,
-                    labelColor: Asset.Colors.night.color
+                    labelColor: .init(resource: .night)
                 ).onTap(self, action: #selector(back))
             }
         }

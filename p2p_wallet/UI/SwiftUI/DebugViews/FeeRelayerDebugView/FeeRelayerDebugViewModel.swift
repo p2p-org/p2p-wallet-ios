@@ -51,8 +51,10 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
         }
 
         var mark = "+"
-        let remainder = max(relayAccountBalance, minRelayAccountBalance) -
-            min(relayAccountBalance, minRelayAccountBalance)
+        let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(
+            relayAccountBalance,
+            minRelayAccountBalance
+        )
         if relayAccountBalance < minRelayAccountBalance {
             mark = "-"
         }

@@ -1,6 +1,5 @@
 import Combine
 import KeyAppKitCore
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -31,7 +30,7 @@ final class ChooseWormholeTokenCoordinator: Coordinator<SolanaAccount?> {
         navigationController.setViewControllers([controller], animated: false)
         controller.title = L10n.pickAToken
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: Asset.MaterialIcon.close.image,
+            image: .init(resource: .close),
             style: .plain,
             target: self,
             action: #selector(closeButtonTapped)

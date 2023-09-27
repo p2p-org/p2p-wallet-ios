@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import KeyAppUI
 import Resolver
 import Send
 import UIKit
@@ -59,7 +58,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         )
 
         // create bottom sheet
-        transactionDetailVC = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
+        transactionDetailVC = UIBottomSheetHostingController(rootView: view, shouldIgnoresKeyboard: true)
         transactionDetailVC.view.layer.cornerRadius = 20
 
         // present bottom sheet

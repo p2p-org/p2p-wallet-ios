@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SliderActionButtonData {
@@ -29,19 +28,19 @@ struct SliderActionButton: View {
         Group {
             if animatedFinish {
                 Circle()
-                    .stroke(Color(Asset.Colors.night.color), lineWidth: 4)
-                    .background(Circle().fill(Color(Asset.Colors.lime.color)))
+                    .stroke(Color(.night), lineWidth: 4)
+                    .background(Circle().fill(Color(.lime)))
                     .frame(width: 56, height: 56)
                     .overlay(
-                        Image(uiImage: .check)
+                        Image(.check)
                             .renderingMode(.template)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                     )
             } else {
                 if data.isEnabled {
                     SliderButtonView(
                         title: data.title,
-                        image: .arrowRight,
+                        image: .init(resource: .arrowRight),
                         style: .solidBlack,
                         isOn: Binding(get: {
                             self.isSliderOn

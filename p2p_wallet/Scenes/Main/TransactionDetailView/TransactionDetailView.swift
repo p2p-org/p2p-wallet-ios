@@ -1,4 +1,3 @@
-import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -8,7 +7,7 @@ struct DetailTransactionView: View {
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 2, style: .circular)
-                .fill(Color(Asset.Colors.rain.color))
+                .fill(Color(.rain))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
 
@@ -32,25 +31,25 @@ struct DetailTransactionView: View {
             Text(viewModel.rendableTransaction.title)
                 .fontWeight(.bold)
                 .apply(style: .title3)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
             if !viewModel.rendableTransaction.subtitle.isEmpty {
                 Text(viewModel.rendableTransaction.subtitle)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
         }
     }
 
     private var amountInFiatColor: Color {
         if case .error = viewModel.rendableTransaction.status {
-            return Color(Asset.Colors.rose.color)
+            return Color(.rose)
         }
 
         switch viewModel.rendableTransaction.amountInFiat {
         case .positive:
-            return Color(Asset.Colors.mint.color)
+            return Color(.mint)
         default:
-            return Color(Asset.Colors.night.color)
+            return Color(.night)
         }
     }
 
@@ -69,7 +68,7 @@ struct DetailTransactionView: View {
             if !viewModel.rendableTransaction.amountInToken.isEmpty {
                 Text(viewModel.rendableTransaction.amountInToken)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .padding(.top, viewModel.rendableTransaction.amountInFiat.value.isEmpty ? 16 : 0)
             }
 
@@ -98,7 +97,7 @@ struct DetailTransactionView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
 
     var info: some View {
@@ -107,7 +106,7 @@ struct DetailTransactionView: View {
                 HStack(alignment: .top) {
                     Text(infoItem.title)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                     Spacer()
                     Button {
                         let clipboardManager: ClipboardManager = Resolver.resolve()
@@ -123,15 +122,15 @@ struct DetailTransactionView: View {
                                         .fontWeight(.bold)
                                         .apply(style: .text4)
                                         .multilineTextAlignment(.trailing)
-                                        .foregroundColor(Color(Asset.Colors.night.color))
+                                        .foregroundColor(Color(.night))
 
                                     Text(value.secondaryText)
                                         .apply(style: .label1)
                                         .multilineTextAlignment(.trailing)
-                                        .foregroundColor(Color(Asset.Colors.night.color))
+                                        .foregroundColor(Color(.night))
 
                                     if infoItem.copyableValue != nil {
-                                        Image(uiImage: .copyReceiverAddress)
+                                        Image(.copyReceiverAddress)
                                     }
                                 }
                             }

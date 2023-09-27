@@ -1,5 +1,4 @@
 import KeyAppKitCore
-import KeyAppUI
 import Kingfisher
 import Resolver
 import SolanaSwift
@@ -18,7 +17,7 @@ struct WormholeSendInputView: View {
 
                 Text(L10n.wouldBeCompletedOnTheEthereumNetwork)
                     .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
             }
             .padding(.bottom, 30)
 
@@ -40,7 +39,7 @@ struct WormholeSendInputView: View {
                 SendInputAmountView(
                     amountText: $viewModel.input,
                     isFirstResponder: $viewModel.isFirstResponder,
-                    amountTextColor: viewModel.adapter.inputColor,
+                    amountTextColor: .init(resource: viewModel.adapter.inputColor),
                     countAfterDecimalPoint: viewModel.countAfterDecimalPoint,
                     mainTokenText: viewModel.inputMode == .crypto ? account.token.symbol : viewModel.adapter
                         .fiatString,
@@ -65,14 +64,14 @@ struct WormholeSendInputView: View {
                             Text(L10n.fee.uppercased())
                                 .apply(style: .caps)
                                 .foregroundColor(viewModel.adapter
-                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
-                                    Color(Asset.Colors.mountain.color))
+                                    .isFeeGTAverage ? Color(.rose) :
+                                    Color(.mountain))
 
-                            Image(uiImage: UIImage.warningIcon)
+                            Image(.warningIcon)
                                 .resizable()
                                 .foregroundColor(viewModel.adapter
-                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
-                                    Color(Asset.Colors.mountain.color))
+                                    .isFeeGTAverage ? Color(.rose) :
+                                    Color(.mountain))
                                 .frame(width: 16, height: 16)
                             Spacer()
                             if viewModel.adapter.feesLoading {
@@ -82,8 +81,8 @@ struct WormholeSendInputView: View {
                                 Text(viewModel.adapter.fees)
                                     .apply(style: .text4)
                                     .foregroundColor(viewModel.adapter
-                                        .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
-                                        Color(Asset.Colors.mountain.color))
+                                        .isFeeGTAverage ? Color(.rose) :
+                                        Color(.mountain))
                             }
                         }
                     }
@@ -91,7 +90,7 @@ struct WormholeSendInputView: View {
                 HStack {
                     Text(L10n.totalAmount.uppercased())
                         .apply(style: .caps)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Spacer()
                     if !viewModel.adapter.feesLoading {
                         Text(
@@ -100,7 +99,7 @@ struct WormholeSendInputView: View {
                                 : viewModel.adapter.totalCryptoAmount
                         )
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     }
                 }
             }
@@ -127,7 +126,7 @@ struct WormholeSendInputView: View {
         }
         .padding(.horizontal, 16)
         .background(
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
         )
     }

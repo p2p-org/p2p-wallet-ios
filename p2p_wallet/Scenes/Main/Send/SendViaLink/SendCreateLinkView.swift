@@ -1,15 +1,14 @@
 import AnalyticsManager
-import KeyAppUI
 import Resolver
 import SwiftUI
 
 struct SendCreateLinkView: View {
-    private let mainColor = Color(Asset.Colors.night.color)
+    private let mainColor = Color(.night)
     private let animationSize = CGSize(width: 272, height: 204)
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
                 LottieView(lottieFile: "sendViaLinkAnimation", loopMode: .loop)

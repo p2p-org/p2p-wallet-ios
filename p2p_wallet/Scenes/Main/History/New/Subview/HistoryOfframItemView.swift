@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct HistoryOfframItemView: View {
@@ -8,9 +7,9 @@ struct HistoryOfframItemView: View {
     var primaryColor: Color {
         switch item.status {
         case .ready:
-            return Color(Asset.Colors.night.color)
+            return Color(.night)
         case .error:
-            return Color(Asset.Colors.rose.color)
+            return Color(.rose)
         }
     }
 
@@ -22,11 +21,11 @@ struct HistoryOfframItemView: View {
                 switch item.status {
                 case .ready:
                     Circle()
-                        .fill(Color(Asset.Colors.rain.color))
+                        .fill(Color(.rain))
                         .overlay(
-                            Image(uiImage: .transactionIndicatorSellPending)
+                            Image(.transactionIndicatorSellPending)
                                 .renderingMode(.template)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         )
                         .frame(width: 48, height: 48)
 
@@ -34,9 +33,9 @@ struct HistoryOfframItemView: View {
                     Circle()
                         .fill(Color(UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)))
                         .overlay(
-                            Image(uiImage: .transactionIndicatorSellPending)
+                            Image(.transactionIndicatorSellPending)
                                 .renderingMode(.template)
-                                .foregroundColor(Color(Asset.Colors.rose.color))
+                                .foregroundColor(Color(.rose))
                         )
                         .frame(width: 48, height: 48)
                 }
@@ -48,7 +47,7 @@ struct HistoryOfframItemView: View {
 
                     Text(item.subtitle)
                         .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                 }
                 Spacer()
                 Text(item.detail)

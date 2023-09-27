@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct LinkErrorView: View {
@@ -9,13 +8,13 @@ struct LinkErrorView: View {
         VStack {
             Spacer()
             VStack(spacing: 8) {
-                Image(uiImage: model.image)
+                Image(model.image)
                 Text(model.title)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title1, weight: .semibold))
                 Text(model.subtitle)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text4))
             }
             Spacer()
@@ -25,11 +24,11 @@ struct LinkErrorView: View {
                 },
                 label: {
                     Text(L10n.okay)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .font(uiFont: .font(of: .text2, weight: .semibold))
                         .frame(height: 56)
                         .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                         .padding(.horizontal, 16)
                 }
@@ -45,6 +44,6 @@ extension LinkErrorView {
     struct Model {
         let title: String
         let subtitle: String
-        let image: UIImage
+        let image: ImageResource
     }
 }

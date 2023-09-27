@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -98,9 +97,9 @@ struct CryptoAccountsView: View {
                     },
                     label: {
                         HStack(spacing: 8) {
-                            Image(uiImage: isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
+                            Image(isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
                             Text(L10n.hiddenTokens)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .font(.system(size: 16))
                                 .padding(.vertical, 12)
                             Spacer()
@@ -127,7 +126,7 @@ struct CryptoAccountsView: View {
             }
         }
         .padding(.top, 8)
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
 
     @ViewBuilder
@@ -167,14 +166,14 @@ private extension View {
     ) -> some View {
         swipeActions(allowsFullSwipe: true) {
             Button(action: action) {
-                Image(uiImage: isVisible ? .eyeHide : .eyeShow)
+                Image(isVisible ? .eyeHide : .eyeShow)
             }
             .tint(.clear)
         }
     }
 
     func hideView(isVisible: Bool) -> AnyView {
-        Image(uiImage: isVisible ? .eyeHide : .eyeShow)
+        Image(isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
     }

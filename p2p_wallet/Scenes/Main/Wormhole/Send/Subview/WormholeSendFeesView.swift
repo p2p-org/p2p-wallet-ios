@@ -1,4 +1,3 @@
-import KeyAppUI
 import Send
 import SwiftUI
 
@@ -19,18 +18,18 @@ struct WormholeSendFeesView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(fee.title)
                         .apply(style: .text3)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     HStack {
                         Text(fee.subtitle)
                             .apply(style: .label1)
                             .foregroundColor(
-                                fee.isFree ? Color(Asset.Colors.mint.color)
-                                    : Color(Asset.Colors.mountain.color)
+                                fee.isFree ? Color(.mint)
+                                    : Color(.mountain)
                             )
                         Spacer()
                         Text(fee.detail)
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(Color(.mountain))
                     }
                 }
                 .frame(height: 64)
@@ -42,10 +41,10 @@ struct WormholeSendFeesView: View {
             }, label: {
                 Text(L10n.okay)
                     .font(uiFont: .font(of: .text2, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Color(Asset.Colors.rain.color))
+                    .background(Color(.rain))
                     .cornerRadius(12)
             })
             .padding(.horizontal, 16)

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 enum HomeAction {
@@ -14,7 +13,7 @@ enum HomeAction {
         }
     }
 
-    var image: UIImage {
+    var image: ImageResource {
         switch self {
         case .addMoney:
             return .addMoneyButton

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -41,10 +40,10 @@ struct SettingsView: View {
                         cellView(image: .profileIcon, title: L10n.username) {
                             HStack(spacing: 14) {
                                 Text(viewModel.name)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .foregroundColor(Color(.mountain))
                                     .font(uiFont: .font(of: .label1))
-                                Image(uiImage: .cellArrow)
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                Image(.cellArrow)
+                                    .foregroundColor(Color(.mountain))
                             }
                         }
                     }
@@ -64,10 +63,10 @@ struct SettingsView: View {
                         Spacer()
                         Text(L10n.logOut)
                             .font(uiFont: .font(of: .text2, weight: .semibold))
-                        Image(uiImage: .settingsSignOut)
+                        Image(.settingsSignOut)
                         Spacer()
                     }
-                    .foregroundColor(Color(Asset.Colors.rose.color))
+                    .foregroundColor(Color(.rose))
                 }
             )
             .alert(isPresented: $logOutPresented) {
@@ -89,9 +88,9 @@ struct SettingsView: View {
                 action: { viewModel.showView(.recoveryKit) },
                 label: {
                     SettingsRowView(title: L10n.securityAndPrivacy, withArrow: true) {
-                        Image(uiImage: UIImage.recoveryKit)
+                        Image(.recoveryKit)
                             .overlay(
-                                AlertIndicatorView(fillColor: Color(Asset.Colors.rose.color))
+                                AlertIndicatorView(fillColor: Color(.rose))
                                     .opacity(viewModel.deviceShareMigrationAlert ? 1 : 0)
                                     .offset(x: 2.5, y: -2.5),
                                 alignment: .topTrailing
@@ -113,7 +112,7 @@ struct SettingsView: View {
                     title: viewModel.biometryType == .face ? L10n.faceID : L10n.touchID
                 ) {
                     Toggle("", isOn: $viewModel.biometryIsEnabled)
-                        .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
+                        .toggleStyle(SwitchToggleStyle(tint: Color(.night)))
                         .labelsHidden()
                 }
                 .alert(isPresented: $viewModel.errorAlertPresented) {
@@ -130,7 +129,7 @@ struct SettingsView: View {
         Section(header: headerText(L10n.appearance)) {
             cellView(image: .hideZeroBalance, title: L10n.hideZeroBalances) {
                 Toggle("", isOn: $viewModel.zeroBalancesIsHidden)
-                    .toggleStyle(SwitchToggleStyle(tint: Color(Asset.Colors.night.color)))
+                    .toggleStyle(SwitchToggleStyle(tint: Color(.night)))
                     .labelsHidden()
             }
         }
@@ -158,7 +157,7 @@ struct SettingsView: View {
         Section {
             cellView(image: .settingsAppVersion, title: L10n.appVersion) {
                 Text(viewModel.appInfo)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .label1))
             }
         }
@@ -169,7 +168,7 @@ struct SettingsView: View {
             Section {
                 Button(
                     action: { debugPresented.toggle() },
-                    label: { cellView(image: UIImage(), title: "Debug Menu") }
+                    label: { cellView(image: nil, title: "Debug Menu") }
                 )
             }
             .sheet(isPresented: $debugPresented) {
@@ -178,7 +177,9 @@ struct SettingsView: View {
         }
     #endif
 
-    private func cellView<Content: View>(image: UIImage, title: String, rightContent: () -> Content) -> some View {
+    private func cellView<Content: View>(image: ImageResource?, title: String,
+                                         rightContent: () -> Content) -> some View
+    {
         HStack(spacing: 8) {
             cellView(image: image, title: title, withArrow: false)
             Spacer()
@@ -186,25 +187,27 @@ struct SettingsView: View {
         }
     }
 
-    private func cellView(image: UIImage, title: String, withArrow: Bool = true) -> some View {
+    private func cellView(image: ImageResource?, title: String, withArrow: Bool = true) -> some View {
         HStack(spacing: 12) {
-            Image(uiImage: image)
-                .frame(width: 24, height: 24)
+            if let image {
+                Image(image)
+                    .frame(width: 24, height: 24)
+            }
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text2))
                 .lineLimit(1)
             if withArrow {
                 Spacer()
-                Image(uiImage: .cellArrow)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                Image(.cellArrow)
+                    .foregroundColor(Color(.mountain))
             }
         }
     }
 
     private func headerText(_ text: String) -> some View {
         Text(text)
-            .foregroundColor(Color(Asset.Colors.mountain.color))
+            .foregroundColor(Color(.mountain))
             .font(uiFont: .font(of: .text4))
     }
 }

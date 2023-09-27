@@ -3,7 +3,6 @@ import Combine
 import Foundation
 import Resolver
 import Sell
-import UIKit
 
 @MainActor
 final class SellPendingViewModel: BaseViewModel, ObservableObject {
@@ -78,7 +77,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 extension SellPendingViewModel {
     struct Model {
         let id: String
-        let tokenImage: UIImage
+        let tokenImage: ImageResource
         let tokenSymbol: String
         let tokenAmount: Double
         let fiatAmount: Double

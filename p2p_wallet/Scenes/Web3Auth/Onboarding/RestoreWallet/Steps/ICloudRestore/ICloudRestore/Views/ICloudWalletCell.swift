@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct ICloudWalletCell: View {
@@ -11,11 +10,11 @@ struct ICloudWalletCell: View {
             action()
         }, label: {
             HStack {
-                Image(uiImage: Asset.MaterialIcon.accountBalanceWalletOutlined.image)
+                Image(.accountBalanceWalletOutlined)
                     .aspectRatio(1, contentMode: .fit)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .frame(width: 48, height: 48)
-                    .background(Circle().fill(Color(Asset.Colors.rain.color)))
+                    .background(Circle().fill(Color(.rain)))
                     .padding(.leading, 16)
 
                 if let name = name {
@@ -25,10 +24,10 @@ struct ICloudWalletCell: View {
                             .font(uiFont: UIFont.font(of: .text2, weight: .regular))
                         HStack(spacing: 0) {
                             Text(String(publicKey.dropLast(4)))
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .lineLimit(1)
                             Text(publicKey.suffix(4))
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .foregroundColor(Color(.mountain))
                                 .lineLimit(1)
                         }.font(uiFont: UIFont.font(of: .label1, weight: .regular))
                     }
@@ -40,20 +39,20 @@ struct ICloudWalletCell: View {
                         Text(String(publicKey.dropLast(4)))
                         Text(publicKey.suffix(4))
                     }
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: UIFont.font(of: .text2, weight: .regular))
                     .lineLimit(1)
                 }
 
                 Spacer()
-                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                Image(.chevronRight)
+                    .foregroundColor(Color(.mountain))
                     .padding(.trailing, 14)
             }
             .frame(height: 72)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(Asset.Colors.snow.color))
+                    .fill(Color(.snow))
             )
         }).buttonStyle(CustomHighlightColor())
     }
@@ -63,7 +62,7 @@ private struct CustomHighlightColor: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration
             .label
-            .overlay(configuration.isPressed ? Color(Asset.Colors.mountain.color.withAlphaComponent(0.2)) : Color.clear)
+            .overlay(configuration.isPressed ? Color(.mountain).opacity(0.2) : Color.clear)
     }
 }
 

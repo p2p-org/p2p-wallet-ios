@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -21,13 +20,13 @@ struct BuySelect<Content: View>: View {
 
     var body: some View {
         VStack {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.top, 6)
 
             Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.top, 11)
 
@@ -42,11 +41,11 @@ struct BuySelect<Content: View>: View {
                     },
                     label: {
                         Text(L10n.done)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .font(uiFont: .font(of: .text2, weight: .bold))
                             .frame(height: 58)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.rain.color))
+                            .background(Color(.rain))
                             .padding(.horizontal, 2)
                             .cornerRadius(12)
                             .padding(.bottom, 16)
@@ -87,7 +86,7 @@ View where Model == Cell.Model {
                             }
                             Spacer()
                             if viewModel.selectedModel == model {
-                                Image(uiImage: UIImage.checkBoxIOS)
+                                Image(.checkBoxIOS)
                                     .frame(width: 15, height: 44)
                                     .padding(.trailing, 8)
                             }
@@ -95,7 +94,7 @@ View where Model == Cell.Model {
                         if model != viewModel.items.last {
                             Divider()
                                 .frame(height: 1)
-                                .foregroundColor(Color(Asset.Colors.rain.color))
+                                .foregroundColor(Color(.rain))
                         }
                     }
                 }
@@ -126,7 +125,7 @@ struct BuySelectTokenCellView: BuySelectViewModelCell {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.token.name)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 if let amount = model.amount {
                     Text(
                         amount.fiatAmountFormattedString(
@@ -135,7 +134,7 @@ struct BuySelectTokenCellView: BuySelectViewModelCell {
                         )
                     )
                     .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 }
             }
             Spacer()
@@ -158,7 +157,7 @@ struct FiatCellView: BuySelectViewModelCell {
         HStack {
             Text(model.code)
                 .apply(style: .text2)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.leading)
                 .padding(.leading, 5)
                 .padding(.vertical, 3)

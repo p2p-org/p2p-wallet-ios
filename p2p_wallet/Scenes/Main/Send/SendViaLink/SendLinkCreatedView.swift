@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 private extension String {
@@ -23,7 +22,7 @@ struct SendLinkCreatedView: View {
                         .frame(width: 16, height: 16)
                         .padding(8)
                 }
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
             }
 
             Spacer()
@@ -32,13 +31,13 @@ struct SendLinkCreatedView: View {
             Text(L10n.shareYourLinkToSendMoney)
                 .apply(style: .largeTitle)
                 .multilineTextAlignment(.center)
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .padding(.bottom, 24)
                 .accessibilityIdentifier(.accessibilityTitleLabel)
 
             // Recipient
             RecipientCell(
-                image: Image(uiImage: .sendViaLinkCircleCompleted)
+                image: Image(.sendViaLinkCircleCompleted)
                     .castToAnyView(),
                 title: viewModel.formatedAmount,
                 subtitle: viewModel.link,
@@ -47,7 +46,7 @@ struct SendLinkCreatedView: View {
                         viewModel.copyClicked()
                     },
                     label: {
-                        Image(uiImage: .copyFill)
+                        Image(.copyFill)
                             .resizable()
                             .frame(width: 24, height: 24)
                     }
@@ -59,7 +58,7 @@ struct SendLinkCreatedView: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .foregroundColor(Color(Asset.Colors.snow.color))
+                    .foregroundColor(Color(.snow))
             )
             .padding(.bottom, 28)
 
@@ -67,7 +66,7 @@ struct SendLinkCreatedView: View {
             Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .padding(.horizontal, 16)
                 .accessibilityIdentifier(.accessibilitySubtitleLabel)
 
@@ -86,7 +85,7 @@ struct SendLinkCreatedView: View {
             .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
-        .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .background(Color(.smoke).edgesIgnoringSafeArea(.vertical))
         .onAppear {
             viewModel.onAppear()
         }

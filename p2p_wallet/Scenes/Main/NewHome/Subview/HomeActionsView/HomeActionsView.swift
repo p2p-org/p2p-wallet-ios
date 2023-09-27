@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct HomeActionsView: View {
@@ -20,7 +19,7 @@ struct HomeActionsView: View {
 
     private func actionView(
         title: String,
-        image: UIImage,
+        image: ImageResource,
         action: @escaping () -> Void
     ) -> some View {
         Button(
@@ -30,7 +29,7 @@ struct HomeActionsView: View {
                     Text(title)
                         .fontWeight(.semibold)
                         .apply(style: .text2)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .padding(
                             EdgeInsets(
                                 top: 14,
@@ -39,12 +38,12 @@ struct HomeActionsView: View {
                                 trailing: 5
                             )
                         )
-                    Image(uiImage: image)
+                    Image(image)
                 }
                 .frame(maxWidth: .infinity)
             }
         )
-        .background(Color(Asset.Colors.night.color))
+        .background(Color(.night))
         .cornerRadius(radius: 12, corners: .allCorners)
     }
 }

@@ -1,10 +1,9 @@
-import KeyAppUI
 import SwiftUI
 
 struct SlippageSettingsView: View {
     @StateObject private var viewModel: SlippageSettingsViewModel
 
-    @State private var textFieldColor: UIColor = Asset.Colors.night.color
+    @State private var textFieldColor: UIColor = .init(resource: .night)
 
     let onSelectSlippage: (Double?) -> Void
 
@@ -25,7 +24,7 @@ struct SlippageSettingsView: View {
             )
         }
         .onChange(of: viewModel.isCustomSlippageValid) { isSlippageValid in
-            textFieldColor = isSlippageValid ? Asset.Colors.night.color : Asset.Colors.rose.color
+            textFieldColor = .init(resource: isSlippageValid ? .night : .rose)
         }
         .onChange(of: viewModel.selectedSlippage) { selectedSlippage in
             onSelectSlippage(selectedSlippage)
@@ -45,7 +44,7 @@ struct SlippageSettingsView: View {
     func staticSelectionCell(index: Int, slippage: Double) -> some View {
         HStack {
             Text("\(String(format: "%.1f", slippage))%")
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .font(uiFont: .font(of: .text3))
             Spacer()
             if index == viewModel.selectedIndex {
@@ -60,7 +59,7 @@ struct SlippageSettingsView: View {
         VStack {
             HStack {
                 Text(L10n.custom)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text3))
                 Spacer()
                 if index == viewModel.selectedIndex {
@@ -70,13 +69,13 @@ struct SlippageSettingsView: View {
             if index == viewModel.selectedIndex {
                 VStack(alignment: .leading, spacing: 4) {
                     ZStack {
-                        Color(Asset.Colors.rain.color)
+                        Color(.rain)
                             .frame(height: 44)
                             .cornerRadius(12)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(
-                                        Color(Asset.Colors.rose.color),
+                                        Color(.rose),
                                         lineWidth: viewModel.isCustomSlippageValid ? 0 : 1
                                     )
                             )
@@ -84,9 +83,7 @@ struct SlippageSettingsView: View {
                         percentSuffixTextField
                     }
                     Text("\(L10n.theSlippageCouldBe) 0.01-50%")
-                        .foregroundColor(viewModel
-                            .isCustomSlippageValid ? Color(Asset.Colors.mountain.color) :
-                            Color(Asset.Colors.rose.color))
+                        .foregroundColor(viewModel.isCustomSlippageValid ? Color(.mountain) : Color(.rose))
                         .font(uiFont: .font(of: .label1))
                 }
             }
@@ -111,7 +108,7 @@ struct SlippageSettingsView: View {
 
             Text("%")
                 .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                .foregroundColor(Color(.night).opacity(0.3))
 
             Spacer(minLength: 0)
         }

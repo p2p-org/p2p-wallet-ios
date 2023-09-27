@@ -1,6 +1,5 @@
 import BEPureLayout
 import Combine
-import KeyAppUI
 import UIKit
 
 final class EnterPhoneNumberViewController: BaseOTPViewController {
@@ -120,7 +119,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheNumberToContinue
-            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? UIImage(resource: .arrowForward) : nil
         }.store(in: &store)
 
         viewModel.$isLoading.sink { [weak self] isLoading in
@@ -140,21 +139,21 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         // Right button
         let infoButton = UIButton()
         infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+        infoButton.setImage(.init(resource: .helpOutline), for: .normal)
         infoButton.contentMode = .scaleAspectFill
-        infoButton.tintColor = Asset.Colors.night.color
+        infoButton.tintColor = .init(resource: .night)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
     }
 
     private func addLeftButton() {
         guard viewModel.isBackAvailable else { return }
         let backButton = UIBarButtonItem(
-            image: Asset.MaterialIcon.arrowBackIos.image,
+            image: .init(resource: .arrowBackIos),
             style: .plain,
             target: self,
             action: #selector(onBack)
         )
-        backButton.tintColor = Asset.Colors.night.color
+        backButton.tintColor = .init(resource: .night)
         navigationItem.leftBarButtonItem = backButton
     }
 
@@ -188,7 +187,7 @@ class PhoneTextField: BaseTextFieldView {
         textField?.textContentType = .telephoneNumber
         textField?.text = "+"
         textField?.font = UIFont.font(of: .title1, weight: .bold)
-        (textField as? TextField)?.onPaste = onPaste
+        (textField as? TextField_Deprecated)?.onPaste = onPaste
     }
 
     @available(*, unavailable)
@@ -208,7 +207,7 @@ class PhoneTextField: BaseTextFieldView {
                 width: 8,
                 height: 5,
                 imageNamed: "expand-icon",
-                tintColor: Asset.Colors.night.color
+                tintColor: .init(resource: .night)
             ).padding(.init(only: .left, inset: 4))
         }
     }

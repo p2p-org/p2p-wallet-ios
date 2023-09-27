@@ -3,8 +3,6 @@ name: p2p_wallet
 packages:
     KeyAppKit:
         path: ./Packages/KeyAppKit
-    KeyAppUI:
-        path: ./Packages/KeyAppUI
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
@@ -66,7 +64,7 @@ options:
         iOS: 15.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
-    # preGenCommand: sh Scripts/preGenCommand.sh
+    preGenCommand: rm -f p2p_wallet/Resources/Asset+Generated.swift p2p_wallet/Resources/Fonts+Generated.swift
     # postGenCommand: sh Scripts/postGenCommand.sh
 
 configs:
@@ -191,7 +189,7 @@ targets:
                   fi
             name: "[SCRIPT] Crashlytics Run"
             inputFiles:
-              - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}"
+              - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF"
               - "$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
         settings:
             base:
@@ -250,8 +248,6 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
-
-            - package: KeyAppUI
             - package: BEPureLayout
 
             - package: Lokalise

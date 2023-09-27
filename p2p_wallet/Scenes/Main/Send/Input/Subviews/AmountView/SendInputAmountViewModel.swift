@@ -1,7 +1,6 @@
 import Combine
 import KeyAppBusiness
 import KeyAppKitCore
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import UIKit
@@ -41,7 +40,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     // View
     @Published var maxAmountTextInCurrentType = ""
     @Published var amountText: String = ""
-    @Published var amountTextColor: UIColor = Asset.Colors.night.color
+    @Published var amountTextColor: UIColor = .init(resource: .night)
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
     @Published var isMaxButtonVisible: Bool = true
@@ -131,7 +130,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
         $isError
             .sink { [weak self] value in
-                self?.amountTextColor = value ? Asset.Colors.rose.color : Asset.Colors.night.color
+                self?.amountTextColor = .init(resource: value ? .rose : .night)
             }
             .store(in: &subscriptions)
 

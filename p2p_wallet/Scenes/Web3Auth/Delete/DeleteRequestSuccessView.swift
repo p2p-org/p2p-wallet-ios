@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct DeleteRequestSuccessView: View {
@@ -6,7 +5,7 @@ struct DeleteRequestSuccessView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Image(uiImage: .catFail)
+            Image(.catFail)
             Text(L10n.deletingYourAccountWillTakeUpTo30Days)
                 .padding(.vertical, 20)
             TextButtonView(title: L10n.done, style: .second, size: .large) { onDone?() }

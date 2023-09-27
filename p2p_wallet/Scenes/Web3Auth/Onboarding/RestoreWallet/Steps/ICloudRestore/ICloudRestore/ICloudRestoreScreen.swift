@@ -1,4 +1,3 @@
-import KeyAppUI
 import Onboarding
 import SwiftUI
 
@@ -17,7 +16,7 @@ struct ICloudRestoreScreen: View {
         }, onInfo: { [weak viewModel] in
             viewModel?.infoPressed()
         })
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .edgesIgnoringSafeArea(.all)
         .frame(maxHeight: .infinity)
     }
@@ -25,7 +24,7 @@ struct ICloudRestoreScreen: View {
     var content: some View {
         VStack(spacing: .zero) {
             if viewModel.accounts.count <= 5 {
-                Image(uiImage: .icloud)
+                Image(.icloud)
                     .resizable()
                     .scaledToFit()
                     .frame(minHeight: viewModel.accounts.count < 3 ? 200 : 90)
@@ -33,13 +32,13 @@ struct ICloudRestoreScreen: View {
 
             Text(L10n.chooseYourWallet)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .padding(.top, 24)
 
             Text(L10n.found(L10n.dWallet(viewModel.accounts.count)))
                 .font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
-                .foregroundColor(Color(Asset.Colors.night.color))
+                .foregroundColor(Color(.night))
                 .multilineTextAlignment(.center)
                 .padding(.top, 16)
         }

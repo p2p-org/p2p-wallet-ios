@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 enum ActionsViewActionType: CaseIterable {
@@ -28,7 +27,7 @@ enum ActionsViewActionType: CaseIterable {
         }
     }
 
-    var icon: UIImage {
+    var icon: ImageResource {
         switch self {
         case .bankTransfer:
             return .addMoneyBankTransfer

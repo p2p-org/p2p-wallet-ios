@@ -1,4 +1,3 @@
-import KeyAppUI
 import Send
 import SwiftUI
 
@@ -33,21 +32,21 @@ struct RecipientCell: View {
         case let .username(name, domain):
             switch domain {
             case "key":
-                image = Image(uiImage: .appIconSmall).castToAnyView()
+                image = Image(.appIconSmall).castToAnyView()
                 title = "@\(name).key"
                 self.subtitle = subtitle
             default:
-                image = Image(uiImage: .newWalletCircle).castToAnyView()
+                image = Image(.newWalletCircle).castToAnyView()
                 title = RecipientFormatter.username(name: name, domain: domain)
                 self.subtitle = RecipientFormatter.format(destination: recipient.address)
             }
         case .solanaAddress:
-            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            image = Image(.newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
 
         case .ethereumAddress:
-            image = Image(uiImage: .ethereumIcon).castToAnyView()
+            image = Image(.ethereumIcon).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = nil
 
@@ -56,7 +55,7 @@ struct RecipientCell: View {
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
-            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            image = Image(.newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
         }
@@ -64,7 +63,7 @@ struct RecipientCell: View {
         if let date = recipient.createdData {
             trailingView = Text(date.timeAgoDisplay())
                 .apply(style: .label1)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .accessibilityIdentifier("RecipientCell.createdDate")
                 .castToAnyView()
         } else {
@@ -82,13 +81,12 @@ struct RecipientCell: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text2)
-                    .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) :
-                        Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .foregroundColor(isEnabled ? Color(.night) : Color(.night).opacity(0.3))
                     .lineLimit(1)
                     .accessibilityIdentifier("RecipientCell.title")
                 if let subtitle {
                     Text(subtitle)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .apply(style: .label1)
                         .if(multilinesForSubtitle) {
                             $0

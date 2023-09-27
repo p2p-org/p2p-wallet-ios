@@ -1,13 +1,12 @@
-import KeyAppUI
 import SwiftUI
 
 struct ListDividerReceiveView: View {
     var body: some View {
         ZStack {
-            Color(Asset.Colors.snow.color)
+            Color(.snow)
             Divider()
                 .frame(height: 1)
-                .background(Color(Asset.Colors.rain.color))
+                .background(Color(.rain))
         }
         .frame(height: 1)
     }

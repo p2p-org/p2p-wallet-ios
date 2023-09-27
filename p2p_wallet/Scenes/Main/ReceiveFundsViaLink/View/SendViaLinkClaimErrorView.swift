@@ -1,10 +1,9 @@
-import KeyAppUI
 import SwiftUI
 
 struct SendViaLinkClaimErrorView: View {
     let title: String
     let subtitle: String?
-    let image: UIImage
+    let image: ImageResource
     @Binding var isLoading: Bool
     let reloadClicked: () -> Void
     let cancelClicked: () -> Void
@@ -13,11 +12,11 @@ struct SendViaLinkClaimErrorView: View {
         VStack(spacing: 39) {
             if let subtitle {
                 Text(subtitle)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .text3))
             }
             Spacer()
-            Image(uiImage: image)
+            Image(image)
             VStack(spacing: 12) {
                 TextButtonView(
                     title: L10n.tryAgain,

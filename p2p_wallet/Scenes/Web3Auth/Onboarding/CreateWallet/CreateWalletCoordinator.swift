@@ -1,6 +1,5 @@
 import AnalyticsManager
 import Combine
-import KeyAppUI
 import Onboarding
 import Resolver
 import UIKit

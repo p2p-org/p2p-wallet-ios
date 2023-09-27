@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 /// In case of successful experiment make a base Renderable protocol

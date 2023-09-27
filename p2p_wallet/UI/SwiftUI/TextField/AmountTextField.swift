@@ -1,12 +1,11 @@
 import Foundation
-import KeyAppUI
 import SwiftUI
 import UIKit
 
 struct AmountTextField: UIViewRepresentable {
     @Binding private var value: Double?
     @Binding private var isFirstResponder: Bool
-    @Binding private var textColor: UIColor
+    @Binding private var textColor: ColorResource
     @Binding private var maxFractionDigits: Int
     @Binding private var maxValue: Double?
     private let decimalSeparator: String
@@ -18,7 +17,7 @@ struct AmountTextField: UIViewRepresentable {
     init(
         value: Binding<Double?>,
         isFirstResponder: Binding<Bool>,
-        textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
+        textColor: Binding<ColorResource> = Binding.constant(.night),
         maxFractionDigits: Binding<Int>,
         maxValue: Binding<Double?> = .constant(nil),
         decimalSeparator: String = ".",
@@ -46,7 +45,7 @@ struct AmountTextField: UIViewRepresentable {
         )
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textField.decimalSeparator = decimalSeparator
-        textField.textColor = textColor
+        textField.textColor = .init(resource: textColor)
         textField.moveCursorToTrailingWhenDidBeginEditing = moveCursorToTrailingWhenDidBeginEditing
         configuration(textField)
         return textField
@@ -72,7 +71,7 @@ struct AmountTextField: UIViewRepresentable {
         }
 
         configuration(uiView)
-        uiView.textColor = textColor
+        uiView.textColor = .init(resource: textColor)
     }
 }
 

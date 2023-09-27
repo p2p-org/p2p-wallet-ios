@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import Resolver
 
 class BaseOTPViewController: BaseViewController {

@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct SwapSwitchButton: View {
@@ -7,12 +6,12 @@ struct SwapSwitchButton: View {
 
     var body: some View {
         Button(action: action.send, label: {
-            Image(uiImage: .swapArrows)
+            Image(.swapArrows)
         })
         .accessibilityIdentifier("SwapView.switchButton")
         .background(
             Circle()
-                .foregroundColor(Color(Asset.Colors.rain.color))
+                .foregroundColor(Color(.rain))
                 .frame(width: 36, height: 36)
         )
     }

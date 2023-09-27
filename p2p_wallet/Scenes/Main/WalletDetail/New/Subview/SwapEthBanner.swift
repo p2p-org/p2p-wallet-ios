@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SwapEthBanner: View {
@@ -11,12 +10,12 @@ struct SwapEthBanner: View {
             HStack(alignment: .top, spacing: 8) {
                 Text(text)
                     .apply(style: .text1)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                 Spacer()
                 Button {
                     close()
                 } label: {
-                    Image(uiImage: UIImage.closeIcon)
+                    Image(.closeIcon)
                 }
             }
             TextButtonView(
@@ -29,7 +28,7 @@ struct SwapEthBanner: View {
         }
         .padding(.all, 16)
         .background(
-            Image(uiImage: UIImage.swapBannerBackground)
+            Image(.swapBannerBackground)
                 .resizable()
         )
     }

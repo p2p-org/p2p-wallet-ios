@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct RecipientSearchField: View {
@@ -32,26 +31,26 @@ struct RecipientSearchField: View {
                 } else if text.isEmpty {
                     Button { past() }
                         label: {
-                            Image(uiImage: Asset.Icons.past.image)
+                            Image(.paste)
                                 .resizable()
                                 .frame(width: 18, height: 18)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         }
                         .accessibilityIdentifier("RecipientSearchField.paste")
                 } else {
                     Button { text = "" }
                         label: {
-                            Image(uiImage: .crossIcon)
+                            Image(.crossIcon)
                                 .resizable()
                                 .frame(width: 12, height: 12)
-                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .foregroundColor(Color(.night))
                         }
                         .accessibilityIdentifier("RecipientSearchField.clear")
                 }
             }
             .padding(.horizontal, 18)
             .background(
-                Color(Asset.Colors.rain.color)
+                Color(.rain)
                     .cornerRadius(radius: 12, corners: .allCorners)
             )
 
@@ -59,10 +58,10 @@ struct RecipientSearchField: View {
                 scan()
             } label: {
                 ZStack {
-                    Image(uiImage: Asset.Icons.qr.image)
+                    Image(.qr)
                         .resizable()
                         .frame(width: 18, height: 18)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Rectangle()
                         .frame(width: 30, height: 30)
                         .opacity(0)

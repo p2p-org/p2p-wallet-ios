@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct HomeView: View {
@@ -42,7 +41,7 @@ struct HomeView: View {
     func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
         NavigationView {
             ZStack {
-                Color(Asset.Colors.smoke.color)
+                Color(.smoke)
                     .edgesIgnoringSafeArea(.all)
                 content()
                     .navigationBarTitleDisplayMode(.inline)
@@ -55,14 +54,14 @@ struct HomeView: View {
                                 },
                                 label: {
                                     ZStack {
-                                        Color(Asset.Colors.snow.color)
+                                        Color(.snow)
                                             .cornerRadius(80)
                                         HStack(spacing: 5) {
-                                            Image(uiImage: .walletNavigation)
+                                            Image(.walletNavigation)
                                             Text(viewModel.address)
                                                 .fontWeight(.semibold)
                                                 .apply(style: .text3)
-                                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                                .foregroundColor(Color(.mountain))
                                         }
                                         .padding(.horizontal, 18)
                                         .padding(.vertical, 12)

@@ -1,7 +1,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppUI
 import Resolver
 import SolanaSwift
 import UIKit
@@ -24,11 +23,11 @@ class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
     var thirdRowText: NSAttributedString {
         let firstAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.font(of: .text3, weight: .semibold),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
         ]
         let secondAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.font(of: .text3),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
         ]
         let firstString = NSMutableAttributedString(
             string: L10n.yourSeedPhraseMustNeverBeShared,

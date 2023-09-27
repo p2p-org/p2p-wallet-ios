@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -16,7 +15,7 @@ struct PincodeVerifyView: View {
         VStack {
             // Header
             VStack {
-                Image(uiImage: .changePincode)
+                Image(.changePincode)
                     .resizable()
                     .frame(
                         minWidth: 85,
@@ -56,7 +55,7 @@ struct PincodeVerifyView: View {
             label: {
                 Text(L10n.iForgotPIN)
                     .apply(style: .text1)
-                    .foregroundColor(Color(Asset.Colors.sky.color))
+                    .foregroundColor(Color(.sky))
                     .padding(.top, 24)
             }
         }
@@ -65,13 +64,13 @@ struct PincodeVerifyView: View {
                 Button {
                     helpSubject.send()
                 } label: {
-                    Image(uiImage: Asset.MaterialIcon.helpOutline.image)
+                    Image(.helpOutline)
                 }
             }
         }
         .padding(.top, safeAreaInsets.top + 50)
         .padding(.bottom, 54)
-        .background(Color(Asset.Colors.rain.color))
+        .background(Color(.rain))
         .edgesIgnoringSafeArea(.all)
     }
 }

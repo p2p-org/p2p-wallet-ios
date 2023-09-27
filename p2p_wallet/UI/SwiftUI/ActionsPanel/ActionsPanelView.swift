@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct ActionsPanelView: View {
@@ -16,7 +15,7 @@ struct ActionsPanelView: View {
                     .font(uiFont: .font(of: 64, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .padding(.top, 18)
                     .padding(.bottom, usdAmount.isEmpty ? 24 : 12)
                     .onTapGesture {
@@ -30,7 +29,7 @@ struct ActionsPanelView: View {
             if !usdAmount.isEmpty {
                 Text(usdAmount)
                     .font(uiFont: .font(of: .text3))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .padding(.bottom, 25)
             }
             HStack(spacing: 32) {
@@ -43,22 +42,22 @@ struct ActionsPanelView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 2)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
     }
 
-    private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
+    private func tokenOperation(title: String, image: ImageResource, action: @escaping () -> Void) -> some View {
         Button(
             action: action,
             label: {
                 VStack(spacing: 4) {
-                    Image(uiImage: image)
+                    Image(image)
                         .resizable()
                         .frame(width: 53, height: 53)
                         .scaledToFit()
                     Text(title)
                         .fontWeight(.semibold)
                         .apply(style: .label2)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
             }
         )

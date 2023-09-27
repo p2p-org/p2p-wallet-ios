@@ -1,4 +1,3 @@
-import KeyAppUI
 import SkeletonUI
 import SwiftUI
 
@@ -7,25 +6,25 @@ struct SwapSettingsInfoView: View {
 
     var body: some View {
         VStack {
-            Image(uiImage: viewModel.image)
+            Image(viewModel.image)
             HStack(spacing: 16) {
-                Image(uiImage: .transactionFee)
+                Image(.transactionFee)
                     .frame(width: 48, height: 48)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(viewModel.title)
                         .font(uiFont: .font(of: .text1, weight: .bold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                     Text(viewModel.subtitle)
                         .fixedSize(horizontal: false, vertical: true)
                         .font(uiFont: .font(of: .label1))
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                 }
                 Spacer()
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity)
-            .background(Color(Asset.Colors.cloud.color))
+            .background(Color(.cloud))
             .cornerRadius(12)
             .padding(.bottom, 30)
 
@@ -52,10 +51,10 @@ struct SwapSettingsInfoView: View {
                 label: {
                     Text(viewModel.buttonTitle)
                         .font(uiFont: .font(of: .text2, weight: .semibold))
-                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .foregroundColor(Color(.snow))
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(Color(Asset.Colors.night.color))
+                        .background(Color(.night))
                         .cornerRadius(12)
                 }
             )
@@ -88,17 +87,17 @@ struct SwapSettingsInfoView: View {
                 Text(title)
                     .fixedSize(horizontal: false, vertical: true)
                     .font(uiFont: .font(of: .text3))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .skeleton(with: isLoading, size: .init(width: 100, height: 16))
                 Text(subtitle)
                     .font(uiFont: .font(of: .label1))
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .skeleton(with: isLoading, size: .init(width: 52, height: 12))
             }
             Spacer()
             Text(rightTitle ?? "")
                 .font(uiFont: .font(of: .label1))
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .skeleton(with: isLoading, size: .init(width: 52, height: 12))
         }
     }

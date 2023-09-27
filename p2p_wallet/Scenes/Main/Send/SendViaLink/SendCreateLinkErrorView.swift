@@ -1,5 +1,4 @@
 import AnalyticsManager
-import KeyAppUI
 import Resolver
 import SwiftUI
 
@@ -34,7 +33,7 @@ struct SendCreateLinkErrorView: View {
         }
         .padding(.horizontal, 20)
         .background(
-            Color(Asset.Colors.snow.color)
+            Color(.snow)
                 .edgesIgnoringSafeArea(.top)
         )
         .onAppear {

@@ -1,4 +1,3 @@
-import KeyAppUI
 import SkeletonUI
 import SwiftUI
 
@@ -7,7 +6,7 @@ struct SellView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(.smoke)
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 switch viewModel.status {

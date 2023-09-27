@@ -17,7 +17,7 @@ jobs:
     name: Run KeyAppKit unit testing
     runs-on: macos-13
     env: 
-      XCODE_VERSION: "14.3.1"
+      XCODE_VERSION: "15.0.0"
     steps:
 
       - name: Cleanup build folder

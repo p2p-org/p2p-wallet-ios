@@ -1,6 +1,5 @@
 import Combine
 import KeyAppKitCore
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -35,7 +34,7 @@ final class ChooseSendItemCoordinator: Coordinator<SolanaAccount?> {
         navigationController.setViewControllers([controller], animated: false)
         configureTitle(strategy: strategy, vc: controller)
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: Asset.MaterialIcon.close.image,
+            image: .init(resource: .close),
             style: .plain,
             target: self,
             action: #selector(closeButtonTapped)

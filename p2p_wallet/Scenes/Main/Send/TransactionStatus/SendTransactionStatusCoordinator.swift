@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 final class SendTransactionStatusCoordinator: Coordinator<Void> {
@@ -75,15 +74,15 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
 
     private func style(nc: UINavigationController) {
         nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        nc.navigationBar.backgroundColor = Asset.Colors.snow.color
+        nc.navigationBar.backgroundColor = .init(resource: .snow)
     }
 
     private func wrap(for navigationController: UINavigationController) {
         let closeView = UIView()
-        closeView.backgroundColor = Asset.Colors.rain.color
+        closeView.backgroundColor = .init(resource: .rain)
         closeView.layer.cornerRadius = 2
         container.view.addSubview(closeView)
-        container.view.backgroundColor = Asset.Colors.snow.color
+        container.view.backgroundColor = .init(resource: .snow)
         closeView.autoSetDimensions(to: .init(width: 31, height: 4))
         closeView.autoPinEdge(toSuperviewEdge: .top, withInset: 6)
         NSLayoutConstraint.activate([closeView.centerXAnchor.constraint(equalTo: container.view.centerXAnchor)])

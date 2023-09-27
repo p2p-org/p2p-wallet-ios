@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SupportedTokensBannerView: View {
@@ -10,17 +9,17 @@ struct SupportedTokensBannerView: View {
             Spacer()
 
             ZStack {
-                Image(uiImage: .ethereumIcon)
+                Image(.ethereumIcon)
                     .cornerRadius(44)
                     .clipShape(Circle())
-                Image(uiImage: .solanaIcon)
+                Image(.solanaIcon)
                     .clipShape(Circle())
                     .offset(x: -33)
             }
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 18)
-        .background(Color(Asset.Colors.rain.color))
+        .background(Color(.rain))
         .cornerRadius(16)
     }
 }

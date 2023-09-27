@@ -81,8 +81,8 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                         UIImageView(width: 56, height: 56, image: tokenImage, contentMode: .scaleAspectFit)
                             .setup { view in
                                 view.layer.borderWidth = 4
-                                view.layer.borderColor = UIColor.textWhite.cgColor
-                                view.layer.backgroundColor = UIColor.textWhite.cgColor
+                                view.layer.borderColor = UIColor(resource: .textWhite).cgColor
+                                view.layer.backgroundColor = UIColor(resource: .textWhite).cgColor
                                 view.layer.cornerRadius = 28
                                 view.layer.masksToBounds = true
                             }.withTag(2)
@@ -100,19 +100,19 @@ class QrCodeImageRenderImpl: QrCodeImageRender {
                     let address = NSMutableAttributedString(string: address)
                     address.addAttribute(
                         .foregroundColor,
-                        value: UIColor.h5887ff,
+                        value: UIColor(resource: .h5887Ff),
                         range: NSRange(location: 0, length: 4)
                     )
                     address.addAttribute(
                         .foregroundColor,
-                        value: UIColor.h5887ff,
+                        value: UIColor(resource: .h5887Ff),
                         range: NSRange(location: address.length - 4, length: 4)
                     )
                     label.attributedText = address
                 }.padding(.init(top: 18, left: 48, bottom: 32, right: 48))
 
             // Logo
-            UIImageView(image: .keyappLogo, tintColor: theme.logoColor)
+            UIImageView(image: .init(resource: .keyappLogo), tintColor: theme.logoColor)
                 .centered(.horizontal)
                 .padding(.init(only: .bottom, inset: 19))
 

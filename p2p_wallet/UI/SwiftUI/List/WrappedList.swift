@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct WrappedList<Content: View>: View {

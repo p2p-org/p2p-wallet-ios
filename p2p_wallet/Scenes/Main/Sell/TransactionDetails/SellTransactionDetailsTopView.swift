@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct SellTransactionDetailsTopView: View {
@@ -7,10 +6,10 @@ struct SellTransactionDetailsTopView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text(model.date.string(withFormat: "MMMM dd, yyyy @ HH:mm"))
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .foregroundColor(Color(.mountain))
                 .font(uiFont: .font(of: .text3))
             ZStack {
-                Color(Asset.Colors.smoke.color)
+                Color(.smoke)
                     .frame(height: 208)
                 tokenView
             }
@@ -19,16 +18,16 @@ struct SellTransactionDetailsTopView: View {
 
     private var tokenView: some View {
         VStack(spacing: 16) {
-            Image(uiImage: model.tokenImage)
+            Image(model.tokenImage)
                 .resizable()
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
             VStack(spacing: 4) {
                 Text(model.tokenAmount.tokenAmountFormattedString(symbol: model.tokenSymbol))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                 Text("≈ \(model.fiatAmount.fiatAmountFormattedString(currency: model.currency))")
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                     .font(uiFont: .font(of: .text2))
             }
         }
@@ -40,7 +39,7 @@ struct SellTransactionDetailsTopView: View {
 extension SellTransactionDetailsTopView {
     struct Model {
         let date: Date
-        let tokenImage: UIImage
+        let tokenImage: ImageResource
         let tokenSymbol: String
         let tokenAmount: Double
         let fiatAmount: Double

@@ -1,5 +1,4 @@
 import KeyAppKitCore
-import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
@@ -39,12 +38,12 @@ struct TokenCellView: View {
             VStack(alignment: .leading, spacing: appearance.textPadding) {
                 Text(item.token.name)
                     .font(uiFont: .font(of: .text2))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .accessibility(identifier: "TokenCellView.item.token.name")
                 if item.amount != nil {
                     Text(item.amount!.tokenAmountFormattedString(symbol: item.token.symbol))
                         .font(uiFont: .font(of: .label1))
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
                         .accessibility(identifier: "TokenCellView.item.amount")
                 }
             }
@@ -52,7 +51,7 @@ struct TokenCellView: View {
             if item.amountInCurrentFiat != nil {
                 Text(item.amountInCurrentFiat!.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .accessibility(identifier: "TokenCellView.item.amountInCurrentFiat")
             }
         }.contentShape(Rectangle())

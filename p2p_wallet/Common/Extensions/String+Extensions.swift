@@ -3,6 +3,20 @@ import FirebaseRemoteConfig
 import Foundation
 import UIKit
 
+extension String {
+    subscript(bounds: CountableClosedRange<Int>) -> String {
+        let start = index(startIndex, offsetBy: bounds.lowerBound)
+        let end = index(startIndex, offsetBy: bounds.upperBound)
+        return String(self[start ... end])
+    }
+
+    subscript(bounds: CountableRange<Int>) -> String {
+        let start = index(startIndex, offsetBy: bounds.lowerBound)
+        let end = index(startIndex, offsetBy: bounds.upperBound)
+        return String(self[start ..< end])
+    }
+}
+
 extension Optional where Wrapped == String {
     public var orEmpty: String {
         self ?? ""

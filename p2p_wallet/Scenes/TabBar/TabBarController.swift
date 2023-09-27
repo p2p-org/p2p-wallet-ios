@@ -1,7 +1,6 @@
 import AnalyticsManager
 import Combine
 import Intercom
-import KeyAppUI
 import Onboarding
 import Resolver
 import Sell
@@ -56,8 +55,8 @@ final class TabBarController: UITabBarController {
         TabItem.allCases.enumerated().forEach { index, item in
             viewControllers?[index].tabBarItem = UITabBarItem(
                 title: item.displayTitle,
-                image: item.image,
-                selectedImage: item.image
+                image: item.image != nil ? .init(resource: item.image!) : nil,
+                selectedImage: item.image != nil ? .init(resource: item.image!) : nil
             )
         }
 
@@ -67,12 +66,15 @@ final class TabBarController: UITabBarController {
             .receive(on: RunLoop.main)
             .sink { [weak self] migrationIsAvailable in
                 if migrationIsAvailable {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
-                        .selectedImage = .selectedTabBarSettingsWithAlert
+                        .image = .init(resource: .tabBarSettingsWithAlert)
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .init(resource: .selectedTabBarSettingsWithAlert)
                 } else {
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
-                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .image = .init(resource: .tabBarSettings)
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .init(resource: .tabBarSettings)
                 }
             }
             .store(in: &subscriptions)
@@ -220,14 +222,14 @@ final class TabBarController: UITabBarController {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .font: UIFont.font(of: .label1, weight: .regular),
-            .foregroundColor: Asset.Colors.mountain.color,
+            .foregroundColor: UIColor(resource: .mountain),
         ]
         standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .font: UIFont.font(of: .label1, weight: .regular),
-            .foregroundColor: Asset.Colors.night.color,
+            .foregroundColor: UIColor(resource: .night),
         ]
-        standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
-        standardAppearance.stackedLayoutAppearance.selected.iconColor = Asset.Colors.night.color
+        standardAppearance.stackedLayoutAppearance.normal.iconColor = .init(resource: .mountain)
+        standardAppearance.stackedLayoutAppearance.selected.iconColor = .init(resource: .night)
         standardAppearance.stackedItemPositioning = .automatic
         UITabBar.appearance().standardAppearance = standardAppearance
         UITabBar.appearance().scrollEdgeAppearance = standardAppearance
@@ -286,10 +288,12 @@ final class TabBarController: UITabBarController {
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] claimableTransferExist in
-                let image: UIImage = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
-                let selectedImage: UIImage = claimableTransferExist ? .selectedTabBarCryptoWithAlert : .tabBarCrypto
-                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = image
-                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.selectedImage = selectedImage
+                let image: ImageResource = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
+                let selectedImage: ImageResource = claimableTransferExist ? .selectedTabBarCryptoWithAlert :
+                    .tabBarCrypto
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = .init(resource: image)
+                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem
+                    .selectedImage = .init(resource: selectedImage)
             }
             .store(in: &subscriptions)
 
@@ -345,14 +349,14 @@ extension TabBarController: UITabBarControllerDelegate {
 // MARK: - TabItem
 
 private extension TabItem {
-    var image: UIImage {
+    var image: ImageResource? {
         switch self {
         case .wallet:
             return .tabBarWallet
         case .crypto:
             return .tabBarCrypto
         case .send:
-            return UIImage()
+            return nil
         case .history:
             return .tabBarHistory
         case .settings:

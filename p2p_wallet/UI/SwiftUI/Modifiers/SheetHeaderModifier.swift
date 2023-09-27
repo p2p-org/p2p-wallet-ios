@@ -1,5 +1,4 @@
 import Combine
-import KeyAppUI
 import SwiftUI
 
 struct SheetHeaderModifier: ViewModifier {
@@ -13,7 +12,7 @@ struct SheetHeaderModifier: ViewModifier {
             SheetHeaderView(title: title, withSeparator: withSeparator, bottomPadding: bottomPadding, close: close)
             Spacer()
             content
-        }.background(Color(Asset.Colors.snow.color))
+        }.background(Color(.snow))
             .cornerRadius(radius: 18, corners: [.topLeft, .topRight])
     }
 }
@@ -42,7 +41,7 @@ private struct SheetHeaderView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color(Asset.Colors.rain.color)
+            Color(.rain)
                 .frame(width: 31, height: 4)
                 .cornerRadius(2)
                 .padding(.top, 6)
@@ -53,7 +52,7 @@ private struct SheetHeaderView: View {
                 if let title {
                     Text(title)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .foregroundColor(Color(.night))
                         .font(uiFont: .font(of: .title3, weight: .semibold))
                         .padding(.top, 18)
                 }
@@ -64,7 +63,7 @@ private struct SheetHeaderView: View {
                             close()
                         },
                         label: {
-                            Image(uiImage: .closeAction)
+                            Image(.closeAction)
                         }
                     )
                 }
@@ -73,7 +72,7 @@ private struct SheetHeaderView: View {
             .padding(.leading, close != nil ? 32 : 16)
             .padding(.bottom, bottomPadding)
             if withSeparator {
-                Color(Asset.Colors.rain.color)
+                Color(.rain)
                     .frame(height: 1)
                     .frame(maxWidth: .infinity)
             }

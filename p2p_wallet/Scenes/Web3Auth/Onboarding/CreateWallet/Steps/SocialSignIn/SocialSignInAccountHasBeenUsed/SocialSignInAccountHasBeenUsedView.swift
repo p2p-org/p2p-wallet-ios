@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import KeyAppUI
 import SwiftUI
 
 struct SocialSignInAccountHasBeenUsedView: View {
@@ -27,7 +26,7 @@ struct SocialSignInAccountHasBeenUsedView: View {
                         title: L10n.useAnotherAccount,
                         style: .inverted,
                         size: .large,
-                        leading: .google,
+                        leading: .init(resource: .google),
                         isLoading: viewModel.loading
                     ) { [weak viewModel] in viewModel?.userAnotherAccount() }
                         .frame(height: TextButton.Size.large.height)

@@ -1,5 +1,4 @@
 import CarPlay
-import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseView: View {
@@ -13,7 +12,7 @@ struct SeedPhraseView: View {
                 HStack {
                     Text(L10n.seedPhrase)
                         .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .foregroundColor(Color(.mountain))
 
                     Spacer()
 
@@ -21,7 +20,7 @@ struct SeedPhraseView: View {
                         title: !hidden ? L10n.hide : L10n.show,
                         style: .second,
                         size: .small,
-                        trailing: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens
+                        trailing: .init(resource: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens)
                     ) { hidden = !hidden }
                         .frame(maxWidth: 100, maxHeight: TextButton.Size.small.height)
                 }
@@ -40,11 +39,11 @@ struct SeedPhraseView: View {
             .padding(.leading, 16)
             .padding(.trailing, 8)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .background(Color(.smoke))
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                .stroke(Color(.rain), lineWidth: 1)
         )
     }
 }
@@ -100,7 +99,7 @@ private struct Grid<Content: View, T: Hashable>: View {
             let child = HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text("\(i * 3 + (j + 1))")
                     .apply(style: .text4)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .foregroundColor(Color(.mountain))
                 content(self.list[i][j])
                 Spacer()
             }

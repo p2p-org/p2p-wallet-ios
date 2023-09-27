@@ -1,4 +1,3 @@
-import KeyAppUI
 import SwiftUI
 
 struct NetworkView: View {
@@ -10,11 +9,11 @@ struct NetworkView: View {
     var body: some View {
         VStack(spacing: 32) {
             VStack(spacing: 18) {
-                Color(Asset.Colors.rain.color)
+                Color(.rain)
                     .frame(width: 31, height: 4)
                     .cornerRadius(2)
                 Text(L10n.network)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
             }
             VStack {
@@ -35,11 +34,11 @@ struct NetworkView: View {
                     },
                     label: {
                         Text(L10n.done)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .font(uiFont: .font(of: .text2, weight: .semibold))
                             .frame(height: 56)
                             .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.rain.color))
+                            .background(Color(.rain))
                             .cornerRadius(12)
                             .padding(.horizontal, 24)
                     }
@@ -62,7 +61,7 @@ struct NetworkView: View {
                 VStack(spacing: -1) {
                     HStack {
                         Text(title)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .foregroundColor(Color(.night))
                             .font(uiFont: .font(of: .text2))
                         Spacer()
                         if selected {
@@ -72,7 +71,7 @@ struct NetworkView: View {
                     .padding(.vertical, 24)
                     .padding(.horizontal, 16)
                     if withSeparator {
-                        Color(Asset.Colors.rain.color)
+                        Color(.rain)
                             .frame(height: 1)
                             .frame(maxWidth: .infinity)
                             .padding(.leading, 20)

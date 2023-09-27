@@ -1,5 +1,4 @@
 import Foundation
-import KeyAppUI
 import SwiftUI
 
 struct OnboardingBlockScreen: View {
@@ -66,7 +65,7 @@ struct OnboardingBlockScreen: View {
                 }
             }
         }
-        .background(Color(Asset.Colors.lime.color))
+        .background(Color(.lime))
         .ignoresSafeArea()
         .onboardingNavigationBar(title: "", onInfo: onInfo)
     }
