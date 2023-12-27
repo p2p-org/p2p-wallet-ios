@@ -4,8 +4,6 @@ import Resolver
 import SwiftUI
 
 final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocialState> {
-    @Injected private var helpLauncher: HelpCenterLauncher
-
     override func buildViewController(for state: RestoreSocialState) -> UIViewController? {
         switch state {
         case .signIn:
@@ -41,10 +39,6 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         }
     }
 
-    private func openInfo() {
-        helpLauncher.launch()
-    }
-
     private func socialSignInParameters() -> SocialSignInParameters {
         let content = OnboardingContentData(image: .easyToStart, title: L10n.howToContinue)
         let parameters = SocialSignInParameters(
@@ -62,8 +56,6 @@ private extension RestoreSocialDelegatedCoordinator {
     func handleSocial() -> UIViewController {
         let viewModel = SocialSignInViewModel(parameters: socialSignInParameters())
         let view = SocialSignInView(viewModel: viewModel)
-        viewModel.outInfo.sink { [weak self] in self?.openInfo() }
-            .store(in: &subscriptions)
 
         viewModel.outLogin.sinkAsync { [stateMachine] process in
             process.start {
@@ -101,10 +93,6 @@ private extension RestoreSocialDelegatedCoordinator {
             _ = try await stateMachine <- .start
         }
         .store(in: &subscriptions)
-        chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
-        }
-        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.back.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .back
         }
@@ -130,8 +118,6 @@ private extension RestoreSocialDelegatedCoordinator {
         let actionView = RestoreSocialOptionView(viewModel: actionViewModel)
         let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
             Task { _ = try await stateMachine <- .start }
-        }, info: { [weak self] in
-            self?.openInfo()
         }, customActions: { actionView })
         return UIHostingController(rootView: view)
     }

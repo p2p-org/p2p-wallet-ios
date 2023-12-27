@@ -46,8 +46,7 @@ struct SocialSignInAccountHasBeenUsedView: View {
         }
         .onboardingNavigationBar(
             title: L10n.stepOf("1", "3"),
-            onBack: { [weak viewModel] in viewModel?.back() },
-            onInfo: { [weak viewModel] in viewModel?.info() }
+            onBack: { [weak viewModel] in viewModel?.back() }
         )
         .modifier(OnboardingScreen())
     }

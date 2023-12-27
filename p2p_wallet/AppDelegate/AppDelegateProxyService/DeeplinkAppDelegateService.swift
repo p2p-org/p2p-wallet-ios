@@ -61,21 +61,9 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             return
         }
 
-        // Intercom survey
-        // https://key.app/intercom?intercom_survey_id=133423424
-        if urlComponents.host == "key.app",
-           urlComponents.path == "/intercom",
-           let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
-           let value = queryItem.value
-        {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                GlobalAppState.shared.surveyID = value
-            }
-        }
-
         // Send via link
         // https://t.key.app/<seed>
-        else if urlComponents.host == "t.key.app" {
+        if urlComponents.host == "t.key.app" {
             GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
         }
     }

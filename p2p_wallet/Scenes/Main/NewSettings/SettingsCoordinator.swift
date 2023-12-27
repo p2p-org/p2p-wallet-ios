@@ -3,8 +3,6 @@ import Resolver
 import UIKit
 
 final class SettingsCoordinator: Coordinator<Void> {
-    @Injected private var helpLauncher: HelpCenterLauncher
-
     private let navigationController: UINavigationController
 
     init(navigationController: UINavigationController) {
@@ -24,8 +22,6 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .username:
                     let vc = NewUsernameViewController()
                     navigationController.pushViewController(vc, animated: true)
-                case .support:
-                    helpLauncher.launch()
                 case .reserveUsername:
                     coordinate(to: CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController)))
                         .sink { [unowned self] in

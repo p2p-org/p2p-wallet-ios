@@ -1,6 +1,5 @@
 import AnalyticsManager
 import Combine
-import Intercom
 import Onboarding
 import Resolver
 import Sell
@@ -11,7 +10,6 @@ final class TabBarController: UITabBarController {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var deviceShareMigration: DeviceShareMigrationService
 
@@ -186,12 +184,6 @@ final class TabBarController: UITabBarController {
             }
             .store(in: &subscriptions)
 
-        pincodeViewModel.infoDidTap
-            .sink(receiveValue: { [unowned self] in
-                helpLauncher.launch()
-            })
-            .store(in: &subscriptions)
-
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -259,15 +251,6 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { [unowned self] in
                 changeItem(to: .history)
             })
-            .store(in: &subscriptions)
-
-        viewModel.moveToIntercomSurvey
-            .sink { id in
-                guard !id.isEmpty else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    Intercom.presentSurvey(id)
-                }
-            }
             .store(in: &subscriptions)
 
         // locking status

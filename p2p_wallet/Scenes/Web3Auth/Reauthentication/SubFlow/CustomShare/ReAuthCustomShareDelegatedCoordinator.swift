@@ -12,7 +12,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
                 attemptCounter: resendCounter,
                 strategy: .create
             )
-            let vc = EnterSMSCodeViewController(viewModel: vm, disableRightButton: true)
+            let vc = EnterSMSCodeViewController(viewModel: vm)
             vc.title = L10n.confirmYourNumber
 
             vm.coordinatorIO.onConfirm.sinkAsync { [weak vm, stateMachine] opt in
@@ -69,8 +69,7 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
                 onHome: { [stateMachine] in Task { try await stateMachine <- .back } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockValidate } },
                 onTermsOfService: { [weak self] in self?.openTermsOfService() },
-                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
-                onInfo: { [weak self] in self?.openHelp() }
+                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() }
             )
 
             return UIHostingController(rootView: view)
@@ -97,10 +96,5 @@ class ReAuthCustomShareDelegatedCoordinator: DelegatedCoordinator<ReAuthCustomSh
             bundledMarkdownTxtFileName: "Privacy_policy"
         )
         rootViewController?.present(viewController, animated: true)
-    }
-
-    private func openHelp() {
-        let helpLauncher: HelpCenterLauncher = Resolver.resolve()
-        helpLauncher.launch()
     }
 }

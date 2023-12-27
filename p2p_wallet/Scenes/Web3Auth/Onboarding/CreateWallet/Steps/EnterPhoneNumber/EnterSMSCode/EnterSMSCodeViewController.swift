@@ -11,13 +11,10 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     private var resendButtonRef = BERef<UIButton>()
     private var continueButtonRef = BERef<TextButton>()
 
-    private var disableRightButton: Bool
-
     var store = Set<AnyCancellable>()
 
-    init(viewModel: EnterSMSCodeViewModel, disableRightButton: Bool = false) {
+    init(viewModel: EnterSMSCodeViewModel) {
         self.viewModel = viewModel
-        self.disableRightButton = disableRightButton
         super.init()
     }
 
@@ -166,24 +163,10 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         )
         backButton.tintColor = .init(resource: .night)
         navigationItem.leftBarButtonItem = backButton
-
-        if !disableRightButton {
-            // Right button
-            let infoButton = UIButton()
-            infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-            infoButton.setImage(.init(resource: .helpOutline), for: .normal)
-            infoButton.contentMode = .scaleAspectFill
-            infoButton.tintColor = .init(resource: .night)
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
-        }
     }
 
     @objc func onBack() {
         viewModel.backTapped()
-    }
-
-    @objc func onInfo() {
-        viewModel.infoTapped()
     }
 
     private func openKeyboard() {

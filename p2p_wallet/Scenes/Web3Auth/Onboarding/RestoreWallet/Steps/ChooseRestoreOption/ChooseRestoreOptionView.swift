@@ -23,8 +23,7 @@ struct ChooseRestoreOptionView: View {
         }
         .onboardingNavigationBar(
             title: L10n.restoreYourWallet,
-            onBack: viewModel.isBackAvailable ? { [weak viewModel] in viewModel?.back.send() } : nil,
-            onInfo: { [weak viewModel] in viewModel?.openInfo.send() }
+            onBack: viewModel.isBackAvailable ? { [weak viewModel] in viewModel?.back.send() } : nil
         )
     }
 }

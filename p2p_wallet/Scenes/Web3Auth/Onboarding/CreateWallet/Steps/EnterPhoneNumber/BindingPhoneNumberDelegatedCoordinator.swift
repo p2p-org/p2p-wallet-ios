@@ -7,7 +7,6 @@ import Resolver
 import SwiftUI
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
@@ -31,12 +30,6 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 else { return }
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
-
-            mv.coordinatorIO.helpClicked
-                .sink(receiveValue: { [unowned self] in
-                    openHelp()
-                })
-                .store(in: &subscriptions)
 
             mv.coordinatorIO.phoneEntered.sinkAsync { [weak mv, stateMachine] phone in
                 mv?.isLoading = true
@@ -72,12 +65,6 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = false
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.showInfo
-                .sink(receiveValue: { [unowned self] in
-                    openHelp()
-                })
-                .store(in: &subscriptions)
-
             vm.coordinatorIO.goBack.sinkAsync { [weak vm, stateMachine] in
                 vm?.isLoading = true
                 do {
@@ -104,13 +91,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                         .LetSWaitTogetherFinallyTheAppWillBeRepaired
                         .ifYouWishToReportTheIssueUseErrorCode(abs(code))
                 ),
-                back: { [stateMachine] in try await stateMachine <- .back },
-                info: { [unowned self] in
-                    openHelp()
-                },
-                help: { [unowned self] in
-                    openHelp()
-                }
+                back: { [stateMachine] in try await stateMachine <- .back }
             )
 
             return UIHostingController(rootView: view)
@@ -139,8 +120,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
                 onTermsOfService: { [weak self] in self?.openTermsOfService() },
-                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
-                onInfo: { [weak self] in self?.openHelp() }
+                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() }
             )
 
             return UIHostingController(rootView: view)
@@ -173,9 +153,5 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             presentingViewController: rootViewController
         )
         return try await coordinator.start().async()
-    }
-
-    private func openHelp() {
-        helpLauncher.launch()
     }
 }

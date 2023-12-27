@@ -226,10 +226,6 @@ extension Resolver: ResolverRegistering {
 
     /// Graph scope: Recreate and reuse dependencies
     @MainActor private static func registerForGraphScope() {
-        // Intercom
-        register { IntercomMessengerLauncher() }
-            .implements(HelpCenterLauncher.self)
-
         // ImageSaver
         register { ImageSaver() }
             .implements(ImageSaverType.self)
