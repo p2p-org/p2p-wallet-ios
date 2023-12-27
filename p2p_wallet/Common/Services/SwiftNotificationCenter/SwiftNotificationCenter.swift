@@ -1,6 +1,6 @@
 import Foundation
 
-class Broadcaster {
+enum Broadcaster {
     fileprivate static var observersDic = [String: Any]()
 
     fileprivate static let notificationQueue = DispatchQueue(

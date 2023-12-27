@@ -193,8 +193,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
     static func format(code: String) -> String {
-        Self.prepareRawCode(code: code)
-            .prefix(Self.codeLength)
+        prepareRawCode(code: code)
+            .prefix(codeLength)
             .asString()
             .separate(every: 3, with: " ")
     }

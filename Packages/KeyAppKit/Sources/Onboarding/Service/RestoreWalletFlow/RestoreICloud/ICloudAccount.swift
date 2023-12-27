@@ -3,7 +3,7 @@ import SolanaSwift
 
 public struct ICloudAccount: Codable, Hashable {
     public let name: String?
-    internal let phrase: String
+    let phrase: String
     public let derivablePath: DerivablePath
     public let publicKey: String
 

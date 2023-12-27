@@ -10,7 +10,7 @@ public struct EthereumKeyPair: Equatable, Hashable {
     }
 
     /// Protected area data.
-    internal let privateKey: EthereumPrivateKey
+    let privateKey: EthereumPrivateKey
 
     /// Ethereum public key
     public var publicKey: String {
