@@ -163,15 +163,6 @@
       }
     },
     {
-      "identity" : "intercom-ios-sp",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/intercom/intercom-ios-sp",
-      "state" : {
-        "revision" : "1031655ceb49a8c8975b0cb138fe3bed897d159e",
-        "version" : "15.0.3"
-      }
-    },
-    {
       "identity" : "jazziconswift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/p2p-org/JazziconSwift.git",
@@ -194,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "c75584ac759cbb16b204d0a7de3ebf53ea6b304d",
-        "version" : "7.9.0"
+        "revision" : "add0a87ec4e31e2ca2a0b2085f0559201e4f5918",
+        "version" : "7.10.1"
       }
     },
     {
@@ -239,8 +230,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/PhoneNumberKit.git",
       "state" : {
-        "revision" : "b6c141f4a97dde7cd3ea335a5d6d679faa7675f6",
-        "version" : "3.6.7"
+        "revision" : "d2886b0735a47e47fb227504666756efb2e2ac26",
+        "version" : "3.7.6"
       }
     },
     {
@@ -401,8 +392,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "dc46eeb3928a75390651fac6c1ef7f93ad59a73b",
-        "version" : "1.11.1"
+        "revision" : "59b663f68e69f27a87b45de48cb63264b8194605",
+        "version" : "1.15.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "6ad4ea24b01559dde0773e3d091f1b9e36175036",
+        "version" : "509.0.2"
       }
     },
     {

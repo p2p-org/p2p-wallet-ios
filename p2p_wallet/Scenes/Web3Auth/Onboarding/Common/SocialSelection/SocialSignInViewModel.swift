@@ -30,7 +30,6 @@ final class SocialSignInViewModel: BaseViewModel, ObservableObject {
 
     let isBackAvailable: Bool
     let outBack: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
-    let outInfo: PassthroughSubject<Void, Never> = .init()
     let outLogin: PassthroughSubject<ReactiveProcess<SocialProvider>, Never> = .init()
 
     init(parameters: SocialSignInParameters) {
@@ -40,11 +39,6 @@ final class SocialSignInViewModel: BaseViewModel, ObservableObject {
         googleButtonTitle = parameters.googleButtonTitle
         isBackAvailable = parameters.isBackAvailable
         super.init()
-    }
-
-    func onInfo() {
-        guard loading == nil else { return }
-        outInfo.send()
     }
 
     func onBack() {

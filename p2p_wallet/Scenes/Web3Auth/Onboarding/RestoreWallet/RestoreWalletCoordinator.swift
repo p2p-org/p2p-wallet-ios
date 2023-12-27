@@ -11,7 +11,6 @@ enum RestoreWalletNavigation {
 }
 
 final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: OnboardingNavigationController
@@ -182,10 +181,6 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         }
     }
 
-    @objc private func openInfo() {
-        helpLauncher.launch()
-    }
-
     private func isBackAvailable() -> Bool {
         switch navigation {
         case .root:
@@ -220,10 +215,6 @@ private extension RestoreWalletCoordinator {
         .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
-        }
-        .store(in: &subscriptions)
-        chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
         }
         .store(in: &subscriptions)
         chooseRestoreOptionViewModel.back.sinkAsync {

@@ -5,7 +5,6 @@ import SwiftUI
 import UIKit
 
 final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetupState> {
-    @Injected private var helpLauncher: HelpCenterLauncher
 
     override func buildViewController(for state: SecuritySetupState) -> UIViewController? {
         switch state {
@@ -21,12 +20,6 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
     private func createPincodeScreen() -> UIViewController {
         let viewModel = PincodeViewModel(state: .create, isBackAvailable: false, successNotification: "")
         let viewController = PincodeViewController(viewModel: viewModel)
-
-        viewModel.infoDidTap
-            .sink { [unowned self] _ in
-                openInfo()
-            }
-            .store(in: &subscriptions)
 
         viewModel.confirmPin
             .sinkAsync { [stateMachine] pincode in
@@ -45,12 +38,6 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
         )
         let viewController = PincodeViewController(viewModel: viewModel)
 
-        viewModel.infoDidTap
-            .sink { [unowned self] _ in
-                openInfo()
-            }
-            .store(in: &subscriptions)
-
         viewModel.openMain
             .sinkAsync { [stateMachine] pincode, isBiometryEnabled in
                 try await stateMachine <- .setPincode(pincode: pincode, isBiometryEnabled: isBiometryEnabled)
@@ -62,9 +49,5 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
             .store(in: &subscriptions)
 
         return viewController
-    }
-
-    @objc private func openInfo() {
-        helpLauncher.launch()
     }
 }

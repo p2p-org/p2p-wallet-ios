@@ -15,7 +15,6 @@ struct OnboardingBlockScreen: View {
     let onCompletion: (() async throws -> Void)?
     let onTermsOfService: () -> Void
     let onPrivacyPolicy: () -> Void
-    let onInfo: (() -> Void)?
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -67,7 +66,7 @@ struct OnboardingBlockScreen: View {
         }
         .background(Color(.lime))
         .ignoresSafeArea()
-        .onboardingNavigationBar(title: "", onInfo: onInfo)
+        .onboardingNavigationBar(title: "")
     }
 
     private let formatter: DateComponentsFormatter = {
@@ -96,6 +95,6 @@ struct OnboardingBlockScreen_Previews: PreviewProvider {
             primaryButtonAction: "Recovery Kit",
             contentTitle: L10n.soLetSBreathe,
             contentSubtitle: { (_: Any) in L10n.YouVeUsedAll5Codes.TryAgainLater.forHelpContactSupport }
-        ) {} onCompletion: {} onTermsOfService: {} onPrivacyPolicy: {} onInfo: {}
+        ) {} onCompletion: {} onTermsOfService: {} onPrivacyPolicy: {}
     }
 }

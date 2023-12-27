@@ -18,9 +18,6 @@ packages:
     SwiftyUserDefaults:
         url: https://github.com/sunshinejr/SwiftyUserDefaults.git
         exactVersion: 5.3.0
-    Intercom:
-        url: https://github.com/intercom/intercom-ios-sp
-        exactVersion: 15.0.3
     Down:
         url: https://github.com/p2p-org/Down.git
         branch: master
@@ -256,7 +253,6 @@ targets:
               product: Reachability
             - package: KeychainSwift
             - package: SwiftyUserDefaults
-            - package: Intercom
             - package: Down
             - package: Resolver
             - package: Kingfisher

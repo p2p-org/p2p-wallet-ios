@@ -134,7 +134,6 @@ final class PincodeViewController: BaseViewController {
 
     private func setupNavBar() {
         addLeftButton()
-        addRightButton()
     }
 
     private func addLeftButton() {
@@ -162,23 +161,6 @@ final class PincodeViewController: BaseViewController {
 
     @objc private func onBack() {
         viewModel.back.send()
-    }
-
-    private func addRightButton() {
-        let infoButton = UIButton()
-        infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
-        infoButton.setImage(.init(resource: .helpOutline), for: .normal)
-        infoButton.contentMode = .scaleAspectFill
-        if navigationController != nil {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
-        } else {
-            view.addSubview(infoButton)
-            infoButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 17, yInset: 3)
-        }
-    }
-
-    @objc private func openInfo() {
-        viewModel.infoDidTap.send()
     }
 
     private var transition: PanelTransition?

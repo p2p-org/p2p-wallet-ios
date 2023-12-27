@@ -27,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Defaults.fiat = .usd
 
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
 
