@@ -6,18 +6,18 @@ public class JSBContext: NSObject {
     /// An id that indicates current unused local variable.
     ///
     /// The local variable will be used for temporary or permanent js data storage.
-    internal var variableId: Int = 0
+    var variableId: Int = 0
 
     /// A dispatch table for callback from async js functions.
-    internal var promiseDispatchTable: PromiseDispatchTable = .init()
+    var promiseDispatchTable: PromiseDispatchTable = .init()
 
-    internal let wkWebView: WKWebView
+    let wkWebView: WKWebView
 
     /// A local variable prefix.
     private static let kJsbValueName = "__localBridgeVariable"
 
     /// A WKWebview channel for returning values from JS `Promise`.
-    internal static let kPromiseCallback = "promiseCallback"
+    static let kPromiseCallback = "promiseCallback"
 
     public init(wkWebView: WKWebView? = nil) {
         self.wkWebView = wkWebView ?? WKWebView()
