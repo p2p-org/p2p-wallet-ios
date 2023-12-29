@@ -1,6 +1,6 @@
 import Foundation
 
-struct UsernameUtils {
+enum UsernameUtils {
     static func splitIntoNameAndDomain(rawName: String) -> (name: String, domain: String) {
         var name = ""
         var domain = ""

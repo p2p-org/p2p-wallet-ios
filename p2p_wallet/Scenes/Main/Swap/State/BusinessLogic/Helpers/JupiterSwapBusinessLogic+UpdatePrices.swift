@@ -26,7 +26,8 @@ extension JupiterSwapBusinessLogic {
             return state
         }
 
-        // Warning: This method should be refactored as we should not take prices directly from API but from PriceService
+        // Warning: This method should be refactored as we should not take prices directly from API but from
+        // PriceService
         let tokensPriceMap =
             ((try? await services.pricesAPI.getPrices(tokens: tokens, fiat: Defaults.fiat.code)) ?? [:])
             .reduce([String: Double]()) { combined, element in
