@@ -7,8 +7,8 @@ enum CryptoError: Error {
     case invalidMac
 }
 
-internal enum Crypto {
-    internal struct EncryptedMetadata: Codable {
+enum Crypto {
+    struct EncryptedMetadata: Codable {
         let nonce: String
         let metadataCiphered: String
 
@@ -18,7 +18,7 @@ internal enum Crypto {
         }
     }
 
-    internal static func extractSymmetricKey(seedPhrase: String) throws -> Data {
+    static func extractSymmetricKey(seedPhrase: String) throws -> Data {
         try extractOnboardingSeedPhrase(phrase: seedPhrase, path: "m/44'/101'/0'/0'")
     }
 

@@ -9,7 +9,7 @@ class BaseOTPViewModel: BaseViewModel, ObservableObject {
     @Published var error: String?
 
     @MainActor
-    internal func showError(error: Error?) {
+    func showError(error: Error?) {
         var errorText = L10n.SomethingWentWrong.pleaseTryAgain
         if let error = error as? APIGatewayError {
             switch error {

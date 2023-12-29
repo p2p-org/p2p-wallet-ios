@@ -2,7 +2,7 @@ import FeeRelayerSwift
 import Foundation
 import SolanaSwift
 
-struct SendInputBusinessLogic {
+enum SendInputBusinessLogic {
     static func sendInputBusinessLogic(
         state: SendInputState,
         action: SendInputAction,

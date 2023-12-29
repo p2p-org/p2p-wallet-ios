@@ -3,7 +3,7 @@ import Foundation
 import SolanaSwift
 import SwiftyUserDefaults
 
-struct Buy {
+enum Buy {
     typealias Currency = BuyCurrencyType
 
     enum FiatCurrency: String, BuyCurrencyType, Equatable {

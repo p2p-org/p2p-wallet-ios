@@ -102,7 +102,7 @@ public class RelayContextManagerImpl: RelayContextManager {
     }
 }
 
-internal extension FeeLimitForAuthorityResponse {
+extension FeeLimitForAuthorityResponse {
     func asUsageStatus() -> UsageStatus {
         UsageStatus(
             maxUsage: limits.maxFeeCount,
