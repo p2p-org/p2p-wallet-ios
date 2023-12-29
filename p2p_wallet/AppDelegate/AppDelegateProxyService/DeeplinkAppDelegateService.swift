@@ -123,6 +123,10 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             let seed = String(path.dropFirst())
             GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
         }
+        // keyapp://swap?inpuMint:<from>&outputMint:<to>
+        else if scheme == "keyapp", host == "swap" {
+            GlobalAppState.shared.swapUrl = components.url
+        }
     }
 }
 
