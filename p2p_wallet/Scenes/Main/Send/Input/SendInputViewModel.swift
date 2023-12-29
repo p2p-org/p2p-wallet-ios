@@ -304,6 +304,10 @@ private extension SendInputViewModel {
                 if self.status != .initializing {
                     self.logTokenChosen(symbol: value.token.symbol)
                 }
+                if currentState.amountInToken.isLamportsBiggerThanUInt64(decimals: Int(value.token.decimals)) {
+                    _ = await self.stateMachine.accept(action: .changeAmountInToken(0))
+                    self.inputAmountViewModel.amountText = "0"
+                }
                 _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
