@@ -128,7 +128,7 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
-    
+
     var moveToSwap: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
