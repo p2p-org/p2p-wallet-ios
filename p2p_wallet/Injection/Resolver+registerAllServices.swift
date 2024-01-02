@@ -541,8 +541,7 @@ extension Resolver: ResolverRegistering {
         register {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
-                tokensHost: GlobalAppState.shared
-                    .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag" : nil,
+                tokensHost: "https://token.jup.ag/all",
                 version: .v4
             )
         }
