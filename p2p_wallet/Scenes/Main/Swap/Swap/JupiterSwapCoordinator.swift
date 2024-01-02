@@ -5,16 +5,17 @@ import SolanaSwift
 import SwiftUI
 
 enum JupiterSwapSource: String {
-    case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend", deeplink = "Deeplink"
+    case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend",
+         deeplink = "Deeplink"
 }
 
 struct JupiterSwapParameters {
     let preChosenWallet: SolanaAccount?
     let destinationWallet: SolanaAccount?
-    
+
     let inputMint: String?
     let outputMint: String?
-    
+
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
@@ -32,10 +33,10 @@ struct JupiterSwapParameters {
     ) {
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
-        
+
         self.inputMint = inputMint
         self.outputMint = outputMint
-        
+
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
         self.source = source
