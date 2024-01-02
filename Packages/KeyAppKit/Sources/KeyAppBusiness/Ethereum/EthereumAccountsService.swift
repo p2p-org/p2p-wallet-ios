@@ -98,7 +98,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         try await accounts.fetch()?.value
     }
 
-    internal func fetchPrice(
+    func fetchPrice(
         state: AsyncValueState<[EthereumAccount]>,
         fiat: String
     ) -> Future<AsyncValueState<[Account]>, Never> {
@@ -153,7 +153,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
     }
 }
 
-internal class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
+class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
     enum Error: Swift.Error {
         case invalidEthereumAddress
     }
@@ -208,7 +208,7 @@ internal class EthereumAccountAsyncValue: AsyncValue<[EthereumAccount]> {
     }
 
     /// Method resolve ethereum erc-20 token accounts.
-    internal static func resolveTokenAccounts(
+    static func resolveTokenAccounts(
         address: String,
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository

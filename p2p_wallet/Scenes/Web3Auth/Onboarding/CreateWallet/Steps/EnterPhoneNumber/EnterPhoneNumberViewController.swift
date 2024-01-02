@@ -136,13 +136,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
     func configureNavBar() {
         addLeftButton()
-        // Right button
-        let infoButton = UIButton()
-        infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-        infoButton.setImage(.init(resource: .helpOutline), for: .normal)
-        infoButton.contentMode = .scaleAspectFill
-        infoButton.tintColor = .init(resource: .night)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
     }
 
     private func addLeftButton() {
@@ -159,10 +152,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
     @objc private func onBack() {
         viewModel.coordinatorIO.back.send()
-    }
-
-    @objc func onInfo() {
-        viewModel.infoClicked()
     }
 }
 

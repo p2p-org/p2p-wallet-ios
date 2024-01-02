@@ -9,7 +9,6 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
             AppflyerAppDelegateService(),
             DeeplinkAppDelegateService(),
             HistoryAppdelegateService(),
-            IntercomAppDelegateService(),
             LokaliseAppDelegateService(),
         ]
         serviceAppDelegates = services.compactMap { $0 }

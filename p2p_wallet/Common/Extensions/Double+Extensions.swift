@@ -145,3 +145,18 @@ extension Double {
         "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 }
+
+extension Double {
+    // Check if lamport value is smaller than UInt64 max
+    func isLamportsBiggerThanUInt64(decimals: Int) -> Bool {
+        let value = (self * Double.pow(10, Double(decimals))).rounded()
+        let maxValue = Decimal(UInt64.max)
+
+        if Decimal(value) > maxValue {
+            debugPrint("\(value) overflows Int64 max \(maxValue)")
+            return true
+        }
+
+        return false
+    }
+}

@@ -4,8 +4,6 @@ import Resolver
 import SwiftUI
 
 final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreSeedState> {
-    @Injected private var helpLauncher: HelpCenterLauncher
-
     override func buildViewController(for state: RestoreSeedState) -> UIViewController? {
         switch state {
         case .signInSeed:
@@ -15,10 +13,6 @@ final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreS
         case .finish:
             return nil
         }
-    }
-
-    private func openInfo() {
-        helpLauncher.launch()
     }
 }
 
@@ -35,9 +29,6 @@ private extension RestoreSeedPhraseDelegatedCoordinator {
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
 
-        viewModel.info.sinkAsync { [weak self] _ in
-            self?.openInfo()
-        }.store(in: &subscriptions)
         return UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
     }
 

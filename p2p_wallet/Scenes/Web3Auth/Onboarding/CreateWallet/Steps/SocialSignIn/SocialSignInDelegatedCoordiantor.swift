@@ -6,7 +6,6 @@ import Resolver
 import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
@@ -16,8 +15,6 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
 
             let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
-            vc.viewModel.outInfo.sink { [weak self] in self?.openInfo() }
-                .store(in: &subscriptions)
 
             vc.viewModel.outBack.sinkAsync { [stateMachine] process in
                 process.start { try await stateMachine <- .signInBack }
@@ -97,10 +94,6 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             return vc
         default: return nil
         }
-    }
-
-    func openInfo() {
-        helpLauncher.launch()
     }
 
     private func socialSignInParameters() -> SocialSignInParameters {

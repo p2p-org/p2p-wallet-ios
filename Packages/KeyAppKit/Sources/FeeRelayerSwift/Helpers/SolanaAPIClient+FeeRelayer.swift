@@ -11,7 +11,7 @@ extension SolanaAPIClient {
     /// Retrieves associated SPL Token address for ``address``.
     ///
     /// - Returns: The associated address.
-    internal func getAssociatedSPLTokenAddress(for address: PublicKey, mint: PublicKey) async throws -> PublicKey {
+    func getAssociatedSPLTokenAddress(for address: PublicKey, mint: PublicKey) async throws -> PublicKey {
         let account: BufferInfo<SPLTokenAccountState>? = try? await getAccountInfo(account: address.base58EncodedString)
 
         // The account doesn't exists
@@ -31,7 +31,7 @@ extension SolanaAPIClient {
         return try PublicKey.associatedTokenAddress(walletAddress: address, tokenMintAddress: mint)
     }
 
-    internal func isAccountExists(_ address: PublicKey) async throws -> Bool {
+    func isAccountExists(_ address: PublicKey) async throws -> Bool {
         let account: BufferInfo<EmptyInfo>? = try await getAccountInfo(account: address.base58EncodedString)
         return account != nil
     }

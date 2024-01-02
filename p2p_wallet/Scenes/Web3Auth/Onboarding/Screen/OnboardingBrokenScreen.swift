@@ -6,8 +6,6 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
     let contentData: OnboardingContentData
 
     let back: (() async throws -> Void)?
-    let info: (() -> Void)?
-    let help: (() -> Void)?
 
     @ViewBuilder var customActions: CustomActions
 
@@ -17,15 +15,11 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
         title: String,
         contentData: OnboardingContentData,
         back: (() async throws -> Void)? = nil,
-        info: (() -> Void)? = nil,
-        help: (() -> Void)? = nil,
         @ViewBuilder customActions: () -> CustomActions
     ) {
         self.title = title
         self.contentData = contentData
         self.back = back
-        self.info = info
-        self.help = help
         self.customActions = customActions()
     }
 
@@ -40,17 +34,6 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
             BottomActionContainer {
                 VStack {
                     customActions
-
-                    if let help = help {
-                        TextButtonView(
-                            title: L10n.support,
-                            style: .inverted,
-                            size: .large,
-                            leading: UIImage(resource: .newReleasesOutlined),
-                            onPressed: { help() }
-                        )
-                        .frame(height: TextButton.Size.large.height)
-                    }
 
                     if let back = back {
                         TextButtonView(
@@ -74,8 +57,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
         }
         .onboardingNavigationBar(
             title: title,
-            onBack: nil,
-            onInfo: info != nil ? { info!() } : nil
+            onBack: nil
         )
         .modifier(OnboardingScreen())
     }
@@ -86,15 +68,12 @@ extension OnboardingBrokenScreen where CustomActions == SwiftUI.EmptyView {
         title: String,
         contentData: OnboardingContentData,
         back: (() async throws -> Void)? = nil,
-        info: (() -> Void)? = nil,
-        help: (() -> Void)? = nil
+        help _: (() -> Void)? = nil
     ) {
         self.init(
             title: title,
             contentData: contentData,
             back: back,
-            info: info,
-            help: help,
             customActions: { SwiftUI.EmptyView() }
         )
     }
@@ -110,9 +89,7 @@ struct OnboardingBrokenScreen_Previews: PreviewProvider {
                     title: L10n.easyToStart,
                     subtitle: L10n.createYourAccountIn1Minute
                 ),
-                back: {},
-                info: {},
-                help: {}
+                back: {}
             )
         }
     }

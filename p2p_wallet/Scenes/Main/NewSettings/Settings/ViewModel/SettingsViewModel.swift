@@ -66,8 +66,6 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 return KeyAppAnalyticsEvent.settingsPinClick
             case .network:
                 return KeyAppAnalyticsEvent.settingsNetworkClick
-            case .support:
-                return KeyAppAnalyticsEvent.settingsSupportClick
             case .recoveryKit:
                 return KeyAppAnalyticsEvent.settingsRecoveryClick
             default:
@@ -195,7 +193,6 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 extension SettingsViewModel {
     enum OpenAction {
         case username
-        case support
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin

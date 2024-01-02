@@ -114,31 +114,6 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
-    var moveToIntercomSurvey: AnyPublisher<String, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.surveyID != nil && value == false
-                }
-                .map { _ in () },
-
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
-        )
-        .map { _ in () }
-        .map {
-            GlobalAppState.shared.surveyID ?? ""
-        }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.surveyID = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
-    }
-
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
