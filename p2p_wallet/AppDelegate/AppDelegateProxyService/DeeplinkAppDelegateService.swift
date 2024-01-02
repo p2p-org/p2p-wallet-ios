@@ -68,7 +68,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         }
 
         // Swap via link
-        // https://s.key.app/?inputMint=<from>&outputMint=<to>
+        // https://s.key.app/swap?inputMint=<from>&outputMint=<to>
         if urlComponents.host == "s.key.app" {
             GlobalAppState.shared.swapUrl = urlComponents.url
         }
