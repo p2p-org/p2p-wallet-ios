@@ -371,7 +371,7 @@ public actor TKeyJSFacade: TKeyFacade {
         return RefreshDeviceShareResult(share: deviceShare)
     }
 
-    internal func parseFacadeJSError(error: Any) -> TKeyFacadeError? {
+    func parseFacadeJSError(error: Any) -> TKeyFacadeError? {
         guard
             let errorStr = error as? String,
             let error = errorStr.data(using: .utf8)

@@ -2,7 +2,7 @@ import Foundation
 import WebKit
 
 /// The class is responsible for creating background web view.
-class BackgroundWebViewManager {
+enum BackgroundWebViewManager {
     static func requestWebView() -> WKWebView {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
         WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in

@@ -63,7 +63,7 @@ public enum SocialSignInState: Codable, State, Equatable {
         }
     }
 
-    internal func socialSelectionEventHandler(
+    func socialSelectionEventHandler(
         currentState _: Self, event: Event,
         provider: Provider
     ) async throws -> Self {
@@ -78,7 +78,7 @@ public enum SocialSignInState: Codable, State, Equatable {
         }
     }
 
-    internal func socialSignInProgressEventHandler(event: Event, provider: Provider) async throws -> Self {
+    func socialSignInProgressEventHandler(event: Event, provider: Provider) async throws -> Self {
         switch event {
         case let .signInTorus(value, email, socialProvider):
             let tokenID = TokenID(value: value, provider: socialProvider.rawValue)
@@ -118,7 +118,7 @@ public enum SocialSignInState: Codable, State, Equatable {
         }
     }
 
-    internal func socialTryAgainEventHandler(
+    func socialTryAgainEventHandler(
         currentState _: Self, event: Event,
         provider: Provider
     ) async throws -> Self {
@@ -161,7 +161,7 @@ public enum SocialSignInState: Codable, State, Equatable {
         }
     }
 
-    internal func socialSignInAccountWasUsedHandler(
+    func socialSignInAccountWasUsedHandler(
         currentState: Self, event: Event,
         provider: Provider
     ) async throws -> Self {

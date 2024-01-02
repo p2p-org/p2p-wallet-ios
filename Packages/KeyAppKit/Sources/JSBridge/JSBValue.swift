@@ -15,7 +15,7 @@ public class JSBValue: JSBridge, CustomStringConvertible {
         currentContext = context
     }
 
-    internal init(name: String) {
+    init(name: String) {
         // Set variable name
         self.name = name
     }
@@ -114,13 +114,13 @@ public class JSBValue: JSBridge, CustomStringConvertible {
     }
 
     /// Parse swift args to js args.
-    internal func parseArgs(_ args: [CustomStringConvertible]) throws -> String {
+    func parseArgs(_ args: [CustomStringConvertible]) throws -> String {
         try args
             .map(parse)
             .joined(separator: ", ")
     }
 
-    internal func parse(_ arg: CustomStringConvertible) throws -> String {
+    func parse(_ arg: CustomStringConvertible) throws -> String {
         if let arg = arg as? String {
             return "\"\(arg.safe)\""
         }
@@ -187,7 +187,7 @@ public class JSBValue: JSBridge, CustomStringConvertible {
     }
 }
 
-internal extension String {
+extension String {
     /// Make string be safed in js
     var safe: String {
         replacingOccurrences(of: "\"", with: "\\\"")
