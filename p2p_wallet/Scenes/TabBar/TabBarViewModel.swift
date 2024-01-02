@@ -95,7 +95,7 @@ extension TabBarViewModel {
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> {
         authenticationHandler.authenticationStatusPublisher
     }
-    
+
     var moveToHistory: AnyPublisher<Void, Never> {
         Publishers.Merge(
             notificationService.showNotification
@@ -113,7 +113,7 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
-    
+
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
@@ -128,9 +128,9 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
-    
+
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
-    
+
     var transferAccountsPublisher: AnyPublisher<Bool, Never> {
         Publishers.CombineLatest(
             ethereumAccountsService.statePublisher,
