@@ -5,7 +5,6 @@ import SwiftUI
 import UIKit
 
 final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetupState> {
-
     override func buildViewController(for state: SecuritySetupState) -> UIViewController? {
         switch state {
         case .createPincode:
