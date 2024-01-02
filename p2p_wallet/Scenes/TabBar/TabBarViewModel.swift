@@ -76,8 +76,8 @@ final class TabBarViewModel {
         analyticsManager.log(event: .mainScreenCryptoClick)
     }
 
-    func sendTapped() {
-        analyticsManager.log(event: .mainScreenSendClick)
+    func swapTapped() {
+        analyticsManager.log(event: .mainScreenSwapBar)
     }
 
     func historyTapped() {
@@ -166,25 +166,5 @@ extension TabBarViewModel {
             return !transferAccounts.isEmpty
         }
         .eraseToAnyPublisher()
-    }
-
-    var walletBalancePublisher: AnyPublisher<String, Never> {
-        solanaAccountsService.statePublisher
-            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: CurrencyAmount = state.value
-                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
-                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
-                    .reduce(CurrencyAmount(usd: 0)) {
-                        $0 + $1.amountInFiat
-                    }
-                let formatter = CurrencyFormatter(
-                    showSpacingAfterCurrencySymbol: false,
-                    showSpacingAfterCurrencyGroup: false,
-                    showSpacingAfterLessThanOperator: false
-                )
-                return formatter.string(amount: equityValue)
-            }
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
     }
 }

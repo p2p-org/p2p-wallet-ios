@@ -2,21 +2,6 @@ import Combine
 import UIKit
 
 final class CustomTabBar: UITabBar {
-    private lazy var middleButton: UIButton! = {
-        let middleButton = UIButton()
-        middleButton.frame.size = CGSize(width: 60, height: 60)
-        middleButton.backgroundColor = .init(resource: .snow)
-        middleButton.layer.cornerRadius = 30
-        middleButton.setImage(UIImage(resource: .tabBarCenter), for: .normal)
-        middleButton.setImage(UIImage(resource: .tabBarCenter), for: .highlighted)
-        middleButton.imageView?.contentMode = .scaleAspectFit
-        middleButton.contentHorizontalAlignment = .fill
-        middleButton.contentVerticalAlignment = .fill
-        middleButton.addTarget(self, action: #selector(middleButtonAction), for: .touchUpInside)
-        addSubview(middleButton)
-        return middleButton
-    }()
-
     private lazy var selectedView: UIView! = {
         let selectedView = UIView()
         selectedView.frame.size = CGSize(width: 36, height: 4)
@@ -40,22 +25,9 @@ final class CustomTabBar: UITabBar {
         return 14
     }
 
-    override var clipsToBounds: Bool {
-        didSet {
-            middleButton.clipsToBounds = false
-        }
-    }
-
-    private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
-    var middleButtonClicked: AnyPublisher<Void, Never> { middleButtonClickedSubject.eraseToAnyPublisher() }
-
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        middleButton.center = CGPoint(
-            x: frame.width / 2,
-            y: frame.height / 2 - Self.additionalHeight - inset
-        )
         updateSelectedViewPositionIfNeeded()
 
         layer.shadowColor = UIColor(red: 0.043, green: 0.122, blue: 0.208, alpha: 0.1).cgColor
@@ -84,15 +56,6 @@ final class CustomTabBar: UITabBar {
     }
 
     // MARK: - Actions
-
-    @objc func middleButtonAction() {
-        middleButtonClickedSubject.send()
-    }
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard !clipsToBounds, !isHidden, alpha > 0 else { return nil }
-        return middleButton.frame.contains(point) ? middleButton : super.hitTest(point, with: event)
-    }
 
     func updateSelectedViewPositionIfNeeded() {
         guard let currentIndex = currentIndex else { return }

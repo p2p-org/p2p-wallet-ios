@@ -46,8 +46,8 @@ final class TabBarCoordinator: Coordinator<Void> {
     /// Start coordinator
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
-        let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setupCryptoAndHistory()
+        let secondTab = setUpSwap()
+        let (firstTab, thirdTab) = setupCryptoAndHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -55,7 +55,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             [
                 firstTab,
                 secondTab,
-                UINavigationController(),
                 thirdTab,
                 forthTab,
             ],
@@ -110,7 +109,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        listenToSendButton()
         listenToWallet()
     }
 
@@ -156,6 +154,26 @@ final class TabBarCoordinator: Coordinator<Void> {
         return (cryptoNavigation, historyNavigation)
     }
 
+    /// Set up Swap scene
+    private func setUpSwap() -> UIViewController {
+        let nc = UINavigationController()
+        let swapCoordinator = JupiterSwapCoordinator(
+            navigationController: nc,
+            params: JupiterSwapParameters(
+                dismissAfterCompletion: false,
+                openKeyboardOnStart: false,
+                source: .actionPanel,
+                hideTabBar: false
+            )
+        )
+        jupiterSwapTabCoordinator = swapCoordinator
+        // coordinate to homeCoordinator
+        coordinate(to: swapCoordinator)
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
+        return nc
+    }
+
     /// Set up Settings scene
     private func setUpSettings() -> UIViewController {
         let settingsNavigation = UINavigationController()
@@ -164,44 +182,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
         return settingsNavigation
-    }
-
-    /// Listen to Send Button
-    private func listenToSendButton() {
-        tabBarController.middleButtonClicked
-            .receive(on: RunLoop.main)
-            .compactMap { [weak self] in
-                self?.navigationControllerForSelectedTab()
-            }
-            .flatMap { [unowned self] navigationController -> AnyPublisher<SendResult, Never> in
-                self.coordinate(
-                    to: SendCoordinator(
-                        rootViewController: navigationController,
-                        preChosenWallet: nil,
-                        hideTabBar: true,
-                        allowSwitchingMainAmountType: true
-                    )
-                )
-            }
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] result in
-                guard let navigationController = self?.navigationControllerForSelectedTab() else {
-                    return
-                }
-                switch result {
-                case let .sent(model):
-                    navigationController.popToRootViewController(animated: true)
-                    self?.showSendTransactionStatus(navigationController: navigationController, model: model)
-                case let .wormhole(trx):
-                    navigationController.popToRootViewController(animated: true)
-                    self?.showUserAction(userAction: trx)
-                case .sentViaLink:
-                    navigationController.popToRootViewController(animated: true)
-                case .cancelled:
-                    break
-                }
-            })
-            .store(in: &subscriptions)
     }
 
     private func listenToWallet() {
