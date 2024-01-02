@@ -151,7 +151,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         try await fetchedAccountsByRpc.fetch()?.value
     }
 
-    internal func fetchPrice(
+    func fetchPrice(
         for state: AsyncValueState<[Account]>,
         fiat: String
     ) -> Future<AsyncValueState<[Account]>, Never> {
@@ -193,7 +193,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     }
 
     /// Update single accounts.
-    internal func onUpdateAccount(account: SolanaAccount) {
+    func onUpdateAccount(account: SolanaAccount) {
         var state = accountsStream.value
 
         let matchIdx = state.value
@@ -238,7 +238,7 @@ public extension SolanaAccountsService {
     }
 }
 
-internal class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
+class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
     enum Error: Swift.Error {
         case authorityError
     }

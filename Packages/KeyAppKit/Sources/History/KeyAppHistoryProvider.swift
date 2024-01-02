@@ -64,7 +64,7 @@ public class KeyAppHistoryProviderImpl: KeyAppHistoryProvider {
     }
 }
 
-internal struct TransactionsRequestParams: Codable {
+struct TransactionsRequestParams: Codable {
     var pubKey: String
     var limit: UInt64
     var offset: UInt64

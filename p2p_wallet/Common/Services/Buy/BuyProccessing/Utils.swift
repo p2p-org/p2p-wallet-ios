@@ -1,6 +1,6 @@
 import Foundation
 
-struct BuyProviderUtils {
+enum BuyProviderUtils {
     typealias Params = [String: String?]
 }
 
