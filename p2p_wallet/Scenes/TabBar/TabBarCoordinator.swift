@@ -2,6 +2,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
@@ -92,6 +93,20 @@ final class TabBarCoordinator: Coordinator<Void> {
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
                 }
+            }
+            .store(in: &subscriptions)
+
+        tabBarViewModel.moveToSwap
+            .sink { [weak self] url in
+                guard let self else { return }
+                guard let vc = UIApplication.topmostViewController()?.navigationController ?? self.tabBarController
+                    .navigationController else { return }
+
+                let urlComponent = URLComponents(url: url, resolvingAgainstBaseURL: true)
+                let inputMint = urlComponent?.queryItems?.first { $0.name == "inputMint" }?.value
+                let outputMint = urlComponent?.queryItems?.first { $0.name == "outputMint" }?.value
+
+                self.routeToSwap(nc: vc, source: .tapToken, inputMint: inputMint, outputMint: outputMint)
             }
             .store(in: &subscriptions)
 
@@ -244,7 +259,9 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func routeToSwap(
         nc: UINavigationController,
         hidesBottomBarWhenPushed: Bool = true,
-        source: JupiterSwapSource
+        source: JupiterSwapSource,
+        inputMint: String? = nil,
+        outputMint: String? = nil
     ) {
         let swapCoordinator = JupiterSwapCoordinator(
             navigationController: nc,
@@ -252,6 +269,8 @@ final class TabBarCoordinator: Coordinator<Void> {
                 dismissAfterCompletion: source != .tapMain,
                 openKeyboardOnStart: source != .tapMain,
                 source: source,
+                inputMint: inputMint,
+                outputMint: outputMint,
                 hideTabBar: hidesBottomBarWhenPushed
             )
         )

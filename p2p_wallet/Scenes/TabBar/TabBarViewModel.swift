@@ -129,6 +129,21 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
+    var moveToSwap: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
+        )
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.swapUrl }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.swapUrl = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
 
     var transferAccountsPublisher: AnyPublisher<Bool, Never> {

@@ -66,6 +66,12 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         if urlComponents.host == "t.key.app" {
             GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
         }
+
+        // Swap via link
+        // https://s.key.app/swap?inputMint=<from>&outputMint=<to>
+        if urlComponents.host == "s.key.app" {
+            GlobalAppState.shared.swapUrl = urlComponents.url
+        }
     }
 
     private func handleCustomURIScheme(urlComponents components: URLComponents) {
@@ -110,6 +116,10 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         else if scheme == "keyapp", host == "t" {
             let seed = String(path.dropFirst())
             GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
+        }
+        // keyapp://swap?inputMint=<from>&outputMint=<to>
+        else if scheme == "keyapp", host == "swap" {
+            GlobalAppState.shared.swapUrl = components.url
         }
     }
 }
