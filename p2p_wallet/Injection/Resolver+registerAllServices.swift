@@ -42,6 +42,7 @@ extension Resolver: ResolverRegistering {
             WarmupManager(processes: [
                 RemoteConfigWarmupProcess(),
                 TokenServiceWarmupProcess(),
+                MigrationWarmupProcess(),
             ])
         }.scope(.application)
 
