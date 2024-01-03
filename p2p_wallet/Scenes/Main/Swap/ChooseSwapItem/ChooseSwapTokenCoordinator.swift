@@ -63,7 +63,15 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
         token: SwapToken?
     ) {
         if token?.token.tags.map(\.name).contains("unknown") == true {
-            let vc = UIBottomSheetHostingController(rootView: Text("strict"), shouldIgnoresKeyboard: true)
+            let vc = UIBottomSheetHostingController(
+                rootView: NonStrictTokenConfirmationView(
+                    token: token
+                ) {
+                    [weak self] in
+                    self?.close(token: token)
+                },
+                shouldIgnoresKeyboard: true
+            )
             vc.view.layer.cornerRadius = 20
 
             // present bottom sheet
