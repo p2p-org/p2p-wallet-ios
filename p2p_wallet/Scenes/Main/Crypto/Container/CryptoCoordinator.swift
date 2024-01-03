@@ -22,7 +22,7 @@ enum CryptoNavigation: Equatable {
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
     // Empty
-    case topUpCoin(Token)
+    case topUpCoin(TokenMetadata)
     // Error
     case error(show: Bool)
 }
@@ -96,6 +96,32 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 )
                 return coordinate(to: coordinator).eraseToAnyPublisher()
             }
+        case .send:
+            return coordinate(
+                to: SendCoordinator(
+                    rootViewController: navigationController,
+                    preChosenWallet: nil,
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
+                )
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case let .sent(model):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showSendTransactionStatus(model: model)
+                case let .wormhole(trx):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showUserAction(userAction: trx)
+                case .sentViaLink:
+                    self?.navigationController.popToRootViewController(animated: true)
+                case .cancelled:
+                    break
+                }
+            })
+            .map { _ in () }
+            .eraseToAnyPublisher()
         case .swap:
             return coordinate(
                 to: JupiterSwapCoordinator(
@@ -153,5 +179,20 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             return Just(())
                 .eraseToAnyPublisher()
         }
+    }
+
+    private func showUserAction(userAction: any UserAction) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(userAction: userAction),
+            presentingViewController: navigationController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    }
+
+    private func showSendTransactionStatus(model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
     }
 }
