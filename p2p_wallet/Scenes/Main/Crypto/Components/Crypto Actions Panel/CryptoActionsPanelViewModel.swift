@@ -31,7 +31,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        actions = [.receive, .swap]
+        actions = [.buy, .receive, .send, .swap]
 
         bind()
     }
@@ -44,7 +44,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
                 let equityValue: CurrencyAmount = state.value
                     .filter { !($0.token.keyAppExtensions.isPositionOnWS ?? false) }
                     .reduce(CurrencyAmount(usd: 0)) {
-                        return $0 + $1.amountInFiat
+                        $0 + $1.amountInFiat
                     }
 
                 let formatter = CurrencyFormatter(
@@ -63,11 +63,17 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
 
     func actionClicked(_ action: WalletActionType) {
         switch action {
+        case .buy:
+            analyticsManager.log(event: .buyScreenOpened(lastScreen: "mainScreen"))
+            navigation.send(.buy)
         case .receive:
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
             else { return }
             analyticsManager.log(event: .cryptoReceiveClick)
             navigation.send(.receive(publicKey: pubkey))
+        case .send:
+            analyticsManager.log(event: .mainScreenSendClick)
+            navigation.send(.send)
         case .swap:
             analyticsManager.log(event: .cryptoSwapClick)
             navigation.send(.swap)
