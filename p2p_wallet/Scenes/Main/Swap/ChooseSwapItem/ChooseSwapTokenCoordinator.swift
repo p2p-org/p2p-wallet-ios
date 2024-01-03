@@ -9,6 +9,7 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     private let fromToken: Bool
     private let tokens: [SwapToken]
     private let title: String
+    private var nonStrictTokenAlertVC: CustomPresentableViewController?
 
     init(
         chosenWallet: SwapToken,
@@ -63,19 +64,21 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
         token: SwapToken?
     ) {
         if token?.token.tags.map(\.name).contains("unknown") == true {
-            let vc = UIBottomSheetHostingController(
+            nonStrictTokenAlertVC = UIBottomSheetHostingController(
                 rootView: NonStrictTokenConfirmationView(
                     token: token
                 ) {
                     [weak self] in
-                    self?.close(token: token)
+                    self?.nonStrictTokenAlertVC?.dismiss(animated: true) { [weak self] in
+                        self?.close(token: token)
+                    }
                 },
                 shouldIgnoresKeyboard: true
             )
-            vc.view.layer.cornerRadius = 20
+            nonStrictTokenAlertVC!.view.layer.cornerRadius = 20
 
             // present bottom sheet
-            navigationController.present(vc, interactiveDismissalType: .standard)
+            navigationController.present(nonStrictTokenAlertVC!, interactiveDismissalType: .standard)
         } else {
             close(token: token)
         }
