@@ -543,6 +543,8 @@ extension Resolver: ResolverRegistering {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
                 tokensHost: "https://token.jup.ag/all",
+//                GlobalAppState.shared
+//                .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag/tokens" : nil,
                 version: .v4
             )
         }
