@@ -97,7 +97,7 @@ extension TokenAmount: CryptoAmountConvertible {
 
             if let mint {
                 token = SolanaToken(
-                    _tags: nil,
+                    tags: nil,
                     chainId: 0,
                     mintAddress: mint,
                     symbol: symbol,

@@ -75,6 +75,7 @@ struct NonStrictTokenConfirmationView: View {
     NonStrictTokenConfirmationView(
         token: .init(
             token: .unsupported(
+                tags: ["unknown"],
                 mint: "GWART6ijjvijdihuhvjhhdhjBn78Ee",
                 decimals: 6,
                 symbol: "GWART",

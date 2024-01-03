@@ -3,7 +3,7 @@ import KeyAppKitCore
 
 public enum SupportedToken {
     public static let usdt: SolanaToken = .init(
-        _tags: nil,
+        tags: nil,
         chainId: 101,
         mintAddress: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
         symbol: "USDTet",
