@@ -82,6 +82,10 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     private func navigate(to scene: CryptoNavigation) -> AnyPublisher<CryptoResult, Never> {
         switch scene {
+        case .buy:
+            return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                .map { _ in () }
+                .eraseToAnyPublisher()
         case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(

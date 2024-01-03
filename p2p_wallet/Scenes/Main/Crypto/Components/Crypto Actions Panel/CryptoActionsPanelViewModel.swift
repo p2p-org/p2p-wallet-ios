@@ -64,7 +64,8 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .buy:
-            break
+            analyticsManager.log(event: .buyScreenOpened(lastScreen: "mainScreen"))
+            navigation.send(.buy)
         case .receive:
             guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.address)
             else { return }
