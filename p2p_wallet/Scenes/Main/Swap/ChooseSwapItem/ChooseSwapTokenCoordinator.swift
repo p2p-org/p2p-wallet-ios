@@ -47,10 +47,30 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
         }
 
         viewModel.chooseTokenSubject
-            .sink { [weak self] value in self?.close(token: value as? SwapToken) }
+            .sink { [weak self] value in
+                self?.openNonStrictTokenConfirmationIfNeededOrClose(
+                    token: value as? SwapToken
+                )
+            }
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
+    }
+
+    // MARK: - Navigation
+
+    private func openNonStrictTokenConfirmationIfNeededOrClose(
+        token: SwapToken?
+    ) {
+        if token?.token.tags.map(\.name).contains("unknown") == true {
+            let vc = UIBottomSheetHostingController(rootView: Text("strict"), shouldIgnoresKeyboard: true)
+            vc.view.layer.cornerRadius = 20
+
+            // present bottom sheet
+            navigationController.present(vc, interactiveDismissalType: .standard)
+        } else {
+            close(token: token)
+        }
     }
 
     private func close(token: SwapToken?) {
