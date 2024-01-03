@@ -6,13 +6,20 @@ struct NonStrictTokenConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .center) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color(.lightGray))
+                .frame(width: 31, height: 4)
+                .padding(.vertical, 6)
+
             Image(.nonStrictToken)
+                .padding(.top, 20.88)
 
             explanationView
                 .padding(.top, 16)
 
             buttons
                 .padding(.top, 28)
+                .padding(.bottom, 32)
         }
     }
 
@@ -30,9 +37,11 @@ struct NonStrictTokenConfirmationView: View {
                 Text(L10n.theTokenIsOutOfTheStrictList(token?.token.symbol ?? token?.token.mintAddress.prefix(6) ?? ""))
                     .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1, weight: .semibold))
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Text(L10n.makeSureTheMintAddressIsCorrectBeforeConfirming(token?.token.mintAddress.shortAddress ?? ""))
                     .font(uiFont: .font(of: .label1))
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
         }
