@@ -200,7 +200,7 @@ private extension TokenMetadata {
 
         // fix the mint
         return SolanaToken(
-            _tags: [],
+            tags: tags.map(\.name),
             chainId: chainId,
             mintAddress: "So11111111111111111111111111111111111111112",
             symbol: symbol,

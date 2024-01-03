@@ -27,6 +27,10 @@ final class JupiterTokensLocalProvider: JupiterTokensProvider {
         return cacheDirectoryPath.appendingPathComponent("/jupiter-tokens.data")
     }()
 
+    init() {
+        migrate()
+    }
+
     func getCachedData() -> JupiterTokensCache? {
         guard let data = try? Data(contentsOf: cacheFile) else { return nil }
         let cachedData = (try? JSONDecoder().decode(JupiterTokensCache.self, from: data))
@@ -45,5 +49,15 @@ final class JupiterTokensLocalProvider: JupiterTokensProvider {
 
     func clear() {
         try? FileManager.default.removeItem(at: cacheFile)
+    }
+
+    // MARK: - Helpers
+
+    private func migrate() {
+        let migrationKey1 = "MigrationKey1"
+        if !UserDefaults.standard.bool(forKey: migrationKey1) {
+            clear()
+            UserDefaults.standard.set(true, forKey: migrationKey1)
+        }
     }
 }

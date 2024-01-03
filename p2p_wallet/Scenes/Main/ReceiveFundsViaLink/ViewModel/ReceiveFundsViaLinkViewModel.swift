@@ -172,6 +172,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                         address: claimableToken.mintAddress
                     ) ??
                         .unsupported(
+                            tags: nil,
                             mint: claimableToken.mintAddress,
                             decimals: claimableToken.decimals,
                             symbol: "",
