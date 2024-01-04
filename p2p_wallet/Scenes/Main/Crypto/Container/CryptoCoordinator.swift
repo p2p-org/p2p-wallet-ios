@@ -188,7 +188,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     private func showUserAction(userAction: any UserAction) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(userAction: userAction),
-            presentingViewController: navigationController.parent!
+            presentingViewController: navigationController.parent ?? navigationController
         ))
         .sink(receiveValue: { _ in })
         .store(in: &subscriptions)
@@ -196,7 +196,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(
-            parentController: navigationController.parent!,
+            parentController: navigationController.parent ?? navigationController,
             transaction: model
         ))
         .sink(receiveValue: {})
