@@ -73,8 +73,4 @@ extension EthereumToken: AnyToken {
             return contract.hex(eip55: false)
         }
     }
-
-    public var keyAppExtension: KeyAppTokenExtension {
-        KeyAppTokenExtension(data: [:])
-    }
 }

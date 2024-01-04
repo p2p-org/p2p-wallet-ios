@@ -18,10 +18,6 @@ final class ChooseSwapTokenService: ChooseItemService {
     private var subscriptions = [AnyCancellable]()
 
     init(swapTokens: [SwapToken], fromToken: Bool) {
-        let swapTokens = swapTokens.filter { swapToken in
-            swapToken.token.keyAppExtensions.isTokenCellVisibleOnWS
-        }
-
         self.swapTokens = CurrentValueSubject(swapTokens)
         self.fromToken = fromToken
 

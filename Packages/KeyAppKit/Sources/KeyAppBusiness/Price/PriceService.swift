@@ -50,8 +50,6 @@ public class PriceServiceImpl: PriceService {
     /// Cache manager.
     let database: LifetimeDatabase<String, TokenPriceRecord>
 
-    let rules: [PriceRule] = [DepeggingPriceRule(), OneToOnePriceRule()]
-
     // MARK: - Event stream
 
     /// The timer synchronisation
@@ -164,10 +162,6 @@ public class PriceServiceImpl: PriceService {
                 }
             }
 
-        for (token, price) in priceResult {
-            priceResult[token] = applyRule(token: token, price: price, fiat: fiat)
-        }
-
         return priceResult
     }
 
@@ -236,24 +230,6 @@ public class PriceServiceImpl: PriceService {
             value: BigDecimal(fromString: value),
             token: token
         )
-    }
-
-    func applyRule(token: SomeToken, price: TokenPrice, fiat: String) -> TokenPrice? {
-        var adjustedPrice: TokenPrice? = price
-
-        loop: for rule in rules {
-            let result = rule.adjustValue(token: token, price: price, fiat: fiat)
-
-            switch result {
-            case let .continue(newPrice):
-                adjustedPrice = newPrice
-            case let .break(newPrice):
-                adjustedPrice = newPrice
-                break loop
-            }
-        }
-
-        return adjustedPrice
     }
 
     public func clear() async throws {
