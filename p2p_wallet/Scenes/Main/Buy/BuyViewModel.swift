@@ -362,7 +362,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[token.mintAddress] ?? 0,
+                    amount: tokenPrices[fiat]?[$0.mintAddress] ?? 0,
                     fiat: fiat
                 )
             }
