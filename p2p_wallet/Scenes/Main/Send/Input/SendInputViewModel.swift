@@ -404,11 +404,13 @@ private extension SendInputViewModel {
                 guard let self else { return }
                 if currentWallet.price == nil {
                     self.turnOffInputSwitch()
-                } else if
-                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
-                {
-                    self.turnOffInputSwitch()
-                } else {
+                }
+//                else if
+//                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
+//                {
+//                    self.turnOffInputSwitch()
+//                }
+                else {
                     self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
                 }
             }
@@ -663,9 +665,5 @@ private extension SendInputViewModel {
 private extension SolanaAccount {
     var isSendable: Bool {
         lamports > 0 && !isNFTToken
-    }
-
-    var isUsdcOrUsdt: Bool {
-        [TokenMetadata.usdc.mintAddress, TokenMetadata.usdt.mintAddress].contains(token.mintAddress)
     }
 }
