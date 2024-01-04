@@ -7,6 +7,7 @@ extension SwapToken: ChooseItemSearchableItem {
         token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
             token.symbol.lowercased().contains(keyword.lowercased()) ||
             token.name.lowercased().hasPrefix(keyword.lowercased()) ||
-            token.name.lowercased().contains(keyword.lowercased())
+            token.name.lowercased().contains(keyword.lowercased()) ||
+            token.mintAddress.lowercased().hasPrefix(keyword.lowercased())
     }
 }

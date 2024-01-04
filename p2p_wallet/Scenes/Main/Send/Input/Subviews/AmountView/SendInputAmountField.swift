@@ -103,6 +103,10 @@ struct SendInputAmountField: UIViewRepresentable {
 
             let number = Double(updatedText.replacingOccurrences(of: " ", with: ""))
 
+            if number?.isLamportsBiggerThanUInt64(decimals: countAfterDecimalPoint) == true {
+                return false
+            }
+
             if (string.isEmpty || string.starts(with: "0"))
                 && updatedText.starts(with: "0\(decimalSeparator)")
                 && number == 0

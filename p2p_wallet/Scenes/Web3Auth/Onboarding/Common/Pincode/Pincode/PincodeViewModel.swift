@@ -28,7 +28,6 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
     @Published var showForgotModal: Bool = false
 
     let back = PassthroughSubject<Void, Never>()
-    let infoDidTap = PassthroughSubject<Void, Never>()
     let pincodeSuccess = PassthroughSubject<String?, Never>()
     let pincodeFailed = PassthroughSubject<Void, Never>()
 

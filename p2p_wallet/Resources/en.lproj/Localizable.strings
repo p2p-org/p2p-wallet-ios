@@ -570,3 +570,6 @@
 "✌️ Great! Your new PIN is set." = "✌️ Great! Your new PIN is set.";
 "😓 name is not available" = "😓 name is not available";
 "😢 PIN doesn't match. Please try again" = "😢 PIN doesn't match. Please try again";
+"Confirm selection" = "Confirm selection";
+"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
+"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";

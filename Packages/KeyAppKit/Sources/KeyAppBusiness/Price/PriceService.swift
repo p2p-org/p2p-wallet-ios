@@ -177,7 +177,7 @@ public class PriceServiceImpl: PriceService {
     }
 
     /// Method for fetching price from server
-    internal func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
+    func fetchTokenPrice(tokens: [AnyToken], fiat: String) async throws -> [SomeToken: TokenPrice] {
         var result: [SomeToken: TokenPrice] = [:]
 
         // Request token price
@@ -261,7 +261,7 @@ public class PriceServiceImpl: PriceService {
     }
 }
 
-internal extension AnyToken {
+extension AnyToken {
     /// Map token to requested primary key in backend.
     var addressPriceMapping: String {
         switch network {

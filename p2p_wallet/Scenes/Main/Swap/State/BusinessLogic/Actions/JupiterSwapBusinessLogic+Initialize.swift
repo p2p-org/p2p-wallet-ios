@@ -76,7 +76,10 @@ extension JupiterSwapBusinessLogic {
 
                 // if userWallet found
                 if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.mintAddress }) {
-                    return SwapToken(token: userWallet.token, userWallet: userWallet)
+                    // move tags
+                    var token = userWallet.token
+                    token.tags = jupiterToken.tags
+                    return SwapToken(token: token, userWallet: userWallet)
                 }
 
                 // otherwise return jupiter token with no userWallet

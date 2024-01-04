@@ -11,7 +11,7 @@ public class JupiterRestClientAPI: JupiterAPI {
     }
 
     public func getTokens() async throws -> [TokenMetadata] {
-        let (data, _) = try await URLSession.shared.data(from: URL(string: "\(tokensHost ?? host)/tokens")!)
+        let (data, _) = try await URLSession.shared.data(from: URL(string: "\(tokensHost ?? "\(host)/tokens")")!)
         return try JSONDecoder().decode([TokenMetadata].self, from: data)
     }
 

@@ -5,7 +5,7 @@ import KeyAppKitCore
 import Send
 import Wormhole
 
-struct RendableGeneralUserActionTransaction {
+enum RendableGeneralUserActionTransaction {
     static func resolve(userAction: any UserAction) -> RenderableTransactionDetail {
         switch userAction {
         case let userAction as WormholeSendUserAction:

@@ -95,7 +95,9 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
             // map solanaTokens to jupiter token
             jupiterTokens = jupiterTokens.map { jupiterToken in
-                if let token = solanaTokens[jupiterToken.mintAddress] {
+                if var token = solanaTokens[jupiterToken.mintAddress] {
+                    // join tags
+                    token.tags = Array(Set(token.tags + jupiterToken.tags))
                     return token
                 }
                 return jupiterToken

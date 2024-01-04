@@ -7,13 +7,13 @@ public typealias SolanaTokensService = TokenRepository
 public actor KeyAppSolanaTokenRepository: TokenRepository {
     static let version: Int = 1
 
-    internal struct Database: Codable, Hashable {
+    struct Database: Codable, Hashable {
         var timestamps: Date?
         var data: [String: SolanaToken]
         var version: Int?
     }
 
-    internal enum Status: Int {
+    enum Status: Int {
         case initialising = 0
         case updating
         case ready
@@ -200,7 +200,7 @@ private extension TokenMetadata {
 
         // fix the mint
         return SolanaToken(
-            _tags: [],
+            tags: tags.map(\.name),
             chainId: chainId,
             mintAddress: "So11111111111111111111111111111111111111112",
             symbol: symbol,

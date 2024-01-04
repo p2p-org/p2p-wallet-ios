@@ -42,6 +42,7 @@ extension Resolver: ResolverRegistering {
             WarmupManager(processes: [
                 RemoteConfigWarmupProcess(),
                 TokenServiceWarmupProcess(),
+                MigrationWarmupProcess(),
             ])
         }.scope(.application)
 
@@ -226,10 +227,6 @@ extension Resolver: ResolverRegistering {
 
     /// Graph scope: Recreate and reuse dependencies
     @MainActor private static func registerForGraphScope() {
-        // Intercom
-        register { IntercomMessengerLauncher() }
-            .implements(HelpCenterLauncher.self)
-
         // ImageSaver
         register { ImageSaver() }
             .implements(ImageSaverType.self)
@@ -545,8 +542,9 @@ extension Resolver: ResolverRegistering {
         register {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
-                tokensHost: GlobalAppState.shared
-                    .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag" : nil,
+                tokensHost: "https://token.jup.ag/all",
+//                GlobalAppState.shared
+//                .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag/tokens" : nil,
                 version: .v4
             )
         }

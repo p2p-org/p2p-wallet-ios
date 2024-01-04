@@ -76,8 +76,8 @@ final class TabBarViewModel {
         analyticsManager.log(event: .mainScreenCryptoClick)
     }
 
-    func sendTapped() {
-        analyticsManager.log(event: .mainScreenSendClick)
+    func swapTapped() {
+        analyticsManager.log(event: .mainScreenSwapBar)
     }
 
     func historyTapped() {
@@ -114,31 +114,6 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
-    var moveToIntercomSurvey: AnyPublisher<String, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.surveyID != nil && value == false
-                }
-                .map { _ in () },
-
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
-        )
-        .map { _ in () }
-        .map {
-            GlobalAppState.shared.surveyID ?? ""
-        }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.surveyID = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
-    }
-
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
@@ -149,6 +124,21 @@ extension TabBarViewModel {
         .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.sendViaLinkUrl = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
+    var moveToSwap: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
+        )
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.swapUrl }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.swapUrl = nil
         })
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
@@ -176,25 +166,5 @@ extension TabBarViewModel {
             return !transferAccounts.isEmpty
         }
         .eraseToAnyPublisher()
-    }
-
-    var walletBalancePublisher: AnyPublisher<String, Never> {
-        solanaAccountsService.statePublisher
-            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
-                let equityValue: CurrencyAmount = state.value
-                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
-                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
-                    .reduce(CurrencyAmount(usd: 0)) {
-                        $0 + $1.amountInFiat
-                    }
-                let formatter = CurrencyFormatter(
-                    showSpacingAfterCurrencySymbol: false,
-                    showSpacingAfterCurrencyGroup: false,
-                    showSpacingAfterLessThanOperator: false
-                )
-                return formatter.string(amount: equityValue)
-            }
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
     }
 }

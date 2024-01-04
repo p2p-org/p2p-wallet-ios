@@ -34,8 +34,6 @@ struct SeedPhraseRestoreWalletView: View {
         }
         .onboardingNavigationBar(title: L10n.restoreYourWallet) { [weak viewModel] in
             viewModel?.back.send()
-        } onInfo: { [weak viewModel] in
-            viewModel?.info.send()
         }
         .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { viewModel.isSeedFocused = true } }
         .onDisappear { viewModel.isSeedFocused = false }

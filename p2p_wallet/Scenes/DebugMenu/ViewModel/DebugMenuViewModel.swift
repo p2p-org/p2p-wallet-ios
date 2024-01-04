@@ -25,10 +25,28 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             }
 
         let solanaEndpoints: [APIEndPoint] = [
-            .init(address: "https://api.mainnet-beta.solana.com", network: .mainnetBeta),
-            .init(address: "https://solana-api.projectserum.com", network: .mainnetBeta),
-            .init(address: "https://p2p.rpcpool.com", network: .mainnetBeta),
-            .init(address: "https://api.devnet.solana.com", network: .devnet),
+            .init(
+                address: "https://api.mainnet-beta.solana.com",
+                network: .mainnetBeta
+            ),
+            .init(
+                address: "https://solana-api.projectserum.com",
+                network: .mainnetBeta
+            ),
+            .init(
+                address: "https://p2p.rpcpool.com",
+                network: .mainnetBeta,
+                additionalQuery: .secretConfig("RPCPOOL_API_KEY")
+            ),
+            .init(
+                address: "https://solana.keyapp.org",
+                network: .mainnetBeta,
+                additionalQuery: .secretConfig("KEYAPP_ORG_API_KEY")
+            ),
+            .init(
+                address: "https://api.devnet.solana.com",
+                network: .devnet
+            ),
         ]
         self.solanaEndpoints = solanaEndpoints
         selectedEndpoint = solanaEndpoints.first(where: { $0 == Defaults.apiEndPoint })

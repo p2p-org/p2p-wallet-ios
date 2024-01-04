@@ -13,8 +13,6 @@ struct ICloudRestoreScreen: View {
         }
         .onboardingNavigationBar(title: L10n.restoreYourWallet, onBack: { [weak viewModel] in
             viewModel?.backPressed()
-        }, onInfo: { [weak viewModel] in
-            viewModel?.infoPressed()
         })
         .background(Color(.lime))
         .edgesIgnoringSafeArea(.all)

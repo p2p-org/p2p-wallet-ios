@@ -20,13 +20,11 @@ public class UISeedPhrasesTextView: UITextView {
     }()
 
     /// Default typing attributes for text
-    private static let defaultTypingAttributes: [NSAttributedString.Key: Any] = {
-        [
-            .font: UIFont.font(of: .text3),
-            .foregroundColor: UIColor(resource: .night),
-            .paragraphStyle: defaultParagraphStyle,
-        ]
-    }()
+    private static let defaultTypingAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.font(of: .text3),
+        .foregroundColor: UIColor(resource: .night),
+        .paragraphStyle: defaultParagraphStyle,
+    ]
 
     private static let defaultIndexAttributes: [NSAttributedString.Key: Any] = {
         var attributes = defaultTypingAttributes

@@ -8,8 +8,6 @@ struct PincodeVerifyView: View {
     @Injected private var pincodeStorage: PincodeStorageType
     var onSuccess: (() -> Void)?
     var forgetPinCode: (() -> Void)?
-    private let helpSubject = PassthroughSubject<Void, Never>()
-    var help: AnyPublisher<Void, Never> { helpSubject.eraseToAnyPublisher() }
 
     var body: some View {
         VStack {
@@ -57,15 +55,6 @@ struct PincodeVerifyView: View {
                     .apply(style: .text1)
                     .foregroundColor(Color(.sky))
                     .padding(.top, 24)
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    helpSubject.send()
-                } label: {
-                    Image(.helpOutline)
-                }
             }
         }
         .padding(.top, safeAreaInsets.top + 50)

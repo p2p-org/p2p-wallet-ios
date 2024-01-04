@@ -63,6 +63,10 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     private let preChosenWallet: SolanaAccount?
     private let destinationWallet: SolanaAccount?
+
+    private var inputMint: String?
+    private var outputMint: String?
+
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
@@ -75,13 +79,20 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
         preChosenWallet: SolanaAccount? = nil,
-        destinationWallet: SolanaAccount? = nil
+        destinationWallet: SolanaAccount? = nil,
+        inputMint: String? = nil,
+        outputMint: String? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
         self.stateMachine = stateMachine
+
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
+
+        self.inputMint = inputMint
+        self.outputMint = outputMint
+
         self.source = source
         super.init()
         bind()
@@ -248,8 +259,9 @@ private extension SwapViewModel {
                     account: userWalletManager.wallet?.account,
                     jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
-                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
-                    preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? Defaults.toTokenAddress
+                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? inputMint ?? Defaults
+                        .fromTokenAddress,
+                    preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? outputMint ?? Defaults.toTokenAddress
                 )
             )
         if source != .tapMain {

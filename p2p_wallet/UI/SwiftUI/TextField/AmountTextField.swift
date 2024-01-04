@@ -173,12 +173,21 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
         let updatedText = text
             .replacingCharacters(in: textRange, with: string)
             .replacingOccurrences(of: decimalSeparator == "." ? "," : ".", with: decimalSeparator)
+
         if (updatedText.components(separatedBy: decimalSeparator).count - 1) > 1 {
             return false
         }
-        if updatedText.components(separatedBy: decimalSeparator).last?.count ?? 0 > maxFractionDigits.wrappedValue {
+
+        if updatedText.contains(decimalSeparator) && updatedText.components(separatedBy: decimalSeparator).last?
+            .count ?? 0 > maxFractionDigits.wrappedValue
+        {
             return false
         }
+
+        if Double(updatedText)?.isLamportsBiggerThanUInt64(decimals: maxFractionDigits.wrappedValue) == true {
+            return false
+        }
+
         return isNotMoreThanMax(text: updatedText.amountFormat(
             maxAfterComma: maxFractionDigits.wrappedValue,
             decimalSeparator: decimalSeparator

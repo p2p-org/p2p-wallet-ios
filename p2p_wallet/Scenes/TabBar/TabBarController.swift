@@ -1,6 +1,5 @@
 import AnalyticsManager
 import Combine
-import Intercom
 import Onboarding
 import Resolver
 import Sell
@@ -11,13 +10,11 @@ final class TabBarController: UITabBarController {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var deviceShareMigration: DeviceShareMigrationService
 
     // MARK: - Publishers
 
-    var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
     private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
@@ -186,12 +183,6 @@ final class TabBarController: UITabBarController {
             }
             .store(in: &subscriptions)
 
-        pincodeViewModel.infoDidTap
-            .sink(receiveValue: { [unowned self] in
-                helpLauncher.launch()
-            })
-            .store(in: &subscriptions)
-
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -261,15 +252,6 @@ final class TabBarController: UITabBarController {
             })
             .store(in: &subscriptions)
 
-        viewModel.moveToIntercomSurvey
-            .sink { id in
-                guard !id.isEmpty else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    Intercom.presentSurvey(id)
-                }
-            }
-            .store(in: &subscriptions)
-
         // locking status
         viewModel.isLockedPublisher
             .sink(receiveValue: { [weak self] isLocked in
@@ -281,28 +263,6 @@ final class TabBarController: UITabBarController {
         viewModel.authenticationStatusPublisher
             .map { $0 == nil }
             .assignWeak(to: \.isHidden, on: blurEffectView)
-            .store(in: &subscriptions)
-
-        // Crypto alert on/off
-        viewModel.transferAccountsPublisher
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] claimableTransferExist in
-                let image: ImageResource = claimableTransferExist ? .tabBarCryptoWithAlert : .tabBarCrypto
-                let selectedImage: ImageResource = claimableTransferExist ? .selectedTabBarCryptoWithAlert :
-                    .tabBarCrypto
-                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem.image = .init(resource: image)
-                self?.viewControllers?[TabItem.crypto.rawValue].tabBarItem
-                    .selectedImage = .init(resource: selectedImage)
-            }
-            .store(in: &subscriptions)
-
-        // Wallet balance
-        viewModel.walletBalancePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] balanceString in
-                self?.viewControllers?[TabItem.wallet.rawValue].tabBarItem.title = balanceString
-            }
             .store(in: &subscriptions)
     }
 }
@@ -321,18 +281,15 @@ extension TabBarController: UITabBarControllerDelegate {
         if let tabItem = TabItem(rawValue: selectedIndex) {
             switch tabItem {
             case .wallet:
-                viewModel.walletTapped()
+                viewModel.cryptoTapped()
 
                 if (viewController as! UINavigationController).viewControllers.count == 1,
                    self.selectedIndex == selectedIndex
                 {
                     homeTabClickedTwicelySubject.send()
                 }
-            case .crypto:
-                viewModel.cryptoTapped()
-            case .send:
-                viewModel.sendTapped()
-                return false
+            case .swap:
+                viewModel.swapTapped()
             case .history:
                 viewModel.historyTapped()
             case .settings:
@@ -352,11 +309,9 @@ private extension TabItem {
     var image: ImageResource? {
         switch self {
         case .wallet:
-            return .tabBarWallet
-        case .crypto:
             return .tabBarCrypto
-        case .send:
-            return nil
+        case .swap:
+            return .tabBarSwap
         case .history:
             return .tabBarHistory
         case .settings:
@@ -367,11 +322,9 @@ private extension TabItem {
     var displayTitle: String {
         switch self {
         case .wallet:
-            return ""
-        case .crypto:
             return L10n.crypto
-        case .send:
-            return L10n.send
+        case .swap:
+            return L10n.swap
         case .history:
             return L10n.history
         case .settings:

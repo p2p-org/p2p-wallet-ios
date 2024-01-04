@@ -131,7 +131,7 @@ public final class EthereumTokensRepository {
         try await resolve(addresses: [address]).values.first
     }
 
-    internal func parseToken(tokenData: KeyAppTokenProviderData.Token) throws -> EthereumToken {
+    func parseToken(tokenData: KeyAppTokenProviderData.Token) throws -> EthereumToken {
         // Logo
         let logo: URL?
         if let logoUrl = tokenData.logoUrl {
