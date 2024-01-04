@@ -92,7 +92,6 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let network: TokenNetwork
 
-
     public init(
         tokenPrimaryKey: TokenPrimaryKey,
         symbol: String,
