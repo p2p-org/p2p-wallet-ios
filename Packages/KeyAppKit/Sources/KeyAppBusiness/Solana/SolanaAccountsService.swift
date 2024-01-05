@@ -261,7 +261,7 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                 // Updating native account balance and get spl tokens
                 let (balance, (resolved, _)) = try await(
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
-                    solanaAPIClient.getAccountBalances(
+                    solanaAPIClient.getAccountBalancesWithToken2022(
                         for: accountAddress,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
