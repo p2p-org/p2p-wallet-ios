@@ -53,10 +53,6 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
                     !SupportedTokensBusinnes.wellKnownTokens.map(\.symbol)
                         .contains(token.symbol.trimmingCharacters(in: .whitespacesAndNewlines))
                 }
-                .filter { token in
-                    // Filter by flag isTokenCellVisibleOnWS
-                    token.keyAppExtensions.isTokenCellVisibleOnWS
-                }
                 .map { SupportedTokenItem(solana: $0) }
 
             solana = Set(SupportedTokensBusinnes.wellKnownTokens + filteredToken)

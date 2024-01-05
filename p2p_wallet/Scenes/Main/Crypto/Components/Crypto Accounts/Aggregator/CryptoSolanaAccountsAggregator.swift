@@ -19,21 +19,17 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
 
         return accounts
             .filter { !$0.isNFTToken }
-//            .filter { !($0.token.keyAppExtensions.isPositionOnWS ?? false) }
             .sorted(by: Self.defaultSorter)
             .map { account in
                 var tags: AccountTags = []
 
                 if favourites.contains(account.address) {
                     tags.insert(.favourite)
-                } else if ignores.contains(account.address) /* , account.token.keyAppExtensions.canBeHidden == true */ {
+                } else if ignores.contains(account.address) {
                     tags.insert(.ignore)
                 } else if hideZeroBalance, account.lamports == 0 {
                     tags.insert(.ignore)
                 }
-
-//                let extraAction: AccountExtraAction? = account.token.keyAppExtensions.canBeHidden ? .showHide : nil
-
                 return RenderableSolanaAccount(
                     account: account,
                     extraAction: nil, // extraAction,

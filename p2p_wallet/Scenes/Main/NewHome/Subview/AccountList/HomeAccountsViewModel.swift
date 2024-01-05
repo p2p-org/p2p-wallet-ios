@@ -104,8 +104,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: CurrencyAmount = state.value
-                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
-                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
                     .reduce(CurrencyAmount(usd: 0)) {
                         $0 + $1.amountInFiat
                     }
@@ -128,7 +126,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let cryptoFormatter = CryptoFormatter()
                 guard let usdcAccount = state.value.first(where: {
-                    $0.isUSDC && ($0.token.keyAppExtensions.isPositionOnWS ?? false)
+                    $0.isUSDC
                 }) else {
                     // Show zero balance for USDC if no USDC account exists
                     return cryptoFormatter.string(amount: CryptoAmount(amount: 0, token: TokenMetadata.usdc))
