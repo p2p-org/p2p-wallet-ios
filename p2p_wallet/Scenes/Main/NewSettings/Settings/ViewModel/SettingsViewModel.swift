@@ -64,8 +64,6 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             switch $0 {
             case .yourPin:
                 return KeyAppAnalyticsEvent.settingsPinClick
-            case .network:
-                return KeyAppAnalyticsEvent.settingsNetworkClick
             case .recoveryKit:
                 return KeyAppAnalyticsEvent.settingsRecoveryClick
             default:
@@ -196,6 +194,5 @@ extension SettingsViewModel {
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin
-        case network
     }
 }
