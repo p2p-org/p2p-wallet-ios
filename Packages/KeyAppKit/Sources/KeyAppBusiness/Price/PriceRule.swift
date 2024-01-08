@@ -13,18 +13,18 @@ protocol PriceRule {
 
 // Make price rate equals 1:1 when `ruleOfProcessingTokenPrice` equals `byCountOfTokensValue`.
 class OneToOnePriceRule: PriceRule {
-    func adjustValue(token: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
+    func adjustValue(token _: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
 //        if token.keyAppExtension.ruleOfProcessingTokenPriceWS == .byCountOfTokensValue {
 //            return .continue(TokenPrice(currencyCode: price.currencyCode, value: 1.0, token: token))
 //        }
 
-        return .continue(price)
+        .continue(price)
     }
 }
 
 // Depegging price by measure percentage difference.
 class DepeggingPriceRule: PriceRule {
-    func adjustValue(token: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
+    func adjustValue(token _: SomeToken, price: TokenPrice, fiat _: String) -> PriceRuleHandler {
 //        if let allowPercentageDifferenceValue = token.keyAppExtension.percentDifferenceToShowByPriceOnWS {
 //            let percentageDifferenceValue = 100 - (1 / price.value) * 100
 //            if abs(percentageDifferenceValue) <= BigDecimal(floatLiteral: allowPercentageDifferenceValue) {
@@ -34,6 +34,6 @@ class DepeggingPriceRule: PriceRule {
 //            }
 //        }
 
-        return .continue(price)
+        .continue(price)
     }
 }
