@@ -40,11 +40,6 @@ final class SettingsCoordinator: Coordinator<Void> {
                             navigationController.popToRootViewController(animated: true)
                         })
                         .store(in: &subscriptions)
-                case .network:
-                    let coordinator = NetworkCoordinator(navigationController: navigationController)
-                    coordinate(to: coordinator)
-                        .sink(receiveValue: {})
-                        .store(in: &subscriptions)
                 }
             })
             .store(in: &subscriptions)

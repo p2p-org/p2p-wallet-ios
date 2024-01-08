@@ -98,10 +98,6 @@ struct SettingsView: View {
                 action: { viewModel.showView(.yourPin) },
                 label: { cellView(image: .pinIcon, title: L10n.yourPIN) }
             )
-            Button(
-                action: { viewModel.showView(.network) },
-                label: { cellView(image: .networkIcon, title: L10n.network) }
-            )
             if viewModel.biometryIsAvailable, viewModel.biometryType != .none {
                 cellView(
                     image: viewModel.biometryType == .face ? .faceIdIcon : .touchIdIcon,

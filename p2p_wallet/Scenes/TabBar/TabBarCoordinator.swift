@@ -157,20 +157,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     /// Set up Swap scene
     private func setUpSwap() -> UIViewController {
         let nc = UINavigationController()
-        let swapCoordinator = JupiterSwapCoordinator(
-            navigationController: nc,
-            params: JupiterSwapParameters(
-                dismissAfterCompletion: false,
-                openKeyboardOnStart: false,
-                source: .actionPanel,
-                hideTabBar: false
-            )
-        )
-        jupiterSwapTabCoordinator = swapCoordinator
-        // coordinate to homeCoordinator
-        coordinate(to: swapCoordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+        routeToSwap(nc: nc, hidesBottomBarWhenPushed: false, source: .tapMain)
         return nc
     }
 

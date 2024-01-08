@@ -178,7 +178,6 @@ public enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case settingsSupportClick
     case settingsRecoveryClick
     case settingsPinClick
-    case settingsNetworkClick
     case settingsFaceidClick
     case settingsLogOut
 
