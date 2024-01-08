@@ -122,10 +122,10 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .compactMap { $0 }
             .switchToLatest()
             .sink { [weak outputSubject] state in
-                var state = state
-                state.value = state.value.filter { account in
-                    account.token.keyAppExtensions.isTokenCellVisibleOnWS
-                }
+//                var state = state
+//                state.value = state.value.filter { account in
+//                    account.token.keyAppExtensions.isTokenCellVisibleOnWS
+//                }
 
                 outputSubject?.send(state)
             }

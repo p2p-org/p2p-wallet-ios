@@ -46,7 +46,7 @@ public protocol AnyToken {
     @available(*, deprecated, message: "Legacy code")
     var address: String { get }
 
-    var keyAppExtension: KeyAppTokenExtension { get }
+//    var keyAppExtension: KeyAppTokenExtension { get }
 }
 
 public extension AnyToken {
@@ -58,8 +58,8 @@ public extension AnyToken {
             symbol: symbol,
             name: name,
             decimals: decimals,
-            network: network,
-            keyAppExtension: keyAppExtension
+            network: network
+//            keyAppExtension: keyAppExtension
         )
     }
 
@@ -95,21 +95,21 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let network: TokenNetwork
 
-    public var keyAppExtension: KeyAppTokenExtension
+//    public var keyAppExtension: KeyAppTokenExtension
 
     public init(
         tokenPrimaryKey: TokenPrimaryKey,
         symbol: String,
         name: String,
         decimals: UInt8,
-        network: TokenNetwork,
-        keyAppExtension: KeyAppTokenExtension
+        network: TokenNetwork
+//        keyAppExtension: KeyAppTokenExtension
     ) {
         primaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name
         self.decimals = decimals
         self.network = network
-        self.keyAppExtension = keyAppExtension
+//        self.keyAppExtension = keyAppExtension
     }
 }
