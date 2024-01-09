@@ -192,6 +192,6 @@ extension CryptoViewModel {
 
 private extension String {
     var shortAddress: String {
-        "\(prefix(4))...\(suffix(4))"
+        "\(prefix(6))...\(suffix(6))"
     }
 }
