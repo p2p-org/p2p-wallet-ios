@@ -270,6 +270,7 @@ extension Pool {
             destinationAccountInstructions = try await blockchainClient.prepareForCreatingAssociatedTokenAccount(
                 owner: owner,
                 mint: toMint,
+                tokenProgramId: TokenProgram.id,
                 feePayer: feePayer ?? owner,
                 closeAfterward: false
             )

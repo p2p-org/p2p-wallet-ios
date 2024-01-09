@@ -88,29 +88,29 @@ extension RecipientSearchServiceImpl {
                     }
                 }
             } else {
-                let splAccounts = try await solanaClient.getTokenAccountsByOwner(
-                    pubkey: address.base58EncodedString,
-                    params: .init(
-                        mint: nil,
-                        programId: TokenProgram.id.base58EncodedString
-                    ),
-                    configs: .init(encoding: "base64")
-                )
-
-                if splAccounts.isEmpty {
-                    // This account doesn't exits in blockchain
-                    return .ok([.init(
-                        address: addressBase58,
-                        category: .solanaAddress,
-                        attributes: [.funds, attributes]
-                    )])
-                } else {
-                    return .ok([.init(
-                        address: addressBase58,
-                        category: .solanaAddress,
-                        attributes: [.funds, attributes]
-                    )])
-                }
+//                let splAccounts = try await solanaClient.getTokenAccountsByOwner(
+//                    pubkey: address.base58EncodedString,
+//                    params: .init(
+//                        mint: nil,
+//                        programId: TokenProgram.id.base58EncodedString
+//                    ),
+//                    configs: .init(encoding: "base64")
+//                )
+//
+//                if splAccounts.isEmpty {
+//                    // This account doesn't exits in blockchain
+//                    return .ok([.init(
+//                        address: addressBase58,
+//                        category: .solanaAddress,
+//                        attributes: [.funds, attributes]
+//                    )])
+//                } else {
+                return .ok([.init(
+                    address: addressBase58,
+                    category: .solanaAddress,
+                    attributes: [.funds, attributes]
+                )])
+//                }
             }
         } catch let error as SolanaSwift.APIClientError {
             return handleSolanaAPIClientError(error)

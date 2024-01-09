@@ -61,6 +61,7 @@ public class SendActionServiceImpl: SendActionService {
             from: wallet,
             receiver: receiver,
             amount: amount,
+            minRentExemption: wallet.minRentExemption ?? 2_039_280,
             feeWallet: feeWallet,
             ignoreTopUp: ignoreTopUp,
             memo: memo,
@@ -72,6 +73,7 @@ public class SendActionServiceImpl: SendActionService {
         from wallet: SolanaAccount,
         receiver: String,
         amount: Lamports,
+        minRentExemption: Lamports,
         feeWallet: SolanaAccount?,
         ignoreTopUp: Bool = false,
         memo: String?,
@@ -89,6 +91,7 @@ public class SendActionServiceImpl: SendActionService {
             receiver: receiver,
             amount: amount.convertToBalance(decimals: wallet.token.decimals),
             payingFeeToken: payingFeeToken,
+            minRentExemption: minRentExemption,
             memo: memo
         )
 
@@ -155,7 +158,7 @@ public class SendActionServiceImpl: SendActionService {
         payingFeeToken: FeeRelayerSwift.TokenAccount?,
         recentBlockhash: String? = nil,
         lamportsPerSignature _: Lamports? = nil,
-        minRentExemption: Lamports? = nil,
+        minRentExemption: Lamports,
         memo: String?
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
@@ -191,6 +194,7 @@ public class SendActionServiceImpl: SendActionService {
             preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
                 account: account,
                 mintAddress: wallet.token.mintAddress,
+                tokenProgramId: TokenProgram.id,
                 decimals: wallet.token.decimals,
                 from: sender,
                 to: receiver,

@@ -351,7 +351,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         }
 
         // 2. Get token accounts by owner
-        let tokenAccounts = try await solanaAPIClient.getTokenAccountsByOwner(
+        let tokenAccounts = try await solanaAPIClient.getTokenAccountsByOwnerWithToken2022(
             pubkey: keypair.publicKey.base58EncodedString,
             params: .init(
                 mint: nil,
@@ -442,7 +442,8 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         // get associated token address
         let splDestination = try await solanaAPIClient.findSPLTokenDestinationAddress(
             mintAddress: mintAddress.base58EncodedString,
-            destinationAddress: receiver.base58EncodedString
+            destinationAddress: receiver.base58EncodedString,
+            tokenProgramId: TokenProgram.id
         )
 
         // form instruction
@@ -456,7 +457,8 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
                     .createAssociatedTokenAccountInstruction(
                         mint: mintAddress,
                         owner: receiver,
-                        payer: feePayer
+                        payer: feePayer,
+                        tokenProgramId: TokenProgram.id
                     )
             )
             accountsCreationFee += minRentExemption

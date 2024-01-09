@@ -16,7 +16,11 @@ extension SolanaAPIClient {
 
         // The account doesn't exists
         if account == nil {
-            return try PublicKey.associatedTokenAddress(walletAddress: address, tokenMintAddress: mint)
+            return try PublicKey.associatedTokenAddress(
+                walletAddress: address,
+                tokenMintAddress: mint,
+                tokenProgramId: TokenProgram.id
+            )
         }
 
         // The account is already token account
@@ -28,7 +32,11 @@ extension SolanaAPIClient {
         guard account?.owner != SystemProgram.id.base58EncodedString else {
             throw FeeRelayerError.wrongAddress
         }
-        return try PublicKey.associatedTokenAddress(walletAddress: address, tokenMintAddress: mint)
+        return try PublicKey.associatedTokenAddress(
+            walletAddress: address,
+            tokenMintAddress: mint,
+            tokenProgramId: TokenProgram.id
+        )
     }
 
     func isAccountExists(_ address: PublicKey) async throws -> Bool {
