@@ -22,12 +22,14 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
+    @Injected private var createNameService: CreateNameService
 
     let navigation: PassthroughSubject<CryptoNavigation, Never>
 
     // MARK: - Properties
 
     @Published var state = State.pending
+    @Published var address = ""
 
     // MARK: - Initializers
 
@@ -52,8 +54,29 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
         }
-
+        updateAddressIfNeeded()
         analyticsManager.log(event: .cryptoScreenOpened)
+    }
+
+    func copyToClipboard() {
+        clipboardManager
+            .copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.address ?? "")
+        let text: String
+        if nameStorage.getName() != nil {
+            text = L10n.usernameCopiedToClipboard
+        } else {
+            text = L10n.addressCopiedToClipboard
+        }
+        notificationsService.showToast(title: "", text: text, haptic: true)
+        analyticsManager.log(event: .mainScreenAddressClick)
+    }
+
+    func updateAddressIfNeeded() {
+        if let name = nameStorage.getName(), !name.isEmpty {
+            address = name
+        } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
+            self.address = address
+        }
     }
 }
 
@@ -109,7 +132,7 @@ private extension CryptoViewModel {
             }
             .store(in: &subscriptions)
 
-        // state, error, log
+        // state, address, error, log
 
         Publishers
             .CombineLatest(solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher)
@@ -120,6 +143,9 @@ private extension CryptoViewModel {
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
                     partialResult = partialResult + account.amountInFiatDouble
                 }
+
+                // TODO: Bad place
+                self.updateAddressIfNeeded()
 
                 let hasAnyTokenWithPositiveBalance =
                     solanaState.value.contains(where: { $0.lamports > 0 }) ||
@@ -138,6 +164,15 @@ private extension CryptoViewModel {
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(solanaTotalBalance > 0))
                     self.analyticsManager.log(parameter: .userAggregateBalance(solanaTotalBalance))
                 }
+            }
+            .store(in: &subscriptions)
+
+        // update name when needed
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                guard isSuccess else { return }
+                self?.updateAddressIfNeeded()
             }
             .store(in: &subscriptions)
     }
