@@ -32,8 +32,8 @@ public enum SendInputAction: Equatable {
 
     case changeAmountInFiat(Double)
     case changeAmountInToken(Double)
-    case changeUserToken(TokenMetadata)
-    case changeFeeToken(TokenMetadata)
+    case changeUserToken(SolanaAccount)
+    case changeFeeToken(SolanaAccount)
 }
 
 public struct SendInputServices {
@@ -97,7 +97,7 @@ public struct SendInputState: Equatable {
 
     public let recipient: Recipient
     public let recipientAdditionalInfo: RecipientAdditionalInfo
-    public let token: TokenMetadata
+    public let token: SolanaAccount
     public let userWalletEnvironments: UserWalletEnvironments
 
     public let amountInFiat: Double
@@ -107,7 +107,7 @@ public struct SendInputState: Equatable {
     public let fee: FeeAmount
 
     /// Selected fee token
-    public let tokenFee: TokenMetadata
+    public let tokenFee: SolanaAccount
 
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
@@ -127,12 +127,12 @@ public struct SendInputState: Equatable {
         status: Status,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo,
-        token: TokenMetadata,
+        token: SolanaAccount,
         userWalletEnvironments: UserWalletEnvironments,
         amountInFiat: Double,
         amountInToken: Double,
         fee: FeeAmount,
-        tokenFee: TokenMetadata,
+        tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
         feeRelayerContext: RelayContext?,
         sendViaLinkSeed: String?
@@ -155,8 +155,8 @@ public struct SendInputState: Equatable {
         status: Status = .requiredInitialize,
         recipient: Recipient,
         recipientAdditionalInfo: RecipientAdditionalInfo = .zero,
-        token: TokenMetadata,
-        feeToken: TokenMetadata,
+        token: SolanaAccount,
+        feeToken: SolanaAccount,
         userWalletState: UserWalletEnvironments,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?
@@ -181,12 +181,12 @@ public struct SendInputState: Equatable {
         status: Status? = nil,
         recipient: Recipient? = nil,
         recipientAdditionalInfo: RecipientAdditionalInfo? = nil,
-        token: TokenMetadata? = nil,
+        token: SolanaAccount? = nil,
         userWalletEnvironments: UserWalletEnvironments? = nil,
         amountInFiat: Double? = nil,
         amountInToken: Double? = nil,
         fee: FeeAmount? = nil,
-        tokenFee: TokenMetadata? = nil,
+        tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?? = nil

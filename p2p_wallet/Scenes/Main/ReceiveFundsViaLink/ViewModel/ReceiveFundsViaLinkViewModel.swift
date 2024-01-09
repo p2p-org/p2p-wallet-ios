@@ -95,7 +95,11 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         let transaction = ClaimSentViaLinkTransaction(
             claimableTokenInfo: claimableToken,
             token: token,
-            destinationWallet: SolanaAccount(pubkey: claimableToken.account, token: token),
+            destinationWallet: .classicSPLTokenAccount(
+                address: claimableToken.account,
+                lamports: 0,
+                token: token
+            ),
             tokenAmount: cryptoAmount,
             isFakeTransaction: isFakeSendingTransaction,
             fakeTransactionErrorType: fakeTransactionErrorType

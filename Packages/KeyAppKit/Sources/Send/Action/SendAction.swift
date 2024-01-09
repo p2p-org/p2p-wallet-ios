@@ -230,7 +230,11 @@ public class SendActionServiceImpl: SendActionService {
             else {
                 throw SendError.invalidPayingFeeWallet
             }
-            return .init(address: address, mint: mintAddress)
+            return .init(
+                address: address,
+                mint: mintAddress,
+                minimumTokenAccountBalance: feeWallet.minRentExemption ?? 2_039_280
+            )
         }
         return nil
     }

@@ -1,10 +1,11 @@
 import FeeRelayerSwift
+import KeyAppKitCore
 import OrcaSwapSwift
 import SolanaSwift
 
 public protocol SendFeeCalculator: AnyObject {
     func getFees(
-        from token: TokenMetadata,
+        from token: SolanaAccount,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -15,12 +16,14 @@ public protocol SendFeeCalculator: AnyObject {
 public class SendFeeCalculatorImpl: SendFeeCalculator {
     private let feeRelayerCalculator: RelayFeeCalculator
 
-    public init(feeRelayerCalculator: RelayFeeCalculator) { self.feeRelayerCalculator = feeRelayerCalculator }
+    public init(feeRelayerCalculator: RelayFeeCalculator) {
+        self.feeRelayerCalculator = feeRelayerCalculator
+    }
 
     // MARK: - Fees calculator
 
     public func getFees(
-        from token: TokenMetadata,
+        from token: SolanaAccount,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
         payingTokenMint: String?,
@@ -71,7 +74,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
 
         let expectedFee = FeeAmount(
             transaction: transactionFee,
-            accountBalances: isAssociatedTokenUnregister ? context.minimumTokenAccountBalance : 0
+            accountBalances: isAssociatedTokenUnregister ? token.minRentExemption ?? 0 : 0
         )
 
         // TODO: - Remove later: Send as SendViaLink when link creation available

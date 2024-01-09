@@ -271,7 +271,9 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                 let solanaAccount = try SolanaAccount(
                     address: accountAddress,
                     lamports: balance,
-                    token: await tokensService.nativeToken
+                    token: await tokensService.nativeToken,
+                    minRentExemption: nil,
+                    tokenProgramId: nil
                 )
 
                 newAccounts = [solanaAccount] + resolved
@@ -283,7 +285,9 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                         return SolanaAccount(
                             address: pubkey,
                             lamports: accountBalance.lamports ?? 0,
-                            token: accountBalance.token
+                            token: accountBalance.token,
+                            minRentExemption: accountBalance.minimumBalanceForRentExemption,
+                            tokenProgramId: accountBalance.tokenProgramId
                         )
                     }
                     .compactMap { $0 }

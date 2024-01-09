@@ -24,7 +24,11 @@ struct WormholeSendInputView: View {
             VStack {
                 // Account view
                 SendInputTokenView(
-                    wallet: viewModel.adapter.inputAccount ?? SolanaAccount(token: .eth),
+                    wallet: viewModel.adapter.inputAccount ?? .classicSPLTokenAccount(
+                        address: "",
+                        lamports: 0,
+                        token: .eth
+                    ),
                     amountInFiat: viewModel.adapter.inputAccount?.amountInFiatDouble ?? 0.0,
                     isChangeEnabled: true,
                     skeleton: viewModel.adapter.inputAccountSkeleton

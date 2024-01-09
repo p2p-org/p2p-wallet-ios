@@ -81,10 +81,16 @@ extension OrcaSwap {
             (tokenABalance, tokenBBalance) = (tab, tbb)
         } else {
             try Task.checkCancellation()
-            (tokenABalance, tokenBBalance) = try await(
-                solanaClient.getTokenAccountBalance(pubkey: pool.tokenAccountA, commitment: nil),
-                solanaClient.getTokenAccountBalance(pubkey: pool.tokenAccountB, commitment: nil)
+            let pool = pool
+            async let tokenABalanceResult = solanaClient.getTokenAccountBalance(
+                pubkey: pool.tokenAccountA,
+                commitment: nil
             )
+            async let tokenBBalanceResult = solanaClient.getTokenAccountBalance(
+                pubkey: pool.tokenAccountB,
+                commitment: nil
+            )
+            (tokenABalance, tokenBBalance) = try await(tokenABalanceResult, tokenBBalanceResult)
         }
 
         await balancesCache.save(key: pool.tokenAccountA, value: tokenABalance)
@@ -92,6 +98,31 @@ extension OrcaSwap {
 
         pool.tokenABalance = tokenABalance
         pool.tokenBBalance = tokenBBalance
+
+        // get minrent exemption
+        let (tokenAMinRent, tokenBMinRent): (UInt64, UInt64)
+        if let tab = await minRentCache.getTokenABalance(pool: pool),
+           let tbb = await minRentCache.getTokenBBalance(pool: pool)
+        {
+            (tokenAMinRent, tokenBMinRent) = (tab, tbb)
+        } else {
+            try Task.checkCancellation()
+            let pool = pool
+            async let tokenAMinRentResult: BufferInfo<SPLTokenAccountState>? = solanaClient
+                .getAccountInfo(account: pool.tokenAccountA)
+            async let tokenBMinRentResult: BufferInfo<SPLTokenAccountState>? = solanaClient
+                .getAccountInfo(account: pool.tokenAccountB)
+            (tokenAMinRent, tokenBMinRent) = try await(
+                tokenAMinRentResult?.lamports ?? 2_039_280,
+                tokenBMinRentResult?.lamports ?? 2_039_280
+            )
+        }
+
+        await minRentCache.save(key: pool.tokenAccountA, value: tokenAMinRent)
+        await minRentCache.save(key: pool.tokenAccountB, value: tokenBMinRent)
+
+        pool.tokenAMinimumBalanceForRentExemption = tokenAMinRent
+        pool.tokenBMinimumBalanceForRentExemption = tokenBMinRent
 
         return pool
     }

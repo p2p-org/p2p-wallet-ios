@@ -116,7 +116,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
                 .first(where: { $0.token.mintAddress == token.mintAddress }) ??
-                SolanaAccount(token: TokenMetadata.nativeSolana)
+                .nativeSolana(pubkey: nil, lamport: nil)
         default:
             if let preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -131,14 +131,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                             return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: TokenMetadata.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? .nativeSolana(pubkey: nil, lamport: nil)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
             .first(where: { $0.token.mintAddress == TokenMetadata.usdc.mintAddress }) ??
-            SolanaAccount(token: TokenMetadata.usdc)
+            .classicSPLTokenAccount(address: "", lamports: 0, token: .usdc)
 
         var exchangeRate = [String: TokenPrice]()
         var tokens = Set<TokenMetadata>()
@@ -156,8 +156,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let state = SendInputState.zero(
             recipient: recipient,
-            token: tokenInWallet.token,
-            feeToken: feeTokenInWallet.token,
+            token: tokenInWallet,
+            feeToken: feeTokenInWallet,
             userWalletState: env,
             sendViaLinkSeed: sendViaLinkSeed
         )
@@ -308,7 +308,7 @@ private extension SendInputViewModel {
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(0))
                     self.inputAmountViewModel.amountText = "0"
                 }
-                _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
+                _ = await self.stateMachine.accept(action: .changeUserToken(value))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
                     self?.isFeeLoading = false
@@ -360,7 +360,7 @@ private extension SendInputViewModel {
             .sinkAsync { [weak self] newFeeToken in
                 guard let self else { return }
                 self.isFeeLoading = true
-                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken.token))
+                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
                 self.isFeeLoading = false
             }
             .store(in: &subscriptions)
