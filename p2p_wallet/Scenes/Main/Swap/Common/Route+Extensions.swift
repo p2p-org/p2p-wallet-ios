@@ -5,22 +5,22 @@ import SolanaSwift
 extension QuoteResponse {
     func getMints() -> [String] {
         // get marketInfos
-        guard !marketInfos.isEmpty
+        guard !routePlan.isEmpty
         else {
             return []
         }
         // transform route to mints
         var mints = [String]()
-        for (index, info) in marketInfos.enumerated() {
-            if index == 0 { mints.append(info.inputMint) }
-            mints.append(info.outputMint)
+        for (index, info) in routePlan.enumerated() {
+            if index == 0 { mints.append(info.swapInfo.inputMint) }
+            mints.append(info.swapInfo.outputMint)
         }
         return mints
     }
 
     func toSymbols(tokensList: [TokenMetadata]) -> [String]? {
         // get marketInfos
-        guard !marketInfos.isEmpty
+        guard !routePlan.isEmpty
         else {
             return nil
         }
@@ -56,8 +56,7 @@ extension QuoteResponse {
 
 extension QuoteResponse {
     public var id: String {
-        routePlan.map(\.swapInfo.id)
-        marketInfos.map(\.id).joined()
+        routePlan.map(\.swapInfo.ammKey).joined()
     }
 
     var name: String {

@@ -149,8 +149,8 @@ struct JupiterSwapState: Equatable {
     /// Network fee of the transaction, can be modified by the fee relayer service
     var networkFee: SwapFeeInfo? {
         // FIXME: - Relay context and free transaction
-        guard let signatureFee = route?.fees?.signatureFee
-        else { return nil }
+        // TODO(jupiter): How to calculate signature fee?
+        let signatureFee: Lamports = 50000
 
         // FIXME: - paying fee token
         let payingFeeToken = TokenMetadata.nativeSolana
@@ -169,14 +169,17 @@ struct JupiterSwapState: Equatable {
     }
 
     var accountCreationFee: SwapFeeInfo? {
+        // TODO(jupiter): How to calculate account creation fee?
+
         // get route & fees
-        guard let route,
-              let fees = route.fees
-        else { return nil }
+        guard let route else { return nil }
+
+        // let fees = route.fees
 
         // get fee in SOL
-        let accountCreationFeeInSOL = fees.totalFeeAndDeposits
-            .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals)
+        // let accountCreationFeeInSOL = fees.totalFeeAndDeposits
+        //    .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals)
+        let accountCreationFeeInSOL = 0.0
 
         // prepare for converting
         let payingFeeToken: TokenMetadata
@@ -210,10 +213,11 @@ struct JupiterSwapState: Equatable {
 
     var liquidityFee: [SwapFeeInfo] {
         guard let route else { return [] }
-        return route.marketInfos.map(\.lpFee)
-            .compactMap { lqFee -> SwapFeeInfo? in
-                guard let token = swapTokens.map(\.token).first(where: { $0.mintAddress == lqFee.mint }),
-                      let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
+        return route.routePlan
+            .map { ($0.swapInfo.feeAmount, $0.swapInfo.feeMint) }
+            .compactMap { feeAmount, feeMint -> SwapFeeInfo? in
+                guard let token = swapTokens.map(\.token).first(where: { $0.mintAddress == feeMint }),
+                      let amount = UInt64(feeAmount)?.convertToBalance(decimals: token.decimals)
                 else {
                     return nil
                 }
@@ -223,7 +227,8 @@ struct JupiterSwapState: Equatable {
                     tokenSymbol: token.symbol,
                     tokenName: token.name,
                     tokenPriceInCurrentFiat: tokensPriceMap[token.mintAddress],
-                    pct: lqFee.pct,
+                    // TODO(jupiter): Pct in v6 is not provided for each route plan. We have summarize value in response.
+                    pct: 0,
                     canBePaidByKeyApp: false
                 )
             }

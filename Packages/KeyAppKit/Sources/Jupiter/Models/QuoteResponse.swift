@@ -14,6 +14,7 @@ public struct QuoteResponse: Codable, Equatable {
     public let platformFee: PlatformFee?
     public let keyapp: KeyAppInfo?
     
+    public let message: String?
     public let timeTaken: Double?
     public let contextSlot: Int?
 
@@ -34,6 +35,7 @@ public struct QuoteResponse: Codable, Equatable {
         swapMode: String,
         platformFee: PlatformFee?,
         keyapp: KeyAppInfo?,
+        message: String?,
         timeTaken: Double?,
         contextSlot: Int?
     ) {
@@ -47,6 +49,8 @@ public struct QuoteResponse: Codable, Equatable {
         self.swapMode = swapMode
         self.platformFee = platformFee
         self.keyapp = keyapp
+        
+        self.message = message
         self.timeTaken = timeTaken
         self.contextSlot = contextSlot
     }
@@ -67,6 +71,8 @@ public struct QuoteResponse: Codable, Equatable {
         case otherAmountThreshold, swapMode
         case platformFee
         case keyapp
+        
+        case message
         case timeTaken
         case contextSlot
     }
@@ -83,6 +89,8 @@ public struct QuoteResponse: Codable, Equatable {
         swapMode = try container.decode(String.self, forKey: .swapMode)
         platformFee = try container.decodeIfPresent(PlatformFee.self, forKey: .platformFee)
         keyapp = try container.decodeIfPresent(KeyAppInfo.self, forKey: .keyapp)
+        
+        message = try container.decodeIfPresent(String.self, forKey: .message)
         timeTaken = try container.decodeIfPresent(Double.self, forKey: .timeTaken)
         contextSlot = try container.decodeIfPresent(Int.self, forKey: .contextSlot)
     }
@@ -99,6 +107,8 @@ public struct QuoteResponse: Codable, Equatable {
         try container.encode(swapMode, forKey: .swapMode)
         try container.encodeIfPresent(platformFee, forKey: .platformFee)
         try container.encodeIfPresent(keyapp, forKey: .keyapp)
+        
+        try container.encodeIfPresent(message, forKey: .message)
         try container.encodeIfPresent(timeTaken, forKey: .timeTaken)
         try container.encodeIfPresent(contextSlot, forKey: .contextSlot)
     }

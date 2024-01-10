@@ -40,11 +40,11 @@ extension JupiterSwapBusinessLogic {
             )
 
             // routes
-            let routes = data.data
+            let routes = [data]
 
             // if pre chosen route is stil available, choose it
             // if not choose the first one
-            guard let route = (data.data?.first { $0.id == state.route?.id } ?? data.data?.first) else {
+            guard let route = (routes.first { $0.id == state.route?.id } ?? routes.first) else {
                 let status: JupiterSwapState.Status
                 if let errorMessage = data.message,
                    errorMessage.contains("The value \"NaN\" cannot be converted to a number")
