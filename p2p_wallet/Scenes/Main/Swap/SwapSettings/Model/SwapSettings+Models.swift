@@ -36,7 +36,7 @@ struct JupiterSwapStateInfo: Equatable {
 
 // MARK: - Extensions
 
-extension Route {
+extension QuoteResponse {
     func mapToInfo(
         currentState: JupiterSwapState
     ) -> SwapSettingsRouteInfo {

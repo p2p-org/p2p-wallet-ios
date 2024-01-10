@@ -2,17 +2,20 @@ import Foundation
 
 // MARK: - Quote
 
-public struct Route: Codable, Equatable {
+public struct QuoteResponse: Codable, Equatable {
     // MARK: - Properties
 
     public let inAmount, outAmount: String
     public let priceImpactPct: Decimal
-    public let marketInfos: [MarketInfo]
+    public let routePlan: [RoutePlan]
     public let amount: String
     public let slippageBps: Int
     public let otherAmountThreshold, swapMode: String
-    public let fees: Fees?
+    public let platformFee: PlatformFee?
     public let keyapp: KeyAppInfo?
+    
+    public let timeTaken: Double?
+    public let contextSlot: Int?
 
     // MARK: - Additional properties (non Codable)
 
@@ -24,24 +27,28 @@ public struct Route: Codable, Equatable {
         inAmount: String,
         outAmount: String,
         priceImpactPct: Decimal,
-        marketInfos: [MarketInfo],
+        routePlan: [RoutePlan],
         amount: String,
         slippageBps: Int,
         otherAmountThreshold: String,
         swapMode: String,
-        fees: Fees?,
-        keyapp: KeyAppInfo?
+        platformFee: PlatformFee?,
+        keyapp: KeyAppInfo?,
+        timeTaken: Double?,
+        contextSlot: Int?
     ) {
         self.inAmount = inAmount
         self.outAmount = outAmount
         self.priceImpactPct = priceImpactPct
-        self.marketInfos = marketInfos
+        self.routePlan = routePlan
         self.amount = amount
         self.slippageBps = slippageBps
         self.otherAmountThreshold = otherAmountThreshold
         self.swapMode = swapMode
-        self.fees = fees
+        self.platformFee = platformFee
         self.keyapp = keyapp
+        self.timeTaken = timeTaken
+        self.contextSlot = contextSlot
     }
 
     // MARK: - Custom Encoding
@@ -54,12 +61,14 @@ public struct Route: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case inAmount, outAmount
         case priceImpactPct
-        case marketInfos
+        case routePlan
         case amount
         case slippageBps
         case otherAmountThreshold, swapMode
-        case fees
+        case platformFee
         case keyapp
+        case timeTaken
+        case contextSlot
     }
 
     public init(from decoder: Decoder) throws {
@@ -67,13 +76,15 @@ public struct Route: Codable, Equatable {
         inAmount = try container.decode(String.self, forKey: .inAmount)
         outAmount = try container.decode(String.self, forKey: .outAmount)
         priceImpactPct = try container.decode(Decimal.self, forKey: .priceImpactPct)
-        marketInfos = try container.decode([MarketInfo].self, forKey: .marketInfos)
+        routePlan = try container.decode([RoutePlan].self, forKey: .routePlan)
         amount = try container.decode(String.self, forKey: .amount)
         slippageBps = try container.decode(Int.self, forKey: .slippageBps)
         otherAmountThreshold = try container.decode(String.self, forKey: .otherAmountThreshold)
         swapMode = try container.decode(String.self, forKey: .swapMode)
-        fees = try container.decodeIfPresent(Fees.self, forKey: .fees)
+        platformFee = try container.decodeIfPresent(PlatformFee.self, forKey: .platformFee)
         keyapp = try container.decodeIfPresent(KeyAppInfo.self, forKey: .keyapp)
+        timeTaken = try container.decodeIfPresent(Double.self, forKey: .timeTaken)
+        contextSlot = try container.decodeIfPresent(Int.self, forKey: .contextSlot)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -81,14 +92,36 @@ public struct Route: Codable, Equatable {
         try container.encode(inAmount, forKey: .inAmount)
         try container.encode(outAmount, forKey: .outAmount)
         try container.encode(priceImpactPct, forKey: .priceImpactPct)
-        try container.encode(marketInfos, forKey: .marketInfos)
+        try container.encode(routePlan, forKey: .routePlan)
         try container.encode(amount, forKey: .amount)
         try container.encode(slippageBps, forKey: .slippageBps)
         try container.encode(otherAmountThreshold, forKey: .otherAmountThreshold)
         try container.encode(swapMode, forKey: .swapMode)
-        try container.encodeIfPresent(fees, forKey: .fees)
+        try container.encodeIfPresent(platformFee, forKey: .platformFee)
         try container.encodeIfPresent(keyapp, forKey: .keyapp)
+        try container.encodeIfPresent(timeTaken, forKey: .timeTaken)
+        try container.encodeIfPresent(contextSlot, forKey: .contextSlot)
     }
+}
+
+// MARK: - RoutePlan
+
+public struct RoutePlan: Codable, Equatable {
+    public let swapInfo: SwapInfo
+    public let percent: Int32
+}
+
+// MARK: - SwapInfo
+
+public struct SwapInfo: Codable, Equatable {
+    public let ammKey: String
+    public let label: String?
+    public let inputMint: String
+    public let outputMint: String
+    public let inputAmount: String
+    public let outputAmount: String
+    public let feeAmount: String
+    public let feeMint: String
 }
 
 // MARK: - MarketInfo
@@ -130,13 +163,11 @@ public struct MarketInfo: Codable, Equatable {
 
 public struct PlatformFee: Codable, Equatable {
     public let amount: String
-    public let mint: String
-    public let pct: Decimal
+    public let feeBps: Int
 
-    public init(amount: String, mint: String, pct: Decimal) {
+    init(amount: String, feeBps: Int) {
         self.amount = amount
-        self.mint = mint
-        self.pct = pct
+        self.feeBps = feeBps
     }
 }
 

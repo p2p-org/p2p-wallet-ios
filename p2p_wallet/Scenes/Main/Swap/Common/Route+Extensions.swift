@@ -2,7 +2,7 @@ import Foundation
 import Jupiter
 import SolanaSwift
 
-extension Route {
+extension QuoteResponse {
     func getMints() -> [String] {
         // get marketInfos
         guard !marketInfos.isEmpty
@@ -54,12 +54,13 @@ extension Route {
     }
 }
 
-extension Route {
+extension QuoteResponse {
     public var id: String {
+        routePlan.map(\.swapInfo.id)
         marketInfos.map(\.id).joined()
     }
 
     var name: String {
-        marketInfos.map(\.label).joined(separator: " x ")
+        routePlan.map(\.swapInfo.label).compactMap { $0 }.joined(separator: " x ")
     }
 }

@@ -22,7 +22,7 @@ enum JupiterSwapAction: Equatable {
     case updateUserWallets(userWallets: [SolanaAccount])
     case updateTokensPriceMap([String: Double])
 
-    case chooseRoute(Route)
+    case chooseRoute(QuoteResponse)
     case changeSlippageBps(Int)
 
     case retry(JupiterSwapState.RetryAction)

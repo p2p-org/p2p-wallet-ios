@@ -64,13 +64,13 @@ struct JupiterSwapState: Equatable {
     var tokensPriceMap: [String: Double]
 
     /// Selected route
-    var route: Route?
+    var route: QuoteResponse?
 
     /// Current swap transaction for the state
     var swapTransaction: SwapTransaction?
 
     /// All available routes for current tokens pair
-    var routes: [Route]
+    var routes: [QuoteResponse]
 
     /// Info of all swappable tokens
     var swapTokens: [SwapToken]

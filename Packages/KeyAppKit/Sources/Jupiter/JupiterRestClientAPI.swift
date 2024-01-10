@@ -25,7 +25,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         onlyDirectRoutes: Bool?,
         userPublicKey: String?,
         enforceSingleTx: Bool?
-    ) async throws -> Response<[Route]> {
+    ) async throws -> QuoteResponse {
         guard var urlComponent = URLComponents(string: host + "/quote") else { throw JupiterError.invalidURL }
 
         // Queries
@@ -58,11 +58,11 @@ public class JupiterRestClientAPI: JupiterAPI {
         print(request.cURL())
         let (data, _) = try await URLSession.shared.data(for: request)
         print(String(data: data, encoding: .utf8) ?? "")
-        return try JSONDecoder().decode(Response<[Route]>.self, from: data)
+        return try JSONDecoder().decode(QuoteResponse.self, from: data)
     }
 
     public func swap(
-        route: Route,
+        route: QuoteResponse,
         userPublicKey: String,
         wrapUnwrapSol: Bool,
         feeAccount: String?,
@@ -71,7 +71,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         destinationWallet: String?
     ) async throws -> SwapTransaction {
         struct PostData: Codable {
-            let route: Route
+            let route: QuoteResponse
             let userPublicKey: String
             let wrapUnwrapSol: Bool
             let feeAccount: String?

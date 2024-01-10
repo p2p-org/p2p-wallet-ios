@@ -7,7 +7,7 @@ extension JupiterSwapBusinessLogic {
     static func sendToBlockchain(
         account: KeyPair,
         swapTransaction: String?,
-        route: Route,
+        route: QuoteResponse,
         services: JupiterSwapServices
     ) async throws -> String {
         // retry

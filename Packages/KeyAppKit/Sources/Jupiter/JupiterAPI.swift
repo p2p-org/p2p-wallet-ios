@@ -19,10 +19,13 @@ public protocol JupiterAPI {
         onlyDirectRoutes: Bool?,
         userPublicKey: String?,
         enforceSingleTx: Bool?
-    ) async throws -> Response<[Route]>
+    ) async throws -> QuoteResponse
 
+    // TODO(jupiter): rename route to quoteResponse
+    // TODO(jupiter): rename wrapUnwrapSol to wrapAndUnwrapSol
+    // TODO(jupiter): remove destinationWallet
     func swap(
-        route: Route,
+        route: QuoteResponse,
         userPublicKey: String,
         wrapUnwrapSol: Bool,
         feeAccount: String?,
@@ -36,7 +39,7 @@ public protocol JupiterAPI {
 
 public extension JupiterAPI {
     func swap(
-        route: Route,
+        route: QuoteResponse,
         userPublicKey: String,
         wrapUnwrapSol: Bool,
         feeAccount: String?,

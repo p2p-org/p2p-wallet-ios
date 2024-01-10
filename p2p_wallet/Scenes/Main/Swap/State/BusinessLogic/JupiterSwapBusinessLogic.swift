@@ -298,10 +298,10 @@ enum JupiterSwapBusinessLogic {
     // MARK: - Private
 
     private static func simulateAndRemoveFailingSwapTransaction(
-        availableRoutes: [Route],
+        availableRoutes: [QuoteResponse],
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> (routes: [Route], swapTransaction: SwapTransaction?) {
+    ) async throws -> (routes: [QuoteResponse], swapTransaction: SwapTransaction?) {
         var availableRoutes = availableRoutes
         var swapTransaction: SwapTransaction?
 
@@ -328,7 +328,7 @@ enum JupiterSwapBusinessLogic {
     }
 
     private static func createAndSimulateTransaction(
-        for route: Route,
+        for route: QuoteResponse,
         account: KeyPair,
         services: JupiterSwapServices
     ) async throws -> SwapTransaction? {
