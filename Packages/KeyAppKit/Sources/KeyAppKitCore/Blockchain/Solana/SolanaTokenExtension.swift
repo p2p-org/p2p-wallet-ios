@@ -1,13 +1,13 @@
-//import Foundation
-//import SolanaSwift
+// import Foundation
+// import SolanaSwift
 //
-//public extension SolanaToken {
+// public extension SolanaToken {
 //    var keyAppExtensions: KeyAppTokenExtension {
 //        KeyAppTokenExtension(data: extensions ?? [:])
 //    }
-//}
+// }
 //
-//public struct KeyAppTokenExtension: Codable, Hashable {
+// public struct KeyAppTokenExtension: Codable, Hashable {
 //    public let ruleOfProcessingTokenPriceWS: RuleOfProcessingTokenPriceWS?
 //    public let isPositionOnWS: Bool?
 //    public let isTokenCellVisibleOnWS: Bool
@@ -61,4 +61,4 @@
 //        self.ruleOfFractionalPartOnWS = ruleOfFractionalPartOnWS
 //        self.canBeHidden = canBeHidden ?? true
 //    }
-//}
+// }
