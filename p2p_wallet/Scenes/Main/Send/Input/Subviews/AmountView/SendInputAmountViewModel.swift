@@ -42,8 +42,10 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountText: String = ""
     @Published var amountTextColor: UIColor = .init(resource: .night)
     @Published var mainTokenText = ""
-    @Published var mainAmountType: EnteredAmountType =
-        .token // Can't switch, can't remember Defaults.isTokenInputTypeChosen ? .token : .fiat
+
+    // Can't switch, can't remember Defaults.isTokenInputTypeChosen ? .token : .fiat
+    @Published var mainAmountType: EnteredAmountType = .token
+
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
