@@ -106,8 +106,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 to: SendCoordinator(
                     rootViewController: navigationController,
                     preChosenWallet: nil,
-                    hideTabBar: true,
-                    allowSwitchingMainAmountType: true
+                    hideTabBar: true
                 )
             )
             .receive(on: RunLoop.main)

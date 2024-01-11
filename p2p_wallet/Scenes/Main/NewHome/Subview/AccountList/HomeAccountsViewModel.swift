@@ -106,9 +106,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 let equityValue: CurrencyAmount = state.value
 //                    .filter { $0.token.keyAppExtensions.isPositionOnWS ?? false }
 //                    .filter { $0.token.keyAppExtensions.calculationOfFinalBalanceOnWS ?? true }
-                    .reduce(CurrencyAmount(usd: 0)) {
-                        $0 + $1.amountInFiat
-                    }
+                        .reduce(CurrencyAmount(usd: 0)) {
+                            $0 + $1.amountInFiat
+                        }
 
                 let formatter = CurrencyFormatter(
                     showSpacingAfterCurrencySymbol: false,

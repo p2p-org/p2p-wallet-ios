@@ -6,6 +6,9 @@ struct SwapToken: Equatable {
     let token: TokenMetadata
     let userWallet: SolanaAccount?
     var mintAddress: String { token.mintAddress }
+    var isNonStrict: Bool {
+        token.tags.map(\.name).contains("unknown") == true
+    }
 }
 
 extension SwapToken {
