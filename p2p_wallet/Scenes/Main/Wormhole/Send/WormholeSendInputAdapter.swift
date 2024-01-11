@@ -53,10 +53,14 @@ struct WormholeSendInputStateAdapter: Equatable {
     var fees: String {
         switch state {
         case let .ready(_, output, _):
-            return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+            if let totalInCrypto = output.fees.totalInCrypto {
+                return "≈\(cryptoFormatter.string(amount: totalInCrypto))"
+            } else {
+                return ""
+            }
         case let .error(_, output, _):
-            if let output {
-                return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+            if let output, let totalInCrypto = output.fees.totalInCrypto {
+                return "≈\(cryptoFormatter.string(amount: totalInCrypto))"
             } else {
                 return ""
             }
