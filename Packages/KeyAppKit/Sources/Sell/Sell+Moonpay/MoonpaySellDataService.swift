@@ -75,7 +75,7 @@ public final class MoonpaySellDataService: SellDataService {
             self.currency = currency
             self.fiat = fiat
             status = .ready
-        } catch MoonpaySellDataServiceProviderError.unsupportedRegion(let region) {
+        } catch let MoonpaySellDataServiceProviderError.unsupportedRegion(region) {
             currency = nil
             fiat = nil
             status = .error(SellDataServiceError.unsupportedRegion(region))
