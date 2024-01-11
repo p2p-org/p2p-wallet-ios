@@ -6,9 +6,9 @@ public struct QuoteResponse: Codable, Equatable {
     // MARK: - Properties
 
     public let inAmount, outAmount: String
+    public let inputMint, outputMint: String
     public let priceImpactPct: Decimal
     public let routePlan: [RoutePlan]
-    public let amount: String
     public let slippageBps: Int
     public let otherAmountThreshold, swapMode: String
     public let platformFee: PlatformFee?
@@ -27,9 +27,10 @@ public struct QuoteResponse: Codable, Equatable {
     public init(
         inAmount: String,
         outAmount: String,
+        inputMint: String,
+        outputMint: String,
         priceImpactPct: Decimal,
         routePlan: [RoutePlan],
-        amount: String,
         slippageBps: Int,
         otherAmountThreshold: String,
         swapMode: String,
@@ -41,9 +42,10 @@ public struct QuoteResponse: Codable, Equatable {
     ) {
         self.inAmount = inAmount
         self.outAmount = outAmount
+        self.inputMint = inputMint
+        self.outputMint = outputMint
         self.priceImpactPct = priceImpactPct
         self.routePlan = routePlan
-        self.amount = amount
         self.slippageBps = slippageBps
         self.otherAmountThreshold = otherAmountThreshold
         self.swapMode = swapMode
@@ -64,9 +66,9 @@ public struct QuoteResponse: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case inAmount, outAmount
+        case inputMint, outputMint
         case priceImpactPct
         case routePlan
-        case amount
         case slippageBps
         case otherAmountThreshold, swapMode
         case platformFee
@@ -81,9 +83,12 @@ public struct QuoteResponse: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         inAmount = try container.decode(String.self, forKey: .inAmount)
         outAmount = try container.decode(String.self, forKey: .outAmount)
-        priceImpactPct = try container.decode(Decimal.self, forKey: .priceImpactPct)
+        
+        inputMint = try container.decode(String.self, forKey: .inputMint)
+        outputMint = try container.decode(String.self, forKey: .outputMint)
+        
+        priceImpactPct = Decimal(string: try container.decode(String.self, forKey: .priceImpactPct)) ?? 0.0
         routePlan = try container.decode([RoutePlan].self, forKey: .routePlan)
-        amount = try container.decode(String.self, forKey: .amount)
         slippageBps = try container.decode(Int.self, forKey: .slippageBps)
         otherAmountThreshold = try container.decode(String.self, forKey: .otherAmountThreshold)
         swapMode = try container.decode(String.self, forKey: .swapMode)
@@ -97,11 +102,15 @@ public struct QuoteResponse: Codable, Equatable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(inAmount, forKey: .inAmount)
         try container.encode(outAmount, forKey: .outAmount)
+        
+        try container.encode(inputMint, forKey: .inputMint)
+        try container.encode(outputMint, forKey: .outputMint)
+        
         try container.encode(priceImpactPct, forKey: .priceImpactPct)
         try container.encode(routePlan, forKey: .routePlan)
-        try container.encode(amount, forKey: .amount)
         try container.encode(slippageBps, forKey: .slippageBps)
         try container.encode(otherAmountThreshold, forKey: .otherAmountThreshold)
         try container.encode(swapMode, forKey: .swapMode)
@@ -128,8 +137,8 @@ public struct SwapInfo: Codable, Equatable {
     public let label: String?
     public let inputMint: String
     public let outputMint: String
-    public let inputAmount: String
-    public let outputAmount: String
+    public let inAmount: String
+    public let outAmount: String
     public let feeAmount: String
     public let feeMint: String
 }

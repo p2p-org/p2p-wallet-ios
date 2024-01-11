@@ -91,7 +91,11 @@ extension JupiterSwapBusinessLogic {
         // send to blockchain
         return try await solanaAPIClient.sendTransaction(
             transaction: serializedTransaction,
-            configs: RequestConfiguration(encoding: "base64")!
+            configs: RequestConfiguration(
+                commitment: "confirmed",
+                encoding: "base64",
+                preflightCommitment: "confirmed"
+            )!
         )
     }
 }

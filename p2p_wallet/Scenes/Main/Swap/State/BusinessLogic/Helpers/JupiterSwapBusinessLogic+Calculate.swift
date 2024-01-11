@@ -40,7 +40,7 @@ extension JupiterSwapBusinessLogic {
             )
 
             // routes
-            let routes = [data]
+            let routes: [QuoteResponse] = [data]
 
             // if pre chosen route is stil available, choose it
             // if not choose the first one
@@ -55,7 +55,7 @@ extension JupiterSwapBusinessLogic {
                 }
                 return state.modified {
                     $0.status = status
-                    $0.routes = routes ?? []
+                    $0.routes = routes
                     $0.route = nil
                 }
             }
@@ -64,11 +64,12 @@ extension JupiterSwapBusinessLogic {
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
-                    $0.routes = routes ?? []
+                    $0.routes = routes
                 },
                 services: services
             )
         } catch {
+            print("[Jupiter]", error)
             return handle(error: error, for: state)
         }
     }
