@@ -46,6 +46,29 @@ struct CryptoView: View {
                 )
             }
         }
+        .if(viewModel.state != .pending, transform: { view in
+            view.toolbar {
+                ToolbarItem(placement: .principal) {
+                    Button(
+                        action: {
+                            viewModel.copyToClipboard()
+                        },
+                        label: {
+                            ZStack {
+                                Color(.snow)
+                                    .cornerRadius(80)
+                                Text("🔗 \(viewModel.address)")
+                                    .fontWeight(.semibold)
+                                    .apply(style: .text3)
+                                    .foregroundColor(Color(.mountain))
+                                    .padding(.horizontal, 18)
+                                    .padding(.vertical, 12)
+                            }
+                        }
+                    )
+                }
+            }
+        })
         .onAppear {
             viewModel.viewAppeared()
         }

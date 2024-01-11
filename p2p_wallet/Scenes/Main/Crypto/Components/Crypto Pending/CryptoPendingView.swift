@@ -4,22 +4,20 @@ import SwiftUI
 /// View of `CryptoPending` scene
 struct CryptoPendingView: View {
     var body: some View {
-        NavigationView {
-            content
-                .padding(.top, 11)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationViewStyle(StackNavigationViewStyle())
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("")
-                            .skeleton(
-                                with: true,
-                                size: CGSize(width: 164, height: 40),
-                                animated: .default
-                            )
-                    }
+        content
+            .padding(.top, 11)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationViewStyle(StackNavigationViewStyle())
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("")
+                        .skeleton(
+                            with: true,
+                            size: CGSize(width: 164, height: 40),
+                            animated: .default
+                        )
                 }
-        }
+            }
     }
 
     private var content: some View {
