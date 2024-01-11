@@ -18,7 +18,7 @@ enum WalletActionType {
         case .swap:
             return L10n.swap
         case .cashOut:
-            return "Cash out"
+            return L10n.cashOut
         }
     }
 
@@ -33,7 +33,7 @@ enum WalletActionType {
         case .swap:
             return .actionSwap
         case .cashOut:
-            return .cashOut
+            return .actionCashOut
         }
     }
 }

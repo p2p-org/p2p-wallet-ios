@@ -19,6 +19,7 @@ enum RendableAccountDetailsAction: Identifiable {
     case receive(ReceiveParam)
     case send
     case swap(SolanaAccount?)
+    case cashOut
 }
 
 extension RendableAccountDetailsAction {
@@ -37,6 +38,8 @@ extension RendableAccountDetailsAction {
             return 2
         case .swap:
             return 3
+        case .cashOut:
+            return 4
         }
     }
 
@@ -50,6 +53,8 @@ extension RendableAccountDetailsAction {
             return L10n.send
         case .swap:
             return L10n.swap
+        case .cashOut:
+            return L10n.cashOut
         }
     }
 
@@ -63,6 +68,8 @@ extension RendableAccountDetailsAction {
             return .buttonSend
         case .swap:
             return .buttonSwap
+        case .cashOut:
+            return .buttonCashOut
         }
     }
 }

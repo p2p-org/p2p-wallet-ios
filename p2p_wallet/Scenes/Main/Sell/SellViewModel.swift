@@ -6,6 +6,7 @@ import Reachability
 import Resolver
 import Sell
 import SolanaSwift
+import UIKit
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -75,7 +76,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
     @Published var fee: LoadingValue<SellViewModel.Fee> = .loaded(.zero)
-    @Published var status: SellDataServiceStatus = .initialized
+    @Published var status = SellDataViewStatus.loading
     @Published var inputError: SellViewModelInputError?
     var shouldNotShowKeyboard = false
     var currentInputTypeCode: String {
@@ -83,6 +84,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     @Published var quoteReceiveAmount: Double = 0
+
+    @Published var region: SelectCountryViewModel.Model?
 
     // MARK: - Initializer
 
@@ -107,9 +110,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
         goBackSubject.send()
     }
 
-    func warmUp() {
+    func warmUp(region: ProviderRegion? = nil) {
         Task { [unowned self] in
-            await dataService.update()
+            await dataService.update(region: region)
         }
     }
 
@@ -141,6 +144,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
         if isEnteringQuoteAmount {
             isEnteringQuoteAmount = false
         }
+    }
+
+    func countrySelected(_ country: SelectCountryViewModel.Model, isSellAllowed: Bool) {
+        setNewCountryInfo(model: country, isSellAllowed: isSellAllowed)
+    }
+
+    func changeTheRegionClicked() {
+        guard let region else { return }
+        navigation.send(.chooseCountry(region))
     }
 
     func openProviderWebView(
@@ -236,7 +248,27 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // bind status publisher to status property
         dataService.statusPublisher
             .receive(on: RunLoop.main)
-            .assignWeak(to: \.status, on: self)
+            .sink(receiveValue: { [weak self] dataStatus in
+                guard let self else { return }
+                switch dataStatus {
+                case .initialized, .updating:
+                    self.status = .loading
+                case .ready:
+                    self.status = .ready
+                case let .error(SellDataServiceError.unsupportedRegion(region)):
+                    setNewCountryInfo(
+                        model: SelectCountryViewModel.Model(
+                            alpha2: region.alpha2,
+                            country: region.country,
+                            state: region.state,
+                            alpha3: region.alpha3
+                        ),
+                        isSellAllowed: false
+                    )
+                case let .error(error):
+                    self.status = .error(.other)
+                }
+            })
             .store(in: &subscriptions)
 
         // bind dataService.data to viewModel's data
@@ -299,7 +331,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
             .filter { [weak self] _ in
-                self?.status.isReady == true
+                if case .ready = self?.status { return true }
+                return false
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
@@ -335,6 +368,28 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Helpers
+
+    private func setNewCountryInfo(model: SelectCountryViewModel.Model, isSellAllowed: Bool) {
+        guard !model.title.isEmpty else {
+            status = .ready
+            region = model
+            return
+        }
+        region = model
+
+        if isSellAllowed {
+            warmUp(region: model)
+        } else {
+            let model = ChangeCountryErrorView.ChangeCountryModel(
+                image: UIImage(resource: .connectionErrorCat),
+                title: L10n.sorry,
+                subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(model.title),
+                buttonTitle: L10n.goBack,
+                subButtonTitle: L10n.changeTheRegionManually
+            )
+            status = .error(.region(model))
+        }
+    }
 
     private func checkIfMoreBaseCurrencyNeeded() {
         maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
@@ -442,3 +497,5 @@ extension SellViewModel {
         static let zero = SellViewModel.Fee(baseAmount: 0, quoteAmount: 0)
     }
 }
+
+extension SelectCountryViewModel.Model: ProviderRegion {}

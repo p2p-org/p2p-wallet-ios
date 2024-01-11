@@ -57,6 +57,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSwap()
             case let .openSwapWithDestination(source, recipient):
                 self.openSwap(destination: recipient)
+            case .openCashOut:
+                break
             }
         }
         .store(in: &subscriptions)

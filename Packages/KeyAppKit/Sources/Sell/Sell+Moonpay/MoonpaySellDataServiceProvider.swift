@@ -2,7 +2,7 @@ import Foundation
 import Moonpay
 
 public enum MoonpaySellDataServiceProviderError: Error {
-    case unsupportedRegion
+    case unsupportedRegion(ProviderRegion)
 }
 
 public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
@@ -11,6 +11,7 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     public typealias Currency = MoonpayCurrency
     public typealias Transaction = MoonpayTransaction
     public typealias Fiat = MoonpayFiat
+    public typealias Region = Moonpay.Provider.IpAddressResponse
 
     // MARK: - Properties
 
@@ -28,19 +29,23 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
         try await moonpayAPI.ipAddresses().isSellAllowed
     }
 
-    func fiat() async throws -> Fiat {
-        func fiatByApha3(alpha3: String) throws -> Fiat {
-            if moonpayAPI.UKAlpha3Code() == alpha3 {
+    func fiat(region: ProviderRegion?) async throws -> Fiat {
+        func fiatByApha3(region: ProviderRegion) throws -> Fiat {
+            if moonpayAPI.UKAlpha3Code() == region.alpha3 {
                 return .gbp
-            } else if moonpayAPI.bankTransferAvailableAlpha3Codes().contains(alpha3) {
+            } else if moonpayAPI.bankTransferAvailableAlpha3Codes().contains(region.alpha3) {
                 return .eur
-            } else if moonpayAPI.USAlpha3Code() == alpha3 {
+            } else if moonpayAPI.USAlpha3Code() == region.alpha3 {
                 return .usd
             }
-            throw MoonpaySellDataServiceProviderError.unsupportedRegion
+            throw MoonpaySellDataServiceProviderError.unsupportedRegion(region)
         }
-        let resp = try await moonpayAPI.ipAddresses()
-        return try fiatByApha3(alpha3: resp.alpha3)
+        if let region {
+            return try fiatByApha3(region: region)
+        } else {
+            let resp = try await moonpayAPI.ipAddresses()
+            return try fiatByApha3(region: resp)
+        }
     }
 
     func currencies() async throws -> [Currency] {
@@ -126,3 +131,5 @@ public extension MoonpaySellDataServiceProvider.MoonpayTransaction {
         public var walletAddress: String
     }
 }
+
+extension Moonpay.Provider.IpAddressResponse: ProviderRegion {}

@@ -28,8 +28,8 @@ public protocol SellDataService {
     /// Check if service available
     func checkAvailability() async
 
-    /// Request for pendings, rates, min amounts
-    func update() async
+    /// Request for pendings, rates, min amounts for defined region
+    func update(region: ProviderRegion?) async
 
     /// Retrieve all incompleted transactions
     func updateIncompletedTransactions() async throws

@@ -182,6 +182,25 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             moonpayInfoViewController.modalPresentationStyle = .custom
             navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
             return moonpayInfoViewController.deallocatedPublisher()
+
+        case let .chooseCountry(selectedCountry):
+            let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
+            let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
+                .asViewController(withoutUIKitNavBar: false)
+            navigationController.pushViewController(selectCountryViewController, animated: true)
+
+            selectCountryViewModel.selectCountry
+                .sink(receiveValue: { [weak self] item in
+                    self?.viewModel.countrySelected(item.0, isSellAllowed: item.sellAllowed)
+                    self?.navigationController.popViewController(animated: true)
+                })
+                .store(in: &subscriptions)
+            selectCountryViewModel.currentSelected
+                .sink(receiveValue: { [weak self] in
+                    self?.navigationController.popViewController(animated: true)
+                })
+                .store(in: &subscriptions)
+            return Just(()).eraseToAnyPublisher()
         }
     }
 
