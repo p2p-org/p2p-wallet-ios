@@ -134,7 +134,6 @@ enum JupiterSwapBusinessLogic {
         case let .initialize(
             account,
             jupiterTokens,
-            routeMap,
             preChosenFromTokenMintAddress,
             preChosenToTokenMintAddress
         ):
@@ -143,7 +142,7 @@ enum JupiterSwapBusinessLogic {
                 services: services,
                 account: account,
                 jupiterTokens: jupiterTokens,
-                routeMap: routeMap,
+                routeMap: .init(mintKeys: [], indexesRouteMap: [:]),
                 preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
                 preChosenToTokenMintAddress: preChosenToTokenMintAddress
             )

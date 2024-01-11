@@ -189,8 +189,8 @@ private extension SwapViewModel {
                 switch dataStatus {
                 case .loading, .initial:
                     self.viewState = .loading
-                case let .ready(jupiterTokens, routeMap):
-                    await self.initialize(jupiterTokens: jupiterTokens, routeMap: routeMap)
+                case let .ready(jupiterTokens):
+                    await self.initialize(jupiterTokens: jupiterTokens)
                 case .failed:
                     self.viewState = .failed
                 }
@@ -252,13 +252,12 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
+    func initialize(jupiterTokens: [TokenMetadata]) async {
         let newState = await stateMachine
             .accept(
                 action: .initialize(
                     account: userWalletManager.wallet?.account,
                     jupiterTokens: jupiterTokens,
-                    routeMap: routeMap,
                     preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? inputMint ?? Defaults
                         .fromTokenAddress,
                     preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? outputMint ?? Defaults.toTokenAddress

@@ -6,7 +6,6 @@ enum JupiterSwapAction: Equatable {
     case initialize(
         account: KeyPair?,
         jupiterTokens: [TokenMetadata],
-        routeMap: RouteMap,
         preChosenFromTokenMintAddress: String?,
         preChosenToTokenMintAddress: String?
     )

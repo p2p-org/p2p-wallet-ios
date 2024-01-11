@@ -141,9 +141,9 @@ struct JupiterSwapState: Equatable {
         return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
     }
 
+    // TODO(jupiter): Fetch dynamic in future.
     var possibleToTokens: [SwapToken] {
-        let toAddresses = Set(routeMap.indexesRouteMap[fromToken.mintAddress] ?? [])
-        return swapTokens.filter { toAddresses.contains($0.token.mintAddress) }
+        swapTokens
     }
 
     /// Network fee of the transaction, can be modified by the fee relayer service
