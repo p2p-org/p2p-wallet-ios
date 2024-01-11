@@ -154,8 +154,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 category: .solanaAddress,
                 attributes: [.funds]
             ),
-            preChosenAmount: transaction.baseCurrencyAmount,
-            allowSwitchingMainAmountType: false
+            preChosenAmount: transaction.baseCurrencyAmount
         ))
         .sink { _ in }
         .store(in: &subscriptions)

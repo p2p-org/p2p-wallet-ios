@@ -87,7 +87,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let flow: SendFlow
     private var wasMaxWarningToastShown: Bool = false
     private let preChosenAmount: Double?
-    private let allowSwitchingMainAmountType: Bool
 
     // MARK: - Dependencies
 
@@ -98,12 +97,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
         flow: SendFlow,
-        allowSwitchingMainAmountType: Bool,
         sendViaLinkSeed: String?
     ) {
         self.flow = flow
         self.preChosenAmount = preChosenAmount
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
         let repository = Resolver.resolve(SolanaAccountsService.self)
         let wallets = repository.getWallets()
@@ -398,32 +395,10 @@ private extension SendInputViewModel {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self?.openKeyboard() }
             }
             .store(in: &subscriptions)
-
-        $sourceWallet.eraseToAnyPublisher()
-            .sink { [weak self] currentWallet in
-                guard let self else { return }
-                if currentWallet.price == nil {
-                    self.turnOffInputSwitch()
-                }
-//                else if
-//                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
-//                {
-//                    self.turnOffInputSwitch()
-//                }
-                else {
-                    self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
-                }
-            }
-            .store(in: &subscriptions)
     }
 }
 
 private extension SendInputViewModel {
-    func turnOffInputSwitch() {
-        inputAmountViewModel.mainAmountType = .token
-        inputAmountViewModel.isSwitchAvailable = false
-    }
-
     func updateInputAmountView() {
         guard currentState.amountInToken != .zero else {
             inputAmountViewModel.isError = false
