@@ -140,7 +140,7 @@ struct WormholeSendInputStateAdapter: Equatable {
     }
 
     var disableSwitch: Bool {
-        input?.solanaAccount.price == nil
+        true
     }
 
     var totalCryptoAmount: String {
