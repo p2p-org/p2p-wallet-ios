@@ -200,6 +200,7 @@ public class SendActionServiceImpl: SendActionService {
                 amount: amount,
                 feePayer: feePayer,
                 transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
+                lamportsPerSignature: context.lamportsPerSignature,
                 minRentExemption: wallet.minRentExemption ?? 2_039_280
             ).preparedTransaction
         }
