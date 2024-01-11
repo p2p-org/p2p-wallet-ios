@@ -274,8 +274,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
             preChosenWallet: account,
-            hideTabBar: true,
-            allowSwitchingMainAmountType: true
+            hideTabBar: true
         )
 
         coordinate(to: coordinator)

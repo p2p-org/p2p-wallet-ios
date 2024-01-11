@@ -68,7 +68,7 @@ private extension SwapInputView {
             viewModel.changeTokenPressed.send()
         } label: {
             HStack {
-                Text(viewModel.tokenSymbol)
+                Text("\(viewModel.tokenSymbol) \(viewModel.token.isNonStrict ? "⚠" : "")")
                     .apply(style: .title1)
                     .foregroundColor(Color(.night))
                     .if(viewModel.isLoading) { view in

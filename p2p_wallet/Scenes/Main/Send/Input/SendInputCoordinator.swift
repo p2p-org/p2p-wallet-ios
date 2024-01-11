@@ -13,7 +13,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private var subject = PassthroughSubject<SendResult, Never>()
     private let flow: SendFlow
     private let pushedWithoutRecipientSearchView: Bool
-    private let allowSwitchingMainAmountType: Bool
 
     private let sendViaLinkSeed: String?
 
@@ -24,7 +23,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         navigationController: UINavigationController,
         flow: SendFlow,
         pushedWithoutRecipientSearchView: Bool = false,
-        allowSwitchingMainAmountType: Bool,
         sendViaLinkSeed: String? = nil
     ) {
         self.recipient = recipient
@@ -33,7 +31,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         self.navigationController = navigationController
         self.flow = flow
         self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
         self.sendViaLinkSeed = sendViaLinkSeed
     }
 
@@ -43,7 +40,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
             flow: flow,
-            allowSwitchingMainAmountType: allowSwitchingMainAmountType,
             sendViaLinkSeed: sendViaLinkSeed
         )
         let view = SendInputView(viewModel: viewModel)

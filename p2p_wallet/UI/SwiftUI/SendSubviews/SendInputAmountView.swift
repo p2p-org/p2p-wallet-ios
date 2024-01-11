@@ -91,21 +91,21 @@ struct SendInputAmountView: View {
                                 .accessibilityIdentifier("current-currency")
                         }
 
-                        if isSwitchMainAmountTypeAvailable {
-                            HStack(spacing: 2) {
-                                Text(secondaryAmountText)
-                                    .secondaryStyle()
+                        HStack(spacing: 2) {
+                            Text(secondaryAmountText)
+                                .secondaryStyle()
 
-                                Text(secondaryCurrencyText)
-                                    .secondaryStyle()
+                            Text(secondaryCurrencyText)
+                                .secondaryStyle()
 
-                                Spacer()
+                            Spacer()
 
-                                Text(L10n.tapToSwitchTo(secondaryCurrencyText))
-                                    .secondaryStyle()
-                                    .opacity(switchAreaOpacity)
-                                    .layoutPriority(1)
-                            }
+//                        if isSwitchMainAmountTypeAvailable {
+//                                Text(L10n.tapToSwitchTo(secondaryCurrencyText))
+//                                    .secondaryStyle()
+//                                    .opacity(switchAreaOpacity)
+//                                    .layoutPriority(1)
+//                        }
                         }
                     }
                     if isSwitchMainAmountTypeAvailable {
@@ -122,7 +122,7 @@ struct SendInputAmountView: View {
                         .frame(width: 24, height: 24)
                     }
                 }
-                .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
+                .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 24))
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(.snow))
             }

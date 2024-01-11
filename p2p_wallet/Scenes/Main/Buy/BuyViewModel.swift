@@ -182,15 +182,14 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] = try Dictionary(
-                    await pricesService.getPrices(
-                        tokens: BuyViewModel.tokens,
-                        fiat: fiat.rawValue
-                    )
-                    .map { token, price in
-                        (token.address, price.doubleValue)
-                    }
-                ) { lhs, _ in lhs }
+                guard let fiatCurrency = fiat.buyFiatCurrency() else { continue }
+                var tokenPrice: [String: Double] = [:]
+                for token in BuyViewModel.tokens {
+                    guard let cryptoCurrency = token.buyCryptoCurrency() else { continue }
+                    let rate = try await exchangeService.getExchangeRate(from: fiatCurrency, to: cryptoCurrency)
+                    tokenPrice[token.mintAddress] = rate.amount
+                }
+                self.tokenPrices[fiat] = tokenPrice
             }
 
             let banks = try await exchangeService.isBankTransferEnabled()
