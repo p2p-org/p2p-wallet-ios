@@ -100,7 +100,7 @@ public class OrcaSwap: OrcaSwapType {
         guard let fromTokenName = getTokenFromMint(fromMint)?.name,
               let toTokenName = getTokenFromMint(toMint)?.name,
               let currentRoutes = try? findRoutes(fromTokenName: fromTokenName, toTokenName: toTokenName)
-              .first?.value
+                  .first?.value
         else { return [] }
 
         // retrieve all routes
@@ -271,11 +271,11 @@ public class OrcaSwap: OrcaSwapType {
            let decimals = bestPoolsPair![0].tokenABalance?.decimals,
            let inputAmount = inputAmount,
            let intermediaryToken = bestPoolsPair?
-           .getIntermediaryToken(
-               inputAmount: inputAmount.toLamport(decimals: decimals),
-               slippage: slippage
-           ),
-           let mint = getMint(tokenName: intermediaryToken.tokenName)
+               .getIntermediaryToken(
+                   inputAmount: inputAmount.toLamport(decimals: decimals),
+                   slippage: slippage
+               ),
+               let mint = getMint(tokenName: intermediaryToken.tokenName)
         {
             // when intermediary token is SOL, a deposit fee for creating WSOL is needed (will be returned after
             // transaction)
