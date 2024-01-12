@@ -75,19 +75,13 @@ private extension SwapView {
                 Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
                     .apply(style: .label2)
                     .foregroundColor(.red)
+                    .padding(.top, 8)
 
                 // Slippage (for debugging)
                 Text("Slippage: \(Double(viewModel.stateMachine.currentState.slippageBps) / 100)%")
                     .apply(style: .label2)
                     .foregroundColor(.red)
             #endif
-
-            // Disclaimer
-            Text(L10n.keyAppDoesnTMakeAnyProfitFromThisSwap💚)
-                .apply(style: .label1)
-                .foregroundColor(Color(.mountain))
-                .padding(.top, 16)
-                .accessibilityIdentifier("SwapView.profitInfoLabel")
 
             // Warning message
             if let warningState = viewModel.warningState {
