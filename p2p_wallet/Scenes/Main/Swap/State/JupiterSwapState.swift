@@ -1,4 +1,5 @@
 import FeeRelayerSwift
+import Foundation
 import Jupiter
 import KeyAppKitCore
 import SolanaSwift
@@ -87,6 +88,9 @@ struct JupiterSwapState: Equatable {
     /// SlippageBps is slippage multiplied by 100 (be careful)
     var slippageBps: Int
 
+    /// Lamport per signature
+    var lamportPerSignature: Lamports
+
     // MARK: - Computed properties
 
     /// Amount to
@@ -150,7 +154,15 @@ struct JupiterSwapState: Equatable {
     var networkFee: SwapFeeInfo? {
         // FIXME: - Relay context and free transaction
         // TODO(jupiter): How to calculate signature fee?
-        let signatureFee: Lamports = 50000
+        var signatureFee: Lamports = 0
+
+        if
+            let swapTransaction = swapTransaction?.stringValue,
+            let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
+            let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+        {
+            signatureFee = UInt64(versionedTransaction.message.value.header.numRequiredSignatures) * lamportPerSignature
+        }
 
         // FIXME: - paying fee token
         let payingFeeToken = TokenMetadata.nativeSolana
@@ -281,7 +293,8 @@ struct JupiterSwapState: Equatable {
             swapTokens: [],
             fromToken: .nativeSolana,
             toToken: .nativeSolana,
-            slippageBps: 0
+            slippageBps: 0,
+            lamportPerSignature: 5000
         )
     }
 

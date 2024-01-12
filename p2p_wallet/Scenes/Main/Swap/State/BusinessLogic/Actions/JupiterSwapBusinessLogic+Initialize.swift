@@ -8,7 +8,7 @@ import SolanaSwift
 extension JupiterSwapBusinessLogic {
     static func initializeAction(
         state _: JupiterSwapState,
-        services _: JupiterSwapServices,
+        services: JupiterSwapServices,
         account: KeyPair?,
         jupiterTokens: [TokenMetadata],
         routeMap: RouteMap,
@@ -16,9 +16,10 @@ extension JupiterSwapBusinessLogic {
         preChosenToTokenMintAddress: String?
     ) async -> JupiterSwapState {
         // get swapTokens, pricesMap
-        let (swapTokens, tokensPriceMap) = await(
+        let (swapTokens, tokensPriceMap, lamportPerSignature) = await(
             getSwapTokens(jupiterTokens),
-            getTokensPriceMap()
+            getTokensPriceMap(),
+            getLamportPerSignature(solanaAPIClient: services.solanaAPIClient)
         )
 
         // choose fromToken
@@ -45,6 +46,7 @@ extension JupiterSwapBusinessLogic {
             $0.slippageBps = Int(0.5 * 100)
             $0.fromToken = fromToken
             $0.toToken = toToken
+            $0.lamportPerSignature = lamportPerSignature
         }
     }
 
@@ -96,6 +98,15 @@ extension JupiterSwapBusinessLogic {
             return Dictionary(prices.map { ($0.key.address, $0.value.doubleValue) }) { lhs, _ in lhs }
         } catch {
             return [:]
+        }
+    }
+    
+    private static func getLamportPerSignature(solanaAPIClient: SolanaAPIClient) async -> Lamports {
+        do {
+            let fees = try await solanaAPIClient.getFees(commitment: nil)
+            return fees.feeCalculator?.lamportsPerSignature ?? 5000
+        } catch {
+            return 5000
         }
     }
 
