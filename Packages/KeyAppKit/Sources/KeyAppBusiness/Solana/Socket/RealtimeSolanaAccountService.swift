@@ -284,8 +284,9 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 // Updating native account balance and get spl tokens
                 let (balance, (resolved, _)) = try await(
                     apiClient.getBalance(account: owner, commitment: "confirmed"),
-                    apiClient.getAccountBalancesWithToken2022(
+                    apiClient.getAccountBalances(
                         for: owner,
+                        withToken2022: true,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
                     )
