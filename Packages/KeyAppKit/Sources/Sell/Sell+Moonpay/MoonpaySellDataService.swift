@@ -32,6 +32,8 @@ public final class MoonpaySellDataService: SellDataService {
 
     public var fiat: MoonpaySellDataServiceProvider.Fiat?
 
+    public var region: ProviderRegion?
+
     public let userId: String
 
     // MARK: - Initializer
@@ -63,6 +65,9 @@ public final class MoonpaySellDataService: SellDataService {
         do {
             if region == nil {
                 isAvailable = try await provider.isAvailable()
+                self.region = try await provider.ipRegion()
+            } else {
+                self.region = region
             }
             let (currency, fiat, _) = try await(
                 provider.currencies().filter { $0.code.uppercased() == "SOL" }.first,
@@ -79,6 +84,7 @@ public final class MoonpaySellDataService: SellDataService {
             currency = nil
             fiat = nil
             status = .error(SellDataServiceError.unsupportedRegion(region))
+            self.region = region
             return
         } catch {
             debugPrint(error)

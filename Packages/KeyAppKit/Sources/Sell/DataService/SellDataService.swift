@@ -4,6 +4,9 @@ import Foundation
 public protocol SellDataService {
     associatedtype Provider: SellDataServiceProvider
 
+    /// Current region
+    var region: ProviderRegion? { get }
+
     /// Availability status
     var isAvailable: Bool { get }
 

@@ -16,6 +16,7 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     // MARK: - Properties
 
     private let moonpayAPI: Moonpay.Provider
+    private var ipRegion: Moonpay.Provider.IpAddressResponse?
 
     // MARK: - Initializer
 
@@ -26,7 +27,14 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     // MARK: - Methods
 
     func isAvailable() async throws -> Bool {
-        try await moonpayAPI.ipAddresses().isSellAllowed
+        try await ipRegion().isSellAllowed
+    }
+
+    func ipRegion() async throws -> Moonpay.Provider.IpAddressResponse {
+        if let ipRegion {
+            return ipRegion
+        }
+        return try await moonpayAPI.ipAddresses()
     }
 
     func fiat(region: ProviderRegion?) async throws -> Fiat {
@@ -43,8 +51,8 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
         if let region {
             return try fiatByApha3(region: region)
         } else {
-            let resp = try await moonpayAPI.ipAddresses()
-            return try fiatByApha3(region: resp)
+            let region = try await ipRegion()
+            return try fiatByApha3(region: region)
         }
     }
 
