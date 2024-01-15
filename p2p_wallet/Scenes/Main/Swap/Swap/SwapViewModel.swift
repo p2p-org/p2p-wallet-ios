@@ -67,6 +67,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var inputMint: String?
     private var outputMint: String?
 
+    private var inputSymbol: String?
+    private var outputSymbol: String?
+
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
@@ -81,7 +84,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         preChosenWallet: SolanaAccount? = nil,
         destinationWallet: SolanaAccount? = nil,
         inputMint: String? = nil,
-        outputMint: String? = nil
+        outputMint: String? = nil,
+        inputSymbol: String? = nil,
+        outputSymbol: String? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
@@ -92,6 +97,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
         self.inputMint = inputMint
         self.outputMint = outputMint
+
+        self.inputSymbol = inputSymbol
+        self.outputSymbol = outputSymbol
 
         self.source = source
         super.init()
@@ -253,15 +261,38 @@ private extension SwapViewModel {
     }
 
     func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
+        func findTokenMintBySymbol(symbol: String?) -> String? {
+            guard let symbol else { return nil }
+
+            // We filter tokens by tags and symbol
+            let tokens = jupiterTokens
+                .filter { token in
+                    token.tags.contains { tag in
+                        ["old-registry", "community", "wormhole"].contains(tag.name)
+                    } && token.symbol == symbol
+                }
+
+            if tokens.count == 1 {
+                return tokens.first?.mintAddress
+            } else {
+                return nil
+            }
+        }
+
+        var preChosenFromTokenMintAddress = findTokenMintBySymbol(symbol: inputSymbol) ?? preChosenWallet?
+            .mintAddress ?? inputMint ?? Defaults
+            .fromTokenAddress
+        let preChosenToTokenMintAddress = findTokenMintBySymbol(symbol: outputSymbol) ?? destinationWallet?
+            .mintAddress ?? outputMint ?? Defaults.toTokenAddress
+
         let newState = await stateMachine
             .accept(
                 action: .initialize(
                     account: userWalletManager.wallet?.account,
                     jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
-                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? inputMint ?? Defaults
-                        .fromTokenAddress,
-                    preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? outputMint ?? Defaults.toTokenAddress
+                    preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
+                    preChosenToTokenMintAddress: preChosenToTokenMintAddress
                 )
             )
         if source != .tapMain {

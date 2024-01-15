@@ -104,8 +104,17 @@ final class TabBarCoordinator: Coordinator<Void> {
                 let urlComponent = URLComponents(url: url, resolvingAgainstBaseURL: true)
                 let inputMint = urlComponent?.queryItems?.first { $0.name == "inputMint" }?.value
                 let outputMint = urlComponent?.queryItems?.first { $0.name == "outputMint" }?.value
+                let from = urlComponent?.queryItems?.first { $0.name == "from" }?.value
+                let to = urlComponent?.queryItems?.first { $0.name == "to" }?.value
 
-                self.routeToSwap(nc: vc, source: .tapToken, inputMint: inputMint, outputMint: outputMint)
+                self.routeToSwap(
+                    nc: vc,
+                    source: .tapToken,
+                    inputMint: inputMint,
+                    outputMint: outputMint,
+                    inputSymbol: from,
+                    outputSymbol: to
+                )
             }
             .store(in: &subscriptions)
 
@@ -228,7 +237,9 @@ final class TabBarCoordinator: Coordinator<Void> {
         hidesBottomBarWhenPushed: Bool = true,
         source: JupiterSwapSource,
         inputMint: String? = nil,
-        outputMint: String? = nil
+        outputMint: String? = nil,
+        inputSymbol: String? = nil,
+        outputSymbol: String? = nil
     ) {
         let swapCoordinator = JupiterSwapCoordinator(
             navigationController: nc,
@@ -238,6 +249,8 @@ final class TabBarCoordinator: Coordinator<Void> {
                 source: source,
                 inputMint: inputMint,
                 outputMint: outputMint,
+                inputSymbol: inputSymbol,
+                outputSymbol: outputSymbol,
                 hideTabBar: hidesBottomBarWhenPushed
             )
         )
