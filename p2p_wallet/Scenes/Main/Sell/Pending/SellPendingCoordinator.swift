@@ -61,7 +61,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
         let view = SellPendingView(viewModel: viewModel)
         let viewController = SellPendingHostingController(rootView: view, shouldShowAlert: navigatedFromMoonpay)
-        viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
+        viewController.hidesBottomBarWhenPushed = true
         viewController.backButtonHandler = { [weak self] in
             self?.resultSubject.send(.cashOutInterupted)
         }
