@@ -91,6 +91,9 @@ struct JupiterSwapState: Equatable {
     /// Lamport per signature
     var lamportPerSignature: Lamports
 
+    /// Fee for creating spl token account
+    var splAccountCreationFee: Lamports
+
     // MARK: - Computed properties
 
     /// Amount to
@@ -186,39 +189,18 @@ struct JupiterSwapState: Equatable {
         // get route & fees
         guard let route else { return nil }
 
-        // let fees = route.fees
-
-        // get fee in SOL
-        // let accountCreationFeeInSOL = fees.totalFeeAndDeposits
-        //    .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals)
-        let accountCreationFeeInSOL = 0.0
-
-        // prepare for converting
-        let payingFeeToken: TokenMetadata
-        let accountCreationFee: Double
-
-        // convert to toToken
-        if let tokenPrice = tokensPriceMap[toToken.mintAddress],
-           tokenPrice > 0
-        {
-            payingFeeToken = toToken.token
-            accountCreationFee =
-                ((tokensPriceMap[TokenMetadata.nativeSolana.mintAddress] / tokenPrice) * accountCreationFeeInSOL)
-                .rounded(decimals: payingFeeToken.decimals)
-        }
-
-        // fallback to SOL
-        else {
-            payingFeeToken = TokenMetadata.nativeSolana
-            accountCreationFee = accountCreationFeeInSOL
+        let amount: Lamports
+        if toToken.userWallet == nil {
+            amount = splAccountCreationFee
+        } else {
+            amount = 0
         }
 
         return SwapFeeInfo(
-            amount: accountCreationFee,
-            tokenSymbol: payingFeeToken.symbol,
-            tokenName: payingFeeToken.name,
-            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
-            pct: nil,
+            amount: splAccountCreationFee.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals),
+            tokenSymbol: "SOL",
+            tokenName: "Solana",
+            tokenPriceInCurrentFiat: tokensPriceMap[TokenMetadata.nativeSolana.mintAddress],
             canBePaidByKeyApp: false
         )
     }
@@ -294,7 +276,8 @@ struct JupiterSwapState: Equatable {
             fromToken: .nativeSolana,
             toToken: .nativeSolana,
             slippageBps: 0,
-            lamportPerSignature: 5000
+            lamportPerSignature: 5000,
+            splAccountCreationFee: 0
         )
     }
 

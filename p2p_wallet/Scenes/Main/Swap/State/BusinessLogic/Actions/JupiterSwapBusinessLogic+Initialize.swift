@@ -16,20 +16,29 @@ extension JupiterSwapBusinessLogic {
         preChosenToTokenMintAddress: String?
     ) async -> JupiterSwapState {
         // get swapTokens, pricesMap
-        let (swapTokens, tokensPriceMap, lamportPerSignature) = await(
-            getSwapTokens(jupiterTokens),
-            getTokensPriceMap(),
-            getLamportPerSignature(solanaAPIClient: services.solanaAPIClient)
+        async let swapTokens = getSwapTokens(jupiterTokens)
+        async let pricesMap = getTokensPriceMap()
+        async let lamportPerSignature = getLamportPerSignature(solanaAPIClient: services.solanaAPIClient)
+        async let splAccountCreationFee = try? services.solanaAPIClient.getMinimumBalanceForRentExemption(
+            dataLength: SPLTokenAccountState.BUFFER_LENGTH,
+            commitment: nil
+        )
+
+        let (swapTokensResult, priceMapResult, lamportPerSignatureResult, splAccountCreationFeeResult) = await (
+            swapTokens,
+            pricesMap,
+            lamportPerSignature,
+            splAccountCreationFee
         )
 
         // choose fromToken
-        let fromToken = getFromToken(
+        let fromToken = await getFromToken(
             preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
             swapTokens: swapTokens
         )
 
         // auto choose toToken
-        let toToken = getToToken(
+        let toToken = await getToToken(
             preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
             preChosenToTokenMintAddress: preChosenToTokenMintAddress,
             swapTokens: swapTokens,
@@ -40,13 +49,14 @@ extension JupiterSwapBusinessLogic {
         return JupiterSwapState.zero.modified {
             $0.status = .ready
             $0.account = account
-            $0.tokensPriceMap = tokensPriceMap
+            $0.tokensPriceMap = priceMapResult
             $0.routeMap = routeMap
-            $0.swapTokens = swapTokens
+            $0.swapTokens = swapTokensResult
             $0.slippageBps = Int(0.5 * 100)
             $0.fromToken = fromToken
             $0.toToken = toToken
-            $0.lamportPerSignature = lamportPerSignature
+            $0.lamportPerSignature = lamportPerSignatureResult
+            $0.splAccountCreationFee = splAccountCreationFeeResult ?? 0
         }
     }
 
@@ -100,7 +110,7 @@ extension JupiterSwapBusinessLogic {
             return [:]
         }
     }
-    
+
     private static func getLamportPerSignature(solanaAPIClient: SolanaAPIClient) async -> Lamports {
         do {
             let fees = try await solanaAPIClient.getFees(commitment: nil)

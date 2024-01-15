@@ -60,11 +60,21 @@ extension JupiterSwapBusinessLogic {
                 }
             }
 
+            // Cache account creation fee.
+            var splAccountCreationFee: Lamports = state.splAccountCreationFee
+            if splAccountCreationFee == 0 {
+                splAccountCreationFee = try await services.solanaAPIClient.getMinimumBalanceForRentExemption(
+                    dataLength: SPLTokenAccountState.BUFFER_LENGTH,
+                    commitment: nil
+                )
+            }
+
             return await validateAmounts(
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes
+                    $0.splAccountCreationFee = splAccountCreationFee
                 },
                 services: services
             )
@@ -112,7 +122,7 @@ extension JupiterSwapBusinessLogic {
             let minBalance = try await services.relayContextManager.getCurrentContextOrUpdate()
                 .minimumRelayAccountBalance
             let remains = (balance - amountFrom).toLamport(decimals: decimals)
-            if remains > 0 && remains < minBalance {
+            if remains > 0, remains < minBalance {
                 let maximumInput = (balance.toLamport(decimals: decimals) - minBalance)
                     .convertToBalance(decimals: decimals)
                 return .error(reason: .inputTooHigh(maximumInput))
