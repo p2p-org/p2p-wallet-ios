@@ -29,7 +29,8 @@ public class TransitTokenAccountManagerImpl: TransitTokenAccountManager {
 
         return TokenAccount(
             address: transitTokenAccountAddress,
-            mint: transitTokenMintPubkey
+            mint: transitTokenMintPubkey,
+            minimumTokenAccountBalance: getTransitTokenMintRentExemption(pools: pools) ?? 2_039_280
         )
     }
 
@@ -37,6 +38,11 @@ public class TransitTokenAccountManagerImpl: TransitTokenAccountManager {
         guard pools.count == 2 else { return nil }
         let interTokenName = pools[0].tokenBName
         return try PublicKey(string: orcaSwap.getMint(tokenName: interTokenName))
+    }
+
+    func getTransitTokenMintRentExemption(pools: PoolsPair) -> UInt64? {
+        guard pools.count == 2 else { return nil }
+        return pools[0].tokenBMinimumBalanceForRentExemption
     }
 
     public func checkIfNeedsCreateTransitTokenAccount(transitToken: TokenAccount?) async throws -> Bool? {

@@ -1,11 +1,12 @@
 import FeeRelayerSwift
 import Foundation
+import KeyAppKitCore
 import SolanaSwift
 
 extension SendInputBusinessLogic {
     static func changeFeeToken(
         state: SendInputState,
-        feeToken: TokenMetadata,
+        feeToken: SolanaAccount,
         services: SendInputServices
     ) async -> SendInputState {
         guard let feeRelayerContext = state.feeRelayerContext else {

@@ -12,6 +12,7 @@ public class OrcaSwap: OrcaSwapType {
 
     var info: SwapInfo?
     let balancesCache = BalancesCache()
+    let minRentCache = MinRentCache()
     let locker = NSLock()
 
     // MARK: - Initializer
@@ -286,7 +287,11 @@ public class OrcaSwap: OrcaSwapType {
             // Check if intermediary token creation is needed
             else {
                 isIntermediaryTokenCreated = try await solanaClient
-                    .checkIfAssociatedTokenAccountExists(owner: owner, mint: mint)
+                    .checkIfAssociatedTokenAccountExists(
+                        owner: owner,
+                        mint: mint,
+                        tokenProgramId: TokenProgram.id
+                    )
             }
         }
 
@@ -610,6 +615,7 @@ public class OrcaSwap: OrcaSwapType {
             .prepareForCreatingAssociatedTokenAccount(
                 owner: owner.publicKey,
                 mint: destinationMint,
+                tokenProgramId: TokenProgram.id,
                 feePayer: feePayer ?? owner.publicKey,
                 closeAfterward: false
             )
@@ -620,7 +626,7 @@ public class OrcaSwap: OrcaSwapType {
                     from: owner.publicKey,
                     amount: 0,
                     payer: feePayer ?? owner.publicKey,
-                    minRentExemption: nil
+                    minRentExemption: await solanaClient.getMinimumBalanceForRentExemption(span: 165)
                 ),
                 createDestinationTokenAccountInstructionsRequest
             )
@@ -629,6 +635,7 @@ public class OrcaSwap: OrcaSwapType {
                 blockchainClient.prepareForCreatingAssociatedTokenAccount(
                     owner: owner.publicKey,
                     mint: intermediaryTokenMint,
+                    tokenProgramId: TokenProgram.id,
                     feePayer: feePayer ?? owner.publicKey,
                     closeAfterward: true
                 ),

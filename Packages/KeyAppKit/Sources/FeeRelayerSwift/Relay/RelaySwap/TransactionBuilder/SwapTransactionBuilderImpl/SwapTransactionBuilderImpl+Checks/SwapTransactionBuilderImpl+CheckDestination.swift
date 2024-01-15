@@ -50,14 +50,16 @@ extension SwapTransactionBuilderImpl {
                 // For other token, get associated token address
                 let associatedAddress = try PublicKey.associatedTokenAddress(
                     walletAddress: owner.publicKey,
-                    tokenMintAddress: destinationMint
+                    tokenMintAddress: destinationMint,
+                    tokenProgramId: TokenProgram.id
                 )
 
                 if needsCreation {
                     let instruction = try AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
                         mint: destinationMint,
                         owner: owner.publicKey,
-                        payer: feePayerAddress
+                        payer: feePayerAddress,
+                        tokenProgramId: TokenProgram.id
                     )
 
                     // SPECIAL CASE WHEN WE SWAP FROM SOL TO NON-CREATED SPL TOKEN, THEN WE NEEDS ADDITIONAL TRANSACTION

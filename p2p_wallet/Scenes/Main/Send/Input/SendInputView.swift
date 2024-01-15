@@ -176,12 +176,8 @@ struct SendInputView: View {
                         animated: .default
                     )
             }
-            Image(.arrowUpDown)
-                .renderingMode(.template)
-                .foregroundColor(Color(.rain))
-                .frame(width: 16, height: 16)
         }
-        .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
+        .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 24))
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(.snow)))
         .frame(height: 90)
     }
@@ -246,7 +242,6 @@ struct SendInputView_Previews: PreviewProvider {
                 preChosenWallet: nil,
                 preChosenAmount: nil,
                 flow: .send,
-                allowSwitchingMainAmountType: false,
                 sendViaLinkSeed: nil
             )
         )

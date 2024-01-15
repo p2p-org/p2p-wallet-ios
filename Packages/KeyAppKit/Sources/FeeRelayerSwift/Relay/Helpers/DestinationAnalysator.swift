@@ -46,7 +46,7 @@ public class DestinationAnalysatorImpl: DestinationAnalysator {
             // Check destination address is exist.
             let info: BufferInfo<SPLTokenAccountState>? = try? await solanaAPIClient
                 .getAccountInfo(account: address.base58EncodedString)
-            let needsCreateDestinationTokenAccount = info?.owner != TokenProgram.id.base58EncodedString
+            let needsCreateDestinationTokenAccount = !PublicKey.isSPLTokenOrToken2022ProgramId(info?.owner)
 
             return .splAccount(needsCreation: needsCreateDestinationTokenAccount)
         }

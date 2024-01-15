@@ -106,7 +106,11 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                             .send(
                                 .openSwapWithDestination(
                                     solanaAccount,
-                                    SolanaAccount(token: supportedWormholeToken)
+                                    .classicSPLTokenAccount(
+                                        address: "",
+                                        lamports: 0,
+                                        token: supportedWormholeToken
+                                    )
                                 )
                             )
                     }, close: { [weak self] in

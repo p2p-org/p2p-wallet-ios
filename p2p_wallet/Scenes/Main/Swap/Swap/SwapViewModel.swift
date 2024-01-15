@@ -456,8 +456,9 @@ private extension SwapViewModel {
         }
 
         // form transaction
-        let destinationWallet = currentState.toToken.userWallet ?? SolanaAccount(
-            pubkey: nil,
+        let destinationWallet = currentState.toToken.userWallet ?? .classicSPLTokenAccount(
+            address: "",
+            lamports: 0,
             token: currentState.toToken.token
         )
 

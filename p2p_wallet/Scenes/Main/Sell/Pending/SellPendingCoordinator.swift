@@ -88,8 +88,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                         ),
                         preChosenAmount: transaction.baseCurrencyAmount,
                         hideTabBar: true,
-                        flow: .sell,
-                        allowSwitchingMainAmountType: false
+                        flow: .sell
                     ))
             }
             .sink { [weak self] res in

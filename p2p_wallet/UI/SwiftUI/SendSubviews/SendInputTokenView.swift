@@ -95,7 +95,10 @@ struct SendInputTokenView_Previews: PreviewProvider {
         ZStack {
             Color(.rain)
             SendInputTokenView(
-                wallet: SolanaAccount(token: .nativeSolana),
+                wallet: .nativeSolana(
+                    pubkey: nil,
+                    lamport: 0
+                ),
                 amountInFiat: 1.0,
                 isChangeEnabled: true,
                 changeAction: {}

@@ -63,7 +63,7 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     private func openNonStrictTokenConfirmationIfNeededOrClose(
         token: SwapToken?
     ) {
-        if token?.token.tags.map(\.name).contains("unknown") == true {
+        if token?.isNonStrict == true {
             nonStrictTokenAlertVC = UIBottomSheetHostingController(
                 rootView: NonStrictTokenConfirmationView(
                     token: token

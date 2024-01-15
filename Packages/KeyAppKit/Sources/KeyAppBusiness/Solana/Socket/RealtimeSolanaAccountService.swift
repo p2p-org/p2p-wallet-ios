@@ -241,11 +241,30 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 ]
             )
 
+            let splToken2022AccountChange = solanaWebSocketMethod.programSubscribe(
+                program: Token2022Program.id.base58EncodedString,
+                commitment: "confirmed",
+                encoding: "base64",
+                filters: [
+                    [
+                        "dataSize": 165,
+                    ],
+                    [
+                        "memcmp": [
+                            "offset": 32,
+                            "bytes": owner,
+                        ] as [String: Any],
+                    ],
+                ]
+            )
+
             let nativeAccountChangeRequest = try JSONSerialization.data(withJSONObject: nativeAccountChange)
             let splAccountChangeRequest = try JSONSerialization.data(withJSONObject: splAccountChange)
+            let splToken2022AccountChangeRequest = try JSONSerialization.data(withJSONObject: splToken2022AccountChange)
 
             ws.send(nativeAccountChangeRequest.bytes)
             ws.send(splAccountChangeRequest.bytes)
+            ws.send(splToken2022AccountChangeRequest.bytes)
 
             return nil
         } catch {
@@ -267,6 +286,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                     apiClient.getBalance(account: owner, commitment: "confirmed"),
                     apiClient.getAccountBalances(
                         for: owner,
+                        withToken2022: true,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
                     )
@@ -277,7 +297,9 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 let solanaAccount = try SolanaAccount(
                     address: owner,
                     lamports: balance,
-                    token: await tokensService.nativeToken
+                    token: await tokensService.nativeToken,
+                    minRentExemption: nil,
+                    tokenProgramId: nil
                 )
 
                 let accounts = [solanaAccount] + resolved
@@ -289,7 +311,9 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                         return SolanaAccount(
                             address: pubKey,
                             lamports: accountBalance.lamports ?? 0,
-                            token: accountBalance.token
+                            token: accountBalance.token,
+                            minRentExemption: accountBalance.minimumBalanceForRentExemption,
+                            tokenProgramId: accountBalance.tokenProgramId
                         )
                     }
                     .compactMap { $0 }
@@ -328,10 +352,13 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                     // TODO: Add case when token info is invalid
                     if let token {
+                        let minRentExempt = value.account.lamports
                         let splAccount = SolanaAccount(
                             address: pubKey,
                             lamports: tokenAccountData.lamports,
-                            token: token
+                            token: token,
+                            minRentExemption: minRentExempt,
+                            tokenProgramId: value.account.owner
                         )
                         accountsSubject.send(splAccount)
                     }
@@ -347,7 +374,9 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         let nativeSolanaAccount = try SolanaAccount(
             address: owner,
             lamports: notification.result.value.lamports,
-            token: await tokensService.nativeToken
+            token: await tokensService.nativeToken,
+            minRentExemption: nil,
+            tokenProgramId: nil
         )
         accountsSubject.send(nativeSolanaAccount)
     }

@@ -63,7 +63,6 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             accountsViewModel: accountsViewModel
         )
         let cryptoVC = UIHostingController(rootView: cryptoView)
-        cryptoVC.title = L10n.myCrypto
         navigationController.setViewControllers([cryptoVC], animated: false)
 
         // handle navigation
@@ -105,8 +104,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 to: SendCoordinator(
                     rootViewController: navigationController,
                     preChosenWallet: nil,
-                    hideTabBar: true,
-                    allowSwitchingMainAmountType: true
+                    hideTabBar: true
                 )
             )
             .receive(on: RunLoop.main)
