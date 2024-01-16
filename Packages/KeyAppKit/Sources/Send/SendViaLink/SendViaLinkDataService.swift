@@ -353,10 +353,6 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         // 2. Get token accounts by owner
         let tokenAccounts = try await solanaAPIClient.getTokenAccountsByOwnerWithToken2022(
             pubkey: keypair.publicKey.base58EncodedString,
-            params: .init(
-                mint: nil,
-                programId: TokenProgram.id.base58EncodedString
-            ),
             configs: .init(
                 commitment: "confirmed",
                 encoding: "base64"
