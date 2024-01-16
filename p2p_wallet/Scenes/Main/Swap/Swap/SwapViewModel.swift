@@ -67,11 +67,11 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private let preChosenWallet: SolanaAccount?
     private let destinationWallet: SolanaAccount?
 
-    private var inputMint: String?
-    private var outputMint: String?
-
-    private var inputSymbol: String?
-    private var outputSymbol: String?
+    /// Mint address or ticker
+    private var inputToken: String?
+    
+    /// Mint address or ticker
+    private var outputToken: String?
 
     private var timer: Timer?
     private let source: JupiterSwapSource
@@ -79,6 +79,16 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Init
 
+    /// <#Description#>
+    /// - Parameters:
+    ///   - stateMachine: initial state
+    ///   - fromTokenInputViewModel: view model for controlling input field
+    ///   - toTokenInputViewModel: view model for controlling output field
+    ///   - source: source of caller. Used for analytics
+    ///   - preChosenWallet: Token A account (optional)
+    ///   - destinationWallet: Token B account (optional)
+    ///   - inputToken: mint address or ticker
+    ///   - outputToken: mint address or ticker
     init(
         stateMachine: JupiterSwapStateMachine,
         fromTokenInputViewModel: SwapInputViewModel,
@@ -86,10 +96,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         source: JupiterSwapSource,
         preChosenWallet: SolanaAccount? = nil,
         destinationWallet: SolanaAccount? = nil,
-        inputMint: String? = nil,
-        outputMint: String? = nil,
-        inputSymbol: String? = nil,
-        outputSymbol: String? = nil
+        inputToken: String? = nil,
+        outputToken: String? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
@@ -98,11 +106,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
 
-        self.inputMint = inputMint
-        self.outputMint = outputMint
-
-        self.inputSymbol = inputSymbol
-        self.outputSymbol = outputSymbol
+        self.inputToken = inputToken
+        self.outputToken = outputToken
 
         self.source = source
         super.init()
@@ -264,6 +269,8 @@ private extension SwapViewModel {
     }
 
     func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
+        
+        // Find token by ticker.
         func findTokenMintBySymbol(symbol: String?) -> TokenMetadata? {
             guard let symbol else { return nil }
 
@@ -272,10 +279,12 @@ private extension SwapViewModel {
                 .filter { token in
                     token.symbol == symbol
                 }
-
+ 
             if tokens.count == 1 {
+                // Return it if we found only one token
                 return tokens.first
             } else {
+                // Otherwise we need to find token by tags
                 if let strictToken = tokens
                     .first(where: { token in token.tags.map(\.name).contains(where: { tokenTag in
                         ["old-registry", "community", "wormhole"].contains(tokenTag)
@@ -287,36 +296,36 @@ private extension SwapViewModel {
                 }
             }
         }
-
-        // Check from token
-        var fromTokenBySymbol = findTokenMintBySymbol(symbol: inputSymbol)
-        if let inputSymbol, fromTokenBySymbol == nil {
-            deeplinkSuspicionTokens.append(inputSymbol)
-            deeplinkSuspicionAlert = true
+        
+        // In case if input is ticker, we need to extract mint address.
+        func extract(_ input: String?) -> String? {
+            guard let input else { return nil }
+            
+            if input.count < 32 {
+                // Symbol mode
+                let token = findTokenMintBySymbol(symbol: input)
+                
+                guard let token else {
+                    deeplinkSuspicionAlert = true
+                    deeplinkSuspicionTokens.append(input)
+                    return nil
+                }
+                
+                if token.tags.contains(where: { $0.name == "unknown" }) {
+                    deeplinkSuspicionTokens.append(token.symbol)
+                    deeplinkSuspicionAlert = true
+                    return nil
+                }
+                
+                return token.mintAddress
+            } else {
+                // Mint mode
+                return input
+            }
         }
-        if let token = fromTokenBySymbol, token.tags.contains(where: { $0.name == "unknown" }) {
-            fromTokenBySymbol = nil
-            deeplinkSuspicionTokens.append(token.symbol)
-            deeplinkSuspicionAlert = true
-        }
-
-        let preChosenFromTokenMintAddress = fromTokenBySymbol?.mintAddress ?? preChosenWallet?
-            .mintAddress ?? inputMint ?? Defaults
-            .fromTokenAddress
-
-        // Check to token
-        var toTokenBySymbol = findTokenMintBySymbol(symbol: outputSymbol)
-        if let outputSymbol, toTokenBySymbol == nil {
-            deeplinkSuspicionTokens.append(outputSymbol)
-            deeplinkSuspicionAlert = true
-        }
-        if let token = toTokenBySymbol, token.tags.contains(where: { $0.name == "unknown" }) {
-            toTokenBySymbol = nil
-            deeplinkSuspicionTokens.append(token.symbol)
-            deeplinkSuspicionAlert = true
-        }
-        let preChosenToTokenMintAddress = toTokenBySymbol?.mintAddress ?? destinationWallet?
-            .mintAddress ?? outputMint ?? Defaults.toTokenAddress
+        
+        let preChosenFromTokenMintAddress = preChosenWallet?.mintAddress ?? extract(inputToken) ?? Defaults.fromTokenAddress
+        let preChosenToTokenMintAddress = destinationWallet?.mintAddress ?? extract(outputToken) ?? Defaults.toTokenAddress
 
         let newState = await stateMachine
             .accept(

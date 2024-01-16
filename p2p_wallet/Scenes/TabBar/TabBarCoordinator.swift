@@ -102,18 +102,18 @@ final class TabBarCoordinator: Coordinator<Void> {
                     .navigationController else { return }
 
                 let urlComponent = URLComponents(url: url, resolvingAgainstBaseURL: true)
-                let inputMint = urlComponent?.queryItems?.first { $0.name == "inputMint" }?.value
-                let outputMint = urlComponent?.queryItems?.first { $0.name == "outputMint" }?.value
                 let from = urlComponent?.queryItems?.first { $0.name == "from" }?.value
                 let to = urlComponent?.queryItems?.first { $0.name == "to" }?.value
+
+                if from == nil, to == nil {
+                    return
+                }
 
                 self.routeToSwap(
                     nc: vc,
                     source: .tapToken,
-                    inputMint: inputMint,
-                    outputMint: outputMint,
-                    inputSymbol: from,
-                    outputSymbol: to
+                    inputToken: from,
+                    outputToken: to
                 )
             }
             .store(in: &subscriptions)
@@ -236,10 +236,8 @@ final class TabBarCoordinator: Coordinator<Void> {
         nc: UINavigationController,
         hidesBottomBarWhenPushed: Bool = true,
         source: JupiterSwapSource,
-        inputMint: String? = nil,
-        outputMint: String? = nil,
-        inputSymbol: String? = nil,
-        outputSymbol: String? = nil
+        inputToken: String? = nil,
+        outputToken: String? = nil
     ) {
         let swapCoordinator = JupiterSwapCoordinator(
             navigationController: nc,
@@ -247,10 +245,8 @@ final class TabBarCoordinator: Coordinator<Void> {
                 dismissAfterCompletion: source != .tapMain,
                 openKeyboardOnStart: source != .tapMain,
                 source: source,
-                inputMint: inputMint,
-                outputMint: outputMint,
-                inputSymbol: inputSymbol,
-                outputSymbol: outputSymbol,
+                inputToken: inputToken,
+                outputToken: outputToken,
                 hideTabBar: hidesBottomBarWhenPushed
             )
         )
