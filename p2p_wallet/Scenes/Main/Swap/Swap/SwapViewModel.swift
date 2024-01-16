@@ -53,6 +53,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Published var warningState: SwapPriceImpactView.Model?
     @Published var isViewAppeared = false
 
+    @Published var deeplinkSuspicionAlert: Bool = false
+    @Published var deeplinkSuspicionTokens: [String] = []
+
     #if !RELEASE
         @Published var errorLogs: [String]?
     #endif
@@ -261,28 +264,58 @@ private extension SwapViewModel {
     }
 
     func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
-        func findTokenMintBySymbol(symbol: String?) -> String? {
+        func findTokenMintBySymbol(symbol: String?) -> TokenMetadata? {
             guard let symbol else { return nil }
 
-            // We filter tokens by tags and symbol
+            // We filter tokens by symbol
             let tokens = jupiterTokens
                 .filter { token in
-                    token.tags.contains { tag in
-                        ["old-registry", "community", "wormhole"].contains(tag.name)
-                    } && token.symbol == symbol
+                    token.symbol == symbol
                 }
 
             if tokens.count == 1 {
-                return tokens.first?.mintAddress
+                return tokens.first
             } else {
-                return nil
+                if let strictToken = tokens
+                    .first(where: { token in token.tags.map(\.name).contains(where: { tokenTag in
+                        ["old-registry", "community", "wormhole"].contains(tokenTag)
+                    }) })
+                {
+                    return strictToken
+                } else {
+                    return nil
+                }
             }
         }
 
-        var preChosenFromTokenMintAddress = findTokenMintBySymbol(symbol: inputSymbol) ?? preChosenWallet?
+        // Check from token
+        var fromTokenBySymbol = findTokenMintBySymbol(symbol: inputSymbol)
+        if let inputSymbol, fromTokenBySymbol == nil {
+            deeplinkSuspicionTokens.append(inputSymbol)
+            deeplinkSuspicionAlert = true
+        }
+        if let token = fromTokenBySymbol, token.tags.contains(where: { $0.name == "unknown" }) {
+            fromTokenBySymbol = nil
+            deeplinkSuspicionTokens.append(token.symbol)
+            deeplinkSuspicionAlert = true
+        }
+
+        let preChosenFromTokenMintAddress = fromTokenBySymbol?.mintAddress ?? preChosenWallet?
             .mintAddress ?? inputMint ?? Defaults
             .fromTokenAddress
-        let preChosenToTokenMintAddress = findTokenMintBySymbol(symbol: outputSymbol) ?? destinationWallet?
+
+        // Check to token
+        var toTokenBySymbol = findTokenMintBySymbol(symbol: outputSymbol)
+        if let outputSymbol, toTokenBySymbol == nil {
+            deeplinkSuspicionTokens.append(outputSymbol)
+            deeplinkSuspicionAlert = true
+        }
+        if let token = toTokenBySymbol, token.tags.contains(where: { $0.name == "unknown" }) {
+            toTokenBySymbol = nil
+            deeplinkSuspicionTokens.append(token.symbol)
+            deeplinkSuspicionAlert = true
+        }
+        let preChosenToTokenMintAddress = toTokenBySymbol?.mintAddress ?? destinationWallet?
             .mintAddress ?? outputMint ?? Defaults.toTokenAddress
 
         let newState = await stateMachine

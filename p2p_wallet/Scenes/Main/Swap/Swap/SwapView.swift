@@ -43,6 +43,15 @@ struct SwapView: View {
         .onDisappear {
             viewModel.isViewAppeared = false
         }
+        .alert(isPresented: $viewModel.deeplinkSuspicionAlert) {
+            Alert(
+                title: Text(L10n.beSaveAndCarefull),
+                message: Text(L10n
+                    .theTokenFromYourSwapLinkSeemsSuspiciousThereforeWeVeRefreshedSwapPairToDefault(viewModel
+                        .deeplinkSuspicionTokens.joined(separator: ", "))),
+                dismissButton: .default(Text(L10n.okay))
+            )
+        }
     }
 }
 
