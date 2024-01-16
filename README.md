@@ -14,8 +14,8 @@ Key App wallet on Solana blockchain
 
 ## Requirements
 
-- iOS 13.0+
-- Xcode 12
+- iOS 14.0+
+- Xcode 14.3
 - SwiftFormat
 
 ## Installation
@@ -115,29 +115,6 @@ XCCONFIG_URL=""
 
 ```
 
-## Code style
-
-- Space indent: 4
-- NSAttributedString 
-Example:
-```swift
-label.attributedText = 
-   NSMutableAttributedString()
-      .text(
-          "0.00203928 SOL",
-          size: 15,
-          color: .textBlack
-      )
-      .text(
-          " (~$0.93)",
-          size: 15,
-          color: .textSecondary
-      )
-```
-Result
-<img width="113" alt="image" src="https://user-images.githubusercontent.com/6975538/160050828-f1231cbb-070b-4dba-bb83-c4a284cf3d2d.png">
-
-
 ## UI Templates
 
 - Copy template `MVVM-C.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
@@ -205,5 +182,381 @@ if available(.settingsFeature) {
         input: input,
         status: status
     )
+}
+```
+
+## Code style
+
+The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
+
+### Calls from View to ViewModel
+Name ViewModel functions as action from View:
+
+🟢
+```
+.onTapGesture {
+    viewModel.buttonTapped()
+}
+```
+
+🔴
+```
+.onTapGesture {
+    viewModel.sendToken()
+}
+```
+
+
+### Protocols
+Interfaces used for abstractions are named without prefixes and postfixes:
+
+🟢
+```
+protocol IBuyService {}
+```
+
+🔴
+```
+protocol BuyServiceProtocol {}
+```
+
+
+For implementation we use natural name, for mocks append `Mock` or other key words in the ending:
+
+🟢
+```
+final class BuyService: BuyService {}
+final class BuyServiceMock: BuyService {}
+```
+
+🔴
+```
+final class BuyServiceImpl: BuyService {}
+final class BuyMockService: BuyService {}
+```
+
+
+If it is known in advance that only classes will conform to the protocol, you need to add the keyword AnyObject:
+
+🟢
+```
+protocol SomeProtocol: AnyObject {}
+```
+
+🔴
+```
+protocol SomeProtocol {}
+```
+
+
+### Class structure
+We try to avoid inheritance. For all classes from which inheritance is not planned, the final keyword must be explicitly specified. This speeds up the dispatching of calls in runtime and makes life easier for the compiler.:
+
+```
+final class BuyView: UIView {}
+```
+
+
+Dependencies and properties are always written at the top of the class, indicated by a comment without indentation after:
+
+🟢
+```
+final class SomeClass {
+
+    // Dependencies
+    private let buyService: BuyService
+    private let sellService: SellService
+
+    // Private properties
+    private var amount: Double?
+}
+```
+
+🔴
+```
+final class SomeClass {
+
+    // Dependencies
+
+    private let buyService: BuyService
+    private let sellService: SellService
+
+    // Private properties
+
+    private var amount: Double?
+}
+```
+
+
+All other elements are indicated with // MARK: - indented after:
+
+🟢
+```
+final class SomeClass {
+
+    // MARK: - Init
+
+    public init() {...}
+
+    // MARK: - BuyService
+
+    func buyCrypto(_ crypto: Crypto) {...}
+}
+```
+
+🔴
+```
+final class SomeClass {
+
+    // MARK: - Init
+    public init() {...}
+
+    // MARK: - BuyService
+    func buyCrypto(_ crypto: Crypto) {...}
+}
+```
+
+
+If a large number of private functions are typed, then you should not dump them all in one pile, you need to break them into logically connected blocks.
+
+🟢 Division within the class:
+```
+final class SomeClass {
+
+    // MARK: - Listeners
+
+    private func addListeners() {...}
+    private func removeListeners() {...}
+    private func removeListener(_ listener: Listener) {...}
+
+    // MARK: - Actions
+
+    @objc private func didTapClose() {...}
+}
+```
+
+
+🟢 Takeaway in extensions:
+```
+final class SomeClass {
+    ...
+}
+
+// MARK: - Listeners
+
+extension SomeClass {
+    private func addListeners() {...}
+    private func removeListeners() {...}
+    private func removeListener(_ listener: Listener) {...}
+}
+
+// MARK: - Actions
+
+extension SomeClass {
+   @objc private func didTapClose() {...}
+}
+```
+
+🔴
+```
+final class SomeClass {
+
+    // MARK: - Private
+
+    func addListeners() {...}
+    @objc func didTapClose() {...}
+    func removeListeners() {...}
+    func removeListener(_ listener: Listener) {...}
+}
+```
+
+
+There should be no line break before the closing brackets:
+
+🟢
+```
+struct SomeStruct {
+    func listen() {
+        ...
+    }
+}
+```
+
+🔴
+```
+struct SomeStruct {
+    func listen() {
+        ...
+    }
+
+}
+```
+
+
+### Switch statement
+For enum we don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
+
+🟢
+```
+enum SomeEnum {
+    case one
+    case two
+    case three
+    case four
+}
+
+switch enum {
+    case .one: // do something
+    case .two: // do something
+    case .three, .four: break
+}
+```
+
+🔴
+```
+enum SomeEnum {
+    case one
+    case two
+    case three
+    case four
+}
+
+switch enum {
+    case .one: // do something
+    case .two: // do something
+    default: break
+}
+```
+
+
+### Redundant code
+In the .map functions .filter .reduce etc. omit the parentheses:
+
+🟢
+```
+dict.map { $0 }
+dict.filter { $0 % 2 == 0 }
+```
+
+🔴
+```
+dict.map({ $0 })
+dict.filter({ $0 % 2 == 0 })
+```
+
+
+For the returned parameters in closure, we omit the parentheses:
+
+🟢
+```
+let handler: SomeHandler = { [weak self] action, indexPath in
+    self?.didTrigger(action, onItemAt: indexPath)
+}
+```
+
+🔴
+```
+let handler: SomeHandler = { [weak self] (action, indexPath) in
+    self?.didTrigger(action, onItemAt: indexPath)
+}
+```
+
+
+### TODO comments
+In TODO, we specify the version in which the fix is planned, your nickname and a link to the task in JIRA.
+
+```
+// TODO: 2.7 vasya.pupkin later take out the logic in BuyService https://jira..../task
+```
+
+
+### Constants
+### Local constants
+All constants should be at the very top of the file, right after the imports.
+If the constants are of the same type, combine them into an extension:
+
+```
+private extension CGFloat {
+    static let horizontalPadding: CGFloat = 5
+    static let verticalPadding: CGFloat = 5
+}
+
+// Using
+SomeView {...}
+   .padding(.horizontal, .horizontalPadding)
+   .padding(.vertical, .verticalPadding)
+```
+
+
+If constants of different types are combined into enum:
+
+```
+private enum Constants {
+    static let boxCornerRadius: CGFloat = 5
+    static let boxInitSize = CGSize(width: 60, height: 40)
+    static let boxSize = CGSize(width: 60, height: 40)
+    static let boxInitCornerRadius: CGFloat = 5
+}
+```
+
+
+### Naming
+We use direct naming, not the reverse.
+
+🟢
+```
+let limitsController: UIViewController
+```
+
+🔴
+```
+let controllerLimits: UIViewController
+```
+
+
+We are getting old to avoid duplication of information in function names.
+
+🟢
+```
+func didSelectCell(at indexPath: IndexPath)
+```
+
+🔴
+```
+func didSelectCellAtIndexPath(_ indexPath: IndexPath)
+```
+
+
+### Recommendations
+If the protocol requires an implementation and does not contain set properties, then it is better to use extension:
+
+```
+protocol BuyService {
+  func buy()
+}
+```
+
+🟢
+```
+final class BuyServiceImpl {
+    ...
+}
+
+// MARK: - BuyService
+
+extension BuyServiceImpl: BuyService {
+
+   func buy() {}
+}
+```
+
+🔴
+```
+final class BuyServiceImpl: BuyService {
+    ...
+
+    // MARK: - BuyService
+
+    func buy() {}
 }
 ```
