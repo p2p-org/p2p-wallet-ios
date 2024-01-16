@@ -93,7 +93,11 @@ struct SendInputFeePromptView_Previews: PreviewProvider {
     static var previews: some View {
         SendInputFeePromptView(
             viewModel: SendInputFeePromptViewModel(
-                feeToken: .init(token: .usdc),
+                feeToken: .classicSPLTokenAccount(
+                    address: "",
+                    lamports: 0,
+                    token: .usdc
+                ),
                 feeInToken: .zero,
                 availableFeeTokens: []
             )
