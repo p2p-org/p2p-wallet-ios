@@ -408,7 +408,7 @@ extension WormholeSendInputViewModel {
 
         if availableBridgeAccounts.isEmpty {
             availableBridgeAccounts.append(
-                SolanaAccount(
+                .classicSPLTokenAccount(
                     address: "",
                     lamports: 0,
                     token: .usdcet

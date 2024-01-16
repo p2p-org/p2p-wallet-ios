@@ -34,7 +34,9 @@ struct SendInputAmountWrapperView_Previews: PreviewProvider {
         ZStack {
             Color(.smoke)
             SendInputAmountWrapperView(
-                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana))
+                viewModel: SendInputAmountViewModel(
+                    initialToken: .nativeSolana(pubkey: nil, lamport: nil)
+                )
             )
             .padding(.horizontal, 16)
         }

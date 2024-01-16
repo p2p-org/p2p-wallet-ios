@@ -57,14 +57,12 @@ public class RelayContextManagerImpl: RelayContextManager {
 
             // retrieve RelayContext
             let (
-                minimumTokenAccountBalance,
                 minimumRelayAccountBalance,
                 lamportsPerSignature,
                 feePayerAddress,
                 relayAccountStatus,
                 usageStatus
             ) = try await(
-                solanaAPIClient.getMinimumBalanceForRentExemption(span: 165),
                 solanaAPIClient.getMinimumBalanceForRentExemption(span: 0),
                 solanaAPIClient.getFees(commitment: nil).feeCalculator?.lamportsPerSignature ?? 0,
                 feeRelayerAPIClient.getFeePayerPubkey(),
@@ -77,7 +75,6 @@ public class RelayContextManagerImpl: RelayContextManager {
             )
 
             return try RelayContext(
-                minimumTokenAccountBalance: minimumTokenAccountBalance,
                 minimumRelayAccountBalance: minimumRelayAccountBalance,
                 feePayerAddress: PublicKey(string: feePayerAddress),
                 lamportsPerSignature: lamportsPerSignature,
