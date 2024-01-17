@@ -60,7 +60,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     private let fiat: Fiat = Defaults.fiat
     private var currentText: String?
-    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(.init(token: .nativeSolana))
+    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(
+        .nativeSolana(pubkey: nil, lamport: nil)
+    )
 
     // MARK: - Dependencies
 

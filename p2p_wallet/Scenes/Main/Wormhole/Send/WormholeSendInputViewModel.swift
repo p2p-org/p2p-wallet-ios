@@ -67,7 +67,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         recipient: Recipient,
         userWalletManager: UserWalletManager = Resolver.resolve(),
         wormholeAPI: WormholeAPI = Resolver.resolve(),
-        relayService: RelayService = Resolver.resolve(),
         relayContextManager: RelayContextManager = Resolver.resolve(),
         orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
@@ -77,7 +76,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
 
-        let services: WormholeSendInputState.Service = (wormholeAPI, relayService, relayContextManager, orcaSwap)
+        let services: WormholeSendInputState.Service = (wormholeAPI, relayContextManager, orcaSwap)
 
         // Ensure user wallet is available
         guard let wallet = userWalletManager.wallet else {
@@ -409,7 +408,7 @@ extension WormholeSendInputViewModel {
 
         if availableBridgeAccounts.isEmpty {
             availableBridgeAccounts.append(
-                SolanaAccount(
+                .classicSPLTokenAccount(
                     address: "",
                     lamports: 0,
                     token: .usdcet

@@ -33,6 +33,8 @@ public struct Pool: Codable, Equatable {
     // balance (lazy load)
     var tokenABalance: TokenAccountBalance?
     var tokenBBalance: TokenAccountBalance?
+    public var tokenAMinimumBalanceForRentExemption: UInt64?
+    public var tokenBMinimumBalanceForRentExemption: UInt64?
 
     var isStable: Bool?
 
@@ -268,6 +270,7 @@ extension Pool {
             destinationAccountInstructions = try await blockchainClient.prepareForCreatingAssociatedTokenAccount(
                 owner: owner,
                 mint: toMint,
+                tokenProgramId: TokenProgram.id,
                 feePayer: feePayer ?? owner,
                 closeAfterward: false
             )
