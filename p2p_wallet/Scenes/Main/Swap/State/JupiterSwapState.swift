@@ -187,7 +187,7 @@ struct JupiterSwapState: Equatable {
         // TODO(jupiter): How to calculate account creation fee?
 
         // get route & fees
-        guard let route else { return nil }
+        guard route != nil else { return nil }
 
         let amount: Lamports
         if toToken.userWallet == nil {
@@ -197,7 +197,7 @@ struct JupiterSwapState: Equatable {
         }
 
         return SwapFeeInfo(
-            amount: splAccountCreationFee.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals),
+            amount: amount.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals),
             tokenSymbol: "SOL",
             tokenName: "Solana",
             tokenPriceInCurrentFiat: tokensPriceMap[TokenMetadata.nativeSolana.mintAddress],
