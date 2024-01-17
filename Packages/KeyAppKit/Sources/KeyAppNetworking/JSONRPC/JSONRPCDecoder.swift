@@ -25,7 +25,12 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
     ///   - data: data to decode
     ///   - response: httpURLResponse from network
     /// - Returns: object of predefined type
-    public func decode<T: Decodable>(_: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
+    public func decode<T: Decodable, U: Decodable>(
+        _: T.Type,
+        errorType: U.Type,
+        data: Data,
+        httpURLResponse response: HTTPURLResponse
+    ) throws -> T {
         // Check status code
         switch response.statusCode {
         case 200 ... 299:
@@ -33,17 +38,23 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
             do {
                 return try jsonDecoder.decode(T.self, from: data)
             } catch {
-                throw decodeRpcError(from: data) ?? error
+                throw decodeRpcError(
+                    from: data,
+                    errorType: errorType
+                ) ?? error
             }
         default:
-            throw decodeRpcError(from: data) ?? HTTPClientError.invalidResponse(response, data)
+            throw decodeRpcError(
+                from: data,
+                errorType: errorType
+            ) ?? HTTPClientError.invalidResponse(response, data)
         }
     }
 
     // MARK: - Helpers
 
     /// Custom error return from rpc endpoint
-    private func decodeRpcError(from data: Data) -> JSONRPCError? {
-        try? jsonDecoder.decode(JSONRPCResponseErrorDto.self, from: data).error
+    private func decodeRpcError<U: Decodable>(from data: Data, errorType _: U.Type) -> JSONRPCError<U>? {
+        try? jsonDecoder.decode(JSONRPCResponseErrorDto<U>.self, from: data).error
     }
 }

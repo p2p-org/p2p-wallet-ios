@@ -1,5 +1,6 @@
 import Foundation
 
+@available(*, deprecated, message: "Use KeyAppNetworking.JSONRPCHTTPClient instead")
 public class HTTPJSONRPCCLient {
     static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
