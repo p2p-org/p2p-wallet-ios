@@ -19,7 +19,7 @@ extension SendActionServiceImpl {
         let mintAddress = wallet.isNative ? nil : wallet.mintAddress
 
         let response = try await sendService.transfer(
-            userWallet: wallet.address,
+            userWallet: account.publicKey.base58EncodedString,
             mint: mintAddress,
             amount: amount,
             recipient: receiver,
