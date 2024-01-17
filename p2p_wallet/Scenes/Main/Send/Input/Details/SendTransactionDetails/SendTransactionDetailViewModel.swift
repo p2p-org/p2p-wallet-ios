@@ -179,7 +179,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    private func convert(_ input: Lamports, _ token: TokenMetadata, _ price: TokenPrice?) -> (String, String?) {
+    private func convert(_ input: Lamports, _ token: SolanaAccount, _ price: TokenPrice?) -> (String, String?) {
         let amountInToken: Double = input.convertToBalance(decimals: token.decimals)
 
         let amountInFiat: Double?

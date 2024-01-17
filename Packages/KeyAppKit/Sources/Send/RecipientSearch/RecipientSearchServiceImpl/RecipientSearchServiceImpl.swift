@@ -8,7 +8,11 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
     let solanaClient: SolanaAPIClient
     let swapService: SwapService
 
-    public init(nameService: NameService, solanaClient: SolanaAPIClient, swapService: SwapService) {
+    public init(
+        nameService: NameService,
+        solanaClient: SolanaAPIClient,
+        swapService: SwapService
+    ) {
         self.nameService = nameService
         self.solanaClient = solanaClient
         self.swapService = swapService

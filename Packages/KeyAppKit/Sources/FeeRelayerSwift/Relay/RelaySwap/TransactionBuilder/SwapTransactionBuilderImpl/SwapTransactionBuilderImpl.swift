@@ -43,7 +43,8 @@ public class SwapTransactionBuilderImpl: SwapTransactionBuilder {
         // assert userSource
         let associatedToken = try PublicKey.associatedTokenAddress(
             walletAddress: feePayerAddress,
-            tokenMintAddress: sourceTokenAccount.mint
+            tokenMintAddress: sourceTokenAccount.mint,
+            tokenProgramId: TokenProgram.id
         )
         guard output.userSource != associatedToken else { throw FeeRelayerError.wrongAddress }
 

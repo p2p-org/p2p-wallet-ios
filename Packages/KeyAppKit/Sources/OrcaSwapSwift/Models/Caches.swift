@@ -16,3 +16,19 @@ actor BalancesCache {
         balancesCache[key] = value
     }
 }
+
+actor MinRentCache {
+    var minRentCache = [String: UInt64]()
+
+    func getTokenABalance(pool: Pool) -> UInt64? {
+        pool.tokenAMinimumBalanceForRentExemption ?? minRentCache[pool.tokenAccountA]
+    }
+
+    func getTokenBBalance(pool: Pool) -> UInt64? {
+        pool.tokenBMinimumBalanceForRentExemption ?? minRentCache[pool.tokenAccountB]
+    }
+
+    func save(key: String, value: UInt64) {
+        minRentCache[key] = value
+    }
+}
