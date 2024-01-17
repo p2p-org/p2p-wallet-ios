@@ -27,14 +27,16 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     // MARK: - Methods
 
     func isAvailable() async throws -> Bool {
-        try await ipRegion().isSellAllowed
+        try await ipRegion().isAvailable
     }
 
-    func ipRegion() async throws -> Moonpay.Provider.IpAddressResponse {
+    func ipRegion() async throws -> (Moonpay.Provider.IpAddressResponse, isAvailable: Bool) {
         if let ipRegion {
-            return ipRegion
+            return (ipRegion, ipRegion.isSellAllowed)
         }
-        return try await moonpayAPI.ipAddresses()
+        let region = try await moonpayAPI.ipAddresses()
+        ipRegion = region
+        return (region, region.isSellAllowed)
     }
 
     func fiat(region: ProviderRegion?) async throws -> Fiat {
@@ -52,7 +54,7 @@ public class MoonpaySellDataServiceProvider: SellDataServiceProvider {
             return try fiatByApha3(region: region)
         } else {
             let region = try await ipRegion()
-            return try fiatByApha3(region: region)
+            return try fiatByApha3(region: region.0)
         }
     }
 

@@ -64,8 +64,9 @@ public final class MoonpaySellDataService: SellDataService {
         // get currency
         do {
             if region == nil {
-                isAvailable = try await provider.isAvailable()
-                self.region = try await provider.ipRegion()
+                let regionData = try await provider.ipRegion()
+                self.region = regionData.0
+                isAvailable = regionData.isAvailable
             } else {
                 self.region = region
             }
