@@ -1,11 +1,11 @@
 import Foundation
 
-public struct JSONRPCError<U: Decodable>: Decodable, Error, LocalizedError {
+public struct JSONRPCError<DataType: Decodable>: Decodable, Error, LocalizedError {
     public let code: Int?
     public let message: String?
-    public let data: U?
+    public let data: DataType?
 
-    public init(code: Int, message: String, data: U?) {
+    public init(code: Int, message: String, data: DataType?) {
         self.code = code
         self.message = message
         self.data = data
@@ -16,7 +16,7 @@ public struct JSONRPCError<U: Decodable>: Decodable, Error, LocalizedError {
     }
 }
 
-public extension JSONRPCError where U == String {
+public extension JSONRPCError where DataType == EmptyData {
     init(code: Int, message: String) {
         self.code = code
         self.message = message
