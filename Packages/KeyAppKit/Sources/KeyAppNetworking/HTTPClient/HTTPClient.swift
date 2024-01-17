@@ -1,20 +1,7 @@
 import Foundation
 
-/// HttpClient to handle http network requests
-public protocol IHTTPClient {
-    /// Send request to specific endpoint
-    /// - Parameters:
-    ///   - endpoint: endpoint to send request to
-    ///   - responseModel: result type of model
-    /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable>(
-        endpoint: HTTPEndpoint,
-        responseModel: T.Type
-    ) async throws -> T
-}
-
-/// Default implementation for `IHTTPClient`
-public class HTTPClient {
+/// Default implementation for `HTTPClient`
+public struct HTTPClient {
     // MARK: - Properties
 
     /// URLSession to handle network request
@@ -39,15 +26,16 @@ public class HTTPClient {
 
 // MARK: - IHTTPClient
 
-extension HTTPClient: IHTTPClient {
+public extension HTTPClient {
     /// Send request to specific endpoint
     /// - Parameters:
     ///   - endpoint: endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    public func request<T: Decodable>(
+    func request<T: Decodable, E: Decodable>(
         endpoint: HTTPEndpoint,
-        responseModel: T.Type
+        responseModel: T.Type,
+        errorModel: E.Type
     ) async throws -> T {
         /// URL assertion
         guard let url = URL(string: endpoint.urlString) else {
@@ -75,6 +63,11 @@ extension HTTPClient: IHTTPClient {
         }
 
         // Decode response
-        return try decoder.decode(responseModel, data: data, httpURLResponse: response)
+        return try decoder.decode(
+            responseModel,
+            errorType: errorModel,
+            data: data,
+            httpURLResponse: response
+        )
     }
 }

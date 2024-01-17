@@ -23,6 +23,9 @@ public struct DefaultHTTPEndpoint: HTTPEndpoint {
     }
 }
 
+/// String represent EmptyData
+public typealias EmptyData = String
+
 /// Public extension for HTTPClient for handy use of DefaultHTTPEndpoint
 public extension HTTPClient {
     /// Send request to specific endpoint
@@ -30,10 +33,15 @@ public extension HTTPClient {
     ///   - endpoint: default endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable>(
+    func request<T: Decodable, E: Decodable>(
         endpoint: DefaultHTTPEndpoint,
-        responseModel: T.Type
+        responseModel: T.Type,
+        errorType: E.Type = EmptyData.self
     ) async throws -> T {
-        try await request(endpoint: endpoint as HTTPEndpoint, responseModel: responseModel)
+        try await request(
+            endpoint: endpoint as HTTPEndpoint,
+            responseModel: responseModel,
+            errorModel: errorType
+        )
     }
 }

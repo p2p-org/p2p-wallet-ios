@@ -8,7 +8,12 @@ public protocol HTTPResponseDecoder {
     ///   - data: data to decode
     ///   - response: httpURLResponse from network
     /// - Returns: object of predefined type
-    func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T
+    func decode<T: Decodable, U: Decodable>(
+        _ type: T.Type,
+        errorType: U.Type,
+        data: Data,
+        httpURLResponse response: HTTPURLResponse
+    ) throws -> T
 }
 
 /// ResponseDecoder for JSON type
@@ -36,8 +41,12 @@ extension JSONResponseDecoder: HTTPResponseDecoder {
     ///   - data: data to decode
     ///   - response: httpURLResponse from network
     /// - Returns: object of predefined type
-    public func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T
-    {
+    public func decode<T: Decodable, U: Decodable>(
+        _ type: T.Type,
+        errorType _: U.Type,
+        data: Data,
+        httpURLResponse response: HTTPURLResponse
+    ) throws -> T {
         switch response.statusCode {
         case 200 ... 299:
             // Special case when return type is string
