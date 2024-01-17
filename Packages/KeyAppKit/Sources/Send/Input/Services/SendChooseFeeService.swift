@@ -4,7 +4,7 @@ import OrcaSwapSwift
 import SolanaSwift
 
 public protocol SendChooseFeeService {
-    func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [SolanaAccount]
+    func getAvailableWalletsToPayFee(feeInSOL: FeeAmount, whiteListMints: [String]) async throws -> [SolanaAccount]
 }
 
 public final class SendChooseFeeServiceImpl: SendChooseFeeService {
@@ -18,8 +18,13 @@ public final class SendChooseFeeServiceImpl: SendChooseFeeService {
         self.orcaSwap = orcaSwap
     }
 
-    public func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [SolanaAccount] {
-        let filteredWallets = wallets.filter { $0.lamports > 0 }
+    public func getAvailableWalletsToPayFee(
+        feeInSOL: FeeAmount,
+        whiteListMints: [String]
+    ) async throws -> [SolanaAccount] {
+        let filteredWallets = wallets
+            .filter { $0.lamports > 0 && whiteListMints.contains($0.mintAddress) }
+
         var feeWallets = [SolanaAccount]()
         for element in filteredWallets {
             if element.token.mintAddress == PublicKey.wrappedSOLMint

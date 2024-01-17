@@ -40,11 +40,18 @@ public struct SendInputServices {
     let swapService: SwapService
     let feeService: SendFeeCalculator
     let solanaAPIClient: SolanaAPIClient
+    let rpcService: SendRPCService
 
-    public init(swapService: SwapService, feeService: SendFeeCalculator, solanaAPIClient: SolanaAPIClient) {
+    public init(
+        swapService: SwapService,
+        feeService: SendFeeCalculator,
+        solanaAPIClient: SolanaAPIClient,
+        rpcService: SendRPCService
+    ) {
         self.swapService = swapService
         self.feeService = feeService
         self.solanaAPIClient = solanaAPIClient
+        self.rpcService = rpcService
     }
 }
 
@@ -112,6 +119,9 @@ public struct SendInputState: Equatable {
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
 
+    /// The list of tokens' mint that can be used to pay fee
+    public let feePayableTokenMints: [String]
+
     /// Fee relayer context
     ///
     /// Current state for free transactions
@@ -134,6 +144,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount,
         tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
+        feePayableTokenMints: [String],
         feeRelayerContext: RelayContext?,
         sendViaLinkSeed: String?
     ) {
@@ -147,6 +158,7 @@ public struct SendInputState: Equatable {
         self.fee = fee
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
+        self.feePayableTokenMints = feePayableTokenMints
         self.feeRelayerContext = feeRelayerContext
         self.sendViaLinkSeed = sendViaLinkSeed
     }
@@ -158,6 +170,7 @@ public struct SendInputState: Equatable {
         token: SolanaAccount,
         feeToken: SolanaAccount,
         userWalletState: UserWalletEnvironments,
+        feePayableTokenMints: [String] = [],
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?
     ) -> SendInputState {
@@ -172,6 +185,7 @@ public struct SendInputState: Equatable {
             fee: .zero,
             tokenFee: feeToken,
             feeInToken: .zero,
+            feePayableTokenMints: feePayableTokenMints,
             feeRelayerContext: feeRelayerContext,
             sendViaLinkSeed: sendViaLinkSeed
         )
@@ -188,6 +202,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount? = nil,
         tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
+        feePayableTokenMints: [String]? = nil,
         feeRelayerContext: RelayContext? = nil,
         sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
@@ -202,6 +217,7 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
+            feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
             feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
             sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )

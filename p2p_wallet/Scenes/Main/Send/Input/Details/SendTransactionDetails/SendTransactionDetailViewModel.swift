@@ -42,7 +42,10 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 Task { [weak self] in
                     guard let self else { return }
                     let tokens = try? await self.feeWalletsService
-                        .getAvailableWalletsToPayFee(feeInSOL: stateMachine.currentState.fee)
+                        .getAvailableWalletsToPayFee(
+                            feeInSOL: stateMachine.currentState.fee,
+                            whiteListMints: state.feePayableTokenMints
+                        )
 
                     await MainActor.run { [weak self] in
                         guard let self else { return }

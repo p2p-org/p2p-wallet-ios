@@ -169,7 +169,11 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 feeService: SendFeeCalculatorImpl(
                     feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
                 ),
-                solanaAPIClient: Resolver.resolve()
+                solanaAPIClient: Resolver.resolve(),
+                rpcService: SendRPCService(
+                    host: "https://send-service.key.app",
+                    urlSession: URLSession.shared
+                )
             )
         )
 
