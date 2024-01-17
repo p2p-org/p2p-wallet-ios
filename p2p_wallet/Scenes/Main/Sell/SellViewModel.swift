@@ -148,6 +148,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func countrySelected(_ country: SelectCountryViewModel.Model, isSellAllowed: Bool) {
         setNewCountryInfo(model: country, isSellAllowed: isSellAllowed)
+        warmUp(region: country)
     }
 
     func changeTheRegionClicked() {
@@ -256,18 +257,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 case .ready:
                     self.status = .ready
                 case let .error(SellDataServiceError.unsupportedRegion(region)):
-                    setNewCountryInfo(
-                        model: SelectCountryViewModel.Model(
-                            alpha2: region.alpha2,
-                            country: region.country,
-                            state: region.state,
-                            alpha3: region.alpha3
-                        ),
-                        isSellAllowed: false
-                    )
+                    setNewCountryInfo(model: region.createModel(), isSellAllowed: false)
                 case let .error(error):
                     self.status = .error(.other)
                 }
+                self.region = self.dataService.region?.createModel()
             })
             .store(in: &subscriptions)
 
@@ -370,25 +364,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Helpers
 
     private func setNewCountryInfo(model: SelectCountryViewModel.Model, isSellAllowed: Bool) {
-        guard !model.title.isEmpty else {
-            status = .ready
-            region = model
-            return
-        }
         region = model
-
-        if isSellAllowed {
-            warmUp(region: model)
-        } else {
-            let model = ChangeCountryErrorView.ChangeCountryModel(
-                image: UIImage(resource: .connectionErrorCat),
-                title: L10n.sorry,
-                subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(model.title),
-                buttonTitle: L10n.goBack,
-                subButtonTitle: L10n.changeTheRegionManually
-            )
-            status = .error(.region(model))
-        }
+        guard !isSellAllowed else { return }
+        let model = ChangeCountryErrorView.ChangeCountryModel(
+            image: UIImage(resource: .connectionErrorCat),
+            title: L10n.sorry,
+            subtitle: L10n.unfortunatelyYouCanNotCashoutInButYouCanStillUseOtherKeyAppFeatures(model.title),
+            buttonTitle: L10n.goBack,
+            subButtonTitle: L10n.changeTheRegionManually
+        )
+        status = .error(.region(model))
     }
 
     private func checkIfMoreBaseCurrencyNeeded() {
@@ -499,3 +484,9 @@ extension SellViewModel {
 }
 
 extension SelectCountryViewModel.Model: ProviderRegion {}
+
+private extension ProviderRegion {
+    func createModel() -> SelectCountryViewModel.Model {
+        SelectCountryViewModel.Model(alpha2: alpha2, country: country, state: state, alpha3: alpha3)
+    }
+}

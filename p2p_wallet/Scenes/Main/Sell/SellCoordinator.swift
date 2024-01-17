@@ -201,6 +201,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
             let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
                 .asViewController(withoutUIKitNavBar: false)
+            viewModel?.isEnteringBaseAmount = false
             navigationController.pushViewController(selectCountryViewController, animated: true)
 
             selectCountryViewModel.selectCountry
