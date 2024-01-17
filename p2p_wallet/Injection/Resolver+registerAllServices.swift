@@ -318,6 +318,10 @@ extension Resolver: ResolverRegistering {
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
                 relayService: Resolver.resolve(),
+                sendService: .init(
+                    host: "https://send-service.key.app",
+                    urlSession: URLSession.shared
+                ),
                 account: Resolver.resolve(SolanaAccountStorage.self).account
             )
         }

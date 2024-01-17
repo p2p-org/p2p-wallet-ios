@@ -11,22 +11,25 @@ public protocol SendActionService {
         feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
-        operationType: StatsInfo.OperationType
+        operationType: StatsInfo.OperationType,
+        useSendService: Bool
     ) async throws -> String
 }
 
 public class SendActionServiceImpl: SendActionService {
     private let contextManager: RelayContextManager
-    private let solanaAPIClient: SolanaAPIClient
+    let solanaAPIClient: SolanaAPIClient
     private let blockchainClient: BlockchainClient
-    private let account: KeyPair?
+    let account: KeyPair?
     private let relayService: RelayService
+    let sendService: SendRPCService
 
     public init(
         contextManager: RelayContextManager,
         solanaAPIClient: SolanaAPIClient,
         blockchainClient: BlockchainClient,
         relayService: RelayService,
+        sendService: SendRPCService,
         account: KeyPair?
     ) {
         self.contextManager = contextManager
@@ -34,6 +37,7 @@ public class SendActionServiceImpl: SendActionService {
         self.blockchainClient = blockchainClient
         self.relayService = relayService
         self.account = account
+        self.sendService = sendService
     }
 
     public func send(
@@ -43,7 +47,8 @@ public class SendActionServiceImpl: SendActionService {
         feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
-        operationType: StatsInfo.OperationType
+        operationType: StatsInfo.OperationType,
+        useSendService: Bool
     ) async throws -> String {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         let sender = wallet.address
@@ -57,15 +62,29 @@ public class SendActionServiceImpl: SendActionService {
             throw SendError.sendToYourself
         }
 
-        return try await sendToSolanaBCViaRelayMethod(
-            from: wallet,
-            receiver: receiver,
-            amount: amount,
-            feeWallet: feeWallet,
-            ignoreTopUp: ignoreTopUp,
-            memo: memo,
-            operationType: operationType
-        )
+        if useSendService {
+            guard let context = contextManager.currentContext else {
+                throw SendError.noContextFound
+            }
+            return try await sendViaSendService(
+                wallet: wallet,
+                amount: amount,
+                receiver: receiver,
+                context: context,
+                feeWallet: feeWallet
+            )
+        } else {
+            // TODO: - Remove later
+            return try await sendToSolanaBCViaRelayMethod(
+                from: wallet,
+                receiver: receiver,
+                amount: amount,
+                feeWallet: feeWallet,
+                ignoreTopUp: ignoreTopUp,
+                memo: memo,
+                operationType: operationType
+            )
+        }
     }
 
     func sendToSolanaBCViaRelayMethod(
@@ -251,6 +270,9 @@ public enum SendError: String, Swift.Error, LocalizedError {
     case invalidSourceWallet = "Source wallet is not valid"
     case sendToYourself = "You can not send tokens to yourself"
     case invalidPayingFeeWallet = "Paying fee wallet is not valid"
+    case invalidUserAccount = "Invalid user account"
+    case invalidTransaction = "Invalid transaction returned from send service"
+    case noContextFound = "No relay context found"
 
     public var errorDescription: String? {
         // swiftlint:disable swiftgen_strings
