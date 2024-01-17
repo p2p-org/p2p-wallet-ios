@@ -81,7 +81,10 @@ public class SendActionServiceImpl: SendActionService {
         let currency = wallet.token.mintAddress
 
         // get paying fee token
-        let payingFeeToken = try? getPayingFeeToken(feeWallet: feeWallet)
+        let payingFeeToken = try? getPayingFeeToken(
+            feeWallet: feeWallet,
+            minimumTokenAccountBalance: wallet.minRentExemption ?? 2_039_280
+        )
 
         // prepare sending to Solana (returning legacy transaction)
         var (preparedTransaction, useFeeRelayer) = try await prepareForSendingToSolanaNetworkViaRelayMethod(
@@ -155,7 +158,6 @@ public class SendActionServiceImpl: SendActionService {
         payingFeeToken: FeeRelayerSwift.TokenAccount?,
         recentBlockhash: String? = nil,
         lamportsPerSignature _: Lamports? = nil,
-        minRentExemption: Lamports? = nil,
         memo: String?
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
@@ -191,13 +193,15 @@ public class SendActionServiceImpl: SendActionService {
             preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
                 account: account,
                 mintAddress: wallet.token.mintAddress,
+                tokenProgramId: PublicKey(string: wallet.tokenProgramId),
                 decimals: wallet.token.decimals,
                 from: sender,
                 to: receiver,
                 amount: amount,
                 feePayer: feePayer,
                 transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
-                minRentExemption: minRentExemption
+                lamportsPerSignature: context.lamportsPerSignature,
+                minRentExemption: wallet.minRentExemption ?? 2_039_280
             ).preparedTransaction
         }
 
@@ -222,7 +226,10 @@ public class SendActionServiceImpl: SendActionService {
             context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 
-    private func getPayingFeeToken(feeWallet: SolanaAccount?) throws -> FeeRelayerSwift.TokenAccount? {
+    private func getPayingFeeToken(
+        feeWallet: SolanaAccount?,
+        minimumTokenAccountBalance: UInt64
+    ) throws -> FeeRelayerSwift.TokenAccount? {
         if let feeWallet = feeWallet {
             let addressString = feeWallet.address
             guard let address = try? PublicKey(string: addressString),
@@ -230,7 +237,11 @@ public class SendActionServiceImpl: SendActionService {
             else {
                 throw SendError.invalidPayingFeeWallet
             }
-            return .init(address: address, mint: mintAddress)
+            return .init(
+                address: address,
+                mint: mintAddress,
+                minimumTokenAccountBalance: minimumTokenAccountBalance
+            )
         }
         return nil
     }

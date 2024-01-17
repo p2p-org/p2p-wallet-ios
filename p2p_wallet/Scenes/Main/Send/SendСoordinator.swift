@@ -37,7 +37,6 @@ final class SendCoordinator: Coordinator<SendResult> {
     let preChosenWallet: SolanaAccount?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?
-    let allowSwitchingMainAmountType: Bool
 
     // MARK: - Initializer
 
@@ -47,8 +46,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
-        flow: SendFlow = .send,
-        allowSwitchingMainAmountType: Bool
+        flow: SendFlow = .send
     ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
@@ -56,7 +54,6 @@ final class SendCoordinator: Coordinator<SendResult> {
         self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
         self.flow = flow
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
         super.init()
     }
 
@@ -91,8 +88,7 @@ final class SendCoordinator: Coordinator<SendResult> {
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             flow: flow,
-            pushedWithoutRecipientSearchView: true,
-            allowSwitchingMainAmountType: allowSwitchingMainAmountType
+            pushedWithoutRecipientSearchView: true
         ))
         .sink { [weak self] result in
             switch result {
@@ -120,8 +116,7 @@ final class SendCoordinator: Coordinator<SendResult> {
                     preChosenWallet: preChosenWallet,
                     preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
-                    flow: flow,
-                    allowSwitchingMainAmountType: allowSwitchingMainAmountType
+                    flow: flow
                 ))
             }
             .sink { [weak self] result in
@@ -228,7 +223,6 @@ final class SendCoordinator: Coordinator<SendResult> {
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             flow: .sendViaLink,
-            allowSwitchingMainAmountType: true,
             sendViaLinkSeed: seed
         ))
         .sink { [weak self] result in

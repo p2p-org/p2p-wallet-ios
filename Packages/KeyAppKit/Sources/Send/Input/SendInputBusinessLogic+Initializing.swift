@@ -17,12 +17,8 @@ extension SendInputBusinessLogic {
                 recipientAdditionalInfo = try await .init(
                     walletAccount: services.solanaAPIClient.getAccountInfo(account: state.recipient.address),
                     splAccounts: services.solanaAPIClient
-                        .getTokenAccountsByOwner(
+                        .getTokenAccountsByOwnerWithToken2022(
                             pubkey: state.recipient.address,
-                            params: .init(
-                                mint: nil,
-                                programId: TokenProgram.id.base58EncodedString
-                            ),
                             configs: .init(encoding: "base64")
                         )
                 )
@@ -30,12 +26,8 @@ extension SendInputBusinessLogic {
                 recipientAdditionalInfo = try await .init(
                     walletAccount: services.solanaAPIClient.getAccountInfo(account: walletAddress.base58EncodedString),
                     splAccounts: services.solanaAPIClient
-                        .getTokenAccountsByOwner(
+                        .getTokenAccountsByOwnerWithToken2022(
                             pubkey: walletAddress.base58EncodedString,
-                            params: .init(
-                                mint: nil,
-                                programId: TokenProgram.id.base58EncodedString
-                            ),
                             configs: .init(encoding: "base64")
                         )
                 )

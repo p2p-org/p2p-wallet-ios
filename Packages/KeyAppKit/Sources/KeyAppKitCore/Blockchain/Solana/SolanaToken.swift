@@ -36,7 +36,7 @@ extension SolanaToken: AnyToken {
         .solana
     }
 
-    public var keyAppExtension: KeyAppTokenExtension {
-        KeyAppTokenExtension(data: extensions ?? [:])
-    }
+//    public var keyAppExtension: KeyAppTokenExtension {
+//        KeyAppTokenExtension(data: extensions ?? [:])
+//    }
 }

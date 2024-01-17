@@ -42,7 +42,10 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountText: String = ""
     @Published var amountTextColor: UIColor = .init(resource: .night)
     @Published var mainTokenText = ""
-    @Published var mainAmountType: EnteredAmountType = .fiat
+
+    // Can't switch, can't remember Defaults.isTokenInputTypeChosen ? .token : .fiat
+    @Published var mainAmountType: EnteredAmountType = .token
+
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -53,19 +56,19 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
-    @Published var isSwitchAvailable: Bool = true
+    @Published var isSwitchAvailable = false // Switch is cancelled
 
-    private let fiat: Fiat
+    private let fiat: Fiat = Defaults.fiat
     private var currentText: String?
-    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(.init(token: .nativeSolana))
+    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(
+        .nativeSolana(pubkey: nil, lamport: nil)
+    )
 
     // MARK: - Dependencies
 
     init(initialToken: SolanaAccount) {
-        fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
-        mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
 
         super.init()
 

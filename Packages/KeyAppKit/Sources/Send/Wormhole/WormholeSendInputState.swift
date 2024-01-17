@@ -10,7 +10,6 @@ import Wormhole
 public enum WormholeSendInputState: Equatable {
     public typealias Service = (
         wormhole: WormholeAPI,
-        relay: RelayService,
         relayContextManager: RelayContextManager,
         orcaSwap: OrcaSwapType
     )

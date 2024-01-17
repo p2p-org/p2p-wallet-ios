@@ -21,7 +21,27 @@ public struct DefaultHTTPEndpoint: HTTPEndpoint {
         self.header = header
         self.body = body
     }
+
+    public init<P: Encodable>(
+        baseURL: String,
+        path: String,
+        method: HTTPMethod,
+        header: [String: String],
+        body: P
+    ) throws {
+        self.baseURL = baseURL
+        self.path = path
+        self.method = method
+        self.header = header
+        self.body = try String(
+            data: JSONEncoder().encode(body),
+            encoding: .utf8
+        )
+    }
 }
+
+/// String represent EmptyData
+public typealias EmptyData = String
 
 /// Public extension for HTTPClient for handy use of DefaultHTTPEndpoint
 public extension HTTPClient {
@@ -30,10 +50,15 @@ public extension HTTPClient {
     ///   - endpoint: default endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable>(
+    func request<T: Decodable, E: Decodable>(
         endpoint: DefaultHTTPEndpoint,
-        responseModel: T.Type
+        responseModel: T.Type,
+        errorType: E.Type = EmptyData.self
     ) async throws -> T {
-        try await request(endpoint: endpoint as HTTPEndpoint, responseModel: responseModel)
+        try await request(
+            endpoint: endpoint as HTTPEndpoint,
+            responseModel: responseModel,
+            errorModel: errorType
+        )
     }
 }

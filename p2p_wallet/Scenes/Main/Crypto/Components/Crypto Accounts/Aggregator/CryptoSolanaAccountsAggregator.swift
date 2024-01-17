@@ -36,7 +36,7 @@ struct CryptoSolanaAccountsAggregator: DataAggregator {
 
                 return RenderableSolanaAccount(
                     account: account,
-                    extraAction: nil, // extraAction,
+                    extraAction: .showHide,
                     tags: tags
                 )
             }

@@ -122,10 +122,10 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .compactMap { $0 }
             .switchToLatest()
             .sink { [weak outputSubject] state in
-                var state = state
-                state.value = state.value.filter { account in
-                    account.token.keyAppExtensions.isTokenCellVisibleOnWS
-                }
+//                var state = state
+//                state.value = state.value.filter { account in
+//                    account.token.keyAppExtensions.isTokenCellVisibleOnWS
+//                }
 
                 outputSubject?.send(state)
             }
@@ -263,6 +263,7 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,
+                        withToken2022: true,
                         tokensRepository: tokensService,
                         commitment: "confirmed"
                     )
@@ -271,7 +272,9 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                 let solanaAccount = try SolanaAccount(
                     address: accountAddress,
                     lamports: balance,
-                    token: await tokensService.nativeToken
+                    token: await tokensService.nativeToken,
+                    minRentExemption: nil,
+                    tokenProgramId: nil
                 )
 
                 newAccounts = [solanaAccount] + resolved
@@ -283,7 +286,9 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                         return SolanaAccount(
                             address: pubkey,
                             lamports: accountBalance.lamports ?? 0,
-                            token: accountBalance.token
+                            token: accountBalance.token,
+                            minRentExemption: accountBalance.minimumBalanceForRentExemption,
+                            tokenProgramId: accountBalance.tokenProgramId
                         )
                     }
                     .compactMap { $0 }

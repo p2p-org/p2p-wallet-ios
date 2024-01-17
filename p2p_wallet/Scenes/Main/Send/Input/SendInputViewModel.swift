@@ -87,7 +87,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let flow: SendFlow
     private var wasMaxWarningToastShown: Bool = false
     private let preChosenAmount: Double?
-    private let allowSwitchingMainAmountType: Bool
 
     // MARK: - Dependencies
 
@@ -98,12 +97,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
         flow: SendFlow,
-        allowSwitchingMainAmountType: Bool,
         sendViaLinkSeed: String?
     ) {
         self.flow = flow
         self.preChosenAmount = preChosenAmount
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
         let repository = Resolver.resolve(SolanaAccountsService.self)
         let wallets = repository.getWallets()
@@ -116,7 +113,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
                 .first(where: { $0.token.mintAddress == token.mintAddress }) ??
-                SolanaAccount(token: TokenMetadata.nativeSolana)
+                .nativeSolana(pubkey: nil, lamport: nil)
         default:
             if let preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -131,14 +128,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                             return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: TokenMetadata.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? .nativeSolana(pubkey: nil, lamport: nil)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
             .first(where: { $0.token.mintAddress == TokenMetadata.usdc.mintAddress }) ??
-            SolanaAccount(token: TokenMetadata.usdc)
+            .classicSPLTokenAccount(address: "", lamports: 0, token: .usdc)
 
         var exchangeRate = [String: TokenPrice]()
         var tokens = Set<TokenMetadata>()
@@ -156,8 +153,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let state = SendInputState.zero(
             recipient: recipient,
-            token: tokenInWallet.token,
-            feeToken: feeTokenInWallet.token,
+            token: tokenInWallet,
+            feeToken: feeTokenInWallet,
             userWalletState: env,
             sendViaLinkSeed: sendViaLinkSeed
         )
@@ -308,7 +305,7 @@ private extension SendInputViewModel {
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(0))
                     self.inputAmountViewModel.amountText = "0"
                 }
-                _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
+                _ = await self.stateMachine.accept(action: .changeUserToken(value))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
                     self?.isFeeLoading = false
@@ -360,7 +357,7 @@ private extension SendInputViewModel {
             .sinkAsync { [weak self] newFeeToken in
                 guard let self else { return }
                 self.isFeeLoading = true
-                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken.token))
+                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
                 self.isFeeLoading = false
             }
             .store(in: &subscriptions)
@@ -398,30 +395,10 @@ private extension SendInputViewModel {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self?.openKeyboard() }
             }
             .store(in: &subscriptions)
-
-        $sourceWallet.eraseToAnyPublisher()
-            .sink { [weak self] currentWallet in
-                guard let self else { return }
-                if currentWallet.price == nil {
-                    self.turnOffInputSwitch()
-                } else if
-                    currentWallet.isUsdcOrUsdt, currentWallet.price?.value == 1.0
-                {
-                    self.turnOffInputSwitch()
-                } else {
-                    self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
-                }
-            }
-            .store(in: &subscriptions)
     }
 }
 
 private extension SendInputViewModel {
-    func turnOffInputSwitch() {
-        inputAmountViewModel.mainAmountType = .token
-        inputAmountViewModel.isSwitchAvailable = false
-    }
-
     func updateInputAmountView() {
         guard currentState.amountInToken != .zero else {
             inputAmountViewModel.isError = false
@@ -663,9 +640,5 @@ private extension SendInputViewModel {
 private extension SolanaAccount {
     var isSendable: Bool {
         lamports > 0 && !isNFTToken
-    }
-
-    var isUsdcOrUsdt: Bool {
-        [TokenMetadata.usdc.mintAddress, TokenMetadata.usdt.mintAddress].contains(token.mintAddress)
     }
 }

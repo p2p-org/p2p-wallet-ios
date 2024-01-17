@@ -66,7 +66,7 @@ final class BuyViewModel: ObservableObject {
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     // Defaults
-    private static let defaultMinAmount = Double(30)
+    private static let defaultMinAmount = Double(40)
     private static let defaultMaxAmount = Double(10000)
     private static let tokens: [TokenMetadata] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = [.eur, .gbp, .usd]
@@ -182,15 +182,14 @@ final class BuyViewModel: ObservableObject {
 
         Task {
             for fiat in BuyViewModel.fiats {
-                self.tokenPrices[fiat] = try Dictionary(
-                    await pricesService.getPrices(
-                        tokens: BuyViewModel.tokens,
-                        fiat: fiat.rawValue
-                    )
-                    .map { token, price in
-                        (token.address, price.doubleValue)
-                    }
-                ) { lhs, _ in lhs }
+                guard let fiatCurrency = fiat.buyFiatCurrency() else { continue }
+                var tokenPrice: [String: Double] = [:]
+                for token in BuyViewModel.tokens {
+                    guard let cryptoCurrency = token.buyCryptoCurrency() else { continue }
+                    let rate = try await exchangeService.getExchangeRate(from: fiatCurrency, to: cryptoCurrency)
+                    tokenPrice[token.mintAddress] = rate.amount
+                }
+                self.tokenPrices[fiat] = tokenPrice
             }
 
             let banks = try await exchangeService.isBankTransferEnabled()
@@ -362,7 +361,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[token.mintAddress] ?? 0,
+                    amount: tokenPrices[fiat]?[$0.mintAddress] ?? 0,
                     fiat: fiat
                 )
             }

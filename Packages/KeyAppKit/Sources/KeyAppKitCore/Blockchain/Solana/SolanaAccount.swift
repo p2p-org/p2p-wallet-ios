@@ -16,19 +16,42 @@ public struct SolanaAccount: Identifiable, Equatable, Hashable {
     /// The fetched price at current moment of time.
     public var price: TokenPrice?
 
-    public init(address: String, lamports: Lamports, token: SolanaToken, price: TokenPrice? = nil) {
+    public var minRentExemption: UInt64?
+
+    public var tokenProgramId: String?
+
+    // MARK: - Intializers
+
+    public init(
+        address: String,
+        lamports: Lamports,
+        token: SolanaToken,
+        price: TokenPrice? = nil,
+        minRentExemption: UInt64?,
+        tokenProgramId: String?
+    ) {
         self.address = address
         self.lamports = lamports
         self.token = token
         self.price = price
+        self.minRentExemption = minRentExemption
+        self.tokenProgramId = tokenProgramId
     }
 
-    @available(*, deprecated)
-    public init(pubkey: String? = nil, lamports: Lamports? = nil, token: TokenMetadata) {
-        address = pubkey ?? ""
-        self.lamports = lamports ?? 0
-        self.token = token
-        price = nil
+    public static func classicSPLTokenAccount(
+        address: String,
+        lamports: Lamports,
+        token: SolanaToken,
+        price: TokenPrice? = nil
+    ) -> Self {
+        .init(
+            address: address,
+            lamports: lamports,
+            token: token,
+            price: price,
+            minRentExemption: 2_039_280,
+            tokenProgramId: TokenProgram.id.base58EncodedString
+        )
     }
 
     public var cryptoAmount: CryptoAmount {
@@ -45,6 +68,18 @@ public struct SolanaAccount: Identifiable, Equatable, Hashable {
 public extension SolanaAccount {
     var mintAddress: String {
         token.mintAddress
+    }
+
+    var isNative: Bool {
+        token.isNative
+    }
+
+    var symbol: String {
+        token.symbol
+    }
+
+    var decimals: Decimals {
+        token.decimals
     }
 
     @available(*, deprecated, renamed: "address")
@@ -81,6 +116,12 @@ public extension SolanaAccount {
 
     @available(*, deprecated, message: "Legacy code")
     static func nativeSolana(pubkey: String?, lamport: Lamports?) -> Self {
-        .init(pubkey: pubkey, lamports: lamport, token: .nativeSolana)
+        .init(
+            address: pubkey ?? "",
+            lamports: lamport ?? 0,
+            token: .nativeSolana,
+            minRentExemption: nil,
+            tokenProgramId: nil
+        )
     }
 }

@@ -11,10 +11,17 @@ class HTTPClientTests: XCTestCase {
             "name": "John Doe"
         }
         """
-        let mockURLSession = MockURLSession(responseString: mockString, statusCode: 200, error: nil)
+        let mockURLSession = MockURLSession(
+            responseString: mockString,
+            statusCode: 200,
+            error: nil
+        )
         let mockDecoder = JSONResponseDecoder()
 
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
+        let httpClient = HTTPClient(
+            urlSession: mockURLSession,
+            decoder: mockDecoder
+        )
         let endpoint = DefaultHTTPEndpoint(
             baseURL: "https://example.com/api",
             path: "/users",
@@ -24,7 +31,10 @@ class HTTPClientTests: XCTestCase {
         )
 
         // Act
-        let userModel: UserModel = try await httpClient.request(endpoint: endpoint, responseModel: UserModel.self)
+        let userModel: UserModel = try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: UserModel.self
+        )
 
         // Assert
         XCTAssertEqual(userModel.id, 1)
@@ -34,10 +44,17 @@ class HTTPClientTests: XCTestCase {
     func testRequest_SuccessfulResponse_ReturnsString() async throws {
         // Arrange
         let mockString = "OK"
-        let mockURLSession = MockURLSession(responseString: mockString, statusCode: 200, error: nil)
+        let mockURLSession = MockURLSession(
+            responseString: mockString,
+            statusCode: 200,
+            error: nil
+        )
         let mockDecoder = JSONResponseDecoder()
 
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
+        let httpClient = HTTPClient(
+            urlSession: mockURLSession,
+            decoder: mockDecoder
+        )
         let endpoint = DefaultHTTPEndpoint(
             baseURL: "https://example.com/api",
             path: "/users",
@@ -47,7 +64,10 @@ class HTTPClientTests: XCTestCase {
         )
 
         // Act
-        let response = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        let response = try await httpClient.request(
+            endpoint: endpoint,
+            responseModel: String.self
+        )
 
         // Assert
         XCTAssertEqual(response, "OK")
@@ -56,10 +76,17 @@ class HTTPClientTests: XCTestCase {
     func testRequest_InvalidResponse_ThrowsError() async throws {
         // Arrange
         let mockData = Data()
-        let mockURLSession = MockURLSession(responseString: nil, statusCode: 200, error: nil)
+        let mockURLSession = MockURLSession(
+            responseString: nil,
+            statusCode: 200,
+            error: nil
+        )
         let mockDecoder = JSONResponseDecoder()
 
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
+        let httpClient = HTTPClient(
+            urlSession: mockURLSession,
+            decoder: mockDecoder
+        )
         let endpoint = DefaultHTTPEndpoint(
             baseURL: "https://example.com/api",
             path: "/users",
@@ -70,7 +97,10 @@ class HTTPClientTests: XCTestCase {
 
         // Act & Assert
         do {
-            _ = try await httpClient.request(endpoint: endpoint, responseModel: UserModel.self)
+            _ = try await httpClient.request(
+                endpoint: endpoint,
+                responseModel: UserModel.self
+            )
             XCTFail()
         } catch let HTTPClientError.invalidResponse(response, data) {
             XCTAssertEqual(response, nil)

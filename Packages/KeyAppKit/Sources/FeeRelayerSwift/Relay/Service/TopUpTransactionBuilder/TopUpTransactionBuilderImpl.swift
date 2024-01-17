@@ -43,7 +43,8 @@ class TopUpTransactionBuilderImpl: TopUpTransactionBuilder {
         let feePayerAddress = context.feePayerAddress
         let associatedTokenAddress = try PublicKey.associatedTokenAddress(
             walletAddress: feePayerAddress,
-            tokenMintAddress: sourceTokenMintAddress
+            tokenMintAddress: sourceTokenMintAddress,
+            tokenProgramId: TokenProgram.id
         ) ?! FeeRelayerError.unknown
         let network = solanaApiClient.endpoint.network
 
@@ -102,7 +103,7 @@ class TopUpTransactionBuilderImpl: TopUpTransactionBuilder {
 
         switch swap.swapData {
         case let swap as DirectSwapData:
-            expectedFee.accountBalances += context.minimumTokenAccountBalance
+            expectedFee.accountBalances += sourceToken.minimumTokenAccountBalance
             // approve
             if let userTransferAuthority = userTransferAuthority {
                 instructions.append(
@@ -154,7 +155,7 @@ class TopUpTransactionBuilderImpl: TopUpTransactionBuilder {
             }
 
             // Destination WSOL account funding
-            expectedFee.accountBalances += context.minimumTokenAccountBalance
+            expectedFee.accountBalances += sourceToken.minimumTokenAccountBalance
 
             // top up
             try instructions.append(

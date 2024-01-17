@@ -90,6 +90,7 @@
 "Confirm" = "Confirm";
 "Confirm access to your account that was used to create the wallet" = "Confirm access to your account that was used to create the wallet";
 "Confirm claiming the tokens " = "Confirm claiming\nthe tokens";
+"Confirm selection" = "Confirm selection";
 "Confirm your new PIN code" = "Confirm your new PIN code";
 "Confirm your number" = "Confirm your number";
 "Confirmation Code Limit Hit" = "Confirmation Code Limit Hit";
@@ -226,6 +227,7 @@
 "Log out" = "Log out";
 "Looks like you already have a wallet with" = "Looks like you already have a wallet with";
 "Low slippage %@. We recommend to increase slippage manually" = "Low slippage %@. We recommend to increase slippage manually";
+"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
 "Make sure this is still your device" = "Make sure this is still your device";
 "Make sure you understand" = "Make sure you understand";
 "Make sure you understand these aspects" = "Make sure you understand these aspects";
@@ -393,6 +395,7 @@
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps.";
 "The seed phrase doesn't match. Please try again" = "The seed phrase doesn't match. Please try again";
 "The slippage could be" = "The slippage could be";
+"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
 "The transaction has been rejected" = "The transaction has been rejected";
 "The transaction has been successfully completed" = "The transaction has been successfully completed";
 "The transaction has been successfully completed 🤟" = "The transaction has been successfully completed 🤟";
@@ -570,6 +573,3 @@
 "✌️ Great! Your new PIN is set." = "✌️ Great! Your new PIN is set.";
 "😓 name is not available" = "😓 name is not available";
 "😢 PIN doesn't match. Please try again" = "😢 PIN doesn't match. Please try again";
-"Confirm selection" = "Confirm selection";
-"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
-"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";

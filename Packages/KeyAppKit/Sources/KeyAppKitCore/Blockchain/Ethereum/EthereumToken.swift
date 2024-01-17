@@ -74,7 +74,7 @@ extension EthereumToken: AnyToken {
         }
     }
 
-    public var keyAppExtension: KeyAppTokenExtension {
-        KeyAppTokenExtension(data: [:])
-    }
+//    public var keyAppExtension: KeyAppTokenExtension {
+//        KeyAppTokenExtension(data: [:])
+//    }
 }

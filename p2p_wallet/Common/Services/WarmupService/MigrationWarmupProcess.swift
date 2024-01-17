@@ -3,9 +3,9 @@ import Resolver
 
 class MigrationWarmupProcess: WarmupProcess {
     func start() async {
-        // Migrate to endpoint solana.keyapp.org
-        let migration1Key = "APIEndpoint.migrationKey1"
+        let migration1Key = "APIEndpoint.migrationKey2"
         if !UserDefaults.standard.bool(forKey: migration1Key) {
+            // Migrate to endpoint solana.keyapp.org
             Resolver.resolve(ChangeNetworkResponder.self)
                 .changeAPIEndpoint(
                     to: .init(
@@ -14,6 +14,11 @@ class MigrationWarmupProcess: WarmupProcess {
                         additionalQuery: .secretConfig("KEYAPP_ORG_API_KEY")
                     )
                 )
+
+            // Reset input type to token
+            Defaults.isTokenInputTypeChosen = true
+
+            // Set at migrated
             UserDefaults.standard.set(true, forKey: migration1Key)
         }
     }
