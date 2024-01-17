@@ -57,13 +57,13 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         dataLength _: UInt64,
         commitment _: Commitment?
     ) async throws
-        -> UInt64 { fatalError("getMinimumBalanceForRentExemption(dataLength:commitment:) has not been implemented") }
+    -> UInt64 { fatalError("getMinimumBalanceForRentExemption(dataLength:commitment:) has not been implemented") }
 
     func getSignatureStatuses(
         signatures _: [String],
         configs _: RequestConfiguration?
     ) async throws
-        -> [SignatureStatus?] { fatalError("getSignatureStatuses(signatures:configs:) has not been implemented") }
+    -> [SignatureStatus?] { fatalError("getSignatureStatuses(signatures:configs:) has not been implemented") }
 
     func getSignatureStatus(
         signature _: String,
@@ -74,7 +74,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         pubkey _: String,
         commitment _: Commitment?
     ) async throws
-        -> TokenAccountBalance { fatalError("getTokenAccountBalance(pubkey:commitment:) has not been implemented") }
+    -> TokenAccountBalance { fatalError("getTokenAccountBalance(pubkey:commitment:) has not been implemented") }
 
     func getTokenAccountsByDelegate<T: TokenAccountState>(
         pubkey _: String,
@@ -98,7 +98,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         pubkey _: String,
         commitment _: Commitment?
     ) async throws
-        -> [TokenAmount] { fatalError("getTokenLargestAccounts(pubkey:commitment:) has not been implemented") }
+    -> [TokenAmount] { fatalError("getTokenLargestAccounts(pubkey:commitment:) has not been implemented") }
 
     func getTokenSupply(
         pubkey _: String,
@@ -128,7 +128,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         transaction _: String,
         configs _: RequestConfiguration
     ) async throws
-        -> SimulationResult { fatalError("simulateTransaction(transaction:configs:) has not been implemented") }
+    -> SimulationResult { fatalError("simulateTransaction(transaction:configs:) has not been implemented") }
 
     func setLogFilter(
         filter _: String
@@ -158,7 +158,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         address _: String,
         configs _: RequestConfiguration?
     ) async throws
-        -> [SignatureInfo] { fatalError("getSignaturesForAddress(address:configs:) has not been implemented") }
+    -> [SignatureInfo] { fatalError("getSignaturesForAddress(address:configs:) has not been implemented") }
 
     func getTransaction(
         signature _: String,
