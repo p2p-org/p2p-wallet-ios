@@ -21,6 +21,23 @@ public struct DefaultHTTPEndpoint: HTTPEndpoint {
         self.header = header
         self.body = body
     }
+
+    public init<P: Encodable>(
+        baseURL: String,
+        path: String,
+        method: HTTPMethod,
+        header: [String: String],
+        body: P
+    ) throws {
+        self.baseURL = baseURL
+        self.path = path
+        self.method = method
+        self.header = header
+        self.body = try String(
+            data: JSONEncoder().encode(body),
+            encoding: .utf8
+        )
+    }
 }
 
 /// String represent EmptyData
