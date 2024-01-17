@@ -56,7 +56,7 @@ extension APIClientError: SendTransactionStatusViewableError {
     }
 }
 
-extension JSONRPCError: SendTransactionStatusViewableError where U == EmptyData {
+extension JSONRPCError: SendTransactionStatusViewableError where DataType == EmptyData {
     func detail(feeAmount _: String?) -> SendTransactionStatusDetailsParameters? {
         .init(title: L10n.somethingWentWrong, description: message ?? "")
     }
