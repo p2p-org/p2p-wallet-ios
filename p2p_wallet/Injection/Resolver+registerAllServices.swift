@@ -313,15 +313,19 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register {
+            SendRPCService(
+                host: "https://send-service.key.app"
+            )
+        }
+        .scope(.unique)
+
+        register {
             SendActionServiceImpl(
                 contextManager: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
                 relayService: Resolver.resolve(),
-                sendService: .init(
-                    host: "https://send-service.key.app",
-                    urlSession: URLSession.shared
-                ),
+                sendService: Resolver.resolve(),
                 account: Resolver.resolve(SolanaAccountStorage.self).account
             )
         }

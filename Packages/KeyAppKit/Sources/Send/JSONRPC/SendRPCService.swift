@@ -5,7 +5,10 @@ public class SendRPCService {
     let host: String
     let jsonrpcClient: JSONRPCHTTPClient
 
-    public init(host: String, urlSession: HTTPURLSession) {
+    public init(
+        host: String,
+        urlSession: HTTPURLSession = URLSession.shared
+    ) {
         self.host = host
         jsonrpcClient = .init(urlSession: urlSession)
     }
