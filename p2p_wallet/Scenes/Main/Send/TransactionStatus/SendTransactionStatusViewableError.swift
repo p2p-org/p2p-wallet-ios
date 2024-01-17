@@ -61,3 +61,9 @@ extension JSONRPCError: SendTransactionStatusViewableError where DataType == Emp
         .init(title: L10n.somethingWentWrong, description: message ?? "")
     }
 }
+
+extension DecodingError: SendTransactionStatusViewableError {
+    func detail(feeAmount _: String?) -> SendTransactionStatusDetailsParameters? {
+        .init(title: L10n.somethingWentWrong, description: .init(reflecting: self))
+    }
+}

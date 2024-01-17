@@ -7,8 +7,8 @@ public struct SendServiceTransferResponse: Codable, Equatable {
     public let expiresAt: UInt64
     public let signature: String
     public let recipientGetsAmount, totalAmount: SendServiceTransferAmount
-    public let networkFee, tokenAccountRent: SendServiceTransferFee
-    public let token2022_TransferFee: SendServiceTransferFee?
+    public let networkFee: SendServiceTransferFee
+    public let tokenAccountRent, token2022_TransferFee: SendServiceTransferFee?
 
     enum CodingKeys: String, CodingKey {
         case transaction, blockhash
@@ -52,5 +52,5 @@ public struct SendServiceTransferAmount: Codable, Equatable {
 // MARK: - Price
 
 public struct SendServiceTransferPrice: Codable, Equatable {
-    let usd: Double?
+    let usd: String?
 }
