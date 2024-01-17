@@ -218,12 +218,14 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
         try decode(TransactionInfo.self, from: getTransactionResponse)
     }
 
-    override func getTokenAccountsByOwner(
+    override func getTokenAccountsByOwner<T>(
         pubkey _: String,
         params _: OwnerInfoParams?,
-        configs _: RequestConfiguration?
-    ) async throws -> [TokenAccount<SPLTokenAccountState>] {
-        try decode(Rpc<[TokenAccount<SPLTokenAccountState>]>.self, from: getTokensAccountByOwnerResponse).value
+        configs _: RequestConfiguration?,
+        decodingTo _: T.Type
+    ) async throws -> [TokenAccount<T>] where T: TokenAccountState {
+        try decode(Rpc<[TokenAccount<T>]>.self, from: getTokensAccountByOwnerResponse)
+            .value
     }
 
     override func getTokenAccountBalance(pubkey _: String,

@@ -3,7 +3,9 @@ import Foundation
 // MARK: - SendServiceTransferRequest
 
 struct SendServiceTransferRequest: Codable {
-    let userWallet, mint, amount, recipient: String
+    let userWallet: String
+    let mint: String?
+    let amount, recipient: String
     let options: SendServiceTransferOptions
 
     enum CodingKeys: String, CodingKey {

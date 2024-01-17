@@ -40,7 +40,8 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         startSlot _: UInt64,
         endSlot _: UInt64
     ) async throws
-    -> [String] {
+        -> [String]
+    {
         fatalError("getConfirmedSignaturesForAddress(account:startSlot:endSlot:) has not been implemented")
     }
 
@@ -56,13 +57,13 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         dataLength _: UInt64,
         commitment _: Commitment?
     ) async throws
-    -> UInt64 { fatalError("getMinimumBalanceForRentExemption(dataLength:commitment:) has not been implemented") }
+        -> UInt64 { fatalError("getMinimumBalanceForRentExemption(dataLength:commitment:) has not been implemented") }
 
     func getSignatureStatuses(
         signatures _: [String],
         configs _: RequestConfiguration?
     ) async throws
-    -> [SignatureStatus?] { fatalError("getSignatureStatuses(signatures:configs:) has not been implemented") }
+        -> [SignatureStatus?] { fatalError("getSignatureStatuses(signatures:configs:) has not been implemented") }
 
     func getSignatureStatus(
         signature _: String,
@@ -73,24 +74,23 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         pubkey _: String,
         commitment _: Commitment?
     ) async throws
-    -> TokenAccountBalance { fatalError("getTokenAccountBalance(pubkey:commitment:) has not been implemented") }
+        -> TokenAccountBalance { fatalError("getTokenAccountBalance(pubkey:commitment:) has not been implemented") }
 
-    func getTokenAccountsByDelegate(
+    func getTokenAccountsByDelegate<T: TokenAccountState>(
         pubkey _: String,
         mint _: String?,
         programId _: String?,
         configs _: RequestConfiguration?
-    ) async throws
-    -> [TokenAccount<SPLTokenAccountState>] {
+    ) async throws -> [TokenAccount<T>] {
         fatalError("getTokenAccountsByDelegate(pubkey:mint:programId:configs:) has not been implemented")
     }
 
-    func getTokenAccountsByOwner(
+    func getTokenAccountsByOwner<T: TokenAccountState>(
         pubkey _: String,
         params _: OwnerInfoParams?,
-        configs _: RequestConfiguration?
-    ) async throws
-    -> [TokenAccount<SPLTokenAccountState>] {
+        configs _: RequestConfiguration?,
+        decodingTo _: T.Type
+    ) async throws -> [TokenAccount<T>] {
         fatalError("getTokenAccountsByOwner(pubkey:params:configs:) has not been implemented")
     }
 
@@ -98,7 +98,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         pubkey _: String,
         commitment _: Commitment?
     ) async throws
-    -> [TokenAmount] { fatalError("getTokenLargestAccounts(pubkey:commitment:) has not been implemented") }
+        -> [TokenAmount] { fatalError("getTokenLargestAccounts(pubkey:commitment:) has not been implemented") }
 
     func getTokenSupply(
         pubkey _: String,
@@ -128,7 +128,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         transaction _: String,
         configs _: RequestConfiguration
     ) async throws
-    -> SimulationResult { fatalError("simulateTransaction(transaction:configs:) has not been implemented") }
+        -> SimulationResult { fatalError("simulateTransaction(transaction:configs:) has not been implemented") }
 
     func setLogFilter(
         filter _: String
@@ -145,7 +145,8 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         timeout _: Int,
         delay _: Int
     )
-    -> AsyncStream<PendingTransactionStatus> {
+        -> AsyncStream<PendingTransactionStatus>
+    {
         fatalError("observeSignatureStatus(signature:timeout:delay:) has not been implemented")
     }
 
@@ -157,7 +158,7 @@ class MockedSolanaAPIClient: SolanaAPIClient {
         address _: String,
         configs _: RequestConfiguration?
     ) async throws
-    -> [SignatureInfo] { fatalError("getSignaturesForAddress(address:configs:) has not been implemented") }
+        -> [SignatureInfo] { fatalError("getSignaturesForAddress(address:configs:) has not been implemented") }
 
     func getTransaction(
         signature _: String,
@@ -172,7 +173,8 @@ class MockedSolanaAPIClient: SolanaAPIClient {
     func batchRequest(
         with _: [JSONRPCRequestEncoder.RequestType]
     ) async throws
-    -> [AnyResponse<JSONRPCRequestEncoder.RequestType.Entity>] {
+        -> [AnyResponse<JSONRPCRequestEncoder.RequestType.Entity>]
+    {
         fatalError("batchRequest(with:) has not been implemented")
     }
 
@@ -190,13 +192,15 @@ class MockedSolanaAPIClient: SolanaAPIClient {
     }
 
     func getAddressLookupTable(accountKey _: SolanaSwift.PublicKey) async throws -> SolanaSwift
-    .AddressLookupTableAccount? {
+        .AddressLookupTableAccount?
+    {
         fatalError()
     }
 
     func getMultipleAccounts<T>(pubkeys _: [String],
                                 commitment _: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?]
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         fatalError()
     }
 }

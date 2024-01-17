@@ -23,7 +23,7 @@ public class SendRPCService {
 
     public func transfer(
         userWallet: String,
-        mint: String,
+        mint: String?,
         amount: UInt64,
         recipient: String,
         transferMode: SendServiceTransferMode,

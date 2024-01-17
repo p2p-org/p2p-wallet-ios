@@ -15,9 +15,12 @@ extension SendActionServiceImpl {
             throw SendError.invalidUserAccount
         }
 
+        // ignore mint if token is native
+        let mintAddress = wallet.isNative ? nil : wallet.mintAddress
+
         let response = try await sendService.transfer(
             userWallet: wallet.address,
-            mint: wallet.mintAddress,
+            mint: mintAddress,
             amount: amount,
             recipient: receiver,
             transferMode: .exactIn,
