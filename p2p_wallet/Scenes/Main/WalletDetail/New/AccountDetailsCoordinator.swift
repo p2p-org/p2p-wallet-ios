@@ -140,6 +140,15 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             navigationController: navigationController,
             initialAmountInToken: transaction.baseCurrencyAmount
         ))
+        .receive(on: RunLoop.main)
+        .handleEvents(receiveOutput: { [weak navigationController] result in
+            switch result {
+            case .completed, .none:
+                break
+            case .interupted:
+                navigationController?.dismiss(animated: true)
+            }
+        })
         .sink { _ in }
         .store(in: &subscriptions)
     }
