@@ -1,15 +1,11 @@
-//
-//  HttpClient.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.04.2022.
-//
 import Foundation
 
+@available(*, deprecated, message: "Use KeyAppNetworking.HTTPClient instead")
 protocol HttpClient {
     func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type) async throws -> T
 }
 
+@available(*, deprecated, message: "Use KeyAppNetworking.HTTPClient instead")
 final class HttpClientImpl: HttpClient {
     func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type) async throws -> T {
         guard let url = URL(string: endpoint.baseURL + endpoint.path) else { throw ErrorModel.invalidURL }

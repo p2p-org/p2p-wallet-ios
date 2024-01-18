@@ -1,8 +1,8 @@
 import Foundation
 
 public struct JSONRPCResponseDto<T: Decodable>: Decodable {
-    let id: String?
-    let result: T
+    public let id: String?
+    public let result: T
 
     public init(
         id: String,
@@ -13,11 +13,7 @@ public struct JSONRPCResponseDto<T: Decodable>: Decodable {
     }
 }
 
-public struct JSONRPCResponseErrorDto: Decodable {
+public struct JSONRPCResponseErrorDto<U: Decodable>: Decodable {
     public let id: String?
-    public let error: JSONRPCError?
-}
-
-public struct JSONRPCError: Decodable, Error {
-    public let code: Int?
+    public let error: JSONRPCError<U>
 }
