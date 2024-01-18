@@ -91,7 +91,8 @@ struct JupiterSwapState: Equatable {
     /// Lamport per signature
     var lamportPerSignature: Lamports
 
-    /// Fee for creating spl token account
+    /// Fee for creating spl token account. This field will be used for calculating when user connects direct to
+    /// jupiter.
     var splAccountCreationFee: Lamports
 
     // MARK: - Computed properties
@@ -155,54 +156,101 @@ struct JupiterSwapState: Equatable {
 
     /// Network fee of the transaction, can be modified by the fee relayer service
     var networkFee: SwapFeeInfo? {
-        // FIXME: - Relay context and free transaction
-        // TODO(jupiter): How to calculate signature fee?
-        var signatureFee: Lamports = 0
+        guard route != nil else { return nil }
 
-        if
-            let swapTransaction = swapTransaction?.stringValue,
-            let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
-            let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
-        {
-            signatureFee = UInt64(versionedTransaction.message.value.header.numRequiredSignatures) * lamportPerSignature
+        if let keyapp = route?.keyapp {
+            // Fee is calculated on P2P backend
+            let payingFeeToken = TokenMetadata.nativeSolana
+            let networkFeeAmount = keyapp.fees.signatureFee.convertToBalance(decimals: payingFeeToken.decimals)
+
+            return SwapFeeInfo(
+                amount: networkFeeAmount,
+                tokenSymbol: payingFeeToken.symbol,
+                tokenName: payingFeeToken.name,
+                tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
+                pct: nil,
+                canBePaidByKeyApp: true
+            )
+        } else {
+            var signatureFee: Lamports = 0
+
+            if
+                let swapTransaction = swapTransaction?.stringValue,
+                let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
+                let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+            {
+                signatureFee = UInt64(versionedTransaction.message.value.header.numRequiredSignatures) *
+                    lamportPerSignature
+            }
+
+            let payingFeeToken = TokenMetadata.nativeSolana
+            let networkFeeAmount = signatureFee
+                .convertToBalance(decimals: payingFeeToken.decimals)
+
+            return SwapFeeInfo(
+                amount: networkFeeAmount,
+                tokenSymbol: payingFeeToken.symbol,
+                tokenName: payingFeeToken.name,
+                tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
+                pct: nil,
+                canBePaidByKeyApp: true
+            )
         }
-
-        // FIXME: - paying fee token
-        let payingFeeToken = TokenMetadata.nativeSolana
-
-        let networkFeeAmount = signatureFee
-            .convertToBalance(decimals: payingFeeToken.decimals)
-
-        return SwapFeeInfo(
-            amount: networkFeeAmount,
-            tokenSymbol: payingFeeToken.symbol,
-            tokenName: payingFeeToken.name,
-            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
-            pct: nil,
-            canBePaidByKeyApp: true
-        )
     }
 
     var accountCreationFee: SwapFeeInfo? {
-        // TODO(jupiter): How to calculate account creation fee?
-
-        // get route & fees
         guard route != nil else { return nil }
 
-        let amount: Lamports
-        if toToken.userWallet == nil {
-            amount = splAccountCreationFee
-        } else {
-            amount = 0
-        }
+        if let keyapp = route?.keyapp {
+            let accountCreationFeeInSOL = keyapp.fees.totalFeeAndDeposits
+                .convertToBalance(decimals: TokenMetadata.nativeSolana.decimals)
 
-        return SwapFeeInfo(
-            amount: amount.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals),
-            tokenSymbol: "SOL",
-            tokenName: "Solana",
-            tokenPriceInCurrentFiat: tokensPriceMap[TokenMetadata.nativeSolana.mintAddress],
-            canBePaidByKeyApp: false
-        )
+            // prepare for converting
+            let payingFeeToken: TokenMetadata
+            let accountCreationFee: Double
+
+            // convert to toToken
+            if let tokenPrice = tokensPriceMap[toToken.mintAddress],
+               tokenPrice > 0
+            {
+                payingFeeToken = toToken.token
+                accountCreationFee =
+                    ((tokensPriceMap[TokenMetadata.nativeSolana.mintAddress] / tokenPrice) *
+                        accountCreationFeeInSOL)
+                    .rounded(decimals: payingFeeToken.decimals)
+            } else {
+                // fallback to SOL
+                payingFeeToken = TokenMetadata.nativeSolana
+                accountCreationFee = accountCreationFeeInSOL
+            }
+            return SwapFeeInfo(
+                amount: accountCreationFee,
+                tokenSymbol: payingFeeToken.symbol,
+                tokenName: payingFeeToken.name,
+                tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.mintAddress],
+                pct: nil,
+                canBePaidByKeyApp: false
+            )
+
+        } else {
+            // get route & fees
+            guard route != nil else { return nil }
+
+            let amount: Lamports
+            if toToken.userWallet == nil {
+                amount = splAccountCreationFee
+            } else {
+                amount = 0
+            }
+
+            return SwapFeeInfo(
+                amount: amount.convertToBalance(decimals: TokenMetadata.nativeSolana.decimals),
+                tokenSymbol: "SOL",
+                tokenName: "Solana",
+                tokenPriceInCurrentFiat: tokensPriceMap[TokenMetadata.nativeSolana.mintAddress],
+                canBePaidByKeyApp: false
+            )
+        }
     }
 
     var liquidityFee: [SwapFeeInfo] {

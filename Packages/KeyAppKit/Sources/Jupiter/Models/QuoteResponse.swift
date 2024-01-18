@@ -109,7 +109,7 @@ public struct QuoteResponse: Codable, Equatable {
         try container.encode(inputMint, forKey: .inputMint)
         try container.encode(outputMint, forKey: .outputMint)
         
-        try container.encode(priceImpactPct, forKey: .priceImpactPct)
+        try container.encode("\(priceImpactPct)", forKey: .priceImpactPct)
         try container.encode(routePlan, forKey: .routePlan)
         try container.encode(slippageBps, forKey: .slippageBps)
         try container.encode(otherAmountThreshold, forKey: .otherAmountThreshold)
@@ -159,6 +159,14 @@ public struct PlatformFee: Codable, Equatable {
 
 public struct KeyAppInfo: Codable, Equatable {
     public let fee: String
+    public let fees: Fees
     public let refundableFee: String
     public let _hash: String
+}
+
+public struct Fees: Codable, Equatable {
+    public let signatureFee: UInt64
+    public let ataDeposits: [UInt64]
+    public let totalFeeAndDeposits: UInt64
+    public let minimumSOLForTransaction: UInt64
 }
