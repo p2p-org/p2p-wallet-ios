@@ -53,8 +53,7 @@ class GlobalAppState: ObservableObject {
         if let forcedValue = Defaults.forcedNewSwapEndpoint {
             newSwapEndpoint = forcedValue
         } else {
-            //TODO(jupiter): change to p2p backend
-            newSwapEndpoint = "https://quote-api.jup.ag"
+            newSwapEndpoint = "https://swap-v6.key.app"
         }
     }
 
