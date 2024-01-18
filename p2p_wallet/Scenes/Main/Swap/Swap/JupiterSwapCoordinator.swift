@@ -168,7 +168,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
                 if !show {
                     controller?.navigationItem.rightBarButtonItems = [shareBarButton]
-                } else if controller?.navigationItem.rightBarButtonItems == nil {
+                } else {
                     controller?.navigationItem.rightBarButtonItems = [swapSettingBarButton, shareBarButton]
                 }
             }
