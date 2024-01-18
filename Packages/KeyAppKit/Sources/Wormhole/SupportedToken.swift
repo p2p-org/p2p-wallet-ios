@@ -63,6 +63,13 @@ public enum SupportedToken {
             receiveFromAddress: "2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk"
         ),
         .init(
+            name: "WETH",
+            coingekoID: "Wrapped Ether",
+            ethAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+            solAddress: "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs",
+            receiveFromAddress: "2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk"
+        ),
+        .init(
             name: "USDC",
             coingekoID: "usd-coin",
             ethAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
