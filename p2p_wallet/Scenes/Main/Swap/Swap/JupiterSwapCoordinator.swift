@@ -15,7 +15,7 @@ struct JupiterSwapParameters {
 
     let inputToken: String?
     let outputToken: String?
-    
+
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
@@ -36,7 +36,7 @@ struct JupiterSwapParameters {
 
         self.inputToken = inputToken
         self.outputToken = outputToken
-        
+
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
         self.source = source

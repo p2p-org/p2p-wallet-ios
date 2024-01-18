@@ -69,7 +69,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     /// Mint address or ticker
     private var inputToken: String?
-    
+
     /// Mint address or ticker
     private var outputToken: String?
 
@@ -269,7 +269,6 @@ private extension SwapViewModel {
     }
 
     func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
-        
         // Find token by ticker.
         func findTokenMintBySymbol(symbol: String?) -> TokenMetadata? {
             guard let symbol else { return nil }
@@ -279,7 +278,7 @@ private extension SwapViewModel {
                 .filter { token in
                     token.symbol == symbol
                 }
- 
+
             if tokens.count == 1 {
                 // Return it if we found only one token
                 return tokens.first
@@ -296,36 +295,38 @@ private extension SwapViewModel {
                 }
             }
         }
-        
+
         // In case if input is ticker, we need to extract mint address.
         func extract(_ input: String?) -> String? {
             guard let input else { return nil }
-            
+
             if input.count < 32 {
                 // Symbol mode
                 let token = findTokenMintBySymbol(symbol: input)
-                
+
                 guard let token else {
                     deeplinkSuspicionAlert = true
                     deeplinkSuspicionTokens.append(input)
                     return nil
                 }
-                
+
                 if token.tags.contains(where: { $0.name == "unknown" }) {
                     deeplinkSuspicionTokens.append(token.symbol)
                     deeplinkSuspicionAlert = true
                     return nil
                 }
-                
+
                 return token.mintAddress
             } else {
                 // Mint mode
                 return input
             }
         }
-        
-        let preChosenFromTokenMintAddress = preChosenWallet?.mintAddress ?? extract(inputToken) ?? Defaults.fromTokenAddress
-        let preChosenToTokenMintAddress = destinationWallet?.mintAddress ?? extract(outputToken) ?? Defaults.toTokenAddress
+
+        let preChosenFromTokenMintAddress = preChosenWallet?.mintAddress ?? extract(inputToken) ?? Defaults
+            .fromTokenAddress
+        let preChosenToTokenMintAddress = destinationWallet?.mintAddress ?? extract(outputToken) ?? Defaults
+            .toTokenAddress
 
         let newState = await stateMachine
             .accept(
