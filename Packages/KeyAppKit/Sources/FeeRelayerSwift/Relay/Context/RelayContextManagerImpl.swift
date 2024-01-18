@@ -56,28 +56,29 @@ public class RelayContextManagerImpl: RelayContextManager {
             else { throw RelayContextManagerError.invalidContext }
 
             // retrieve RelayContext
-            let (
-                minimumRelayAccountBalance,
-                lamportsPerSignature,
-                feePayerAddress,
-                relayAccountStatus,
-                usageStatus
-            ) = try await(
-                solanaAPIClient.getMinimumBalanceForRentExemption(span: 0),
-                solanaAPIClient.getFees(commitment: nil).feeCalculator?.lamportsPerSignature ?? 0,
-                feeRelayerAPIClient.getFeePayerPubkey(),
-                solanaAPIClient.getRelayAccountStatus(
-                    RelayProgram.getUserRelayAddress(user: account.publicKey, network: solanaAPIClient.endpoint.network)
+            async let minimumRelayAccountBalance = solanaAPIClient
+                .getMinimumBalanceForRentExemption(span: 0)
+            async let lamportsPerSignature = solanaAPIClient
+                .getFees(commitment: nil).feeCalculator?
+                .lamportsPerSignature
+            async let feePayerAddress = feeRelayerAPIClient.getFeePayerPubkey()
+            async let relayAccountStatus = solanaAPIClient
+                .getRelayAccountStatus(
+                    RelayProgram
+                        .getUserRelayAddress(
+                            user: account.publicKey,
+                            network: solanaAPIClient.endpoint.network
+                        )
                         .base58EncodedString
-                ),
-                feeRelayerAPIClient.getFreeFeeLimits(for: account.publicKey.base58EncodedString)
-                    .asUsageStatus()
-            )
+                )
+            async let usageStatus = feeRelayerAPIClient
+                .getFreeFeeLimits(for: account.publicKey.base58EncodedString)
+                .asUsageStatus()
 
-            return try RelayContext(
+            return try await RelayContext(
                 minimumRelayAccountBalance: minimumRelayAccountBalance,
                 feePayerAddress: PublicKey(string: feePayerAddress),
-                lamportsPerSignature: lamportsPerSignature,
+                lamportsPerSignature: lamportsPerSignature ?? 5000,
                 relayAccountStatus: relayAccountStatus,
                 usageStatus: usageStatus
             )

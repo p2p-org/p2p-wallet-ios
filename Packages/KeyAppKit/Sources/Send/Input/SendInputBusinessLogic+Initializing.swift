@@ -19,10 +19,6 @@ extension SendInputBusinessLogic {
                     splAccounts: services.solanaAPIClient
                         .getTokenAccountsByOwnerWithToken2022(
                             pubkey: state.recipient.address,
-                            params: .init(
-                                mint: nil,
-                                programId: TokenProgram.id.base58EncodedString
-                            ),
                             configs: .init(encoding: "base64")
                         )
                 )
@@ -32,10 +28,6 @@ extension SendInputBusinessLogic {
                     splAccounts: services.solanaAPIClient
                         .getTokenAccountsByOwnerWithToken2022(
                             pubkey: walletAddress.base58EncodedString,
-                            params: .init(
-                                mint: nil,
-                                programId: TokenProgram.id.base58EncodedString
-                            ),
                             configs: .init(encoding: "base64")
                         )
                 )
