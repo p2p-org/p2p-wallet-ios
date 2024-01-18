@@ -36,7 +36,7 @@ public struct SendServiceTransferAmount: Codable, Equatable {
     public let name: String
     public let decimals: Int
     public let logoURL: String?
-    public let coingeckoID: String
+    public let coingeckoID: String?
     public let price: SendServiceTransferPrice
 
     enum CodingKeys: String, CodingKey {
