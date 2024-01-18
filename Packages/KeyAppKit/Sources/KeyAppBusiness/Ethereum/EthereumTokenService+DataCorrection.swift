@@ -34,7 +34,7 @@ class EthereumTokenDataCorrection {
             contractType: token.contractType
         )
     }
-    
+
     private func fixWETH(token: EthereumToken) -> EthereumToken {
         EthereumToken(
             name: token.name,
