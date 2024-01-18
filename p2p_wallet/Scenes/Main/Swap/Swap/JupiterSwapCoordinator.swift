@@ -145,12 +145,12 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             action: #selector(receiptButtonPressed)
         )
 
-        shareBarButton = UIBarButtonItem(
-            image: UIImage(named: "share-1"),
-            style: .plain,
-            target: self,
-            action: #selector(shareButtonPressed)
-        )
+        let shareButton = UIButton(type: .system)
+            .setTarget(target: self, action: #selector(shareButtonPressed), for: .touchUpInside)
+        shareButton.setImage(UIImage(named: "share-1"), for: .normal)
+        shareButton.setTitleColor(.gray, for: .highlighted)
+        
+        shareBarButton = UIBarButtonItem(customView: shareButton)
 
         // show rightBarButtonItem only on successful loading
         viewModel.$viewState
@@ -186,13 +186,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
     @objc private func shareButtonPressed() {
         UIApplication.shared.endEditing()
-        
+
         let from = viewModel.currentState.fromToken.mintAddress
         let to = viewModel.currentState.toToken.mintAddress
-        
+
         let items = ["https://s.key.app/swap?from=\(from)&to=\(to)"]
         let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
-         
+
         navigationController.present(activityVC, animated: true)
     }
 
