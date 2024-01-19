@@ -40,25 +40,3 @@ public struct SendFees: Codable, Hashable, Equatable {
         case bridgeFeeInToken = "bridge_fee_in_token"
     }
 }
-
-public extension SendFees {
-    /// Total amount in fiat.
-    var totalInFiat: CurrencyAmount {
-        CurrencyAmount(usd: 0)
-            + arbiter?.asCurrencyAmount
-            + networkFee?.asCurrencyAmount
-            + messageAccountRent?.asCurrencyAmount
-            + bridgeFee?.asCurrencyAmount
-    }
-
-    /// Total in Crypto
-    var totalInCrypto: CryptoAmount? {
-        guard let arbiter, let networkFeeInToken, let messageAccountRentInToken, let bridgeFeeInToken else {
-            return nil
-        }
-        return arbiter.asCryptoAmount
-            + networkFeeInToken.asCryptoAmount
-            + messageAccountRentInToken.asCryptoAmount
-            + bridgeFeeInToken.asCryptoAmount
-    }
-}
