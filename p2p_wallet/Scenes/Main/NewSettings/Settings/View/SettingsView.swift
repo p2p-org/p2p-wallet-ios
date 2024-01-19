@@ -23,7 +23,7 @@ struct SettingsView: View {
                 communitySection
                 appVersionSection
 //                #if !RELEASE
-                    debugSection
+                debugSection
 //                #endif
             }
             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
@@ -156,17 +156,18 @@ struct SettingsView: View {
     }
 
 //    #if !RELEASE
-        private var debugSection: some View {
-            Section {
-                Button(
-                    action: { debugPresented.toggle() },
-                    label: { cellView(image: nil, title: "Debug Menu") }
-                )
-            }
-            .sheet(isPresented: $debugPresented) {
-                DebugMenuView(viewModel: .init())
-            }
+    private var debugSection: some View {
+        Section {
+            Button(
+                action: { debugPresented.toggle() },
+                label: { cellView(image: nil, title: "Debug Menu") }
+            )
         }
+        .sheet(isPresented: $debugPresented) {
+            DebugMenuView(viewModel: .init())
+        }
+    }
+
 //    #endif
 
     private func cellView<Content: View>(image: ImageResource?, title: String,
