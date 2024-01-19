@@ -19,7 +19,7 @@ extension SendActionServiceImpl {
         let mintAddress = wallet.isNative ? nil : wallet.mintAddress
 
         let response = try await sendService.transfer(
-            userWallet: account.publicKey.base58EncodedString,
+            userWallet: wallet.address,
             mint: mintAddress,
             amount: amount,
             recipient: receiver,
@@ -58,7 +58,7 @@ extension SendActionServiceImpl {
             } else if feeWallet.mintAddress == wallet.mintAddress {
                 return .userSameToken
             } else {
-                return .other(pubkey: feeWallet.address)
+                return .other(pubkey: feeWallet.mintAddress)
             }
         } else {
             return .userSOL
@@ -75,7 +75,7 @@ extension SendActionServiceImpl {
             } else if feeWallet.mintAddress == wallet.mintAddress {
                 return .userSameToken
             } else {
-                return .other(pubkey: feeWallet.address)
+                return .other(pubkey: feeWallet.mintAddress)
             }
         } else {
             return .userSOL
