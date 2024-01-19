@@ -22,9 +22,9 @@ struct SettingsView: View {
                 appearanceSection
                 communitySection
                 appVersionSection
-                #if !RELEASE
+//                #if !RELEASE
                     debugSection
-                #endif
+//                #endif
             }
             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
         }
@@ -155,7 +155,7 @@ struct SettingsView: View {
         }
     }
 
-    #if !RELEASE
+//    #if !RELEASE
         private var debugSection: some View {
             Section {
                 Button(
@@ -167,7 +167,7 @@ struct SettingsView: View {
                 DebugMenuView(viewModel: .init())
             }
         }
-    #endif
+//    #endif
 
     private func cellView<Content: View>(image: ImageResource?, title: String,
                                          rightContent: () -> Content) -> some View
