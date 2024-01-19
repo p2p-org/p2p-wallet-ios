@@ -588,10 +588,8 @@ extension Resolver: ResolverRegistering {
             RecipientSearchServiceImpl(
                 nameService: resolve(),
                 solanaClient: resolve(),
-                swapService: SwapServiceWrapper(
-                    orcaSwap: resolve(),
-                    relayService: resolve()
-                )
+                feeCalculator: SendFeeCalculatorImpl(),
+                orcaSwap: resolve()
             )
         }
         .implements(RecipientSearchService.self)

@@ -1,21 +1,25 @@
 import Foundation
 import NameService
+import OrcaSwapSwift
 import SolanaSwift
 import Wormhole
 
 public class RecipientSearchServiceImpl: RecipientSearchService {
     let nameService: NameService
     let solanaClient: SolanaAPIClient
-    let swapService: SwapService
+    let feeCalculator: SendFeeCalculator
+    let orcaSwap: OrcaSwapType
 
     public init(
         nameService: NameService,
         solanaClient: SolanaAPIClient,
-        swapService: SwapService
+        feeCalculator: SendFeeCalculator,
+        orcaSwap: OrcaSwapType
     ) {
         self.nameService = nameService
         self.solanaClient = solanaClient
-        self.swapService = swapService
+        self.feeCalculator = feeCalculator
+        self.orcaSwap = orcaSwap
     }
 
     public func search(

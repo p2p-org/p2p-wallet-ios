@@ -153,8 +153,12 @@ extension RecipientSearchServiceImpl {
                 let mint = try? PublicKey(string: wallet.token.mintAddress)
             else { continue }
 
-            let result = try await swapService.calculateFeeInPayingToken(
-                feeInSOL: .init(transaction: 0, accountBalances: env.rentExemptionAmountForWalletAccount),
+            let result = try await feeCalculator.calculateFeeInPayingToken(
+                orcaSwap: orcaSwap,
+                feeInSOL: .init(
+                    transaction: 0,
+                    accountBalances: env.rentExemptionAmountForWalletAccount
+                ),
                 payingFeeTokenMint: mint
             )
 
@@ -178,8 +182,12 @@ extension RecipientSearchServiceImpl {
                 let mint = try? PublicKey(string: wallet.token.mintAddress)
             else { continue }
 
-            let result = try await swapService.calculateFeeInPayingToken(
-                feeInSOL: .init(transaction: 0, accountBalances: env.rentExemptionAmountForSPLAccount),
+            let result = try await feeCalculator.calculateFeeInPayingToken(
+                orcaSwap: orcaSwap,
+                feeInSOL: .init(
+                    transaction: 0,
+                    accountBalances: env.rentExemptionAmountForSPLAccount
+                ),
                 payingFeeTokenMint: mint
             )
 
