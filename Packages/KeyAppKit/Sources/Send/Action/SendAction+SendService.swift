@@ -23,7 +23,7 @@ extension SendActionServiceImpl {
             mint: mintAddress,
             amount: amount,
             recipient: receiver,
-            transferMode: .exactIn,
+            transferMode: .exactOut,
             networkFeePayer: getNetworkFeePayer(
                 context: context,
                 wallet: wallet,
