@@ -6,7 +6,7 @@ import SolanaSwift
 
 protocol CreateNameService {
     var createNameResult: AnyPublisher<Bool, Never> { get }
-    func create(username: String)
+    func create(username: String, domain: String)
 }
 
 final class CreateNameServiceImpl: CreateNameService {
@@ -22,7 +22,7 @@ final class CreateNameServiceImpl: CreateNameService {
 
     private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 
-    func create(username: String) {
+    func create(username: String, domain: String) {
         Task {
             do {
                 guard let account = storage.account else {
@@ -41,8 +41,9 @@ final class CreateNameServiceImpl: CreateNameService {
                     configs: RequestConfiguration(encoding: "base64")!
                 )
 
-                nameStorage.save(name: username)
-                nameCache.save(username, for: account.publicKey.base58EncodedString)
+                let name = "\(username)\(domain)"
+                nameStorage.save(name: name)
+                nameCache.save(name, for: account.publicKey.base58EncodedString)
                 createNameResultSubject.send(true)
             } catch {
                 createNameResultSubject.send(false)
