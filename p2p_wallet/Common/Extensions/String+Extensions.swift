@@ -49,7 +49,7 @@ extension String {
     }
 
     static var nameServiceDomain: String {
-        RemoteConfig.remoteConfig().usernameDomain ?? "key"
+        RemoteConfig.remoteConfig().usernameDomain ?? ".key"
     }
 
     static func secretConfig(_ key: String) -> String? {
@@ -124,4 +124,6 @@ extension String {
 
         return String(stringLiteral: s)
     }
+
+    static let neutralFlag = "🏳️‍🌈"
 }

@@ -231,13 +231,13 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     func reload() async throws {
         history.reset()
         try await history.fetch()?.value
-        await sellDataService?.update()
+        await sellDataService?.update(region: nil)
     }
 
     func fetch() {
         history.fetch()
         Task {
-            await sellDataService?.update()
+            await sellDataService?.update(region: nil)
         }
     }
 

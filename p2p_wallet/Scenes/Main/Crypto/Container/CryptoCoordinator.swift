@@ -40,14 +40,16 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     /// Navigation controller that handle the navigation stack
     private let navigationController: UINavigationController
+    private let tabBarController: TabBarController
 
     /// Navigation subject
     private let navigation = PassthroughSubject<CryptoNavigation, Never>()
 
     // MARK: - Initializer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, tabBarController: TabBarController) {
         self.navigationController = navigationController
+        self.tabBarController = tabBarController
     }
 
     // MARK: - Methods
@@ -177,6 +179,27 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             }
+        case .cashOut:
+            return coordinate(
+                to: SellCoordinator(navigationController: navigationController)
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case .completed:
+                    self?.tabBarController.changeItem(to: .history)
+                case .interupted:
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?
+                        .popToRootViewController(animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self?.tabBarController.changeItem(to: .history)
+                    }
+                case .none:
+                    break
+                }
+            })
+            .map { _ in () }
+            .eraseToAnyPublisher()
         default:
             return Just(())
                 .eraseToAnyPublisher()
