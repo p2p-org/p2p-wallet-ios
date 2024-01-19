@@ -299,12 +299,17 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // Open pendings in case there are pending txs
         dataPublisher
+            .filter { [weak self] currency, _ in
+                guard let self else { return false }
+                self.minBaseAmount = currency?.minSellAmount ?? 0
+                self.checkIfMoreBaseCurrencyNeeded()
+                return !self.isMoreBaseCurrencyNeeded
+            }
             .withLatestFrom(dataService.transactionsPublisher)
             .map { $0.filter { $0.status == .waitingForDeposit }}
             .removeDuplicates()
             .sink(receiveValue: { [weak self] transactions in
                 guard let self = self, let fiat = self.dataService.fiat else { return }
-                guard !self.isMoreBaseCurrencyNeeded else { return }
                 self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
             })
             .store(in: &subscriptions)
@@ -356,8 +361,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         try? reachability.startNotifier()
-        reachability.status.sink { [unowned self] _ in
-            _ = self.reachability.check()
+        reachability.status.sink { [weak self] _ in
+            _ = self?.reachability.check()
         }.store(in: &subscriptions)
     }
 
@@ -378,9 +383,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     private func checkIfMoreBaseCurrencyNeeded() {
         maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
-        if maxBaseAmount < minBaseAmount {
-            isMoreBaseCurrencyNeeded = true
-        }
+        isMoreBaseCurrencyNeeded = maxBaseAmount < minBaseAmount
     }
 
     private func checkError(amount: Double) {
@@ -415,7 +418,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
             return
         }
 
-        updatePricesTask = Task { [unowned self] in
+        updatePricesTask = Task { [weak self] in
+            guard let self else { return }
             // get sellQuote
             do {
                 let sellQuote = try await self.actionService.sellQuote(
