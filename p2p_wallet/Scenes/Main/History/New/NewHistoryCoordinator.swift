@@ -132,8 +132,8 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         }
 
         coordinate(to: SellCoordinator(
-            initialAmountInToken: transaction.baseCurrencyAmount,
-            navigationController: navigationController
+            navigationController: navigationController,
+            initialAmountInToken: transaction.baseCurrencyAmount
         ))
         .sink { _ in }
         .store(in: &subscriptions)

@@ -22,7 +22,7 @@ struct AccountDetailsView: View {
             }
             .padding(.top, 24)
 
-            HStack(spacing: 32) {
+            HStack(spacing: detailAccount.rendableAccountDetails.actions.count > 3 ? 12 : 32) {
                 ForEach(detailAccount.rendableAccountDetails.actions) { action in
                     CircleButton(title: action.title, image: action.icon) {
                         detailAccount.rendableAccountDetails.onAction(action)
@@ -57,7 +57,7 @@ struct AccountDetailsView_Previews: PreviewProvider {
                     title: "USDC",
                     amountInToken: "1 000.97 USDC",
                     amountInFiat: "1 000.97 USDC",
-                    actions: [.buy, .receive(.none), .send, .swap(nil)],
+                    actions: [.cashOut, .buy, .receive(.none), .send, .swap(nil)],
                     onAction: { _ in }
                 )
             ),

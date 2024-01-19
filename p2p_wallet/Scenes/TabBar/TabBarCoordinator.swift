@@ -214,7 +214,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func routeToCrypto(
         nc: UINavigationController
     ) {
-        let cryptoCoordinator = CryptoCoordinator(navigationController: nc)
+        let cryptoCoordinator = CryptoCoordinator(navigationController: nc, tabBarController: tabBarController)
         coordinate(to: cryptoCoordinator)
             .sink(receiveValue: { [weak self] _ in
                 guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
