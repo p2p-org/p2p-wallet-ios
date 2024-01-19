@@ -124,4 +124,6 @@ extension String {
 
         return String(stringLiteral: s)
     }
+
+    static let neutralFlag = "🏳️‍🌈"
 }

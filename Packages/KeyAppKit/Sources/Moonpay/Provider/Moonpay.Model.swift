@@ -54,6 +54,7 @@ public extension Moonpay {
     struct MoonpayCountry: Decodable {
         public let code: String
         public let name: String
+        public let alpha3: String
         public let isBuyAllowed: Bool
         public let isSellAllowed: Bool
         public let isNftAllowed: Bool
@@ -63,6 +64,7 @@ public extension Moonpay {
         enum CodingKeys: String, CodingKey {
             case code = "alpha2"
             case name
+            case alpha3
             case isBuyAllowed
             case isSellAllowed
             case isNftAllowed

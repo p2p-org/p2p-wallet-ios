@@ -10,17 +10,30 @@ struct SellView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 switch viewModel.status {
-                case .initialized, .updating:
+                case .loading:
                     loading
                 case .ready:
                     SellInputView(viewModel: viewModel)
-                case .error:
+                case .error(.other):
                     BaseErrorView(
-                        appearance: BaseErrorView.Appearance(actionButtonHorizontalOffset: 23, imageTextPadding: 30),
+                        appearance: BaseErrorView.Appearance(
+                            actionButtonHorizontalOffset: 23,
+                            imageTextPadding: 30
+                        ),
                         actionTitle: L10n.goBack
                     ) {
                         viewModel.goBack()
                     }
+                case let .error(.region(model)):
+                    ChangeCountryErrorView(
+                        model: model,
+                        buttonAction: {
+                            viewModel.goBack()
+                        },
+                        subButtonAction: {
+                            viewModel.changeTheRegionClicked()
+                        }
+                    )
                 }
             }
         }
@@ -30,7 +43,30 @@ struct SellView: View {
         .onForeground {
             viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }
-        .navigationBarTitle(L10n.cashoutWithMoonpay, displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Spacer()
+                    Spacer()
+                    Text(L10n.cashoutWithMoonpay)
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Button(
+                        action: {
+                            viewModel.changeTheRegionClicked()
+                        },
+                        label: {
+                            HStack(spacing: 10) {
+                                Text(viewModel.region?.flag ?? .neutralFlag)
+                                    .font(uiFont: .font(of: .title1, weight: .bold))
+                                Image(.chevronDown)
+                                    .foregroundColor(Color(.mountain))
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
 
     var loading: some View {

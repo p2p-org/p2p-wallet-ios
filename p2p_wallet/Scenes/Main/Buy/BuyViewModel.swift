@@ -11,17 +11,13 @@ import UIKit
 
 let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
 
-private extension String {
-    static let neutralFlag = "🏳️‍🌈"
-}
-
 final class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
 
     // MARK: - To View
 
     @Published var state: State = .usual
-    @Published var flag = String.neutralFlag
+    @Published var region: SelectCountryViewModel.Model?
     @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: TokenMetadata
     @Published var fiat: Fiat = .usd
@@ -61,7 +57,6 @@ final class BuyViewModel: ObservableObject {
     var lastMethod: PaymentType = .bank
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
-    private var countryTitle: String?
 
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
@@ -248,18 +243,22 @@ final class BuyViewModel: ObservableObject {
             let ipInfo = try await moonpayProvider.ipAddresses()
             await MainActor.run {
                 setNewCountryInfo(
-                    flag: ipInfo.alpha2.asFlag ?? .neutralFlag,
-                    title: ipInfo.countryTitle,
+                    region: SelectCountryViewModel.Model(
+                        alpha2: ipInfo.alpha2,
+                        country: ipInfo.country,
+                        state: ipInfo.state,
+                        alpha3: ipInfo.alpha3
+                    ),
                     isBuyAllowed: ipInfo.isBuyAllowed
                 )
             }
         }
     }
 
-    private func setNewCountryInfo(flag: String, title: String, isBuyAllowed: Bool) {
-        guard !title.isEmpty else {
+    private func setNewCountryInfo(region: SelectCountryViewModel.Model, isBuyAllowed: Bool) {
+        guard !region.title.isEmpty else {
             state = .usual
-            self.flag = .neutralFlag
+            self.region = region
             return
         }
 
@@ -269,15 +268,14 @@ final class BuyViewModel: ObservableObject {
             let model = ChangeCountryErrorView.ChangeCountryModel(
                 image: UIImage(resource: .connectionErrorCat),
                 title: L10n.sorry,
-                subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(title),
+                subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(region.title),
                 buttonTitle: L10n.goBack,
                 subButtonTitle: L10n.changeTheRegionManually
             )
             state = .buyNotAllowed(model: model)
             analyticsManager.log(event: .buyBlockedScreenOpen)
         }
-        self.flag = flag
-        countryTitle = title
+        self.region = region
     }
 
     // MARK: - From View
@@ -287,18 +285,14 @@ final class BuyViewModel: ObservableObject {
     }
 
     func changeTheRegionClicked() {
-        coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
-            flag: flag,
-            title: countryTitle ?? ""
-        ))
+        guard let region else { return }
+        coordinatorIO.chooseCountry.send(region)
         analyticsManager.log(event: .buyBlockedRegionClick)
     }
 
     func flagClicked() {
-        coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
-            flag: flag,
-            title: countryTitle ?? ""
-        ))
+        guard let region else { return }
+        coordinatorIO.chooseCountry.send(region)
         analyticsManager.log(event: .buyChangeCountryClick)
     }
 
@@ -566,7 +560,7 @@ final class BuyViewModel: ObservableObject {
     }
 
     func countrySelected(_ country: SelectCountryViewModel.Model, buyAllowed: Bool) {
-        setNewCountryInfo(flag: country.flag, title: country.title, isBuyAllowed: buyAllowed)
+        setNewCountryInfo(region: country, isBuyAllowed: buyAllowed)
     }
 
     struct CoordinatorIO {

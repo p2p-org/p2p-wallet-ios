@@ -5,15 +5,6 @@ public enum SellDataServiceStatus {
     case updating
     case ready
     case error(Error)
-
-    public var isReady: Bool {
-        switch self {
-        case .ready:
-            return true
-        default:
-            return false
-        }
-    }
 }
 
 public protocol ProviderCurrency: Equatable {
@@ -56,6 +47,14 @@ public struct SellDataServiceTransaction: Hashable {
     }
 }
 
+public protocol ProviderRegion {
+    var alpha2: String { get }
+    var alpha3: String { get }
+    var country: String { get }
+    var state: String { get }
+}
+
 public enum SellDataServiceError: Error {
+    case unsupportedRegion(ProviderRegion)
     case couldNotLoadSellData
 }
