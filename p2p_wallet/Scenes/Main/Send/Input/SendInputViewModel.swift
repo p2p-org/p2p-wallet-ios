@@ -162,13 +162,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
-                swapService: SwapServiceImpl(
-                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator,
-                    orcaSwap: Resolver.resolve()
-                ),
-                feeService: SendFeeCalculatorImpl(
-                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
-                ),
+                orcaSwap: Resolver.resolve(),
+                feeService: SendFeeCalculatorImpl(),
                 solanaAPIClient: Resolver.resolve(),
                 rpcService: Resolver.resolve()
             )

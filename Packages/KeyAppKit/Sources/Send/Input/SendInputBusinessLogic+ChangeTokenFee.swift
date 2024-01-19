@@ -23,17 +23,20 @@ extension SendInputBusinessLogic {
                 fee = .zero
                 feeInToken = .zero
             } else {
-                fee = try await services.feeService.getFees(
-                    from: state.token,
-                    recipient: state.recipient,
-                    recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: feeToken.mintAddress,
-                    feeRelayerContext: feeRelayerContext
-                ) ?? .zero
-                feeInToken = try (try? await services.swapService.calculateFeeInPayingToken(
-                    feeInSOL: fee,
-                    payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
-                )) ?? .zero
+                fee = try await services.feeService
+                    .getFees(
+                        from: state.token,
+                        recipient: state.recipient,
+                        recipientAdditionalInfo: state.recipientAdditionalInfo,
+                        lamportsPerSignature: feeRelayerContext.lamportsPerSignature,
+                        usageStatus: feeRelayerContext.usageStatus
+                    ) ?? .zero
+                feeInToken = (try? await services.feeService
+                    .calculateFeeInPayingToken(
+                        orcaSwap: services.orcaSwap,
+                        feeInSOL: fee,
+                        payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
+                    )) ?? .zero
             }
 
             let state = state.copy(

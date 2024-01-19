@@ -26,8 +26,8 @@ extension SendInputBusinessLogic {
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: state.tokenFee.mintAddress,
-                    feeRelayerContext: feeRelayerContext
+                    lamportsPerSignature: feeRelayerContext.lamportsPerSignature,
+                    usageStatus: feeRelayerContext.usageStatus
                 ) ?? .zero
             }
 
@@ -107,10 +107,12 @@ extension SendInputBusinessLogic {
 
         for wallet in sortedWallets {
             do {
-                let feeInToken: FeeAmount = try (await services.swapService.calculateFeeInPayingToken(
-                    feeInSOL: feeInSol,
-                    payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
-                )) ?? .zero
+                let feeInToken = try (await services.feeService
+                    .calculateFeeInPayingToken(
+                        orcaSwap: services.orcaSwap,
+                        feeInSOL: feeInSol,
+                        payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
+                    )) ?? .zero
 
                 if feeInToken.total <= wallet.lamports {
                     return (wallet, feeInToken)

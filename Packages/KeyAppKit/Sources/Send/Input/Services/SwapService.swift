@@ -29,9 +29,10 @@ public class SwapServiceImpl: SwapService {
         self.orcaSwap = orcaSwap
     }
 
-    public func calculateFeeInPayingToken(feeInSOL: FeeAmount,
-                                          payingFeeTokenMint: PublicKey) async throws -> FeeAmount?
-    {
+    public func calculateFeeInPayingToken(
+        feeInSOL: FeeAmount,
+        payingFeeTokenMint: PublicKey
+    ) async throws -> FeeAmount? {
         try await feeRelayerCalculator.calculateFeeInPayingToken(
             orcaSwap: orcaSwap,
             feeInSOL: feeInSOL,

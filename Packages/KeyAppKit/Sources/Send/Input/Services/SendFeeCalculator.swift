@@ -8,17 +8,20 @@ public protocol SendFeeCalculator: AnyObject {
         from token: SolanaAccount,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
-        payingTokenMint: String?,
-        feeRelayerContext context: RelayContext
+//        payingTokenMint: String?,
+        lamportsPerSignature: UInt64,
+        usageStatus: UsageStatus
+    ) async throws -> FeeAmount?
+
+    func calculateFeeInPayingToken(
+        orcaSwap: OrcaSwapType,
+        feeInSOL: FeeAmount,
+        payingFeeTokenMint: PublicKey
     ) async throws -> FeeAmount?
 }
 
 public class SendFeeCalculatorImpl: SendFeeCalculator {
-    private let feeRelayerCalculator: RelayFeeCalculator
-
-    public init(feeRelayerCalculator: RelayFeeCalculator) {
-        self.feeRelayerCalculator = feeRelayerCalculator
-    }
+    public init() {}
 
     // MARK: - Fees calculator
 
@@ -26,16 +29,17 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
         from token: SolanaAccount,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
-        payingTokenMint: String?,
-        feeRelayerContext context: RelayContext
+//        payingTokenMint _: String?,
+        lamportsPerSignature: UInt64,
+        usageStatus: UsageStatus
     ) async throws -> FeeAmount? {
         var transactionFee: UInt64 = 0
 
         // owner's signature
-        transactionFee += context.lamportsPerSignature
+        transactionFee += lamportsPerSignature
 
         // feePayer's signature
-        transactionFee += context.lamportsPerSignature
+        transactionFee += lamportsPerSignature
 
         var isAssociatedTokenUnregister = false
 
@@ -67,44 +71,76 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             }
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
-        // fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
-            // subtract the fee payer signature cost
-            transactionFee -= context.lamportsPerSignature
-        }
+//        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't
+//        /use
+//        // fee relayer)
+//        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
+//            // subtract the fee payer signature cost
+//            transactionFee -= context.lamportsPerSignature
+//        }
 
-        let expectedFee = FeeAmount(
+        var expectedFee = FeeAmount(
             transaction: transactionFee,
             accountBalances: isAssociatedTokenUnregister ? token.minRentExemption ?? 0 : 0
         )
 
-        // TODO: - Remove later: Send as SendViaLink when link creation available
-        if !context.usageStatus.reachedLimitLinkCreation {
-            return .zero
+        // is Top up free
+        if usageStatus.isFreeTransactionFeeAvailable(
+            transactionFee: expectedFee.transaction
+        ) {
+            expectedFee.transaction = 0
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
-        // fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
-            return expectedFee
+        return expectedFee
+    }
+
+    public func calculateFeeInPayingToken(
+        orcaSwap: OrcaSwapType,
+        feeInSOL: FeeAmount,
+        payingFeeTokenMint: PublicKey
+    ) async throws -> FeeAmount? {
+        // If token is sol, no conversion needed
+        if payingFeeTokenMint == PublicKey.wrappedSOLMint {
+            return feeInSOL
         }
 
-        return try await feeRelayerCalculator.calculateNeededTopUpAmount(
-            context,
-            expectedFee: expectedFee,
-            payingTokenMint: try? PublicKey(string: payingTokenMint)
+        // If token is not sol, we need to get poolsPairs for trading token to SOL to cover fees
+        let tradablePoolsPairs = try await orcaSwap.getTradablePoolsPairs(
+            fromMint: payingFeeTokenMint.base58EncodedString,
+            toMint: PublicKey.wrappedSOLMint.base58EncodedString
+        )
+
+        // Get best poolsPair for best price
+        guard let bestPools = try orcaSwap.findBestPoolsPairForEstimatedAmount(
+            feeInSOL.total,
+            from: tradablePoolsPairs
+        ) else {
+            throw FeeRelayerError.swapPoolsNotFound
+        }
+
+        let transactionFee = bestPools.getInputAmount(
+            minimumAmountOut: feeInSOL.transaction,
+            slippage: FeeRelayerConstants.topUpSlippage
+        )
+        let accountCreationFee = bestPools.getInputAmount(
+            minimumAmountOut: feeInSOL.accountBalances,
+            slippage: FeeRelayerConstants.topUpSlippage
+        )
+
+        return .init(
+            transaction: transactionFee ?? 0,
+            accountBalances: accountCreationFee ?? 0
         )
     }
 
-    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
-        _ context: RelayContext,
-        payingTokenMint: String?
-    ) -> Bool {
-        let expectedTransactionFee = context.lamportsPerSignature * 2
-        return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
-            context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
-    }
+//    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+//        _ context: RelayContext,
+//        payingTokenMint: String?
+//    ) -> Bool {
+//        let expectedTransactionFee = context.lamportsPerSignature * 2
+//        return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
+//            context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
+//    }
 }
 
 public enum SendFeeCalculatorError: String, Swift.Error {

@@ -218,13 +218,26 @@ struct SendInputView: View {
                         }
                 }
 
-                FeeRelayerDebugView(
-                    viewModel: .init(
-                        feeInSOL: viewModel.currentState.fee,
-                        feeInToken: viewModel.currentState.feeInToken,
-                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                Group {
+                    Text(
+                        "User usageStatus: \(String(describing: viewModel.currentState.feeRelayerContext?.usageStatus))"
                     )
-                )
+
+                    Text(
+                        "isFreeTransactionAvailable: \(viewModel.currentState.feeRelayerContext?.usageStatus.isFreeTransactionFeeAvailable(transactionFee: viewModel.currentState.fee.transaction) == true ? "true" : "false")"
+                    )
+
+                    Text(
+                        "feeInSOL(networkFee: \(viewModel.currentState.fee.transaction), rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
+                    )
+
+                    Text(
+                        "feeInToken(networkFee: \(viewModel.currentState.feeInToken.transaction.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)), rentExemptionFee: \(viewModel.currentState.feeInToken.accountBalances.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)))"
+                    )
+                }
+                .font(uiFont: .font(of: .label2, weight: .regular))
+                .foregroundColor(Color(.red))
+                .multilineTextAlignment(.trailing)
             }
         }
     #endif

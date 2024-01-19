@@ -259,7 +259,7 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, (resolved, _)) = try await(
+                async let (balance, (resolved, _)) = (
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "confirmed"),
                     solanaAPIClient.getAccountBalances(
                         for: accountAddress,
@@ -269,7 +269,7 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                     )
                 )
 
-                let solanaAccount = try SolanaAccount(
+                let solanaAccount = try await SolanaAccount(
                     address: accountAddress,
                     lamports: balance,
                     token: await tokensService.nativeToken,
@@ -277,7 +277,7 @@ class SolanaAccountAsyncValue: AsyncValue<[SolanaAccount]> {
                     tokenProgramId: nil
                 )
 
-                newAccounts = [solanaAccount] + resolved
+                newAccounts = try await [solanaAccount] + resolved
                     .map { accountBalance -> SolanaAccount? in
                         guard let pubkey = accountBalance.pubkey else {
                             return nil
