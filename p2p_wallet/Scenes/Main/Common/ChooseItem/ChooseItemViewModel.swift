@@ -66,21 +66,33 @@ private extension ChooseItemViewModel {
             .store(in: &subscriptions)
 
         $searchText
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sinkAsync(receiveValue: { [weak self] value in
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
+            .map { [weak self] (input: String) -> (String, [ChooseItemListSection]) in
+                if input.isEmpty {
+                    return (input, [])
+                } else {
+                    guard let self else { return (input, []) }
+                    // Do not split up sections if there is a keyword
+                    let searchedItems = self.allItems
+                        .flatMap(\.items)
+                        .filter { $0.matches(keyword: input.lowercased()) }
+                    let result = self.service.sortFiltered(
+                        by: input.lowercased(),
+                        items: [ChooseItemListSection(items: searchedItems)]
+                    )
+
+                    return (input, result)
+                }
+            }
+            .receive(on: RunLoop.main)
+            .sinkAsync(receiveValue: { [weak self] value, result in
                 guard let self else { return }
                 self.isSearchGoing = !value.isEmpty
                 if value.isEmpty {
                     self.sections = self.allItems
                 } else {
-                    // Do not split up sections if there is a keyword
-                    let searchedItems = self.allItems
-                        .flatMap(\.items)
-                        .filter { $0.matches(keyword: value.lowercased()) }
-                    self.sections = self.service.sortFiltered(
-                        by: value.lowercased(),
-                        items: [ChooseItemListSection(items: searchedItems)]
-                    )
+                    self.sections = result
                 }
             })
             .store(in: &subscriptions)
