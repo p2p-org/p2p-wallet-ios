@@ -69,6 +69,7 @@ struct CryptoView: View {
                 }
             }
         })
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.viewAppeared()
         }

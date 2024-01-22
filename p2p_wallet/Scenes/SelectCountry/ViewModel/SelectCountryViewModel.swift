@@ -4,20 +4,16 @@ import Foundation
 import Moonpay
 import Resolver
 
-private extension String {
-    static let neutralFlag = "🏳️‍🌈"
-}
-
 final class SelectCountryViewModel: ObservableObject {
     // Dependencies
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var moonpayProvider: Moonpay.Provider
 
     // Private variables
-    private var models = [(Model, buyAllowed: Bool)]()
+    private var models = [(Model, buyAllowed: Bool, sellAllowed: Bool)]()
 
     // Subjects
-    private let selectCountrySubject = PassthroughSubject<(Model, buyAllowed: Bool), Never>()
+    private let selectCountrySubject = PassthroughSubject<(Model, buyAllowed: Bool, sellAllowed: Bool), Never>()
     private let currentSelectedSubject = PassthroughSubject<Void, Never>()
 
     // MARK: - To View
@@ -70,12 +66,16 @@ final class SelectCountryViewModel: ObservableObject {
             let countries = try await moonpayProvider.getCountries()
 
             await MainActor.run {
-                var models = [(Model, buyAllowed: Bool)]()
+                var models = [(Model, buyAllowed: Bool, sellAllowed: Bool)]()
                 for country in countries {
                     let flag = country.code.asFlag ?? .neutralFlag
 
                     if selectedCountry.title != country.name {
-                        models.append((Model(flag: flag, title: country.name), buyAllowed: country.isBuyAllowed))
+                        models.append((
+                            Model(alpha2: country.code, country: country.name, state: "", alpha3: country.alpha3),
+                            buyAllowed: country.isBuyAllowed,
+                            sellAllowed: country.isSellAllowed
+                        ))
                     }
                     guard country.code == "US" else { continue }
 
@@ -85,8 +85,14 @@ final class SelectCountryViewModel: ObservableObject {
                         guard selectedCountry.title != title else { continue }
 
                         models.append((
-                            Model(flag: flag, title: "\(country.name) (\(state.name))"),
-                            buyAllowed: state.isBuyAllowed
+                            Model(
+                                alpha2: country.code,
+                                country: country.name,
+                                state: state.name,
+                                alpha3: country.alpha3
+                            ),
+                            buyAllowed: state.isBuyAllowed,
+                            sellAllowed: state.isSellAllowed
                         ))
                     }
                 }
@@ -122,14 +128,27 @@ extension SelectCountryViewModel {
     }
 
     struct Model: Equatable {
-        let flag: String
-        let title: String
+        let alpha2: String
+        let country: String
+        let state: String
+        let alpha3: String
+
+        var flag: String {
+            alpha2.asFlag ?? .neutralFlag
+        }
+
+        var title: String {
+            country + (alpha2 == "US" ? " (\(state))" : "")
+        }
     }
 }
 
 // MARK: - To Coordinator
 
 extension SelectCountryViewModel {
-    var selectCountry: AnyPublisher<(Model, buyAllowed: Bool), Never> { selectCountrySubject.eraseToAnyPublisher() }
+    var selectCountry: AnyPublisher<(Model, buyAllowed: Bool, sellAllowed: Bool), Never> {
+        selectCountrySubject.eraseToAnyPublisher()
+    }
+
     var currentSelected: AnyPublisher<Void, Never> { currentSelectedSubject.eraseToAnyPublisher() }
 }

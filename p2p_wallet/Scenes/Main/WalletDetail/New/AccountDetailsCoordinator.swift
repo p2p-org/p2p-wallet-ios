@@ -57,6 +57,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSwap()
             case let .openSwapWithDestination(source, recipient):
                 self.openSwap(destination: recipient)
+            case .openCashOut:
+                self.openCashout()
             }
         }
         .store(in: &subscriptions)
@@ -135,9 +137,18 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
 
         coordinate(to: SellCoordinator(
-            initialAmountInToken: transaction.baseCurrencyAmount,
-            navigationController: navigationController
+            navigationController: navigationController,
+            initialAmountInToken: transaction.baseCurrencyAmount
         ))
+        .receive(on: RunLoop.main)
+        .handleEvents(receiveOutput: { [weak navigationController] result in
+            switch result {
+            case .completed, .none:
+                break
+            case .interupted:
+                navigationController?.dismiss(animated: true)
+            }
+        })
         .sink { _ in }
         .store(in: &subscriptions)
     }
@@ -336,6 +347,16 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             shouldPush: false
         )
 
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
+
+    func openCashout() {
+        let coordinator = SellCoordinator(
+            presentingViewController: presentation.presentingViewController,
+            shouldPush: false
+        )
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)

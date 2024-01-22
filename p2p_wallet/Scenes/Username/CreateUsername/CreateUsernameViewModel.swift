@@ -76,7 +76,7 @@ private extension CreateUsernameViewModel {
         createUsername.sink { [weak self] in
             guard let self = self else { return }
             self.isLoading = true
-            self.createNameService.create(username: self.username)
+            self.createNameService.create(username: self.username, domain: self.domain)
             self.analyticsManager.log(event: .usernameCreationButton(result: true))
             self.close.send(())
         }.store(in: &subscriptions)

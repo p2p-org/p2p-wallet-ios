@@ -589,3 +589,4 @@
 "Confirm selection" = "Confirm selection";
 "The token %@ is out of the strict list" = "The token %@ is out of the strict list";
 "Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
+"Unfortunately, you can not cashout in %@, but you can still use other Key App features" = "Unfortunately, you can not cashout in %@, but you can still use other Key App features";

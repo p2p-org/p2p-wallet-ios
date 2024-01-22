@@ -13,6 +13,7 @@ enum AccountDetailsAction {
     case openSend
     case openSwap(SolanaAccount?)
     case openSwapWithDestination(SolanaAccount?, SolanaAccount?)
+    case openCashOut
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
@@ -52,6 +53,8 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             case .receive:
                 analyticsManager.log(event: .tokenScreenReceiveBar)
                 actionSubject?.send(.openReceive)
+            case .cashOut:
+                actionSubject?.send(.openCashOut)
             }
         }
 
