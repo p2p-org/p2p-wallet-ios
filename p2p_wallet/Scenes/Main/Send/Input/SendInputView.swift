@@ -220,7 +220,7 @@ struct SendInputView: View {
 
                 Group {
                     Text(
-                        "User limit: \(String(describing: viewModel.currentState.limit))"
+                        "User limit: \(viewModel.currentState.limit.jsonString ?? "")"
                     )
 
                     Text(
