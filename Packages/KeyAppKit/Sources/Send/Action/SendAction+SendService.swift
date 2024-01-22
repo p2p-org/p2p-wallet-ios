@@ -44,7 +44,7 @@ extension SendActionServiceImpl {
 
         // TODO: - Temporarily fix amount that is closer to max amount
         if let totalAmount = UInt64(response.totalAmount.amount),
-           totalAmount > amount
+           totalAmount > wallet.lamports
         {
             amount = .max
             response = try await sendService.transfer(
