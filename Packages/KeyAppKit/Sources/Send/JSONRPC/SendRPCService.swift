@@ -26,7 +26,7 @@ public class SendRPCService {
         mint: String?,
         amount: UInt64,
         recipient: String,
-        transferMode: SendServiceTransferMode,
+        transferMode: SendServiceTransferMode = .exactOut,
         networkFeePayer: SendServiceTransferFeePayer,
         taRentPayer: SendServiceTransferFeePayer
     ) async throws -> SendServiceTransferResponse {
