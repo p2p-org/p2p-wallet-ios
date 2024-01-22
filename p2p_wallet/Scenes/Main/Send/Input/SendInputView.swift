@@ -224,10 +224,6 @@ struct SendInputView: View {
                     )
 
                     Text(
-                        "isFreeTransactionAvailable: \(viewModel.currentState.limit.networkFee.isAvailable(forAmount: viewModel.currentState.fee.transaction) == true ? "true" : "false")"
-                    )
-
-                    Text(
                         "feeInSOL(networkFee: \(viewModel.currentState.fee.transaction), rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
                     )
 
