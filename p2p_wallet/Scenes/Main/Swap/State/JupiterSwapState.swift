@@ -206,7 +206,7 @@ struct JupiterSwapState: Equatable {
     }
 
     var transferFee: SwapFeeInfo? {
-        guard route != nil, let transferFeeBasisPoints else { return nil }
+        guard route != nil, let transferFeeBasisPoints, transferFeeBasisPoints != 0 else { return nil }
 
         let fee = minimumReceivedAmount * (Double(transferFeeBasisPoints) / 100_000)
         return SwapFeeInfo(
