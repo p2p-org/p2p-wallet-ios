@@ -16,6 +16,13 @@ extension SendInputBusinessLogic {
             )
         }
 
+        guard let limit = state.limit else {
+            return state.copy(
+                status: .error(reason: .missingFeeRelayer),
+                token: token
+            )
+        }
+
         do {
             // Update fee in SOL and source token
             let fee: FeeAmount
@@ -27,7 +34,7 @@ extension SendInputBusinessLogic {
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
                     lamportsPerSignature: feeRelayerContext.lamportsPerSignature,
-                    usageStatus: feeRelayerContext.usageStatus
+                    limit: limit
                 ) ?? .zero
             }
 

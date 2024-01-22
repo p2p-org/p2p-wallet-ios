@@ -10,7 +10,7 @@ public protocol SendFeeCalculator: AnyObject {
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
 //        payingTokenMint: String?,
         lamportsPerSignature: UInt64,
-        usageStatus: UsageStatus
+        limit: SendServiceLimitResponse
     ) async throws -> FeeAmount?
 
     func calculateFeeInPayingToken(
@@ -31,7 +31,7 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
 //        payingTokenMint _: String?,
         lamportsPerSignature: UInt64,
-        usageStatus: UsageStatus
+        limit: SendServiceLimitResponse
     ) async throws -> FeeAmount? {
         var transactionFee: UInt64 = 0
 
@@ -85,8 +85,8 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
         )
 
         // is Top up free
-        if usageStatus.isFreeTransactionFeeAvailable(
-            transactionFee: expectedFee.transaction
+        if limit.networkFee.isAvailable(
+            forAmount: expectedFee.transaction
         ) {
             expectedFee.transaction = 0
         }

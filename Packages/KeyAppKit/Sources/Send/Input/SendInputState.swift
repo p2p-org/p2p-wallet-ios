@@ -128,6 +128,9 @@ public struct SendInputState: Equatable {
     /// Current state for free transactions
     public let feeRelayerContext: RelayContext?
 
+    /// Limit for free transactions
+    public let limit: SendServiceLimitResponse?
+
     /// Send via link
     public let sendViaLinkSeed: String?
     public var isSendingViaLink: Bool {
@@ -147,6 +150,7 @@ public struct SendInputState: Equatable {
         feeInToken: FeeAmount,
         feePayableTokenMints: [String],
         feeRelayerContext: RelayContext?,
+        limit: SendServiceLimitResponse?,
         sendViaLinkSeed: String?
     ) {
         self.status = status
@@ -161,6 +165,7 @@ public struct SendInputState: Equatable {
         self.feeInToken = feeInToken
         self.feePayableTokenMints = feePayableTokenMints
         self.feeRelayerContext = feeRelayerContext
+        self.limit = limit
         self.sendViaLinkSeed = sendViaLinkSeed
     }
 
@@ -188,6 +193,7 @@ public struct SendInputState: Equatable {
             feeInToken: .zero,
             feePayableTokenMints: feePayableTokenMints,
             feeRelayerContext: feeRelayerContext,
+            limit: nil,
             sendViaLinkSeed: sendViaLinkSeed
         )
     }
@@ -205,6 +211,7 @@ public struct SendInputState: Equatable {
         feeInToken: FeeAmount? = nil,
         feePayableTokenMints: [String]? = nil,
         feeRelayerContext: RelayContext? = nil,
+        limit: SendServiceLimitResponse? = nil,
         sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
         .init(
@@ -220,6 +227,7 @@ public struct SendInputState: Equatable {
             feeInToken: feeInToken ?? self.feeInToken,
             feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
             feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
+            limit: limit ?? self.limit,
             sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )
     }
