@@ -8,6 +8,7 @@ public protocol SendActionService {
         from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
+        isSendingMaxAmount: Bool,
         feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
@@ -44,6 +45,7 @@ public class SendActionServiceImpl: SendActionService {
         from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
+        isSendingMaxAmount: Bool,
         feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
@@ -69,6 +71,7 @@ public class SendActionServiceImpl: SendActionService {
             return try await sendViaSendService(
                 wallet: wallet,
                 amount: amount,
+                isSendingMaxAmount: isSendingMaxAmount,
                 receiver: receiver,
                 context: context,
                 feeWallet: feeWallet

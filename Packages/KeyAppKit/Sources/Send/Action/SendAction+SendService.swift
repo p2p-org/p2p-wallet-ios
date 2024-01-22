@@ -7,6 +7,7 @@ extension SendActionServiceImpl {
     func sendViaSendService(
         wallet: SolanaAccount,
         amount: UInt64,
+        isSendingMaxAmount: Bool,
         receiver: String,
         context: RelayContext,
         feeWallet: SolanaAccount?
@@ -18,7 +19,14 @@ extension SendActionServiceImpl {
         // ignore mint if token is native
         let mintAddress = wallet.isNative ? nil : wallet.mintAddress
 
-        let response = try await sendService.transfer(
+        var amount = amount
+        if isSendingMaxAmount {
+            amount = .max
+        }
+
+        var response: SendServiceTransferResponse
+
+        response = try await sendService.transfer(
             userWallet: wallet.address,
             mint: mintAddress,
             amount: amount,
@@ -33,6 +41,28 @@ extension SendActionServiceImpl {
                 feeWallet: feeWallet
             )
         )
+
+        // TODO: - Temporarily fix amount that is closer to max amount
+        if let totalAmount = UInt64(response.totalAmount.amount),
+           totalAmount > amount
+        {
+            amount = .max
+            response = try await sendService.transfer(
+                userWallet: wallet.address,
+                mint: mintAddress,
+                amount: amount,
+                recipient: receiver,
+                networkFeePayer: getNetworkFeePayer(
+                    context: context,
+                    wallet: wallet,
+                    feeWallet: feeWallet
+                ),
+                taRentPayer: getTokenAccountFeePayer(
+                    wallet: wallet,
+                    feeWallet: feeWallet
+                )
+            )
+        }
 
         return try await sendToBlockchain(
             account: account,
