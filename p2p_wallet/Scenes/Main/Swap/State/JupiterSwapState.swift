@@ -206,9 +206,19 @@ struct JupiterSwapState: Equatable {
     }
 
     var transferFee: SwapFeeInfo? {
-        guard route != nil, let transferFeeBasisPoints, transferFeeBasisPoints != 0 else { return nil }
+        guard
+            route != nil,
+            let transferFeeBasisPoints,
+            transferFeeBasisPoints != 0 else { return nil }
+        guard
+            let outAmountString = route?.outAmount,
+            let outAmount = UInt64(outAmountString)
+        else {
+            return nil
+        }
+        var outAmountUI = outAmount.convertToBalance(decimals: toToken.token.decimals)
 
-        let fee = minimumReceivedAmount * (Double(transferFeeBasisPoints) / 100_000)
+        let fee = outAmountUI * (Double(transferFeeBasisPoints) / 100_000)
         return SwapFeeInfo(
             amount: fee,
             tokenSymbol: toToken.token.symbol,
