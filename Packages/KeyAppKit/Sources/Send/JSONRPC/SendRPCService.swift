@@ -50,13 +50,13 @@ public class SendRPCService {
         )
     }
 
-    public func getLimit(
+    public func getLimits(
         userWallet: String
     ) async throws -> SendServiceLimitResponse {
         try await jsonrpcClient.request(
             baseURL: host,
             body: .init(
-                method: "limit",
+                method: "limits",
                 params: ["user_wallet": userWallet]
             )
         )

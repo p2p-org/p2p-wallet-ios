@@ -16,7 +16,7 @@ extension SendInputBusinessLogic {
 
             async let lamportsPerSignature = services.solanaAPIClient.getLamportsPerSignature()
             async let minimumRelayAccountBalance = services.solanaAPIClient.getMinimumBalanceForRentExemption(span: 0)
-            async let limit = services.rpcService.getLimit(
+            async let limit = services.rpcService.getLimits(
                 userWallet: userWalletAddress
             )
             async let feePayableTokenMints = services.rpcService.getCompensationTokens()
