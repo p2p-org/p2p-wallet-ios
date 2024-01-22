@@ -95,6 +95,9 @@ struct JupiterSwapState: Equatable {
     /// jupiter.
     var splAccountCreationFee: Lamports
 
+    /// transfer fee on token 2022
+    var transferFeeBasisPoints: UInt64?
+
     // MARK: - Computed properties
 
     /// Amount to
@@ -146,7 +149,11 @@ struct JupiterSwapState: Equatable {
             return nil
         }
         let slippage = Double(slippageBps) / 100 / 100
-        return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
+        var result = outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
+        if let transferFee {
+            result = result - transferFee.amount
+        }
+        return result
     }
 
     // TODO(jupiter): Fetch dynamic in future.
@@ -196,6 +203,19 @@ struct JupiterSwapState: Equatable {
                 canBePaidByKeyApp: true
             )
         }
+    }
+
+    var transferFee: SwapFeeInfo? {
+        guard route != nil, let transferFeeBasisPoints else { return nil }
+
+        let fee = minimumReceivedAmount * (Double(transferFeeBasisPoints) / 100_000)
+        return SwapFeeInfo(
+            amount: fee,
+            tokenSymbol: toToken.token.symbol,
+            tokenName: toToken.token.name,
+            tokenPriceInCurrentFiat: tokensPriceMap[toToken.token.mintAddress],
+            canBePaidByKeyApp: false
+        )
     }
 
     var accountCreationFee: SwapFeeInfo? {
@@ -325,7 +345,8 @@ struct JupiterSwapState: Equatable {
             toToken: .nativeSolana,
             slippageBps: 0,
             lamportPerSignature: 5000,
-            splAccountCreationFee: 0
+            splAccountCreationFee: 0,
+            transferFeeBasisPoints: nil
         )
     }
 
