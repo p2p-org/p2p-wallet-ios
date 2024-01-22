@@ -12,9 +12,29 @@ extension SendInputBusinessLogic {
         do {
             // Update fee in SOL and source token
             let fee: FeeAmount
+            let token2022TransferFeePerOneToken: [String: UInt64]?
             if state.isSendingViaLink {
                 fee = .zero
+                token2022TransferFeePerOneToken = nil
             } else {
+                if token.tokenProgramId == Token2022Program.id.base58EncodedString {
+                    if let string = try? await services.rpcService.transfer(
+                        userWallet: state.userWalletEnvironments.userWalletAddress ?? "",
+                        mint: token.mintAddress,
+                        amount: 1.toLamport(decimals: token.decimals),
+                        recipient: state.recipient.address,
+                        networkFeePayer: .userSOL,
+                        taRentPayer: .userSOL
+                    ).token2022_TransferFee?.amount.amount {
+                        var currentValue = state.token2022TransferFeePerOneToken
+                        currentValue[token.mintAddress] = UInt64(string)
+                        token2022TransferFeePerOneToken = currentValue
+                    } else {
+                        token2022TransferFeePerOneToken = nil
+                    }
+                } else {
+                    token2022TransferFeePerOneToken = nil
+                }
                 fee = try await services.feeService.getFees(
                     from: token,
                     recipient: state.recipient,
@@ -26,7 +46,8 @@ extension SendInputBusinessLogic {
 
             var state = state.copy(
                 token: token,
-                fee: fee
+                fee: fee,
+                token2022TransferFeePerOneToken: token2022TransferFeePerOneToken
             )
 
             // Auto select fee token
