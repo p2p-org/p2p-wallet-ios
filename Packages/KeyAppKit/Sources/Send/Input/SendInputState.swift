@@ -102,6 +102,9 @@ public struct SendInputState: Equatable {
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
 
+    /// Specific fee for token 2022
+    public let token2022TransferFee: SendServiceTransferFee?
+
     /// The list of tokens' mint that can be used to pay fee
     public let feePayableTokenMints: [String]
 
@@ -131,6 +134,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount,
         tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
+        token2022TransferFee: SendServiceTransferFee?,
         feePayableTokenMints: [String],
         lamportsPerSignature: UInt64,
         minimumRelayAccountBalance: UInt64,
@@ -147,6 +151,7 @@ public struct SendInputState: Equatable {
         self.fee = fee
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
+        self.token2022TransferFee = token2022TransferFee
         self.feePayableTokenMints = feePayableTokenMints
         self.lamportsPerSignature = lamportsPerSignature
         self.minimumRelayAccountBalance = minimumRelayAccountBalance
@@ -176,6 +181,7 @@ public struct SendInputState: Equatable {
             fee: .zero,
             tokenFee: feeToken,
             feeInToken: .zero,
+            token2022TransferFee: nil,
             feePayableTokenMints: feePayableTokenMints,
             lamportsPerSignature: 5000,
             minimumRelayAccountBalance: 890_880,
@@ -201,6 +207,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount? = nil,
         tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
+        token2022TransferFee: SendServiceTransferFee? = nil,
         feePayableTokenMints: [String]? = nil,
         lamportsPerSignature: UInt64? = nil,
         minimumRelayAccountBalance: UInt64? = nil,
@@ -218,6 +225,7 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
+            token2022TransferFee: token2022TransferFee ?? self.token2022TransferFee,
             feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
             lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
             minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
@@ -234,8 +242,14 @@ public extension SendInputState {
             .lamports ?? 0
 
         if token.mintAddress == tokenFee.mintAddress {
-            if balance >= feeInToken.total {
-                balance = balance - feeInToken.total
+            // total fee in tokens + tokens 2022
+            var fee = feeInToken.total
+            if let token2022TransferFee, let amount = UInt64(token2022TransferFee.amount.amount) {
+                fee += amount
+            }
+
+            if balance >= fee {
+                balance = balance - fee
             } else {
                 return 0
             }
