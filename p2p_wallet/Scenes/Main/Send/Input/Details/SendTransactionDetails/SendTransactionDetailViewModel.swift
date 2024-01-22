@@ -86,7 +86,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             mainText = "0 \(state.tokenFee.symbol)"
             secondaryText = "\(Defaults.fiat.symbol) 0"
         case state.fee.transaction == 0:
-            mainText = L10n.freeLeftForToday(remainUsage)
+            mainText = L10n.free
             secondaryText = nil
         default:
             mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
