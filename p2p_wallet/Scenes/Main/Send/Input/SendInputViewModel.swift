@@ -191,11 +191,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             self.status = .initializing
 
             let nextState = await self.stateMachine
-                .accept(action: .initialize(.init {
-                    // get current context
-                    let relayContextManager = Resolver.resolve(RelayContextManager.self)
-                    return try await relayContextManager.getCurrentContextOrUpdate()
-                }))
+                .accept(action: .initialize)
 
             // disable adding amount if amount is pre-chosen
             if let amount = self.preChosenAmount {
@@ -557,7 +553,7 @@ private extension SendInputViewModel {
                 isFakeSendTransaction: isFakeSendTransaction,
                 isFakeSendTransactionError: isFakeSendTransactionError,
                 isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                isLinkCreationAvailable: stateMachine.currentState.feeRelayerContext?.usageStatus
+                isLinkCreationAvailable: Resolver.resolve(RelayContextManager.self).currentContext?.usageStatus
                     .reachedLimitLinkCreation == false,
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,

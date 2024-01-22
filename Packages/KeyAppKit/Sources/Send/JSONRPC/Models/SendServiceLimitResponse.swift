@@ -14,7 +14,7 @@ public struct SendServiceLimitResponse: Codable, Equatable {
 // MARK: - NetworkFee
 
 public struct SendServiceLimitRemaining: Codable, Equatable {
-    public let remainingAmount, remainingTransactions: Int
+    public let remainingAmount, remainingTransactions: UInt64
 
     enum CodingKeys: String, CodingKey {
         case remainingAmount = "remaining_amount"

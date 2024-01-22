@@ -6,13 +6,19 @@ import SolanaSwift
 extension SendInputBusinessLogic {
     static func initialize(
         state: SendInputState,
-        services: SendInputServices,
-        params: SendInputActionInitializeParams
+        services: SendInputServices
     ) async -> SendInputState {
         do {
+            guard let userWalletAddress = state.userWalletEnvironments.userWalletAddress else {
+                throw SendError.invalidUserAccount
+            }
             var recipientAdditionalInfo = SendInputState.RecipientAdditionalInfo.zero
 
-            async let relayContext = params.feeRelayerContext()
+            async let lamportsPerSignature = services.solanaAPIClient.getLamportsPerSignature()
+            async let minimumRelayAccountBalance = services.solanaAPIClient.getMinimumBalanceForRentExemption(span: 0)
+            async let limit = services.rpcService.getLimit(
+                userWallet: userWalletAddress
+            )
             async let feePayableTokenMints = services.rpcService.getCompensationTokens()
 
             switch state.recipient.category {
@@ -52,7 +58,9 @@ extension SendInputBusinessLogic {
                 status: .ready,
                 recipientAdditionalInfo: recipientAdditionalInfo,
                 feePayableTokenMints: feePayableTokenMints,
-                feeRelayerContext: relayContext
+                lamportsPerSignature: lamportsPerSignature,
+                minimumRelayAccountBalance: minimumRelayAccountBalance,
+                limit: limit
             )
 
             return await changeToken(

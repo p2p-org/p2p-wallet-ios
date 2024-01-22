@@ -157,7 +157,7 @@ extension RecipientSearchServiceImpl {
                 orcaSwap: orcaSwap,
                 feeInSOL: .init(
                     transaction: 0,
-                    accountBalances: env.rentExemptionAmountForWalletAccount
+                    accountBalances: wallet.minRentExemption ?? 2_039_280
                 ),
                 payingFeeTokenMint: mint
             )
@@ -186,7 +186,7 @@ extension RecipientSearchServiceImpl {
                 orcaSwap: orcaSwap,
                 feeInSOL: .init(
                     transaction: 0,
-                    accountBalances: env.rentExemptionAmountForSPLAccount
+                    accountBalances: wallet.minRentExemption ?? 2_039_280
                 ),
                 payingFeeTokenMint: mint
             )

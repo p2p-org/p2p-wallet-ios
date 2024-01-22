@@ -9,25 +9,8 @@ public enum Amount: Equatable {
     case token(lamport: UInt64, mint: String, decimals: Int)
 }
 
-public struct SendInputActionInitializeParams: Equatable {
-    let feeRelayerContext: () async throws -> RelayContext
-
-    public init(feeRelayerContext: @escaping () async throws -> RelayContext) {
-        self.feeRelayerContext = feeRelayerContext
-    }
-
-    public init(feeRelayerContext: RelayContext) {
-        self.feeRelayerContext = { feeRelayerContext }
-    }
-
-    public static func == (
-        _: SendInputActionInitializeParams,
-        _: SendInputActionInitializeParams
-    ) -> Bool { true }
-}
-
 public enum SendInputAction: Equatable {
-    case initialize(SendInputActionInitializeParams)
+    case initialize
 
     case update
 
@@ -68,7 +51,6 @@ public struct SendInputState: Equatable {
         case feeCalculationFailed
 
         case requiredInitialize
-        case missingFeeRelayer
         case initializeFailed(NSError)
 
         case unknown(NSError)
@@ -123,13 +105,14 @@ public struct SendInputState: Equatable {
     /// The list of tokens' mint that can be used to pay fee
     public let feePayableTokenMints: [String]
 
-    /// Fee relayer context
-    ///
-    /// Current state for free transactions
-    public let feeRelayerContext: RelayContext?
+    /// Lamports per signature
+    public let lamportsPerSignature: UInt64
+
+    /// Minimum relay account balance
+    public let minimumRelayAccountBalance: UInt64
 
     /// Limit for free transactions
-    public let limit: SendServiceLimitResponse?
+    public let limit: SendServiceLimitResponse
 
     /// Send via link
     public let sendViaLinkSeed: String?
@@ -149,8 +132,9 @@ public struct SendInputState: Equatable {
         tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
         feePayableTokenMints: [String],
-        feeRelayerContext: RelayContext?,
-        limit: SendServiceLimitResponse?,
+        lamportsPerSignature: UInt64,
+        minimumRelayAccountBalance: UInt64,
+        limit: SendServiceLimitResponse,
         sendViaLinkSeed: String?
     ) {
         self.status = status
@@ -164,7 +148,8 @@ public struct SendInputState: Equatable {
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
         self.feePayableTokenMints = feePayableTokenMints
-        self.feeRelayerContext = feeRelayerContext
+        self.lamportsPerSignature = lamportsPerSignature
+        self.minimumRelayAccountBalance = minimumRelayAccountBalance
         self.limit = limit
         self.sendViaLinkSeed = sendViaLinkSeed
     }
@@ -177,7 +162,7 @@ public struct SendInputState: Equatable {
         feeToken: SolanaAccount,
         userWalletState: UserWalletEnvironments,
         feePayableTokenMints: [String] = [],
-        feeRelayerContext: RelayContext? = nil,
+        feeRelayerContext _: RelayContext? = nil,
         sendViaLinkSeed: String?
     ) -> SendInputState {
         .init(
@@ -192,8 +177,15 @@ public struct SendInputState: Equatable {
             tokenFee: feeToken,
             feeInToken: .zero,
             feePayableTokenMints: feePayableTokenMints,
-            feeRelayerContext: feeRelayerContext,
-            limit: nil,
+            lamportsPerSignature: 5000,
+            minimumRelayAccountBalance: 890_880,
+            limit: .init(
+                networkFee: .init(
+                    remainingAmount: .max,
+                    remainingTransactions: .max
+                ),
+                tokenAccountRent: .init(remainingAmount: 0, remainingTransactions: 0)
+            ),
             sendViaLinkSeed: sendViaLinkSeed
         )
     }
@@ -210,7 +202,8 @@ public struct SendInputState: Equatable {
         tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
         feePayableTokenMints: [String]? = nil,
-        feeRelayerContext: RelayContext? = nil,
+        lamportsPerSignature: UInt64? = nil,
+        minimumRelayAccountBalance: UInt64? = nil,
         limit: SendServiceLimitResponse? = nil,
         sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
@@ -226,7 +219,8 @@ public struct SendInputState: Equatable {
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
             feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
-            feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
+            lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
+            minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
             limit: limit ?? self.limit,
             sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )
@@ -253,12 +247,11 @@ public extension SendInputState {
     var maxAmountInputInSOLWithLeftAmount: Double {
         var maxAmountInToken = maxAmountInputInToken.toLamport(decimals: token.decimals)
 
-        guard
-            let context = feeRelayerContext, token.isNative,
-            maxAmountInToken >= context.minimumRelayAccountBalance
+        guard token.isNative,
+              maxAmountInToken >= minimumRelayAccountBalance
         else { return .zero }
 
-        maxAmountInToken = maxAmountInToken - context.minimumRelayAccountBalance
+        maxAmountInToken = maxAmountInToken - minimumRelayAccountBalance
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 

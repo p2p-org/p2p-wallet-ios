@@ -74,17 +74,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     private func extractTransactionFeeCellModel(state: SendInputState) -> CellModel {
-        guard let feeRelayerContext = state.feeRelayerContext else {
-            return .init(
-                type: .transactionFee,
-                title: L10n.transactionFee,
-                subtitle: [("", nil)],
-                image: .transactionFee,
-                isFree: false
-            )
-        }
-
-        let remainUsage = feeRelayerContext.usageStatus.maxUsage - feeRelayerContext.usageStatus.currentUsage
+        let remainUsage = state.limit.networkFee.remainingAmount
 
         let amountFeeInToken = Double(state.feeInToken.transaction) / pow(10, Double(state.tokenFee.decimals))
 

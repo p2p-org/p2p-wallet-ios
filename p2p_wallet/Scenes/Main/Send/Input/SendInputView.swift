@@ -220,11 +220,11 @@ struct SendInputView: View {
 
                 Group {
                     Text(
-                        "User usageStatus: \(String(describing: viewModel.currentState.feeRelayerContext?.usageStatus))"
+                        "User limit: \(String(describing: viewModel.currentState.limit))"
                     )
 
                     Text(
-                        "isFreeTransactionAvailable: \(viewModel.currentState.feeRelayerContext?.usageStatus.isFreeTransactionFeeAvailable(transactionFee: viewModel.currentState.fee.transaction) == true ? "true" : "false")"
+                        "isFreeTransactionAvailable: \(viewModel.currentState.limit.networkFee.isAvailable(forAmount: viewModel.currentState.fee.transaction) == true ? "true" : "false")"
                     )
 
                     Text(

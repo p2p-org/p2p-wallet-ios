@@ -9,20 +9,6 @@ extension SendInputBusinessLogic {
         token: SolanaAccount,
         services: SendInputServices
     ) async -> SendInputState {
-        guard let feeRelayerContext = state.feeRelayerContext else {
-            return state.copy(
-                status: .error(reason: .missingFeeRelayer),
-                token: token
-            )
-        }
-
-        guard let limit = state.limit else {
-            return state.copy(
-                status: .error(reason: .missingFeeRelayer),
-                token: token
-            )
-        }
-
         do {
             // Update fee in SOL and source token
             let fee: FeeAmount
@@ -33,8 +19,8 @@ extension SendInputBusinessLogic {
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    lamportsPerSignature: feeRelayerContext.lamportsPerSignature,
-                    limit: limit
+                    lamportsPerSignature: state.lamportsPerSignature,
+                    limit: state.limit
                 ) ?? .zero
             }
 
