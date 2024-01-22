@@ -224,11 +224,11 @@ struct SendInputView: View {
                     )
 
                     Text(
-                        "feeInSOL(networkFee: \(viewModel.currentState.fee.transaction), rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
+                        "feeInSOL(rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
                     )
 
                     Text(
-                        "feeInToken(networkFee: \(viewModel.currentState.feeInToken.transaction.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)), rentExemptionFee: \(viewModel.currentState.feeInToken.accountBalances.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)))"
+                        "feeInToken(rentExemptionFee: \(viewModel.currentState.feeInToken.accountBalances.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)))"
                     )
                 }
                 .font(uiFont: .font(of: .label2, weight: .regular))

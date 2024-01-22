@@ -558,6 +558,7 @@ private extension SendInputViewModel {
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
+                isSendingMaxAmount: currentState.isSendingMaxAmount,
                 amountInFiat: amountInFiat,
                 walletToken: sourceWallet,
                 address: address,

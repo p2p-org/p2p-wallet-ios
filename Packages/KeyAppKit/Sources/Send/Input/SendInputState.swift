@@ -244,6 +244,10 @@ public extension SendInputState {
         return Double(balance) / pow(10, Double(token.decimals))
     }
 
+    var isSendingMaxAmount: Bool {
+        maxAmountInputInToken == amountInToken
+    }
+
     var maxAmountInputInSOLWithLeftAmount: Double {
         var maxAmountInToken = maxAmountInputInToken.toLamport(decimals: token.decimals)
 
