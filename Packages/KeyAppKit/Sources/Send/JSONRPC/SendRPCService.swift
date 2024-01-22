@@ -58,7 +58,21 @@ public class SendRPCService {
             body: .init(
                 method: "limits",
                 params: ["user_wallet": userWallet]
-            )
+            ),
+            responseModel: SendServiceLimitResponse.self
+        )
+    }
+
+    public func getTokenAccountRentExempt(
+        mints: [String]
+    ) async throws -> [String: UInt64] {
+        try await jsonrpcClient.request(
+            baseURL: host,
+            body: .init(
+                method: "get_token_account_rent_exempt",
+                params: ["mints": mints]
+            ),
+            responseModel: [String: UInt64].self
         )
     }
 }
