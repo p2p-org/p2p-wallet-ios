@@ -311,8 +311,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
-        "branch" : "feature/token-2022-extension",
-        "revision" : "68509d841afd6bb56e255ff37fb2198d3d05b2fc"
+        "branch" : "feature/token-2022",
+        "revision" : "e07298936cd1561a81ee84dad2ae2341c9112d41"
       }
     },
     {
