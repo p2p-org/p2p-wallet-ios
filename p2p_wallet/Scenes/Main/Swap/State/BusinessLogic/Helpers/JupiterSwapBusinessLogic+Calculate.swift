@@ -79,7 +79,7 @@ extension JupiterSwapBusinessLogic {
                     let transferFeeConfig = mintResult
                         .data
                         .getParsedExtension(ofType: TransferFeeConfigExtensionState.self)
-                    
+
                     transferFeeBasisPoints = transferFeeConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
                 } else {
                     transferFeeBasisPoints = 0

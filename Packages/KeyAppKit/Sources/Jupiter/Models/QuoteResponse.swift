@@ -13,7 +13,7 @@ public struct QuoteResponse: Codable, Equatable {
     public let otherAmountThreshold, swapMode: String
     public let platformFee: PlatformFee?
     public let keyapp: KeyAppInfo?
-    
+
     public let message: String?
     public let timeTaken: Double?
     public let contextSlot: Int?
@@ -51,7 +51,7 @@ public struct QuoteResponse: Codable, Equatable {
         self.swapMode = swapMode
         self.platformFee = platformFee
         self.keyapp = keyapp
-        
+
         self.message = message
         self.timeTaken = timeTaken
         self.contextSlot = contextSlot
@@ -73,7 +73,7 @@ public struct QuoteResponse: Codable, Equatable {
         case otherAmountThreshold, swapMode
         case platformFee
         case keyapp
-        
+
         case message
         case timeTaken
         case contextSlot
@@ -83,18 +83,18 @@ public struct QuoteResponse: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         inAmount = try container.decode(String.self, forKey: .inAmount)
         outAmount = try container.decode(String.self, forKey: .outAmount)
-        
+
         inputMint = try container.decode(String.self, forKey: .inputMint)
         outputMint = try container.decode(String.self, forKey: .outputMint)
-        
-        priceImpactPct = Decimal(string: try container.decode(String.self, forKey: .priceImpactPct)) ?? 0.0
+
+        priceImpactPct = try Decimal(string: container.decode(String.self, forKey: .priceImpactPct)) ?? 0.0
         routePlan = try container.decode([RoutePlan].self, forKey: .routePlan)
         slippageBps = try container.decode(Int.self, forKey: .slippageBps)
         otherAmountThreshold = try container.decode(String.self, forKey: .otherAmountThreshold)
         swapMode = try container.decode(String.self, forKey: .swapMode)
         platformFee = try container.decodeIfPresent(PlatformFee.self, forKey: .platformFee)
         keyapp = try container.decodeIfPresent(KeyAppInfo.self, forKey: .keyapp)
-        
+
         message = try container.decodeIfPresent(String.self, forKey: .message)
         timeTaken = try container.decodeIfPresent(Double.self, forKey: .timeTaken)
         contextSlot = try container.decodeIfPresent(Int.self, forKey: .contextSlot)
@@ -102,13 +102,13 @@ public struct QuoteResponse: Codable, Equatable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(inAmount, forKey: .inAmount)
         try container.encode(outAmount, forKey: .outAmount)
-        
+
         try container.encode(inputMint, forKey: .inputMint)
         try container.encode(outputMint, forKey: .outputMint)
-        
+
         try container.encode("\(priceImpactPct)", forKey: .priceImpactPct)
         try container.encode(routePlan, forKey: .routePlan)
         try container.encode(slippageBps, forKey: .slippageBps)
@@ -116,7 +116,7 @@ public struct QuoteResponse: Codable, Equatable {
         try container.encode(swapMode, forKey: .swapMode)
         try container.encodeIfPresent(platformFee, forKey: .platformFee)
         try container.encodeIfPresent(keyapp, forKey: .keyapp)
-        
+
         try container.encodeIfPresent(message, forKey: .message)
         try container.encodeIfPresent(timeTaken, forKey: .timeTaken)
         try container.encodeIfPresent(contextSlot, forKey: .contextSlot)
