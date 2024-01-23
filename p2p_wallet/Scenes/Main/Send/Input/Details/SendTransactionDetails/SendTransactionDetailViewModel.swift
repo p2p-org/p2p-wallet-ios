@@ -72,6 +72,20 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
+    private func extractToken2022FeeCellModel(state: SendInputState) -> CellModel? {
+        guard let token2022TransferFeePerOneToken = state.token2022TransferFeePerOneToken[state.token.mintAddress]
+        else {
+            return nil
+        }
+        let percent = Double(token2022TransferFeePerOneToken) / Double(1.toLamport(decimals: state.token.decimals))
+        return .init(
+            type: .token2022Fee,
+            title: L10n.transferFee,
+            subtitle: [(percent.toString(maximumFractionDigits: 2) + "%", nil)],
+            image: .transactionFee
+        )
+    }
+
     private func extractTransactionFeeCellModel(state: SendInputState) -> CellModel {
         let remainUsage = state.limit.networkFee.remainingAmount
 
@@ -209,6 +223,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 )],
                 image: .recipientGet
             ),
+            extractToken2022FeeCellModel(state: state),
             extractTransactionFeeCellModel(state: state),
             accountCreationFeeCellModel,
             extractTotalCellModel(state: state),
@@ -228,6 +243,7 @@ extension SendTransactionDetailViewModel {
         case address
         case recipientGets
         case transactionFee
+        case token2022Fee
         case accountCreationFee
         case total
     }
