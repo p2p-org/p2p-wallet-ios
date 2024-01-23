@@ -228,10 +228,15 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     }
 
     private func navigateToSendTransactionStatus(model: SendTransaction) {
-        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveCompletion: { [weak self] _ in
-                self?.resultSubject.send(.completed)
-            }, receiveValue: {})
-            .store(in: &subscriptions)
+        coordinate(
+            to: SendTransactionStatusCoordinator(
+                parentController: navigationController,
+                transaction: model
+            )
+        )
+        .sink(receiveCompletion: { [weak self] _ in
+            self?.resultSubject.send(.completed)
+        }, receiveValue: {})
+        .store(in: &subscriptions)
     }
 }
