@@ -1,4 +1,5 @@
 import Foundation
+import TokenService
 @testable import KeyAppBusiness
 
 class MockKeyAppTokenProvider: KeyAppTokenProvider {
@@ -7,7 +8,8 @@ class MockKeyAppTokenProvider: KeyAppTokenProvider {
     var solanaTokensResult: KeyAppTokenProviderData.AllSolanaTokensResult?
 
     func getTokensInfo(_: KeyAppTokenProviderData.Params<KeyAppTokenProviderData.TokenQuery>) async throws
-    -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Token>] {
+        -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Token>]
+    {
         guard let result = tokensInfoResult else {
             throw MockKeyAppTokenProviderError.missingResult
         }
@@ -15,7 +17,8 @@ class MockKeyAppTokenProvider: KeyAppTokenProvider {
     }
 
     func getTokensPrice(_: KeyAppTokenProviderData.Params<KeyAppTokenProviderData.TokenQuery>) async throws
-    -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Price>] {
+        -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Price>]
+    {
         guard let result = tokensPriceResult else {
             throw MockKeyAppTokenProviderError.missingResult
         }
@@ -27,6 +30,14 @@ class MockKeyAppTokenProvider: KeyAppTokenProvider {
             throw MockKeyAppTokenProviderError.missingResult
         }
         return result
+    }
+
+    func getTokenAmount(
+        vs_token _: String?,
+        amount _: UInt64,
+        mints _: [String]
+    ) async throws -> [SolanaTokenAmountResponse] {
+        fatalError()
     }
 }
 

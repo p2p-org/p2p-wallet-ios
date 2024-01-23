@@ -1,4 +1,3 @@
-import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
@@ -16,7 +15,7 @@ extension SendInputBusinessLogic {
                 fee = .zero
                 feeInToken = .zero
             } else {
-                fee = try await services.feeService
+                fee = try await services.feeCalculator
                     .getFees(
                         from: state.token,
                         recipient: state.recipient,
@@ -24,9 +23,8 @@ extension SendInputBusinessLogic {
                         lamportsPerSignature: state.lamportsPerSignature,
                         limit: state.limit
                     ) ?? .zero
-                feeInToken = (try? await services.feeService
+                feeInToken = (try? await services.feeCalculator
                     .calculateFeeInPayingToken(
-                        orcaSwap: services.orcaSwap,
                         feeInSOL: fee,
                         payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
                     )) ?? .zero
