@@ -1,7 +1,6 @@
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
-import OrcaSwapSwift
 import SolanaSwift
 
 public enum Amount: Equatable {
@@ -21,19 +20,15 @@ public enum SendInputAction: Equatable {
 }
 
 public struct SendInputServices {
-    let orcaSwap: OrcaSwapType
-    let feeService: SendFeeCalculator
+    let feeCalculator: SendFeeCalculator
     let solanaAPIClient: SolanaAPIClient
     let rpcService: SendRPCService
 
     public init(
-        orcaSwap: OrcaSwapType,
-        feeService: SendFeeCalculator,
         solanaAPIClient: SolanaAPIClient,
         rpcService: SendRPCService
     ) {
-        self.orcaSwap = orcaSwap
-        self.feeService = feeService
+        feeCalculator = .init(sendService: rpcService)
         self.solanaAPIClient = solanaAPIClient
         self.rpcService = rpcService
     }

@@ -15,7 +15,7 @@ extension SendInputBusinessLogic {
             if state.isSendingViaLink {
                 fee = .zero
             } else {
-                fee = try await services.feeService.getFees(
+                fee = try await services.feeCalculator.getFees(
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
@@ -100,9 +100,8 @@ extension SendInputBusinessLogic {
 
         for wallet in sortedWallets {
             do {
-                let feeInToken = try (await services.feeService
+                let feeInToken = try (await services.feeCalculator
                     .calculateFeeInPayingToken(
-                        orcaSwap: services.orcaSwap,
                         feeInSOL: feeInSol,
                         payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
                     )) ?? .zero

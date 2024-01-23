@@ -16,8 +16,9 @@ public class SendRPCService {
     public func getCompensationTokens() async throws -> [String] {
         try await jsonrpcClient.request(
             baseURL: host,
-            body: .init(method: "get_compensation_tokens"),
-            responseModel: [String].self
+            body: .init(
+                method: "get_compensation_tokens"
+            )
         )
     }
 
@@ -45,8 +46,7 @@ public class SendRPCService {
                         taRentPayer: taRentPayer
                     )
                 )
-            ),
-            responseModel: SendServiceTransferResponse.self
+            )
         )
     }
 
@@ -58,8 +58,7 @@ public class SendRPCService {
             body: .init(
                 method: "limits",
                 params: ["user_wallet": userWallet]
-            ),
-            responseModel: SendServiceLimitResponse.self
+            )
         )
     }
 
@@ -71,8 +70,24 @@ public class SendRPCService {
             body: .init(
                 method: "get_token_account_rent_exempt",
                 params: ["mints": mints]
-            ),
-            responseModel: [String: UInt64].self
+            )
+        )
+    }
+
+    public func getTokenAmount(
+        amount: UInt64,
+        mints: [String]
+    ) async throws -> [SendServiceTokenAmountResponse] {
+        try await jsonrpcClient.request(
+            baseURL: host,
+            body: .init(
+                method: "get_token_amount",
+                params: SendServiceTokenAmountRequest(
+                    vs_token: nil,
+                    amount: "\(amount)",
+                    mints: mints
+                )
+            )
         )
     }
 }

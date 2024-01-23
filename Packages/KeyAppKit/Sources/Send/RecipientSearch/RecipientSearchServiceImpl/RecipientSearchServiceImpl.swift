@@ -1,6 +1,5 @@
 import Foundation
 import NameService
-import OrcaSwapSwift
 import SolanaSwift
 import Wormhole
 
@@ -8,18 +7,15 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
     let nameService: NameService
     let solanaClient: SolanaAPIClient
     let feeCalculator: SendFeeCalculator
-    let orcaSwap: OrcaSwapType
 
     public init(
         nameService: NameService,
         solanaClient: SolanaAPIClient,
-        feeCalculator: SendFeeCalculator,
-        orcaSwap: OrcaSwapType
+        feeCalculator: SendFeeCalculator
     ) {
         self.nameService = nameService
         self.solanaClient = solanaClient
         self.feeCalculator = feeCalculator
-        self.orcaSwap = orcaSwap
     }
 
     public func search(

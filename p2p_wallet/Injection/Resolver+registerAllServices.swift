@@ -16,6 +16,7 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftyUserDefaults
+import TokenService
 import Web3
 import Wormhole
 
@@ -70,9 +71,13 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceShareManager.self)
             .scope(.application)
 
-        register { KeyAppTokenHttpProvider(client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)) }
-            .implements(KeyAppTokenProvider.self)
-            .scope(.application)
+        register {
+            KeyAppTokenHttpProvider(
+                client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)
+            )
+        }
+        .implements(KeyAppTokenProvider.self)
+        .scope(.application)
 
         register {
             DeviceShareMigrationService(
@@ -314,7 +319,8 @@ extension Resolver: ResolverRegistering {
 
         register {
             SendRPCService(
-                host: "https://send-service.key.app"
+                host: "https://send-service.key.app",
+                urlSession: DebugLoggingURLSession()
             )
         }
         .scope(.unique)
@@ -588,8 +594,9 @@ extension Resolver: ResolverRegistering {
             RecipientSearchServiceImpl(
                 nameService: resolve(),
                 solanaClient: resolve(),
-                feeCalculator: SendFeeCalculatorImpl(),
-                orcaSwap: resolve()
+                feeCalculator: SendFeeCalculator(
+                    sendService: resolve()
+                )
             )
         }
         .implements(RecipientSearchService.self)
