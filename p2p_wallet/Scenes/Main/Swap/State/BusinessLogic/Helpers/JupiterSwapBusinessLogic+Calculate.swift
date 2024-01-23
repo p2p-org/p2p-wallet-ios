@@ -69,12 +69,22 @@ extension JupiterSwapBusinessLogic {
                 )
             }
 
+            // Calculate
+            var transferFeeBasisPoints: UInt64? = state.transferFeeBasisPoints
+            if transferFeeBasisPoints == nil {
+                let client = BlockchainClient(apiClient: services.solanaAPIClient)
+                let extensions = try await client.getTokenExtensions(for: state.toToken.mintAddress)
+                let transferTokenConfig = try client.getTransferTokenConfig(extensions)
+                transferFeeBasisPoints = transferTokenConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
+            }
+
             return await validateAmounts(
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes
                     $0.splAccountCreationFee = splAccountCreationFee
+                    $0.transferFeeBasisPoints = transferFeeBasisPoints
                 },
                 services: services
             )

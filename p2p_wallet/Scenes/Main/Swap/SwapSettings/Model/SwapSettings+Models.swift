@@ -23,6 +23,7 @@ struct JupiterSwapStateInfo: Equatable {
     let accountCreationFee: SwapFeeInfo?
     let liquidityFee: [SwapFeeInfo]
     let minimumReceived: SwapTokenAmountInfo?
+    let transferFee: String?
     let exchangeRateInfo: String?
 
     var estimatedFees: String? {
@@ -71,6 +72,7 @@ extension JupiterSwapState {
                 amount: minimumReceivedAmount!,
                 token: toToken.token.symbol
             ),
+            transferFee: transferFeeBasisPoints != nil ? "\(Double(transferFeeBasisPoints!) / 100)%" : nil,
             exchangeRateInfo: exchangeRateInfo
         )
     }
