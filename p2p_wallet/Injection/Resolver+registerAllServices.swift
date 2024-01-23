@@ -542,7 +542,7 @@ extension Resolver: ResolverRegistering {
         register {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
-                //TODO(jupiter): Ask team for token source
+                // TODO(jupiter): Ask team for token source
                 tokensHost: "https://token.jup.ag/all",
                 version: .v6
             )
