@@ -23,6 +23,7 @@ extension SendInputBusinessLogic {
                         mint: token.mintAddress,
                         amount: 1.toLamport(decimals: token.decimals),
                         recipient: state.recipient.address,
+                        transferMode: .exactIn,
                         networkFeePayer: .userSOL,
                         taRentPayer: .userSOL
                     ).token2022_TransferFee?.amount.amount {

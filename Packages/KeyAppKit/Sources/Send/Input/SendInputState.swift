@@ -232,6 +232,19 @@ public struct SendInputState: Equatable {
 }
 
 public extension SendInputState {
+    var recipientGetsAmount: Double {
+        if let token2022TransferFee {
+            let token2022Fee = token2022TransferFee.convertToBalance(decimals: token.decimals)
+            if amountInToken > token2022Fee {
+                return amountInToken - token2022Fee
+            } else {
+                return 0
+            }
+        } else {
+            return amountInToken
+        }
+    }
+
     var token2022TransferFee: UInt64? {
         guard let token2022TransferFeePerOneToken = token2022TransferFeePerOneToken[token.mintAddress] else {
             return nil

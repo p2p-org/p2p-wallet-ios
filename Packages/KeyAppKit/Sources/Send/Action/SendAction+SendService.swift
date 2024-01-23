@@ -19,10 +19,16 @@ extension SendActionServiceImpl {
         // ignore mint if token is native
         let mintAddress = wallet.isNative ? nil : wallet.mintAddress
 
+        // fix amount
         var amount = amount
         if isSendingMaxAmount {
             amount = .max
         }
+
+        // transfer mode
+        let transferMode: SendServiceTransferMode =
+            wallet.tokenProgramId == Token2022Program.id.base58EncodedString
+                ? .exactIn : .exactOut
 
         var response: SendServiceTransferResponse
 
@@ -31,6 +37,7 @@ extension SendActionServiceImpl {
             mint: mintAddress,
             amount: amount,
             recipient: receiver,
+            transferMode: transferMode,
             networkFeePayer: getNetworkFeePayer(
                 context: context,
                 wallet: wallet,

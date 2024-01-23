@@ -77,7 +77,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             type: .token2022Fee,
             title: L10n.transferFee,
             subtitle: [(
-                state.token2022TransferFeePercentage?.toString(maximumFractionDigits: 2) + "%",
+                (state.token2022TransferFeePercentage * 100).toString(maximumFractionDigits: 2) + "%",
                 nil
             )],
             image: .transactionFee
@@ -215,7 +215,9 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 type: .recipientGets,
                 title: L10n.recipientGets,
                 subtitle: [convert(
-                    state.amountInToken.toLamport(decimals: state.token.decimals),
+                    state.recipientGetsAmount.toLamport(
+                        decimals: state.token.decimals
+                    ),
                     state.token,
                     state.sourceWallet?.price
                 )],

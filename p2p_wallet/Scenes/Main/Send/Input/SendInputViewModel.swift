@@ -494,7 +494,8 @@ private extension SendInputViewModel {
 
             // token2022 fees
             else {
-                let text = currentState.token2022TransferFeePercentage?.toString(maximumFractionDigits: 2) ?? "0"
+                let text = (currentState.token2022TransferFeePercentage * 100)
+                    .toString(maximumFractionDigits: 2)
                 feeTitle = L10n.fees(text + "%")
             }
         }
