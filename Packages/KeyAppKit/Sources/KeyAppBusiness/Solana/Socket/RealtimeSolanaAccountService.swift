@@ -3,6 +3,7 @@ import Foundation
 import KeyAppKitCore
 import NIO
 import SolanaSwift
+import TokenService
 import WebSocketKit
 
 public enum RealtimeSolanaAccountState: Equatable {

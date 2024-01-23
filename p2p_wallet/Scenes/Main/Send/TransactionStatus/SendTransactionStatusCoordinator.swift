@@ -42,7 +42,9 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
         container.view.layer.cornerRadius = 20
         container.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
-        parentController.present(container, animated: true)
+        // FIXME: - Temporary fix tabbar autohide problem
+        (parentController.tabBarController ?? parentController.parent ?? parentController)
+            .present(container, animated: true)
 
         viewModel.openDetails
             .sink { [weak self] params in

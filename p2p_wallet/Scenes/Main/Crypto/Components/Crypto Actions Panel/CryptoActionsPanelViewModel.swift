@@ -31,7 +31,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        actions = [.buy, .receive, .send, .swap]
+        actions = [.cashOut, .buy, .receive, .send, .swap]
 
         bind()
     }
@@ -77,7 +77,9 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
         case .swap:
             analyticsManager.log(event: .cryptoSwapClick)
             navigation.send(.swap)
-        default: break
+        case .cashOut:
+            analyticsManager.log(event: .sellClicked(source: "Main"))
+            navigation.send(.cashOut)
         }
     }
 

@@ -6,18 +6,10 @@ import SwiftUI
 import SwiftyUserDefaults
 
 struct ActionsView: View {
-    @Injected private var sellDataService: any SellDataService
-    @Injected private var walletsRepository: SolanaAccountsService
-
     private let actionSubject = PassthroughSubject<ActionsViewActionType, Never>()
     var action: AnyPublisher<ActionsViewActionType, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
-    var isSellAvailable: Bool {
-        available(.sellScenarioEnabled) &&
-            sellDataService.isAvailable &&
-            !walletsRepository.getWallets().isTotalAmountEmpty
-    }
 
     var body: some View {
         VStack(spacing: 8) {

@@ -16,6 +16,7 @@ struct SendTransaction: RawTransactionType {
     let recipient: Recipient
     let sendViaLinkSeed: String?
     let amount: Double
+    let isSendingMaxAmount: Bool
     let amountInFiat: Double
     let walletToken: SolanaAccount
     let address: String
@@ -80,15 +81,18 @@ struct SendTransaction: RawTransactionType {
 
         // Real transaction
         do {
-            let trx = try await Resolver.resolve(SendActionService.self).send(
-                from: walletToken,
-                receiver: address,
-                amount: amount,
-                feeWallet: payingFeeWallet,
-                ignoreTopUp: isSendingViaLink || isLinkCreationAvailable,
-                memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
-                operationType: isSendingViaLink ? .sendViaLink : .transfer
-            )
+            let trx = try await Resolver.resolve(SendActionService.self)
+                .send(
+                    from: walletToken,
+                    receiver: address,
+                    amount: amount,
+                    isSendingMaxAmount: isSendingMaxAmount,
+                    feeWallet: payingFeeWallet,
+                    ignoreTopUp: isSendingViaLink || isLinkCreationAvailable,
+                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
+                    operationType: isSendingViaLink ? .sendViaLink : .transfer,
+                    useSendService: !isSendingViaLink
+                )
 
             // save to storage
             if isSendingViaLink, let sendViaLinkSeed {

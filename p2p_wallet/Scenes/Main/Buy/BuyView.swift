@@ -34,7 +34,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                         },
                         label: {
                             HStack(spacing: 10) {
-                                Text(viewModel.flag)
+                                Text(viewModel.region?.flag ?? .neutralFlag)
                                     .font(uiFont: .font(of: .title1, weight: .bold))
                                 Image(.chevronDown)
                                     .foregroundColor(Color(.mountain))

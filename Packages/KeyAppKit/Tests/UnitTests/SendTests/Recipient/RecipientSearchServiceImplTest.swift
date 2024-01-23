@@ -9,19 +9,25 @@ class RecipientSearchServiceImplTest: XCTestCase {
     let defaultInitialWalletEnvs: RecipientSearchConfig = .init(
         wallets: [
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                 lamports: 5_000_000,
-                token: .nativeSolana
+                token: .nativeSolana,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh22",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh22",
                 lamports: 5_000_000,
-                token: .usdc
+                token: .usdc,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
                 lamports: 5_000_000,
-                token: .usdt
+                token: .usdt,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
         ],
         ethereumAccount: nil,
@@ -89,11 +95,12 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account _: String) async throws -> BufferInfo<T>? { nil }
 
-            override func getTokenAccountsByOwner(
+            override func getTokenAccountsByOwner<T>(
                 pubkey _: String,
                 params _: OwnerInfoParams?,
-                configs _: RequestConfiguration?
-            ) async throws -> [TokenAccount<SPLTokenAccountState>] {
+                configs _: RequestConfiguration?,
+                decodingTo _: T.Type
+            ) async throws -> [TokenAccount<T>] where T: TokenAccountState {
                 []
             }
         }
@@ -181,38 +188,41 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account _: String) async throws -> BufferInfo<T>? { nil }
 
-            override func getTokenAccountsByOwner(
+            override func getTokenAccountsByOwner<T>(
                 pubkey _: String,
                 params _: OwnerInfoParams?,
-                configs _: RequestConfiguration?
-            ) async throws -> [TokenAccount<SPLTokenAccountState>] { try [
-                .init(
-                    pubkey: "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU",
-                    account: .init(
-                        lamports: 0,
-                        owner: TokenProgram.id.base58EncodedString,
-                        data: .init(
-                            mint: .usdcMint,
-                            owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
-                            lamports: 50000,
-                            delegateOption: 0,
-                            delegate: nil,
-                            isInitialized: false,
-                            isFrozen: false,
-                            state: 0,
-                            isNativeOption: 0,
-                            rentExemptReserve: nil,
-                            isNativeRaw: 0,
-                            isNative: false,
-                            delegatedAmount: 0,
-                            closeAuthorityOption: 0,
-                            closeAuthority: nil
-                        ),
-                        executable: false,
-                        rentEpoch: 0
-                    )
-                ),
-            ] }
+                configs _: RequestConfiguration?,
+                decodingTo _: T.Type
+            ) async throws -> [TokenAccount<T>] where T: TokenAccountState {
+                try [
+                    .init(
+                        pubkey: "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU",
+                        account: .init(
+                            lamports: 0,
+                            owner: TokenProgram.id.base58EncodedString,
+                            data: SPLTokenAccountState(
+                                mint: .usdcMint,
+                                owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                                lamports: 50000,
+                                delegateOption: 0,
+                                delegate: nil,
+                                isInitialized: false,
+                                isFrozen: false,
+                                state: 0,
+                                isNativeOption: 0,
+                                rentExemptReserve: nil,
+                                isNativeRaw: 0,
+                                isNative: false,
+                                delegatedAmount: 0,
+                                closeAuthorityOption: 0,
+                                closeAuthority: nil
+                            ) as! T,
+                            executable: false,
+                            rentEpoch: 0
+                        )
+                    ),
+                ]
+            }
         }
 
         let service = RecipientSearchServiceImpl(
@@ -279,14 +289,18 @@ class RecipientSearchServiceImplTest: XCTestCase {
         let defaultInitialWalletEnvs: RecipientSearchConfig = .init(
             wallets: [
                 SolanaAccount(
-                    pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
+                    address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                     lamports: 5_000_000,
-                    token: .nativeSolana
+                    token: .nativeSolana,
+                    minRentExemption: 2_039_280,
+                    tokenProgramId: TokenProgram.id.base58EncodedString
                 ),
                 SolanaAccount(
-                    pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
+                    address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
                     lamports: 5_000_000,
-                    token: .usdt
+                    token: .usdt,
+                    minRentExemption: 2_039_280,
+                    tokenProgramId: TokenProgram.id.base58EncodedString
                 ),
             ],
             ethereumAccount: nil,
@@ -353,19 +367,25 @@ class RecipientSearchServiceImplTest: XCTestCase {
         let defaultInitialWalletEnvs: RecipientSearchConfig = .init(
             wallets: [
                 SolanaAccount(
-                    pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
+                    address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                     lamports: 5_000_000,
-                    token: .nativeSolana
+                    token: .nativeSolana,
+                    minRentExemption: 2_039_280,
+                    tokenProgramId: TokenProgram.id.base58EncodedString
                 ),
                 SolanaAccount(
-                    pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
+                    address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                     lamports: 0,
-                    token: .usdc
+                    token: .usdc,
+                    minRentExemption: 2_039_280,
+                    tokenProgramId: TokenProgram.id.base58EncodedString
                 ),
                 SolanaAccount(
-                    pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
+                    address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
                     lamports: 5_000_000,
-                    token: .usdt
+                    token: .usdt,
+                    minRentExemption: 2_039_280,
+                    tokenProgramId: TokenProgram.id.base58EncodedString
                 ),
             ],
             ethereumAccount: nil,
@@ -395,11 +415,14 @@ class RecipientSearchServiceImplTest: XCTestCase {
         class SolanaAPIClient: MockedSolanaAPIClient {
             override func getAccountInfo<T: BufferLayout>(account _: String) async throws -> BufferInfo<T>? { nil }
 
-            override func getTokenAccountsByOwner(
+            override func getTokenAccountsByOwner<T>(
                 pubkey _: String,
                 params _: OwnerInfoParams?,
-                configs _: RequestConfiguration?
-            ) async throws -> [TokenAccount<SPLTokenAccountState>] { [] }
+                configs _: RequestConfiguration?,
+                decodingTo _: T.Type
+            ) async throws -> [TokenAccount<T>] where T: TokenAccountState {
+                []
+            }
         }
 
         let service = RecipientSearchServiceImpl(

@@ -40,14 +40,16 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     /// Navigation controller that handle the navigation stack
     private let navigationController: UINavigationController
+    private let tabBarController: TabBarController
 
     /// Navigation subject
     private let navigation = PassthroughSubject<CryptoNavigation, Never>()
 
     // MARK: - Initializer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, tabBarController: TabBarController) {
         self.navigationController = navigationController
+        self.tabBarController = tabBarController
     }
 
     // MARK: - Methods
@@ -109,15 +111,18 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             )
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
+                guard let self else { return }
                 switch result {
                 case let .sent(model):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showSendTransactionStatus(model: model)
+                    navigationController.popToRootViewController(animated: true)
+
+                    showSendTransactionStatus(model: model)
+
                 case let .wormhole(trx):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showUserAction(userAction: trx)
+                    navigationController.popToRootViewController(animated: true)
+                    showUserAction(userAction: trx)
                 case .sentViaLink:
-                    self?.navigationController.popToRootViewController(animated: true)
+                    navigationController.popToRootViewController(animated: true)
                 case .cancelled:
                     break
                 }
@@ -177,6 +182,27 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             }
+        case .cashOut:
+            return coordinate(
+                to: SellCoordinator(navigationController: navigationController)
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case .completed:
+                    self?.tabBarController.changeItem(to: .history)
+                case .interupted:
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?
+                        .popToRootViewController(animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self?.tabBarController.changeItem(to: .history)
+                    }
+                case .none:
+                    break
+                }
+            })
+            .map { _ in () }
+            .eraseToAnyPublisher()
         default:
             return Just(())
                 .eraseToAnyPublisher()
@@ -194,7 +220,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(
-            parentController: navigationController.parent ?? navigationController,
+            parentController: navigationController,
             transaction: model
         ))
         .sink(receiveValue: {})

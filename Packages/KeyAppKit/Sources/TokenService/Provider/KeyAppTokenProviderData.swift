@@ -3,10 +3,19 @@ import KeyAppKitCore
 
 public enum KeyAppTokenProviderData {
     public struct Params<T: Codable & Hashable>: Codable, Hashable {
+        public init(query: [T]) {
+            self.query = query
+        }
+
         public let query: [T]
     }
 
     public struct TokenQuery: Codable, Hashable {
+        public init(chainId: String, addresses: [String]) {
+            self.chainId = chainId
+            self.addresses = addresses
+        }
+
         public let chainId: String
         public let addresses: [String]
 

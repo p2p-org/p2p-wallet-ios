@@ -72,7 +72,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
-    let openFeeInfo = PassthroughSubject<Bool, Never>()
+    let openFeeInfo = PassthroughSubject<Void, Never>()
     let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
@@ -139,9 +139,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         var exchangeRate = [String: TokenPrice]()
         var tokens = Set<TokenMetadata>()
-        wallets.forEach {
-            exchangeRate[$0.token.symbol] = $0.price
-            tokens.insert($0.token)
+        for wallet in wallets {
+            exchangeRate[wallet.token.symbol] = wallet.price
+            tokens.insert(wallet.token)
         }
 
         let env = UserWalletEnvironments(
@@ -162,14 +162,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
-                swapService: SwapServiceImpl(
-                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator,
-                    orcaSwap: Resolver.resolve()
-                ),
-                feeService: SendFeeCalculatorImpl(
-                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
-                ),
-                solanaAPIClient: Resolver.resolve()
+                solanaTokenService: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                rpcService: Resolver.resolve()
             )
         )
 
@@ -195,11 +190,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             self.status = .initializing
 
             let nextState = await self.stateMachine
-                .accept(action: .initialize(.init {
-                    // get current context
-                    let relayContextManager = Resolver.resolve(RelayContextManager.self)
-                    return try await relayContextManager.getCurrentContextOrUpdate()
-                }))
+                .accept(action: .initialize)
 
             // disable adding amount if amount is pre-chosen
             if let amount = self.preChosenAmount {
@@ -328,7 +319,7 @@ private extension SendInputViewModel {
         feeInfoPressed
             .sink { [weak self] in
                 guard let self else { return }
-                self.openFeeInfo.send(self.currentState.fee == .zero)
+                self.openFeeInfo.send()
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
                 {
@@ -483,23 +474,30 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        // if send via link, just return enjoyFreeTransactions
-        if currentState.isSendingViaLink {
-            feeTitle = L10n.fees(0)
-        }
-
-        // otherwise show fees in conditions
-        else if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
+        if currentState.isTransactionFree {
             feeTitle = L10n.enjoyFreeTransactions
-        } else if currentState.fee == .zero {
-            feeTitle = L10n.fees(0)
         } else {
-            let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
-            feeTitle = L10n
-                .fees(
-                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals))
-                        .tokenAmountFormattedString(symbol: symbol, roundingMode: .down)
-                )
+            // transaction fee and account rent fee
+            if currentState.fee.total > 0 {
+                feeTitle = L10n
+                    .fees(
+                        currentState.feeInToken.total
+                            .convertToBalance(
+                                decimals: Int(currentState.tokenFee.decimals)
+                            )
+                            .tokenAmountFormattedString(
+                                symbol: currentState.tokenFee.symbol,
+                                roundingMode: .down
+                            )
+                    )
+            }
+
+            // token2022 fees
+            else {
+                let text = (currentState.token2022TransferFeePercentage * 100)
+                    .toString(maximumFractionDigits: 2)
+                feeTitle = L10n.fees(text + "%")
+            }
         }
     }
 
@@ -561,11 +559,12 @@ private extension SendInputViewModel {
                 isFakeSendTransaction: isFakeSendTransaction,
                 isFakeSendTransactionError: isFakeSendTransactionError,
                 isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                isLinkCreationAvailable: stateMachine.currentState.feeRelayerContext?.usageStatus
+                isLinkCreationAvailable: Resolver.resolve(RelayContextManager.self).currentContext?.usageStatus
                     .reachedLimitLinkCreation == false,
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
+                isSendingMaxAmount: currentState.isSendingMaxAmount,
                 amountInFiat: amountInFiat,
                 walletToken: sourceWallet,
                 address: address,
