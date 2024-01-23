@@ -14,6 +14,8 @@ class EthereumTokenDataCorrection {
                 return fixUSDC(token: token)
             case EthereumAddresses.ERC20.usdt.rawValue:
                 return fixUSDT(token: token)
+            case EthereumAddresses.ERC20.eth.rawValue:
+                return fixWETH(token: token)
             default:
                 return token
             }
@@ -24,6 +26,16 @@ class EthereumTokenDataCorrection {
     }
 
     private func fixNativeToken(token: EthereumToken) -> EthereumToken {
+        EthereumToken(
+            name: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            logo: URL(string: SolanaToken.eth.logoURI ?? ""),
+            contractType: token.contractType
+        )
+    }
+
+    private func fixWETH(token: EthereumToken) -> EthereumToken {
         EthereumToken(
             name: token.name,
             symbol: token.symbol,
