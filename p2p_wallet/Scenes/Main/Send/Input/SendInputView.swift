@@ -223,6 +223,10 @@ struct SendInputView: View {
                         "User limit: \(viewModel.currentState.limit.jsonString ?? "")"
                     )
 
+                    if let fee = viewModel.currentState.token2022TransferFee {
+                        Text("token2022Fee: \(fee)")
+                    }
+
                     Text(
                         "feeInSOL(rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
                     )

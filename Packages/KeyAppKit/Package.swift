@@ -231,7 +231,6 @@ let package = Package(
             name: "Send",
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                "FeeRelayerSwift",
                 "NameService",
                 "History",
                 "Wormhole",
