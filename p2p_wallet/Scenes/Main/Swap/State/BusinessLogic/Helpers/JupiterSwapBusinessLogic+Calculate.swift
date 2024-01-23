@@ -40,11 +40,11 @@ extension JupiterSwapBusinessLogic {
             )
 
             // routes
-            let routes = data.data
+            let routes: [QuoteResponse] = [data]
 
             // if pre chosen route is stil available, choose it
             // if not choose the first one
-            guard let route = (data.data?.first { $0.id == state.route?.id } ?? data.data?.first) else {
+            guard let route = (routes.first { $0.id == state.route?.id } ?? routes.first) else {
                 let status: JupiterSwapState.Status
                 if let errorMessage = data.message,
                    errorMessage.contains("The value \"NaN\" cannot be converted to a number")
@@ -55,20 +55,41 @@ extension JupiterSwapBusinessLogic {
                 }
                 return state.modified {
                     $0.status = status
-                    $0.routes = routes ?? []
+                    $0.routes = routes
                     $0.route = nil
                 }
+            }
+
+            // Cache account creation fee.
+            var splAccountCreationFee: Lamports = state.splAccountCreationFee
+            if splAccountCreationFee == 0 {
+                splAccountCreationFee = try await services.solanaAPIClient.getMinimumBalanceForRentExemption(
+                    dataLength: SPLTokenAccountState.BUFFER_LENGTH,
+                    commitment: nil
+                )
+            }
+
+            // Calculate
+            var transferFeeBasisPoints: UInt64? = state.transferFeeBasisPoints
+            if transferFeeBasisPoints == nil {
+                let client = BlockchainClient(apiClient: services.solanaAPIClient)
+                let extensions = try await client.getTokenExtensions(for: state.toToken.mintAddress)
+                let transferTokenConfig = try client.getTransferTokenConfig(extensions)
+                transferFeeBasisPoints = transferTokenConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
             }
 
             return await validateAmounts(
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
-                    $0.routes = routes ?? []
+                    $0.routes = routes
+                    $0.splAccountCreationFee = splAccountCreationFee
+                    $0.transferFeeBasisPoints = transferFeeBasisPoints
                 },
                 services: services
             )
         } catch {
+            print("[Jupiter]", error)
             return handle(error: error, for: state)
         }
     }
@@ -111,7 +132,7 @@ extension JupiterSwapBusinessLogic {
             let minBalance = try await services.relayContextManager.getCurrentContextOrUpdate()
                 .minimumRelayAccountBalance
             let remains = (balance - amountFrom).toLamport(decimals: decimals)
-            if remains > 0 && remains < minBalance {
+            if remains > 0, remains < minBalance {
                 let maximumInput = (balance.toLamport(decimals: decimals) - minBalance)
                     .convertToBalance(decimals: decimals)
                 return .error(reason: .inputTooHigh(maximumInput))

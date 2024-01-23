@@ -15,7 +15,7 @@ protocol JupiterTokensRepository {
 enum JupiterDataStatus {
     case initial
     case loading
-    case ready(jupiterTokens: [SolanaToken], routeMap: RouteMap)
+    case ready(jupiterTokens: [SolanaToken])
     case failed
 }
 
@@ -59,8 +59,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
         statusSubject.send(.loading)
         do {
             var jupiterTokens: [SolanaToken]
-            let routeMap: RouteMap
-
+            
             try Task.checkCancellation()
 
             // get the date component
@@ -73,7 +72,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                Date() < dateToExpired
             {
                 jupiterTokens = cachedData.tokens
-                routeMap = cachedData.routeMap
             }
 
             // retrive to get data
@@ -82,13 +80,11 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 localProvider.clear()
 
                 // get new data
-                (jupiterTokens, routeMap) = try await(
-                    jupiterClient.getTokens(),
-                    jupiterClient.routeMap()
-                )
+                jupiterTokens = try await jupiterClient.getTokens()
+                
 
                 // save new data
-                try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
+                try localProvider.save(tokens: jupiterTokens)
             }
 
             // get solana cached token list
@@ -106,7 +102,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
             // return status ready
             try Task.checkCancellation()
-            statusSubject.send(.ready(jupiterTokens: jupiterTokens, routeMap: routeMap))
+            statusSubject.send(.ready(jupiterTokens: jupiterTokens))
         } catch {
             guard !(error is CancellationError) else {
                 return

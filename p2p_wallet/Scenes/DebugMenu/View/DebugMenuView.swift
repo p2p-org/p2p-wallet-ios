@@ -142,12 +142,7 @@ struct DebugMenuView: View {
 
     var swapEndpoint: some View {
         Section(header: Text("New swap endpoint")) {
-            Picker("URL", selection: $globalAppState.newSwapEndpoint) {
-                Text("Unknown").tag(nil as String?)
-                ForEach(viewModel.newSwapEndpoints, id: \.self) { endpoint in
-                    Text(endpoint).tag(endpoint as String?)
-                }
-            }
+            TextField("New swap endpoint", text: $globalAppState.newSwapEndpoint)
         }
     }
 }

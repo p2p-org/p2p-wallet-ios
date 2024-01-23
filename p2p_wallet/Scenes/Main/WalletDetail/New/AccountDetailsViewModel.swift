@@ -128,9 +128,10 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
-    static func isSwapAvailableFor(wallet: SolanaAccount, for status: JupiterDataStatus) -> Bool {
+    static func isSwapAvailableFor(wallet _: SolanaAccount, for status: JupiterDataStatus) -> Bool {
+        // TODO(jupiter): Dynamic fetching data in future.
         switch status {
-        case let .ready(swapTokens, _) where swapTokens.contains(where: { $0.mintAddress == wallet.mintAddress }):
+        case .ready:
             return true
         default:
             return false

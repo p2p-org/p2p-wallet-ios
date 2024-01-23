@@ -3,7 +3,7 @@ import Jupiter
 
 struct SwapLogsInfo: Codable {
     let swapTransaction: String?
-    let route: Route?
+    let route: QuoteResponse?
     let routeInSymbols: String?
     let amountFrom: Double?
     let amountTo: Double?
