@@ -72,18 +72,26 @@ extension JupiterSwapBusinessLogic {
             // Calculate
             var transferFeeBasisPoints: UInt16? = state.transferFeeBasisPoints
             if transferFeeBasisPoints == nil {
-                let mintResult: BufferInfo<Token2022MintState>? = try await services.solanaAPIClient
-                    .getAccountInfo(account: state.toToken.mintAddress)
+                // Internal function for calculating free basic points
+                func getTransferFeeBasicPointsForToken(mint: String) async throws -> UInt16 {
+                    let mintState: BufferInfo<Token2022MintState>? = try await services
+                        .solanaAPIClient
+                        .getAccountInfo(account: mint)
 
-                if let mintResult {
-                    let transferFeeConfig = mintResult
+                    guard let mintState else { return 0 }
+
+                    let transferFeeConfig = mintState
                         .data
                         .getParsedExtension(ofType: TransferFeeConfigExtensionState.self)
-                    
-                    transferFeeBasisPoints = transferFeeConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
-                } else {
-                    transferFeeBasisPoints = 0
+
+                    return transferFeeConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
                 }
+
+                async let tokenATransferFee = getTransferFeeBasicPointsForToken(mint: state.fromToken.token.mintAddress)
+                async let tokenBTransferFee = getTransferFeeBasicPointsForToken(mint: state.toToken.token.mintAddress)
+
+                let total: UInt16 = try await (tokenATransferFee + tokenBTransferFee)
+                transferFeeBasisPoints = total
             }
 
             return await validateAmounts(
