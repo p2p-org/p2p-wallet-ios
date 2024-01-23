@@ -4,8 +4,8 @@ import XCTest
 import Combine
 import KeyAppKitCore
 import SolanaSwift
-import Web3
 import TokenService
+import Web3
 
 final class EthereumAccountsServiceTests: XCTestCase {
     // Ensure 30 seconds updating
