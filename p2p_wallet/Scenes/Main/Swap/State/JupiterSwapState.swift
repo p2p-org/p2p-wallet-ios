@@ -149,11 +149,7 @@ struct JupiterSwapState: Equatable {
             return nil
         }
         let slippage = Double(slippageBps) / 100 / 100
-        var result = outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
-        if let transferFee {
-            result = result - transferFee.amount
-        }
-        return result
+        return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
     }
 
     // TODO(jupiter): Fetch dynamic in future.
@@ -203,29 +199,6 @@ struct JupiterSwapState: Equatable {
                 canBePaidByKeyApp: true
             )
         }
-    }
-
-    var transferFee: SwapFeeInfo? {
-        guard
-            route != nil,
-            let transferFeeBasisPoints,
-            transferFeeBasisPoints != 0 else { return nil }
-        guard
-            let outAmountString = route?.outAmount,
-            let outAmount = UInt64(outAmountString)
-        else {
-            return nil
-        }
-        var outAmountUI = outAmount.convertToBalance(decimals: toToken.token.decimals)
-
-        let fee = outAmountUI * (Double(transferFeeBasisPoints) / 100_000)
-        return SwapFeeInfo(
-            amount: fee,
-            tokenSymbol: toToken.token.symbol,
-            tokenName: toToken.token.name,
-            tokenPriceInCurrentFiat: tokensPriceMap[toToken.token.mintAddress],
-            canBePaidByKeyApp: false
-        )
     }
 
     var accountCreationFee: SwapFeeInfo? {

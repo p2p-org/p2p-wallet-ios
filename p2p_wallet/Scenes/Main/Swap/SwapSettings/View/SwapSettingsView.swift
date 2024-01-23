@@ -71,11 +71,9 @@ struct SwapSettingsView: View {
                 identifier: .networkFee
             )
 
-            feeRow(
-                title: L10n.transferFee,
-                fee: viewModel.info.transferFee,
-                identifier: .transferFee
-            )
+            if viewModel.info.transferFee != nil {
+                commonRow(title: L10n.transferFee, subtitle: viewModel.info.transferFee, identifier: .transferFee)
+            }
 
             // Account creation fee
             if viewModel.isLoadingOrRouteNotNil {
