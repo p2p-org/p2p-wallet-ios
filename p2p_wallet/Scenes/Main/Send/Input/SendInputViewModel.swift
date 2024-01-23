@@ -139,9 +139,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         var exchangeRate = [String: TokenPrice]()
         var tokens = Set<TokenMetadata>()
-        wallets.forEach {
-            exchangeRate[$0.token.symbol] = $0.price
-            tokens.insert($0.token)
+        for wallet in wallets {
+            exchangeRate[wallet.token.symbol] = wallet.price
+            tokens.insert(wallet.token)
         }
 
         let env = UserWalletEnvironments(

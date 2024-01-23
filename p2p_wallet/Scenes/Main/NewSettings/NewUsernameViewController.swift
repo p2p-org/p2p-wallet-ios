@@ -174,7 +174,6 @@ private class QrCodeCard: BECompositionView {
             }.padding(.init(x: 0, y: 4))
 
         }.border(width: 1, color: .init(resource: .f2F2F7))
-
             .box(cornerRadius: 12)
             .shadow(color: .black, alpha: 0.05, y: 1, blur: 8)
     }
