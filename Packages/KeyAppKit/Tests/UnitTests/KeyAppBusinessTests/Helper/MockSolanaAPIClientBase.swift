@@ -2,6 +2,24 @@ import Foundation
 import SolanaSwift
 
 class MockSolanaAPIClientBase: SolanaAPIClient {
+    func getTokenAccountsByDelegate<T>(
+        pubkey _: String,
+        mint _: String?,
+        programId _: String?,
+        configs _: SolanaSwift.RequestConfiguration?
+    ) async throws -> [SolanaSwift.TokenAccount<T>] where T: SolanaSwift.TokenAccountState {
+        fatalError()
+    }
+
+    func getTokenAccountsByOwner<T>(
+        pubkey _: String,
+        params _: OwnerInfoParams?,
+        configs _: RequestConfiguration?,
+        decodingTo _: T.Type
+    ) async throws -> [TokenAccount<T>] where T: TokenAccountState {
+        fatalError()
+    }
+
     let endpoint: SolanaSwift.APIEndPoint = .init(address: "https://api.mainnet-beta.solana.com", network: .mainnetBeta)
 
     func request<Entity>(method _: String, params _: [Encodable]) async throws -> Entity where Entity: Decodable {
@@ -13,7 +31,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getAccountInfo<T>(account _: String) async throws -> SolanaSwift.BufferInfo<T>?
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         fatalError()
     }
 
@@ -73,7 +92,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getTokenAccountBalance(pubkey _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TokenAccountBalance {
+        .TokenAccountBalance
+    {
         fatalError()
     }
 
@@ -101,7 +121,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getTokenSupply(pubkey _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TokenAmount {
+        .TokenAmount
+    {
         fatalError()
     }
 
@@ -124,7 +145,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func sendTransaction(transaction _: String, configs _: SolanaSwift.RequestConfiguration) async throws -> SolanaSwift
-    .TransactionID {
+        .TransactionID
+    {
         fatalError()
     }
 
@@ -143,7 +165,8 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getMultipleAccounts<T>(pubkeys _: [String]) async throws -> [SolanaSwift.BufferInfo<T>]
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         fatalError()
     }
 
@@ -155,17 +178,20 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getTransaction(signature _: String, commitment _: SolanaSwift.Commitment?) async throws -> SolanaSwift
-    .TransactionInfo? {
+        .TransactionInfo?
+    {
         fatalError()
     }
 
     func batchRequest(with _: [SolanaSwift.JSONRPCRequestEncoder.RequestType]) async throws
-    -> [SolanaSwift.AnyResponse<SolanaSwift.JSONRPCRequestEncoder.RequestType.Entity>] {
+        -> [SolanaSwift.AnyResponse<SolanaSwift.JSONRPCRequestEncoder.RequestType.Entity>]
+    {
         fatalError()
     }
 
     func batchRequest<Entity>(method _: String, params _: [[Encodable]]) async throws -> [Entity?]
-    where Entity: Decodable {
+        where Entity: Decodable
+    {
         fatalError()
     }
 
@@ -190,13 +216,15 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     }
 
     func getAddressLookupTable(accountKey _: SolanaSwift.PublicKey) async throws -> SolanaSwift
-    .AddressLookupTableAccount? {
+        .AddressLookupTableAccount?
+    {
         fatalError()
     }
 
     func getMultipleAccounts<T>(pubkeys: [String],
                                 commitment _: SolanaSwift.Commitment) async throws -> [SolanaSwift.BufferInfo<T>?]
-    where T: SolanaSwift.BufferLayout {
+        where T: SolanaSwift.BufferLayout
+    {
         pubkeys.map { _ in nil }
     }
 }
