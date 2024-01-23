@@ -209,6 +209,7 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
                     sendViaLinkSeed: nil,
                     amount: 0.01,
+                    isSendingMaxAmount: true,
                     amountInFiat: 0.01,
                     walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200_000_000),
                     address: "adfasdf",

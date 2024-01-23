@@ -114,10 +114,16 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 switch result {
                 case let .sent(model):
                     self?.navigationController.popToRootViewController(animated: true)
-                    self?.showSendTransactionStatus(model: model)
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                        self?.showSendTransactionStatus(model: model)
+                    }
+
                 case let .wormhole(trx):
                     self?.navigationController.popToRootViewController(animated: true)
-                    self?.showUserAction(userAction: trx)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                        self?.showUserAction(userAction: trx)
+                    }
                 case .sentViaLink:
                     self?.navigationController.popToRootViewController(animated: true)
                 case .cancelled:

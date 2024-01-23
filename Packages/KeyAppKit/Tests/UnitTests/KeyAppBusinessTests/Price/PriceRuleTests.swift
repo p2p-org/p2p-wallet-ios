@@ -1,4 +1,5 @@
 import SolanaSwift
+import TokenService
 import XCTest
 @testable import KeyAppBusiness
 @testable import KeyAppKitCore

@@ -181,14 +181,14 @@ class StandardInteractionController: NSObject, InteractionControlling {
     }
 
     private func disableOtherTouches() {
-        viewController.view.subviews.forEach {
-            $0.isUserInteractionEnabled = false
+        for subview in viewController.view.subviews {
+            subview.isUserInteractionEnabled = false
         }
     }
 
     private func enableOtherTouches() {
-        viewController.view.subviews.forEach {
-            $0.isUserInteractionEnabled = true
+        for subview in viewController.view.subviews {
+            subview.isUserInteractionEnabled = true
         }
     }
 }

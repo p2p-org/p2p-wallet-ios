@@ -9,8 +9,8 @@ enum SendInputBusinessLogic {
         services: SendInputServices
     ) async -> SendInputState {
         switch action {
-        case let .initialize(params):
-            return await initialize(state: state, services: services, params: params)
+        case let .initialize:
+            return await initialize(state: state, services: services)
         case let .changeAmountInToken(amount):
             return await sendInputChangeAmountInToken(state: state, amount: amount, services: services)
         case let .changeAmountInFiat(amount):

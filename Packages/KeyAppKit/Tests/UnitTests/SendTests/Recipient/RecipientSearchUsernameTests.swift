@@ -9,19 +9,25 @@ class RecipientSearchUsernameTests: XCTestCase {
     let defaultInitialWalletEnvs: RecipientSearchConfig = .init(
         wallets: [
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                 lamports: 5_000_000,
-                token: .nativeSolana
+                token: .nativeSolana,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh22",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh22",
                 lamports: 5_000_000,
-                token: .usdc
+                token: .usdc,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
             SolanaAccount(
-                pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
+                address: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
                 lamports: 5_000_000,
-                token: .usdt
+                token: .usdt,
+                minRentExemption: 2_039_280,
+                tokenProgramId: TokenProgram.id.base58EncodedString
             ),
         ],
         ethereumAccount: nil,

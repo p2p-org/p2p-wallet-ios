@@ -95,6 +95,11 @@ let package = Package(
             targets: ["OrcaSwapSwift"]
         ),
 
+        .library(
+            name: "TokenService",
+            targets: ["TokenService"]
+        ),
+
         // KeyAppBusiness
         .library(
             name: "KeyAppBusiness",
@@ -226,10 +231,11 @@ let package = Package(
             name: "Send",
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                "FeeRelayerSwift",
                 "NameService",
                 "History",
                 "Wormhole",
+                "KeyAppNetworking",
+                "TokenService",
             ]
         ),
 
@@ -285,6 +291,16 @@ let package = Package(
         ),
 
         .target(
+            name: "TokenService",
+            dependencies: [
+                "KeyAppKitCore",
+                "Cache",
+                .product(name: "SolanaSwift", package: "solana-swift"),
+                .product(name: "Web3", package: "Web3.swift"),
+            ]
+        ),
+
+        .target(
             name: "KeyAppBusiness",
             dependencies: [
                 "KeyAppKitCore",
@@ -293,6 +309,7 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
+                "TokenService",
             ]
         ),
         .testTarget(

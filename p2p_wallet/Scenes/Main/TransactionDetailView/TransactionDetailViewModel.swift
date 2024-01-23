@@ -6,6 +6,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
+import TokenService
 
 enum TransactionDetailStyle {
     case active

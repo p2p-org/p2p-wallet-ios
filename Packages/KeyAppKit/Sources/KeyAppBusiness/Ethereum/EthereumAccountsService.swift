@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import KeyAppKitCore
+import TokenService
 import Web3
 
 public final class EthereumAccountsService: NSObject, AccountsService {

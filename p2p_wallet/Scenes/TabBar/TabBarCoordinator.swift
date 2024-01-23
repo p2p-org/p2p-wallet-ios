@@ -22,7 +22,6 @@ final class TabBarCoordinator: Coordinator<Void> {
     private let tabBarViewModel: TabBarViewModel
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
-    private var sendStatusCoordinator: SendTransactionStatusCoordinator?
     private var jupiterSwapTabCoordinator: JupiterSwapCoordinator?
 
     // MARK: - Initializer
@@ -185,30 +184,6 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     private func navigationControllerForSelectedTab() -> UINavigationController? {
         tabBarController.selectedViewController as? UINavigationController
-    }
-
-    private func routeToSendTransactionStatus(model: SendTransaction) {
-        sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: tabBarController, transaction: model)
-
-        sendStatusCoordinator?
-            .start()
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
-    }
-
-    private func showUserAction(userAction: any UserAction) {
-        coordinate(to: TransactionDetailCoordinator(
-            viewModel: .init(userAction: userAction),
-            presentingViewController: tabBarController
-        ))
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
-    }
-
-    private func showSendTransactionStatus(navigationController: UINavigationController, model: SendTransaction) {
-        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
     }
 
     private func routeToCrypto(

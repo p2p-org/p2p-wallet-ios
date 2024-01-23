@@ -1,23 +1,16 @@
-import FeeRelayerSwift
 import KeyAppKitCore
-import OrcaSwapSwift
 import SolanaSwift
+import TokenService
 
-public protocol SendFeeCalculator: AnyObject {
-    func getFees(
-        from token: SolanaAccount,
-        recipient: Recipient,
-        recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
-        payingTokenMint: String?,
-        feeRelayerContext context: RelayContext
-    ) async throws -> FeeAmount?
-}
+public class SendFeeCalculator {
+    // MARK: - Properties
 
-public class SendFeeCalculatorImpl: SendFeeCalculator {
-    private let feeRelayerCalculator: RelayFeeCalculator
+    private let solanaTokenService: SolanaTokensService
 
-    public init(feeRelayerCalculator: RelayFeeCalculator) {
-        self.feeRelayerCalculator = feeRelayerCalculator
+    // MARK: - Init
+
+    public init(solanaTokenService: SolanaTokensService) {
+        self.solanaTokenService = solanaTokenService
     }
 
     // MARK: - Fees calculator
@@ -26,16 +19,17 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
         from token: SolanaAccount,
         recipient: Recipient,
         recipientAdditionalInfo: SendInputState.RecipientAdditionalInfo,
-        payingTokenMint: String?,
-        feeRelayerContext context: RelayContext
+//        payingTokenMint _: String?,
+        lamportsPerSignature: UInt64,
+        limit: SendServiceLimitResponse
     ) async throws -> FeeAmount? {
         var transactionFee: UInt64 = 0
 
         // owner's signature
-        transactionFee += context.lamportsPerSignature
+        transactionFee += lamportsPerSignature
 
         // feePayer's signature
-        transactionFee += context.lamportsPerSignature
+        transactionFee += lamportsPerSignature
 
         var isAssociatedTokenUnregister = false
 
@@ -67,43 +61,97 @@ public class SendFeeCalculatorImpl: SendFeeCalculator {
             }
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
-        // fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
-            // subtract the fee payer signature cost
-            transactionFee -= context.lamportsPerSignature
-        }
-
-        let expectedFee = FeeAmount(
+        var expectedFee = FeeAmount(
             transaction: transactionFee,
             accountBalances: isAssociatedTokenUnregister ? token.minRentExemption ?? 0 : 0
         )
 
-        // TODO: - Remove later: Send as SendViaLink when link creation available
-        if !context.usageStatus.reachedLimitLinkCreation {
+        // Check if any frees transactionFee
+        if limit.networkFee.isAvailable(
+            forAmount: expectedFee.transaction
+        ) {
+            expectedFee.transaction = 0
+        }
+
+        // Check if any frees accountBalancesFee
+        if limit.tokenAccountRent.isAvailable(
+            forAmount: expectedFee.accountBalances
+        ) {
+            expectedFee.accountBalances = 0
+        }
+
+        return expectedFee
+    }
+
+    public func calculateFeeInPayingToken(
+        feeInSOL: FeeAmount,
+        payingFeeTokenMint: PublicKey
+    ) async throws -> FeeAmount? {
+        // If token is sol, no conversion needed
+        if payingFeeTokenMint == PublicKey.wrappedSOLMint {
+            return feeInSOL
+        }
+
+        // Assert fee is not zero
+        guard feeInSOL.total != 0 else {
             return .zero
         }
 
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use
-        // fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(context, payingTokenMint: payingTokenMint) {
-            return expectedFee
-        }
+        // Get rates from sendService
+        return try await withThrowingTaskGroup(of: UInt64.self) { group in
+            group.addTask { [weak self] in
+                if let self, feeInSOL.transaction > 0 {
+                    return try await solanaTokenService.getTokenAmount(
+                        vs_token: nil,
+                        amount: feeInSOL.transaction,
+                        mints: [payingFeeTokenMint.base58EncodedString]
+                    ).first?.uint64Value ?? 0
+                }
+                return 0
+            }
 
-        return try await feeRelayerCalculator.calculateNeededTopUpAmount(
-            context,
-            expectedFee: expectedFee,
-            payingTokenMint: try? PublicKey(string: payingTokenMint)
-        )
+            group.addTask { [weak self] in
+                if let self, feeInSOL.accountBalances > 0 {
+                    return try await solanaTokenService.getTokenAmount(
+                        vs_token: nil,
+                        amount: feeInSOL.accountBalances,
+                        mints: [payingFeeTokenMint.base58EncodedString]
+                    ).first?.uint64Value ?? 0
+                }
+                return 0
+            }
+
+            let rates = try await group.reduce(into: [UInt64]()) { $0.append($1) }
+            return FeeAmount(transaction: rates[0], accountBalances: rates[1])
+        }
     }
 
-    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
-        _ context: RelayContext,
-        payingTokenMint: String?
-    ) -> Bool {
-        let expectedTransactionFee = context.lamportsPerSignature * 2
-        return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
-            context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
+    public func getAvailableWalletsToPayFee(
+        wallets: [SolanaAccount],
+        feeInSOL: FeeAmount,
+        whiteListMints: [String]
+    ) async -> [SolanaAccount] {
+        let filteredWallets = wallets
+            .filter { $0.lamports > 0 && whiteListMints.contains($0.mintAddress) }
+
+        var feeWallets = [SolanaAccount]()
+        for element in filteredWallets {
+            if element.token.mintAddress == PublicKey.wrappedSOLMint
+                .base58EncodedString, element.lamports >= feeInSOL.total
+            {
+                feeWallets.append(element)
+                continue
+            }
+            let feeAmount = try? await calculateFeeInPayingToken(
+                feeInSOL: feeInSOL,
+                payingFeeTokenMint: PublicKey(string: element.token.mintAddress)
+            )
+            if (feeAmount?.total ?? 0) <= element.lamports {
+                feeWallets.append(element)
+            }
+        }
+
+        return feeWallets
     }
 }
 
