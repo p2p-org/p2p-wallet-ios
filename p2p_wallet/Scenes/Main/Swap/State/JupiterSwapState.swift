@@ -96,7 +96,7 @@ struct JupiterSwapState: Equatable {
     var splAccountCreationFee: Lamports
 
     /// transfer fee on token 2022
-    var transferFeeBasisPoints: UInt64?
+    var transferFeeBasisPoints: UInt16?
 
     // MARK: - Computed properties
 

@@ -117,7 +117,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/p2p-org/solana-swift", branch: "feature/token-2022"),
+        .package(url: "https://github.com/p2p-org/solana-swift", branch: "feature/token-2022transferFeeConfig?.newerTransferFee.transferFeeBasisPoints"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),

@@ -70,12 +70,20 @@ extension JupiterSwapBusinessLogic {
             }
 
             // Calculate
-            var transferFeeBasisPoints: UInt64? = state.transferFeeBasisPoints
+            var transferFeeBasisPoints: UInt16? = state.transferFeeBasisPoints
             if transferFeeBasisPoints == nil {
-                let client = BlockchainClient(apiClient: services.solanaAPIClient)
-                let extensions = try await client.getTokenExtensions(for: state.toToken.mintAddress)
-                let transferTokenConfig = try client.getTransferTokenConfig(extensions)
-                transferFeeBasisPoints = transferTokenConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
+                let mintResult: BufferInfo<Token2022MintState>? = try await services.solanaAPIClient
+                    .getAccountInfo(account: state.toToken.mintAddress)
+
+                if let mintResult {
+                    let transferFeeConfig = mintResult
+                        .data
+                        .getParsedExtension(ofType: TransferFeeConfigExtensionState.self)
+                    
+                    transferFeeBasisPoints = transferFeeConfig?.newerTransferFee.transferFeeBasisPoints ?? 0
+                } else {
+                    transferFeeBasisPoints = 0
+                }
             }
 
             return await validateAmounts(
