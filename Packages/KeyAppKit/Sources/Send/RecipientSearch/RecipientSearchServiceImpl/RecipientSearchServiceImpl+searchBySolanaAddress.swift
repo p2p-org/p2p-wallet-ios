@@ -154,7 +154,6 @@ extension RecipientSearchServiceImpl {
             else { continue }
 
             let result = try await feeCalculator.calculateFeeInPayingToken(
-                orcaSwap: orcaSwap,
                 feeInSOL: .init(
                     transaction: 0,
                     accountBalances: wallet.minRentExemption ?? 2_039_280
@@ -183,7 +182,6 @@ extension RecipientSearchServiceImpl {
             else { continue }
 
             let result = try await feeCalculator.calculateFeeInPayingToken(
-                orcaSwap: orcaSwap,
                 feeInSOL: .init(
                     transaction: 0,
                     accountBalances: wallet.minRentExemption ?? 2_039_280

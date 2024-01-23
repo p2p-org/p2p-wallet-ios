@@ -7,6 +7,7 @@ import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
+import TokenService
 
 enum NewHistoryAction {
     case openHistoryTransaction(HistoryTransaction)

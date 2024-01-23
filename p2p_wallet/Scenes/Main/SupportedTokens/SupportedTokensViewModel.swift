@@ -4,6 +4,7 @@ import Foundation
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
+import TokenService
 import Wormhole
 
 enum SupportedTokensAction {

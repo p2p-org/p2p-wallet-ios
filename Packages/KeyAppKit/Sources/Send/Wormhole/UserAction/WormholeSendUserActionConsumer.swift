@@ -4,6 +4,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 import Wormhole
 
 public class WormholeSendUserActionConsumer: UserActionConsumer {

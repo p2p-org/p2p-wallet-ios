@@ -16,12 +16,6 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 
-    private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
-        wallets: walletsRepository.getWallets(),
-        feeRelayer: Resolver.resolve(),
-        orcaSwap: Resolver.resolve()
-    )
-
     @Published var cellModels: [CellModel] = []
     @Published var accountCreationFeeCellModel: CellModel?
 
@@ -41,8 +35,13 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 self.updateCells(for: state)
                 Task { [weak self] in
                     guard let self else { return }
-                    let tokens = try? await self.feeWalletsService
+                    let feeCalculator = SendFeeCalculator(
+                        solanaTokenService: Resolver.resolve()
+                    )
+
+                    let tokens = await feeCalculator
                         .getAvailableWalletsToPayFee(
+                            wallets: walletsRepository.getWallets(),
                             feeInSOL: stateMachine.currentState.fee,
                             whiteListMints: state.feePayableTokenMints
                         )

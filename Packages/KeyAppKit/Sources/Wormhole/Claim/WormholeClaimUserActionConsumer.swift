@@ -5,6 +5,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 import KeyAppKitLogger
 import SolanaSwift
+import TokenService
 
 public class WormholeClaimUserActionConsumer: UserActionConsumer {
     public typealias Action = WormholeClaimUserAction

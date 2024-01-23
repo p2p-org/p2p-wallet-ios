@@ -4,6 +4,7 @@ import Combine
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 
 /// Abstract class for getting exchange rate between token and fiat for any token.
 public protocol PriceService: AnyObject {

@@ -4,6 +4,7 @@ import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
+import TokenService
 
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }

@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating
 /// timer.
