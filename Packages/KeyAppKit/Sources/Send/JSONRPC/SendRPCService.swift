@@ -73,21 +73,4 @@ public class SendRPCService {
             )
         )
     }
-
-    public func getTokenAmount(
-        amount: UInt64,
-        mints: [String]
-    ) async throws -> [SendServiceTokenAmountResponse] {
-        try await jsonrpcClient.request(
-            baseURL: host,
-            body: .init(
-                method: "get_token_amount",
-                params: SendServiceTokenAmountRequest(
-                    vs_token: nil,
-                    amount: "\(amount)",
-                    mints: mints
-                )
-            )
-        )
-    }
 }

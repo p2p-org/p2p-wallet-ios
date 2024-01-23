@@ -162,6 +162,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
+                solanaTokenService: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 rpcService: Resolver.resolve()
             )

@@ -1,15 +1,16 @@
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 
 public class SendFeeCalculator {
     // MARK: - Properties
 
-    private let sendService: SendRPCService
+    private let solanaTokenService: SolanaTokensService
 
     // MARK: - Init
 
-    public init(sendService: SendRPCService) {
-        self.sendService = sendService
+    public init(solanaTokenService: SolanaTokensService) {
+        self.solanaTokenService = solanaTokenService
     }
 
     // MARK: - Fees calculator
@@ -100,7 +101,8 @@ public class SendFeeCalculator {
         return try await withThrowingTaskGroup(of: UInt64.self) { group in
             group.addTask { [weak self] in
                 if let self, feeInSOL.transaction > 0 {
-                    return try await sendService.getTokenAmount(
+                    return try await solanaTokenService.getTokenAmount(
+                        vs_token: nil,
                         amount: feeInSOL.transaction,
                         mints: [payingFeeTokenMint.base58EncodedString]
                     ).first?.uint64Value ?? 0
@@ -110,7 +112,8 @@ public class SendFeeCalculator {
 
             group.addTask { [weak self] in
                 if let self, feeInSOL.accountBalances > 0 {
-                    return try await sendService.getTokenAmount(
+                    return try await solanaTokenService.getTokenAmount(
+                        vs_token: nil,
                         amount: feeInSOL.accountBalances,
                         mints: [payingFeeTokenMint.base58EncodedString]
                     ).first?.uint64Value ?? 0

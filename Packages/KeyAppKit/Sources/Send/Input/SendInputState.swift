@@ -2,6 +2,7 @@ import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 
 public enum Amount: Equatable {
     case fiat(value: Double, currency: String)
@@ -25,10 +26,11 @@ public struct SendInputServices {
     let rpcService: SendRPCService
 
     public init(
+        solanaTokenService: SolanaTokensService,
         solanaAPIClient: SolanaAPIClient,
         rpcService: SendRPCService
     ) {
-        feeCalculator = .init(sendService: rpcService)
+        feeCalculator = .init(solanaTokenService: solanaTokenService)
         self.solanaAPIClient = solanaAPIClient
         self.rpcService = rpcService
     }

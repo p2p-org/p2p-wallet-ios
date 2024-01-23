@@ -219,6 +219,7 @@ extension Resolver: ResolverRegistering {
                 errorObserver: resolve()
             )
         }
+        .implements(TokenRepository.self)
         .implements(SolanaTokensService.self)
         .scope(.application)
 
@@ -595,7 +596,7 @@ extension Resolver: ResolverRegistering {
                 nameService: resolve(),
                 solanaClient: resolve(),
                 feeCalculator: SendFeeCalculator(
-                    sendService: resolve()
+                    solanaTokenService: resolve()
                 )
             )
         }

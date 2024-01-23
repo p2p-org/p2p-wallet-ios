@@ -35,7 +35,9 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 self.updateCells(for: state)
                 Task { [weak self] in
                     guard let self else { return }
-                    let feeCalculator = SendFeeCalculator(sendService: Resolver.resolve())
+                    let feeCalculator = SendFeeCalculator(
+                        solanaTokenService: Resolver.resolve()
+                    )
 
                     let tokens = await feeCalculator
                         .getAvailableWalletsToPayFee(

@@ -236,6 +236,7 @@ let package = Package(
                 "History",
                 "Wormhole",
                 "KeyAppNetworking",
+                "TokenService",
             ]
         ),
 
