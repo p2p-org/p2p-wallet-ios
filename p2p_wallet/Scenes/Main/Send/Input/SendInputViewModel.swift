@@ -72,7 +72,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
-    let openFeeInfo = PassthroughSubject<Bool, Never>()
+    let openFeeInfo = PassthroughSubject<Void, Never>()
     let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
@@ -319,7 +319,7 @@ private extension SendInputViewModel {
         feeInfoPressed
             .sink { [weak self] in
                 guard let self else { return }
-                self.openFeeInfo.send(self.currentState.fee == .zero)
+                self.openFeeInfo.send()
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
                 {
@@ -474,23 +474,29 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        // if send via link, just return enjoyFreeTransactions
-        if currentState.isSendingViaLink {
-            feeTitle = L10n.fees(0)
-        }
-
-        // otherwise show fees in conditions
-        else if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
+        if currentState.isTransactionFree {
             feeTitle = L10n.enjoyFreeTransactions
-        } else if currentState.fee == .zero {
-            feeTitle = L10n.fees(0)
         } else {
-            let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
-            feeTitle = L10n
-                .fees(
-                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals))
-                        .tokenAmountFormattedString(symbol: symbol, roundingMode: .down)
-                )
+            // transaction fee and account rent fee
+            if currentState.fee.total > 0 {
+                feeTitle = L10n
+                    .fees(
+                        currentState.feeInToken.total
+                            .convertToBalance(
+                                decimals: Int(currentState.tokenFee.decimals)
+                            )
+                            .tokenAmountFormattedString(
+                                symbol: currentState.tokenFee.symbol,
+                                roundingMode: .down
+                            )
+                    )
+            }
+
+            // token2022 fees
+            else {
+                let text = currentState.token2022TransferFeePercentage?.toString(maximumFractionDigits: 2) ?? "0"
+                feeTitle = L10n.fees(text + "%")
+            }
         }
     }
 

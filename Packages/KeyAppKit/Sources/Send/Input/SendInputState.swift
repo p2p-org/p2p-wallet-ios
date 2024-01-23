@@ -240,6 +240,18 @@ public extension SendInputState {
             .toLamport(decimals: token.decimals)
     }
 
+    var token2022TransferFeePercentage: Double? {
+        guard let token2022TransferFeePerOneToken = token2022TransferFeePerOneToken[token.mintAddress]
+        else {
+            return nil
+        }
+        return Double(token2022TransferFeePerOneToken) / Double(1.toLamport(decimals: token.decimals))
+    }
+
+    var isTransactionFree: Bool {
+        fee == .zero && (token2022TransferFeePercentage ?? 0) <= 0
+    }
+
     var maxAmountInputInToken: Double {
         var balance: Lamports = userWalletEnvironments.wallets
             .first(where: { $0.token.mintAddress == token.mintAddress })?
