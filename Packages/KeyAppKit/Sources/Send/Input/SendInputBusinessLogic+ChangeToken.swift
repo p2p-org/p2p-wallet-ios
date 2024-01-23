@@ -64,7 +64,7 @@ extension SendInputBusinessLogic {
 
                 state = state.copy(
                     tokenFee: feeInfo.token,
-                    feeInToken: fee == .zero ? .zero : feeInfo.fee
+                    feeInToken: feeInfo.fee
                 )
             }
 
