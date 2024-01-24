@@ -268,7 +268,7 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func initialize(jupiterTokens: [TokenMetadata], routeMap: RouteMap) async {
+    func initialize(jupiterTokens: [TokenMetadata]) async {
         // Find token by ticker.
         func findTokenMintBySymbol(symbol: String?) -> TokenMetadata? {
             guard let symbol else { return nil }
@@ -333,7 +333,6 @@ private extension SwapViewModel {
                 action: .initialize(
                     account: userWalletManager.wallet?.account,
                     jupiterTokens: jupiterTokens,
-                    routeMap: routeMap,
                     preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
                     preChosenToTokenMintAddress: preChosenToTokenMintAddress
                 )
