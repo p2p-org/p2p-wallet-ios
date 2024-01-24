@@ -1,3 +1,4 @@
+import BigDecimal
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -266,25 +267,31 @@ public extension SendInputState {
     }
 
     var maxAmountInputInToken: Double {
+        // Get the balance of current token / wallet
         var balance: Lamports = userWalletEnvironments.wallets
             .first(where: { $0.token.mintAddress == token.mintAddress })?
             .lamports ?? 0
 
-        if token.mintAddress == tokenFee.mintAddress {
-            // total fee in tokens + tokens 2022
-            var fee = feeInToken.total
-            if let amount = token2022TransferFee {
-                fee += amount
-            }
-
-            if balance >= fee {
-                balance = balance - fee
-            } else {
-                return 0
-            }
+        // if user pay with sending token, we need to subtract the amount of fee
+        if token.address == tokenFee.address {
+            // minus feeInToken
+            balance = balance > feeInToken.total ? balance - feeInToken.total : 0
         }
 
-        return Double(balance) / pow(10, Double(token.decimals))
+        // sepecial case for token 2022
+        if let token2022TransferFeePercentage, balance > 0 {
+            // calculate token 2022 fee
+            // maxAmount -> x, balance -> b, feePercentage -> f
+            // (x+x*f)=b -> x = b / (1+f)
+            let value = BigDecimal(balance) / BigDecimal(floatLiteral: 1.0 + token2022TransferFeePercentage)
+
+            balance = UInt64(value.withScale(0).integerValue)
+        }
+
+        // assert amount
+        guard balance > 0 else { return 0 }
+
+        return balance.convertToBalance(decimals: token.decimals)
     }
 
     var isSendingMaxAmount: Bool {

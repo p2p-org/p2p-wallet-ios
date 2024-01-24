@@ -223,8 +223,8 @@ struct SendInputView: View {
                         "User limit: \(viewModel.currentState.limit.jsonString ?? "")"
                     )
 
-                    if let fee = viewModel.currentState.token2022TransferFee {
-                        Text("token2022Fee: \(fee)")
+                    if let fee = viewModel.currentState.token2022TransferFeePercentage {
+                        Text("token2022Fee percentage: \(fee * 100)")
                     }
 
                     Text(
