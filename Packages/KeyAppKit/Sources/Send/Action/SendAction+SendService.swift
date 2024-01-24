@@ -25,9 +25,7 @@ extension SendActionServiceImpl {
             amount = .max
         }
 
-        var response: SendServiceTransferResponse
-
-        response = try await sendService.transfer(
+        let response = try await sendService.transfer(
             userWallet: wallet.address,
             mint: mintAddress,
             amount: amount,
@@ -43,28 +41,6 @@ extension SendActionServiceImpl {
                 feeWallet: feeWallet
             )
         )
-
-        // TODO: - Temporarily fix amount that is closer to max amount
-        if let totalAmount = UInt64(response.totalAmount.amount),
-           totalAmount > wallet.lamports
-        {
-            amount = .max
-            response = try await sendService.transfer(
-                userWallet: wallet.address,
-                mint: mintAddress,
-                amount: amount,
-                recipient: receiver,
-                networkFeePayer: getNetworkFeePayer(
-                    context: context,
-                    wallet: wallet,
-                    feeWallet: feeWallet
-                ),
-                taRentPayer: getTokenAccountFeePayer(
-                    wallet: wallet,
-                    feeWallet: feeWallet
-                )
-            )
-        }
 
         return try await sendToBlockchain(
             account: account,
