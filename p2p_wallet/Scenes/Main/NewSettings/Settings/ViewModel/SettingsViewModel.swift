@@ -50,11 +50,14 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     @Published var deviceShareMigrationAlert: Bool = false
 
+    @Published var isReferralProgramEnabled: Bool
+
     var appInfo: String {
         AppInfo.appVersionDetail
     }
 
     override init() {
+        isReferralProgramEnabled = available(.referralProgramEnabled)
         super.init()
         setUpAuthType()
         updateNameIfNeeded()

@@ -28,6 +28,8 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
+    @Published private(set) var displayReferralBanner: Bool
+
     /// Accounts for claiming transfers.
     @Published var transferAccounts: [any RenderableAccount] = []
 
@@ -53,7 +55,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         self.userActionService = userActionService
         self.favouriteAccountsStore = favouriteAccountsStore
         self.navigation = navigation
-
+        displayReferralBanner = available(.referralProgramEnabled)
         super.init()
 
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in

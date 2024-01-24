@@ -34,8 +34,10 @@ struct CryptoAccountsView: View {
                         .padding(.top, 5)
                         .padding(.bottom, 32)
                         .id(0)
-                    ReferralProgramBannerView(shareAction: {}, openDetails: {})
-                        .padding(.horizontal, 16)
+                    if viewModel.displayReferralBanner {
+                        banner
+                            .padding(.horizontal, 16)
+                    }
                     content
                 }
             }
@@ -58,6 +60,10 @@ struct CryptoAccountsView: View {
 
     private var header: some View {
         actionsPanelView
+    }
+
+    private var banner: some View {
+        ReferralProgramBannerView(shareAction: {}, openDetails: {})
     }
 
     private var content: some View {

@@ -18,7 +18,9 @@ struct SettingsView: View {
         List {
             Group {
                 profileSection
-                referralProgramSection
+                if viewModel.isReferralProgramEnabled {
+                    referralProgramSection
+                }
                 securitySection
                 appearanceSection
                 communitySection
