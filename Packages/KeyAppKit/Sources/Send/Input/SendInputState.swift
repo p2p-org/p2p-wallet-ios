@@ -234,6 +234,29 @@ public struct SendInputState: Equatable {
 }
 
 public extension SendInputState {
+    var totalAmount: UInt64 {
+        var totalAmount: UInt64 = 0
+
+        // get receivingAmount
+        let receivingAmount = amountInToken.toLamport(decimals: token.decimals)
+        totalAmount += receivingAmount
+
+        // add fee when token is same as fee token
+        if token.mintAddress == tokenFee.mintAddress {
+            totalAmount += feeInToken.total
+        }
+
+        // special case for token 2022, add percent fee
+        if token.tokenProgramId == Token2022Program.id.base58EncodedString,
+           let percent = token2022TransferFeePerReceivingAmountMap[token.mintAddress]
+        {
+            let decimalValue = BigDecimal(totalAmount) * (BigDecimal(floatLiteral: 1.0) + percent)
+            totalAmount = UInt64(decimalValue.withScale(0).integerValue)
+        }
+
+        return totalAmount
+    }
+
     var recipientGetsAmount: Double {
         // exactOut
         amountInToken
