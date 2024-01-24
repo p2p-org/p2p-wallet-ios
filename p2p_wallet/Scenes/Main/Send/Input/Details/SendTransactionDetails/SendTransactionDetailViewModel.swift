@@ -16,12 +16,6 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 
-    private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
-        wallets: walletsRepository.getWallets(),
-        feeRelayer: Resolver.resolve(),
-        orcaSwap: Resolver.resolve()
-    )
-
     @Published var cellModels: [CellModel] = []
     @Published var accountCreationFeeCellModel: CellModel?
 
@@ -41,8 +35,16 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 self.updateCells(for: state)
                 Task { [weak self] in
                     guard let self else { return }
-                    let tokens = try? await self.feeWalletsService
-                        .getAvailableWalletsToPayFee(feeInSOL: stateMachine.currentState.fee)
+                    let feeCalculator = SendFeeCalculator(
+                        solanaTokenService: Resolver.resolve()
+                    )
+
+                    let tokens = await feeCalculator
+                        .getAvailableWalletsToPayFee(
+                            wallets: walletsRepository.getWallets(),
+                            feeInSOL: stateMachine.currentState.fee,
+                            whiteListMints: state.feePayableTokenMints
+                        )
 
                     await MainActor.run { [weak self] in
                         guard let self else { return }
@@ -70,18 +72,23 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
-    private func extractTransactionFeeCellModel(state: SendInputState) -> CellModel {
-        guard let feeRelayerContext = state.feeRelayerContext else {
-            return .init(
-                type: .transactionFee,
-                title: L10n.transactionFee,
-                subtitle: [("", nil)],
-                image: .transactionFee,
-                isFree: false
-            )
-        }
+    private func extractToken2022FeeCellModel(state: SendInputState) -> CellModel? {
+        guard let bigDecimal = state.token2022TransferFeePercentage,
+              let fee = Double((bigDecimal * 100).withScale(4).description)
+        else { return nil }
+        return .init(
+            type: .token2022Fee,
+            title: L10n.token2022TransferFee,
+            subtitle: [(
+                fee.toString(maximumFractionDigits: 2) + "%",
+                nil
+            )],
+            image: .transactionFee
+        )
+    }
 
-        let remainUsage = feeRelayerContext.usageStatus.maxUsage - feeRelayerContext.usageStatus.currentUsage
+    private func extractTransactionFeeCellModel(state: SendInputState) -> CellModel {
+        let remainUsage = state.limit.networkFee.remainingAmount
 
         let amountFeeInToken = Double(state.feeInToken.transaction) / pow(10, Double(state.tokenFee.decimals))
 
@@ -93,7 +100,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             mainText = "0 \(state.tokenFee.symbol)"
             secondaryText = "\(Defaults.fiat.symbol) 0"
         case state.fee.transaction == 0:
-            mainText = L10n.freeLeftForToday(remainUsage)
+            mainText = L10n.free
             secondaryText = nil
         default:
             mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
@@ -211,12 +218,15 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 type: .recipientGets,
                 title: L10n.recipientGets,
                 subtitle: [convert(
-                    state.amountInToken.toLamport(decimals: state.token.decimals),
+                    state.recipientGetsAmount.toLamport(
+                        decimals: state.token.decimals
+                    ),
                     state.token,
                     state.sourceWallet?.price
                 )],
                 image: .recipientGet
             ),
+            extractToken2022FeeCellModel(state: state),
             extractTransactionFeeCellModel(state: state),
             accountCreationFeeCellModel,
             extractTotalCellModel(state: state),
@@ -236,6 +246,7 @@ extension SendTransactionDetailViewModel {
         case address
         case recipientGets
         case transactionFee
+        case token2022Fee
         case accountCreationFee
         case total
     }

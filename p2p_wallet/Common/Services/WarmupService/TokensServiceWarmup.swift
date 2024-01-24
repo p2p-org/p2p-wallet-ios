@@ -1,6 +1,7 @@
 import Foundation
 import KeyAppBusiness
 import Resolver
+import TokenService
 
 class TokenServiceWarmupProcess: WarmupProcess {
     func start() async {

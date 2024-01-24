@@ -8,4 +8,11 @@ struct SendTransactionStatusDetailsParameters {
         self.description = description
         self.fee = fee
     }
+
+    static var unknown: Self {
+        .init(
+            title: L10n.somethingWentWrong,
+            description: L10n.unknownError
+        )
+    }
 }

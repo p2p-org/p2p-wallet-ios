@@ -162,6 +162,7 @@ public struct KeyAppInfo: Codable, Equatable {
     public let fees: Fees
     public let refundableFee: String
     public let _hash: String
+    public let epoch: UInt64
 }
 
 public struct Fees: Codable, Equatable {

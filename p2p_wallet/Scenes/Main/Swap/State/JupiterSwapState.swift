@@ -95,6 +95,9 @@ struct JupiterSwapState: Equatable {
     /// jupiter.
     var splAccountCreationFee: Lamports
 
+    /// transfer fee on token 2022
+    var transferFeeBasisPoints: UInt16?
+
     // MARK: - Computed properties
 
     /// Amount to
@@ -325,7 +328,8 @@ struct JupiterSwapState: Equatable {
             toToken: .nativeSolana,
             slippageBps: 0,
             lamportPerSignature: 5000,
-            splAccountCreationFee: 0
+            splAccountCreationFee: 0,
+            transferFeeBasisPoints: nil
         )
     }
 

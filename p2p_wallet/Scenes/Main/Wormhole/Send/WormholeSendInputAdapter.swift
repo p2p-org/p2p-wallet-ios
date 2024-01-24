@@ -53,10 +53,14 @@ struct WormholeSendInputStateAdapter: Equatable {
     var fees: String {
         switch state {
         case let .ready(_, output, _):
-            return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+            if let arbiter = output.fees.arbiter?.asCryptoAmount {
+                return "≈\(cryptoFormatter.string(amount: arbiter))"
+            } else {
+                return ""
+            }
         case let .error(_, output, _):
-            if let output {
-                return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+            if let output, let arbiter = output.fees.arbiter?.asCryptoAmount {
+                return "≈\(cryptoFormatter.string(amount: arbiter))"
             } else {
                 return ""
             }
@@ -140,13 +144,13 @@ struct WormholeSendInputStateAdapter: Equatable {
     }
 
     var disableSwitch: Bool {
-        input?.solanaAccount.price == nil
+        true
     }
 
     var totalCryptoAmount: String {
         if let input {
-            let arbiterFee = output?.fees.arbiter?.asCryptoAmount ?? input.amount.with(amount: 0)
-            return cryptoFormatter.string(amount: input.amount + arbiterFee)
+            let totalAmount = output?.fees.totalAmount?.asCryptoAmount ?? input.amount.with(amount: 0)
+            return cryptoFormatter.string(amount: totalAmount)
         } else {
             return "N/A"
         }

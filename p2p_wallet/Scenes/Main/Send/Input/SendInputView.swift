@@ -218,13 +218,26 @@ struct SendInputView: View {
                         }
                 }
 
-                FeeRelayerDebugView(
-                    viewModel: .init(
-                        feeInSOL: viewModel.currentState.fee,
-                        feeInToken: viewModel.currentState.feeInToken,
-                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                Group {
+                    Text(
+                        "User limit: \(viewModel.currentState.limit.jsonString ?? "")"
                     )
-                )
+
+                    if let fee = viewModel.currentState.token2022TransferFeePercentage {
+                        Text("token2022Fee percentage: \(Double(fee.withScale(4).description) * 100)")
+                    }
+
+                    Text(
+                        "feeInSOL(rentExemptionFee: \(viewModel.currentState.fee.accountBalances))"
+                    )
+
+                    Text(
+                        "feeInToken(rentExemptionFee: \(viewModel.currentState.feeInToken.accountBalances.convertToBalance(decimals: viewModel.currentState.tokenFee.decimals)))"
+                    )
+                }
+                .font(uiFont: .font(of: .label2, weight: .regular))
+                .foregroundColor(Color(.red))
+                .multilineTextAlignment(.trailing)
             }
         }
     #endif

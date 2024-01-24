@@ -30,9 +30,15 @@ struct SendTransactionStatusDetailsView: View {
                             )
                     }
                 }
+                .frame(
+                    minWidth: 0,
+                    maxWidth: .infinity,
+                    alignment: .topLeading
+                )
                 .padding(.top, 16)
             }
             .padding(.horizontal, 24)
+
             TextButtonView(title: L10n.close, style: .primaryWhite, size: .large, onPressed: viewModel.close.send)
                 .frame(height: TextButton.Size.large.height)
                 .padding(.horizontal, 24)

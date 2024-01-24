@@ -37,22 +37,7 @@ public extension HTTPClient {
         responseModel: T.Type,
         errorModel: E.Type
     ) async throws -> T {
-        /// URL assertion
-        guard let url = URL(string: endpoint.urlString) else {
-            throw HTTPClientError.invalidURL(endpoint.urlString)
-        }
-
-        // Form request
-        var request = URLRequest(url: url)
-        request.httpMethod = endpoint.method.rawValue
-        request.allHTTPHeaderFields = endpoint.header
-
-        if let body = endpoint.body {
-            request.httpBody = body.data(using: .utf8)
-        }
-
-        // Retrieve data
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response) = try await _request(endpoint: endpoint)
 
         // Check cancellation
         try Task.checkCancellation()
@@ -69,5 +54,38 @@ public extension HTTPClient {
             data: data,
             httpURLResponse: response
         )
+    }
+
+    /// Send request to specific endpoint expect returning data
+    /// - Parameters:
+    ///   - endpoint: endpoint to send request to
+    /// - Returns: Data
+    func requestData(
+        endpoint: HTTPEndpoint
+    ) async throws -> Data {
+        try await _request(endpoint: endpoint).0
+    }
+
+    // MARK: - Helper
+
+    func _request(
+        endpoint: HTTPEndpoint
+    ) async throws -> (Data, URLResponse) {
+        /// URL assertion
+        guard let url = URL(string: endpoint.urlString) else {
+            throw HTTPClientError.invalidURL(endpoint.urlString)
+        }
+
+        // Form request
+        var request = URLRequest(url: url)
+        request.httpMethod = endpoint.method.rawValue
+        request.allHTTPHeaderFields = endpoint.header
+
+        if let body = endpoint.body {
+            request.httpBody = body.data(using: .utf8)
+        }
+
+        // Retrieve data
+        return try await urlSession.data(for: request)
     }
 }

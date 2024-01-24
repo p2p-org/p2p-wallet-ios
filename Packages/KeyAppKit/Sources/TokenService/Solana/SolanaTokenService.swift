@@ -2,9 +2,15 @@ import Foundation
 import KeyAppKitCore
 import SolanaSwift
 
-public typealias SolanaTokensService = TokenRepository
+public protocol SolanaTokensService: TokenRepository {
+    func getTokenAmount(
+        vs_token: String?,
+        amount: UInt64,
+        mints: [String]
+    ) async throws -> [SolanaTokenAmountResponse]
+}
 
-public actor KeyAppSolanaTokenRepository: TokenRepository {
+public actor KeyAppSolanaTokenRepository: SolanaTokensService {
     static let version: Int = 1
 
     struct Database: Codable, Hashable {
@@ -131,6 +137,18 @@ public actor KeyAppSolanaTokenRepository: TokenRepository {
         }
 
         status = .initialising
+    }
+
+    public func getTokenAmount(
+        vs_token: String?,
+        amount: UInt64,
+        mints: [String]
+    ) async throws -> [SolanaTokenAmountResponse] {
+        try await provider.getTokenAmount(
+            vs_token: vs_token,
+            amount: amount,
+            mints: mints
+        )
     }
 }
 

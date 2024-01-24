@@ -20,7 +20,7 @@ extension UIViewController {
             allButtons.append(L10n.ok)
         }
 
-        allButtons.enumerated().forEach { index, buttonTitle in
+        for (index, buttonTitle) in allButtons.enumerated() {
             let style: UIAlertAction.Style = index == destroingIndex ? .destructive : .default
             let action = UIAlertAction(title: buttonTitle, style: style, handler: { _ in
                 completion?(index)

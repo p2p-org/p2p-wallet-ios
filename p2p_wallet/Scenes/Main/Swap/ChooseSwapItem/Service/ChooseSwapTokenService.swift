@@ -85,11 +85,11 @@ private extension ChooseSwapTokenService {
                     secondSection = tokens.filter { $0.userWallet == nil }
                 } else {
                     let preferTokens = Set(self.preferTokens)
-                    tokens.forEach {
-                        if preferTokens.contains($0.token.mintAddress) {
-                            firstSection.append($0)
+                    for item in tokens {
+                        if preferTokens.contains(item.token.mintAddress) {
+                            firstSection.append(item)
                         } else {
-                            secondSection.append($0)
+                            secondSection.append(item)
                         }
                     }
                 }
@@ -129,8 +129,8 @@ private extension ChooseSwapTokenService {
 private extension [SwapToken] {
     func sorted(preferTokens: [String], sortByName: Bool) -> Self {
         var preferOrder = [String: Int]()
-        preferTokens.enumerated().forEach {
-            preferOrder[$0.1] = $0.0 + 1
+        for preferToken in preferTokens.enumerated() {
+            preferOrder[preferToken.1] = preferToken.0 + 1
         }
         return sorted { (lhs: SwapToken, rhs: SwapToken) -> Bool in
             if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {

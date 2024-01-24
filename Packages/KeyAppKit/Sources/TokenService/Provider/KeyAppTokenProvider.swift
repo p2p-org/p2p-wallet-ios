@@ -12,6 +12,13 @@ public protocol KeyAppTokenProvider {
 
     /// Get all solana tokens
     func getSolanaTokens(modifiedSince: Date?) async throws -> KeyAppTokenProviderData.AllSolanaTokensResult
+
+    /// Get token amount conversion
+    func getTokenAmount(
+        vs_token: String?,
+        amount: UInt64,
+        mints: [String]
+    ) async throws -> [SolanaTokenAmountResponse]
 }
 
 public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
@@ -22,12 +29,14 @@ public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
     }
 
     public func getTokensInfo(_ args: KeyAppTokenProviderData.Params<KeyAppTokenProviderData.TokenQuery>) async throws
-    -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Token>] {
+        -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Token>]
+    {
         try await client.call(method: "get_tokens_info", params: args)
     }
 
     public func getTokensPrice(_ args: KeyAppTokenProviderData.Params<KeyAppTokenProviderData.TokenQuery>) async throws
-    -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Price>] {
+        -> [KeyAppTokenProviderData.TokenResult<KeyAppTokenProviderData.Price>]
+    {
         try await client.call(method: "get_tokens_price", params: args)
     }
 
@@ -62,5 +71,20 @@ public class KeyAppTokenHttpProvider: KeyAppTokenProvider {
 
         let parsedData = try JSONDecoder().decode(KeyAppTokenProviderData.AllSolanaTokensResult.Result.self, from: data)
         return .result(parsedData)
+    }
+
+    public func getTokenAmount(
+        vs_token: String?,
+        amount: UInt64,
+        mints: [String]
+    ) async throws -> [SolanaTokenAmountResponse] {
+        try await client.call(
+            method: "get_token_amount",
+            params: SolanaTokenAmountRequest(
+                vs_token: vs_token,
+                amount: "\(amount)",
+                mints: mints
+            )
+        )
     }
 }

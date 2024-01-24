@@ -6,16 +6,16 @@ import Wormhole
 public class RecipientSearchServiceImpl: RecipientSearchService {
     let nameService: NameService
     let solanaClient: SolanaAPIClient
-    let swapService: SwapService
+    let feeCalculator: SendFeeCalculator
 
     public init(
         nameService: NameService,
         solanaClient: SolanaAPIClient,
-        swapService: SwapService
+        feeCalculator: SendFeeCalculator
     ) {
         self.nameService = nameService
         self.solanaClient = solanaClient
-        self.swapService = swapService
+        self.feeCalculator = feeCalculator
     }
 
     public func search(

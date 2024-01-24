@@ -44,6 +44,12 @@ final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
             title = L10n.liquidityFee
             subtitle = L10n.aFeePaidToTheLiquidityProviders
             buttonTitle = L10n.okay + "👍"
+        case .transferFee:
+            image = .accountCreationFeeHand
+            title = L10n.transferFee
+            subtitle = L10n.ChargeThatYouNeedToPayToSendOrReceiveTokenA
+                .itHelpsMaintainTheNetworkAndEnsureSmoothTransactions
+            buttonTitle = L10n.gotIt + "👍"
         }
     }
 
@@ -60,6 +66,7 @@ extension SwapSettingsInfoViewModel {
         case accountCreationFee
         case minimumReceived
         case liquidityFee
+        case transferFee
     }
 }
 
