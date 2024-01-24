@@ -38,47 +38,39 @@ class RecruitmentDispatcher: Dispatcher {
         newActionShouldCancelPreviousAction
     }
 
-    func actionWillBeginDispatching(
+    func dispatch(
         action: RecruitmentAction,
-        currentState: RecruitmentState
-    ) async -> RecruitmentState? {
+        currentState: inout RecruitmentState,
+        yield: (RecruitmentState) -> Void
+    ) async {
         switch action {
         case let .submitApplication(applicantName):
-            return currentState.modified {
+
+            // emit loading state
+            currentState.modify {
                 $0.sendingStatus = .sending
                 $0.applicantName = applicantName
             }
-        }
-    }
 
-    func dispatch(
-        action: RecruitmentAction,
-        currentState: RecruitmentState
-    ) async -> RecruitmentState {
-        switch action {
-        case let .submitApplication(applicantName):
+            yield(currentState)
+
             do {
                 try await RecruitmentBusinessLogic.sendApplicant(
                     applicantName: applicantName,
                     apiClient: apiClient
                 )
 
-                return currentState.modified {
+                currentState.modify {
                     $0.sendingStatus = .completed
                 }
             } catch {
-                return currentState.modified {
+                currentState.modify {
                     $0.sendingStatus = .error("\(error)")
                 }
             }
-        }
-    }
 
-    func actionDidEndDispatching(
-        action _: RecruitmentAction,
-        currentState _: RecruitmentState
-    ) async -> RecruitmentState? {
-        // No additional state modifications in this example
-        nil
+            // emit last state
+            yield(currentState)
+        }
     }
 }

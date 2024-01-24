@@ -35,7 +35,7 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-//        XCTAssertEqual(states.count, 3)
+        XCTAssertEqual(states[states.count - 3], .initial)
         XCTAssertEqual(states[states.count - 2], .init(
             applicantName: "Napoleon The First",
             sendingStatus: .sending
@@ -67,8 +67,7 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-//        XCTAssertEqual(states.count, 5)
-//        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[states.count - 5], .initial)
         XCTAssertEqual(states[states.count - 4], .init(
             applicantName: "Napoleon The First",
             sendingStatus: .sending
@@ -104,8 +103,7 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-//        XCTAssertEqual(states.count, 5)
-//        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[states.count - 5], .initial)
         XCTAssertEqual(states[states.count - 4], .init(
             applicantName: "Napoleon The First",
             sendingStatus: .sending
@@ -142,8 +140,7 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-//        XCTAssertEqual(states.count, 7)
-//        XCTAssertEqual(states[0], .initial)
+        XCTAssertEqual(states[states.count - 7], .initial)
         XCTAssertEqual(states[states.count - 6], .init(
             applicantName: "Napoleon The First",
             sendingStatus: .sending
@@ -189,12 +186,7 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-//        XCTAssertEqual(states.count, 4)
-//        XCTAssertEqual(states[0], .initial)
-        XCTAssertEqual(states[states.count - 3], .init(
-            applicantName: "Napoleon The First",
-            sendingStatus: .sending
-        ))
+        XCTAssertEqual(states[states.count - 3], .initial)
         XCTAssertEqual(states[states.count - 2], .init(
             applicantName: "Napoleon The Second",
             sendingStatus: .sending
@@ -234,24 +226,14 @@ final class StateMachineTests: XCTestCase {
         }
         .value
 
-        // Verify the states are as expected
-//        XCTAssertEqual(states.count, 7)
-//        XCTAssertEqual(states[0], .initial)
-        XCTAssertEqual(states[states.count - 6], .init(
-            applicantName: "Napoleon The First",
-            sendingStatus: .sending
-        ))
-        XCTAssertEqual(states[states.count - 5], .init(
-            applicantName: "Napoleon The Second",
-            sendingStatus: .sending
-        ))
+        XCTAssertEqual(states[states.count - 5], .initial)
         XCTAssertEqual(states[states.count - 4], .init(
             applicantName: "Napoleon The Second",
-            sendingStatus: .completed
+            sendingStatus: .sending
         ))
         XCTAssertEqual(states[states.count - 3], .init(
-            applicantName: "Napoleon The Third",
-            sendingStatus: .sending
+            applicantName: "Napoleon The Second",
+            sendingStatus: .completed
         ))
         XCTAssertEqual(states[states.count - 2], .init(
             applicantName: "Napoleon The Fourth",

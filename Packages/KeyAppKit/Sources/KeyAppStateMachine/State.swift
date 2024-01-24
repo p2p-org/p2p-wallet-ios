@@ -20,4 +20,12 @@ public extension State {
         modify(&state)
         return state
     }
+
+    /// Convenience method to copy current state and modify it directly.
+    /// - Parameter modify: modify logic
+    mutating func modify(_ modify: (inout Self) -> Void) {
+        var state = self
+        modify(&state)
+        self = state
+    }
 }
