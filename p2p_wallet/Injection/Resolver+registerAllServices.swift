@@ -320,8 +320,7 @@ extension Resolver: ResolverRegistering {
 
         register {
             SendRPCService(
-                host: "https://send-service.key.app",
-                urlSession: DebugLoggingURLSession()
+                host: "https://send-service.key.app"
             )
         }
         .scope(.unique)
