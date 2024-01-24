@@ -224,7 +224,7 @@ struct SendInputView: View {
                     )
 
                     if let fee = viewModel.currentState.token2022TransferFeePercentage {
-                        Text("token2022Fee percentage: \(fee * 100)")
+                        Text("token2022Fee percentage: \(Double(fee.withScale(4).description) * 100)")
                     }
 
                     Text(
