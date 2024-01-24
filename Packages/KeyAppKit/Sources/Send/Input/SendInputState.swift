@@ -222,7 +222,8 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
-            token2022TransferFeePerOneToken: token2022TransferFeePerOneToken ?? token2022TransferFeePerReceivingAmountMap,
+            token2022TransferFeePerOneToken: token2022TransferFeePerOneToken ??
+                token2022TransferFeePerReceivingAmountMap,
             feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
             lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
             minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
