@@ -474,8 +474,15 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
+        // For token 2022 only
+        if currentState.token.tokenProgramId == Token2022Program.id.base58EncodedString {
+            feeTitle = L10n.token2022Details
+            return
+        }
+
+        // For another tokens
         if currentState.isTransactionFree {
-            feeTitle = L10n.enjoyFreeTransactions
+            feeTitle = L10n.fees(0)
         } else {
             // transaction fee and account rent fee
             if currentState.fee.total > 0 {
