@@ -18,6 +18,7 @@ struct SettingsView: View {
         List {
             Group {
                 profileSection
+                referralProgramSection
                 securitySection
                 appearanceSection
                 communitySection
@@ -114,6 +115,14 @@ struct SettingsView: View {
                     )
                 }
             }
+        }
+    }
+
+    private var referralProgramSection: some View {
+        Section {
+            ReferralProgramBannerView(shareAction: {}, openDetails: {})
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
     }
 

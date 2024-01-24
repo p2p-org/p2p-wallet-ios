@@ -34,6 +34,8 @@ struct CryptoAccountsView: View {
                         .padding(.top, 5)
                         .padding(.bottom, 32)
                         .id(0)
+                    ReferralProgramBannerView(shareAction: {}, openDetails: {})
+                        .padding(.horizontal, 16)
                     content
                 }
             }
