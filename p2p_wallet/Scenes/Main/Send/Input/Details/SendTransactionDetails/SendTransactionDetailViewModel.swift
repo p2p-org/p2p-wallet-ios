@@ -164,19 +164,27 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     private func extractTotalCellModel(state: SendInputState) -> CellModel {
-        var subtitles: [(String, String?)] = []
+        // Total amount in sending token
+        var subtitles: [(String, String?)] = [
+            convert(
+                state.totalAmount,
+                state.token,
+                state.sourceWallet?.price
+            ),
+        ]
 
-        var totalAmount: Lamports = state.amountInToken.toLamport(decimals: state.token.decimals)
-        if state.token.mintAddress == state.tokenFee.mintAddress {
-            totalAmount += state.feeInToken.total
-        } else {
-            let fee = state.feeInToken.transaction + state.feeInToken.accountBalances
-            if fee > 0 {
-                subtitles.append(convert(fee, state.tokenFee, state.feeWallet?.price))
-            }
+        // Fees in case user is not paying fee using sending token
+        if state.token.mintAddress != state.tokenFee.mintAddress,
+           state.feeInToken.total > 0
+        {
+            subtitles.append(
+                convert(
+                    state.feeInToken.total,
+                    state.tokenFee,
+                    state.feeWallet?.price
+                )
+            )
         }
-
-        subtitles.insert(convert(totalAmount, state.token, state.sourceWallet?.price), at: 0)
 
         return CellModel(
             type: .total,
