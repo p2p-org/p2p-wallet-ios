@@ -571,6 +571,11 @@
 "✌️ Great! Your new PIN is set." = "✌️ Great! Your new PIN is set.";
 "😓 name is not available" = "😓 name is not available";
 "😢 PIN doesn't match. Please try again" = "😢 PIN doesn't match. Please try again";
+"Confirm selection" = "Confirm selection";
+"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
+"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
+"Be save and carefull" = "Be save and carefull";
+"The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default." = "The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default.";
 "Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions." = "Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions.";
 "Confirm selection" = "Confirm selection";
 "The token %@ is out of the strict list" = "The token %@ is out of the strict list";

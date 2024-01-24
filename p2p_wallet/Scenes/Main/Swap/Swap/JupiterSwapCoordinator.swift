@@ -14,8 +14,8 @@ struct JupiterSwapParameters {
     let preChosenWallet: SolanaAccount?
     let destinationWallet: SolanaAccount?
 
-    let inputMint: String?
-    let outputMint: String?
+    let inputToken: String?
+    let outputToken: String?
 
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
@@ -28,15 +28,15 @@ struct JupiterSwapParameters {
         source: JupiterSwapSource,
         preChosenWallet: SolanaAccount? = nil,
         destinationWallet: SolanaAccount? = nil,
-        inputMint: String? = nil,
-        outputMint: String? = nil,
+        inputToken: String? = nil,
+        outputToken: String? = nil,
         hideTabBar: Bool = false
     ) {
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
 
-        self.inputMint = inputMint
-        self.outputMint = outputMint
+        self.inputToken = inputToken
+        self.outputToken = outputToken
 
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
@@ -92,8 +92,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             source: params.source,
             preChosenWallet: params.preChosenWallet,
             destinationWallet: params.destinationWallet,
-            inputMint: params.inputMint,
-            outputMint: params.outputMint
+            inputToken: params.inputToken,
+            outputToken: params.outputToken
         )
 
         // view
