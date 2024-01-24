@@ -484,27 +484,17 @@ private extension SendInputViewModel {
         if currentState.isTransactionFree {
             feeTitle = L10n.fees(0)
         } else {
-            // transaction fee and account rent fee
-            if currentState.fee.total > 0 {
-                feeTitle = L10n
-                    .fees(
-                        currentState.feeInToken.total
-                            .convertToBalance(
-                                decimals: Int(currentState.tokenFee.decimals)
-                            )
-                            .tokenAmountFormattedString(
-                                symbol: currentState.tokenFee.symbol,
-                                roundingMode: .down
-                            )
-                    )
-            }
-
-            // token2022 fees
-            else {
-                let text = (currentState.token2022TransferFeePercentage * 100)
-                    .toString(maximumFractionDigits: 2)
-                feeTitle = L10n.fees(text + "%")
-            }
+            feeTitle = L10n
+                .fees(
+                    currentState.feeInToken.total
+                        .convertToBalance(
+                            decimals: Int(currentState.tokenFee.decimals)
+                        )
+                        .tokenAmountFormattedString(
+                            symbol: currentState.tokenFee.symbol,
+                            roundingMode: .down
+                        )
+                )
         }
     }
 

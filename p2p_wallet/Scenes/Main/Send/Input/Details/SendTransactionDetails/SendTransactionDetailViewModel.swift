@@ -75,7 +75,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     private func extractToken2022FeeCellModel(state: SendInputState) -> CellModel? {
         .init(
             type: .token2022Fee,
-            title: L10n.transferFee,
+            title: L10n.token2022TransferFee,
             subtitle: [(
                 (state.token2022TransferFeePercentage * 100).toString(maximumFractionDigits: 2) + "%",
                 nil

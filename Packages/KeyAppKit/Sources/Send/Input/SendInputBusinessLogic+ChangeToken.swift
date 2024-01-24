@@ -1,3 +1,4 @@
+import BigDecimal
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -12,23 +13,29 @@ extension SendInputBusinessLogic {
         do {
             // Update fee in SOL and source token
             let fee: FeeAmount
-            let token2022TransferFeePerOneToken: [String: UInt64]?
+            let token2022TransferFeePerOneToken: [String: BigDecimal]?
             if state.isSendingViaLink {
                 fee = .zero
                 token2022TransferFeePerOneToken = nil
             } else {
                 if token.tokenProgramId == Token2022Program.id.base58EncodedString {
-                    if let string = try? await services.rpcService.transfer(
-                        userWallet: state.userWalletEnvironments.userWalletAddress ?? "",
-                        mint: token.mintAddress,
-                        amount: 1.toLamport(decimals: token.decimals),
-                        recipient: state.recipient.address,
-                        transferMode: .exactIn,
-                        networkFeePayer: .userSOL,
-                        taRentPayer: .userSOL
-                    ).token2022_TransferFee?.amount.amount {
+                    if let response = try? await services.rpcService
+                        .transfer(
+                            userWallet: state.userWalletEnvironments.userWalletAddress ?? "",
+                            mint: token.mintAddress,
+                            amount: 1.toLamport(decimals: token.decimals),
+                            recipient: state.recipient.address,
+                            transferMode: .exactIn,
+                            networkFeePayer: .userSOL,
+                            taRentPayer: .userSOL
+                        ),
+                        let string = response.token2022_TransferFee?.amount.amount,
+                        let transferFee = BigDecimal(string),
+                        let recipientGets = BigDecimal(response.recipientGetsAmount.amount),
+                        recipientGets != 0
+                    {
                         var currentValue = state.token2022TransferFeePerOneToken
-                        currentValue[token.mintAddress] = UInt64(string)
+                        currentValue[token.mintAddress] = transferFee / recipientGets
                         token2022TransferFeePerOneToken = currentValue
                     } else {
                         token2022TransferFeePerOneToken = nil
