@@ -332,15 +332,27 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self else { return }
                 let text: String
-                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress, self.currentState
-                    .fee != .zero
+                let isToken2022 = currentState.token.tokenProgramId == Token2022Program.id.base58EncodedString
+
+                if currentState.feeWallet?.mintAddress == sourceWallet.mintAddress,
+                   currentState.fee != .zero
                 {
-                    text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
+                    if isToken2022 {
+                        text = L10n.calculatedBySubtractingTheToken2022TransferFeeAndAccountCreationFeeFromYourBalance
+                    } else {
+                        text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
+                    }
+
                 } else {
-                    text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
+                    if isToken2022 {
+                        text = L10n.calculatedBySubtractingTheToken2022TransferFeeFromYourBalance
+                    } else {
+                        text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
+                    }
                 }
-                self.handleSuccess(text: text)
-                self.vibrate()
+
+                handleSuccess(text: text)
+                vibrate()
             }
             .store(in: &subscriptions)
 
