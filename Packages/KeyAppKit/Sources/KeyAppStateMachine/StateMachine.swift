@@ -119,17 +119,6 @@ public actor StateMachine<
 
     /// Perform an action by delegating works to dispatcher
     private nonisolated func performAction(action: Action) async {
-        // Log
-        logIfVerbose(message: "🏗️ Action will begin dispatching: \(action)")
-
-        if let intermediateState = await dispatcher.actionWillBeginDispatching(
-            action: action,
-            currentState: currentState
-        ) {
-            // loading state whene action is about to be dispatched if it is needed
-            stateSubject.send(intermediateState)
-        }
-
         // check cancellation
         guard !Task.isCancelled else {
             logIfVerbose(message: "❌ Action cancelled: \(action)")
@@ -139,30 +128,36 @@ public actor StateMachine<
         // Log
         logIfVerbose(message: "🚀 Action is being dispatched: \(action)")
 
-        // dispatch action
-        stateSubject.send(
-            await dispatcher.dispatch(
-                action: action,
-                currentState: currentState
-            )
-        )
+        // get stream of states by dispatching action
+        let stateStream = AsyncStream { continuation in
+            Task {
+                var currentState = currentState
 
-        // check cancellation
-        guard !Task.isCancelled else {
-            logIfVerbose(message: "❌ Action cancelled: \(action)")
-            return
+                await dispatcher.dispatch(
+                    action: action,
+                    currentState: &currentState
+                ) { state in
+                    continuation.yield(state)
+                }
+
+                continuation.finish()
+            }
+        }
+
+        // Listen to stream and send state to user
+        for await state in stateStream {
+            // check cancellation
+            guard !Task.isCancelled else {
+                logIfVerbose(message: "❌ Action cancelled: \(action)")
+                return
+            }
+
+            // send state
+            stateSubject.send(state)
         }
 
         // Log
         logIfVerbose(message: "✅ Action did end dispatching: \(action)")
-
-        if let endState = await dispatcher.actionDidEndDispatching(
-            action: action,
-            currentState: currentState
-        ) {
-            // additional state when action is dispatched if it is needed
-            stateSubject.send(endState)
-        }
     }
 
     /// Save current action
