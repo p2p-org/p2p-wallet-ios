@@ -63,7 +63,10 @@ struct CryptoAccountsView: View {
     }
 
     private var banner: some View {
-        ReferralProgramBannerView(shareAction: {}, openDetails: {})
+        ReferralProgramBannerView(
+            shareAction: viewModel.shareReferralLink.send,
+            openDetails: viewModel.openReferralProgramDetails.send
+        )
     }
 
     private var content: some View {

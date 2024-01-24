@@ -17,6 +17,8 @@ struct ReferralProgramBannerView: View {
                     .padding(.trailing, 12)
             }
             HStack(spacing: 8) {
+                // Must apply a button style for the correct behaviour inside a list
+                // https://stackoverflow.com/a/70400079
                 NewTextButton(
                     title: L10n.shareMyLink,
                     size: .small,
@@ -25,6 +27,7 @@ struct ReferralProgramBannerView: View {
                     trailing: UIImage(resource: .share3),
                     action: shareAction
                 )
+                .buttonStyle(.plain)
                 NewTextButton(
                     title: L10n.openDetails,
                     size: .small,
@@ -32,6 +35,7 @@ struct ReferralProgramBannerView: View {
                     expandable: true,
                     action: openDetails
                 )
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)

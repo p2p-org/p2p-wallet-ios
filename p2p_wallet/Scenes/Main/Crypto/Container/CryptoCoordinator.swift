@@ -21,6 +21,8 @@ enum CryptoNavigation: Equatable {
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
+    case referral
+    case shareReferral(URL)
     // Empty
     case topUpCoin(TokenMetadata)
     // Error
@@ -203,6 +205,14 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
+        case .referral:
+            return coordinate(to: ReferralProgramCoordinator(navigationController: navigationController))
+                .eraseToAnyPublisher()
+        case let .shareReferral(link):
+            let activityVC = UIActivityViewController(activityItems: [link], applicationActivities: nil)
+            navigationController.present(activityVC, animated: true)
+            return Just(())
+                .eraseToAnyPublisher()
         default:
             return Just(())
                 .eraseToAnyPublisher()

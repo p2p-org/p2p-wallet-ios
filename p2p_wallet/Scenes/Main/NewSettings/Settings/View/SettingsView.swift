@@ -122,9 +122,12 @@ struct SettingsView: View {
 
     private var referralProgramSection: some View {
         Section {
-            ReferralProgramBannerView(shareAction: {}, openDetails: {})
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            ReferralProgramBannerView(
+                shareAction: viewModel.shareReferralLink.send,
+                openDetails: viewModel.openReferralProgramDetails.send
+            )
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
     }
 

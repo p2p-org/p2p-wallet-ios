@@ -51,6 +51,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Published var deviceShareMigrationAlert: Bool = false
 
     @Published var isReferralProgramEnabled: Bool
+    let openReferralProgramDetails = PassthroughSubject<Void, Never>()
+    let shareReferralLink = PassthroughSubject<Void, Never>()
 
     var appInfo: String {
         AppInfo.appVersionDetail
@@ -174,6 +176,20 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 self.updateNameIfNeeded()
             }
             .store(in: &subscriptions)
+
+        openReferralProgramDetails
+            .map { OpenAction.referral }
+            .sink { [weak self] navigation in
+                self?.openActionSubject.send(navigation)
+            }
+            .store(in: &subscriptions)
+
+        shareReferralLink
+            .map { OpenAction.shareReferral(URL(string: "https://www.google.com/")!) }
+            .sink { [weak self] navigation in
+                self?.openActionSubject.send(navigation)
+            }
+            .store(in: &subscriptions)
     }
 
     func openTwitter() {
@@ -197,5 +213,7 @@ extension SettingsViewModel {
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin
+        case referral
+        case shareReferral(URL)
     }
 }
