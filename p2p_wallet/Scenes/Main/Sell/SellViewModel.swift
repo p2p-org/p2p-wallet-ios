@@ -6,6 +6,7 @@ import Reachability
 import Resolver
 import Sell
 import SolanaSwift
+import UIKit
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -75,7 +76,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
     @Published var fee: LoadingValue<SellViewModel.Fee> = .loaded(.zero)
-    @Published var status: SellDataServiceStatus = .initialized
+    @Published var status = SellDataViewStatus.loading
     @Published var inputError: SellViewModelInputError?
     var shouldNotShowKeyboard = false
     var currentInputTypeCode: String {
@@ -83,6 +84,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     @Published var quoteReceiveAmount: Double = 0
+
+    @Published var region: SelectCountryViewModel.Model?
 
     // MARK: - Initializer
 
@@ -107,9 +110,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
         goBackSubject.send()
     }
 
-    func warmUp() {
+    func warmUp(region: ProviderRegion? = nil) {
         Task { [unowned self] in
-            await dataService.update()
+            await dataService.update(region: region)
         }
     }
 
@@ -141,6 +144,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
         if isEnteringQuoteAmount {
             isEnteringQuoteAmount = false
         }
+    }
+
+    func countrySelected(_ country: SelectCountryViewModel.Model, isSellAllowed: Bool) {
+        setNewCountryInfo(model: country, isSellAllowed: isSellAllowed)
+        warmUp(region: country)
+    }
+
+    func changeTheRegionClicked() {
+        guard let region else { return }
+        navigation.send(.chooseCountry(region))
     }
 
     func openProviderWebView(
@@ -236,7 +249,20 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // bind status publisher to status property
         dataService.statusPublisher
             .receive(on: RunLoop.main)
-            .assignWeak(to: \.status, on: self)
+            .sink(receiveValue: { [weak self] dataStatus in
+                guard let self else { return }
+                switch dataStatus {
+                case .initialized, .updating:
+                    self.status = .loading
+                case .ready:
+                    self.status = .ready
+                case let .error(SellDataServiceError.unsupportedRegion(region)):
+                    setNewCountryInfo(model: region.createModel(), isSellAllowed: false)
+                case let .error(error):
+                    self.status = .error(.other)
+                }
+                self.region = self.dataService.region?.createModel()
+            })
             .store(in: &subscriptions)
 
         // bind dataService.data to viewModel's data
@@ -273,12 +299,17 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // Open pendings in case there are pending txs
         dataPublisher
+            .filter { [weak self] currency, _ in
+                guard let self else { return false }
+                self.minBaseAmount = currency?.minSellAmount ?? 0
+                self.checkIfMoreBaseCurrencyNeeded()
+                return !self.isMoreBaseCurrencyNeeded
+            }
             .withLatestFrom(dataService.transactionsPublisher)
             .map { $0.filter { $0.status == .waitingForDeposit }}
             .removeDuplicates()
             .sink(receiveValue: { [weak self] transactions in
                 guard let self = self, let fiat = self.dataService.fiat else { return }
-                guard !self.isMoreBaseCurrencyNeeded else { return }
                 self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
             })
             .store(in: &subscriptions)
@@ -299,7 +330,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
             .filter { [weak self] _ in
-                self?.status.isReady == true
+                if case .ready = self?.status { return true }
+                return false
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
@@ -329,18 +361,29 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         try? reachability.startNotifier()
-        reachability.status.sink { [unowned self] _ in
-            _ = self.reachability.check()
+        reachability.status.sink { [weak self] _ in
+            _ = self?.reachability.check()
         }.store(in: &subscriptions)
     }
 
     // MARK: - Helpers
 
+    private func setNewCountryInfo(model: SelectCountryViewModel.Model, isSellAllowed: Bool) {
+        region = model
+        guard !isSellAllowed else { return }
+        let model = ChangeCountryErrorView.ChangeCountryModel(
+            image: UIImage(resource: .connectionErrorCat),
+            title: L10n.sorry,
+            subtitle: L10n.unfortunatelyYouCanNotCashoutInButYouCanStillUseOtherKeyAppFeatures(model.title),
+            buttonTitle: L10n.goBack,
+            subButtonTitle: L10n.changeTheRegionManually
+        )
+        status = .error(.region(model))
+    }
+
     private func checkIfMoreBaseCurrencyNeeded() {
         maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
-        if maxBaseAmount < minBaseAmount {
-            isMoreBaseCurrencyNeeded = true
-        }
+        isMoreBaseCurrencyNeeded = maxBaseAmount < minBaseAmount
     }
 
     private func checkError(amount: Double) {
@@ -375,7 +418,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
             return
         }
 
-        updatePricesTask = Task { [unowned self] in
+        updatePricesTask = Task { [weak self] in
+            guard let self else { return }
             // get sellQuote
             do {
                 let sellQuote = try await self.actionService.sellQuote(
@@ -440,5 +484,13 @@ extension SellViewModel {
         var quoteAmount: Double
 
         static let zero = SellViewModel.Fee(baseAmount: 0, quoteAmount: 0)
+    }
+}
+
+extension SelectCountryViewModel.Model: ProviderRegion {}
+
+private extension ProviderRegion {
+    func createModel() -> SelectCountryViewModel.Model {
+        SelectCountryViewModel.Model(alpha2: alpha2, country: country, state: state, alpha3: alpha3)
     }
 }

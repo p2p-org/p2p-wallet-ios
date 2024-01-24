@@ -2,6 +2,7 @@ import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import SwiftUI
+import TokenService
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel

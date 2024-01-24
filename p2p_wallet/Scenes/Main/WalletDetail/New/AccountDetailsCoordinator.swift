@@ -57,6 +57,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSwap()
             case let .openSwapWithDestination(source, recipient):
                 self.openSwap(destination: recipient)
+            case .openCashOut:
+                self.openCashout()
             }
         }
         .store(in: &subscriptions)
@@ -135,9 +137,18 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
 
         coordinate(to: SellCoordinator(
-            initialAmountInToken: transaction.baseCurrencyAmount,
-            navigationController: navigationController
+            navigationController: navigationController,
+            initialAmountInToken: transaction.baseCurrencyAmount
         ))
+        .receive(on: RunLoop.main)
+        .handleEvents(receiveOutput: { [weak navigationController] result in
+            switch result {
+            case .completed, .none:
+                break
+            case .interupted:
+                navigationController?.dismiss(animated: true)
+            }
+        })
         .sink { _ in }
         .store(in: &subscriptions)
     }
@@ -285,24 +296,23 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 case let .wormhole(trx):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self
-                        .coordinate(to: TransactionDetailCoordinator(
-                            viewModel: .init(userAction: trx),
-                            presentingViewController: rootViewController
-                        ))
-                        .sink(receiveValue: { _ in })
-                        .store(in: &self.subscriptions)
+                    coordinate(to: TransactionDetailCoordinator(
+                        viewModel: .init(userAction: trx),
+                        presentingViewController: rootViewController
+                    ))
+                    .sink(receiveValue: { _ in })
+                    .store(in: &subscriptions)
 
                 case let .sent(model):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self
-                        .coordinate(to: SendTransactionStatusCoordinator(
-                            parentController: rootViewController,
-                            transaction: model
-                        ))
-                        .sink(receiveValue: {})
-                        .store(in: &self.subscriptions)
+                    coordinate(to: SendTransactionStatusCoordinator(
+                        parentController: rootViewController,
+                        transaction: model
+                    ))
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+
                 case .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 
@@ -336,6 +346,16 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             shouldPush: false
         )
 
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
+
+    func openCashout() {
+        let coordinator = SellCoordinator(
+            presentingViewController: presentation.presentingViewController,
+            shouldPush: false
+        )
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)

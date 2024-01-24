@@ -69,17 +69,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
 
         viewModel.openFeeInfo
-            .sink { [weak self, weak viewModel] isFree in
+            .sink { [weak self, weak viewModel] in
                 guard let self, let viewModel else { return }
-                if viewModel.currentState.isSendingViaLink {
+                if viewModel.currentState.isTransactionFree {
                     self.openFreeTransactionsDetail(
-                        from: controller,
-                        isSendingViaLink: true
-                    )
-                } else if viewModel.currentState.amountInToken == 0, isFree {
-                    self.openFreeTransactionsDetail(
-                        from: controller,
-                        isSendingViaLink: false
+                        from: controller
                     )
                 } else {
                     self.openFeeDetail(from: controller, viewModel: viewModel)
@@ -150,18 +144,21 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openFreeTransactionsDetail(
-        from vc: UIViewController,
-        isSendingViaLink: Bool
+        from vc: UIViewController
     ) {
         coordinate(to: SendInputFreeTransactionsDetailCoordinator(
             parentController: vc,
-            isFreeTransactionsLimited: !isSendingViaLink
+            isFreeTransactionsLimited: false // Disable for now
         ))
         .sink(receiveValue: {})
         .store(in: &subscriptions)
     }
 
-    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [SolanaAccount]) {
+    private func openFeePropmt(
+        from vc: UIViewController,
+        viewModel: SendInputViewModel,
+        feeWallets: [SolanaAccount]
+    ) {
         guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,

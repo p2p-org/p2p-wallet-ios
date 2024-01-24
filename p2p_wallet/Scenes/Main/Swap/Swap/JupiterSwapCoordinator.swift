@@ -3,6 +3,7 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import SwiftUI
+import UIKit
 
 enum JupiterSwapSource: String {
     case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend",
@@ -51,6 +52,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private var viewModel: SwapViewModel!
 
     private var swapSettingBarButton: UIBarButtonItem!
+    private var shareBarButton: UIBarButtonItem!
 
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
@@ -135,12 +137,21 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     func style(controller: UIViewController) {
         controller.title = L10n.swap
         controller.navigationItem.largeTitleDisplayMode = .never
+
         swapSettingBarButton = UIBarButtonItem(
             image: .init(resource: .receipt),
             style: .plain,
             target: self,
             action: #selector(receiptButtonPressed)
         )
+
+        let shareButton = UIButton(type: .system)
+            .setTarget(target: self, action: #selector(shareButtonPressed), for: .touchUpInside)
+        shareButton.setImage(UIImage(named: "share-1"), for: .normal)
+        shareButton.setTitleColor(.gray, for: .highlighted)
+
+        shareBarButton = UIBarButtonItem(customView: shareButton)
+
         // show rightBarButtonItem only on successful loading
         viewModel.$viewState
             .map { state -> Bool in
@@ -152,11 +163,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                 }
             }
             .removeDuplicates()
-            .sink { [weak controller, weak swapSettingBarButton] show in
+            .sink { [weak controller, weak swapSettingBarButton, weak shareBarButton] show in
+                guard let swapSettingBarButton, let shareBarButton else { return }
+
                 if !show {
-                    controller?.navigationItem.rightBarButtonItem = nil
-                } else if controller?.navigationItem.rightBarButtonItem == nil {
-                    controller?.navigationItem.rightBarButtonItem = swapSettingBarButton
+                    controller?.navigationItem.rightBarButtonItems = [shareBarButton]
+                } else {
+                    controller?.navigationItem.rightBarButtonItems = [swapSettingBarButton, shareBarButton]
                 }
             }
             .store(in: &subscriptions)
@@ -169,6 +182,18 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     @objc private func receiptButtonPressed() {
         UIApplication.shared.endEditing()
         openSwapSettings()
+    }
+
+    @objc private func shareButtonPressed() {
+        UIApplication.shared.endEditing()
+
+        let from = viewModel.currentState.fromToken.mintAddress
+        let to = viewModel.currentState.toToken.mintAddress
+
+        let items = ["https://s.key.app/swap?from=\(from)&to=\(to)"]
+        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
+
+        navigationController.present(activityVC, animated: true)
     }
 
     private func openChooseToken(fromToken: Bool) {

@@ -71,6 +71,10 @@ struct SwapSettingsView: View {
                 identifier: .networkFee
             )
 
+            if viewModel.info.transferFee != nil {
+                commonRow(title: L10n.transferFee, subtitle: viewModel.info.transferFee, identifier: .transferFee)
+            }
+
             // Account creation fee
             if viewModel.isLoadingOrRouteNotNil {
                 feeRow(
@@ -290,6 +294,7 @@ extension SwapSettingsView {
     enum RowIdentifier: Equatable {
         case route
         case networkFee
+        case transferFee
         case accountCreationFee
         case liquidityFee
         case minimumReceived

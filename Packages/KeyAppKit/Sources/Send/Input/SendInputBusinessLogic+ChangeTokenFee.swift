@@ -1,4 +1,3 @@
-import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
@@ -9,13 +8,6 @@ extension SendInputBusinessLogic {
         feeToken: SolanaAccount,
         services: SendInputServices
     ) async -> SendInputState {
-        guard let feeRelayerContext = state.feeRelayerContext else {
-            return state.copy(
-                status: .error(reason: .missingFeeRelayer),
-                tokenFee: feeToken
-            )
-        }
-
         do {
             let fee: FeeAmount
             let feeInToken: FeeAmount
@@ -23,17 +15,19 @@ extension SendInputBusinessLogic {
                 fee = .zero
                 feeInToken = .zero
             } else {
-                fee = try await services.feeService.getFees(
-                    from: state.token,
-                    recipient: state.recipient,
-                    recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: feeToken.mintAddress,
-                    feeRelayerContext: feeRelayerContext
-                ) ?? .zero
-                feeInToken = try (try? await services.swapService.calculateFeeInPayingToken(
-                    feeInSOL: fee,
-                    payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
-                )) ?? .zero
+                fee = try await services.feeCalculator
+                    .getFees(
+                        from: state.token,
+                        recipient: state.recipient,
+                        recipientAdditionalInfo: state.recipientAdditionalInfo,
+                        lamportsPerSignature: state.lamportsPerSignature,
+                        limit: state.limit
+                    ) ?? .zero
+                feeInToken = (try? await services.feeCalculator
+                    .calculateFeeInPayingToken(
+                        feeInSOL: fee,
+                        payingFeeTokenMint: PublicKey(string: feeToken.mintAddress)
+                    )) ?? .zero
             }
 
             let state = state.copy(

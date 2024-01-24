@@ -4,6 +4,7 @@ import XCTest
 import Combine
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 import Web3
 
 final class EthereumAccountsServiceTests: XCTestCase {

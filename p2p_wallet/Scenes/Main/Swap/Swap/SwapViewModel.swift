@@ -205,8 +205,8 @@ private extension SwapViewModel {
                 switch dataStatus {
                 case .loading, .initial:
                     self.viewState = .loading
-                case let .ready(jupiterTokens, routeMap):
-                    await self.initialize(jupiterTokens: jupiterTokens, routeMap: routeMap)
+                case let .ready(jupiterTokens):
+                    await self.initialize(jupiterTokens: jupiterTokens)
                 case .failed:
                     self.viewState = .failed
                 }

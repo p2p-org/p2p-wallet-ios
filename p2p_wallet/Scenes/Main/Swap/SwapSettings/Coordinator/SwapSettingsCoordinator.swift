@@ -111,6 +111,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             // for route, there is a special case
             showChooseRoute()
             return
+        case .transferFee:
+            strategy = .transferFee
         case .networkFee:
             strategy = .enjoyFreeTransaction
         case .accountCreationFee:

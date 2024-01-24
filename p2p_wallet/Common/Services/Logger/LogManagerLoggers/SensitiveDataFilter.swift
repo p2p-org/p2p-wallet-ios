@@ -6,7 +6,7 @@ class DefaultSensitiveDataFilter {
 
     func map(string: String) -> String {
         var ret = string
-        rules.forEach { rule in
+        for rule in rules {
             ret = rule.map(ret)
         }
         return ret
@@ -24,12 +24,12 @@ struct PrivateKeySensitiveDataFilterRule: SensitiveDataFilterRule {
 
     func map(_ string: String) -> String {
         var str = string
-        regs.forEach { reg in
+        for reg in regs {
             guard let regex = try? NSRegularExpression(
                 pattern: reg,
                 options: NSRegularExpression.Options.caseInsensitive
             ) else {
-                return
+                continue
             }
             let range = NSMakeRange(0, string.count)
             let modString = regex.stringByReplacingMatches(

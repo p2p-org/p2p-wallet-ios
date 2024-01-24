@@ -1,3 +1,4 @@
+import BigDecimal
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -9,31 +10,52 @@ extension SendInputBusinessLogic {
         token: SolanaAccount,
         services: SendInputServices
     ) async -> SendInputState {
-        guard let feeRelayerContext = state.feeRelayerContext else {
-            return state.copy(
-                status: .error(reason: .missingFeeRelayer),
-                token: token
-            )
-        }
-
         do {
             // Update fee in SOL and source token
             let fee: FeeAmount
+            let token2022TransferFeePerOneToken: [String: BigDecimal]?
             if state.isSendingViaLink {
                 fee = .zero
+                token2022TransferFeePerOneToken = nil
             } else {
-                fee = try await services.feeService.getFees(
+                if token.tokenProgramId == Token2022Program.id.base58EncodedString {
+                    if let response = try? await services.rpcService
+                        .transfer(
+                            userWallet: state.userWalletEnvironments.userWalletAddress ?? "",
+                            mint: token.mintAddress,
+                            amount: 1.toLamport(decimals: token.decimals),
+                            recipient: state.recipient.address,
+                            transferMode: .exactIn,
+                            networkFeePayer: .userSOL,
+                            taRentPayer: .userSOL
+                        ),
+                        let string = response.token2022_TransferFee?.amount.amount,
+                        let transferFee = BigDecimal(string),
+                        let recipientGets = BigDecimal(response.recipientGetsAmount.amount),
+                        recipientGets != 0
+                    {
+                        var currentValue = state.token2022TransferFeePerReceivingAmountMap
+                        currentValue[token.mintAddress] = transferFee / recipientGets
+                        token2022TransferFeePerOneToken = currentValue
+                    } else {
+                        token2022TransferFeePerOneToken = nil
+                    }
+                } else {
+                    token2022TransferFeePerOneToken = nil
+                }
+                fee = try await services.feeCalculator.getFees(
                     from: token,
                     recipient: state.recipient,
                     recipientAdditionalInfo: state.recipientAdditionalInfo,
-                    payingTokenMint: state.tokenFee.mintAddress,
-                    feeRelayerContext: feeRelayerContext
+                    lamportsPerSignature: state.lamportsPerSignature,
+                    limit: state.limit
                 ) ?? .zero
             }
 
             var state = state.copy(
                 token: token,
-                fee: fee
+                fee: fee,
+                token2022TransferFeePerOneToken: token2022TransferFeePerOneToken
             )
 
             // Auto select fee token
@@ -44,12 +66,13 @@ extension SendInputBusinessLogic {
                     userWallets: state.userWalletEnvironments.wallets,
                     feeInSol: state.fee,
                     token: state.token,
-                    services: services
+                    services: services,
+                    whitelistMints: state.feePayableTokenMints
                 )
 
                 state = state.copy(
                     tokenFee: feeInfo.token,
-                    feeInToken: fee == .zero ? .zero : feeInfo.fee
+                    feeInToken: feeInfo.fee
                 )
             }
 
@@ -82,7 +105,8 @@ extension SendInputBusinessLogic {
         userWallets: [SolanaAccount],
         feeInSol: FeeAmount,
         token: SolanaAccount,
-        services: SendInputServices
+        services: SendInputServices,
+        whitelistMints: [String]
     ) async -> (token: SolanaAccount, fee: FeeAmount?) {
         var preferOrder = ["SOL": 2]
         if !preferOrder.keys.contains(token.symbol) {
@@ -104,13 +128,15 @@ extension SendInputBusinessLogic {
 
             return false
         }
+        .filter { whitelistMints.contains($0.mintAddress) }
 
         for wallet in sortedWallets {
             do {
-                let feeInToken: FeeAmount = try (await services.swapService.calculateFeeInPayingToken(
-                    feeInSOL: feeInSol,
-                    payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
-                )) ?? .zero
+                let feeInToken = try (await services.feeCalculator
+                    .calculateFeeInPayingToken(
+                        feeInSOL: feeInSol,
+                        payingFeeTokenMint: PublicKey(string: wallet.token.mintAddress)
+                    )) ?? .zero
 
                 if feeInToken.total <= wallet.lamports {
                     return (wallet, feeInToken)

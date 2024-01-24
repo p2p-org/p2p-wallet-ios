@@ -16,7 +16,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
 
     var payingFeeWallet: SolanaAccount?
     var feeAmount: SolanaSwift.FeeAmount
-    let route: Route
+    let route: QuoteResponse
     let account: KeyPair
     let swapTransaction: Jupiter.SwapTransaction?
     let services: JupiterSwapServices

@@ -14,11 +14,14 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if viewModel.isEditable && viewModel.balance != nil && !viewModel.isLoading {
+                if viewModel.isEditable, viewModel.balance != nil, !viewModel.isLoading {
                     allButton
                 }
             }
             HStack {
+                CoinLogoImageViewRepresentable(size: 32, args: .token(viewModel.token.token))
+                    .frame(width: 32, height: 32)
+                    .clipShape(Circle())
                 changeTokenButton
                     .layoutPriority(1)
                 amountField

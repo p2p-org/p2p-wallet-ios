@@ -20,7 +20,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     // MARK: - Properties
 
     private var navigation = PassthroughSubject<SellNavigation?, Never>()
-    private let navigationController: UINavigationController
+    private var navigationController: UINavigationController!
+    private let presentingViewController: UIViewController?
     private var viewModel: SellViewModel!
     private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
     // TODO: Pass initial amount in token to view model
@@ -29,12 +30,20 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private var navigatedFromMoonpay = false
     private var transition: PanelTransition?
     private var moonpayInfoViewController: UIViewController?
+    private let shouldPush: Bool
 
     // MARK: - Initializer
 
-    init(initialAmountInToken: Double? = nil, navigationController: UINavigationController) {
+    init(
+        navigationController: UINavigationController? = nil,
+        presentingViewController: UIViewController? = nil,
+        initialAmountInToken: Double? = nil,
+        shouldPush: Bool = true
+    ) {
         self.initialAmountInToken = initialAmountInToken
         self.navigationController = navigationController
+        self.presentingViewController = presentingViewController
+        self.shouldPush = shouldPush
     }
 
     // MARK: - Methods
@@ -43,9 +52,19 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         // create viewController
         viewModel = SellViewModel(initialBaseAmount: initialAmountInToken, navigation: navigation)
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
-        vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
-        navigationController.pushViewController(vc, animated: true)
-        setTitle(to: vc)
+        vc.hidesBottomBarWhenPushed = true
+
+        if shouldPush, let nc = navigationController {
+            nc.pushViewController(vc, animated: true)
+        } else {
+            if navigationController == nil {
+                navigationController = UINavigationController(rootViewController: vc)
+            }
+
+            DispatchQueue.main.async {
+                self.presentingViewController?.show(self.navigationController, sender: nil)
+            }
+        }
 
         // scene navigation
         navigation
@@ -88,11 +107,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         return resultSubject
             .prefix(1)
             .eraseToAnyPublisher()
-    }
-
-    private func setTitle(to vc: UIViewController) {
-        vc.title = "\(L10n.cashoutWithMoonpay) "
-        vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     // MARK: - Navigation
@@ -182,6 +196,26 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             moonpayInfoViewController.modalPresentationStyle = .custom
             navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
             return moonpayInfoViewController.deallocatedPublisher()
+
+        case let .chooseCountry(selectedCountry):
+            let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
+            let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
+                .asViewController(withoutUIKitNavBar: false)
+            viewModel?.isEnteringBaseAmount = false
+            navigationController.pushViewController(selectCountryViewController, animated: true)
+
+            selectCountryViewModel.selectCountry
+                .sink(receiveValue: { [weak self] item in
+                    self?.viewModel.countrySelected(item.0, isSellAllowed: item.sellAllowed)
+                    self?.navigationController.popViewController(animated: true)
+                })
+                .store(in: &subscriptions)
+            selectCountryViewModel.currentSelected
+                .sink(receiveValue: { [weak self] in
+                    self?.navigationController.popViewController(animated: true)
+                })
+                .store(in: &subscriptions)
+            return Just(()).eraseToAnyPublisher()
         }
     }
 
@@ -194,10 +228,15 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     }
 
     private func navigateToSendTransactionStatus(model: SendTransaction) {
-        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveCompletion: { [weak self] _ in
-                self?.resultSubject.send(.completed)
-            }, receiveValue: {})
-            .store(in: &subscriptions)
+        coordinate(
+            to: SendTransactionStatusCoordinator(
+                parentController: navigationController,
+                transaction: model
+            )
+        )
+        .sink(receiveCompletion: { [weak self] _ in
+            self?.resultSubject.send(.completed)
+        }, receiveValue: {})
+        .store(in: &subscriptions)
     }
 }

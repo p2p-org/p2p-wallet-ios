@@ -32,7 +32,7 @@ struct ActionsPanelView: View {
                     .foregroundColor(Color(.night))
                     .padding(.bottom, 25)
             }
-            HStack(spacing: 32) {
+            HStack(spacing: 12) {
                 ForEach(actions, id: \.text) { actionType in
                     tokenOperation(title: actionType.text, image: actionType.icon) {
                         action(actionType)
@@ -52,7 +52,7 @@ struct ActionsPanelView: View {
                 VStack(spacing: 4) {
                     Image(image)
                         .resizable()
-                        .frame(width: 53, height: 53)
+                        .frame(width: 52, height: 52)
                         .scaledToFit()
                     Text(title)
                         .fontWeight(.semibold)

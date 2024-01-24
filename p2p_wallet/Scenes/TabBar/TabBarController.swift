@@ -49,7 +49,7 @@ final class TabBarController: UITabBarController {
     // MARK: - Public actions
 
     func setupTabs() {
-        TabItem.allCases.enumerated().forEach { index, item in
+        for (index, item) in TabItem.allCases.enumerated() {
             viewControllers?[index].tabBarItem = UITabBarItem(
                 title: item.displayTitle,
                 image: item.image != nil ? .init(resource: item.image!) : nil,
@@ -114,7 +114,7 @@ final class TabBarController: UITabBarController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        tabBar.subviews.forEach { bar in
+        for bar in tabBar.subviews {
             bar.subviews.compactMap { $0 as? UILabel }.forEach {
                 $0.adjustsFontSizeToFitWidth = true
             }
