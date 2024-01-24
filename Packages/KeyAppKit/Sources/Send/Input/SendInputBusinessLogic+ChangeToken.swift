@@ -34,7 +34,7 @@ extension SendInputBusinessLogic {
                         let recipientGets = BigDecimal(response.recipientGetsAmount.amount),
                         recipientGets != 0
                     {
-                        var currentValue = state.token2022TransferFeePerOneToken
+                        var currentValue = state.token2022TransferFeePerReceivingAmountMap
                         currentValue[token.mintAddress] = transferFee / recipientGets
                         token2022TransferFeePerOneToken = currentValue
                     } else {

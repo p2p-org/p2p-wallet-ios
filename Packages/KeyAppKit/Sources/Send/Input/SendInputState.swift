@@ -100,8 +100,8 @@ public struct SendInputState: Equatable {
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
 
-    /// Specific fee for token 2022
-    public let token2022TransferFeePerOneToken: [String: UInt64]
+    /// Specific fee percentage for token 2022
+    public let token2022TransferFeePerReceivingAmountMap: [String: BigDecimal]
 
     /// The list of tokens' mint that can be used to pay fee
     public let feePayableTokenMints: [String]
@@ -132,7 +132,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount,
         tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
-        token2022TransferFeePerOneToken: [String: UInt64],
+        token2022TransferFeePerOneToken: [String: BigDecimal],
         feePayableTokenMints: [String],
         lamportsPerSignature: UInt64,
         minimumRelayAccountBalance: UInt64,
@@ -149,7 +149,7 @@ public struct SendInputState: Equatable {
         self.fee = fee
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
-        self.token2022TransferFeePerOneToken = token2022TransferFeePerOneToken
+        token2022TransferFeePerReceivingAmountMap = token2022TransferFeePerOneToken
         self.feePayableTokenMints = feePayableTokenMints
         self.lamportsPerSignature = lamportsPerSignature
         self.minimumRelayAccountBalance = minimumRelayAccountBalance
@@ -204,7 +204,7 @@ public struct SendInputState: Equatable {
         fee: FeeAmount? = nil,
         tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
-        token2022TransferFeePerOneToken: [String: UInt64]? = nil,
+        token2022TransferFeePerOneToken: [String: BigDecimal]? = nil,
         feePayableTokenMints: [String]? = nil,
         lamportsPerSignature: UInt64? = nil,
         minimumRelayAccountBalance: UInt64? = nil,
@@ -222,7 +222,7 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
-            token2022TransferFeePerOneToken: token2022TransferFeePerOneToken ?? self.token2022TransferFeePerOneToken,
+            token2022TransferFeePerOneToken: token2022TransferFeePerOneToken ?? token2022TransferFeePerReceivingAmountMap,
             feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
             lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
             minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
@@ -239,23 +239,27 @@ public extension SendInputState {
     }
 
     var token2022TransferFee: UInt64? {
-        guard let token2022TransferFeePerOneToken = token2022TransferFeePerOneToken[token.mintAddress] else {
+        guard let token2022TransferFeePerRecieveAmount else {
             return nil
         }
-        return token2022TransferFeePerOneToken * amountInToken.toLamport(decimals: token.decimals) / 1
-            .toLamport(decimals: token.decimals)
+
+        let value = BigDecimal(amountInToken.toLamport(decimals: token.decimals)) *
+            token2022TransferFeePerRecieveAmount
+
+        return UInt64(value.withScale(0).integerValue)
     }
 
-    var token2022TransferFeePercentage: Double? {
-        guard let token2022TransferFeePerOneToken = token2022TransferFeePerOneToken[token.mintAddress]
-        else {
-            return nil
-        }
-        return Double(token2022TransferFeePerOneToken) / Double(1.toLamport(decimals: token.decimals))
+    private var token2022TransferFeePerRecieveAmount: BigDecimal? {
+        token2022TransferFeePerReceivingAmountMap[token.mintAddress]
+    }
+
+    var token2022TransferFeePercentage: BigDecimal? {
+        guard let token2022TransferFeePerRecieveAmount else { return nil }
+        return token2022TransferFeePerRecieveAmount / (1 + token2022TransferFeePerRecieveAmount)
     }
 
     var isTransactionFree: Bool {
-        fee == .zero && (token2022TransferFeePercentage ?? 0) <= 0
+        fee == .zero && (token2022TransferFeePerRecieveAmount ?? 0) <= 0
     }
 
     var maxAmountInputInToken: Double {
@@ -271,11 +275,11 @@ public extension SendInputState {
         }
 
         // sepecial case for token 2022
-        if let token2022TransferFeePercentage, balance > 0 {
+        if let token2022TransferFeePerRecieveAmount, balance > 0 {
             // calculate token 2022 fee
             // maxAmount -> x, balance -> b, feePercentage -> f
             // (x+x*f)=b -> x = b / (1+f)
-            let value = BigDecimal(balance) / BigDecimal(floatLiteral: 1.0 + token2022TransferFeePercentage)
+            let value = BigDecimal(balance) / (BigDecimal(floatLiteral: 1.0) + token2022TransferFeePerRecieveAmount)
 
             balance = UInt64(value.withScale(0).integerValue)
         }
