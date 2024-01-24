@@ -296,24 +296,23 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 case let .wormhole(trx):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self
-                        .coordinate(to: TransactionDetailCoordinator(
-                            viewModel: .init(userAction: trx),
-                            presentingViewController: rootViewController
-                        ))
-                        .sink(receiveValue: { _ in })
-                        .store(in: &self.subscriptions)
+                    coordinate(to: TransactionDetailCoordinator(
+                        viewModel: .init(userAction: trx),
+                        presentingViewController: rootViewController
+                    ))
+                    .sink(receiveValue: { _ in })
+                    .store(in: &subscriptions)
 
                 case let .sent(model):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self
-                        .coordinate(to: SendTransactionStatusCoordinator(
-                            parentController: rootViewController,
-                            transaction: model
-                        ))
-                        .sink(receiveValue: {})
-                        .store(in: &self.subscriptions)
+                    coordinate(to: SendTransactionStatusCoordinator(
+                        parentController: rootViewController,
+                        transaction: model
+                    ))
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+
                 case .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 

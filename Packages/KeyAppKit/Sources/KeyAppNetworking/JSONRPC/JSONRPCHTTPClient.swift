@@ -61,7 +61,7 @@ public struct JSONRPCHTTPClient {
             "Content-Type": "application/json",
         ],
         body: JSONRPCRequestDto<P>,
-        responseModel _: T.Type,
+        responseModel _: T.Type = T.self,
         errorDataType: E.Type = EmptyData.self
     ) async throws -> T {
         let httpClient = HTTPClient(

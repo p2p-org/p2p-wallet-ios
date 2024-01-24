@@ -25,7 +25,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         onlyDirectRoutes: Bool?,
         userPublicKey: String?,
         enforceSingleTx: Bool?
-    ) async throws -> Response<[Route]> {
+    ) async throws -> QuoteResponse {
         guard var urlComponent = URLComponents(string: host + "/quote") else { throw JupiterError.invalidURL }
 
         // Queries
@@ -55,14 +55,14 @@ public class JupiterRestClientAPI: JupiterAPI {
 
         guard let url = urlComponent.url else { throw JupiterError.invalidURL }
         let request = URLRequest(url: url)
-        print(request.cURL())
+        print("[Jupiter]", request.cURL())
         let (data, _) = try await URLSession.shared.data(for: request)
-        print(String(data: data, encoding: .utf8) ?? "")
-        return try JSONDecoder().decode(Response<[Route]>.self, from: data)
+        print("[Jupiter]", String(data: data, encoding: .utf8) ?? "")
+        return try JSONDecoder().decode(QuoteResponse.self, from: data)
     }
 
     public func swap(
-        route: Route,
+        route: QuoteResponse,
         userPublicKey: String,
         wrapUnwrapSol: Bool,
         feeAccount: String?,
@@ -71,7 +71,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         destinationWallet: String?
     ) async throws -> SwapTransaction {
         struct PostData: Codable {
-            let route: Route
+            let quoteResponse: QuoteResponse
             let userPublicKey: String
             let wrapUnwrapSol: Bool
             let feeAccount: String?
@@ -89,7 +89,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         request.httpBody = try JSONEncoder().encode(PostData(
-            route: route,
+            quoteResponse: route,
             userPublicKey: userPublicKey,
             wrapUnwrapSol: wrapUnwrapSol,
             feeAccount: feeAccount,
@@ -98,9 +98,10 @@ public class JupiterRestClientAPI: JupiterAPI {
             destinationWallet: destinationWallet
         ))
 
-        print(request.cURL())
-        let (data, _) = try await URLSession.shared.data(for: request)
-        print(String(data: data, encoding: .utf8) ?? "")
+        print("[Jupiter]", request.cURL())
+        let (data, response) = try await URLSession.shared.data(for: request)
+        print("[Jupiter]", response.debugDescription)
+        print("[Jupiter]", String(data: data, encoding: .utf8) ?? "")
         if let swapTransaction = try JSONDecoder().decode(ResponseData.self, from: data).swapTransaction {
             return SwapTransaction(
                 stringValue: swapTransaction,
@@ -145,7 +146,6 @@ public class JupiterRestClientAPI: JupiterAPI {
 
 public extension JupiterRestClientAPI {
     enum Version: String {
-        case v3
-        case v4
+        case v6
     }
 }

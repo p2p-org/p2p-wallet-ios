@@ -111,15 +111,18 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             )
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
+                guard let self else { return }
                 switch result {
                 case let .sent(model):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showSendTransactionStatus(model: model)
+                    navigationController.popToRootViewController(animated: true)
+
+                    showSendTransactionStatus(model: model)
+
                 case let .wormhole(trx):
-                    self?.navigationController.popToRootViewController(animated: true)
-                    self?.showUserAction(userAction: trx)
+                    navigationController.popToRootViewController(animated: true)
+                    showUserAction(userAction: trx)
                 case .sentViaLink:
-                    self?.navigationController.popToRootViewController(animated: true)
+                    navigationController.popToRootViewController(animated: true)
                 case .cancelled:
                     break
                 }
@@ -217,7 +220,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
 
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(
-            parentController: navigationController.parent ?? navigationController,
+            parentController: navigationController,
             transaction: model
         ))
         .sink(receiveValue: {})

@@ -16,6 +16,7 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftyUserDefaults
+import TokenService
 import Web3
 import Wormhole
 
@@ -70,9 +71,13 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceShareManager.self)
             .scope(.application)
 
-        register { KeyAppTokenHttpProvider(client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)) }
-            .implements(KeyAppTokenProvider.self)
-            .scope(.application)
+        register {
+            KeyAppTokenHttpProvider(
+                client: .init(endpoint: GlobalAppState.shared.tokenEndpoint)
+            )
+        }
+        .implements(KeyAppTokenProvider.self)
+        .scope(.application)
 
         register {
             DeviceShareMigrationService(
@@ -214,6 +219,7 @@ extension Resolver: ResolverRegistering {
                 errorObserver: resolve()
             )
         }
+        .implements(TokenRepository.self)
         .implements(SolanaTokensService.self)
         .scope(.application)
 
@@ -313,11 +319,19 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register {
+            SendRPCService(
+                host: "https://send-service.key.app"
+            )
+        }
+        .scope(.unique)
+
+        register {
             SendActionServiceImpl(
                 contextManager: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
                 relayService: Resolver.resolve(),
+                sendService: Resolver.resolve(),
                 account: Resolver.resolve(SolanaAccountStorage.self).account
             )
         }
@@ -543,9 +557,7 @@ extension Resolver: ResolverRegistering {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
                 tokensHost: "https://token.jup.ag/all",
-//                GlobalAppState.shared
-//                .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag/tokens" : nil,
-                version: .v4
+                version: .v6
             )
         }
         .implements(JupiterAPI.self)
@@ -580,9 +592,8 @@ extension Resolver: ResolverRegistering {
             RecipientSearchServiceImpl(
                 nameService: resolve(),
                 solanaClient: resolve(),
-                swapService: SwapServiceWrapper(
-                    orcaSwap: resolve(),
-                    relayService: resolve()
+                feeCalculator: SendFeeCalculator(
+                    solanaTokenService: resolve()
                 )
             )
         }

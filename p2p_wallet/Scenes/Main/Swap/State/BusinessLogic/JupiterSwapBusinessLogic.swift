@@ -74,6 +74,7 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.toToken = toToken
+                $0.transferFeeBasisPoints = nil
             }
         case .switchFromAndToTokens:
             return state.modified {
@@ -84,6 +85,7 @@ enum JupiterSwapBusinessLogic {
                 $0.fromToken = state.toToken
                 $0.amountFrom = nil
                 $0.toToken = state.fromToken
+                $0.transferFeeBasisPoints = nil
             }
         case .update:
             return state.modified {
@@ -134,7 +136,6 @@ enum JupiterSwapBusinessLogic {
         case let .initialize(
             account,
             jupiterTokens,
-            routeMap,
             preChosenFromTokenMintAddress,
             preChosenToTokenMintAddress
         ):
@@ -143,7 +144,7 @@ enum JupiterSwapBusinessLogic {
                 services: services,
                 account: account,
                 jupiterTokens: jupiterTokens,
-                routeMap: routeMap,
+                routeMap: .init(mintKeys: [], indexesRouteMap: [:]),
                 preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
                 preChosenToTokenMintAddress: preChosenToTokenMintAddress
             )
@@ -298,10 +299,10 @@ enum JupiterSwapBusinessLogic {
     // MARK: - Private
 
     private static func simulateAndRemoveFailingSwapTransaction(
-        availableRoutes: [Route],
+        availableRoutes: [QuoteResponse],
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> (routes: [Route], swapTransaction: SwapTransaction?) {
+    ) async throws -> (routes: [QuoteResponse], swapTransaction: SwapTransaction?) {
         var availableRoutes = availableRoutes
         var swapTransaction: SwapTransaction?
 
@@ -328,7 +329,7 @@ enum JupiterSwapBusinessLogic {
     }
 
     private static func createAndSimulateTransaction(
-        for route: Route,
+        for route: QuoteResponse,
         account: KeyPair,
         services: JupiterSwapServices
     ) async throws -> SwapTransaction? {
