@@ -235,6 +235,11 @@ public struct SendInputState: Equatable {
 
 public extension SendInputState {
     var totalAmount: UInt64 {
+        // assertion to prevent unneccessary calculation that can lead to slightly different results
+        if isSendingMaxAmount {
+            return token.lamports
+        }
+
         var totalAmount: UInt64 = 0
 
         // get receivingAmount
