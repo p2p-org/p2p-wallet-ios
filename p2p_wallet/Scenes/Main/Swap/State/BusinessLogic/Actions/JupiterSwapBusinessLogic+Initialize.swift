@@ -24,7 +24,7 @@ extension JupiterSwapBusinessLogic {
             commitment: nil
         )
 
-        let (swapTokensResult, priceMapResult, lamportPerSignatureResult, splAccountCreationFeeResult) = await (
+        let (swapTokensResult, priceMapResult, lamportPerSignatureResult, splAccountCreationFeeResult) = await(
             swapTokens,
             pricesMap,
             lamportPerSignature,
