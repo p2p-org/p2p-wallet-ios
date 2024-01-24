@@ -1,11 +1,9 @@
 import AnalyticsManager
 import Combine
-import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
-import SolanaSwift
 import UIKit
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
@@ -89,57 +87,21 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         errorMessageTap
-            .sink { [weak self] in
-                guard let self = self else { return }
-                var params = SendTransactionStatusDetailsParameters(
-                    title: L10n.somethingWentWrong,
-                    description: L10n.unknownError
-                )
+            .map { [weak self] _ -> SendTransactionStatusDetailsParameters in
+                guard let self = self,
+                      let error = self.currentTransactionError
+                else { return .unknown }
 
-                guard let error = self.currentTransactionError
-                else {
-                    self.openDetails.send(params)
-                    return
-                }
-
-                if let error = error as? FeeRelayerError,
-                   error.message == "Topping up is successfull, but the transaction failed"
+                if let error = error as? SendTransactionStatusViewableError,
+                   let params = error.detail(feeAmount: feeAmount)
                 {
-                    params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
-                } else if let error = error as? APIClientError {
-                    switch error {
-                    case .blockhashNotFound:
-                        params = .init(
-                            title: L10n.blockhashNotFound,
-                            description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
-                                "", // blockhash ?? "",
-                                "" // blockhash ?? ""
-                            )
-                        )
-                    case let .responseError(response) where response.message?.contains("Instruction") == true:
-                        params = .init(
-                            title: L10n.errorProcessingInstruction0CustomProgramError0x1,
-                            description: L10n.AnErrorOccuredWhileProcessingAnInstruction
-                                .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured
-                        )
-                    case let .responseError(response) where response.message?.contains("Already processed") == true:
-                        params = .init(
-                            title: L10n.thisTransactionHasAlreadyBeenProcessed,
-                            description: L10n.TheBankHasSeenThisTransactionBefore
-                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(
-                                    "" // blockhash ?? ""
-                                )
-                        )
-                    case let .responseError(response):
-                        params = .init(
-                            title: L10n.somethingWentWrong,
-                            description: response.message ?? L10n.unknownError
-                        )
-                    default:
-                        break
-                    }
+                    return params
                 }
-                self.openDetails.send(params)
+
+                return .unknown
+            }
+            .sink { [weak self] params in
+                self?.openDetails.send(params)
             }
             .store(in: &subscriptions)
     }

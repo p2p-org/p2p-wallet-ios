@@ -776,8 +776,8 @@ private func getRoutes(tokenA: String, tokenB: String, pools: Pools) -> [Route] 
         }
 
     // Find all routes that can include firstLegPool and a second pool.
-    firstLegPools.forEach { firstLegPoolId, intermediateTokenName in
-        pools.forEach { secondLegPoolId, poolConfig in
+    for (firstLegPoolId, intermediateTokenName) in firstLegPools {
+        for (secondLegPoolId, poolConfig) in pools {
             if (poolConfig.tokenAName == intermediateTokenName && poolConfig.tokenBName == tokenB) ||
                 (poolConfig.tokenBName == intermediateTokenName && poolConfig.tokenAName == tokenB)
             {

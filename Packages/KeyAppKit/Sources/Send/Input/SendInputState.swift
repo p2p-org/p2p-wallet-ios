@@ -1,32 +1,17 @@
+import BigDecimal
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
+import TokenService
 
 public enum Amount: Equatable {
     case fiat(value: Double, currency: String)
     case token(lamport: UInt64, mint: String, decimals: Int)
 }
 
-public struct SendInputActionInitializeParams: Equatable {
-    let feeRelayerContext: () async throws -> RelayContext
-
-    public init(feeRelayerContext: @escaping () async throws -> RelayContext) {
-        self.feeRelayerContext = feeRelayerContext
-    }
-
-    public init(feeRelayerContext: RelayContext) {
-        self.feeRelayerContext = { feeRelayerContext }
-    }
-
-    public static func == (
-        _: SendInputActionInitializeParams,
-        _: SendInputActionInitializeParams
-    ) -> Bool { true }
-}
-
 public enum SendInputAction: Equatable {
-    case initialize(SendInputActionInitializeParams)
+    case initialize
 
     case update
 
@@ -37,14 +22,18 @@ public enum SendInputAction: Equatable {
 }
 
 public struct SendInputServices {
-    let swapService: SwapService
-    let feeService: SendFeeCalculator
+    let feeCalculator: SendFeeCalculator
     let solanaAPIClient: SolanaAPIClient
+    let rpcService: SendRPCService
 
-    public init(swapService: SwapService, feeService: SendFeeCalculator, solanaAPIClient: SolanaAPIClient) {
-        self.swapService = swapService
-        self.feeService = feeService
+    public init(
+        solanaTokenService: SolanaTokensService,
+        solanaAPIClient: SolanaAPIClient,
+        rpcService: SendRPCService
+    ) {
+        feeCalculator = .init(solanaTokenService: solanaTokenService)
         self.solanaAPIClient = solanaAPIClient
+        self.rpcService = rpcService
     }
 }
 
@@ -60,7 +49,6 @@ public struct SendInputState: Equatable {
         case feeCalculationFailed
 
         case requiredInitialize
-        case missingFeeRelayer
         case initializeFailed(NSError)
 
         case unknown(NSError)
@@ -112,10 +100,20 @@ public struct SendInputState: Equatable {
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
 
-    /// Fee relayer context
-    ///
-    /// Current state for free transactions
-    public let feeRelayerContext: RelayContext?
+    /// Specific fee percentage for token 2022
+    public let token2022TransferFeePerReceivingAmountMap: [String: BigDecimal]
+
+    /// The list of tokens' mint that can be used to pay fee
+    public let feePayableTokenMints: [String]
+
+    /// Lamports per signature
+    public let lamportsPerSignature: UInt64
+
+    /// Minimum relay account balance
+    public let minimumRelayAccountBalance: UInt64
+
+    /// Limit for free transactions
+    public let limit: SendServiceLimitResponse
 
     /// Send via link
     public let sendViaLinkSeed: String?
@@ -134,7 +132,11 @@ public struct SendInputState: Equatable {
         fee: FeeAmount,
         tokenFee: SolanaAccount,
         feeInToken: FeeAmount,
-        feeRelayerContext: RelayContext?,
+        token2022TransferFeePerOneToken: [String: BigDecimal],
+        feePayableTokenMints: [String],
+        lamportsPerSignature: UInt64,
+        minimumRelayAccountBalance: UInt64,
+        limit: SendServiceLimitResponse,
         sendViaLinkSeed: String?
     ) {
         self.status = status
@@ -147,7 +149,11 @@ public struct SendInputState: Equatable {
         self.fee = fee
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
-        self.feeRelayerContext = feeRelayerContext
+        token2022TransferFeePerReceivingAmountMap = token2022TransferFeePerOneToken
+        self.feePayableTokenMints = feePayableTokenMints
+        self.lamportsPerSignature = lamportsPerSignature
+        self.minimumRelayAccountBalance = minimumRelayAccountBalance
+        self.limit = limit
         self.sendViaLinkSeed = sendViaLinkSeed
     }
 
@@ -158,7 +164,7 @@ public struct SendInputState: Equatable {
         token: SolanaAccount,
         feeToken: SolanaAccount,
         userWalletState: UserWalletEnvironments,
-        feeRelayerContext: RelayContext? = nil,
+        feePayableTokenMints: [String] = [],
         sendViaLinkSeed: String?
     ) -> SendInputState {
         .init(
@@ -172,7 +178,17 @@ public struct SendInputState: Equatable {
             fee: .zero,
             tokenFee: feeToken,
             feeInToken: .zero,
-            feeRelayerContext: feeRelayerContext,
+            token2022TransferFeePerOneToken: [:],
+            feePayableTokenMints: feePayableTokenMints,
+            lamportsPerSignature: 5000,
+            minimumRelayAccountBalance: 890_880,
+            limit: .init(
+                networkFee: .init(
+                    remainingAmount: .max,
+                    remainingTransactions: .max
+                ),
+                tokenAccountRent: .init(remainingAmount: 0, remainingTransactions: 0)
+            ),
             sendViaLinkSeed: sendViaLinkSeed
         )
     }
@@ -188,7 +204,11 @@ public struct SendInputState: Equatable {
         fee: FeeAmount? = nil,
         tokenFee: SolanaAccount? = nil,
         feeInToken: FeeAmount? = nil,
-        feeRelayerContext: RelayContext? = nil,
+        token2022TransferFeePerOneToken: [String: BigDecimal]? = nil,
+        feePayableTokenMints: [String]? = nil,
+        lamportsPerSignature: UInt64? = nil,
+        minimumRelayAccountBalance: UInt64? = nil,
+        limit: SendServiceLimitResponse? = nil,
         sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
         .init(
@@ -202,38 +222,87 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
-            feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
+            token2022TransferFeePerOneToken: token2022TransferFeePerOneToken ??
+                token2022TransferFeePerReceivingAmountMap,
+            feePayableTokenMints: feePayableTokenMints ?? self.feePayableTokenMints,
+            lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
+            minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
+            limit: limit ?? self.limit,
             sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )
     }
 }
 
 public extension SendInputState {
+    var recipientGetsAmount: Double {
+        // exactOut
+        amountInToken
+    }
+
+    var token2022TransferFee: UInt64? {
+        guard let token2022TransferFeePerRecieveAmount else {
+            return nil
+        }
+
+        let value = BigDecimal(amountInToken.toLamport(decimals: token.decimals)) *
+            token2022TransferFeePerRecieveAmount
+
+        return UInt64(value.withScale(0).integerValue)
+    }
+
+    private var token2022TransferFeePerRecieveAmount: BigDecimal? {
+        token2022TransferFeePerReceivingAmountMap[token.mintAddress]
+    }
+
+    var token2022TransferFeePercentage: BigDecimal? {
+        guard let token2022TransferFeePerRecieveAmount else { return nil }
+        return token2022TransferFeePerRecieveAmount / (1 + token2022TransferFeePerRecieveAmount)
+    }
+
+    var isTransactionFree: Bool {
+        fee == .zero && (token2022TransferFeePerRecieveAmount ?? 0) <= 0
+    }
+
     var maxAmountInputInToken: Double {
+        // Get the balance of current token / wallet
         var balance: Lamports = userWalletEnvironments.wallets
             .first(where: { $0.token.mintAddress == token.mintAddress })?
             .lamports ?? 0
 
-        if token.mintAddress == tokenFee.mintAddress {
-            if balance >= feeInToken.total {
-                balance = balance - feeInToken.total
-            } else {
-                return 0
-            }
+        // if user pay with sending token, we need to subtract the amount of fee
+        if token.address == tokenFee.address {
+            // minus feeInToken
+            balance = balance > feeInToken.total ? balance - feeInToken.total : 0
         }
 
-        return Double(balance) / pow(10, Double(token.decimals))
+        // sepecial case for token 2022
+        if let token2022TransferFeePerRecieveAmount, balance > 0 {
+            // calculate token 2022 fee
+            // maxAmount -> x, balance -> b, feePercentage -> f
+            // (x+x*f)=b -> x = b / (1+f)
+            let value = BigDecimal(balance) / (BigDecimal(floatLiteral: 1.0) + token2022TransferFeePerRecieveAmount)
+
+            balance = UInt64(value.withScale(0).integerValue)
+        }
+
+        // assert amount
+        guard balance > 0 else { return 0 }
+
+        return balance.convertToBalance(decimals: token.decimals)
+    }
+
+    var isSendingMaxAmount: Bool {
+        maxAmountInputInToken == amountInToken
     }
 
     var maxAmountInputInSOLWithLeftAmount: Double {
         var maxAmountInToken = maxAmountInputInToken.toLamport(decimals: token.decimals)
 
-        guard
-            let context = feeRelayerContext, token.isNative,
-            maxAmountInToken >= context.minimumRelayAccountBalance
+        guard token.isNative,
+              maxAmountInToken >= minimumRelayAccountBalance
         else { return .zero }
 
-        maxAmountInToken = maxAmountInToken - context.minimumRelayAccountBalance
+        maxAmountInToken = maxAmountInToken - minimumRelayAccountBalance
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 

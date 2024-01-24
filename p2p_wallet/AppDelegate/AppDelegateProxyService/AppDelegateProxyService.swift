@@ -61,8 +61,8 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        serviceAppDelegates.forEach {
-            $0.application?(
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.application?(
                 application,
                 performActionFor: shortcutItem,
                 completionHandler: completionHandler
@@ -71,26 +71,26 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationDidEnterBackground?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationDidEnterBackground?(application)
         }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationWillEnterForeground?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationWillEnterForeground?(application)
         }
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        serviceAppDelegates.forEach {
-            $0.application?(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.application?(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
         }
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        serviceAppDelegates.forEach {
-            $0.application?(application, didFailToRegisterForRemoteNotificationsWithError: error)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.application?(application, didFailToRegisterForRemoteNotificationsWithError: error)
         }
     }
 
@@ -99,8 +99,8 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        serviceAppDelegates.forEach {
-            $0.application?(
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.application?(
                 application,
                 didReceiveRemoteNotification: userInfo,
                 fetchCompletionHandler: completionHandler
@@ -109,26 +109,26 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationWillResignActive?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationWillResignActive?(application)
         }
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationDidBecomeActive?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationDidBecomeActive?(application)
         }
     }
 
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationDidReceiveMemoryWarning?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationDidReceiveMemoryWarning?(application)
         }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        serviceAppDelegates.forEach {
-            $0.applicationWillTerminate?(application)
+        for serviceAppDelegate in serviceAppDelegates {
+            serviceAppDelegate.applicationWillTerminate?(application)
         }
     }
 

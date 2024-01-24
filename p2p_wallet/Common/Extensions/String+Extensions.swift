@@ -118,8 +118,8 @@ extension String {
     var asFlag: String? {
         let base: UInt32 = 127_397
         var s = ""
-        unicodeScalars.forEach {
-            s.unicodeScalars.append(UnicodeScalar(base + $0.value)!)
+        for unicodeScalar in unicodeScalars {
+            s.unicodeScalars.append(UnicodeScalar(base + unicodeScalar.value)!)
         }
 
         return String(stringLiteral: s)
