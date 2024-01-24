@@ -271,8 +271,14 @@ public extension SendInputState {
             .lamports ?? 0
 
         if token.mintAddress == tokenFee.mintAddress {
-            if balance >= feeInToken.total {
-                balance = balance - feeInToken.total
+            // total fee in tokens + tokens 2022
+            var fee = feeInToken.total
+            if let amount = token2022TransferFee {
+                fee += amount
+            }
+
+            if balance >= fee {
+                balance = balance - fee
             } else {
                 return 0
             }

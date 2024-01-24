@@ -131,17 +131,29 @@ public class SendFeeCalculator {
         feeInSOL: FeeAmount,
         whiteListMints: [String]
     ) async -> [SolanaAccount] {
+        // Assert amount
+        guard feeInSOL.total > 0 else {
+            return wallets.filter {
+                whiteListMints.contains($0.mintAddress)
+            }
+        }
+
+        // Filter candidates that can be used to pay fee
         let filteredWallets = wallets
             .filter { $0.lamports > 0 && whiteListMints.contains($0.mintAddress) }
 
+        // Check if their balance is enough to pay fee
         var feeWallets = [SolanaAccount]()
         for element in filteredWallets {
+            // For solana native token
             if element.token.mintAddress == PublicKey.wrappedSOLMint
                 .base58EncodedString, element.lamports >= feeInSOL.total
             {
                 feeWallets.append(element)
                 continue
             }
+
+            // For other tokens
             let feeAmount = try? await calculateFeeInPayingToken(
                 feeInSOL: feeInSOL,
                 payingFeeTokenMint: PublicKey(string: element.token.mintAddress)

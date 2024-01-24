@@ -25,11 +25,6 @@ extension SendActionServiceImpl {
             amount = .max
         }
 
-        // transfer mode
-        let transferMode: SendServiceTransferMode =
-            wallet.tokenProgramId == Token2022Program.id.base58EncodedString
-                ? .exactIn : .exactOut
-
         var response: SendServiceTransferResponse
 
         response = try await sendService.transfer(
@@ -37,7 +32,7 @@ extension SendActionServiceImpl {
             mint: mintAddress,
             amount: amount,
             recipient: receiver,
-            transferMode: transferMode,
+            transferMode: .exactOut,
             networkFeePayer: getNetworkFeePayer(
                 context: context,
                 wallet: wallet,

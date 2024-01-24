@@ -1,5 +1,6 @@
 import Foundation
 import KeyAppNetworking
+import SolanaSwift
 
 public class SendRPCService {
     let host: String
@@ -14,12 +15,18 @@ public class SendRPCService {
     }
 
     public func getCompensationTokens() async throws -> [String] {
-        try await jsonrpcClient.request(
+        var result: [String] = try await jsonrpcClient.request(
             baseURL: host,
             body: .init(
                 method: "get_compensation_tokens"
             )
         )
+
+        if !result.contains(PublicKey.wrappedSOLMint.base58EncodedString) {
+            result.append(PublicKey.wrappedSOLMint.base58EncodedString)
+        }
+
+        return result
     }
 
     public func transfer(
