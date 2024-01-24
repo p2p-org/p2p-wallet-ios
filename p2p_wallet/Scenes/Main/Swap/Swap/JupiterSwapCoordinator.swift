@@ -149,7 +149,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .setTarget(target: self, action: #selector(shareButtonPressed), for: .touchUpInside)
         shareButton.setImage(UIImage(named: "share-1"), for: .normal)
         shareButton.setTitleColor(.gray, for: .highlighted)
-        
+
         shareBarButton = UIBarButtonItem(customView: shareButton)
 
         // show rightBarButtonItem only on successful loading

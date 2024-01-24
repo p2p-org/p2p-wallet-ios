@@ -59,7 +59,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
         statusSubject.send(.loading)
         do {
             var jupiterTokens: [SolanaToken]
-            
+
             try Task.checkCancellation()
 
             // get the date component
@@ -81,7 +81,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
                 // get new data
                 jupiterTokens = try await jupiterClient.getTokens()
-                
 
                 // save new data
                 try localProvider.save(tokens: jupiterTokens)
