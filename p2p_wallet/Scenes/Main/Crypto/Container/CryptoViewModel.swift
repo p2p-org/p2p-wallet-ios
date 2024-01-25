@@ -25,9 +25,12 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var createNameService: CreateNameService
 
     let navigation: PassthroughSubject<CryptoNavigation, Never>
+    let openReferralProgramDetails = PassthroughSubject<Void, Never>()
+    let shareReferralLink = PassthroughSubject<Void, Never>()
 
     // MARK: - Properties
 
+    @Published private(set) var displayReferralBanner: Bool
     @Published var state = State.pending
     @Published var address = ""
 
@@ -35,6 +38,8 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     init(navigation: PassthroughSubject<CryptoNavigation, Never>) {
         self.navigation = navigation
+        displayReferralBanner = available(.referralProgramEnabled)
+
         super.init()
 
         // bind
@@ -173,6 +178,20 @@ private extension CryptoViewModel {
             .sink { [weak self] isSuccess in
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
+            }
+            .store(in: &subscriptions)
+
+        openReferralProgramDetails
+            .map { CryptoNavigation.referral }
+            .sink { [weak self] navigation in
+                self?.navigation.send(navigation)
+            }
+            .store(in: &subscriptions)
+
+        shareReferralLink
+            .map { CryptoNavigation.shareReferral(URL(string: "https://www.google.com/")!) }
+            .sink { [weak self] navigation in
+                self?.navigation.send(navigation)
             }
             .store(in: &subscriptions)
     }
