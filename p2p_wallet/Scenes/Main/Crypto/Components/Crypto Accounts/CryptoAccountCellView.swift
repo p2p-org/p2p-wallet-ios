@@ -1,6 +1,7 @@
 import PnLService
 import Repository
 import Resolver
+import SkeletonUI
 import SwiftUI
 
 struct CryptoAccountCellView: View, Equatable {
@@ -116,13 +117,15 @@ struct CryptoAccountCellView: View, Equatable {
                 AccountPnLRepository.self
             )
         ) { _ in
-            ProgressView()
+            Rectangle()
+                .skeleton(with: true, size: .init(width: 30, height: 16))
         } errorView: { _, pnl in
             // ignore error
             pnlTextView(pnl: pnl, mint: mint)
         } content: { pnl in
             pnlTextView(pnl: pnl, mint: mint)
         }
+        .frame(height: 16)
     }
 
     @ViewBuilder private func pnlTextView(

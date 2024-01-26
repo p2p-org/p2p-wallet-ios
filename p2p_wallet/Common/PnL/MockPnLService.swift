@@ -9,7 +9,7 @@ struct MockPnLModel: PnLModel {
 
 class MockPnLService: PnLService {
     func getPNL() async throws -> MockPnLModel {
-        try await Task.sleep(nanoseconds: 300_000_000)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         return .init(
             total: 1.2,
             pnlByMint: [

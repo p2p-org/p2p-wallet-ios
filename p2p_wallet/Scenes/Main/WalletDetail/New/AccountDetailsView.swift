@@ -1,3 +1,6 @@
+import PnLService
+import Repository
+import Resolver
 import SwiftUI
 
 struct AccountDetailsView: View {
@@ -19,6 +22,29 @@ struct AccountDetailsView: View {
                 Text(detailAccount.rendableAccountDetails.amountInFiat)
                     .apply(style: .text3)
                     .foregroundColor(Color(.night))
+
+                if let account = detailAccount.rendableAccountDetails as? RendableNewSolanaAccountDetails {
+                    RepositoryView(
+                        repository: Resolver.resolve(AccountPnLRepository.self)
+                    ) { _ in
+                        Rectangle()
+                            .skeleton(with: true, size: .init(width: 100, height: 16))
+                    } errorView: { error, pnl in
+                        #if !RELEASE
+                            VStack {
+                                pnlContentView(pnl: pnl, mint: account.account.mintAddress)
+                                Text(String(reflecting: error))
+                                    .foregroundStyle(.red)
+                            }
+                        #else
+                            pnlContentView(pnl: pnl)
+                        #endif
+                    } content: { pnl in
+                        pnlContentView(pnl: pnl, mint: account.account.mintAddress)
+                    }
+                    .frame(height: 16)
+                    .padding(.top, 12)
+                }
             }
             .padding(.top, 24)
 
@@ -40,6 +66,24 @@ struct AccountDetailsView: View {
                 .padding(.all, 16)
                 .padding(.top, 16)
             }
+        }
+    }
+
+    @ViewBuilder private func pnlContentView(
+        pnl: PnLModel?,
+        mint: String
+    ) -> some View {
+        if let percentage = pnl?.pnlByMint[mint]?.toString(
+            maximumFractionDigits: 2,
+            showPlus: true
+        ) {
+            Text(L10n.allTheTime("\(percentage)%"))
+                .font(uiFont: .font(of: .text3))
+                .foregroundColor(Color(.night))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color(.snow))
+                .cornerRadius(8)
         }
     }
 }

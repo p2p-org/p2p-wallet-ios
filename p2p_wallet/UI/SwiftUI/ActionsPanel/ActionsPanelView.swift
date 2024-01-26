@@ -58,7 +58,8 @@ struct ActionsPanelView: View {
         RepositoryView(
             repository: pnlRepository
         ) { _ in
-            ProgressView()
+            Rectangle()
+                .skeleton(with: true, size: .init(width: 100, height: 16))
         } errorView: { error, pnl in
             #if !RELEASE
                 VStack {
@@ -72,10 +73,7 @@ struct ActionsPanelView: View {
         } content: { pnl in
             pnlContentView(pnl: pnl)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color(.snow))
-        .cornerRadius(8)
+        .frame(height: 16)
     }
 
     @ViewBuilder private func pnlContentView(pnl: PnLModel?) -> some View {
@@ -86,6 +84,10 @@ struct ActionsPanelView: View {
             Text(L10n.allTheTime("\(percentage)%"))
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(.night))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color(.snow))
+                .cornerRadius(8)
         }
     }
 
