@@ -1,5 +1,6 @@
 import Foundation
 
 public protocol PnLService {
-    func getPNL() async throws -> String
+    associatedtype PnL: PnLModel
+    func getPNL() async throws -> PnL
 }

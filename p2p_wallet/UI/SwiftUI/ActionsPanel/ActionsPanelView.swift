@@ -1,4 +1,5 @@
 import Combine
+import PnLService
 import Repository
 import SwiftUI
 
@@ -77,9 +78,12 @@ struct ActionsPanelView: View {
         .cornerRadius(8)
     }
 
-    @ViewBuilder private func pnlContentView(pnl: String?) -> some View {
-        if let pnl {
-            Text(L10n.allTheTime(pnl))
+    @ViewBuilder private func pnlContentView(pnl: PnLModel?) -> some View {
+        if let percentage = pnl?.total.toString(
+            maximumFractionDigits: 2,
+            showPlus: true
+        ) {
+            Text(L10n.allTheTime("\(percentage)%"))
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(.night))
         }

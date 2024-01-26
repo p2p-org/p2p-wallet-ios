@@ -5,15 +5,15 @@ import Repository
 class PnLProvider: Provider {
     // MARK: - Dependencies
 
-    let service: PnLService
+    let service: any PnLService
 
     // MARK: - Initializer
 
-    init(service: PnLService) {
+    init(service: any PnLService) {
         self.service = service
     }
 
-    func fetch() async throws -> String? {
+    func fetch() async throws -> PnLModel? {
         try await service.getPNL()
     }
 }
