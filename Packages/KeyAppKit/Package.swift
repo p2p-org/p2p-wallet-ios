@@ -333,7 +333,7 @@ let package = Package(
         .target(
             name: "PnLService",
             dependencies: [
-                "PnLService",
+                "KeyAppNetworking",
             ]
         ),
 
