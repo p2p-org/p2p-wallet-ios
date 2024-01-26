@@ -238,8 +238,8 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     private func showPnLInfo(allTimePnL: Double) {
         nonStrictTokenAlertVC = UIBottomSheetHostingController(
             rootView: AllTimePnLInfoBottomSheet(allTimePnL: allTimePnL) {
-                [weak nonStrictTokenAlertVC] in
-                nonStrictTokenAlertVC?.dismiss(animated: true)
+                [weak self] in
+                self?.nonStrictTokenAlertVC?.dismiss(animated: true)
             },
             shouldIgnoresKeyboard: true
         )
