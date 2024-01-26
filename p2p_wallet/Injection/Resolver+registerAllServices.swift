@@ -578,7 +578,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         register {
-            PnLRepository(
+            AccountPnLRepository(
                 initialData: nil,
                 provider: .init(
                     service: resolve()

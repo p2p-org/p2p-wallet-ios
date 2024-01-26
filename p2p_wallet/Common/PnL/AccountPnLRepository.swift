@@ -19,7 +19,19 @@ class PnLProvider: Provider {
 }
 
 class PnLRepository: Repository<PnLProvider> {
+    weak var timer: Timer?
+
     override init(initialData: ItemType?, provider: PnLProvider) {
         super.init(initialData: initialData, provider: provider)
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            Task { await self.refresh() }
+        }
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 }
+
+class AccountPnLRepository: PnLRepository {}

@@ -6,7 +6,7 @@ struct ActionsPanelView: View {
     let actions: [WalletActionType]
     let balance: String
     let usdAmount: String
-    let pnlRepository: PnLRepository
+    let pnlRepository: AccountPnLRepository
     let action: (WalletActionType) -> Void
     let balanceTapAction: (() -> Void)?
 
@@ -64,9 +64,11 @@ struct ActionsPanelView: View {
                     .foregroundStyle(.red)
             #endif
         } content: { pnl in
-            Text(pnl)
-                .font(uiFont: .font(of: .text3))
-                .foregroundColor(Color(.night))
+            if let pnl {
+                Text(L10n.allTheTime(pnl))
+                    .font(uiFont: .font(of: .text3))
+                    .foregroundColor(Color(.night))
+            }
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
