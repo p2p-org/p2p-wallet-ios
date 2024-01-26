@@ -10,6 +10,7 @@ import Moonpay
 import NameService
 import Onboarding
 import OrcaSwapSwift
+import PnLService
 import Reachability
 import Resolver
 import Sell
@@ -568,6 +569,22 @@ extension Resolver: ResolverRegistering {
             JupiterTokensLocalProvider()
         }
         .implements(JupiterTokensProvider.self)
+        .scope(.session)
+
+        register {
+            MockPnLService()
+        }
+        .implements(PnLService.self)
+        .scope(.session)
+
+        register {
+            PnLRepository(
+                initialData: nil,
+                provider: .init(
+                    service: resolve()
+                )
+            )
+        }
         .scope(.session)
     }
 

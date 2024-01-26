@@ -1,4 +1,5 @@
 import Foundation
+import Resolver
 import SwiftUI
 
 /// View of `CryptoActionsPanel` scene
@@ -20,6 +21,7 @@ struct CryptoActionsPanelView: View {
             actions: viewModel.actions,
             balance: viewModel.balance,
             usdAmount: "",
+            pnlRepository: Resolver.resolve(),
             action: viewModel.actionClicked,
             balanceTapAction: viewModel.balanceTapped
         )

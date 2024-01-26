@@ -46,6 +46,7 @@ struct HomeAccountsView: View {
             actions: [],
             balance: viewModel.balance,
             usdAmount: viewModel.usdcAmount,
+            pnlRepository: Resolver.resolve(),
             action: { _ in },
             balanceTapAction: viewModel.balanceTapped
         )

@@ -48,6 +48,10 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     func reload() async {
         await CryptoAccountsSynchronizationService().refresh()
+
+        Task.detached {
+            await Resolver.resolve(PnLRepository.self).reload()
+        }
     }
 
     func viewAppeared() {
