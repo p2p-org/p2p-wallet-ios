@@ -1,3 +1,5 @@
+import PnLService
+import Repository
 import Resolver
 import SwiftUI
 
@@ -6,6 +8,7 @@ struct CryptoAccountCellView: View, Equatable {
 
     let iconSize: CGFloat = 50
     let rendable: any RenderableAccount
+    let showPnL: Bool
 
     let onTap: (() -> Void)?
     let onButtonTap: (() -> Void)?
@@ -66,9 +69,23 @@ struct CryptoAccountCellView: View, Equatable {
     @ViewBuilder private var detailView: some View {
         switch rendable.detail {
         case let .text(text):
-            Text(text)
-                .font(uiFont: .font(of: .text3, weight: .semibold))
-                .foregroundColor(Color(.night))
+            if showPnL,
+               let solanaAccount = rendable as? RenderableSolanaAccount
+            {
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(text)
+                        .font(uiFont: .font(of: .text3, weight: .semibold))
+                        .foregroundColor(Color(.night))
+
+                    pnlView(
+                        mint: solanaAccount.account.mintAddress
+                    )
+                }
+            } else {
+                Text(text)
+                    .font(uiFont: .font(of: .text3, weight: .semibold))
+                    .foregroundColor(Color(.night))
+            }
         case let .button(text, enabled):
             Button(
                 action: { onButtonTap?() },
@@ -88,6 +105,37 @@ struct CryptoAccountCellView: View, Equatable {
                         .cornerRadius(12)
                 }
             )
+        }
+    }
+
+    // MARK: - ViewBuilders
+
+    @ViewBuilder private func pnlView(mint: String) -> some View {
+        RepositoryView(
+            repository: Resolver.resolve(
+                AccountPnLRepository.self
+            )
+        ) { _ in
+            ProgressView()
+        } errorView: { _, pnl in
+            // ignore error
+            pnlTextView(pnl: pnl, mint: mint)
+        } content: { pnl in
+            pnlTextView(pnl: pnl, mint: mint)
+        }
+    }
+
+    @ViewBuilder private func pnlTextView(
+        pnl: PnLModel?,
+        mint: String
+    ) -> some View {
+        if let pnl = pnl?.pnlByMint[mint]?.toString(
+            maximumFractionDigits: 2,
+            showPlus: true
+        ) {
+            Text("\(pnl)%")
+                .font(uiFont: .font(of: .label1))
+                .foregroundColor(Color(.mountain))
         }
     }
 
