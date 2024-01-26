@@ -2,6 +2,7 @@ import BigDecimal
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
+import SendService
 import SolanaSwift
 import TokenService
 
@@ -65,11 +66,11 @@ public struct SendInputState: Equatable {
         public let walletAccount: BufferInfo<SolanaAddressInfo>?
 
         ///  Usable when recipient category is ``Recipient.Category.solanaAddress``
-        public let splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
+        public let splAccounts: [SolanaSwift.TokenAccount<TokenAccountState>]
 
         public init(
             walletAccount: BufferInfo<SolanaAddressInfo>?,
-            splAccounts: [SolanaSwift.TokenAccount<SPLTokenAccountState>]
+            splAccounts: [SolanaSwift.TokenAccount<TokenAccountState>]
         ) {
             self.walletAccount = walletAccount
             self.splAccounts = splAccounts

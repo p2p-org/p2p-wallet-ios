@@ -73,7 +73,7 @@ final class CheckSourceTests: XCTestCase {
                 from: .feePayerAddress,
                 toNewPubkey: env.sourceWSOLNewAccount!.publicKey,
                 lamports: minimumTokenAccountBalance + inputAmount,
-                space: SPLTokenAccountState.BUFFER_LENGTH,
+                space: TokenAccountState.BUFFER_LENGTH,
                 programId: TokenProgram.id
             ),
             TokenProgram.initializeAccountInstruction(

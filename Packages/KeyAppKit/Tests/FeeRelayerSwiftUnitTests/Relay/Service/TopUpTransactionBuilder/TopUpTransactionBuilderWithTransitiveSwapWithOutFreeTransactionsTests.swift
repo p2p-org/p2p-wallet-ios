@@ -565,7 +565,7 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
             case 0, 2:
                 return nil
             case 1, 3:
-                let info = BufferInfo<SPLTokenAccountState>(
+                let info = BufferInfo<TokenAccountState>(
                     lamports: 0,
                     owner: TokenProgram.id.base58EncodedString,
                     data: .init(

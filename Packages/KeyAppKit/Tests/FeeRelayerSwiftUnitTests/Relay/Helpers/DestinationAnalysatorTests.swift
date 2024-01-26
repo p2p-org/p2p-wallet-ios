@@ -59,7 +59,7 @@ private class MockSolanaAPIClient: MockSolanaAPIClientBase {
     override func getAccountInfo<T>(account: String) async throws -> BufferInfo<T>? where T: BufferLayout {
         switch account {
         case usdcAssociatedAddress.base58EncodedString:
-            let info = BufferInfo<SPLTokenAccountState>(
+            let info = BufferInfo<TokenAccountState>(
                 lamports: 0,
                 owner: testCase > 1 ? SystemProgram.id.base58EncodedString : TokenProgram.id.base58EncodedString,
                 data: .init(

@@ -1,6 +1,5 @@
 import Foundation
 import KeyAppNetworking
-import SolanaSwift
 
 public class SendRPCService {
     let host: String
@@ -22,8 +21,9 @@ public class SendRPCService {
             )
         )
 
-        if !result.contains(PublicKey.wrappedSOLMint.base58EncodedString) {
-            result.append(PublicKey.wrappedSOLMint.base58EncodedString)
+        let solMint = "So11111111111111111111111111111111111111112"
+        if !result.contains(solMint) {
+            result.append(solMint)
         }
 
         return result

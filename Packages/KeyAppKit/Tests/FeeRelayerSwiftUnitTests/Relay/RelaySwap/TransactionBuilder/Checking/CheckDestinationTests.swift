@@ -113,7 +113,7 @@ final class CheckDestinationTests: XCTestCase {
                 from: .feePayerAddress,
                 toNewPubkey: env.destinationNewAccount!.publicKey,
                 lamports: minimumTokenAccountBalance,
-                space: SPLTokenAccountState.BUFFER_LENGTH,
+                space: TokenAccountState.BUFFER_LENGTH,
                 programId: TokenProgram.id
             ),
             TokenProgram.initializeAccountInstruction(

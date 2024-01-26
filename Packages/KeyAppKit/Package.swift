@@ -66,6 +66,12 @@ let package = Package(
             targets: ["History"]
         ),
 
+        // Repository
+        .library(
+            name: "Repository",
+            targets: ["Repository"]
+        ),
+
         // Sell
         .library(
             name: "Sell",
@@ -100,6 +106,11 @@ let package = Package(
             targets: ["TokenService"]
         ),
 
+        .library(
+            name: "SendService",
+            targets: ["SendService"]
+        ),
+
         // KeyAppBusiness
         .library(
             name: "KeyAppBusiness",
@@ -117,7 +128,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/p2p-org/solana-swift", branch: "feature/token-2022"),
+        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
@@ -236,6 +247,7 @@ let package = Package(
                 "Wormhole",
                 "KeyAppNetworking",
                 "TokenService",
+                "SendService",
             ]
         ),
 
@@ -252,6 +264,12 @@ let package = Package(
                 "Onboarding",
                 .product(name: "SolanaSwift", package: "solana-swift"),
             ]
+        ),
+
+        // Repository
+        .target(
+            name: "Repository",
+            dependencies: []
         ),
 
         // Sell
@@ -297,6 +315,13 @@ let package = Package(
                 "Cache",
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),
+            ]
+        ),
+
+        .target(
+            name: "SendService",
+            dependencies: [
+                "KeyAppNetworking",
             ]
         ),
 

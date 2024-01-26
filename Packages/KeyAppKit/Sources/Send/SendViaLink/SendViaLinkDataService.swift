@@ -209,7 +209,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         // spl token
         else {
             let mre = try await solanaAPIClient
-                .getMinimumBalanceForRentExemption(span: SPLTokenAccountState.BUFFER_LENGTH)
+                .getMinimumBalanceForRentExemption(span: TokenAccountState.BUFFER_LENGTH)
             return try await claimSPLToken(
                 keypair: token.keypair,
                 receiver: receiver,

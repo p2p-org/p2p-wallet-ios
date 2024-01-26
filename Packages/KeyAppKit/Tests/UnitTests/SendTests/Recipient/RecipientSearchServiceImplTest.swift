@@ -200,7 +200,7 @@ class RecipientSearchServiceImplTest: XCTestCase {
                         account: .init(
                             lamports: 0,
                             owner: TokenProgram.id.base58EncodedString,
-                            data: SPLTokenAccountState(
+                            data: TokenAccountState(
                                 mint: .usdcMint,
                                 owner: PublicKey(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
                                 lamports: 50000,
