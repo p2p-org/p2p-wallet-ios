@@ -11,7 +11,7 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = ReferralProgramView()
+        let view = ReferralProgramView(viewModel: ReferralProgramViewModel())
         let vc = UIHostingController(rootView: view)
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
