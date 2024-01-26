@@ -31,8 +31,9 @@ struct AllTimePnLInfoBottomSheet: View {
             Image(.transactionFee)
                 .frame(width: 48, height: 48)
 
+            let pnl = allTimePnL.toString(maximumFractionDigits: 2, showPlus: true)
             VStack(alignment: .leading, spacing: 2) {
-                Text(L10n.allTheTime(allTimePnL.toString(maximumFractionDigits: 2, showPlus: true)))
+                Text(L10n.allTheTime("\(pnl)%"))
                     .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1, weight: .semibold))
                     .fixedSize(horizontal: false, vertical: true)
