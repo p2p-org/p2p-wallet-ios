@@ -10,6 +10,7 @@ struct ActionsPanelView: View {
     let pnlRepository: AccountPnLRepository
     let action: (WalletActionType) -> Void
     let balanceTapAction: (() -> Void)?
+    let pnlTapAction: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -20,6 +21,9 @@ struct ActionsPanelView: View {
             }
 
             pnlView
+                .onTapGesture {
+                    pnlTapAction?()
+                }
                 .padding(.top, usdAmount.isEmpty ? 12 : 0)
 
             actionsView

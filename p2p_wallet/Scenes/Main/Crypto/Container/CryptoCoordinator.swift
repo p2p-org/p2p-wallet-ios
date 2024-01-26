@@ -12,6 +12,7 @@ import Wormhole
 /// The scenes that the `Crypto` scene can navigate to
 enum CryptoNavigation: Equatable {
     // With tokens
+    case allTimePnLInfo(pnl: Double)
     case buy
     case receive(publicKey: PublicKey)
     case send
@@ -41,6 +42,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     /// Navigation controller that handle the navigation stack
     private let navigationController: UINavigationController
     private let tabBarController: TabBarController
+    private var nonStrictTokenAlertVC: CustomPresentableViewController?
 
     /// Navigation subject
     private let navigation = PassthroughSubject<CryptoNavigation, Never>()
@@ -203,6 +205,12 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
+        case let .allTimePnLInfo(pnl):
+            return Just({ [weak self] in
+                guard let self else { return }
+                showPnLInfo(allTimePnL: pnl)
+            }())
+                .eraseToAnyPublisher()
         default:
             return Just(())
                 .eraseToAnyPublisher()
@@ -225,5 +233,19 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         ))
         .sink(receiveValue: {})
         .store(in: &subscriptions)
+    }
+
+    private func showPnLInfo(allTimePnL: Double) {
+        nonStrictTokenAlertVC = UIBottomSheetHostingController(
+            rootView: AllTimePnLInfoBottomSheet(allTimePnL: allTimePnL) {
+                [weak nonStrictTokenAlertVC] in
+                nonStrictTokenAlertVC?.dismiss(animated: true)
+            },
+            shouldIgnoresKeyboard: true
+        )
+        nonStrictTokenAlertVC!.view.layer.cornerRadius = 20
+
+        // present bottom sheet
+        tabBarController.present(nonStrictTokenAlertVC!, interactiveDismissalType: .standard)
     }
 }

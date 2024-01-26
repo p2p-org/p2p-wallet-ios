@@ -48,7 +48,8 @@ struct HomeAccountsView: View {
             usdAmount: viewModel.usdcAmount,
             pnlRepository: Resolver.resolve(),
             action: { _ in },
-            balanceTapAction: viewModel.balanceTapped
+            balanceTapAction: viewModel.balanceTapped,
+            pnlTapAction: {}
         )
     }
 
