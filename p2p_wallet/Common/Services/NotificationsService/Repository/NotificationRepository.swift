@@ -29,7 +29,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
                 header: header,
                 body: .init(
                     method: "add_device",
-                    params: model
+                    params: [model]
                 )
             )
         } catch let error as JSONRPCError<EmptyData> {
@@ -53,7 +53,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
             header: header,
             body: .init(
                 method: "delete_device",
-                params: model
+                params: [model]
             )
         )
     }
