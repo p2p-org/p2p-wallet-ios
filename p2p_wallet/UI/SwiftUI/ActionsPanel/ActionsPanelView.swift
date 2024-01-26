@@ -56,24 +56,33 @@ struct ActionsPanelView: View {
     @ViewBuilder private var pnlView: some View {
         RepositoryView(
             repository: pnlRepository
-        ) {
+        ) { _ in
             ProgressView()
-        } errorView: { error in
+        } errorView: { error, pnl in
             #if !RELEASE
-                Text(String(reflecting: error))
-                    .foregroundStyle(.red)
+                VStack {
+                    pnlContentView(pnl: pnl)
+                    Text(String(reflecting: error))
+                        .foregroundStyle(.red)
+                }
+            #else
+                pnlContentView(pnl: pnl)
             #endif
         } content: { pnl in
-            if let pnl {
-                Text(L10n.allTheTime(pnl))
-                    .font(uiFont: .font(of: .text3))
-                    .foregroundColor(Color(.night))
-            }
+            pnlContentView(pnl: pnl)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(Color(.snow))
         .cornerRadius(8)
+    }
+
+    @ViewBuilder private func pnlContentView(pnl: String?) -> some View {
+        if let pnl {
+            Text(L10n.allTheTime(pnl))
+                .font(uiFont: .font(of: .text3))
+                .foregroundColor(Color(.night))
+        }
     }
 
     @ViewBuilder private var actionsView: some View {
