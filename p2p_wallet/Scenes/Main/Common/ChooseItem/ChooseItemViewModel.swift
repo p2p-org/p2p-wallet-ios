@@ -96,7 +96,7 @@ private extension ChooseItemViewModel {
             } else {
                 // Do not split up sections if there is a keyword
                 var searchedItems: [any ChooseItemSearchableItem] = []
-                
+
                 for section in self.allItems {
                     for item in section.items {
                         if item.matches(keyword: value.lowercased()) {
@@ -105,13 +105,13 @@ private extension ChooseItemViewModel {
                         }
                     }
                 }
-                
+
                 try Task.checkCancellation()
                 let result = self.service.sortFiltered(
                     by: value.lowercased(),
                     items: [ChooseItemListSection(items: searchedItems)]
                 )
-                
+
                 try Task.checkCancellation()
                 await MainActor.run {
                     self.sections = result
