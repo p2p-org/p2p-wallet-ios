@@ -21,6 +21,8 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var notifications: NotificationService
 
+    var searchingTask: Task<Void, Error>?
+
     init(service: ChooseItemService, chosenToken: any ChooseItemSearchableItem) {
         self.chosenToken = chosenToken
         self.service = service
@@ -33,6 +35,9 @@ private extension ChooseItemViewModel {
     func bind() {
         service.state
             .receive(on: DispatchQueue.main)
+            .removeDuplicates { lhs, rhs in
+                lhs.status == rhs.status && lhs.value.count == rhs.value.count
+            }
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state.status {
@@ -67,34 +72,51 @@ private extension ChooseItemViewModel {
 
         $searchText
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
-            .map { [weak self] (input: String) -> (String, [ChooseItemListSection]) in
-                if input.isEmpty {
-                    return (input, [])
-                } else {
-                    guard let self else { return (input, []) }
-                    // Do not split up sections if there is a keyword
-                    let searchedItems = self.allItems
-                        .flatMap(\.items)
-                        .filter { $0.matches(keyword: input.lowercased()) }
-                    let result = self.service.sortFiltered(
-                        by: input.lowercased(),
-                        items: [ChooseItemListSection(items: searchedItems)]
-                    )
-
-                    return (input, result)
-                }
+            .sink { [weak self] value in
+                self?.searchingTask(keyword: value)
             }
-            .receive(on: RunLoop.main)
-            .sinkAsync(receiveValue: { [weak self] value, result in
-                guard let self else { return }
-                self.isSearchGoing = !value.isEmpty
-                if value.isEmpty {
+            .store(in: &subscriptions)
+    }
+
+    func searchingTask(keyword value: String) {
+        if searchingTask != nil {
+            searchingTask?.cancel()
+        }
+
+        searchingTask = Task {
+            try Task.checkCancellation()
+            self.isSearchGoing = !value.isEmpty
+
+            if value.isEmpty {
+                try Task.checkCancellation()
+
+                await MainActor.run {
                     self.sections = self.allItems
-                } else {
+                }
+            } else {
+                // Do not split up sections if there is a keyword
+                var searchedItems: [any ChooseItemSearchableItem] = []
+                
+                for section in self.allItems {
+                    for item in section.items {
+                        if item.matches(keyword: value.lowercased()) {
+                            try Task.checkCancellation()
+                            searchedItems.append(item)
+                        }
+                    }
+                }
+                
+                try Task.checkCancellation()
+                let result = self.service.sortFiltered(
+                    by: value.lowercased(),
+                    items: [ChooseItemListSection(items: searchedItems)]
+                )
+                
+                try Task.checkCancellation()
+                await MainActor.run {
                     self.sections = result
                 }
-            })
-            .store(in: &subscriptions)
+            }
+        }
     }
 }
