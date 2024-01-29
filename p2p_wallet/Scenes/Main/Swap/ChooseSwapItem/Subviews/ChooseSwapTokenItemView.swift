@@ -27,10 +27,10 @@ struct ChooseSwapTokenItemView: View {
             if let amount {
                 subtitle = "\(amount) • \(formattedMint)"
             } else {
-                subtitle = "\(token.token.symbol) • \(formattedMint))"
+                subtitle = "\(token.token.symbol) • \(formattedMint)"
             }
         } else {
-            subtitle = "\(token.token.symbol) • \(formattedMint))"
+            subtitle = "\(token.token.symbol) • \(formattedMint)"
         }
     }
 
