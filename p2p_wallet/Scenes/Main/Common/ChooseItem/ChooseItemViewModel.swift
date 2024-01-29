@@ -51,7 +51,7 @@ private extension ChooseItemViewModel {
                         self.allItems = self.service.sort(items: dataWithoutChosen)
 
                         if !self.isSearchGoing {
-                            self.sections = self.allItems
+                            self.sections = self.allItems.filter { $0.items.count < 100 }
                         }
                     }
 
@@ -71,7 +71,7 @@ private extension ChooseItemViewModel {
             .store(in: &subscriptions)
 
         $searchText
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .sink { [weak self] value in
                 self?.searchingTask(keyword: value)
             }
@@ -91,12 +91,12 @@ private extension ChooseItemViewModel {
                 try Task.checkCancellation()
 
                 await MainActor.run {
-                    self.sections = self.allItems
+                    self.sections = self.allItems.filter { $0.items.count < 100 }
                 }
             } else {
                 // Do not split up sections if there is a keyword
                 var searchedItems: [any ChooseItemSearchableItem] = []
-                
+
                 for section in self.allItems {
                     for item in section.items {
                         if item.matches(keyword: value.lowercased()) {
@@ -105,13 +105,13 @@ private extension ChooseItemViewModel {
                         }
                     }
                 }
-                
+
                 try Task.checkCancellation()
                 let result = self.service.sortFiltered(
                     by: value.lowercased(),
                     items: [ChooseItemListSection(items: searchedItems)]
                 )
-                
+
                 try Task.checkCancellation()
                 await MainActor.run {
                     self.sections = result
