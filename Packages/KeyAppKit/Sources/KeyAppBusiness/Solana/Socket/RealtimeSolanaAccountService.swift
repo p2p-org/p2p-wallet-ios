@@ -143,7 +143,9 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 guard dataStr.contains("accountNotification") || dataStr.contains("programNotification") else { return }
 
                 do {
-                    if dataStr.contains("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") {
+                    if dataStr.contains(TokenProgram.id.base58EncodedString) ||
+                        dataStr.contains(Token2022Program.id.base58EncodedString)
+                    {
                         // Token account did change
                         let requestType = JSONRPCRequest<SolanaNotification<SolanaProgramChange>>.self
                         if let data = dataStr.data(using: .utf8) {
