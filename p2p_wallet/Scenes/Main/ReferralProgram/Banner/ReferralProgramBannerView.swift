@@ -7,7 +7,7 @@ struct ReferralProgramBannerView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top) {
-                Text(L10n.refferalProgramm)
+                Text(L10n.referralProgram.replacingOccurrences(of: " ", with: "\n"))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                 Spacer()
                 Image(uiImage: .init(resource: .referralIcon))

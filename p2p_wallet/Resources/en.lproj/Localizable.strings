@@ -581,7 +581,6 @@
 "The token %@ is out of the strict list" = "The token %@ is out of the strict list";
 "Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
 "Unfortunately, you can not cashout in %@, but you can still use other Key App features" = "Unfortunately, you can not cashout in %@, but you can still use other Key App features";
-"Refferal\nprogramm" = "Refferal\nprogramm";
 "Share my link" = "Share my link";
 "Open details" = "Open details";
 "Token 2022 details" = "Token 2022 details";
@@ -589,5 +588,4 @@
 "Calculated by subtracting the token 2022 transfer fee from your balance" = "Calculated by subtracting the token 2022 transfer fee from your balance";
 "Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance" = "Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance";
 "Referral program" = "Referral program";
-"My referral link" = "My referral link";
 "Hey, let’s swap trendy meme coins with me!" = "Hey, let’s swap trendy meme coins with me!";

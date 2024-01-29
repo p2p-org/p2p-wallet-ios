@@ -128,31 +128,6 @@ struct SettingsView: View {
             )
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.myReferralLink)
-                        .font(uiFont: .font(of: .text3, weight: .semibold))
-                    Text("mock/@team")
-                        .apply(style: .label1)
-                        .foregroundColor(Color(uiColor: UIColor(resource: .mountain)))
-                }
-                Spacer()
-                NewTextButton(
-                    title: L10n.share,
-                    size: .small,
-                    style: .primary,
-                    trailing: UIImage(resource: .share3),
-                    action: viewModel.shareReferralLink.send
-                )
-                .buttonStyle(.plain)
-            }
-            .padding(.all, 16)
-            .background(Color.white)
-            .cornerRadius(16)
-            .listRowInsets(EdgeInsets(top: 24, leading: 0, bottom: 0, trailing: 0))
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
         }
     }
 
