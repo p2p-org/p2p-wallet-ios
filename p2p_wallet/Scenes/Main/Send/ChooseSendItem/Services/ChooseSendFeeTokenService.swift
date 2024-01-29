@@ -20,8 +20,7 @@ final class ChooseSendFeeTokenService: ChooseItemService {
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [SolanaAccount] else { return section }
-            return ChooseItemListSection(items: wallets
-                .sorted(preferOrderSymbols: [TokenMetadata.usdc.symbol, TokenMetadata.usdt.symbol]))
+            return ChooseItemListSection(items: wallets.sorted())
         }
         let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems
