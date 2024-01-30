@@ -26,17 +26,7 @@ public class PnLServiceImpl: PnLService {
     }
 
     public func getPNL(userWallet: String, mints: [String]) async throws -> [String: RPCPnLResponseDetail] {
-        struct PnLRPCRequest: Codable {
-            let userWallet: String
-            let mints: [String]
-
-            enum CodingKeys: String, CodingKey {
-                case userWallet = "user_wallet"
-                case mints
-            }
-        }
-
-        return try await JSONRPCHTTPClient(urlSession: urlSession)
+        try await JSONRPCHTTPClient(urlSession: urlSession)
             .request(
                 baseURL: "https://pnl.key.app",
                 body: .init(

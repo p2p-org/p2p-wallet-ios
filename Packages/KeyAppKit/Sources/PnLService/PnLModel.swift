@@ -5,6 +5,16 @@ public protocol PnLModel {
     var pnlByMint: [String: RPCPnLResponseDetail] { get }
 }
 
+struct PnLRPCRequest: Codable {
+    let userWallet: String
+    let mints: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case userWallet = "user_wallet"
+        case mints
+    }
+}
+
 public struct RPCPnLResponseDetail: Codable {
     public let usdAmount, percent: String
 

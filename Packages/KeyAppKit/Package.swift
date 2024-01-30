@@ -337,6 +337,12 @@ let package = Package(
             ]
         ),
 
+        .testTarget(
+            name: "PnLServiceTests",
+            dependencies: ["PnLService"],
+            path: "Tests/UnitTests/PnLServiceTests"
+        ),
+
         .target(
             name: "KeyAppBusiness",
             dependencies: [

@@ -572,7 +572,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         register {
-            PnLServiceImpl()
+            MockPnLService()
         }
         .implements((any PnLService).self)
         .scope(.session)
