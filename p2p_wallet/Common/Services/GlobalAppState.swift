@@ -66,7 +66,7 @@ class GlobalAppState: ObservableObject {
         if let forcedValue = Defaults.forcedReferralProgramEndpoint {
             newReferralProgramEndpoint = forcedValue
         } else {
-            newReferralProgramEndpoint = ReferralProgramViewModel.Constants.urlString
+            newReferralProgramEndpoint = String.secretConfig("REFERRAL_PROGRAM_ENDPOINT")!
         }
     }
 
