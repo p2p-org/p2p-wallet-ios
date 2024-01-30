@@ -8,6 +8,7 @@ private enum ReferralJSBridgeMethod: String {
     case showShareDialog
     case nativeLog
     case signTransaction
+    case getUserPublicKey
 }
 
 protocol ReferralBridge {
@@ -93,9 +94,9 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         }
 
         // Overload reply handler
-        let replyHandler: (Any?, String?) -> Void = { [weak self] result, _ in
+        let handler: (Any?, String?) -> Void = { [weak self] result, error in
             guard let self else { return }
-            if let error = (result as? [String: Any])?["error"] {
+            if let error {
                 self.logger.log(event: "ReferralProgramLog", data: String(describing: error), logLevel: LogLevel.error)
             } else {
                 self.logger.log(event: "ReferralProgramLog", data: String(describing: result), logLevel: LogLevel.info)
@@ -108,21 +109,32 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         case .showShareDialog:
             if let link = dict["link"] as? String {
                 shareSubject.send(link)
-                replyHandler(link, nil)
+                handler(link, nil)
             } else {
-                replyHandler(nil, "Empty link")
+                handler(nil, "Empty link")
             }
 
         case .nativeLog:
             if let info = dict["info"] as? String {
-                replyHandler(info, nil)
+                debugPrint(info)
+                handler(info, nil)
             } else {
-                replyHandler(nil, "Empty info")
+                handler(nil, "Empty info")
             }
 
         case .signTransaction:
-            Task {
-                replyHandler(true, nil)
+            if let message = dict["message"] as? String {
+                Task {
+                    // TODO: https://linear.app/etherean/issue/ETH-806/[ios]-podpis-zaprosov-privatnym-klyuchom
+                    handler(message, nil)
+                }
+            }
+
+        case .getUserPublicKey:
+            if let address {
+                handler(address, nil)
+            } else {
+                handler(nil, "Empty address")
             }
         }
     }
