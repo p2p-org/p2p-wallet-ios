@@ -3,6 +3,10 @@ import Foundation
 import WebKit
 
 final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
+    enum Constants {
+        static let urlString = "https://referral-2ii.pages.dev"
+    }
+
     let link: URL
     let bridge: ReferralJSBridge
     let webView: WKWebView
@@ -13,8 +17,7 @@ final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
         let wkWebView = ReferralProgramViewModel.buildWebView()
         webView = wkWebView
         bridge = ReferralJSBridge(webView: wkWebView)
-        link = URL(string: GlobalAppState.shared.newReferralProgramEndpoint) ??
-            URL(string: String.secretConfig("REFERRAL_PROGRAM_ENDPOINT")!)!
+        link = URL(string: GlobalAppState.shared.newReferralProgramEndpoint) ?? URL(string: Constants.urlString)!
         super.init()
 
         bridge.inject()
