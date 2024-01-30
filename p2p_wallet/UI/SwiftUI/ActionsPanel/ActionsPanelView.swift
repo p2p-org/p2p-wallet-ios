@@ -1,6 +1,3 @@
-import Combine
-import PnLService
-import Repository
 import SwiftUI
 
 struct ActionsPanelView: View {
@@ -59,37 +56,21 @@ struct ActionsPanelView: View {
     }
 
     @ViewBuilder private var pnlView: some View {
-        RepositoryView(
-            repository: pnlRepository
-        ) { _ in
-            Rectangle()
-                .skeleton(with: true, size: .init(width: 100, height: 16))
-        } errorView: { error, pnl in
-            #if !RELEASE
-                VStack {
-                    pnlContentView(pnl: pnl)
-                    Text(String(reflecting: error))
-                        .foregroundStyle(.red)
-                }
-            #else
-                pnlContentView(pnl: pnl)
-            #endif
-        } content: { pnl in
-            pnlContentView(pnl: pnl)
+        PnLView(
+            pnlRepository: pnlRepository,
+            skeletonSize: .init(width: 100, height: 16)
+        ) { pnl in
+            if let percentage = pnl?.total?.percent {
+                Text(L10n.allTheTime("\(percentage)%"))
+                    .font(uiFont: .font(of: .text3))
+                    .foregroundColor(Color(.night))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(.snow))
+                    .cornerRadius(8)
+            }
         }
         .frame(height: 16)
-    }
-
-    @ViewBuilder private func pnlContentView(pnl: PnLModel?) -> some View {
-        if let percentage = pnl?.total?.percent {
-            Text(L10n.allTheTime("\(percentage)%"))
-                .font(uiFont: .font(of: .text3))
-                .foregroundColor(Color(.night))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color(.snow))
-                .cornerRadius(8)
-        }
     }
 
     @ViewBuilder private var actionsView: some View {

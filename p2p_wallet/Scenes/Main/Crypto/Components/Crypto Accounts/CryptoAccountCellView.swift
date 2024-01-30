@@ -1,5 +1,3 @@
-import PnLService
-import Repository
 import Resolver
 import SkeletonUI
 import SwiftUI
@@ -112,31 +110,24 @@ struct CryptoAccountCellView: View, Equatable {
     // MARK: - ViewBuilders
 
     @ViewBuilder private func pnlView(mint: String) -> some View {
-        RepositoryView(
-            repository: Resolver.resolve(
+        PnLView(
+            pnlRepository: Resolver.resolve(
                 PnLRepository.self
-            )
-        ) { _ in
-            Rectangle()
-                .skeleton(with: true, size: .init(width: 30, height: 16))
-        } errorView: { _, pnl in
-            // ignore error
-            pnlTextView(pnl: pnl, mint: mint)
-        } content: { pnl in
-            pnlTextView(pnl: pnl, mint: mint)
+            ),
+            skeletonSize: .init(width: 30, height: 16)
+        ) { pnl in
+            if let pnl = pnl?.pnlByMint[mint]?.percent {
+                Text("\(pnl)%")
+                    .font(uiFont: .font(of: .label1))
+                    .foregroundColor(Color(.mountain))
+            } else {
+                // Hack: invisible text to keep lines height
+                Text("0%")
+                    .font(uiFont: .font(of: .label1))
+                    .foregroundColor(.clear)
+            }
         }
         .frame(height: 16)
-    }
-
-    @ViewBuilder private func pnlTextView(
-        pnl: PnLModel?,
-        mint: String
-    ) -> some View {
-        if let pnl = pnl?.pnlByMint[mint]?.percent {
-            Text("\(pnl)%")
-                .font(uiFont: .font(of: .label1))
-                .foregroundColor(Color(.mountain))
-        }
     }
 
     // MARK: - Equatable

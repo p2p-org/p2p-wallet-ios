@@ -55,7 +55,7 @@ class PnLRepository: Repository<PnLProvider> {
     // MARK: - Scheduler
 
     private func scheduleRun() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5 * 60)) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) { [weak self] in
             guard let self else { return }
             Task { await self.refresh() }
             self.scheduleRun()
