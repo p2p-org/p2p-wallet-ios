@@ -38,6 +38,13 @@ class GlobalAppState: ObservableObject {
         }
     }
 
+    @Published var newReferralProgramEndpoint: String {
+        didSet {
+            Defaults.forcedReferralProgramEndpoint = newReferralProgramEndpoint
+            ResolverScope.session.reset()
+        }
+    }
+
     // TODO: Refactor!
     @Published var surveyID: String?
     @Published var sendViaLinkUrl: URL?
@@ -54,6 +61,12 @@ class GlobalAppState: ObservableObject {
             newSwapEndpoint = forcedValue
         } else {
             newSwapEndpoint = "https://swap-v6.key.app"
+        }
+
+        if let forcedValue = Defaults.forcedReferralProgramEndpoint {
+            newReferralProgramEndpoint = forcedValue
+        } else {
+            newReferralProgramEndpoint = ReferralProgramViewModel.Constants.urlString
         }
     }
 

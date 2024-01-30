@@ -11,10 +11,22 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = ReferralProgramView(viewModel: ReferralProgramViewModel())
+        let viewModel = ReferralProgramViewModel()
+        let view = ReferralProgramView(viewModel: viewModel)
         let vc = UIHostingController(rootView: view)
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
+        
+        viewModel.openShare
+            .sink { [weak vc] link in
+                let activityVC = UIActivityViewController(
+                    activityItems: ["\(L10n.heyLetSSwapTrendyMemeCoinsWithMe) \(link)"],
+                    applicationActivities: nil
+                )
+                vc?.present(activityVC, animated: true)
+            }
+            .store(in: &subscriptions)
+        
 
         return result.eraseToAnyPublisher()
     }
