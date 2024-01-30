@@ -10,7 +10,7 @@ const handleRequest = async (args) => {
             if (result === "null") {
                 return Promise.resolve();
             }
-            return result;
+            return {value: result};
         });
     }
     return { code: 4900, message: "Host is not ready" }

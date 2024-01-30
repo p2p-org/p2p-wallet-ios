@@ -94,15 +94,15 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         }
 
         // Overload reply handler
-        let handler: (Any?, String?) -> Void = { [weak self] result, error in
+        let handler: (String?, String?) -> Void = { [weak self] result, error in
             guard let self else { return }
-            if let error {
-                self.logger.log(event: "ReferralProgramLog", data: String(describing: error), logLevel: LogLevel.error)
-            } else {
+            if let result {
                 self.logger.log(event: "ReferralProgramLog", data: String(describing: result), logLevel: LogLevel.info)
+                replyHandler(result, nil)
+            } else {
+                self.logger.log(event: "ReferralProgramLog", data: String(describing: error), logLevel: LogLevel.error)
+                replyHandler(nil, error)
             }
-
-            replyHandler(result, nil)
         }
 
         switch method {
@@ -128,6 +128,8 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
                     // TODO: https://linear.app/etherean/issue/ETH-806/[ios]-podpis-zaprosov-privatnym-klyuchom
                     handler(message, nil)
                 }
+            } else {
+                handler(nil, "Empty message")
             }
 
         case .getUserPublicKey:
