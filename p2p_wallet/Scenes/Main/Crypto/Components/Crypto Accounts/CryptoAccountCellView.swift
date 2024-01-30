@@ -114,7 +114,7 @@ struct CryptoAccountCellView: View, Equatable {
     @ViewBuilder private func pnlView(mint: String) -> some View {
         RepositoryView(
             repository: Resolver.resolve(
-                AccountPnLRepository.self
+                PnLRepository.self
             )
         ) { _ in
             Rectangle()
@@ -132,10 +132,7 @@ struct CryptoAccountCellView: View, Equatable {
         pnl: PnLModel?,
         mint: String
     ) -> some View {
-        if let pnl = pnl?.pnlByMint[mint]?.toString(
-            maximumFractionDigits: 2,
-            showPlus: true
-        ) {
+        if let pnl = pnl?.pnlByMint[mint]?.percent {
             Text("\(pnl)%")
                 .font(uiFont: .font(of: .label1))
                 .foregroundColor(Color(.mountain))

@@ -1,7 +1,8 @@
+import SkeletonUI
 import SwiftUI
 
 struct AllTimePnLInfoBottomSheet: View {
-    let allTimePnL: Double
+    @ObservedObject var repository: PnLRepository
     var onConfirm: () -> Void
 
     var body: some View {
@@ -31,16 +32,20 @@ struct AllTimePnLInfoBottomSheet: View {
             Image(.transactionFee)
                 .frame(width: 48, height: 48)
 
-            let pnl = allTimePnL.toString(maximumFractionDigits: 2, showPlus: true)
+            let pnl = repository.data?.total?.percent ?? ""
             VStack(alignment: .leading, spacing: 2) {
                 Text(L10n.allTheTime("\(pnl)%"))
                     .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1, weight: .semibold))
+                    .skeleton(with: repository.data == nil && repository.isLoading)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(L10n.hereSHowDoWeCountYourProfitsForTotalBalanceAndEverySingleToken)
-                    .font(uiFont: .font(of: .label1))
-                    .fixedSize(horizontal: false, vertical: true)
+                Text(
+                    L10n.BasedOnAbsoluteAndRelativeProfitabilityOfEachTrade
+                        .itShowsTheRelativePotentialProfitsOrLossesOfYourTradingStrategy
+                )
+                .font(uiFont: .font(of: .label1))
+                .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
         }

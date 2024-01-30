@@ -578,10 +578,12 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         register {
-            AccountPnLRepository(
+            PnLRepository(
                 initialData: nil,
                 provider: .init(
-                    service: resolve()
+                    service: resolve(),
+                    userWalletsManager: resolve(),
+                    solanaAccountsService: resolve()
                 )
             )
         }

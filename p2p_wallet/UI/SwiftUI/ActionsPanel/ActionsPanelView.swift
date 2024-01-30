@@ -7,7 +7,7 @@ struct ActionsPanelView: View {
     let actions: [WalletActionType]
     let balance: String
     let usdAmount: String
-    let pnlRepository: AccountPnLRepository
+    let pnlRepository: PnLRepository
     let action: (WalletActionType) -> Void
     let balanceTapAction: (() -> Void)?
     let pnlTapAction: (() -> Void)?
@@ -81,10 +81,7 @@ struct ActionsPanelView: View {
     }
 
     @ViewBuilder private func pnlContentView(pnl: PnLModel?) -> some View {
-        if let percentage = pnl?.total.toString(
-            maximumFractionDigits: 2,
-            showPlus: true
-        ) {
+        if let percentage = pnl?.total?.percent {
             Text(L10n.allTheTime("\(percentage)%"))
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(.night))

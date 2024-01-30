@@ -25,7 +25,7 @@ struct AccountDetailsView: View {
 
                 if let account = detailAccount.rendableAccountDetails as? RendableNewSolanaAccountDetails {
                     RepositoryView(
-                        repository: Resolver.resolve(AccountPnLRepository.self)
+                        repository: Resolver.resolve(PnLRepository.self)
                     ) { _ in
                         Rectangle()
                             .skeleton(with: true, size: .init(width: 100, height: 16))
@@ -73,10 +73,7 @@ struct AccountDetailsView: View {
         pnl: PnLModel?,
         mint: String
     ) -> some View {
-        if let percentage = pnl?.pnlByMint[mint]?.toString(
-            maximumFractionDigits: 2,
-            showPlus: true
-        ) {
+        if let percentage = pnl?.pnlByMint[mint]?.percent {
             Text(L10n.allTheTime("\(percentage)%"))
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(.night))

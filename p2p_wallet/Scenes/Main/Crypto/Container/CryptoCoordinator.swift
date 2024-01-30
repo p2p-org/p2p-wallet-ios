@@ -12,7 +12,7 @@ import Wormhole
 /// The scenes that the `Crypto` scene can navigate to
 enum CryptoNavigation: Equatable {
     // With tokens
-    case allTimePnLInfo(pnl: Double)
+    case allTimePnLInfo
     case buy
     case receive(publicKey: PublicKey)
     case send
@@ -205,10 +205,10 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
-        case let .allTimePnLInfo(pnl):
+        case .allTimePnLInfo:
             return Just({ [weak self] in
                 guard let self else { return }
-                showPnLInfo(allTimePnL: pnl)
+                showPnLInfo()
             }())
                 .eraseToAnyPublisher()
         default:
@@ -235,9 +235,9 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         .store(in: &subscriptions)
     }
 
-    private func showPnLInfo(allTimePnL: Double) {
+    private func showPnLInfo() {
         nonStrictTokenAlertVC = UIBottomSheetHostingController(
-            rootView: AllTimePnLInfoBottomSheet(allTimePnL: allTimePnL) {
+            rootView: AllTimePnLInfoBottomSheet(repository: Resolver.resolve()) {
                 [weak self] in
                 self?.nonStrictTokenAlertVC?.dismiss(animated: true)
             },

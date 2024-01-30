@@ -28,7 +28,7 @@ struct CryptoView: View {
     private var actionsPanelView: CryptoActionsPanelView {
         CryptoActionsPanelView(viewModel: actionsPanelViewModel) {
             viewModel.navigation
-                .send(.allTimePnLInfo(pnl: Resolver.resolve(AccountPnLRepository.self).data?.total ?? 0))
+                .send(.allTimePnLInfo)
         }
     }
 
