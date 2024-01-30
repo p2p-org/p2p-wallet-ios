@@ -16,7 +16,7 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
         let vc = UIHostingController(rootView: view)
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
-        
+
         viewModel.openShare
             .sink { [weak vc] link in
                 let activityVC = UIActivityViewController(
@@ -26,7 +26,6 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
                 vc?.present(activityVC, animated: true)
             }
             .store(in: &subscriptions)
-        
 
         return result.eraseToAnyPublisher()
     }
