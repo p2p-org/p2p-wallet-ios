@@ -42,7 +42,6 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     /// Navigation controller that handle the navigation stack
     private let navigationController: UINavigationController
     private let tabBarController: TabBarController
-    private var nonStrictTokenAlertVC: CustomPresentableViewController?
 
     /// Navigation subject
     private let navigation = PassthroughSubject<CryptoNavigation, Never>()
@@ -236,16 +235,16 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
     }
 
     private func showPnLInfo() {
-        nonStrictTokenAlertVC = UIBottomSheetHostingController(
-            rootView: AllTimePnLInfoBottomSheet(repository: Resolver.resolve()) {
-                [weak self] in
-                self?.nonStrictTokenAlertVC?.dismiss(animated: true)
-            },
-            shouldIgnoresKeyboard: true
+        let coordinator = BottomSheetInfoCoordinator(
+            parentVC: tabBarController,
+            rootView: AllTimePnLInfoBottomSheet(
+                repository: Resolver.resolve(),
+                mint: nil
+            )
         )
-        nonStrictTokenAlertVC!.view.layer.cornerRadius = 20
 
-        // present bottom sheet
-        tabBarController.present(nonStrictTokenAlertVC!, interactiveDismissalType: .standard)
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }

@@ -3,7 +3,8 @@ import SwiftUI
 
 struct AllTimePnLInfoBottomSheet: View {
     @ObservedObject var repository: PnLRepository
-    var onConfirm: () -> Void
+    @SwiftUI.Environment(\.dismiss) private var dismiss
+    let mint: String? // mint == nil for total pnl
 
     var body: some View {
         VStack(alignment: .center) {
@@ -32,9 +33,9 @@ struct AllTimePnLInfoBottomSheet: View {
             Image(.transactionFee)
                 .frame(width: 48, height: 48)
 
-            let pnl = repository.data?.total?.percent ?? ""
+            let pnl = mint == nil ? repository.data?.total?.percent : repository.data?.pnlByMint[mint!]?.percent
             VStack(alignment: .leading, spacing: 2) {
-                Text(L10n.allTheTime("\(pnl)%"))
+                Text(L10n.allTheTime("\(pnl ?? "")%"))
                     .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1, weight: .semibold))
                     .skeleton(with: repository.data == nil && repository.isLoading)
@@ -64,7 +65,9 @@ struct AllTimePnLInfoBottomSheet: View {
             size: .large,
             style: .primaryWhite,
             expandable: true,
-            action: onConfirm
+            action: {
+                dismiss()
+            }
         )
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 16)
