@@ -16,12 +16,21 @@ struct ChooseSwapTokenItemView: View {
         self.token = token
         self.chosen = chosen
         self.fromToken = fromToken
+
+        let formattedMint = RecipientFormatter.format(destination: token.mintAddress)
+
         if fromToken {
-            subtitle = token.userWallet?.amount?.tokenAmountFormattedString(
+            let amount = token.userWallet?.amount?.tokenAmountFormattedString(
                 symbol: token.token.symbol, maximumFractionDigits: Int(token.token.decimals)
-            ) ?? token.token.symbol
+            )
+
+            if let amount {
+                subtitle = "\(amount) • \(formattedMint)"
+            } else {
+                subtitle = "\(token.token.symbol) • \(formattedMint)"
+            }
         } else {
-            subtitle = token.token.symbol
+            subtitle = "\(token.token.symbol) • \(formattedMint)"
         }
     }
 
@@ -35,10 +44,17 @@ struct ChooseSwapTokenItemView: View {
             .cornerRadius(radius: 48 / 2, corners: .allCorners)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(token.token.name)
-                    .font(uiFont: .font(of: .text3, weight: .bold))
-                    .foregroundColor(Color(.night))
-                    .lineLimit(1)
+                HStack {
+                    Text(token.token.name)
+                        .font(uiFont: .font(of: .text3, weight: .bold))
+                        .foregroundColor(Color(.night))
+                        .lineLimit(1)
+
+                    Text(token.isNonStrict ? " ⚠" : "")
+                        .font(uiFont: .font(of: .text3, weight: .bold))
+                        .foregroundColor(Color(.night))
+                        .lineLimit(1)
+                }
                 Text(subtitle)
                     .apply(style: .label1)
                     .foregroundColor(Color(.mountain))
