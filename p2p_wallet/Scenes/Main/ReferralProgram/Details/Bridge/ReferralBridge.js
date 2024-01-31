@@ -17,7 +17,7 @@ const handleRequest = async (args) => {
 };
 
 window.ReferralBridge = {
-    getUserPublicKey: async function() {
+    getUserPublicKeyAsync: async function() {
         const result = await handleRequest({ method: "getUserPublicKey" });
         ReferralBridge.nativeLog(result);
         return result
