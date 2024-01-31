@@ -88,7 +88,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         mint _: String?,
         programId _: String?,
         configs _: SolanaSwift.RequestConfiguration?
-    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
+    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.TokenAccountState>] {
         fatalError()
     }
 
@@ -96,7 +96,7 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
         pubkey _: String,
         params _: SolanaSwift.OwnerInfoParams?,
         configs _: SolanaSwift.RequestConfiguration?
-    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.SPLTokenAccountState>] {
+    ) async throws -> [SolanaSwift.TokenAccount<SolanaSwift.TokenAccountState>] {
         fatalError()
     }
 

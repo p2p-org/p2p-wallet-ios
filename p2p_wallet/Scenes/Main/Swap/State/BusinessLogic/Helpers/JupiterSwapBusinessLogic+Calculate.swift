@@ -64,7 +64,7 @@ extension JupiterSwapBusinessLogic {
             var splAccountCreationFee: Lamports = state.splAccountCreationFee
             if splAccountCreationFee == 0 {
                 splAccountCreationFee = try await services.solanaAPIClient.getMinimumBalanceForRentExemption(
-                    dataLength: SPLTokenAccountState.BUFFER_LENGTH,
+                    dataLength: TokenAccountState.BUFFER_LENGTH,
                     commitment: nil
                 )
             }

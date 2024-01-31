@@ -5,8 +5,8 @@ extension SolanaAPIClient {
     func getTokenAccountsByOwnerWithToken2022(
         pubkey: String,
         configs: RequestConfiguration?
-    ) async throws -> [TokenAccount<SPLTokenAccountState>]
-    { // Temporarily convert all state into basic SPLTokenAccountState layout
+    ) async throws -> [TokenAccount<TokenAccountState>]
+    { // Temporarily convert all state into basic TokenAccountState layout
         async let classicTokenAccounts = getTokenAccountsByOwner(
             pubkey: pubkey,
             params: .init(
@@ -14,7 +14,7 @@ extension SolanaAPIClient {
                 programId: TokenProgram.id.base58EncodedString
             ),
             configs: configs,
-            decodingTo: SPLTokenAccountState.self
+            decodingTo: TokenAccountState.self
         )
 
         async let token2022Accounts = getTokenAccountsByOwner(
@@ -24,7 +24,7 @@ extension SolanaAPIClient {
                 programId: Token2022Program.id.base58EncodedString
             ),
             configs: configs,
-            decodingTo: SPLTokenAccountState.self
+            decodingTo: TokenAccountState.self
         )
 
         return try await classicTokenAccounts + token2022Accounts

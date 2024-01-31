@@ -3,14 +3,14 @@ import SolanaSwift
 
 public enum SolanaAddressInfo {
     case empty
-    case splAccount(SPLTokenAccountState)
+    case splAccount(TokenAccountState)
 }
 
 extension SolanaAddressInfo: BufferLayout {
     public init(from reader: inout SolanaSwift.BinaryReader) throws {
         if reader.isEmpty {
             self = .empty
-        } else if let accountInfo = try? SPLTokenAccountState(from: &reader) {
+        } else if let accountInfo = try? TokenAccountState(from: &reader) {
             self = .splAccount(accountInfo)
         } else {
             self = .empty

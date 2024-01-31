@@ -108,9 +108,9 @@ extension OrcaSwap {
         } else {
             try Task.checkCancellation()
             let pool = pool
-            async let tokenAMinRentResult: BufferInfo<SPLTokenAccountState>? = solanaClient
+            async let tokenAMinRentResult: BufferInfo<TokenAccountState>? = solanaClient
                 .getAccountInfo(account: pool.tokenAccountA)
-            async let tokenBMinRentResult: BufferInfo<SPLTokenAccountState>? = solanaClient
+            async let tokenBMinRentResult: BufferInfo<TokenAccountState>? = solanaClient
                 .getAccountInfo(account: pool.tokenAccountB)
             (tokenAMinRent, tokenBMinRent) = try await(
                 tokenAMinRentResult?.lamports ?? 2_039_280,

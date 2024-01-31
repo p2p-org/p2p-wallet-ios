@@ -1,34 +1,44 @@
 import Foundation
+import KeyAppNetworking
 import Resolver
 
 protocol NotificationRepository {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
-
-    func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse
-    func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse
+    func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponseDto
+    func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponseDto
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    let httpClient = HttpClientImpl()
+    let httpClient = JSONRPCHTTPClient()
 
-    func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
+    private var baseURL: String {
+        GlobalAppState.shared.pushServiceEndpoint
+    }
+
+    private var header: [String: String] {
+        [
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "CHANNEL_ID": "P2PWALLET_MOBILE",
+        ]
+    }
+
+    func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponseDto {
         do {
-            return try await httpClient.sendRequest(
-                endpoint: NotifierEndpoint.addDevice(dto: .init(
+            return try await httpClient.request(
+                baseURL: baseURL,
+                header: header,
+                body: .init(
                     method: "add_device",
                     params: [model]
-                )),
-                responseModel: DeviceTokenResponse.self
+                )
             )
-        } catch let error as JsonRpcError {
+        } catch let error as JSONRPCError<EmptyData> {
             if error.code == -32001 {
+                // Already sent
                 return .init(
-                    id: "",
-                    result: .init(
-                        deviceToken: model.deviceToken,
-                        timestamp: String(Date().timeIntervalSince1970),
-                        clientId: model.clientId
-                    )
+                    deviceToken: model.deviceToken,
+                    timestamp: String(Date().timeIntervalSince1970),
+                    clientId: model.clientId
                 )
             }
             throw error
@@ -37,13 +47,14 @@ final class NotificationRepositoryImpl: NotificationRepository {
         }
     }
 
-    func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse {
-        try await httpClient.sendRequest(
-            endpoint: NotifierEndpoint.deleteDevice(dto: .init(
+    func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponseDto {
+        try await httpClient.request(
+            baseURL: baseURL,
+            header: header,
+            body: .init(
                 method: "delete_device",
                 params: [model]
-            )),
-            responseModel: DeviceTokenResponse.self
+            )
         )
     }
 }

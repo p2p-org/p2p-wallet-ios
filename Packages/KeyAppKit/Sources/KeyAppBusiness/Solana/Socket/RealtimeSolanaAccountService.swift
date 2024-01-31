@@ -346,7 +346,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
                     // Parse
                     var reader = BinaryReader(bytes: data.bytes)
-                    let tokenAccountData = try SPLTokenAccountState(from: &reader)
+                    let tokenAccountData = try TokenAccountState(from: &reader)
 
                     // Get token
                     let token = try await tokensService.get(address: tokenAccountData.mint)

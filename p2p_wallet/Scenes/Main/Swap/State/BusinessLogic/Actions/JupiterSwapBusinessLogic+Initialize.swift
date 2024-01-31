@@ -20,7 +20,7 @@ extension JupiterSwapBusinessLogic {
         async let pricesMap = getTokensPriceMap()
         async let lamportPerSignature = getLamportPerSignature(solanaAPIClient: services.solanaAPIClient)
         async let splAccountCreationFee = try? services.solanaAPIClient.getMinimumBalanceForRentExemption(
-            dataLength: SPLTokenAccountState.BUFFER_LENGTH,
+            dataLength: TokenAccountState.BUFFER_LENGTH,
             commitment: nil
         )
 
