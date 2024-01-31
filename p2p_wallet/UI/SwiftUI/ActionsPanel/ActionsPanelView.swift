@@ -63,3 +63,12 @@ struct ActionsPanelView: View {
         )
     }
 }
+
+#Preview {
+    ActionsPanelView(
+        actions: [.cashOut, .send, .swap],
+        balance: "1789.91 USDC", usdAmount: "1789.91"
+    ) { _ in
+
+    } balanceTapAction: {}
+}

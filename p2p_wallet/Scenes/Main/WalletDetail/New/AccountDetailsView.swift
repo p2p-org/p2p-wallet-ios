@@ -24,9 +24,24 @@ struct AccountDetailsView: View {
 
             HStack(spacing: detailAccount.rendableAccountDetails.actions.count > 3 ? 12 : 32) {
                 ForEach(detailAccount.rendableAccountDetails.actions) { action in
-                    CircleButton(title: action.title, image: action.icon) {
-                        detailAccount.rendableAccountDetails.onAction(action)
-                    }
+
+                    Button(
+                        action: {
+                            detailAccount.rendableAccountDetails.onAction(action)
+                        },
+                        label: {
+                            VStack(spacing: 4) {
+                                Image(action.icon)
+                                    .resizable()
+                                    .frame(width: 52, height: 52)
+                                    .scaledToFit()
+                                Text(action.title)
+                                    .fontWeight(.semibold)
+                                    .apply(style: .label2)
+                                    .foregroundColor(Color(.night))
+                            }
+                        }
+                    )
                 }
             }
             .padding(.top, 32)
