@@ -29,7 +29,7 @@ window.ReferralBridge = {
         handleRequest({ method: "showShareDialog", link: link });
     },
     signMessageAsync: async function(message) {
-        const result = await handleRequest({ method: "signTransaction", message: message });
+        const result = await handleRequest({ method: "signMessage", message: message });
         return result
     }
 }

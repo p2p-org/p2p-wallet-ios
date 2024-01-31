@@ -2,14 +2,9 @@ import Combine
 import Foundation
 import Network
 import Resolver
+import SolanaSwift
+import TweetNacl
 import WebKit
-
-private enum ReferralJSBridgeMethod: String {
-    case showShareDialog
-    case nativeLog
-    case signTransaction
-    case getUserPublicKey
-}
 
 protocol ReferralBridge {
     var sharePublisher: AnyPublisher<String, Never> { get }
@@ -22,28 +17,16 @@ final class ReferralJSBridge: NSObject, ReferralBridge {
 
     private var logger = DefaultLogManager.shared
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var nameStorage: NameStorageType
 
     // MARK: - Properties
 
     private let shareSubject = PassthroughSubject<String, Never>()
-
     private var subscriptions: [AnyCancellable] = []
     private weak var webView: WKWebView?
-
-    private var address: String?
-    private var domainName: String?
 
     public init(webView: WKWebView) {
         self.webView = webView
         super.init()
-
-        userWalletManager.$wallet
-            .map { $0?.account.publicKey.base58EncodedString }
-            .assignWeak(to: \.address, on: self)
-            .store(in: &subscriptions)
-
-        domainName = nameStorage.getName()
     }
 
     func reload() {
@@ -87,22 +70,31 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         }
 
         guard let methodRaw = dict["method"] as? String,
-              let method = ReferralJSBridgeMethod(rawValue: methodRaw)
+              let method = ReferralBridgeMethod(rawValue: methodRaw)
         else {
             replyHandler(true, nil)
             return
         }
 
         // Overload reply handler
-        let handler: (String?, String?) -> Void = { [weak self] result, error in
+        let handler: (String?, ReferralBridgeError?) -> Void = { [weak self] result, error in
             guard let self else { return }
             if let result {
                 self.logger.log(event: "ReferralProgramLog", data: String(describing: result), logLevel: LogLevel.info)
                 replyHandler(result, nil)
             } else {
-                self.logger.log(event: "ReferralProgramLog", data: String(describing: error), logLevel: LogLevel.error)
-                replyHandler(nil, error)
+                self.logger.log(
+                    event: "ReferralProgramLog",
+                    data: String(describing: error?.rawValue),
+                    logLevel: LogLevel.error
+                )
+                replyHandler(nil, error?.rawValue)
             }
+        }
+
+        guard let user = userWalletManager.wallet else {
+            handler(nil, .emptyAddress)
+            return
         }
 
         switch method {
@@ -111,7 +103,7 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
                 shareSubject.send(link)
                 handler(link, nil)
             } else {
-                handler(nil, "Empty link")
+                handler(nil, .emptyLink)
             }
 
         case .nativeLog:
@@ -119,25 +111,29 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
                 debugPrint(info)
                 handler(info, nil)
             } else {
-                handler(nil, "Empty info")
+                handler(nil, .emptyLog)
             }
 
-        case .signTransaction:
-            if let message = dict["message"] as? String {
+        case .signMessage:
+            if let message = dict["message"] as? String,
+               let user = userWalletManager.wallet,
+               let base64Data = Data(base64Encoded: message, options: .ignoreUnknownCharacters)
+            {
                 Task {
-                    // TODO: https://linear.app/etherean/issue/ETH-806/[ios]-podpis-zaprosov-privatnym-klyuchom
-                    handler(message, nil)
+                    do {
+                        let signed = try NaclSign.signDetached(message: base64Data, secretKey: user.account.secretKey)
+                        let signatureBase58 = Base58.encode(signed)
+                        handler(signatureBase58, nil)
+                    } catch {
+                        handler(nil, .signFailed)
+                    }
                 }
             } else {
-                handler(nil, "Empty message")
+                handler(nil, .signFailed)
             }
 
         case .getUserPublicKey:
-            if let address {
-                handler(address, nil)
-            } else {
-                handler(nil, "Empty address")
-            }
+            handler(user.account.publicKey.base58EncodedString, nil)
         }
     }
 }
