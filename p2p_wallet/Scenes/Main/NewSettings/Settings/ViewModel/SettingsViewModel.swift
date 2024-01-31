@@ -16,6 +16,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
     @Injected private var deviceShareMigrationService: DeviceShareMigrationService
+    @Injected private var referralService: ReferralProgramService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -185,7 +186,10 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         shareReferralLink
-            .map { OpenAction.shareReferral(URL(string: "https://www.google.com/")!) }
+            .compactMap { [weak self] in
+                guard let self else { return nil }
+                return OpenAction.shareReferral(self.referralService.link)
+            }
             .sink { [weak self] navigation in
                 self?.openActionSubject.send(navigation)
             }

@@ -46,7 +46,10 @@ final class SettingsCoordinator: Coordinator<Void> {
                         .sink { _ in }
                         .store(in: &subscriptions)
                 case let .shareReferral(link):
-                    let activityVC = UIActivityViewController(activityItems: [link], applicationActivities: nil)
+                    let activityVC = UIActivityViewController(
+                        activityItems: ["\(L10n.heyLetSSwapTrendyMemeCoinsWithMe) \(link)"],
+                        applicationActivities: nil
+                    )
                     navigationController.present(activityVC, animated: true)
                 }
             })
