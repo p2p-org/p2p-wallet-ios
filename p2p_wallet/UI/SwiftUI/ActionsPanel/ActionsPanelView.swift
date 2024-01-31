@@ -61,7 +61,7 @@ struct ActionsPanelView: View {
             skeletonSize: .init(width: 100, height: 16)
         ) { pnl in
             if let percentage = pnl?.total?.percent {
-                Text(L10n.allTheTime("\(percentage)%"))
+                Text(L10n.last24h("\(percentage)%"))
                     .font(uiFont: .font(of: .text3))
                     .foregroundColor(Color(.night))
                     .padding(.horizontal, 8)

@@ -35,15 +35,14 @@ struct AllTimePnLInfoBottomSheet: View {
 
             let pnl = mint == nil ? repository.data?.total?.percent : repository.data?.pnlByMint[mint!]?.percent
             VStack(alignment: .leading, spacing: 2) {
-                Text(L10n.allTheTime("\(pnl ?? "")%"))
+                Text(L10n.last24h("\(pnl ?? "")"))
                     .foregroundColor(Color(.night))
                     .font(uiFont: .font(of: .text1, weight: .semibold))
                     .skeleton(with: repository.data == nil && repository.isLoading)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(
-                    L10n.BasedOnAbsoluteAndRelativeProfitabilityOfEachTrade
-                        .itShowsTheRelativePotentialProfitsOrLossesOfYourTradingStrategy
+                    L10n.resultOfAnInvestmentTradingStrategyPer24Hours
                 )
                 .font(uiFont: .font(of: .label1))
                 .fixedSize(horizontal: false, vertical: true)

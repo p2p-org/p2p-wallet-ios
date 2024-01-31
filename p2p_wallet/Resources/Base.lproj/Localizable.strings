@@ -600,3 +600,5 @@
 "%@ all the time" = "%@ all the time";
 "Here’s how do we count your profits for total balance and every single token" = "Here’s how do we count your profits for total balance and every single token";
 "Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy." = "Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy.";
+"%@%% last 24h" = "%@%% last 24h";
+"Result of an investment, trading strategy per 24 hours" = "Result of an investment, trading strategy per 24 hours";

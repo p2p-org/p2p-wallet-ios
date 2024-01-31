@@ -74,7 +74,7 @@ struct AccountDetailsView: View {
         mint: String
     ) -> some View {
         if let percentage = pnl?.pnlByMint[mint]?.percent {
-            Text(L10n.allTheTime("\(percentage)%"))
+            Text(L10n.last24h("\(percentage)"))
                 .font(uiFont: .font(of: .text3))
                 .foregroundColor(Color(.night))
                 .padding(.horizontal, 8)
