@@ -121,7 +121,8 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
             {
                 Task {
                     do {
-                        let signed = try NaclSign.signDetached(message: base64Data, secretKey: user.account.secretKey).base64EncodedString()                        
+                        let signed = try NaclSign.signDetached(message: base64Data, secretKey: user.account.secretKey)
+                            .base64EncodedString()
                         handler(signed, nil)
                     } catch {
                         handler(nil, .signFailed)
