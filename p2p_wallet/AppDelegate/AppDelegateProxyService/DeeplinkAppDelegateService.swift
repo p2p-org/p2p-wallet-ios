@@ -78,7 +78,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         }
 
         if urlComponents.host == "r.key.app" {
-            setReferrerIfNeeded(r: urlComponents.path)
+            setReferrerIfNeeded(r: String(urlComponents.path.dropFirst()))
         }
     }
 
