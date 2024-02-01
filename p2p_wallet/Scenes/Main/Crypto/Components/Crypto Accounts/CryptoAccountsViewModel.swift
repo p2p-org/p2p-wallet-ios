@@ -114,12 +114,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func refresh() async {
-        defer {
-            Task {
-                await Resolver.resolve(PnLRepository.self).reload()
-            }
-        }
         await HomeAccountsSynchronisationService().refresh()
+        Task {
+            await Resolver.resolve(PnLRepository.self).reload()
+        }
     }
 
     func scrollToTop() {

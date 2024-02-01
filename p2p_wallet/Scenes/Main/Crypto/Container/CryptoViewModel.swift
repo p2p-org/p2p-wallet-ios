@@ -46,12 +46,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Methods
 
-    func reload() async {
-        defer {
-            Task {
-                await Resolver.resolve(PnLRepository.self).reload()
-            }
-        }
+    private func reload() async {
         await CryptoAccountsSynchronizationService().refresh()
     }
 
@@ -178,6 +173,18 @@ private extension CryptoViewModel {
             .sink { [weak self] isSuccess in
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
+            }
+            .store(in: &subscriptions)
+
+        // solana account vs pnl, get for the first time
+        solanaAccountsService.statePublisher
+            .receive(on: RunLoop.main)
+            .filter { $0.status == .ready }
+            .prefix(1)
+            .sink { _ in
+                Task {
+                    await Resolver.resolve(PnLRepository.self).reload()
+                }
             }
             .store(in: &subscriptions)
     }

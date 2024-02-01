@@ -63,7 +63,7 @@ struct NewHistoryView<Header: View>: View {
             }
             .padding(.vertical, 8)
         }
-        .customRefreshable { try? await viewModel.reload() }
+        .customRefreshable { try? await viewModel.refresh() }
         .background(Color(.smoke))
         .onAppear {
             viewModel.onAppear()
