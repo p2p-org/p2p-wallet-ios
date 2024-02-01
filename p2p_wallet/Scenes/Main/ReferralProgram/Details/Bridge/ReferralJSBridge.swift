@@ -15,7 +15,7 @@ final class ReferralJSBridge: NSObject, ReferralBridge {
 
     // MARK: - Dependencies
 
-    private var logger = DefaultLogManager.shared
+    private let logger = DefaultLogManager.shared
     @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Properties
