@@ -136,7 +136,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     }
 
     private func setReferrerIfNeeded(r: String) {
-//        guard available(.referralProgramEnabled) else { return }
+        guard available(.referralProgramEnabled) else { return }
         let referralService: ReferralProgramService = Resolver.resolve()
         Task {
             _ = await referralService.setReferent(from: r)

@@ -56,7 +56,7 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
                 user: currentUserAddress, referrent: nil, timestamp: timestamp
             )
             .sign(secretKey: secret)
-            let _: String = try await jsonrpcClient.request(
+            let _: String? = try await jsonrpcClient.request(
                 baseURL: baseURL,
                 body: .init(
                     method: "register",
@@ -85,10 +85,10 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
             guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
             let timestamp = Int64(Date().timeIntervalSince1970)
             let signed = try SetReferentSignature(
-                user: currentUserAddress, referent: referrer, timestamp: timestamp
+                user: currentUserAddress, referent: from, timestamp: timestamp
             )
             .sign(secretKey: secret)
-            let _: String = try await jsonrpcClient.request(
+            let _: String? = try await jsonrpcClient.request(
                 baseURL: baseURL,
                 body: .init(
                     method: "set_referent",
