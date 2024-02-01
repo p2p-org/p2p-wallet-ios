@@ -2,16 +2,19 @@ import Foundation
 
 struct Version: Decodable {
     // MARK: - Enumerations
+
     enum VersionError: Error {
         case invalidFormat
     }
 
     // MARK: - Public properties
+
     let major: Int
     let minor: Int
     let patch: Int
 
     // MARK: - Init
+
     init(from decoder: Decoder) throws {
         do {
             let container = try decoder.singleValueContainer()
@@ -29,15 +32,16 @@ struct Version: Decodable {
         }
 
         guard let major = versionComponents[0], let minor = versionComponents[1],
-            let patch = versionComponents[2] else {
-                throw VersionError.invalidFormat
+              let patch = versionComponents[2]
+        else {
+            throw VersionError.invalidFormat
         }
 
         self.major = major
         self.minor = minor
         self.patch = patch
     }
-    
+
     var string: String {
         "\(major).\(minor).\(patch)"
     }

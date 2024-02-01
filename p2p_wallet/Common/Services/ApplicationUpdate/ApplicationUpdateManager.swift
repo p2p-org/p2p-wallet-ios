@@ -29,7 +29,7 @@ class ApplicationUpdateManager {
         else {
             return .noUpdate
         }
-        
+
         print("[ApplicationUpdateManager]", appVersion, storeAppVersion)
 
         // Check
