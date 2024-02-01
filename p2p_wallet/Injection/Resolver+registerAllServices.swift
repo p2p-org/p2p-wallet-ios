@@ -81,6 +81,11 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         register {
+            ApplicationUpdateManager(provider: FirebaseApplicationUpdateProvider())
+        }
+        .scope(.application)
+
+        register {
             DeviceShareMigrationService(
                 isWeb3AuthUser: resolve(UserWalletManager.self)
                     .$wallet

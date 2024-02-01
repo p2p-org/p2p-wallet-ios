@@ -81,6 +81,13 @@ struct DebugMenuView: View {
             DebugTextField(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
             DebugTextField(title: "Token:", content: $globalAppState.tokenEndpoint)
             Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
+
+            Button {
+                Task {
+                    UserDefaults.standard.set(nil, forKey: "application_user_awareness")
+                }
+            } label: { Text("Clean version alert") }
+
             Button {
                 Task {
                     ResolverScope.session.reset()
