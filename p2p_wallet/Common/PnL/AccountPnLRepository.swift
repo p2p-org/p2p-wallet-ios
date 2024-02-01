@@ -38,27 +38,14 @@ class PnLProvider: Provider {
 }
 
 class PnLRepository: Repository<PnLProvider> {
-//    weak var timer: Timer?
+    weak var timer: Timer?
 
     override init(initialData: ItemType?, provider: PnLProvider) {
         super.init(initialData: initialData, provider: provider)
-//        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-//            guard let self else { return }
-//            Task { await self.refresh() }
-//        }
-
-        // wtf timer doesn't fire???
-
-        scheduleRun()
-    }
-
-    // MARK: - Scheduler
-
-    private func scheduleRun() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5 * 60)) { [weak self] in
+        timer = Timer.scheduledTimer(withTimeInterval: 5 * 60, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { await self.refresh() }
-            self.scheduleRun()
         }
+        timer?.fire()
     }
 }
