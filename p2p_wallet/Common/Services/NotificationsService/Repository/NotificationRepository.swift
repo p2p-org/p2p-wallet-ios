@@ -8,7 +8,7 @@ protocol NotificationRepository {
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    let httpClient = JSONRPCHTTPClient(urlSession: DebugLoggingURLSession())
+    let httpClient = JSONRPCHTTPClient()
 
     private var baseURL: String {
         GlobalAppState.shared.pushServiceEndpoint
