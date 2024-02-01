@@ -2,6 +2,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppNetworking
 import Resolver
+import SolanaSwift
 import TweetNacl
 
 protocol ReferralProgramService {
@@ -37,6 +38,43 @@ final class ReferralProgramServiceImpl {
 // MARK: - ReferralProgramService
 
 extension ReferralProgramServiceImpl: ReferralProgramService {
+    private struct SetReferentRequest: Encodable {
+        struct TimedSignature: Encodable {
+            let timestamp: Int64
+            let signature: String
+        }
+
+        let user: String
+        let referent: String
+        let timedSignature: TimedSignature
+
+        enum CodingKeys: String, CodingKey {
+            case user, referent, timedSignature = "timed_signature"
+        }
+    }
+
+    private struct SetReferentSignature: BorshSerializable {
+        let user: String
+        let referent: String
+        let timestamp: Int64
+
+        func serialize(to writer: inout Data) throws {
+            try user.serialize(to: &writer)
+            try referent.serialize(to: &writer)
+            try timestamp.serialize(to: &writer)
+        }
+
+        func sign(secretKey: Data) throws -> Data {
+            var data = Data()
+            try serialize(to: &data)
+            return try NaclSign.signDetached(message: data, secretKey: secretKey)
+        }
+
+        func signAsBase64(secretKey: Data) throws -> String {
+            try sign(secretKey: secretKey).base64EncodedString()
+        }
+    }
+
     var referrer: String {
         nameStorage.getName() ?? currentUserAddress
     }
@@ -47,44 +85,22 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
 
     func setReferent(from: String) async throws -> String {
         guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
-        var timestamp = Date().timeIntervalSince1970
-        let model = ReferralSetReferentModel(user: currentUserAddress, referent: referrer, timestamp: timestamp)
-        let data = try JSONEncoder().encode(model)
-        let signed = try NaclSign.signDetached(message: data, secretKey: secret)
+        var timestamp = Int64(Date().timeIntervalSince1970)
+        let signed = try SetReferentSignature(user: currentUserAddress, referent: referrer, timestamp: timestamp)
+            .signAsBase64(secretKey: secret)
         return try await jsonrpcClient.request(
             baseURL: baseURL,
             body: .init(
                 method: "set_referent",
-                params: ReferralSetReferentRequest(
+                params: SetReferentRequest(
                     user: currentUserAddress,
                     referent: from,
-                    timedSignature: .init(
+                    timedSignature: SetReferentRequest.TimedSignature(
                         timestamp: timestamp,
-                        signature: signed.base64EncodedString()
+                        signature: signed
                     )
                 )
             )
         )
     }
-}
-
-private struct ReferralSetReferentRequest: Encodable {
-    struct TimedSignature: Encodable {
-        let timestamp: TimeInterval
-        let signature: String
-    }
-
-    let user: String
-    let referent: String
-    let timedSignature: TimedSignature
-
-    enum CodingKeys: String, CodingKey {
-        case user, referent, timedSignature = "timed_signature"
-    }
-}
-
-private struct ReferralSetReferentModel: Encodable {
-    let user: String
-    let referent: String
-    let timestamp: TimeInterval
 }

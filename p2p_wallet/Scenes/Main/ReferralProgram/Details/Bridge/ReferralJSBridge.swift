@@ -121,8 +121,8 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
             {
                 Task {
                     do {
-                        let signed = try NaclSign.signDetached(message: base64Data, secretKey: user.account.secretKey)
-                            .base64EncodedString()
+                        let signed = try SignMessageSignature(message: message)
+                            .signAsBase64(secretKey: user.account.secretKey)
                         handler(signed, nil)
                     } catch {
                         handler(nil, .signFailed)
@@ -135,5 +135,23 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         case .getUserPublicKey:
             handler(user.account.publicKey.base58EncodedString, nil)
         }
+    }
+}
+
+struct SignMessageSignature: Codable, BorshSerializable {
+    let message: String
+
+    func serialize(to writer: inout Data) throws {
+        try message.serialize(to: &writer)
+    }
+
+    func sign(secretKey: Data) throws -> Data {
+        var data = Data()
+        try serialize(to: &data)
+        return try NaclSign.signDetached(message: data, secretKey: secretKey)
+    }
+
+    func signAsBase64(secretKey: Data) throws -> String {
+        try sign(secretKey: secretKey).base64EncodedString()
     }
 }

@@ -73,7 +73,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             GlobalAppState.shared.swapUrl = urlComponents.url
 
             if let referrer = urlComponents.queryItems?.first { $0.name == "r" }?.value {
-                setReferrer(r: referrer)
+                setReferrerIfNeeded(r: referrer)
             }
         }
 
@@ -131,7 +131,8 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         }
     }
 
-    private func setReferrer(r: String) {
+    private func setReferrerIfNeeded(r: String) {
+        guard available(.referralProgramEnabled) else { return }
         let referralService: ReferralProgramService = Resolver.resolve()
         Task {
             do {

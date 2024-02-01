@@ -189,10 +189,12 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
         let from = viewModel.currentState.fromToken.mintAddress
         let to = viewModel.currentState.toToken.mintAddress
-        let referrer = viewModel.referralProgramService.referrer
+        var item = "https://s.key.app/swap?from=\(from)&to=\(to)"
+        if available(.referralProgramEnabled) {
+            item.append("&r=\(viewModel.referralProgramService.referrer)")
+        }
 
-        let items = ["https://s.key.app/swap?from=\(from)&to=\(to)&r=\(referrer)"]
-        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: [item], applicationActivities: nil)
 
         navigationController.present(activityVC, animated: true)
     }
