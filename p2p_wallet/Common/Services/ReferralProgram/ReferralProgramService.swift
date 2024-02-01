@@ -9,7 +9,8 @@ protocol ReferralProgramService {
     var referrer: String { get }
     var shareLink: URL { get }
 
-    func setReferent(from: String) async throws -> String
+    func register() async
+    func setReferent(from: String) async
 }
 
 enum ReferralProgramServiceError: Error {
@@ -38,43 +39,6 @@ final class ReferralProgramServiceImpl {
 // MARK: - ReferralProgramService
 
 extension ReferralProgramServiceImpl: ReferralProgramService {
-    private struct SetReferentRequest: Encodable {
-        struct TimedSignature: Encodable {
-            let timestamp: Int64
-            let signature: String
-        }
-
-        let user: String
-        let referent: String
-        let timedSignature: TimedSignature
-
-        enum CodingKeys: String, CodingKey {
-            case user, referent, timedSignature = "timed_signature"
-        }
-    }
-
-    private struct SetReferentSignature: BorshSerializable {
-        let user: String
-        let referent: String
-        let timestamp: Int64
-
-        func serialize(to writer: inout Data) throws {
-            try user.serialize(to: &writer)
-            try referent.serialize(to: &writer)
-            try timestamp.serialize(to: &writer)
-        }
-
-        func sign(secretKey: Data) throws -> Data {
-            var data = Data()
-            try serialize(to: &data)
-            return try NaclSign.signDetached(message: data, secretKey: secretKey)
-        }
-
-        func signAsBase64(secretKey: Data) throws -> String {
-            try sign(secretKey: secretKey).base64EncodedString()
-        }
-    }
-
     var referrer: String {
         nameStorage.getName() ?? currentUserAddress
     }
@@ -83,24 +47,68 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
         URL(string: "https://r.key.app/\(referrer)")!
     }
 
-    func setReferent(from: String) async throws -> String {
-        guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
-        var timestamp = Int64(Date().timeIntervalSince1970)
-        let signed = try SetReferentSignature(user: currentUserAddress, referent: referrer, timestamp: timestamp)
-            .signAsBase64(secretKey: secret)
-        return try await jsonrpcClient.request(
-            baseURL: baseURL,
-            body: .init(
-                method: "set_referent",
-                params: SetReferentRequest(
-                    user: currentUserAddress,
-                    referent: from,
-                    timedSignature: SetReferentRequest.TimedSignature(
-                        timestamp: timestamp,
-                        signature: signed
+    func register() async {
+        guard !Defaults.referrerRegistered else { return }
+        do {
+            guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
+            let timestamp = Int64(Date().timeIntervalSince1970)
+            let signed = try RegisterUserSignature(
+                user: currentUserAddress, referrent: nil, timestamp: timestamp
+            )
+            .sign(secretKey: secret)
+            let _: String = try await jsonrpcClient.request(
+                baseURL: baseURL,
+                body: .init(
+                    method: "register",
+                    params: RegisterUserRequest(
+                        user: currentUserAddress,
+                        timedSignature: ReferralTimedSignature(
+                            timestamp: timestamp, signature: signed.toHexString()
+                        )
                     )
                 )
             )
-        )
+            Defaults.referrerRegistered = true
+        } catch {
+            debugPrint(error)
+            DefaultLogManager.shared.log(
+                event: "\(ReferralProgramService.self)_register",
+                data: error.localizedDescription,
+                logLevel: LogLevel.error
+            )
+        }
+    }
+
+    func setReferent(from: String) async {
+        guard from != currentUserAddress else { return }
+        do {
+            guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
+            let timestamp = Int64(Date().timeIntervalSince1970)
+            let signed = try SetReferentSignature(
+                user: currentUserAddress, referent: referrer, timestamp: timestamp
+            )
+            .sign(secretKey: secret)
+            let _: String = try await jsonrpcClient.request(
+                baseURL: baseURL,
+                body: .init(
+                    method: "set_referent",
+                    params: SetReferentRequest(
+                        user: currentUserAddress,
+                        referent: from,
+                        timedSignature: ReferralTimedSignature(
+                            timestamp: timestamp,
+                            signature: signed.toHexString()
+                        )
+                    )
+                )
+            )
+        } catch {
+            debugPrint(error)
+            DefaultLogManager.shared.log(
+                event: "\(ReferralProgramService.self)_setReferent",
+                data: error.localizedDescription,
+                logLevel: LogLevel.error
+            )
+        }
     }
 }

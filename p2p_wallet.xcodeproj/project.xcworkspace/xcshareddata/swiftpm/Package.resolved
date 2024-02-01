@@ -311,8 +311,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
-        "branch" : "main",
-        "revision" : "f9181079014c474c0e823a2f3f615ba953b41f1e"
+        "branch" : "feature/pwn-783",
+        "revision" : "ca0b6b46dab4975a336a848e9e38d75adc3ebab0"
       }
     },
     {

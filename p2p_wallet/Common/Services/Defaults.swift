@@ -124,6 +124,10 @@ extension DefaultsKeys {
     var ethBannerShouldHide: DefaultsKey<Bool> {
         .init(#function, defaultValue: false)
     }
+
+    var referrerRegistered: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
 }
 
 // MARK: - Moonpay Environment

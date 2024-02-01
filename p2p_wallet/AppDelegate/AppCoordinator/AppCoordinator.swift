@@ -131,6 +131,12 @@ final class AppCoordinator: Coordinator<Void> {
             await Resolver.resolve(JupiterTokensRepository.self).load()
         }
 
+        if available(.referralProgramEnabled) {
+            Task {
+                await Resolver.resolve(ReferralProgramService.self).register()
+            }
+        }
+
         Task {
             // load services
             if available(.sellScenarioEnabled) {
