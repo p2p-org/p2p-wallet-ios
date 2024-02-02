@@ -1,4 +1,5 @@
 import Foundation
+import Resolver
 import SwiftUI
 
 /// View of `CryptoActionsPanel` scene
@@ -7,11 +8,7 @@ struct CryptoActionsPanelView: View {
 
     @ObservedObject var viewModel: CryptoActionsPanelViewModel
 
-    // MARK: - Initializer
-
-    init(viewModel: CryptoActionsPanelViewModel) {
-        self.viewModel = viewModel
-    }
+    let pnlTapAction: (() -> Void)?
 
     // MARK: - View content
 
@@ -20,8 +17,10 @@ struct CryptoActionsPanelView: View {
             actions: viewModel.actions,
             balance: viewModel.balance,
             usdAmount: "",
+            pnlRepository: Resolver.resolve(),
             action: viewModel.actionClicked,
-            balanceTapAction: viewModel.balanceTapped
+            balanceTapAction: viewModel.balanceTapped,
+            pnlTapAction: pnlTapAction
         )
         .onAppear {
             viewModel.viewDidAppear()

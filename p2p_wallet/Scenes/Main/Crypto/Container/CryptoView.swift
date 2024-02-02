@@ -1,4 +1,5 @@
 import Combine
+import Resolver
 import SwiftUI
 
 /// View of `Crypto` scene
@@ -25,7 +26,10 @@ struct CryptoView: View {
     // MARK: - View content
 
     private var actionsPanelView: CryptoActionsPanelView {
-        CryptoActionsPanelView(viewModel: actionsPanelViewModel)
+        CryptoActionsPanelView(viewModel: actionsPanelViewModel) {
+            viewModel.navigation
+                .send(.allTimePnLInfo)
+        }
     }
 
     var body: some View {

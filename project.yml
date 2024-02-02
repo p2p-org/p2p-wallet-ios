@@ -245,6 +245,11 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
+            - package: KeyAppKit
+              product: Repository
+            - package: KeyAppKit
+              product: PnLService
+              
             - package: BEPureLayout
 
             - package: Lokalise
