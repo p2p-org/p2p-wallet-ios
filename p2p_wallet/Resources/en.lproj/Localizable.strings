@@ -1,4 +1,5 @@
 "%@ Liquidity fee %@" = "%@ Liquidity fee %@";
+"%@ all the time" = "%@ all the time";
 "%@ doesn't work. Try another option" = "%@ doesn't work. Try another option";
 "%@ found" = "%@ found";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ is the minimum amount to receive from the Ethereum Network";
@@ -6,6 +7,7 @@
 "%@ purchase cost" = "%@ purchase cost";
 "%@ to %@" = "%@ to %@";
 "%@ transactions" = "%@ transactions";
+"%@%% last 24h" = "%@%% last 24h";
 "%@\nPlease log in with the correct %@ account." = "%@\nPlease log in with the correct %@ account.";
 "0%% fees" = "0%% fees";
 "1%% fee" = "1%% fee";
@@ -48,6 +50,8 @@
 "Balance" = "Balance";
 "Bank card" = "Bank card";
 "Bank transfer" = "Bank transfer";
+"Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy." = "Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy.";
+"Be save and carefull" = "Be save and carefull";
 "Best price" = "Best price";
 "Bitcoin" = "Bitcoin";
 "Blockhash not found" = "Blockhash not found";
@@ -62,6 +66,8 @@
 "Buying %@ as the base currency" = "Buying %@ as the base currency";
 "By continuing, you agree to Key App’s" = "By continuing, you agree to Key App’s";
 "Calculated by subtracting the account creation fee from your balance" = "Calculated by subtracting the account creation fee from your balance";
+"Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance" = "Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance";
+"Calculated by subtracting the token 2022 transfer fee from your balance" = "Calculated by subtracting the token 2022 transfer fee from your balance";
 "Calculating the fees" = "Calculating the fees";
 "Cancel" = "Cancel";
 "Cannot calculate fees. Try again" = "Cannot calculate fees. Try again";
@@ -74,6 +80,7 @@
 "Change my PIN" = "Change my PIN";
 "Change the region manually" = "Change the region manually";
 "Changed language to %@" = "Changed language to %@";
+"Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions." = "Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions.";
 "Check available funds" = "Check available funds";
 "Choose a recipient" = "Choose a recipient";
 "Choose an option to continue" = "Choose an option to continue";
@@ -177,8 +184,10 @@
 "Funds were sent" = "Funds were sent";
 "Go back" = "Go back";
 "Got it" = "Got it";
+"Here’s how do we count your profits for total balance and every single token" = "Here’s how do we count your profits for total balance and every single token";
 "Here’s what we found" = "Here’s what we found";
 "Hey, I've sent you %@ %@! Get it here: %@" = "Hey, I've sent you %@ %@! Get it here: %@";
+"Hey, let’s swap trendy meme coins with me!" = "Hey, let’s swap trendy meme coins with me!";
 "Hidden tokens" = "Hidden tokens";
 "Hide" = "Hide";
 "Hide zero balances" = "Hide zero balances";
@@ -214,6 +223,7 @@
 "Keep your pin safe. Hide your pin from other people." = "Keep your pin safe. Hide your pin from other people.";
 "Key App" = "Key App";
 "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings." = "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings.";
+"Key App doesn’t make any profit from this swap 💚" = "Key App doesn’t make any profit from this swap 💚";
 "Key App one-time transfer link" = "Key App one-time transfer link";
 "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain" = "Key App respects your privacy - it can't access your funds or personal details. Your information stays securely stored on your device and in the blockchain.";
 "Key App’s" = "Key App’s";
@@ -246,6 +256,7 @@
 "Multi-factor authentication" = "Multi-factor authentication";
 "My Ethereum address" = "My Ethereum address";
 "My Solana address" = "My Solana address";
+"My crypto" = "My crypto";
 "My username" = "My username";
 "Name was booked" = "Name was booked";
 "Network" = "Network";
@@ -268,6 +279,7 @@
 "Only you have access to your funds. You can recover your wallet using your phone or email" = "Only you have access to your funds. You can recover your wallet using your phone or email";
 "Oops! Something happened." = "Oops! Something happened.";
 "Oops, something went wrong.\nPlease try again later" = "Oops, something went wrong.\nPlease try again later";
+"Open details" = "Open details";
 "Open settings" = "Open settings";
 "Other tokens" = "Other tokens";
 "PIN code" = "PIN code";
@@ -299,12 +311,14 @@
 "Recently used" = "Recently used";
 "Recipient gets" = "Recipient gets";
 "Recipient’s address" = "Recipient’s address";
+"Referral program" = "Referral program";
 "Refresh" = "Refresh";
 "Remove from history" = "Remove from history";
 "Repeat social auth" = "Repeat social auth";
 "Response error" = "Response error";
 "Restore" = "Restore";
 "Restore your wallet" = "Restore your wallet";
+"Result of an investment, trading strategy per 24 hours" = "Result of an investment, trading strategy per 24 hours";
 "SMS will not be delivered. Please change phone number" = "SMS will not be delivered. Please change phone number";
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via";
 "Save" = "Save";
@@ -334,6 +348,7 @@
 "Set up" = "Set up";
 "Settings" = "Settings";
 "Share" = "Share";
+"Share my link" = "Share my link";
 "Share your link to send money" = "Share your link to send money";
 "Show" = "Show";
 "Show my seed phrase" = "Show my seed phrase";
@@ -393,6 +408,7 @@
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps.";
 "The seed phrase doesn't match. Please try again" = "The seed phrase doesn't match. Please try again";
 "The slippage could be" = "The slippage could be";
+"The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default." = "The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default.";
 "The token %@ is out of the strict list" = "The token %@ is out of the strict list";
 "The transaction has been rejected" = "The transaction has been rejected";
 "The transaction has been successfully completed" = "The transaction has been successfully completed";
@@ -422,6 +438,8 @@
 "To send %@ to Ethereum network you have to swap it to %@" = "To send %@ to Ethereum network you have to swap it to %@";
 "To your bank account" = "To your bank account";
 "Today" = "Today";
+"Token 2022 details" = "Token 2022 details";
+"Token 2022 transfer fee" = "Token 2022 transfer fee";
 "Token not found. Try another one" = "Token not found. Try another one";
 "Token you pay" = "Token you pay";
 "Token you receive" = "Token you receive";
@@ -448,6 +466,7 @@
 "Unable to access camera" = "Unable to access camera";
 "Unauthorized" = "Unauthorized";
 "Unfortunately, you can not buy in %@, but you can still use other Key App features" = "Unfortunately, you can not buy in %@, but you can still use other Key App features";
+"Unfortunately, you can not cashout in %@, but you can still use other Key App features" = "Unfortunately, you can not cashout in %@, but you can still use other Key App features";
 "Unique one-time link works once only" = "Unique one-time link works once only";
 "Unknown" = "Unknown";
 "Unknown date" = "Unknown date";
@@ -571,26 +590,3 @@
 "✌️ Great! Your new PIN is set." = "✌️ Great! Your new PIN is set.";
 "😓 name is not available" = "😓 name is not available";
 "😢 PIN doesn't match. Please try again" = "😢 PIN doesn't match. Please try again";
-"Confirm selection" = "Confirm selection";
-"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
-"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
-"Be save and carefull" = "Be save and carefull";
-"The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default." = "The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default.";
-"Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions." = "Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions.";
-"Confirm selection" = "Confirm selection";
-"The token %@ is out of the strict list" = "The token %@ is out of the strict list";
-"Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
-"Unfortunately, you can not cashout in %@, but you can still use other Key App features" = "Unfortunately, you can not cashout in %@, but you can still use other Key App features";
-"Share my link" = "Share my link";
-"Open details" = "Open details";
-"Token 2022 details" = "Token 2022 details";
-"Token 2022 transfer fee" = "Token 2022 transfer fee";
-"Calculated by subtracting the token 2022 transfer fee from your balance" = "Calculated by subtracting the token 2022 transfer fee from your balance";
-"Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance" = "Calculated by subtracting the token 2022 transfer fee and account creation fee from your balance";
-"Referral program" = "Referral program";
-"Hey, let’s swap trendy meme coins with me!" = "Hey, let’s swap trendy meme coins with me!";
-"%@ all the time" = "%@ all the time";
-"Here’s how do we count your profits for total balance and every single token" = "Here’s how do we count your profits for total balance and every single token";
-"Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy." = "Based on absolute and relative profitability of each trade. It shows the relative potential %% profits or losses of your trading strategy.";
-"%@%% last 24h" = "%@%% last 24h";
-"Result of an investment, trading strategy per 24 hours" = "Result of an investment, trading strategy per 24 hours";
