@@ -18,6 +18,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
+    @Injected private(set) var referralProgramService: ReferralProgramService
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var transactionHandler: TransactionHandler

@@ -192,7 +192,7 @@ private extension CryptoViewModel {
         shareReferralLink
             .compactMap { [weak self] in
                 guard let self else { return nil }
-                return CryptoNavigation.shareReferral(self.referralService.link)
+                return CryptoNavigation.shareReferral(self.referralService.shareLink)
             }
             .sink { [weak self] navigation in
                 self?.navigation.send(navigation)

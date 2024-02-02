@@ -45,6 +45,8 @@ class GlobalAppState: ObservableObject {
         }
     }
 
+    @Published var referralProgramAPIEndoint = String.secretConfig("REFERRAL_PROGRAM_API_ENDPOINT_PROD")!
+
     // TODO: Refactor!
     @Published var surveyID: String?
     @Published var sendViaLinkUrl: URL?

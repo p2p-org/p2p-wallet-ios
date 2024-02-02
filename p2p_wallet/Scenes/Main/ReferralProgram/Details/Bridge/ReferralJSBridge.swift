@@ -15,7 +15,7 @@ final class ReferralJSBridge: NSObject, ReferralBridge {
 
     // MARK: - Dependencies
 
-    private var logger = DefaultLogManager.shared
+    private let logger = DefaultLogManager.shared
     @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Properties
@@ -122,8 +122,7 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
                 Task {
                     do {
                         let signed = try NaclSign.signDetached(message: base64Data, secretKey: user.account.secretKey)
-                            .base64EncodedString()
-                        handler(signed, nil)
+                        handler(signed.base64EncodedString(), nil)
                     } catch {
                         handler(nil, .signFailed)
                     }
