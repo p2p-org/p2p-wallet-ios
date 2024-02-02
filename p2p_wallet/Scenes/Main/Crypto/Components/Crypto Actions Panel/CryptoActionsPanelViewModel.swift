@@ -31,7 +31,7 @@ final class CryptoActionsPanelViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        actions = [.cashOut, .buy, .receive, .send, .swap]
+        actions = [.cashOut, .buy, .swap, .receive, .send]
 
         bind()
     }
