@@ -23,11 +23,16 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     }
 
     var title: String {
-        switch trx.status {
-        case .success:
-            return L10n.transactionSucceeded
-        case .failed:
-            return L10n.transactionFailed
+        switch trx.info {
+        case .referralReward:
+            return L10n.referralReward
+        default:
+            switch trx.status {
+            case .success:
+                return L10n.transactionSucceeded
+            case .failed:
+                return L10n.transactionFailed
+            }
         }
     }
 
@@ -86,6 +91,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case .tryCreateAccount:
             return .icon(.planet)
+
+        case let .referralReward(data):
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
 
         case .unknown, .none:
             return .icon(.planet)
@@ -177,6 +185,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         case .tryCreateAccount:
             return .unchanged("")
 
+        case let .referralReward(data):
+            return .positive("+\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))")
+
         case .none:
             return .unchanged("")
         }
@@ -225,6 +236,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
 
         case .tryCreateAccount:
+            return ""
+
+        case let .referralReward(data):
             return ""
 
         case .none:
