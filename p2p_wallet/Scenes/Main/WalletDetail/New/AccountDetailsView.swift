@@ -37,7 +37,7 @@ struct AccountDetailsView: View {
                                     .foregroundStyle(.red)
                             }
                         #else
-                            pnlContentView(pnl: pnl)
+                            pnlContentView(pnl: pnl, mint: account.account.mintAddress)
                         #endif
                     } content: { pnl in
                         pnlContentView(pnl: pnl, mint: account.account.mintAddress)
