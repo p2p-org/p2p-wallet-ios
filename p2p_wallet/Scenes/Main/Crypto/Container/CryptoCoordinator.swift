@@ -223,7 +223,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 showPnLInfo()
             }())
                 .eraseToAnyPublisher()
-                
+
         default:
             return Just(())
                 .eraseToAnyPublisher()
