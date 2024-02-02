@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import KeyAppKitCore
 import NIO
+import OSLog
 import SolanaSwift
 import TokenService
 import WebSocketKit
@@ -143,7 +144,12 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 guard dataStr.contains("accountNotification") || dataStr.contains("programNotification") else { return }
 
                 do {
-                    if dataStr.contains("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") {
+                    if dataStr.contains(TokenProgram.id.base58EncodedString) ||
+                        dataStr.contains(Token2022Program.id.base58EncodedString)
+                    {
+                        #if DEBUG
+                            Logger().debug("ws: \(dataStr)")
+                        #endif
                         // Token account did change
                         let requestType = JSONRPCRequest<SolanaNotification<SolanaProgramChange>>.self
                         if let data = dataStr.data(using: .utf8) {
@@ -247,9 +253,6 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 commitment: "confirmed",
                 encoding: "base64",
                 filters: [
-                    [
-                        "dataSize": 165,
-                    ],
                     [
                         "memcmp": [
                             "offset": 32,
