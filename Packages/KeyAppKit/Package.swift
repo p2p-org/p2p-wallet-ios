@@ -107,6 +107,11 @@ let package = Package(
         ),
 
         .library(
+            name: "PnLService",
+            targets: ["PnLService"]
+        ),
+
+        .library(
             name: "SendService",
             targets: ["SendService"]
         ),
@@ -323,6 +328,19 @@ let package = Package(
             dependencies: [
                 "KeyAppNetworking",
             ]
+        ),
+
+        .target(
+            name: "PnLService",
+            dependencies: [
+                "KeyAppNetworking",
+            ]
+        ),
+
+        .testTarget(
+            name: "PnLServiceTests",
+            dependencies: ["PnLService"],
+            path: "Tests/UnitTests/PnLServiceTests"
         ),
 
         .target(

@@ -70,7 +70,7 @@ struct CryptoAccountsView: View {
             if !viewModel.transferAccounts.isEmpty {
                 wrappedList(items: viewModel.transferAccounts) { data in
                     ForEach(data, id: \.id) {
-                        tokenCell(rendableAccount: $0)
+                        tokenCell(rendableAccount: $0, showPnL: false)
                     }
                 }
             }
@@ -78,16 +78,22 @@ struct CryptoAccountsView: View {
             wrappedList(items: viewModel.accounts) { data in
                 ForEach(data, id: \.id) { rendableAccount in
                     if rendableAccount.extraAction == .showHide {
-                        tokenCell(rendableAccount: rendableAccount)
-                            .swipeActions(
-                                isVisible: true,
-                                currentUserInteractionCellID: $currentUserInteractionCellID,
-                                action: {
-                                    viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                                }
-                            )
+                        tokenCell(
+                            rendableAccount: rendableAccount,
+                            showPnL: true
+                        )
+                        .swipeActions(
+                            isVisible: true,
+                            currentUserInteractionCellID: $currentUserInteractionCellID,
+                            action: {
+                                viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                            }
+                        )
                     } else {
-                        tokenCell(rendableAccount: rendableAccount)
+                        tokenCell(
+                            rendableAccount: rendableAccount,
+                            showPnL: true
+                        )
                     }
                 }
             }
@@ -118,14 +124,17 @@ struct CryptoAccountsView: View {
                 if !isHiddenSectionDisabled {
                     wrappedList(items: viewModel.hiddenAccounts) { data in
                         ForEach(data, id: \.id) { rendableAccount in
-                            tokenCell(rendableAccount: rendableAccount)
-                                .swipeActions(
-                                    isVisible: false,
-                                    currentUserInteractionCellID: $currentUserInteractionCellID,
-                                    action: {
-                                        viewModel.invoke(for: rendableAccount, event: .visibleToggle)
-                                    }
-                                )
+                            tokenCell(
+                                rendableAccount: rendableAccount,
+                                showPnL: true
+                            )
+                            .swipeActions(
+                                isVisible: false,
+                                currentUserInteractionCellID: $currentUserInteractionCellID,
+                                action: {
+                                    viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                                }
+                            )
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                     }
@@ -137,8 +146,14 @@ struct CryptoAccountsView: View {
     }
 
     @ViewBuilder
-    private func tokenCell(rendableAccount: any RenderableAccount) -> some View {
-        CryptoAccountCellView(rendable: rendableAccount) {
+    private func tokenCell(
+        rendableAccount: any RenderableAccount,
+        showPnL: Bool
+    ) -> some View {
+        CryptoAccountCellView(
+            rendable: rendableAccount,
+            showPnL: showPnL
+        ) {
             viewModel.invoke(for: rendableAccount, event: .tap)
         } onButtonTap: {
             viewModel.invoke(for: rendableAccount, event: .extraButtonTap)

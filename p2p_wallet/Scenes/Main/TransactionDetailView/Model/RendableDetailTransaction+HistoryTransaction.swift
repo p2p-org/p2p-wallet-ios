@@ -385,6 +385,11 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 private enum Constants {
     static let swapFeeRelayerAccount = "JdYkwaUrvoeYsCbPgnt3AAa1qzjV2CtoRqU3bzuAvQu"
     static let feeRelayerAccount = "FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"
+    static let sendFeeRelayerAccount2 = "9U8gVazjmW87Ax5j1yFG7PBfD4ZzckFPLhdPhmoWc2xD"
 
-    static var feeRelayerAccounts = [Constants.swapFeeRelayerAccount, Constants.feeRelayerAccount]
+    static var feeRelayerAccounts = [
+        Constants.swapFeeRelayerAccount,
+        Constants.feeRelayerAccount,
+        Constants.sendFeeRelayerAccount2,
+    ]
 }

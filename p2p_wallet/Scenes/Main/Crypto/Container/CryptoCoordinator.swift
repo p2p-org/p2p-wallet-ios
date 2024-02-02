@@ -12,6 +12,7 @@ import Wormhole
 /// The scenes that the `Crypto` scene can navigate to
 enum CryptoNavigation: Equatable {
     // With tokens
+    case allTimePnLInfo
     case buy
     case receive(publicKey: PublicKey)
     case send
@@ -216,6 +217,13 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             navigationController.present(activityVC, animated: true)
             return Just(())
                 .eraseToAnyPublisher()
+        case .allTimePnLInfo:
+            return Just({ [weak self] in
+                guard let self else { return }
+                showPnLInfo()
+            }())
+                .eraseToAnyPublisher()
+                
         default:
             return Just(())
                 .eraseToAnyPublisher()
@@ -238,5 +246,19 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         ))
         .sink(receiveValue: {})
         .store(in: &subscriptions)
+    }
+
+    private func showPnLInfo() {
+        let coordinator = BottomSheetInfoCoordinator(
+            parentVC: tabBarController,
+            rootView: AllTimePnLInfoBottomSheet(
+                repository: Resolver.resolve(),
+                mint: nil
+            )
+        )
+
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }
