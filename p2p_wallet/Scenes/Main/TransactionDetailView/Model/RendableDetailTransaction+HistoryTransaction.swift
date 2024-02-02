@@ -312,6 +312,19 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             )
         case .swap:
             break
+        case let .referralReward(data):
+            let value: String
+            if let name = data.account.name {
+                value = "@\(name)"
+            } else {
+                value = RecipientFormatter.shortFormat(destination: data.account.address)
+            }
+            result.append(
+                .init(
+                    title: L10n.from,
+                    values: [.init(text: value)]
+                )
+            )
 
         default:
             result.append(
@@ -347,7 +360,14 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         return result
     }
 
-    var actions: [TransactionDetailAction] = [.share, .explorer]
+    var actions: [TransactionDetailAction] {
+        switch trx.info {
+        case .referralReward:
+            return []
+        default:
+            return [.share, .explorer]
+        }
+    }
 
     /// Resolve token icon url
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
