@@ -32,6 +32,16 @@ struct CryptoView: View {
         }
     }
 
+    private var banner: ReferralProgramBannerView? {
+        if viewModel.displayReferralBanner {
+            return ReferralProgramBannerView(
+                shareAction: viewModel.shareReferralLink.send,
+                openDetails: viewModel.openReferralProgramDetails.send
+            )
+        }
+        return nil
+    }
+
     var body: some View {
         ZStack {
             Color(.smoke)
@@ -41,12 +51,14 @@ struct CryptoView: View {
                 CryptoPendingView()
             case .empty:
                 CryptoEmptyView(
-                    actionsPanelView: actionsPanelView
+                    actionsPanelView: actionsPanelView,
+                    banner: banner
                 )
             case .accounts:
                 CryptoAccountsView(
                     viewModel: accountsViewModel,
-                    actionsPanelView: actionsPanelView
+                    actionsPanelView: actionsPanelView,
+                    banner: banner
                 )
             }
         }

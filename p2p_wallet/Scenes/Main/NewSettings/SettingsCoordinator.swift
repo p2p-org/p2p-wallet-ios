@@ -40,6 +40,17 @@ final class SettingsCoordinator: Coordinator<Void> {
                             navigationController.popToRootViewController(animated: true)
                         })
                         .store(in: &subscriptions)
+                case .referral:
+                    let coordinator = ReferralProgramCoordinator(navigationController: navigationController)
+                    coordinate(to: coordinator)
+                        .sink { _ in }
+                        .store(in: &subscriptions)
+                case let .shareReferral(link):
+                    let activityVC = UIActivityViewController(
+                        activityItems: ["\(L10n.heyLetSSwapTrendyMemeCoinsWithMe) \(link)"],
+                        applicationActivities: nil
+                    )
+                    navigationController.present(activityVC, animated: true)
                 }
             })
             .store(in: &subscriptions)

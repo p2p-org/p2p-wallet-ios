@@ -53,7 +53,6 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         self.userActionService = userActionService
         self.favouriteAccountsStore = favouriteAccountsStore
         self.navigation = navigation
-
         super.init()
 
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in

@@ -105,6 +105,7 @@ class UserWalletManager: ObservableObject {
         Defaults.isTokenInputTypeChosen = false
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
+        Defaults.referrerRegistered = false
 
         walletSettings.reset()
 

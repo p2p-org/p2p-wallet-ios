@@ -6,21 +6,30 @@ struct CryptoEmptyView: View {
     // MARK: - Properties
 
     private let actionsPanelView: CryptoActionsPanelView
+    private let banner: ReferralProgramBannerView?
 
     // MARK: - Initializer
 
     init(
-        actionsPanelView: CryptoActionsPanelView
+        actionsPanelView: CryptoActionsPanelView,
+        banner: ReferralProgramBannerView?
     ) {
         self.actionsPanelView = actionsPanelView
+        self.banner = banner
     }
 
     // MARK: - View content
 
     var body: some View {
-        VStack(spacing: 30) {
-            header
-            content
+        ScrollView {
+            VStack(spacing: 30) {
+                header
+                if let banner {
+                    banner
+                        .padding(.horizontal, 16)
+                }
+                content
+            }
         }
     }
 

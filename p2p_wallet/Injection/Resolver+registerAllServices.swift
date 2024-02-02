@@ -291,6 +291,9 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
+
+        register { ReferralProgramServiceImpl() }
+            .implements(ReferralProgramService.self)
     }
 
     /// Session scope: Live when user is authenticated

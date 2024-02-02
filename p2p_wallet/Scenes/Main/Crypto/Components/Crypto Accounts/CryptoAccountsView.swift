@@ -9,6 +9,7 @@ struct CryptoAccountsView: View {
 
     @ObservedObject var viewModel: CryptoAccountsViewModel
     private let actionsPanelView: CryptoActionsPanelView
+    private let banner: ReferralProgramBannerView?
 
     @State var isHiddenSectionDisabled: Bool = true
     @State var currentUserInteractionCellID: String?
@@ -18,10 +19,12 @@ struct CryptoAccountsView: View {
 
     init(
         viewModel: CryptoAccountsViewModel,
-        actionsPanelView: CryptoActionsPanelView
+        actionsPanelView: CryptoActionsPanelView,
+        banner: ReferralProgramBannerView?
     ) {
         self.viewModel = viewModel
         self.actionsPanelView = actionsPanelView
+        self.banner = banner
     }
 
     // MARK: - View content
@@ -34,6 +37,10 @@ struct CryptoAccountsView: View {
                         .padding(.top, 5)
                         .padding(.bottom, 32)
                         .id(0)
+                    if let banner {
+                        banner
+                            .padding(.horizontal, 16)
+                    }
                     content
                 }
             }
