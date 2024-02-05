@@ -136,9 +136,10 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     }
 
     private func setReferrerIfNeeded(r: String) {
-        guard available(.referralProgramEnabled) else { return }
-        let referralService: ReferralProgramService = Resolver.resolve()
         Task {
+            let _ = await RemoteConfigWarmupProcess().start()
+            guard available(.referralProgramEnabled) else { return }
+            let referralService: ReferralProgramService = Resolver.resolve()
             _ = await referralService.setReferent(from: r)
         }
     }
