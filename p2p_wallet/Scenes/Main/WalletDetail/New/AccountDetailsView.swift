@@ -48,12 +48,12 @@ struct AccountDetailsView: View {
             }
             .padding(.top, 24)
 
-            HStack(spacing: detailAccount.rendableAccountDetails.actions.count > 3 ? 12 : 32) {
-                ForEach(detailAccount.rendableAccountDetails.actions) { action in
+            HStack(spacing: viewModel.rendableAccountDetails.actions.count > 3 ? 12 : 32) {
+                ForEach(viewModel.rendableAccountDetails.actions) { action in
 
                     Button(
                         action: {
-                            detailAccount.rendableAccountDetails.onAction(action)
+                            viewModel.rendableAccountDetails.onAction(action)
                         },
                         label: {
                             VStack(spacing: 4) {
