@@ -39,7 +39,7 @@ struct NonStrictTokenConfirmationView: View {
                     .font(uiFont: .font(of: .text1, weight: .semibold))
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(L10n.makeSureTheMintAddressIsCorrectBeforeConfirming(token?.token.mintAddress.shortAddress ?? ""))
+                Text(L10n.makeSureTheMintAddressIsCorrectBeforeConfirming(token?.token.mintAddress ?? ""))
                     .font(uiFont: .font(of: .label1))
                     .fixedSize(horizontal: false, vertical: true)
             }

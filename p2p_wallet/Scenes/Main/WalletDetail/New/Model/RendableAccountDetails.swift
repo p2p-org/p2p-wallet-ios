@@ -61,15 +61,15 @@ extension RendableAccountDetailsAction {
     var icon: ImageResource {
         switch self {
         case .receive:
-            return .buttonReceive
+            return .actionReceive
         case .buy:
-            return .buttonBuy
+            return .homeBuy
         case .send:
-            return .buttonSend
+            return .homeSend
         case .swap:
-            return .buttonSwap
+            return .actionSwap
         case .cashOut:
-            return .buttonCashOut
+            return .actionCashOut
         }
     }
 }
