@@ -76,12 +76,12 @@ struct CryptoView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             viewModel.viewAppeared()
         }
-        .alert("Update available", isPresented: $viewModel.updateAlert) {
-            Button("Update", action: {
+        .alert(L10n.updateAvailable, isPresented: $viewModel.updateAlert) {
+            Button(L10n.update, action: {
                 viewModel.openAppstore()
                 viewModel.userIsAwareAboutUpdate()
             })
-            Button("Cancel", role: .cancel, action: {
+            Button(L10n.cancel, role: .cancel, action: {
                 viewModel.userIsAwareAboutUpdate()
             })
         }
