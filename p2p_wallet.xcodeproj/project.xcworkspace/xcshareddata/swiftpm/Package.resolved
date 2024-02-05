@@ -266,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ashleymills/Reachability.swift.git",
       "state" : {
-        "revision" : "c01bbdf2d633cf049ae1ed1a68a2020a8bda32e2",
-        "version" : "5.1.0"
+        "revision" : "c01127cb51f591045696128effe43c16840d08bf",
+        "version" : "5.2.0"
       }
     },
     {
@@ -312,7 +312,7 @@
       "location" : "https://github.com/p2p-org/solana-swift",
       "state" : {
         "branch" : "main",
-        "revision" : "f9181079014c474c0e823a2f3f615ba953b41f1e"
+        "revision" : "3811cabe260e4b88e8096527a50eee8d23b41204"
       }
     },
     {

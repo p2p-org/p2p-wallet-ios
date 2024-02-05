@@ -41,6 +41,7 @@ extension DefaultsKeys {
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedReferralProgramEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }
@@ -121,6 +122,10 @@ extension DefaultsKeys {
     }
 
     var ethBannerShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
+
+    var referrerRegistered: DefaultsKey<Bool> {
         .init(#function, defaultValue: false)
     }
 }

@@ -4,7 +4,7 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
-class HistoryRepository: Repository {
+class HistoryRepository {
     typealias Element = HistoryTransaction
 
     var provider: KeyAppHistoryProvider

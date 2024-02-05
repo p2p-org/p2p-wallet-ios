@@ -52,11 +52,17 @@ final class ChooseSwapTokenService: ChooseItemService {
     func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let sections = items.map { section in
             guard var tokens = section.items as? [SwapToken] else { return section }
-            tokens = tokens.sorted(by: { lhs, _ in
+            tokens = tokens.sorted(by: { lhs, rhs in
                 // Put 'start' matches in the beginning of array, 'contains' after
-                lhs.token.name.lowercased().starts(with: keyword.lowercased()) ||
-                    lhs.token.symbol.lowercased().starts(with: keyword.lowercased()) ||
-                    lhs.token.mintAddress.lowercased().starts(with: keyword.lowercased())
+                if !lhs.isNonStrict, rhs.isNonStrict {
+                    return true
+                } else if lhs.isNonStrict, !rhs.isNonStrict {
+                    return false
+                } else {
+                    return lhs.token.name.lowercased().starts(with: keyword.lowercased()) ||
+                        lhs.token.symbol.lowercased().starts(with: keyword.lowercased()) ||
+                        lhs.token.mintAddress.lowercased().starts(with: keyword.lowercased())
+                }
             })
             if let index = tokens.firstIndex(where: {
                 $0.token.name.lowercased().elementsEqual(keyword.lowercased()) ||
