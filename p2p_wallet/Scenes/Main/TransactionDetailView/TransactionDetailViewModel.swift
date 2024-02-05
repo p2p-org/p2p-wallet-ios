@@ -38,7 +38,12 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     init(historyTransaction: HistoryTransaction) {
-        style = .passive
+        switch historyTransaction.info {
+        case .referralReward:
+            style = .active
+        default:
+            style = .passive
+        }
         rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
 
         super.init()

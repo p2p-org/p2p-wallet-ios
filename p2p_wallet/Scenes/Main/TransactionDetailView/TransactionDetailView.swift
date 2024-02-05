@@ -19,7 +19,7 @@ struct DetailTransactionView: View {
                 .padding(.top, 9)
                 .padding(.horizontal, 18)
             status
-            button
+            bottomActions
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
         }
@@ -169,7 +169,7 @@ struct DetailTransactionView: View {
         }
     }
 
-    var button: some View {
+    var bottomActions: some View {
         var style: TextButton.Style {
             switch viewModel.style {
             case .active:
@@ -179,20 +179,53 @@ struct DetailTransactionView: View {
             }
         }
 
-        return Button(
-            action: {
-                viewModel.action.send(.close)
-            },
-            label: {
-                Text(viewModel.rendableTransaction.buttonTitle)
-                    .font(uiFont: style.font(size: .large))
-                    .foregroundColor(Color(style.foreground))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Color(style.backgroundColor))
-                    .cornerRadius(12)
+        return VStack(spacing: 12) {
+            ForEach(viewModel.rendableTransaction.bottomActions, id: \.id) { action in
+                Button(
+                    action: { buttonAction(for: action) },
+                    label: {
+                        Text(buttonTitle(for: action))
+                            .font(uiFont: actionStyle(for: action, main: style).font(size: .large))
+                            .foregroundColor(Color(actionStyle(for: action, main: style).foreground))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(Color(actionStyle(for: action, main: style).backgroundColor))
+                            .cornerRadius(12)
+                    }
+                )
             }
-        )
+        }
+    }
+
+    func actionStyle(for type: TransactionBottomAction, main: TextButton.Style) -> TextButton.Style {
+        switch type {
+        case .done, .tryAgain, .increaseSlippageAndTryAgain:
+            return main
+        case .solscan:
+            return .ghost
+        }
+    }
+
+    func buttonAction(for type: TransactionBottomAction) {
+        switch type {
+        case .solscan:
+            viewModel.explore()
+        case .done, .tryAgain, .increaseSlippageAndTryAgain:
+            viewModel.action.send(.close)
+        }
+    }
+
+    func buttonTitle(for type: TransactionBottomAction) -> String {
+        switch type {
+        case .done:
+            return L10n.done
+        case .solscan:
+            return L10n.openSOLScan
+        case .tryAgain:
+            return L10n.tryAgain
+        case .increaseSlippageAndTryAgain:
+            return L10n.increaseSlippageAndTryAgain
+        }
     }
 }
 
