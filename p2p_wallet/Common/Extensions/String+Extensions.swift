@@ -55,6 +55,10 @@ extension String {
     static func secretConfig(_ key: String) -> String? {
         Bundle.main.infoDictionary?[key] as? String
     }
+
+    var shortAddress: String {
+        "\(prefix(6))...\(suffix(6))"
+    }
 }
 
 extension String {

@@ -317,7 +317,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             if let name = data.account.name {
                 value = "@\(name)"
             } else {
-                value = RecipientFormatter.shortFormat(destination: data.account.address)
+                value = data.account.address.shortAddress
             }
             result.append(
                 .init(
