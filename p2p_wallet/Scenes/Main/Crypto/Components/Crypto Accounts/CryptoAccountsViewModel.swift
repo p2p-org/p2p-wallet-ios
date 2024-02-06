@@ -114,8 +114,10 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
 
     func refresh() async {
         await HomeAccountsSynchronisationService().refresh()
-        Task {
-            await Resolver.resolve(PnLRepository.self).reload()
+        if available(.pnlEnabled) {
+            Task {
+                await Resolver.resolve(PnLRepository.self).reload()
+            }
         }
     }
 

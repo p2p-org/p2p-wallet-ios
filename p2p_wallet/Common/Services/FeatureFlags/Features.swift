@@ -30,4 +30,7 @@ public extension Feature {
 
     // Referral program
     static let referralProgramEnabled = Feature(rawValue: "referral_program_enabled")
+
+    // Referral program
+    static let pnlEnabled = Feature(rawValue: "pnl_enabled")
 }
