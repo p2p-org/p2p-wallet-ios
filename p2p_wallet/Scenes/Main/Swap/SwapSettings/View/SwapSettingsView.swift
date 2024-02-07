@@ -95,6 +95,17 @@ struct SwapSettingsView: View {
                 }
             }
 
+            // Platform fee
+            if let platformFee = viewModel.info.platformFee {
+                commonRow(
+                    title: L10n.keyAppSwapFee,
+                    subtitle: nil,
+                    trailingSubtitle: feeBpsFormatter(platformFee.feeBps),
+                    trailingView: EmptyView().castToAnyView(),
+                    identifier: .platformFee
+                )
+            }
+
             // Estimated fee
             if viewModel.isLoadingOrRouteNotNil, viewModel.info.estimatedFees != nil {
                 HStack {
@@ -178,10 +189,12 @@ struct SwapSettingsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
-                Text(subtitle)
-                    .apply(style: .label1)
-                    .foregroundColor(Color(subtitleColor))
-                    .skeleton(with: viewModel.isLoading, size: .init(width: 100, height: 12))
+                if let subtitle {
+                    Text(subtitle)
+                        .apply(style: .label1)
+                        .foregroundColor(Color(subtitleColor))
+                        .skeleton(with: viewModel.isLoading, size: .init(width: 100, height: 12))
+                }
             }
 
             Spacer()
@@ -204,6 +217,18 @@ struct SwapSettingsView: View {
         .padding(.vertical, 14)
     }
 }
+
+private func feeBpsFormatter(_ feeBps: Int) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .percent
+    formatter.minimumIntegerDigits = 1
+    formatter.maximumIntegerDigits = 3
+    formatter.maximumFractionDigits = 2
+    formatter.decimalSeparator = "."
+    
+    return formatter.string(from: NSDecimalNumber(decimal: Decimal(feeBps) / 1000)) ?? "N/A"
+}
+
 
 // struct SwapSettingsView_Previews: PreviewProvider {
 //    static let viewModel = SwapSettingsViewModel(
@@ -297,6 +322,7 @@ extension SwapSettingsView {
         case transferFee
         case accountCreationFee
         case liquidityFee
+        case platformFee
         case minimumReceived
     }
 }

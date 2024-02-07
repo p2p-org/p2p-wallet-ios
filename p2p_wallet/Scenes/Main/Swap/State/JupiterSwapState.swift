@@ -157,6 +157,31 @@ struct JupiterSwapState: Equatable {
         swapTokens
     }
 
+    var platformFeeAmount: SwapFeeInfo? {
+        guard let platformFee = route?.platformFee else { return nil }
+
+        let tokenFee: TokenMetadata
+        if route?.swapMode == "ExactIn" {
+            // Fee in token B
+            tokenFee = toToken.token
+        } else {
+            // Fee in token A
+            tokenFee = fromToken.token
+        }
+
+        guard let amount = UInt64(platformFee.amount)?.convertToBalance(decimals: tokenFee.decimals) else {
+            return nil
+        }
+
+        return SwapFeeInfo(
+            amount: amount,
+            tokenSymbol: tokenFee.symbol,
+            tokenName: tokenFee.name,
+            tokenPriceInCurrentFiat: tokensPriceMap[tokenFee.mintAddress],
+            canBePaidByKeyApp: false
+        )
+    }
+
     /// Network fee of the transaction, can be modified by the fee relayer service
     var networkFee: SwapFeeInfo? {
         guard route != nil else { return nil }
