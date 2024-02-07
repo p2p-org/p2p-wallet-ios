@@ -225,10 +225,9 @@ private func feeBpsFormatter(_ feeBps: Int) -> String {
     formatter.maximumIntegerDigits = 3
     formatter.maximumFractionDigits = 2
     formatter.decimalSeparator = "."
-    
+
     return formatter.string(from: NSDecimalNumber(decimal: Decimal(feeBps) / 1000)) ?? "N/A"
 }
-
 
 // struct SwapSettingsView_Previews: PreviewProvider {
 //    static let viewModel = SwapSettingsViewModel(
