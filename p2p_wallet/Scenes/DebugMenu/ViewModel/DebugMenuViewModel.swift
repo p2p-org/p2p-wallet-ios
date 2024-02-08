@@ -113,6 +113,7 @@ extension DebugMenuViewModel {
         case onboardingUsernameButtonSkipEnabled
 
         case referralProgramEnabled
+        case pnlEnabled
 
         case investSolend
         case solendDisablePlaceholder
@@ -142,6 +143,7 @@ extension DebugMenuViewModel {
             case .solanaEthAddressEnabled: return "solana ETH address enabled"
             case .swapTransactionSimulation: return "Swap transaction simulation"
             case .referralProgramEnabled: return "Referral program enabled"
+            case .pnlEnabled: return "PnL Enabled"
             }
         }
 
@@ -161,6 +163,7 @@ extension DebugMenuViewModel {
             case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
             case .swapTransactionSimulation: return .swapTransactionSimulationEnabled
             case .referralProgramEnabled: return .referralProgramEnabled
+            case .pnlEnabled: return .pnlEnabled
             }
         }
     }

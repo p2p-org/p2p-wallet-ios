@@ -82,6 +82,9 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case .tryCreateAccount:
             return .icon(.planet)
 
+        case let .referralReward(data):
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
+
         case .unknown, .none:
             return .icon(.planet)
         }
@@ -125,6 +128,8 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Ethereum network"
         case .tryCreateAccount:
             return L10n.unknown
+        case let .referralReward(data):
+            return L10n.referralReward
         case .unknown, .none:
             return L10n.unknown
         }
@@ -148,6 +153,8 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Claim"
         case .tryCreateAccount:
             return ""
+        case .referralReward:
+            return date.string(withFormat: "HH:mm")
         default:
             return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
         }
@@ -240,6 +247,12 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case .tryCreateAccount:
             return (.unchanged, "")
 
+        case let .referralReward(data):
+            return (
+                .positive,
+                "+\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+            )
+
         case .none:
             return (.unchanged, "")
         }
@@ -292,6 +305,12 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
 
         case .tryCreateAccount:
             return ""
+
+        case let .referralReward(data):
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return ""
+            }
+            return "\(usdAmount.fiatAmountFormattedString())"
 
         case .none:
             return ""

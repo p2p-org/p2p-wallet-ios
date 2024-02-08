@@ -11,7 +11,7 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
     var amountInToken: String
     var extra: [TransactionDetailExtraInfo]
     var actions: [TransactionDetailAction]
-    var buttonTitle: String
+    var bottomActions: [TransactionBottomAction]
     var url: String?
 
     init(
@@ -23,7 +23,7 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
         amountInToken: String,
         extra: [TransactionDetailExtraInfo],
         actions: [TransactionDetailAction],
-        buttonTitle: String = L10n.done
+        bottomActions: [TransactionBottomAction] = [.done]
     ) {
         self.status = status
         self.title = title
@@ -33,7 +33,7 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
         self.amountInToken = amountInToken
         self.extra = extra
         self.actions = actions
-        self.buttonTitle = buttonTitle
+        self.bottomActions = bottomActions
     }
 
     static func send() -> Self {

@@ -237,8 +237,10 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     func refresh() async throws {
         try await reload()
-        Task.detached {
-            await Resolver.resolve(PnLRepository.self).reload()
+        if available(.pnlEnabled) {
+            Task.detached {
+                await Resolver.resolve(PnLRepository.self).reload()
+            }
         }
     }
 

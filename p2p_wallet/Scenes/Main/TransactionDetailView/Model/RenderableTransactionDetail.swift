@@ -21,7 +21,7 @@ protocol RenderableTransactionDetail {
 
     var actions: [TransactionDetailAction] { get }
 
-    var buttonTitle: String { get }
+    var bottomActions: [TransactionBottomAction] { get }
 
     var url: String? { get }
 }
@@ -68,6 +68,15 @@ enum TransactionDetailAction: Int, Identifiable {
 
     case share
     case explorer
+}
+
+enum TransactionBottomAction: Int, Identifiable {
+    var id: Int { rawValue }
+
+    case done
+    case solscan
+    case tryAgain
+    case increaseSlippageAndTryAgain
 }
 
 enum TransactionDetailIcon {

@@ -17,11 +17,13 @@ struct ActionsPanelView: View {
                 usdAmountView
             }
 
-            pnlView
-                .onTapGesture {
-                    pnlTapAction?()
-                }
-                .padding(.top, usdAmount.isEmpty ? 12 : 0)
+            if available(.pnlEnabled) {
+                pnlView
+                    .onTapGesture {
+                        pnlTapAction?()
+                    }
+                    .padding(.top, usdAmount.isEmpty ? 12 : 0)
+            }
 
             actionsView
                 .padding(.top, 36)
