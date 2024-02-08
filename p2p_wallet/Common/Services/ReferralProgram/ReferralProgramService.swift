@@ -70,6 +70,10 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
             )
             Defaults.referrerRegistered = true
         } catch {
+            if error.localizedDescription.contains("duplicate") {
+                // The code is not unique so we look at the description
+                Defaults.referrerRegistered = true
+            }
             debugPrint(error)
             DefaultLogManager.shared.log(
                 event: "\(ReferralProgramService.self)_register",

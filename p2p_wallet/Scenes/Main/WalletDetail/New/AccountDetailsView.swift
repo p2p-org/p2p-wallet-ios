@@ -23,7 +23,9 @@ struct AccountDetailsView: View {
                     .apply(style: .text3)
                     .foregroundColor(Color(.night))
 
-                if let account = viewModel.rendableAccountDetails as? RendableNewSolanaAccountDetails {
+                if available(.pnlEnabled),
+                   let account = viewModel.rendableAccountDetails as? RendableNewSolanaAccountDetails
+                {
                     RepositoryView(
                         repository: Resolver.resolve(PnLRepository.self)
                     ) { _ in
@@ -37,7 +39,7 @@ struct AccountDetailsView: View {
                                     .foregroundStyle(.red)
                             }
                         #else
-                            pnlContentView(pnl: pnl)
+                            pnlContentView(pnl: pnl, mint: account.account.mintAddress)
                         #endif
                     } content: { pnl in
                         pnlContentView(pnl: pnl, mint: account.account.mintAddress)

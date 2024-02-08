@@ -85,11 +85,3 @@ struct NonStrictTokenConfirmationView: View {
         )
     ) {}
 }
-
-// MARK: - Helpers
-
-private extension String {
-    var shortAddress: String {
-        "\(prefix(6))...\(suffix(6))"
-    }
-}

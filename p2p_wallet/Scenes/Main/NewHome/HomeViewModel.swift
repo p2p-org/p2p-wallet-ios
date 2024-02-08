@@ -201,11 +201,3 @@ extension HomeViewModel {
         case wallet
     }
 }
-
-// MARK: - Helpers
-
-private extension String {
-    var shortAddress: String {
-        "\(prefix(4))...\(suffix(4))"
-    }
-}

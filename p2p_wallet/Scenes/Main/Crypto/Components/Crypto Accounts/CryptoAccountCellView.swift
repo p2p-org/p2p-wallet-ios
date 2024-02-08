@@ -68,7 +68,8 @@ struct CryptoAccountCellView: View, Equatable {
     @ViewBuilder private var detailView: some View {
         switch rendable.detail {
         case let .text(text):
-            if showPnL,
+            if available(.pnlEnabled),
+               showPnL,
                let solanaAccount = rendable as? RenderableSolanaAccount
             {
                 VStack(alignment: .trailing, spacing: 4) {

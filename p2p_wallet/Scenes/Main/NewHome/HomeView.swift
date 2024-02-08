@@ -38,7 +38,7 @@ struct HomeView: View {
         }
     }
 
-    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
+    func navigation(@ViewBuilder content: @escaping () -> some View) -> some View {
         NavigationView {
             ZStack {
                 Color(.smoke)

@@ -112,13 +112,13 @@ struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
         }
     }
 
-    var buttonTitle: String {
-        L10n.done
+    var bottomActions: [TransactionBottomAction] {
+        [.done]
     }
 
     var url: String? {
         if let solanaTransaction = userAction.solanaTransaction {
-            return "https://explorer.solana.com/tx/\(solanaTransaction)"
+            return "https://solscan.io/tx/\(solanaTransaction)"
         } else {
             return nil
         }
