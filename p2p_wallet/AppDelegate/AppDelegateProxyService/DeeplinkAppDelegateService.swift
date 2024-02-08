@@ -71,10 +71,6 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         // https://s.key.app/swap?inputMint=<from>&outputMint=<to>&r=<referrer>
         if urlComponents.host == "s.key.app" {
             GlobalAppState.shared.swapUrl = urlComponents.url
-
-            if let referrer = urlComponents.queryItems?.first { $0.name == "r" }?.value {
-                setReferrerIfNeeded(r: referrer)
-            }
         }
 
         if urlComponents.host == "r.key.app" {
@@ -136,9 +132,10 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     }
 
     private func setReferrerIfNeeded(r: String) {
-        guard available(.referralProgramEnabled) else { return }
-        let referralService: ReferralProgramService = Resolver.resolve()
         Task {
+            let _ = await RemoteConfigWarmupProcess().start()
+            guard available(.referralProgramEnabled) else { return }
+            let referralService: ReferralProgramService = Resolver.resolve()
             _ = await referralService.setReferent(from: r)
         }
     }

@@ -103,9 +103,16 @@ final class TabBarCoordinator: Coordinator<Void> {
                 let urlComponent = URLComponents(url: url, resolvingAgainstBaseURL: true)
                 let from = urlComponent?.queryItems?.first { $0.name == "from" }?.value
                 let to = urlComponent?.queryItems?.first { $0.name == "to" }?.value
+                let r = urlComponent?.queryItems?.first { $0.name == "r" }?.value
 
                 if from == nil, to == nil {
                     return
+                }
+
+                Task {
+                    guard available(.referralProgramEnabled), let r else { return }
+                    let referralService: ReferralProgramService = Resolver.resolve()
+                    _ = await referralService.setReferent(from: r)
                 }
 
                 self.routeToSwap(
