@@ -80,6 +80,8 @@ public struct HistoryTransaction: Identifiable, Codable {
                 info = try .wormholeReceive(container.decode(WormholeReceive.self, forKey: .info))
             case .tryCreateAccount:
                 info = .tryCreateAccount
+            case .referralReward:
+                info = try .referralReward(container.decode(Transfer.self, forKey: .info))
             case .unknown:
                 info = try .unknown(container.decode(TokenAmount.self, forKey: .info))
             }
@@ -117,6 +119,7 @@ public extension HistoryTransaction {
         case wormholeSend = "wormhole_send"
         case wormholeReceive = "wormhole_receive"
         case tryCreateAccount = "try_create_account"
+        case referralReward = "referral_reward"
         case unknown
     }
 
@@ -144,6 +147,7 @@ public extension HistoryTransaction {
         case wormholeSend(WormholeSend)
         case wormholeReceive(WormholeReceive)
         case tryCreateAccount
+        case referralReward(Transfer)
         case unknown(TokenAmount)
     }
 

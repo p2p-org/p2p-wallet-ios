@@ -70,8 +70,8 @@ struct RendableAbstractUserActionTransaction: RenderableTransactionDetail {
         []
     }
 
-    var buttonTitle: String {
-        L10n.done
+    var bottomActions: [TransactionBottomAction] {
+        [.done]
     }
 
     var url: String? {

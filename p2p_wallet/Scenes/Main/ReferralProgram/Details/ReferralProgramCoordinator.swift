@@ -20,7 +20,7 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
         viewModel.openShare
             .sink { [weak vc] link in
                 let activityVC = UIActivityViewController(
-                    activityItems: ["\(L10n.heyLetSSwapTrendyMemeCoinsWithMe) \(link)"],
+                    activityItems: [link],
                     applicationActivities: nil
                 )
                 vc?.present(activityVC, animated: true)

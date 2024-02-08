@@ -211,7 +211,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                 .eraseToAnyPublisher()
         case let .shareReferral(link):
             let activityVC = UIActivityViewController(
-                activityItems: ["\(L10n.heyLetSSwapTrendyMemeCoinsWithMe) \(link)"],
+                activityItems: [link],
                 applicationActivities: nil
             )
             navigationController.present(activityVC, animated: true)
