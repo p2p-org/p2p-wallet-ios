@@ -200,16 +200,18 @@ private extension CryptoViewModel {
             .store(in: &subscriptions)
 
         // solana account vs pnl, get for the first time
-        solanaAccountsService.statePublisher
-            .receive(on: RunLoop.main)
-            .filter { $0.status == .ready }
-            .prefix(1)
-            .sink { _ in
-                Task {
-                    await Resolver.resolve(PnLRepository.self).reload()
+        if available(.pnlEnabled) {
+            solanaAccountsService.statePublisher
+                .receive(on: RunLoop.main)
+                .filter { $0.status == .ready }
+                .prefix(1)
+                .sink { _ in
+                    Task {
+                        await Resolver.resolve(PnLRepository.self).reload()
+                    }
                 }
-            }
-            .store(in: &subscriptions)
+                .store(in: &subscriptions)
+        }
     }
 }
 
