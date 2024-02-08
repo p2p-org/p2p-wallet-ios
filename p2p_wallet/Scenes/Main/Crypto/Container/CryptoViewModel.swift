@@ -26,11 +26,15 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var sellDataService: any SellDataService
     @Injected private var createNameService: CreateNameService
     @Injected private var applicationUpdateManager: ApplicationUpdateManager
+    @Injected private var referralService: ReferralProgramService
 
     let navigation: PassthroughSubject<CryptoNavigation, Never>
+    let openReferralProgramDetails = PassthroughSubject<Void, Never>()
+    let shareReferralLink = PassthroughSubject<Void, Never>()
 
     // MARK: - Properties
 
+    @Published private(set) var displayReferralBanner: Bool
     @Published var state = State.pending
     @Published var address = ""
 
@@ -41,6 +45,8 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     init(navigation: PassthroughSubject<CryptoNavigation, Never>) {
         self.navigation = navigation
+        displayReferralBanner = available(.referralProgramEnabled)
+
         super.init()
 
         // bind
@@ -52,7 +58,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Methods
 
-    func reload() async {
+    private func reload() async {
         await CryptoAccountsSynchronizationService().refresh()
     }
 
@@ -218,6 +224,37 @@ private extension CryptoViewModel {
                     }
                 }
             }.store(in: &subscriptions)
+
+        openReferralProgramDetails
+            .map { CryptoNavigation.referral }
+            .sink { [weak self] navigation in
+                self?.navigation.send(navigation)
+            }
+            .store(in: &subscriptions)
+
+        shareReferralLink
+            .compactMap { [weak self] in
+                guard let self else { return nil }
+                return CryptoNavigation.shareReferral(self.referralService.shareLink)
+            }
+            .sink { [weak self] navigation in
+                self?.navigation.send(navigation)
+            }
+            .store(in: &subscriptions)
+
+        // solana account vs pnl, get for the first time
+        if available(.pnlEnabled) {
+            solanaAccountsService.statePublisher
+                .receive(on: RunLoop.main)
+                .filter { $0.status == .ready }
+                .prefix(1)
+                .sink { _ in
+                    Task {
+                        await Resolver.resolve(PnLRepository.self).reload()
+                    }
+                }
+                .store(in: &subscriptions)
+        }
     }
 }
 
@@ -228,13 +265,5 @@ extension CryptoViewModel {
         case pending
         case empty
         case accounts
-    }
-}
-
-// MARK: - Helpers
-
-private extension String {
-    var shortAddress: String {
-        "\(prefix(6))...\(suffix(6))"
     }
 }

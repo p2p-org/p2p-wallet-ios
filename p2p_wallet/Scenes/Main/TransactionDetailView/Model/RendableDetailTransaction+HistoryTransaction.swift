@@ -23,11 +23,16 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     }
 
     var title: String {
-        switch trx.status {
-        case .success:
-            return L10n.transactionSucceeded
-        case .failed:
-            return L10n.transactionFailed
+        switch trx.info {
+        case .referralReward:
+            return L10n.referralReward
+        default:
+            switch trx.status {
+            case .success:
+                return L10n.transactionSucceeded
+            case .failed:
+                return L10n.transactionFailed
+            }
         }
     }
 
@@ -86,6 +91,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case .tryCreateAccount:
             return .icon(.planet)
+
+        case let .referralReward(data):
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
 
         case .unknown, .none:
             return .icon(.planet)
@@ -177,6 +185,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         case .tryCreateAccount:
             return .unchanged("")
 
+        case let .referralReward(data):
+            return .positive("+\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))")
+
         case .none:
             return .unchanged("")
         }
@@ -225,6 +236,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
 
         case .tryCreateAccount:
+            return ""
+
+        case let .referralReward(data):
             return ""
 
         case .none:
@@ -298,6 +312,19 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             )
         case .swap:
             break
+        case let .referralReward(data):
+            let value: String
+            if let name = data.account.name {
+                value = "@\(name)"
+            } else {
+                value = data.account.address.shortAddress
+            }
+            result.append(
+                .init(
+                    title: L10n.from,
+                    values: [.init(text: value)]
+                )
+            )
 
         default:
             result.append(
@@ -333,7 +360,14 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         return result
     }
 
-    var actions: [TransactionDetailAction] = [.share, .explorer]
+    var actions: [TransactionDetailAction] {
+        switch trx.info {
+        case .referralReward:
+            return []
+        default:
+            return [.share, .explorer]
+        }
+    }
 
     /// Resolve token icon url
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
@@ -358,33 +392,40 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         }
     }
 
-    var buttonTitle: String {
+    var bottomActions: [TransactionBottomAction] {
         switch trx.info {
         case .swap:
             switch status {
             case let .error(_, error):
                 if let error, error.isSlippageError {
-                    return L10n.increaseSlippageAndTryAgain
+                    return [.increaseSlippageAndTryAgain]
                 } else {
-                    return L10n.tryAgain
+                    return [.tryAgain]
                 }
             default:
-                return L10n.done
+                return [.done]
             }
+        case .referralReward:
+            return [.done, .solscan]
 
         default:
-            return L10n.done
+            return [.done]
         }
     }
 
     var url: String? {
-        "https://explorer.solana.com/tx/\(signature ?? "")"
+        "https://solscan.io/tx/\(signature ?? "")"
     }
 }
 
 private enum Constants {
     static let swapFeeRelayerAccount = "JdYkwaUrvoeYsCbPgnt3AAa1qzjV2CtoRqU3bzuAvQu"
     static let feeRelayerAccount = "FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"
+    static let sendFeeRelayerAccount2 = "9U8gVazjmW87Ax5j1yFG7PBfD4ZzckFPLhdPhmoWc2xD"
 
-    static var feeRelayerAccounts = [Constants.swapFeeRelayerAccount, Constants.feeRelayerAccount]
+    static var feeRelayerAccounts = [
+        Constants.swapFeeRelayerAccount,
+        Constants.feeRelayerAccount,
+        Constants.sendFeeRelayerAccount2,
+    ]
 }

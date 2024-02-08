@@ -14,6 +14,7 @@ enum AccountDetailsAction {
     case openSwap(SolanaAccount?)
     case openSwapWithDestination(SolanaAccount?, SolanaAccount?)
     case openCashOut
+    case openPnL
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {

@@ -59,13 +59,15 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSwap(destination: recipient)
             case .openCashOut:
                 self.openCashout()
+            case .openPnL:
+                self.openPnLInfo()
             }
         }
         .store(in: &subscriptions)
 
         let view = AccountDetailsView(
-            detailAccount: detailAccountVM,
-            historyList: historyListVM
+            viewModel: detailAccountVM,
+            historyListViewModel: historyListVM
         )
 
         let vc = UIHostingController(rootView: view)
@@ -356,6 +358,26 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             presentingViewController: presentation.presentingViewController,
             shouldPush: false
         )
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
+
+    private func openPnLInfo() {
+        let mint: String
+        switch args {
+        case let .solanaAccount(account):
+            mint = account.mintAddress
+        }
+
+        let coordinator = BottomSheetInfoCoordinator(
+            parentVC: presentation.presentingViewController,
+            rootView: AllTimePnLInfoBottomSheet(
+                repository: Resolver.resolve(),
+                mint: mint
+            )
+        )
+
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)

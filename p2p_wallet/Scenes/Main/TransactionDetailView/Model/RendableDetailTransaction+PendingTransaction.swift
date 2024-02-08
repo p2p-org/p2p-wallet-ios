@@ -302,27 +302,27 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
         }
     }
 
-    var buttonTitle: String {
+    var bottomActions: [TransactionBottomAction] {
         switch trx.rawTransaction {
         case _ as SwapRawTransactionType:
             switch status {
             case let .error(_, error):
                 if let error, error.isSlippageError {
-                    return L10n.increaseSlippageAndTryAgain
+                    return [.increaseSlippageAndTryAgain]
                 } else {
-                    return L10n.tryAgain
+                    return [.tryAgain]
                 }
             default:
-                return L10n.done
+                return [.done]
             }
 
         default:
-            return L10n.done
+            return [.done]
         }
     }
 
     var url: String? {
-        "https://explorer.solana.com/tx/\(signature ?? "")"
+        "https://solscan.io/tx/\(signature ?? "")"
     }
 }
 

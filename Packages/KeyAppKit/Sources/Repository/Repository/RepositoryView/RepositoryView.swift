@@ -15,10 +15,10 @@ public struct RepositoryView<
     @ObservedObject var repository: R
 
     /// View to handle state when repository is loading, for example ProgressView or Skeleton
-    let loadingView: () -> LoadingView
+    let loadingView: (P.ItemType?) -> LoadingView
 
     /// View to handle state when an error occurred
-    let errorView: (Error) -> ErrorView
+    let errorView: (Error, P.ItemType?) -> ErrorView
 
     /// View to handle state when repository is loaded
     let content: (P.ItemType?) -> LoadedView
@@ -33,10 +33,8 @@ public struct RepositoryView<
     ///   - loadedView: View to handle state when repository is loaded
     public init(
         repository: R,
-        @ViewBuilder loadingView: @escaping () -> LoadingView,
-        @ViewBuilder errorView: @escaping (Error) -> ErrorView = { error in
-            Text(String(reflecting: error)).foregroundStyle(Color.red)
-        },
+        @ViewBuilder loadingView: @escaping (P.ItemType?) -> LoadingView,
+        @ViewBuilder errorView: @escaping (Error, P.ItemType?) -> ErrorView,
         @ViewBuilder content: @escaping (P.ItemType?) -> LoadedView
     ) {
         self.repository = repository
@@ -49,13 +47,15 @@ public struct RepositoryView<
 
     public var body: some View {
         switch repository.state {
-        case .initialized, .loading:
-            loadingView()
+        case .initialized:
+            loadingView(nil)
+        case .loading:
+            loadingView(repository.data)
         case .loaded:
             content(repository.data)
         case .error:
             if let error = repository.error {
-                errorView(error)
+                errorView(error, repository.data)
             }
         }
     }

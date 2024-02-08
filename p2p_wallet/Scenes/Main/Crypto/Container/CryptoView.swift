@@ -1,4 +1,5 @@
 import Combine
+import Resolver
 import SwiftUI
 
 /// View of `Crypto` scene
@@ -25,7 +26,20 @@ struct CryptoView: View {
     // MARK: - View content
 
     private var actionsPanelView: CryptoActionsPanelView {
-        CryptoActionsPanelView(viewModel: actionsPanelViewModel)
+        CryptoActionsPanelView(viewModel: actionsPanelViewModel) {
+            viewModel.navigation
+                .send(.allTimePnLInfo)
+        }
+    }
+
+    private var banner: ReferralProgramBannerView? {
+        if viewModel.displayReferralBanner {
+            return ReferralProgramBannerView(
+                shareAction: viewModel.shareReferralLink.send,
+                openDetails: viewModel.openReferralProgramDetails.send
+            )
+        }
+        return nil
     }
 
     var body: some View {
@@ -37,12 +51,14 @@ struct CryptoView: View {
                 CryptoPendingView()
             case .empty:
                 CryptoEmptyView(
-                    actionsPanelView: actionsPanelView
+                    actionsPanelView: actionsPanelView,
+                    banner: banner
                 )
             case .accounts:
                 CryptoAccountsView(
                     viewModel: accountsViewModel,
-                    actionsPanelView: actionsPanelView
+                    actionsPanelView: actionsPanelView,
+                    banner: banner
                 )
             }
         }

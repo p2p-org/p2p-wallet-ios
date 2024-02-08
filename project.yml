@@ -76,7 +76,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.11.0
+        MARKETING_VERSION: 2.11.1
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -245,6 +245,11 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
+            - package: KeyAppKit
+              product: Repository
+            - package: KeyAppKit
+              product: PnLService
+              
             - package: BEPureLayout
 
             - package: Lokalise

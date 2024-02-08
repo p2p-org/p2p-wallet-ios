@@ -53,7 +53,6 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
         self.userActionService = userActionService
         self.favouriteAccountsStore = favouriteAccountsStore
         self.navigation = navigation
-
         super.init()
 
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
@@ -115,6 +114,11 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
 
     func refresh() async {
         await HomeAccountsSynchronisationService().refresh()
+        if available(.pnlEnabled) {
+            Task {
+                await Resolver.resolve(PnLRepository.self).reload()
+            }
+        }
     }
 
     func scrollToTop() {

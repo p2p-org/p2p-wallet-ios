@@ -235,6 +235,15 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         await sellDataService?.update(region: nil)
     }
 
+    func refresh() async throws {
+        try await reload()
+        if available(.pnlEnabled) {
+            Task.detached {
+                await Resolver.resolve(PnLRepository.self).reload()
+            }
+        }
+    }
+
     func fetch() {
         history.fetch()
         Task {

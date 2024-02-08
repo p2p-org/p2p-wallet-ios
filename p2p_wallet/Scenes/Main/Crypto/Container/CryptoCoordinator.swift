@@ -12,6 +12,7 @@ import Wormhole
 /// The scenes that the `Crypto` scene can navigate to
 enum CryptoNavigation: Equatable {
     // With tokens
+    case allTimePnLInfo
     case buy
     case receive(publicKey: PublicKey)
     case send
@@ -21,6 +22,8 @@ enum CryptoNavigation: Equatable {
     case solanaAccount(SolanaAccount)
     case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
+    case referral
+    case shareReferral(URL)
     // Empty
     case topUpCoin(TokenMetadata)
     // Error
@@ -203,6 +206,24 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
+        case .referral:
+            return coordinate(to: ReferralProgramCoordinator(navigationController: navigationController))
+                .eraseToAnyPublisher()
+        case let .shareReferral(link):
+            let activityVC = UIActivityViewController(
+                activityItems: [link],
+                applicationActivities: nil
+            )
+            navigationController.present(activityVC, animated: true)
+            return Just(())
+                .eraseToAnyPublisher()
+        case .allTimePnLInfo:
+            return Just({ [weak self] in
+                guard let self else { return }
+                showPnLInfo()
+            }())
+                .eraseToAnyPublisher()
+
         default:
             return Just(())
                 .eraseToAnyPublisher()
@@ -225,5 +246,19 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
         ))
         .sink(receiveValue: {})
         .store(in: &subscriptions)
+    }
+
+    private func showPnLInfo() {
+        let coordinator = BottomSheetInfoCoordinator(
+            parentVC: tabBarController,
+            rootView: AllTimePnLInfoBottomSheet(
+                repository: Resolver.resolve(),
+                mint: nil
+            )
+        )
+
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }

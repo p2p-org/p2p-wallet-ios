@@ -21,6 +21,7 @@ struct DebugMenuView: View {
                     solanaEndpoint
                     swapEndpoint
                     nameServiceEndpoint
+                    referralEndpoint
                 }
 
                 featureTogglers
@@ -150,6 +151,12 @@ struct DebugMenuView: View {
     var swapEndpoint: some View {
         Section(header: Text("New swap endpoint")) {
             TextField("New swap endpoint", text: $globalAppState.newSwapEndpoint)
+        }
+    }
+
+    var referralEndpoint: some View {
+        Section(header: Text("New referral program endpoint")) {
+            TextField("Value", text: $globalAppState.newReferralProgramEndpoint)
         }
     }
 }

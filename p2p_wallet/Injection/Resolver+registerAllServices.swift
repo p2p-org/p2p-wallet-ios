@@ -10,6 +10,7 @@ import Moonpay
 import NameService
 import Onboarding
 import OrcaSwapSwift
+import PnLService
 import Reachability
 import Resolver
 import Sell
@@ -295,6 +296,9 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
+
+        register { ReferralProgramServiceImpl() }
+            .implements(ReferralProgramService.self)
     }
 
     /// Session scope: Live when user is authenticated
@@ -573,6 +577,24 @@ extension Resolver: ResolverRegistering {
             JupiterTokensLocalProvider()
         }
         .implements(JupiterTokensProvider.self)
+        .scope(.session)
+
+        register {
+            PnLServiceImpl()
+        }
+        .implements((any PnLService).self)
+        .scope(.session)
+
+        register {
+            PnLRepository(
+                initialData: nil,
+                provider: .init(
+                    service: resolve(),
+                    userWalletsManager: resolve(),
+                    solanaAccountsService: resolve()
+                )
+            )
+        }
         .scope(.session)
     }
 

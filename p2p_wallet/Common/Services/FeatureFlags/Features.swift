@@ -27,4 +27,10 @@ public extension Feature {
     static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
 
     static let solanaEthAddressEnabled = Feature(rawValue: "solana_eth_address_enabled")
+
+    // Referral program
+    static let referralProgramEnabled = Feature(rawValue: "referral_program_enabled")
+
+    // Referral program
+    static let pnlEnabled = Feature(rawValue: "pnl_enabled")
 }
