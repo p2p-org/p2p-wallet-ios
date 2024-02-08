@@ -85,6 +85,5 @@ struct CryptoView: View {
                 viewModel.userIsAwareAboutUpdate()
             })
         }
-        
     }
 }
