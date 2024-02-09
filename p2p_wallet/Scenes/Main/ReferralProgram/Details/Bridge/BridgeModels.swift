@@ -3,6 +3,7 @@ enum ReferralBridgeMethod: String {
     case nativeLog
     case signMessage
     case getUserPublicKey
+    case openTermsUrl
 }
 
 enum ReferralBridgeError: String {

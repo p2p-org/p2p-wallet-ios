@@ -31,5 +31,8 @@ window.ReferralBridge = {
     signMessageAsync: async function(message) {
         const result = await handleRequest({ method: "signMessage", message: message });
         return result
+    },
+    openTermsUrl: function(link) {
+        handleRequest({ method: "openTermsUrl", link: link });
     }
 }
