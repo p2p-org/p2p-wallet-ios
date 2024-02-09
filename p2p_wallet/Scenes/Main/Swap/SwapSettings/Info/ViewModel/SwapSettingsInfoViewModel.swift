@@ -47,7 +47,7 @@ final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
         case .transferFee:
             image = .accountCreationFeeHand
             title = L10n.transferFee
-            subtitle = L10n.ChargeThatYouNeedToPayToSendOrReceiveTokenA
+            subtitle = L10n.ChargeThatYouNeedToPayToSendOrReceiveTokens2022
                 .itHelpsMaintainTheNetworkAndEnsureSmoothTransactions
             buttonTitle = L10n.gotIt + "👍"
         }

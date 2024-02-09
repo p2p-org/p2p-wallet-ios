@@ -22,16 +22,23 @@ struct JupiterSwapStateInfo: Equatable {
     let networkFee: SwapFeeInfo
     let accountCreationFee: SwapFeeInfo?
     let liquidityFee: [SwapFeeInfo]
+    let platformFee: PlatformFee?
+    let platformFeeAmount: SwapFeeInfo?
     let minimumReceived: SwapTokenAmountInfo?
     let transferFee: String?
+    let transferFeeFiat: Double?
     let exchangeRateInfo: String?
 
     var estimatedFees: String? {
-        let estimatedFees = (liquidityFee + [networkFee, accountCreationFee].compactMap { $0 })
+        var fees = (liquidityFee + [networkFee, accountCreationFee, platformFeeAmount]
+            .compactMap { $0 })
             .compactMap(\.amountInFiat)
             .reduce(0.0, +)
+        if let transferFeeFiat {
+            fees = fees + transferFeeFiat
+        }
 
-        return estimatedFees > 0 ? "≈ " + estimatedFees.formattedFiat() : nil
+        return fees > 0 ? "≈ " + fees.formattedFiat() : nil
     }
 }
 
@@ -68,11 +75,15 @@ extension JupiterSwapState {
             ),
             accountCreationFee: accountCreationFee,
             liquidityFee: liquidityFee,
+            platformFee: route?.platformFee,
+            platformFeeAmount: platformFeeAmount,
             minimumReceived: minimumReceivedAmount == nil ? nil : .init(
                 amount: minimumReceivedAmount!,
                 token: toToken.token.symbol
             ),
             transferFee: transferFeeBasisPoints != nil ? "\(Double(transferFeeBasisPoints!) / 100)%" : nil,
+            transferFeeFiat: transferFeeBasisPoints != nil ? Double(transferFeeBasisPoints!) / 100 / 100 *
+                amountFromFiat : nil,
             exchangeRateInfo: exchangeRateInfo
         )
     }
