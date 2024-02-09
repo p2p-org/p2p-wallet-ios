@@ -82,7 +82,8 @@ extension JupiterSwapState {
                 token: toToken.token.symbol
             ),
             transferFee: transferFeeBasisPoints != nil ? "\(Double(transferFeeBasisPoints!) / 100)%" : nil,
-            transferFeeFiat: transferFeeBasisPoints != nil ? Double(transferFeeBasisPoints!) / 100 / 100 * amountFromFiat : nil,
+            transferFeeFiat: transferFeeBasisPoints != nil ? Double(transferFeeBasisPoints!) / 100 / 100 *
+                amountFromFiat : nil,
             exchangeRateInfo: exchangeRateInfo
         )
     }
