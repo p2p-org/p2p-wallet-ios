@@ -7,12 +7,14 @@ import Resolver
 import Sell
 import Send
 import SolanaSwift
+import UIKit
 import Wormhole
 
 /// ViewModel of `Crypto` scene
 final class CryptoViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
+    @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var ethereumAccountsService: EthereumAccountsService
     @Injected private var analyticsManager: AnalyticsManager
@@ -23,6 +25,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var sellDataService: any SellDataService
     @Injected private var createNameService: CreateNameService
+    @Injected private var applicationUpdateManager: ApplicationUpdateManager
     @Injected private var referralService: ReferralProgramService
 
     let navigation: PassthroughSubject<CryptoNavigation, Never>
@@ -34,6 +37,9 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var displayReferralBanner: Bool
     @Published var state = State.pending
     @Published var address = ""
+
+    @Published var updateAlert: Bool = false
+    @Published var newVersion: Version?
 
     // MARK: - Initializers
 
@@ -54,6 +60,19 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
 
     private func reload() async {
         await CryptoAccountsSynchronizationService().refresh()
+    }
+
+    func userIsAwareAboutUpdate() {
+        guard let version = newVersion else { return }
+        Task { await applicationUpdateManager.awareUser(version: version) }
+    }
+
+    func openAppstore() {
+        UIApplication.shared.open(
+            URL(string: "itms-apps://itunes.apple.com/app/id1605603333")!,
+            options: [:],
+            completionHandler: nil
+        )
     }
 
     func viewAppeared() {
@@ -181,6 +200,30 @@ private extension CryptoViewModel {
                 self?.updateAddressIfNeeded()
             }
             .store(in: &subscriptions)
+
+        // Update
+        authenticationHandler.authenticationStatusPublisher
+            .filter { $0 == nil }
+            .delay(for: 3, scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                Task {
+                    guard let self else { return }
+                    let result = await self.applicationUpdateManager.isUpdateAvailable()
+                    switch result {
+                    case .noUpdate:
+                        return
+                    case let .updateAvailable(version):
+                        if await self.applicationUpdateManager.isUserAwareAboutUpdate(version: version) {
+                            return
+                        } else {
+                            await MainActor.run {
+                                self.updateAlert = true
+                                self.newVersion = version
+                            }
+                        }
+                    }
+                }
+            }.store(in: &subscriptions)
 
         openReferralProgramDetails
             .map { CryptoNavigation.referral }

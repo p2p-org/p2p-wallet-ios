@@ -119,6 +119,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             strategy = .accountCreationFee
         case .liquidityFee:
             strategy = .liquidityFee
+        case .platformFee:
+            return
         case .minimumReceived:
             strategy = .minimumReceived
         }
