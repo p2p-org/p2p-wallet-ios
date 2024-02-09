@@ -27,6 +27,14 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
+        viewModel.openTerms
+            .sink { [weak self] url in
+                guard let self else { return }
+                coordinate(to: TermsAndConditionsCoordinator(navigationController: self.navigationController, url: url))
+                    .sink(receiveValue: {}).store(in: &self.subscriptions)
+            }
+            .store(in: &subscriptions)
+
         return result.eraseToAnyPublisher()
     }
 }
