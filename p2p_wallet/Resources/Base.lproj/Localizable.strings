@@ -591,7 +591,7 @@
 "Make sure the mint address %@ is correct before confirming" = "Make sure the mint address %@ is correct before confirming";
 "Be save and carefull" = "Be save and carefull";
 "The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default." = "The token %@ from your swap link seems suspicious, therefore we've refreshed swap pair to default.";
-"Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions." = "Charge that you need to pay to send or receive tokenA. It helps maintain the network and ensure smooth transactions.";
+"Charge that you need to pay to send or receive tokens-2022. It helps maintain the network and ensure smooth transactions." = "Charge that you need to pay to send or receive tokens-2022. It helps maintain the network and ensure smooth transactions.";
 "Unfortunately, you can not cashout in %@, but you can still use other Key App features" = "Unfortunately, you can not cashout in %@, but you can still use other Key App features";
 "Share my link" = "Share my link";
 "Open details" = "Open details";
