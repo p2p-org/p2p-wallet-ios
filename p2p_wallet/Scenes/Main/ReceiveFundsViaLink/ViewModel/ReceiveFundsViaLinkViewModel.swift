@@ -103,7 +103,8 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             ),
             tokenAmount: cryptoAmount,
             isFakeTransaction: isFakeSendingTransaction,
-            fakeTransactionErrorType: fakeTransactionErrorType
+            fakeTransactionErrorType: fakeTransactionErrorType,
+            feePayer: claimableToken.keypair
         )
 
         // Send it to transactionHandler

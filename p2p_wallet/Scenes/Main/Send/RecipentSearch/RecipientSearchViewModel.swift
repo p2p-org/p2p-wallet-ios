@@ -258,14 +258,9 @@ class RecipientSearchViewModel: ObservableObject {
 
     func checkIfSendViaLinkAvailable() async throws {
         if available(.sendViaLinkEnabled) {
-            // get relay context
-            let usageStatus = try await Resolver.resolve(RelayContextManager.self)
-                .getCurrentContextOrUpdate()
-                .usageStatus
-
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: false,
-                reachedLimit: usageStatus.reachedLimitLinkCreation
+                reachedLimit: false
             )
         } else {
             sendViaLinkState = SendViaLinkState(

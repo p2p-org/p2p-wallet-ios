@@ -18,6 +18,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     let feeAmount: FeeAmount = .zero
     let isFakeTransaction: Bool
     let fakeTransactionErrorType: FakeTransactionErrorType
+    let feePayer: KeyPair
 
     var mainDescription: String {
         "Claim-sent-via-link"
@@ -55,21 +56,16 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
 
         // get services
         let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-        let feeRelayerAPIClient = Resolver.resolve(FeeRelayerAPIClient.self)
         let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
 
         // do and catch error
         do {
-            let feePayerAddress = try PublicKey(
-                string: await feeRelayerAPIClient.getFeePayerPubkey()
-            )
-
             // prepare transaction, get recent blockchash
             var (preparedTransaction, recentBlockhash) = try await(
                 sendViaLinkDataService.claim(
                     token: claimableTokenInfo,
                     receiver: receiver,
-                    feePayer: feePayerAddress
+                    feePayer: feePayer.publicKey
                 ),
                 solanaAPIClient.getRecentBlockhash()
             )
@@ -94,7 +90,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
             try preparedTransaction.transaction.addSignature(
                 .init(
                     signature: Data(Base58.decode(feePayerSignature)),
-                    publicKey: feePayerAddress
+                    publicKey: feePayer.publicKey
                 )
             )
 

@@ -89,9 +89,9 @@ struct SendTransaction: RawTransactionType {
                     isSendingMaxAmount: isSendingMaxAmount,
                     feeWallet: payingFeeWallet,
                     ignoreTopUp: isSendingViaLink || isLinkCreationAvailable,
-                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
+                    memo: nil,
                     operationType: isSendingViaLink ? .sendViaLink : .transfer,
-                    useSendService: !isSendingViaLink
+                    useSendService: true
                 )
 
             // save to storage

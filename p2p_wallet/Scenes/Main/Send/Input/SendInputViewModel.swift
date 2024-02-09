@@ -568,8 +568,7 @@ private extension SendInputViewModel {
                 isFakeSendTransaction: isFakeSendTransaction,
                 isFakeSendTransactionError: isFakeSendTransactionError,
                 isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                isLinkCreationAvailable: Resolver.resolve(RelayContextManager.self).currentContext?.usageStatus
-                    .reachedLimitLinkCreation == false,
+                isLinkCreationAvailable: true,
                 recipient: recipient,
                 sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
