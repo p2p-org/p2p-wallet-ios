@@ -454,11 +454,12 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = false
             if !currentState.isSendingViaLink {
                 var title = L10n.send + " "
-                title += currentState.amountInToken.tokenAmountFormattedString(
-                    symbol: currentState.token.symbol,
-                    maximumFractionDigits: Int(currentState.token.decimals),
-                    roundingMode: .down
-                )
+                title += currentState.totalAmount.convertToBalance(decimals: currentState.token.decimals)
+                    .tokenAmountFormattedString(
+                        symbol: currentState.token.symbol,
+                        maximumFractionDigits: Int(currentState.token.decimals),
+                        roundingMode: .down
+                    )
                 actionButtonData = SliderActionButtonData(isEnabled: true, title: title)
             } else {
                 actionButtonData = SliderActionButtonData(
