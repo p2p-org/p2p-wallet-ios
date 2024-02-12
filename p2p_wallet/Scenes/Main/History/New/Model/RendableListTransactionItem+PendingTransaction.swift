@@ -93,7 +93,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 .from(RecipientFormatter
                     .shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         default:
-            return L10n.unknown
+            return L10n.transaction
         }
     }
 

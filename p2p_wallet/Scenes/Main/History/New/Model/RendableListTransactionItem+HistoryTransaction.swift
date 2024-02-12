@@ -131,7 +131,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case let .referralReward(data):
             return L10n.referralReward
         case .unknown, .none:
-            return L10n.unknown
+            return L10n.transaction
         }
     }
 
@@ -156,7 +156,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case .referralReward:
             return date.string(withFormat: "HH:mm")
         default:
-            return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
+            return "\(RecipientFormatter.longSignature(signature: trx.signature))"
         }
     }
 

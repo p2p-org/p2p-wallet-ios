@@ -25,8 +25,12 @@ enum RecipientFormatter {
         }
     }
 
-    static func shortSignature(signature: String) -> String {
-        "...\(signature.suffix(4))"
+    static func longSignature(signature: String) -> String {
+        if signature.count > 16 {
+            return "\(signature.prefix(8))...\(signature.suffix(8))"
+        } else {
+            return signature
+        }
     }
 
     static func signature(signature: String) -> String {
