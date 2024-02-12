@@ -68,7 +68,8 @@ extension SendInputBusinessLogic {
                     feeInSol: state.fee,
                     token: state.token,
                     services: services,
-                    whitelistMints: state.feePayableTokenMints
+                    whitelistMints: state.feePayableTokenMints,
+                    prechosenFeeTokenAddress: state.prechosenFeeTokenAddress
                 )
 
                 state = state.copy(
@@ -107,9 +108,13 @@ extension SendInputBusinessLogic {
         feeInSol: FeeAmount,
         token: SolanaAccount,
         services: SendInputServices,
-        whitelistMints: [String]
+        whitelistMints: [String],
+        prechosenFeeTokenAddress: String?
     ) async -> (token: SolanaAccount, fee: FeeAmount?) {
         var preferOrder = ["SOL": 2]
+        if let prechosenSymbol = userWallets.first(where: { $0.mintAddress == prechosenFeeTokenAddress })?.symbol {
+            preferOrder[prechosenSymbol] = 0
+        }
         if !preferOrder.keys.contains(token.symbol) {
             preferOrder[token.symbol] = 1
         }

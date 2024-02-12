@@ -122,6 +122,8 @@ public struct SendInputState: Equatable {
         sendViaLinkSeed != nil
     }
 
+    public let prechosenFeeTokenAddress: String?
+
     public init(
         status: Status,
         recipient: Recipient,
@@ -138,7 +140,8 @@ public struct SendInputState: Equatable {
         lamportsPerSignature: UInt64,
         minimumRelayAccountBalance: UInt64,
         limit: SendServiceLimitResponse,
-        sendViaLinkSeed: String?
+        sendViaLinkSeed: String?,
+        prechosenFeeTokenAddress: String?
     ) {
         self.status = status
         self.recipient = recipient
@@ -156,6 +159,7 @@ public struct SendInputState: Equatable {
         self.minimumRelayAccountBalance = minimumRelayAccountBalance
         self.limit = limit
         self.sendViaLinkSeed = sendViaLinkSeed
+        self.prechosenFeeTokenAddress = prechosenFeeTokenAddress
     }
 
     public static func zero(
@@ -166,7 +170,8 @@ public struct SendInputState: Equatable {
         feeToken: SolanaAccount,
         userWalletState: UserWalletEnvironments,
         feePayableTokenMints: [String] = [],
-        sendViaLinkSeed: String?
+        sendViaLinkSeed: String?,
+        prechosenFeeTokenAddress: String?
     ) -> SendInputState {
         .init(
             status: status,
@@ -190,7 +195,8 @@ public struct SendInputState: Equatable {
                 ),
                 tokenAccountRent: .init(remainingAmount: 0, remainingTransactions: 0)
             ),
-            sendViaLinkSeed: sendViaLinkSeed
+            sendViaLinkSeed: sendViaLinkSeed,
+            prechosenFeeTokenAddress: prechosenFeeTokenAddress
         )
     }
 
@@ -210,7 +216,8 @@ public struct SendInputState: Equatable {
         lamportsPerSignature: UInt64? = nil,
         minimumRelayAccountBalance: UInt64? = nil,
         limit: SendServiceLimitResponse? = nil,
-        sendViaLinkSeed: String?? = nil
+        sendViaLinkSeed: String?? = nil,
+        prechosenFeeTokenAddress: String?? = nil
     ) -> SendInputState {
         .init(
             status: status ?? self.status,
@@ -229,7 +236,8 @@ public struct SendInputState: Equatable {
             lamportsPerSignature: lamportsPerSignature ?? self.lamportsPerSignature,
             minimumRelayAccountBalance: minimumRelayAccountBalance ?? self.minimumRelayAccountBalance,
             limit: limit ?? self.limit,
-            sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
+            sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed,
+            prechosenFeeTokenAddress: prechosenFeeTokenAddress ?? self.prechosenFeeTokenAddress
         )
     }
 }
