@@ -8,10 +8,12 @@ import WebKit
 
 protocol ReferralBridge {
     var sharePublisher: AnyPublisher<String, Never> { get }
+    var openTermsUrl: AnyPublisher<URL, Never> { get }
 }
 
 final class ReferralJSBridge: NSObject, ReferralBridge {
     var sharePublisher: AnyPublisher<String, Never> { shareSubject.eraseToAnyPublisher() }
+    var openTermsUrl: AnyPublisher<URL, Never> { openTermsUrlSubject.eraseToAnyPublisher() }
 
     // MARK: - Dependencies
 
@@ -21,6 +23,7 @@ final class ReferralJSBridge: NSObject, ReferralBridge {
     // MARK: - Properties
 
     private let shareSubject = PassthroughSubject<String, Never>()
+    private let openTermsUrlSubject = PassthroughSubject<URL, Never>()
     private var subscriptions: [AnyCancellable] = []
     private weak var webView: WKWebView?
 
@@ -133,6 +136,13 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
 
         case .getUserPublicKey:
             handler(user.account.publicKey.base58EncodedString, nil)
+        case .openTermsUrl:
+            if let link = dict["link"] as? String, let url = URL(string: link) {
+                openTermsUrlSubject.send(url)
+                handler(link, nil)
+            } else {
+                handler(nil, .emptyLink)
+            }
         }
     }
 }

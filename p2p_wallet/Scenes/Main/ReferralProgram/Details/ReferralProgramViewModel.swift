@@ -12,6 +12,7 @@ final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
     let webView: WKWebView
 
     let openShare = PassthroughSubject<String, Never>()
+    let openTerms = PassthroughSubject<URL, Never>()
 
     override init() {
         let wkWebView = ReferralProgramViewModel.buildWebView()
@@ -25,6 +26,12 @@ final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
         bridge.sharePublisher
             .sink(receiveValue: { [weak self] value in
                 self?.openShare.send(value)
+            })
+            .store(in: &subscriptions)
+
+        bridge.openTermsUrl
+            .sink(receiveValue: { [weak self] value in
+                self?.openTerms.send(value)
             })
             .store(in: &subscriptions)
     }
