@@ -119,8 +119,6 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             strategy = .accountCreationFee
         case .liquidityFee:
             strategy = .liquidityFee
-        case .platformFee:
-            return
         case .minimumReceived:
             strategy = .minimumReceived
         }
@@ -174,17 +172,26 @@ private extension JupiterSwapState {
             return .loading
         }
 
-        return .loaded(
-            info.liquidityFee.map { lqFee in
-                SwapSettingsInfoViewModel.Fee(
-                    title: L10n.liquidityFee(
-                        lqFee.tokenName ?? L10n.unknownToken,
-                        "\(lqFee.pct == nil ? L10n.unknown : "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
-                    ),
-                    subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                    amount: lqFee.amountInFiatDescription
-                )
-            }
-        )
+        var liquidutyFees = info.liquidityFee.map { lqFee in
+            SwapSettingsInfoViewModel.Fee(
+                title: L10n.liquidityFee(
+                    lqFee.tokenName ?? L10n.unknownToken,
+                    "\(lqFee.pct == nil ? L10n.unknown : "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
+                ),
+                subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                amount: lqFee.amountInFiatDescription
+            )
+        }
+
+        if let platformFeeAmount = info.platformFee {
+            liquidutyFees.append(SwapSettingsInfoViewModel.Fee(
+                title: L10n.swapFee,
+                subtitle: platformFeeAmount.amount
+                    .tokenAmountFormattedString(symbol: platformFeeAmount.tokenSymbol ?? "UNKNOWN"),
+                amount: platformFeeAmount.amountInFiatDescription
+            ))
+        }
+
+        return .loaded(liquidutyFees)
     }
 }
