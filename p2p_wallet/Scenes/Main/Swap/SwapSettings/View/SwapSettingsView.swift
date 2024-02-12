@@ -72,7 +72,11 @@ struct SwapSettingsView: View {
             )
 
             if viewModel.info.transferFee != nil {
-                commonRow(title: L10n.token2022TransferFee, subtitle: viewModel.info.transferFee, identifier: .transferFee)
+                commonRow(
+                    title: L10n.token2022TransferFee,
+                    subtitle: viewModel.info.transferFee,
+                    identifier: .transferFee
+                )
             }
 
             // Account creation fee
