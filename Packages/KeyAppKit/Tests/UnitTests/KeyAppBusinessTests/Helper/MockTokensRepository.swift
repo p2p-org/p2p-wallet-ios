@@ -1,12 +1,14 @@
 import Foundation
-import TokenService
 import SolanaSwift
+import TokenService
 
 struct MockTokensRepository: TokenRepository, SolanaTokensService {
-    func getTokenAmount(vs_token: String?, amount: UInt64, mints: [String]) async throws -> [TokenService.SolanaTokenAmountResponse] {
-        return []
+    func getTokenAmount(vs_token _: String?, amount _: UInt64,
+                        mints _: [String]) async throws -> [TokenService.SolanaTokenAmountResponse]
+    {
+        []
     }
-    
+
     func setup() async throws {}
 
     func get(address: String) async throws -> TokenMetadata? {
