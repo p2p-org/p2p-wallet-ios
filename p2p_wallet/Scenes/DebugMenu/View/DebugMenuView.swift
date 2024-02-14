@@ -54,13 +54,6 @@ struct DebugMenuView: View {
                     try await tokenService.clear()
                 }
             }
-
-            Button("Clear price cache") {
-                let priceService = Resolver.resolve(PriceService.self)
-                Task {
-                    try await priceService.clear()
-                }
-            }
         }
     }
 

@@ -21,7 +21,7 @@ final class DerivableAccountsViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationsService: NotificationService
-    @Injected private var pricesFetcher: PriceService
+    @Injected private var pricesFetcher: JupiterPriceService
     @Injected private var solanaAPIClient: SolanaAPIClient
 
     // MARK: - Subjects

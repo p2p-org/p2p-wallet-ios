@@ -5,7 +5,7 @@ import SolanaSwift
 
 struct JupiterSwapServices {
     let jupiterClient: JupiterAPI
-    let pricesAPI: PriceService
+    let pricesAPI: JupiterPriceService
     let solanaAPIClient: SolanaAPIClient
     let relayContextManager: RelayContextManager
 }

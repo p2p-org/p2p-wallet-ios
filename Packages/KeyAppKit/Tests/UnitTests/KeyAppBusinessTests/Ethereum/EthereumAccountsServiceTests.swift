@@ -22,7 +22,7 @@ final class EthereumAccountsServiceTests: XCTestCase {
         )
 
         let web3 = Web3(provider: web3Provider)
-        let priceService = PriceServiceImpl(api: MockKeyAppTokenProvider(), errorObserver: MockErrorObservable())
+        let priceService = MockJupiterPriceService()
         let keyAppTokenProvider = MockKeyAppTokenProvider()
 
         let service = EthereumAccountsService(
