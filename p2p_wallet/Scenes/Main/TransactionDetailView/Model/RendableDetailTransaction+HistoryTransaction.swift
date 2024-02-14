@@ -325,6 +325,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
                     values: [.init(text: value)]
                 )
             )
+            return result // Do not show trx.fees after this switch case for this type of transaction
 
         default:
             result.append(
