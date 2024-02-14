@@ -159,7 +159,6 @@
 "Error with deleting. Try again" = "Error with deleting. Try again";
 "Estimated fees" = "Estimated fees";
 "Exchanging %@ → %@" = "Exchanging %@ → %@";
-"Explorer" = "Explorer";
 "Face ID" = "Face ID";
 "Failed to get data" = "Failed to get data";
 "Fee" = "Fee";
@@ -598,3 +597,4 @@
 "Terms & Conditions" = "Terms & Conditions";
 "Swap fee" = "Swap fee";
 "Token-2022 transfer fee" = "Token-2022 transfer fee";
+"Solscan" = "Solscan";

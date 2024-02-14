@@ -443,7 +443,6 @@
 "Mint signature" = "Mint signature";
 "Unstake signature" = "Unstake signature";
 "Stake signature" = "Stake signature";
-"Explorer" = "Explorer";
 "Buy with Moonpay" = "Buy with Moonpay";
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
@@ -610,3 +609,4 @@
 "Terms & Conditions" = "Terms & Conditions";
 "Swap fee" = "Swap fee";
 "Token-2022 transfer fee" = "Token-2022 transfer fee";
+"Solscan" = "Solscan";
