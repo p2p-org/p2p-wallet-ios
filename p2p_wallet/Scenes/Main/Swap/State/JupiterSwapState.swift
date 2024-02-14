@@ -284,8 +284,8 @@ struct JupiterSwapState: Equatable {
     var liquidityFee: [SwapFeeInfo] {
         guard let route else { return [] }
         return route.routePlan
-            .map { ($0.swapInfo.feeAmount, $0.swapInfo.feeMint) }
-            .compactMap { feeAmount, feeMint -> SwapFeeInfo? in
+            .map { ($0.swapInfo.feeAmount, $0.swapInfo.feeMint, $0.percent) }
+            .compactMap { feeAmount, feeMint, percent -> SwapFeeInfo? in
                 guard let token = swapTokens.map(\.token).first(where: { $0.mintAddress == feeMint }),
                       let amount = UInt64(feeAmount)?.convertToBalance(decimals: token.decimals)
                 else {
@@ -297,8 +297,7 @@ struct JupiterSwapState: Equatable {
                     tokenSymbol: token.symbol,
                     tokenName: token.name,
                     tokenPriceInCurrentFiat: tokensPriceMap[token.mintAddress],
-                    // TODO(jupiter): Pct in v6 is not provided for each route plan. We have summarize value in response.
-                    pct: 0,
+                    pct: Decimal(percent),
                     canBePaidByKeyApp: false
                 )
             }

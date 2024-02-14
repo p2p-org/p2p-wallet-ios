@@ -67,6 +67,9 @@ extension DefaultsKeys {
 
     // Send
     var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var accountCreationLastTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
 
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(

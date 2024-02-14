@@ -103,6 +103,7 @@ class UserWalletManager: ObservableObject {
         Defaults.ethBannerShouldHide = false
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
+        Defaults.accountCreationLastTokenAddress = nil
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
         Defaults.referrerRegistered = false
