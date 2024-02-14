@@ -134,7 +134,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.mintAddress == TokenMetadata.usdc.mintAddress }) ??
+            .first(where: {
+                $0.token.mintAddress == Defaults.accountCreationLastTokenAddress ?? TokenMetadata.usdc.mintAddress
+            }) ??
             .classicSPLTokenAccount(address: "", lamports: 0, token: .usdc)
 
         var exchangeRate = [String: TokenPrice]()
@@ -156,7 +158,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             token: tokenInWallet,
             feeToken: feeTokenInWallet,
             userWalletState: env,
-            sendViaLinkSeed: sendViaLinkSeed
+            sendViaLinkSeed: sendViaLinkSeed,
+            prechosenFeeTokenAddress: Defaults.accountCreationLastTokenAddress
         )
 
         stateMachine = .init(
@@ -362,6 +365,7 @@ private extension SendInputViewModel {
                 self.isFeeLoading = true
                 _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
                 self.isFeeLoading = false
+                Defaults.accountCreationLastTokenAddress = newFeeToken.mintAddress
             }
             .store(in: &subscriptions)
 
@@ -454,11 +458,12 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = false
             if !currentState.isSendingViaLink {
                 var title = L10n.send + " "
-                title += currentState.amountInToken.tokenAmountFormattedString(
-                    symbol: currentState.token.symbol,
-                    maximumFractionDigits: Int(currentState.token.decimals),
-                    roundingMode: .down
-                )
+                title += currentState.totalAmount.convertToBalance(decimals: currentState.token.decimals)
+                    .tokenAmountFormattedString(
+                        symbol: currentState.token.symbol,
+                        maximumFractionDigits: Int(currentState.token.decimals),
+                        roundingMode: .down
+                    )
                 actionButtonData = SliderActionButtonData(isEnabled: true, title: title)
             } else {
                 actionButtonData = SliderActionButtonData(

@@ -79,6 +79,7 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     private func bind() {
         tabBarViewModel.moveToSendViaLinkClaim
+            .filter { _ in available(.sendViaLinkEnabled) }
             .sink { [weak self] url in
                 guard let self else { return }
 

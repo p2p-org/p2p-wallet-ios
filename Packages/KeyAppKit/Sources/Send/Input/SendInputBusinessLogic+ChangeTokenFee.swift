@@ -33,7 +33,8 @@ extension SendInputBusinessLogic {
             let state = state.copy(
                 fee: fee,
                 tokenFee: feeToken,
-                feeInToken: feeInToken
+                feeInToken: feeInToken,
+                prechosenFeeTokenAddress: feeToken.mintAddress
             )
 
             return await validateFee(state: state)

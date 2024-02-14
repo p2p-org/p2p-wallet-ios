@@ -72,7 +72,11 @@ struct SwapSettingsView: View {
             )
 
             if viewModel.info.transferFee != nil {
-                commonRow(title: L10n.transferFee, subtitle: viewModel.info.transferFee, identifier: .transferFee)
+                commonRow(
+                    title: L10n.token2022TransferFee,
+                    subtitle: viewModel.info.transferFee,
+                    identifier: .transferFee
+                )
             }
 
             // Account creation fee
@@ -86,24 +90,13 @@ struct SwapSettingsView: View {
 
             // Liquidity fee
             if viewModel.isLoadingOrRouteNotNil {
-                if !viewModel.info.liquidityFee.isEmpty {
+                if !viewModel.info.displayableLiquidityFees.isEmpty {
                     feeRow(
                         title: L10n.liquidityFee,
-                        fees: viewModel.info.liquidityFee,
+                        fees: viewModel.info.displayableLiquidityFees,
                         identifier: .liquidityFee
                     )
                 }
-            }
-
-            // Platform fee
-            if let platformFee = viewModel.info.platformFee {
-                commonRow(
-                    title: L10n.keyAppSwapFee,
-                    subtitle: nil,
-                    trailingSubtitle: feeBpsFormatter(platformFee.feeBps),
-                    trailingView: EmptyView().castToAnyView(),
-                    identifier: .platformFee
-                )
             }
 
             // Estimated fee
@@ -322,7 +315,6 @@ extension SwapSettingsView {
         case transferFee
         case accountCreationFee
         case liquidityFee
-        case platformFee
         case minimumReceived
     }
 }
