@@ -94,6 +94,7 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
         }
         
         await setupTask?.value
+        setupTask = nil
     }
 
     func migrate(database: Database) -> Database? {
