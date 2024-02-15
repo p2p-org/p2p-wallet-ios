@@ -35,7 +35,7 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
     let errorObserver: ErrorObserver
 
     var status: Status = .initialising
-    
+
     var setupTask: Task<Void, Never>?
 
     public init(provider: KeyAppTokenProvider, errorObserver: ErrorObserver) {
@@ -52,7 +52,7 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
             await setupTask.value
             return
         }
-        
+
         setupTask = Task {
             // Load from local storage
             if status == Status.initialising {
@@ -92,7 +92,7 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
                 errorObserver.handleError(error)
             }
         }
-        
+
         await setupTask?.value
         setupTask = nil
     }
