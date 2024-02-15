@@ -107,21 +107,13 @@ public final class JupiterPriceServiceImpl: JupiterPriceService {
         var result: [SomeToken: TokenPrice] = [:]
 
         // Request token price
-        let query = tokens.map {
-            if $0.addressPriceMapping == "native" {
-                switch $0.network {
-                case .ethereum: return Token.eth.mintAddress
-                case .solana: return Token.nativeSolana.mintAddress
-                }
-            }
-            return $0.addressPriceMapping
-        }.joined(separator: ",")
+        let query = tokens.map(\.jupiterAddressMaping).joined(separator: ",")
 
         // Fetch
         let newPrices = try await getTokensPrice(ids: query).data
         for tokenData in newPrices {
             // Token should be from requested list
-            let token = tokens.first { token in token.addressPriceMapping == tokenData.key }
+            let token = tokens.first { token in token.jupiterAddressMaping == tokenData.key }
             guard let token = token?.asSomeToken else { continue }
 
             // Parse

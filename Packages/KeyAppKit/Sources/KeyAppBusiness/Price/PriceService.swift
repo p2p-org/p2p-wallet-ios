@@ -266,6 +266,7 @@ public class PriceServiceImpl: PriceService {
 
 extension AnyToken {
     /// Map token to requested primary key in backend.
+    @available(*, deprecated, message: "Use jupiterAddressMaping instead")
     var addressPriceMapping: String {
         switch network {
         case .solana:
@@ -280,6 +281,26 @@ extension AnyToken {
             switch primaryKey {
             case .native:
                 return "native"
+            case let .contract(address):
+                return address
+            }
+        }
+    }
+
+    var jupiterAddressMaping: String {
+        switch network {
+        case .solana:
+            switch primaryKey {
+            case .native:
+                return Token.eth.mintAddress
+            case let .contract(address):
+                return address
+            }
+
+        case .ethereum:
+            switch primaryKey {
+            case .native:
+                return Token.eth.mintAddress
             case let .contract(address):
                 return address
             }
