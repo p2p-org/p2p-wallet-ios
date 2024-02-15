@@ -80,10 +80,10 @@ struct SwapSettingsView: View {
             }
 
             // Account creation fee
-            if viewModel.isLoadingOrRouteNotNil {
+            if viewModel.isLoadingOrRouteNotNil, let fee = viewModel.info.accountCreationFee, fee.amount > 0 {
                 feeRow(
                     title: L10n.accountCreationFee,
-                    fee: viewModel.info.accountCreationFee,
+                    fee: fee,
                     identifier: .accountCreationFee
                 )
             }

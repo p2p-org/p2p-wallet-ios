@@ -66,6 +66,7 @@ enum JupiterSwapBusinessLogic {
                 $0.routes = []
                 $0.fromToken = fromToken
                 $0.amountFrom = nil
+                $0.transferFeeBasisPoints = nil
             }
         case let .changeToToken(toToken):
             return state.modified {
