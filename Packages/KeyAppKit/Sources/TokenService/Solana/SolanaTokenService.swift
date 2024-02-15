@@ -92,6 +92,8 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
                 errorObserver.handleError(error)
             }
         }
+        
+        await setupTask?.value
     }
 
     func migrate(database: Database) -> Database? {
