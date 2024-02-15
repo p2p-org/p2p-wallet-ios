@@ -51,6 +51,7 @@ class GlobalAppState: ObservableObject {
     @Published var surveyID: String?
     @Published var sendViaLinkUrl: URL?
     @Published var swapUrl: URL?
+    @Published var referrerUrl: URL?
 
     private init() {
         if let forcedValue = Defaults.forcedNameServiceEndpoint {

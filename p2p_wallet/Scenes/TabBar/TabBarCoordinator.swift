@@ -104,16 +104,13 @@ final class TabBarCoordinator: Coordinator<Void> {
                 let urlComponent = URLComponents(url: url, resolvingAgainstBaseURL: true)
                 let from = urlComponent?.queryItems?.first { $0.name == "from" }?.value
                 let to = urlComponent?.queryItems?.first { $0.name == "to" }?.value
-                let r = urlComponent?.queryItems?.first { $0.name == "r" }?.value
 
                 if from == nil, to == nil {
                     return
                 }
 
-                Task {
-                    guard available(.referralProgramEnabled), let r else { return }
-                    let referralService: ReferralProgramService = Resolver.resolve()
-                    _ = await referralService.setReferent(from: r)
+                if let r = urlComponent?.queryItems?.first(where: { $0.name == "r" })?.value {
+                    setReferrerIfNeeded(r: r)
                 }
 
                 self.routeToSwap(
@@ -122,6 +119,21 @@ final class TabBarCoordinator: Coordinator<Void> {
                     inputToken: from,
                     outputToken: to
                 )
+            }
+            .store(in: &subscriptions)
+
+        tabBarViewModel.moveToMain
+            .filter { _ in available(.referralProgramEnabled) }
+            .compactMap { URLComponents(url: $0, resolvingAgainstBaseURL: true)?.path.dropFirst() }
+            .sink { [weak self] referrer in
+                guard let self else { return }
+
+                UIApplication.dismissCustomPresentedViewController {
+                    self.navigationControllerForSelectedTab()?.popToRootViewController(animated: true)
+                    self.tabBarController.changeItem(to: .wallet)
+                }
+
+                setReferrerIfNeeded(r: String(referrer))
             }
             .store(in: &subscriptions)
 
@@ -242,5 +254,13 @@ final class TabBarCoordinator: Coordinator<Void> {
                 self?.tabBarController.changeItem(to: .wallet)
             })
             .store(in: &subscriptions)
+    }
+
+    private func setReferrerIfNeeded(r: String) {
+        Task {
+            guard available(.referralProgramEnabled) else { return }
+            let referralService: ReferralProgramService = Resolver.resolve()
+            _ = await referralService.setReferent(from: r)
+        }
     }
 }
