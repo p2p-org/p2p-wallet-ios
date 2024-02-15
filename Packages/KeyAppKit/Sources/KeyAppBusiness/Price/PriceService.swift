@@ -292,7 +292,7 @@ extension AnyToken {
         case .solana:
             switch primaryKey {
             case .native:
-                return Token.eth.mintAddress
+                return Token.nativeSolana.mintAddress
             case let .contract(address):
                 return address
             }
