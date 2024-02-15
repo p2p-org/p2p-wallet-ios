@@ -4,6 +4,7 @@ enum ReferralBridgeMethod: String {
     case signMessage
     case getUserPublicKey
     case openTermsUrl
+    case navigateToSwap
 }
 
 enum ReferralBridgeError: String {
