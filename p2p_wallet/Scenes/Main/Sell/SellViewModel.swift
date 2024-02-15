@@ -36,7 +36,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
-    @Injected private var priceService: PriceService
+    @Injected private var priceService: JupiterPriceService
 
     // MARK: - Properties
 

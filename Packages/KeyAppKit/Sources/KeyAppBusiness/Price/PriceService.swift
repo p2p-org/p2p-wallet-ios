@@ -7,6 +7,7 @@ import SolanaSwift
 import TokenService
 
 /// Abstract class for getting exchange rate between token and fiat for any token.
+@available(*, deprecated, message: "Use JupiterPriceService instead")
 public protocol PriceService: AnyObject {
     /// Get actual price in specific fiat for token.
     func getPrice(
@@ -32,6 +33,7 @@ public protocol PriceService: AnyObject {
 /// This class service allow client to get exchange rate between token and fiat.
 ///
 /// Each rate has 15 minutes lifetime. When the lifetime is expired, the new rate will be requested.
+@available(*, deprecated, message: "Use JupiterPriceService instead")
 public class PriceServiceImpl: PriceService {
     // MARK: - Inner structure
 
@@ -264,6 +266,7 @@ public class PriceServiceImpl: PriceService {
 
 extension AnyToken {
     /// Map token to requested primary key in backend.
+    @available(*, deprecated, message: "Use jupiterAddressMaping instead")
     var addressPriceMapping: String {
         switch network {
         case .solana:
@@ -278,6 +281,26 @@ extension AnyToken {
             switch primaryKey {
             case .native:
                 return "native"
+            case let .contract(address):
+                return address
+            }
+        }
+    }
+
+    var jupiterAddressMaping: String {
+        switch network {
+        case .solana:
+            switch primaryKey {
+            case .native:
+                return Token.nativeSolana.mintAddress
+            case let .contract(address):
+                return address
+            }
+
+        case .ethereum:
+            switch primaryKey {
+            case .native:
+                return Token.eth.mintAddress
             case let .contract(address):
                 return address
             }

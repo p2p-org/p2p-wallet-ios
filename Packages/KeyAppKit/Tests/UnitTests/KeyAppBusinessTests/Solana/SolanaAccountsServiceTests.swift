@@ -13,7 +13,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
         let keyAppTokenProvider = MockKeyAppTokenProvider()
 
         let tokenService = MockTokensRepository()
-        let priceService = PriceServiceImpl(api: keyAppTokenProvider, errorObserver: errorObserver, lifetime: 60)
+        let priceService = MockJupiterPriceService()
 
         let service = SolanaAccountsService(
             accountStorage: MockAccountStorage(),
@@ -47,7 +47,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
         let realtimeSolanaAccountService = MockRealtimeSolanaAccountService()
 
         let tokenService = MockTokensRepository()
-        let priceService = PriceServiceImpl(api: keyAppTokenProvider, errorObserver: errorObserver, lifetime: 60)
+        let priceService = MockJupiterPriceService()
 
         let service = SolanaAccountsService(
             accountStorage: accountStorage,
