@@ -52,7 +52,7 @@ extension JupiterSwapBusinessLogic {
             $0.tokensPriceMap = priceMapResult
             $0.routeMap = routeMap
             $0.swapTokens = swapTokensResult
-            $0.slippageBps = Int(0.5 * 100)
+            $0.slippageBps = Int(1.0 * 100)
             $0.fromToken = fromToken
             $0.toToken = toToken
             $0.lamportPerSignature = lamportPerSignatureResult

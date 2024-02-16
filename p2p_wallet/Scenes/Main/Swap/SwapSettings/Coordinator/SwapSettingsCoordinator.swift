@@ -174,10 +174,7 @@ private extension JupiterSwapState {
 
         var liquidutyFees = info.liquidityFee.map { lqFee in
             SwapSettingsInfoViewModel.Fee(
-                title: L10n.liquidityFee(
-                    lqFee.tokenName ?? L10n.unknownToken,
-                    "\(lqFee.pct == nil ? L10n.unknown : "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
-                ),
+                title: L10n.liquidityFee(lqFee.tokenName ?? L10n.unknownToken),
                 subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
                 amount: lqFee.amountInFiatDescription
             )
