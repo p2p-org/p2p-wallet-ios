@@ -115,6 +115,21 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
+    var moveToMain: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
+        )
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.referrerUrl }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.referrerUrl = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
             authenticationStatusPublisher,
