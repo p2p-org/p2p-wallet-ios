@@ -11,9 +11,6 @@ final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
     let bridge: ReferralJSBridge
     let webView: WKWebView
 
-    let openShare = PassthroughSubject<String, Never>()
-    let openTerms = PassthroughSubject<URL, Never>()
-
     override init() {
         let wkWebView = ReferralProgramViewModel.buildWebView()
         webView = wkWebView
@@ -22,18 +19,6 @@ final class ReferralProgramViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         bridge.inject()
-
-        bridge.sharePublisher
-            .sink(receiveValue: { [weak self] value in
-                self?.openShare.send(value)
-            })
-            .store(in: &subscriptions)
-
-        bridge.openTermsUrl
-            .sink(receiveValue: { [weak self] value in
-                self?.openTerms.send(value)
-            })
-            .store(in: &subscriptions)
     }
 
     private static func buildWebView() -> WKWebView {

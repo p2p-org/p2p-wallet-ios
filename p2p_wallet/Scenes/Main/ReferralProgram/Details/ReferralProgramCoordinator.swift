@@ -17,21 +17,29 @@ final class ReferralProgramCoordinator: Coordinator<Void> {
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
 
-        viewModel.openShare
-            .sink { [weak vc] link in
-                let activityVC = UIActivityViewController(
-                    activityItems: [link],
-                    applicationActivities: nil
-                )
-                vc?.present(activityVC, animated: true)
-            }
-            .store(in: &subscriptions)
-
-        viewModel.openTerms
-            .sink { [weak self] url in
-                guard let self else { return }
-                coordinate(to: TermsAndConditionsCoordinator(navigationController: self.navigationController, url: url))
+        viewModel.bridge.actionPublisher
+            .sink { [weak self, weak vc] action in
+                guard let self, let vc else { return }
+                switch action {
+                case let .openShare(string):
+                    let activityVC = UIActivityViewController(
+                        activityItems: [string],
+                        applicationActivities: nil
+                    )
+                    vc.present(activityVC, animated: true)
+                case let .openTerms(url):
+                    coordinate(to: TermsAndConditionsCoordinator(
+                        navigationController: self.navigationController,
+                        url: url
+                    ))
                     .sink(receiveValue: {}).store(in: &self.subscriptions)
+                case .openSwap:
+                    coordinate(to: JupiterSwapCoordinator(
+                        navigationController: self.navigationController,
+                        params: .init(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .deeplink)
+                    ))
+                    .sink(receiveValue: {}).store(in: &self.subscriptions)
+                }
             }
             .store(in: &subscriptions)
 
