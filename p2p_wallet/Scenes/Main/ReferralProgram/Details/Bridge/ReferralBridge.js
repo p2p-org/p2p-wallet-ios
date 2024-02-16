@@ -34,5 +34,8 @@ window.ReferralBridge = {
     },
     openTermsUrl: function(link) {
         handleRequest({ method: "openTermsUrl", link: link });
+    },
+    navigateToSwap: function() {
+        handleRequest({ method: "navigateToSwap" });
     }
 }

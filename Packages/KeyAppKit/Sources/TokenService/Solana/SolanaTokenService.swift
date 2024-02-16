@@ -11,7 +11,7 @@ public protocol SolanaTokensService: TokenRepository {
 }
 
 public actor KeyAppSolanaTokenRepository: SolanaTokensService {
-    static let version: Int = 1
+    static let version: Int = 2
 
     struct Database: Codable, Hashable {
         var timestamps: Date?
@@ -36,6 +36,8 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
 
     var status: Status = .initialising
 
+    var setupTask: Task<Void, Never>?
+
     public init(provider: KeyAppTokenProvider, errorObserver: ErrorObserver) {
         self.provider = provider
         self.errorObserver = errorObserver
@@ -46,43 +48,53 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
             return
         }
 
-        // Load from local storage
-        if status == Status.initialising {
-            if let encodedData = try? await storage.load(for: filename) {
-                if let database = try? JSONDecoder().decode(Database.self, from: encodedData) {
-                    if let migratedDatabase = migrate(database: database) {
-                        self.database = migratedDatabase
-                        setupStaticToken(data: migratedDatabase.data)
+        if let setupTask {
+            await setupTask.value
+            return
+        }
+
+        setupTask = Task {
+            // Load from local storage
+            if status == Status.initialising {
+                if let encodedData = try? await storage.load(for: filename) {
+                    if let database = try? JSONDecoder().decode(Database.self, from: encodedData) {
+                        if let migratedDatabase = migrate(database: database) {
+                            self.database = migratedDatabase
+                            setupStaticToken(data: migratedDatabase.data)
+                        }
                     }
                 }
             }
-        }
 
-        do {
-            let result = try await provider.getSolanaTokens(modifiedSince: database.timestamps)
-            switch result {
-            case .noChanges:
-                status = .ready
-                return
-            case let .result(result):
-                // Update database
-                database.timestamps = result.timestamp
-                let tokens = result.tokens.map { token in
-                    (token.mintAddress, token)
+            do {
+                let result = try await provider.getSolanaTokens(modifiedSince: database.timestamps)
+                switch result {
+                case .noChanges:
+                    status = .ready
+                    return
+                case let .result(result):
+                    // Update database
+                    database.timestamps = result.timestamp
+                    let tokens = result.tokens.map { token in
+                        (token.mintAddress, token)
+                    }
+                    let data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
+                    database.version = Self.version
+                    database.data = data
+                    setupStaticToken(data: data)
+                    status = .ready
                 }
-                let data = Dictionary(tokens, uniquingKeysWith: { lhs, _ in lhs })
-                database.version = Self.version
-                database.data = data
-                setupStaticToken(data: data)
-                status = .ready
-            }
 
-            if let encodedData = try? JSONEncoder().encode(database) {
-                try? await storage.save(for: filename, data: encodedData)
+                if let encodedData = try? JSONEncoder().encode(database) {
+                    try await storage.save(for: filename, data: encodedData)
+                }
+            } catch {
+                errorObserver.handleError(error)
             }
-        } catch {
-            errorObserver.handleError(error)
         }
+
+        await setupTask?.value
+        setupTask = nil
     }
 
     func migrate(database: Database) -> Database? {
@@ -90,6 +102,9 @@ public actor KeyAppSolanaTokenRepository: SolanaTokensService {
         case .none:
             return nil
         case 1:
+            // Clear all data to ensure user has been updated with the latest data by using new algorithm.
+            return .init(data: [:])
+        case 2:
             return database
         default:
             return database

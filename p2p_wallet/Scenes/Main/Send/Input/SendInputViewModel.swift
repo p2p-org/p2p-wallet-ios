@@ -105,8 +105,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         let repository = Resolver.resolve(SolanaAccountsService.self)
         let wallets = repository.getWallets()
 
-        let pricesService = Resolver.resolve(PriceService.self)
-
         // Setup source token
         let tokenInWallet: SolanaAccount
         switch recipient.category {

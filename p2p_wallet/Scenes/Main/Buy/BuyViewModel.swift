@@ -50,7 +50,7 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var pricesService: PriceService
+    @Injected private var pricesService: JupiterPriceService
 
     // Defaults
 //    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)

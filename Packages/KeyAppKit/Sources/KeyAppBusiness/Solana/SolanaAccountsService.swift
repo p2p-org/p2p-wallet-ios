@@ -13,7 +13,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     // MARK: - Service
 
-    let priceService: PriceService
+    let priceService: JupiterPriceService
 
     let errorObservable: ErrorObserver
 
@@ -55,7 +55,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         solanaAPIClient: SolanaAPIClient,
         realtimeSolanaAccountService: RealtimeSolanaAccountService? = nil,
         tokensService: SolanaTokensService,
-        priceService: PriceService,
+        priceService: JupiterPriceService,
         fiat: String,
         proxyConfiguration: ProxyConfiguration?,
         errorObservable: any ErrorObserver
@@ -156,7 +156,10 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         for state: AsyncValueState<[Account]>,
         fiat: String
     ) -> Future<AsyncValueState<[Account]>, Never> {
-        Future<AsyncValueState<[Account]>, Never> { [weak priceService, errorObservable] promise in
+        Future<AsyncValueState<[Account]>, Never> { [
+            weak priceService,
+            errorObservable
+        ] promise in
             Task { [weak priceService, errorObservable] in
                 // Price service is unavailable
                 guard let priceService else {

@@ -81,7 +81,7 @@ struct DetailTransactionView: View {
                                 viewModel.share()
                             }
                         case .explorer:
-                            CircleButton(title: L10n.explorer, image: .explorer) {
+                            CircleButton(title: L10n.solscan, image: .explorer) {
                                 viewModel.explore()
                             }
                         }

@@ -6,6 +6,7 @@ import History
 import Jupiter
 import KeyAppBusiness
 import KeyAppKitCore
+import KeyAppNetworking
 import Moonpay
 import NameService
 import Onboarding
@@ -155,6 +156,16 @@ extension Resolver: ResolverRegistering {
             PriceServiceImpl(api: resolve(), errorObserver: resolve())
         }
         .implements(PriceService.self)
+        .scope(.application)
+
+        // Prices
+        register {
+            JupiterPriceServiceImpl(client: HTTPClient(
+                urlSession: URLSession.shared,
+                decoder: JSONResponseDecoder()
+            ))
+        }
+        .implements(JupiterPriceService.self)
         .scope(.application)
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }

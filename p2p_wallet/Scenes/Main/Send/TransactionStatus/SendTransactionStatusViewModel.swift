@@ -9,7 +9,7 @@ import UIKit
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var transactionHandler: TransactionHandler
-    @Injected private var priceService: PriceService
+    @Injected private var priceService: JupiterPriceService
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()

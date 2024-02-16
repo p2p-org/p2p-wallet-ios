@@ -11,7 +11,7 @@ public final class MoonpaySellDataService: SellDataService {
     // MARK: - Dependencies
 
     private let provider: Provider
-    private let priceProvider: PriceService
+    private let priceProvider: JupiterPriceService
     private let sellTransactionsRepository: SellTransactionsRepository
 
     // MARK: - Properties
@@ -41,7 +41,7 @@ public final class MoonpaySellDataService: SellDataService {
     public init(
         userId: String,
         provider: Provider,
-        priceProvider: PriceService,
+        priceProvider: JupiterPriceService,
         sellTransactionsRepository: SellTransactionsRepository
     ) {
         self.userId = userId

@@ -7,13 +7,17 @@ import TweetNacl
 import WebKit
 
 protocol ReferralBridge {
-    var sharePublisher: AnyPublisher<String, Never> { get }
-    var openTermsUrl: AnyPublisher<URL, Never> { get }
+    var actionPublisher: AnyPublisher<ReferralBridgeAction, Never> { get }
+}
+
+enum ReferralBridgeAction {
+    case openShare(String)
+    case openTerms(URL)
+    case openSwap
 }
 
 final class ReferralJSBridge: NSObject, ReferralBridge {
-    var sharePublisher: AnyPublisher<String, Never> { shareSubject.eraseToAnyPublisher() }
-    var openTermsUrl: AnyPublisher<URL, Never> { openTermsUrlSubject.eraseToAnyPublisher() }
+    var actionPublisher: AnyPublisher<ReferralBridgeAction, Never> { actionSubject.eraseToAnyPublisher() }
 
     // MARK: - Dependencies
 
@@ -22,8 +26,8 @@ final class ReferralJSBridge: NSObject, ReferralBridge {
 
     // MARK: - Properties
 
-    private let shareSubject = PassthroughSubject<String, Never>()
-    private let openTermsUrlSubject = PassthroughSubject<URL, Never>()
+    private let actionSubject = PassthroughSubject<ReferralBridgeAction, Never>()
+
     private var subscriptions: [AnyCancellable] = []
     private weak var webView: WKWebView?
 
@@ -103,7 +107,7 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
         switch method {
         case .showShareDialog:
             if let link = dict["link"] as? String {
-                shareSubject.send(link)
+                actionSubject.send(.openShare(link))
                 handler(link, nil)
             } else {
                 handler(nil, .emptyLink)
@@ -138,11 +142,14 @@ extension ReferralJSBridge: WKScriptMessageHandlerWithReply {
             handler(user.account.publicKey.base58EncodedString, nil)
         case .openTermsUrl:
             if let link = dict["link"] as? String, let url = URL(string: link) {
-                openTermsUrlSubject.send(url)
+                actionSubject.send(.openTerms(url))
                 handler(link, nil)
             } else {
                 handler(nil, .emptyLink)
             }
+        case .navigateToSwap:
+            actionSubject.send(.openSwap)
+            handler("", nil)
         }
     }
 }
