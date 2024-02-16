@@ -1,4 +1,4 @@
-"%@ Liquidity fee %@" = "%@ Liquidity fee %@";
+"%@ Liquidity fee" = "%@ Liquidity fee";
 "%@ doesn't work. Try another option" = "%@ doesn't work. Try another option";
 "%@ found" = "%@ found";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ is the minimum amount to receive from the Ethereum Network";
