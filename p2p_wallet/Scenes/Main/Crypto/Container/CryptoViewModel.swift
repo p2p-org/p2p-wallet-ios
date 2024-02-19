@@ -81,6 +81,7 @@ final class CryptoViewModel: BaseViewModel, ObservableObject {
         }
         updateAddressIfNeeded()
         analyticsManager.log(event: .cryptoScreenOpened)
+        displayReferralBanner = available(.referralProgramEnabled)
     }
 
     func copyToClipboard() {

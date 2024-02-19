@@ -33,12 +33,12 @@ class RemoteConfigWarmupProcess: WarmupProcess {
 
         let currentEndpoints = APIEndPoint.definedEndpoints
         let defaultFlags = StaticFlagsFetcher(featureFlags: [])
-        #if !RELEASE
-            let settings = RemoteConfigSettings()
-            // WARNING: Don't actually do this in production!
-            settings.minimumFetchInterval = 0
-            RemoteConfig.remoteConfig().configSettings = settings
 
+        let settings = RemoteConfigSettings()
+        settings.minimumFetchInterval = 0
+        RemoteConfig.remoteConfig().configSettings = settings
+
+        #if !RELEASE
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: DebugMenuFeaturesProvider.shared,
