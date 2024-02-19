@@ -152,6 +152,7 @@ final class CryptoAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 analyticsManager.log(event: .cryptoTokenClick(tokenName: renderableAccount.account.token.symbol))
             case .extraButtonTap:
+                guard renderableAccount.status != .isClaiming else { return }
                 analyticsManager.log(event: .cryptoClaimTransferredClick)
                 navigation.send(.claim(renderableAccount.account, renderableAccount.userAction))
             default:
