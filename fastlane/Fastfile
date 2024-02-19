@@ -171,7 +171,7 @@ def notify(version, message)
       "-v", 
       "-H", "Content-Type: application/json",
       "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}",
-      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      "-d", "{\"message\":\"[KeyApp] #{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
       DISCORD_MESSAGE_API_ENDPOINT
     )
   rescue => ex
@@ -367,7 +367,7 @@ platform :ios do
         "curl", 
         "-v", 
         "-H", "Content-Type: application/json", 
-        "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        "-d", "{\"message\":\"[KeyApp] Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
         DISCORD_MESSAGE_API_ENDPOINT
       )
     rescue => ex
@@ -416,7 +416,7 @@ platform :ios do
         "-v", 
         "-H", "Content-Type: application/json",
         "-H", "Authorization: Bearer #{DISCORD_MESSAGE_API_BEARER_TOKEN}", 
-        "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+        "-d", "{\"message\":\"[KeyApp] #{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
         DISCORD_MESSAGE_API_ENDPOINT
       )
     rescue => ex
