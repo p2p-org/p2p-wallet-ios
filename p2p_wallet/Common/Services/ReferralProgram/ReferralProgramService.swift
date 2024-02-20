@@ -56,7 +56,7 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
         do {
             try await Task.retrying(
                 where: { $0.isRetryable },
-                maxRetryCount: 5,
+                maxRetryCount: 10,
                 retryDelay: 5, // 5 secs
                 timeoutInSeconds: 60, // wait for 60s if no success then throw .timedOut error
                 operation: { [weak self] _ in
