@@ -154,7 +154,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
             .map { _ in () }
             .eraseToAnyPublisher()
         case let .claim(account, userAction):
-            if let userAction, userAction.status == .processing {
+            if let userAction, userAction.status != .ready {
                 return coordinate(to: TransactionDetailCoordinator(
                     viewModel: .init(userAction: userAction),
                     presentingViewController: navigationController
@@ -169,7 +169,7 @@ final class CryptoCoordinator: Coordinator<CryptoResult> {
                     )
                 )
                 .handleEvents(receiveOutput: { [weak self] result in
-                    guard let self = self else { return }
+                    guard let self else { return }
                     switch result {
                     case let .claiming(pendingTrx):
                         self.coordinate(
