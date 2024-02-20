@@ -75,7 +75,7 @@ class GlobalAppState: ObservableObject {
 
     @Published var bridgeEndpoint: String = (Environment.current == .release) ?
         String.secretConfig("BRIDGE_PROD")! :
-        String.secretConfig("BRIDGE_DEV")!
+        String.secretConfig("BRIDGE_PROD")!
 
     @Published var tokenEndpoint: String = (Environment.current == .release) ?
         String.secretConfig("TOKEN_SERVICE_PROD")! :
