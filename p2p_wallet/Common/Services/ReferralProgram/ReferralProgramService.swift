@@ -3,6 +3,7 @@ import KeyAppBusiness
 import KeyAppNetworking
 import Resolver
 import SolanaSwift
+import Task_retrying
 import TweetNacl
 
 protocol ReferralProgramService {
@@ -14,7 +15,10 @@ protocol ReferralProgramService {
 }
 
 enum ReferralProgramServiceError: Error {
-    case failedSet
+    case unauthorized
+    case timeOut
+    case alreadyRegistered
+    case other
 }
 
 final class ReferralProgramServiceImpl {
@@ -50,31 +54,17 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
     func register() async {
         guard !Defaults.referrerRegistered else { return }
         do {
-            guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
-            let timestamp = Int64(Date().timeIntervalSince1970)
-            let signed = try RegisterUserSignature(
-                user: currentUserAddress, referrent: nil, timestamp: timestamp
-            )
-            .sign(secretKey: secret)
-            let _: String? = try await jsonrpcClient.request(
-                baseURL: baseURL,
-                body: .init(
-                    method: "register",
-                    params: RegisterUserRequest(
-                        user: currentUserAddress,
-                        timedSignature: ReferralTimedSignature(
-                            timestamp: timestamp, signature: signed.toHexString()
-                        )
-                    )
-                )
-            )
-            Defaults.referrerRegistered = true
+            try await Task.retrying(
+                where: { $0.isRetryable },
+                maxRetryCount: 5,
+                retryDelay: 5, // 5 secs
+                timeoutInSeconds: 60, // wait for 60s if no success then throw .timedOut error
+                operation: { [weak self] _ in
+                    // if there is transaction, send it
+                    try await self?.sendRegisterRequest()
+                }
+            ).value
         } catch {
-            if error.localizedDescription.contains("duplicate") {
-                // The code is not unique so we look at the description
-                Defaults.referrerRegistered = true
-            }
-            debugPrint(error)
             DefaultLogManager.shared.log(
                 event: "\(ReferralProgramService.self)_register",
                 data: error.localizedDescription,
@@ -86,7 +76,8 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
     func setReferent(from: String) async {
         guard from != currentUserAddress else { return }
         do {
-            guard let secret = userWallet.wallet?.account.secretKey else { throw ReferralProgramServiceError.failedSet }
+            guard let secret = userWallet.wallet?.account.secretKey
+            else { throw ReferralProgramServiceError.unauthorized }
             let timestamp = Int64(Date().timeIntervalSince1970)
             let signed = try SetReferentSignature(
                 user: currentUserAddress, referent: from, timestamp: timestamp
@@ -113,6 +104,65 @@ extension ReferralProgramServiceImpl: ReferralProgramService {
                 data: error.localizedDescription,
                 logLevel: LogLevel.error
             )
+        }
+    }
+
+    private func sendRegisterRequest() async throws {
+        do {
+            guard let secret = userWallet.wallet?.account.secretKey
+            else { throw ReferralProgramServiceError.unauthorized }
+            let timestamp = Int64(Date().timeIntervalSince1970)
+            let signed = try RegisterUserSignature(
+                user: currentUserAddress, referrent: nil, timestamp: timestamp
+            )
+            .sign(secretKey: secret)
+            let _: String? = try await jsonrpcClient.request(
+                baseURL: baseURL,
+                body: .init(
+                    method: "register",
+                    params: RegisterUserRequest(
+                        user: currentUserAddress,
+                        timedSignature: ReferralTimedSignature(
+                            timestamp: timestamp, signature: signed.toHexString()
+                        )
+                    )
+                )
+            )
+            Defaults.referrerRegistered = true
+        } catch {
+            debugPrint(error)
+            DefaultLogManager.shared.log(
+                event: "\(ReferralProgramService.self)_register",
+                data: error.localizedDescription,
+                logLevel: LogLevel.error
+            )
+            if error.localizedDescription.contains("duplicate key value violates unique constraint") {
+                // The code is not unique so we look at the description
+                Defaults.referrerRegistered = true
+                throw ReferralProgramServiceError.alreadyRegistered
+            }
+            if error.localizedDescription.contains("timed out") || (error as NSError).code == NSURLErrorTimedOut {
+                throw ReferralProgramServiceError.timeOut
+            }
+            throw ReferralProgramServiceError.other
+        }
+    }
+}
+
+// MARK: - Helpers
+
+private extension Swift.Error {
+    var isRetryable: Bool {
+        switch self {
+        case let error as ReferralProgramServiceError:
+            switch error {
+            case .timeOut:
+                return true
+            default:
+                return false
+            }
+        default:
+            return false
         }
     }
 }
