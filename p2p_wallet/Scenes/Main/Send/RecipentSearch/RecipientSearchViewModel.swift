@@ -98,7 +98,7 @@ class RecipientSearchViewModel: ObservableObject {
         self.flow = flow
 
         let ethereumSearch: Bool
-        if !available(.solanaEthAddressEnabled) {
+        if !available(.ethAddressEnabled) {
             ethereumSearch = false
         } else {
             if let preChosenWallet {
