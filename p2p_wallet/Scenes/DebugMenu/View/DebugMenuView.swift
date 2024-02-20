@@ -98,6 +98,7 @@ struct DebugMenuView: View {
             NavigationLink("Socket", destination: SocketDebugView())
             NavigationLink("Web3Auth", destination: OnboardingDebugView())
             NavigationLink("History") { HistoryDebugView() }
+            NavigationLink("Flags") { FlagDebugMenuView() }
         }
     }
 
