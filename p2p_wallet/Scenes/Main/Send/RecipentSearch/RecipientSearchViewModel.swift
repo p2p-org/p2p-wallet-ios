@@ -98,18 +98,22 @@ class RecipientSearchViewModel: ObservableObject {
         self.flow = flow
 
         let ethereumSearch: Bool
-        if let preChosenWallet {
-            // Check token is support wormhole
-            if WormholeSupportedTokens.bridges
-                .map(\.solAddress).contains(preChosenWallet.token.mintAddress)
-            {
-                ethereumSearch = true
-            } else {
-                ethereumSearch = false
-            }
+        if !available(.solanaEthAddressEnabled) {
+            ethereumSearch = false
         } else {
-            // No pre chosen, search all
-            ethereumSearch = true
+            if let preChosenWallet {
+                // Check token is support wormhole
+                if WormholeSupportedTokens.bridges
+                    .map(\.solAddress).contains(preChosenWallet.token.mintAddress)
+                {
+                    ethereumSearch = true
+                } else {
+                    ethereumSearch = false
+                }
+            } else {
+                // No pre chosen, search all
+                ethereumSearch = true
+            }
         }
 
         config = .init(
@@ -122,7 +126,7 @@ class RecipientSearchViewModel: ObservableObject {
         Task {
             let tokens = try await tokensRepository.all()
             await MainActor.run { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.config.tokens = tokens
             }
         }
@@ -143,7 +147,7 @@ class RecipientSearchViewModel: ObservableObject {
             .combineLatest($config)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.search(
                     query: query,
                     autoSelectTheOnlyOneResultMode: self.autoSelectTheOnlyOneResultMode,
@@ -206,7 +210,7 @@ class RecipientSearchViewModel: ObservableObject {
                     self?.searchResult = result
                 }
                 if
-                    let autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode,
+                    let autoSelectTheOnlyOneResultMode,
                     autoSelectTheOnlyOneResultMode.isEnabled
                 {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
@@ -243,7 +247,7 @@ class RecipientSearchViewModel: ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            let _ = try await(
+            let _ = try await (
                 loadSwapService(),
                 checkIfSendViaLinkAvailable()
             )
