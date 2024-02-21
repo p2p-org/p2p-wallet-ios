@@ -247,7 +247,7 @@ class RecipientSearchViewModel: ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            let _ = try await (
+            let _ = try await(
                 loadSwapService(),
                 checkIfSendViaLinkAvailable()
             )

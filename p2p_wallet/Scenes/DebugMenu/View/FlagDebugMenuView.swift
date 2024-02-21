@@ -8,7 +8,10 @@ struct FlagDebugMenuView: View {
             DebugText(title: "Mocked API Gateway", value: "\(available(.mockedApiGateway))")
             DebugText(title: "Mocked TKey Facade", value: "\(available(.mockedTKeyFacade))")
             DebugText(title: "Onboarding Username", value: "\(available(.onboardingUsernameEnabled))")
-            DebugText(title: "Onboarding Username Button Skip", value: "\(available(.onboardingUsernameButtonSkipEnabled))")
+            DebugText(
+                title: "Onboarding Username Button Skip",
+                value: "\(available(.onboardingUsernameButtonSkipEnabled))"
+            )
             DebugText(title: "PnL", value: "\(available(.pnlEnabled))")
             DebugText(title: "Referral Program", value: "\(available(.referralProgramEnabled))")
             DebugText(title: "Send Via Link", value: "\(available(.sendViaLinkEnabled))")
