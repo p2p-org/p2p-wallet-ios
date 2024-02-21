@@ -9,7 +9,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
 
     // MARK: - Service
 
-    let priceService: JupiterPriceService
+    let priceService: CoingeckoEthereumPriceService
 
     let errorObservable: ErrorObserver
 
@@ -38,7 +38,7 @@ public final class EthereumAccountsService: NSObject, AccountsService {
         address: String,
         web3: Web3,
         ethereumTokenRepository: EthereumTokensRepository,
-        priceService: JupiterPriceService,
+        priceService: CoingeckoEthereumPriceService,
         fiat: String,
         errorObservable: any ErrorObserver,
         enable: Bool

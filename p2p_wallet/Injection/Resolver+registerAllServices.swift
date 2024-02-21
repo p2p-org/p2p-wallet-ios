@@ -158,6 +158,11 @@ extension Resolver: ResolverRegistering {
         .implements(PriceService.self)
         .scope(.application)
 
+        register {
+            CoingeckoEthereumPriceService(endpoint: "https://api.coingecko.com")
+        }
+        .scope(.application)
+
         // Prices
         register {
             JupiterPriceServiceImpl(client: HTTPClient(
