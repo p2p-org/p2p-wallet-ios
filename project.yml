@@ -53,7 +53,7 @@ packages:
         branch: master
     Firebase:
         url: https://github.com/firebase/firebase-ios-sdk.git
-        from: 10.7.0
+        from: 10.20.0
 
 
 options:
